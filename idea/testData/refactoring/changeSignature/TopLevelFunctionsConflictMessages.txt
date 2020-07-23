@@ -1,1 +1,0 @@
-Function already exists: 'public fun fun2(): Unit defined in root package in file TopLevelFunctionsConflictBefore.kt'

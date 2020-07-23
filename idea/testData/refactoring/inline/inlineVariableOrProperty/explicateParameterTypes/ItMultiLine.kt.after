@@ -1,5 +1,0 @@
-fun foo() {
-    val ff = { it: Int ->
-        it
-    }
-}

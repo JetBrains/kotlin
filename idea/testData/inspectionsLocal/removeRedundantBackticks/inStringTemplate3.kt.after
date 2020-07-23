@@ -1,4 +1,0 @@
-fun main() {
-    val name = "Kotlin"
-    val test = "${name}test"
-}

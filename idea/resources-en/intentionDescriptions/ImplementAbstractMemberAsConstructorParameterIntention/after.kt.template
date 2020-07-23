@@ -1,7 +1,0 @@
-interface A {
-    val foo: Int
-}
-
-class B(<spot>override val foo: Int</spot>) : A {
-
-}

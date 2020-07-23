@@ -1,3 +1,0 @@
-Additional checking of reference KtInvokeFunctionReference: foo()
-Changed resolve of KtInvokeFunctionReference: foo()
-Trying to build import list again with import rules: +bug.a.*

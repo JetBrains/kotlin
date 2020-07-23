@@ -1,8 +1,0 @@
-// MOVE: down
-var x: String
-    set(v: String) {
-        // test
-    }
-    <caret>get() {
-        return ""
-    }

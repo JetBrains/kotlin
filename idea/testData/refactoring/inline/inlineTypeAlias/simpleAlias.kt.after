@@ -1,5 +1,0 @@
-class A
-
-fun foo() {
-    val x: A = A()
-}

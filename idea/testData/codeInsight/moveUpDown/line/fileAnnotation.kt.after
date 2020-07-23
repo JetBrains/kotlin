@@ -1,5 +1,0 @@
-// MOVE: up
-@file:JvmName("Utils")<caret>
-package foo
-fun g(x: Int) {
-}

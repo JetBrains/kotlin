@@ -1,6 +1,0 @@
-fun foo(b: Boolean): Int {
-    when (b) {
-        true -> throw AssertionError()
-        else -> return 1
-    }
-}

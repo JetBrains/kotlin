@@ -1,3 +1,0 @@
-// WITH_RUNTIME
-
-val x = listOf("1").map { it.toInt() }

@@ -1,5 +1,0 @@
-expect class A {
-    class M
-
-    fun a(): M
-}

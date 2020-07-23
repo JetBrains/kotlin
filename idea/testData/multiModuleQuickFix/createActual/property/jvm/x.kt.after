@@ -1,4 +1,0 @@
-// x: to be implemented
-actual var x: Int
-    get() = TODO("Not yet implemented")
-    set(value) {}

@@ -1,4 +1,0 @@
-// "Remove parameter 'block'" "true"
-fun doNotUse1() {}
-
-fun useNotUse1() = doNotUse1()

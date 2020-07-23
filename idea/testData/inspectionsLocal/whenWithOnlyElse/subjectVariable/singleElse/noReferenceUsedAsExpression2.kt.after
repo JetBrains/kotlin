@@ -1,6 +1,0 @@
-// WITH_RUNTIME
-fun test() {
-    val x = <caret>use("")
-}
-
-fun use(s: String) {}

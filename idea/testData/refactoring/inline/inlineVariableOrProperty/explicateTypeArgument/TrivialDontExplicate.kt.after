@@ -1,5 +1,0 @@
-import java.util.ArrayList
-
-fun f() {
-    ArrayList(listOf(1, 2, 3))
-}

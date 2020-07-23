@@ -1,4 +1,0 @@
-annotation class Ann
-
-@Ann
-public abstract class Test

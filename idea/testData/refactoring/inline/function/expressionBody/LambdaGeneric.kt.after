@@ -1,3 +1,0 @@
-fun returnLabel() {
-    ({ it: Int -> })(1)
-}

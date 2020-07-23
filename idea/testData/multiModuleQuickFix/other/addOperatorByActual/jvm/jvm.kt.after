@@ -1,5 +1,0 @@
-actual class Foo {
-    actual operator fun unaryMinus() {
-
-    }
-}

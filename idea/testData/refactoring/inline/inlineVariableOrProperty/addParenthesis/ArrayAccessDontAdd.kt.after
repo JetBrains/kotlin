@@ -1,3 +1,0 @@
-fun f() {
-    println(foo()[1])
-}

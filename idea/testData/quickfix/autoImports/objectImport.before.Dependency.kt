@@ -1,3 +1,0 @@
-package bbb
-
-object TestObject

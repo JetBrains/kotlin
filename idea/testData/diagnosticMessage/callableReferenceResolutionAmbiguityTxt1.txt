@@ -1,5 +1,0 @@
-<!-- callableReferenceResolutionAmbiguityTxt1 -->
-Callable reference resolution ambiguity: 
-public fun <T> foo(b: a.b.String, t: T): Unit defined in a.b in file callableReferenceResolutionAmbiguityTxt.kt
-public fun foo(i: Int): Unit defined in a.b in file callableReferenceResolutionAmbiguityTxt.kt
-public fun <T> foo(a: kotlin.String, t: T): Unit defined in a.b in file callableReferenceResolutionAmbiguityTxt.kt

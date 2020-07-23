@@ -1,3 +1,0 @@
-main.kt
-    companion <1>object {
-        fun <2>foo() {

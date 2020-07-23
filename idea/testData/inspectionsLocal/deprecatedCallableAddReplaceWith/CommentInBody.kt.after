@@ -1,7 +1,0 @@
-@Deprecated("", <caret>ReplaceWith("bar()"))
-fun foo() {
-    // invoke bar()
-    bar()
-}
-
-fun bar(){}

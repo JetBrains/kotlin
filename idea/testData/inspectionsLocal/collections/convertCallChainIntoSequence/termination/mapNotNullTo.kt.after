@@ -1,5 +1,0 @@
-// WITH_RUNTIME
-
-fun test(list: List<Int>) {
-    val mapNotNullTo: MutableList<Int> = list.asSequence().filter { it > 1 }.mapNotNullTo(mutableListOf()) { it }
-}

@@ -1,4 +1,0 @@
-// IS_APPLICABLE: false
-// WITH_RUNTIME
-
-val v = <caret>LazyThreadSafetyMode.values

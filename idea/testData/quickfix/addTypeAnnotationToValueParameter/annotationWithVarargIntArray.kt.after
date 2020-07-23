@@ -1,3 +1,0 @@
-// "Add type 'Int' to parameter 'value'" "true"
-
-class CollectionDefault(vararg val value: Int = intArrayOf(1, 2))

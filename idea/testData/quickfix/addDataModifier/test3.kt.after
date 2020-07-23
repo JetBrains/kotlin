@@ -1,9 +1,0 @@
-// "Make 'Foo' data class" "true"
-// WITH_RUNTIME
-data class Foo(val bar: String, var baz: Int)
-
-fun test() {
-    val list = listOf(Foo("A", 1))
-    list.forEach { (foo<caret>, bar) ->
-    }
-}

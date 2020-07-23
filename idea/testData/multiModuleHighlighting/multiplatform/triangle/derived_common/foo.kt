@@ -1,1 +1,0 @@
-expect fun foo(my: Any)

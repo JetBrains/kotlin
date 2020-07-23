@@ -1,5 +1,0 @@
-// WITH_RUNTIME
-
-fun foo() {
-    for (i in 9 downTo 0) {}
-}

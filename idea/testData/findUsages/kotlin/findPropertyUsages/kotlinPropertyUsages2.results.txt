@@ -1,6 +1,0 @@
-[kotlinPropertyUsages2.0.kt] Value read 12 return super<A>.foo
-[kotlinPropertyUsages2.0.kt] Value write 16 super<A>.foo = value
-[kotlinPropertyUsages2.1.kt] Value read 11 println("b.foo = ${b.foo}")
-[kotlinPropertyUsages2.1.kt] Value read 7 println("a.foo = ${a.foo}")
-[kotlinPropertyUsages2.1.kt] Value write 10 b.foo = "b"
-[kotlinPropertyUsages2.1.kt] Value write 6 a.foo = "a"

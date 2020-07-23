@@ -1,5 +1,0 @@
-class MyTest {
-    @Test fun <spot>testTwoPlusTwoEqualsFour</spot>() {
-
-    }
-}

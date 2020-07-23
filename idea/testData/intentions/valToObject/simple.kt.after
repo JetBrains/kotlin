@@ -1,7 +1,0 @@
-interface B {
-}
-
-object a<caret> : B {
-}
-
-val c = a

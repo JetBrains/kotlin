@@ -1,3 +1,0 @@
-// "Move to constructor" "true"
-class Correct(val name: String) {
-}

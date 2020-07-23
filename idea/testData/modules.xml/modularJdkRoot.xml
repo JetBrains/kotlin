@@ -1,8 +1,0 @@
-<modules>
-    <!-- Module script for production -->
-    <module name="name" type="java-production" outputDir="output">
-        <!-- Java source roots -->
-        <!-- Classpath -->
-        <modularJdkRoot path="/path/to/modular/jdk"/>
-    </module>
-</modules>

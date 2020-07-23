@@ -1,6 +1,0 @@
-pluginManagement {
-    repositories {
-        jcenter()
-        gradlePluginPortal()
-    }
-}

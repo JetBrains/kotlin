@@ -1,3 +1,0 @@
-package j
-
-fun j() {}

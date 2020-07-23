@@ -1,4 +1,0 @@
-// "Create type parameter 'test text' in function 'a'" "true"
-fun <`test text`> a() {
-    val c: `test text`
-}

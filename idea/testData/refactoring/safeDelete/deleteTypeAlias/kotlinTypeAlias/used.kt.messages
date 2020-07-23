@@ -1,1 +1,0 @@
-type alias MyString has 2 usages that are not safe to delete.

@@ -1,7 +1,0 @@
-// MOVE: down
-fun test(
-        a: Int,
-        d: Int,
-        <caret>b: Int, c: Int,
-) {
-}

@@ -1,5 +1,0 @@
-fun foo(): Unit {
-    bar()
-}
-
-fun bar() { }

@@ -1,7 +1,0 @@
-// IMPORT: java.util.Calendar
-package p
-
-import java.sql.*
-import java.util.*
-
-val d: Driver? = null

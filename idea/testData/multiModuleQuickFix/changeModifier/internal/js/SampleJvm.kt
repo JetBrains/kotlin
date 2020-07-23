@@ -1,1 +1,0 @@
-actual class Sample

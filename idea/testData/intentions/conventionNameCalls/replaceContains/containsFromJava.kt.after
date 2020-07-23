@@ -1,4 +1,0 @@
-fun foo() {
-    val c = Container()
-    1 in c
-}

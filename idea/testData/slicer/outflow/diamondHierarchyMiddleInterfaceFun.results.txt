@@ -1,6 +1,0 @@
-12 override fun foo() = <bold>3</bold> (in C.foo())
-12 	override <bold>fun foo()</bold> = 3 (in C)
-20 		val x = a.<bold>foo()</bold> (in test(A, B,…))
-20 			<bold>val x</bold> = a.foo() (in test(A, B,…))
-22 		val z = c.<bold>foo()</bold> (in test(A, B,…))
-22 			<bold>val z</bold> = c.foo() (in test(A, B,…))

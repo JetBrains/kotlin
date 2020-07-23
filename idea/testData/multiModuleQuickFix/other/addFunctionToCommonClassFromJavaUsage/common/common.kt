@@ -1,5 +1,0 @@
-package foo
-
-class Bar {
-
-}

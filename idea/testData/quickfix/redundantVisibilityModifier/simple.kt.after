@@ -1,3 +1,0 @@
-// "Remove redundant 'public' modifier" "true"
-class C {
-}

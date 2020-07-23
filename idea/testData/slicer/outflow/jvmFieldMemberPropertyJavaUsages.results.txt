@@ -1,3 +1,0 @@
-5 @JvmField <bold>val x</bold> = 1 (in A)
-3 	int x = new A().<bold>x</bold>;
-3 		int <bold>x = new A().x;</bold>

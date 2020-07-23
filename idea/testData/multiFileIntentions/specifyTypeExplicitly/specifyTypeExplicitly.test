@@ -1,5 +1,0 @@
-{
-  "mainFile": "source/kt36930.kt",
-  "intentionClass": "org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention",
-  "withRuntime": true
-}

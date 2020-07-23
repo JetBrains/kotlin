@@ -1,3 +1,0 @@
-fun main(args: Array<String>) {
-    val (i<spot>: Int</spot>, s<spot>: String</spot>) = Pair(1, "s")
-}

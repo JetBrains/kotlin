@@ -1,3 +1,0 @@
-fun foo() {
-  <spot>x.forEach { a -> a.bar() }</spot>
-}

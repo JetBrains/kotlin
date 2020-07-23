@@ -1,5 +1,0 @@
-Searched references to A
-Used plain search of parameter a of A(val a: Int, val b: Int) in LocalSearchScope:
-    CLASS:A
-    KtWhenEntry "else"
-    KtWhenEntry "is A"

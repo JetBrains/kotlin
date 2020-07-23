@@ -1,5 +1,0 @@
-package p
-
-fun foo() {
-
-}

@@ -1,6 +1,0 @@
-fun f() {
-    try {
-    } finally {
-    }
-    println(239)
-}

@@ -1,7 +1,0 @@
-// "Add annotation target" "true"
-// WITH_RUNTIME
-@Target(AnnotationTarget.FIELD)
-annotation class DelegateAnn
-
-@delegate:DelegateAnn
-val foo by lazy { "" }

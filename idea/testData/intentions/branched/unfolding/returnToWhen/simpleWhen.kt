@@ -1,6 +1,0 @@
-fun test(n: Int): String {
-    <caret>return when (n) {
-      1 -> "one"
-      else -> "two"
-    }
-}

@@ -1,5 +1,0 @@
-SwingUtilities.invokeLater(object : Runnable {
-    override fun run() {
-        println("a")
-    }
-})

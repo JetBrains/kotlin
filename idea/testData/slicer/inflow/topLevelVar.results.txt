@@ -1,4 +1,0 @@
-3 <bold>var foo: Int</bold> = 1
-3 	var foo: Int = <bold>1</bold> (in foo)
-7 	foo = <bold>2</bold> (in test())
-4 	TopLevelVarKt.setFoo(<bold>3</bold>);

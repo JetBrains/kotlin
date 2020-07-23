@@ -1,6 +1,0 @@
-// GENERATOR: SINGLE_TEMPLATE
-data class A(val n: Int, val s: String?) {
-    override fun toString(): String {
-        return "A(n=$n, s=$s)"
-    }
-}

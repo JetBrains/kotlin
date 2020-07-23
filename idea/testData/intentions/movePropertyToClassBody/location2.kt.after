@@ -1,9 +1,0 @@
-class TestClass(text: String) {
-
-    val text = text
-    val p1 = 0
-
-    fun foo() {
-
-    }
-}

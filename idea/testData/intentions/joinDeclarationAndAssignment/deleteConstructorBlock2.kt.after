@@ -1,6 +1,0 @@
-// DISABLE-ERRORS
-class A(i: Int, j: Int) {
-    constructor(i: Int) : this(i, 2)
-
-    val a<selection>: Int</selection><caret> = 1
-}

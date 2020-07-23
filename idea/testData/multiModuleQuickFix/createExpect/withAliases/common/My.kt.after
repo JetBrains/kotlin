@@ -1,4 +1,0 @@
-expect class My {
-    val some: Double
-
-}

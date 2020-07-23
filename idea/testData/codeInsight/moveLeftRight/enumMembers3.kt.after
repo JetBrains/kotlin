@@ -1,4 +1,0 @@
-// MOVE: left
-enum class E {
-    <caret>B, A, C
-}

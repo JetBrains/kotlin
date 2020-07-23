@@ -1,9 +1,0 @@
-fun maybeFoo(): String? {
-    return "foo"
-}
-
-fun bar(): String = "bar"
-
-fun main(args: Array<String>) {
-    maybeFoo() ?: bar()
-}

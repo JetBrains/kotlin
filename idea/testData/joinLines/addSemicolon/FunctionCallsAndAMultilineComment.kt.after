@@ -1,4 +1,0 @@
-fun foo() {
-    println() // A very long<caret> and important comment
-    println()
-}

@@ -1,7 +1,0 @@
-// WITH_RUNTIME
-fun test(c: JavaClass) {
-    c.run {
-        bar1()
-        bar2()
-    }
-}

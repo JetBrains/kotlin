@@ -1,2 +1,0 @@
-Class C uses class D which will be inaccessible after move
-Property c uses class C which will be inaccessible after move

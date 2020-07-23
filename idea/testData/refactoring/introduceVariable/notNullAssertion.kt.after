@@ -1,9 +1,0 @@
-fun foo(): Int {
-    val s: String? = ""
-    val length = s!!.length
-    return if (true) {
-        length
-    } else {
-        length
-    }
-}

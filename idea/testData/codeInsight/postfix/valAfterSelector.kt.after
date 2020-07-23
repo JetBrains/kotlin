@@ -1,7 +1,0 @@
-class A {
-    fun bar() = 1
-}
-fun foo(a: A) {
-    val bar = a.bar()
-    val x = bar
-}

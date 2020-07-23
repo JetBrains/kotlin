@@ -1,1 +1,0 @@
-public open class DerivedClass: <caret>BaseClass()

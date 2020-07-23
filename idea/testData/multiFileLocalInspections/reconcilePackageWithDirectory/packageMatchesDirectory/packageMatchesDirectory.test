@@ -1,5 +1,0 @@
-{
-    "inspectionClass": "org.jetbrains.kotlin.idea.refactoring.move.changePackage.PackageDirectoryMismatchInspection",
-    "problem": "none",
-    "mainFile": "foo/bar/test.kt"
-}

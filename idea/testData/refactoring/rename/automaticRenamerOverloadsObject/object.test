@@ -1,7 +1,0 @@
-{
-  "type": "KOTLIN_FUNCTION",
-  "classId": "testing/Object",
-  "oldName": "foo",
-  "newName": "bar",
-  "mainFile": "Object.kt"
-}

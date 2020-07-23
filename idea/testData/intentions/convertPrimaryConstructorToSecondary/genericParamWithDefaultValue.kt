@@ -1,1 +1,0 @@
-class Test<caret>(val a: Array<Int> = arrayOf(0))

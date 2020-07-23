@@ -1,3 +1,0 @@
-// INTENTION_TEXT: Remove single-expression string template
-
-val bar = 1.hashCode().toString()

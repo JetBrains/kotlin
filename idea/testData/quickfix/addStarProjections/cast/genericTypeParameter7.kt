@@ -1,4 +1,0 @@
-// "Change type arguments to <*>" "true"
-fun <T> test7(list: List<*>) {
-    val a = list as List<T><caret>
-}

@@ -1,5 +1,0 @@
-class Owner {
-    inner class Inner
-
-    val x = Owner::Inner
-}

@@ -1,6 +1,0 @@
-package source
-
-class Foo {
-
-}
-

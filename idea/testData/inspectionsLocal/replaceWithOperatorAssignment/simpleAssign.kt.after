@@ -1,5 +1,0 @@
-fun foo() {
-    var y = 0
-    val x = 0
-    y += x
-}

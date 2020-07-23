@@ -1,5 +1,0 @@
-if (ok) {
-    res = "ok"
-} else {
-    res = "failed"
-}

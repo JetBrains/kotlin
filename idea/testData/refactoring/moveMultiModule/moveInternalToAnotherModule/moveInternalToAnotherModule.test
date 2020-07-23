@@ -1,7 +1,0 @@
-{
-  "mainFile": "A/src/packA1/InternalTarget.kt",
-  "type": "MOVE_KOTLIN_TOP_LEVEL_DECLARATIONS",
-  "targetPackage": "packB",
-  "targetSourceRoot": "B/src",
-  "withRuntime": "true"
-}

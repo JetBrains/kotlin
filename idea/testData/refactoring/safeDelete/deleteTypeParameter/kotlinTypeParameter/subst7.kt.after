@@ -1,9 +1,0 @@
-class A<X> {
-    fun foo() {
-
-    }
-}
-
-fun bar(a: A<String>) {
-    a.foo()
-}

@@ -1,7 +1,0 @@
-<spot>package bar.foo</spot>
-
-class MyClass: OtherClass {
-    fun myFun() {
-
-    }
-}

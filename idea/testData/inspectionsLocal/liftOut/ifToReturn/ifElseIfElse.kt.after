@@ -1,8 +1,0 @@
-fun test(n: Int): String {
-    <caret>return if (n == 1)
-        "one"
-    else if (n == 2)
-        "two"
-    else
-        "three"
-}

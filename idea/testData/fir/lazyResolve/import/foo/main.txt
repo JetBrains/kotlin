@@ -1,4 +1,0 @@
-FILE: main.kt
-    public? final? [TYPES] fun foofoo(): R|kotlin/Int| {
-        ^foofoo barbar#()
-    }

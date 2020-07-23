@@ -1,4 +1,0 @@
-class A {
-    val a: Int
-        get() = 1
-}

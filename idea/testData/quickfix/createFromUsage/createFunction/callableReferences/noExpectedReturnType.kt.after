@@ -1,9 +1,0 @@
-// "Create function 'foo'" "true"
-fun <T, U> T.map(f: (T) -> U) = f(this)
-
-fun test() {
-    fun foo(i: Int): Any {
-        <selection>TODO("Not yet implemented")</selection>
-    }
-    1.map(::foo)
-}

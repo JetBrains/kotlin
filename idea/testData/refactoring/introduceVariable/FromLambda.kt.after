@@ -1,5 +1,0 @@
-fun foo() {
-    val i = 123
-    val z = i
-    val x: (Int) -> Int = { i }
-}

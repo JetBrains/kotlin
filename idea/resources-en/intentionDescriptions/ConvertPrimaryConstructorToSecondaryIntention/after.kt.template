@@ -1,9 +1,0 @@
-class Foo {
-    val z = y
-
-    val x: Int
-
-    constructor(x: Int = 4, y: Int) {
-        this.x = x
-    }
-}

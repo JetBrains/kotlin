@@ -1,1 +1,0 @@
-fun <T> test(<caret>vararg a: T) = a.size

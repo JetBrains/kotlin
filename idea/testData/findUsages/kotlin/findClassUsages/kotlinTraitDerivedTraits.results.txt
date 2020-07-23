@@ -1,3 +1,0 @@
-[kotlinTraitDerivedTraits.0.kt] Unclassified usage 11 interface Y: X {
-[kotlinTraitDerivedTraits.1.kt] Unclassified usage 11 interface Z: A {
-[kotlinTraitDerivedTraits.1.kt] Unclassified usage 15 interface U: Z {

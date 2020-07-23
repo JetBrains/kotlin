@@ -1,7 +1,0 @@
-package a
-
-import c.C
-
-class A<X>
-
-typealias I = A<C<String>>

@@ -1,8 +1,0 @@
-// MOVE: down
-fun test() {
-    for (i in 1..10) {
-        <caret>println()
-        run {
-        }
-    }
-}

@@ -1,7 +1,0 @@
-package test
-
-class A()
-
-fun bar() {
-    println(A())
-}

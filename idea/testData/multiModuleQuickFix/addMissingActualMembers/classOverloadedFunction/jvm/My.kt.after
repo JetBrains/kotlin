@@ -1,9 +1,0 @@
-// "Add missing actual members" "true"
-// DISABLE-ERRORS
-
-actual class My {
-    fun foo(param: String) = 42
-    actual fun foo(param: Int): Int {
-        TODO("Not yet implemented")
-    }
-}

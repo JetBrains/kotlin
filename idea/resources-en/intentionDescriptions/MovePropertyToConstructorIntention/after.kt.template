@@ -1,2 +1,0 @@
-class TestClass(private val text: String = "Lorem Ipsum") {
-}

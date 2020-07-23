@@ -1,8 +1,0 @@
-// MOVE: up
-fun foo() {
-    /**/ <caret>val foo = 1
-    bar {
-        println("foo=")
-        println(foo) /**/
-    }
-}

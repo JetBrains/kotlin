@@ -1,6 +1,0 @@
-import kotlin.math.acos
-
-// WITH_RUNTIME
-fun test(x: Double) {
-    acos(x)
-}

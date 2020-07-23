@@ -1,9 +1,0 @@
-// WITH_RUNTIME
-
-class Test {
-    @Throws(RuntimeException::class)
-    fun a() {
-        throw myError()
-    }
-}
-fun myError() = RuntimeException()

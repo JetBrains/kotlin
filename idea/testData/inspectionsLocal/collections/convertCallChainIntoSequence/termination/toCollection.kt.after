@@ -1,5 +1,0 @@
-// WITH_RUNTIME
-
-fun test(list: List<Int>) {
-    val toCollection: MutableList<Int> = list.asSequence().filter { it > 1 }.toCollection(mutableListOf())
-}

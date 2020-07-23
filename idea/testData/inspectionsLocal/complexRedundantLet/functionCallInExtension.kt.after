@@ -1,7 +1,0 @@
-// WITH_RUNTIME
-
-fun foo(s: String, i: Int) = s.length + i
-
-fun String.baz(): Int {
-    return foo(this, 1)
-}

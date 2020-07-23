@@ -1,7 +1,0 @@
-fun <T> buildList(size: Int) = listOf<T>()
-
-fun f() {
-    val b: List<Int> = buildList(size = 5)
-    buildList<String>(size = 5)
-}
-

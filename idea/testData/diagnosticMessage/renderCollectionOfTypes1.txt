@@ -1,2 +1,0 @@
-<!-- renderCollectionOfTypes1 -->
-Expected 2 parameters of types List<Int>, ArrayList<String>

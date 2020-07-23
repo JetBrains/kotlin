@@ -1,9 +1,0 @@
-class Foo : Bar() {
-    fun test(): String {
-        return bar
-    }
-
-    companion object {
-        val bar: String = "bar"
-    }
-}

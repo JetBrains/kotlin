@@ -1,5 +1,0 @@
-fun foo(list: List<String>) {
-    bar(<spot>*</spot>list.toTypedArray())
-}
-
-fun bar(vararg args: String) {}

@@ -1,1 +1,0 @@
-val x = { x: Int, y: Int -> Utils.foo(x, y) }

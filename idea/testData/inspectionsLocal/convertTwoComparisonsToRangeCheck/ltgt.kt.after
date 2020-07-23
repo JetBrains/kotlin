@@ -1,3 +1,0 @@
-fun foo(bar: Int) {
-    bar in 1..9
-}

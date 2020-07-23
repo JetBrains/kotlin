@@ -1,5 +1,0 @@
-fun a(x: Int) {
-    val i = x + 1
-    val a = i
-    "it's a number $i"
-}

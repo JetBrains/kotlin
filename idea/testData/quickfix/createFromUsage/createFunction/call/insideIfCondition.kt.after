@@ -1,8 +1,0 @@
-// "Create function 'foo'" "true"
-fun bar() {
-    if (foo()) return
-}
-
-fun foo(): Boolean {
-    TODO("Not yet implemented")
-}

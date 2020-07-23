@@ -1,7 +1,0 @@
-fun foo(param: Int, i: Int = 123): String {
-    val x = "a${i}4_"
-    val y = "-4${i}a"
-    val z = "+1243a"
-    val u = 123
-    return "ab${i}def"
-}

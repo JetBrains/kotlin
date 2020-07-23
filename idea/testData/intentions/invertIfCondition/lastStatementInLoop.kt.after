@@ -1,8 +1,0 @@
-fun foo() {
-    for (i in 1..10) {
-        <caret>if (i <= 1) continue
-        bar()
-    }
-}
-
-fun bar(){}

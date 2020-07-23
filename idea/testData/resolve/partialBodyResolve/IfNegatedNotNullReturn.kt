@@ -1,4 +1,0 @@
-fun foo(p: Any?) {
-    if (!(p != null)) return
-    <caret>p.hashCode()
-}

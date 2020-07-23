@@ -1,5 +1,0 @@
-<!-- noneApplicableTxt1 -->
-None of the following functions can be called with the arguments supplied: 
-public fun foo(b: a.b.String): Unit defined in a.b in file noneApplicableTxt.kt
-public fun foo(i: Int): Unit defined in a.b in file noneApplicableTxt.kt
-public fun foo(a: kotlin.String): Unit defined in a.b in file noneApplicableTxt.kt

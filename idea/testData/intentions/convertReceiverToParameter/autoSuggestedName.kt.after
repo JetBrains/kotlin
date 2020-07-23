@@ -1,3 +1,0 @@
-fun <caret>foo(s1: String, s: String): String {
-    return s1 + s
-}

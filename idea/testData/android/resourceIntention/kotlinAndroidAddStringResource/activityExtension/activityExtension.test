@@ -1,5 +1,0 @@
-{
-  "rFile": "../../R.kt",
-  "resDirectory": "../../res",
-  "intentionClass": "org.jetbrains.kotlin.android.intention.KotlinAndroidAddStringResource"
-}

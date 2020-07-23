@@ -1,3 +1,0 @@
-fun foo(x: Int) {
-  x * x + x
-}

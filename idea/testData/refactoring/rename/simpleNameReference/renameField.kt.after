@@ -1,6 +1,0 @@
-class aClass(){
-    var renamed: Int = 0;
-        set(value){
-            field=value
-        }
-}

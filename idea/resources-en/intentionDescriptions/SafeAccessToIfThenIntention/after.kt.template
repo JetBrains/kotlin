@@ -1,1 +1,0 @@
-val result = if (maybeSomething != null) maybeSomething.perform(something) else null

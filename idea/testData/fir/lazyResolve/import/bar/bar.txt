@@ -1,4 +1,0 @@
-FILE: bar.kt
-    public final fun barbar(): R|kotlin/Int| {
-        ^barbar IntegerLiteral(13)
-    }

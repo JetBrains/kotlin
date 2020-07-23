@@ -1,5 +1,0 @@
-fun foo() {
-    <spot>bar("x")</spot>
-}
-
-fun <T> bar(t: T) : T = t

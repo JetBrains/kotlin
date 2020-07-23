@@ -1,5 +1,0 @@
-fun foo(f: List<Int>) {}
-
-fun f() {
-    foo(ArrayList(listOf()))
-}

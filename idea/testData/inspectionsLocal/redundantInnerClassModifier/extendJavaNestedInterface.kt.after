@@ -1,3 +1,0 @@
-class Test : Java() {
-    class Foo : Java.NestedInterface
-}

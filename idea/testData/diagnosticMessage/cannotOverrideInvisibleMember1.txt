@@ -1,2 +1,0 @@
-<!-- cannotOverrideInvisibleMember1 -->
-'public open fun foo(): Unit defined in B' has no access to 'private open fun foo(): Unit defined in A', so it cannot override it

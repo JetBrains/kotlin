@@ -1,3 +1,0 @@
-package util
-
-class Util

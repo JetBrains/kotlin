@@ -1,2 +1,0 @@
-// "Add initializer" "true"
-val n: Int = <selection>0</selection><caret>

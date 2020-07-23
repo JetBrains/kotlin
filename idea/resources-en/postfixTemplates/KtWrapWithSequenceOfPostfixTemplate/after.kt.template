@@ -1,3 +1,0 @@
-fun foo(s: String) {
-    val x = <spot>sequenceOf(s)</spot>
-}

@@ -1,4 +1,0 @@
-interface J {
-
-    int foo;
-}

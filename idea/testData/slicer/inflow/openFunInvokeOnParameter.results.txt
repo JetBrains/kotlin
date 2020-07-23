@@ -1,3 +1,0 @@
-12 open fun bar(<bold>p: Int</bold>) { (in C.bar(Int))
-9 	other?.bar(<bold>p + 1</bold>) (in C.foo(Int))
-22 	other?.bar(<bold>p + 3</bold>) (in D.foo(Int))

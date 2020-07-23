@@ -1,9 +1,0 @@
-<spot>package foo.bar</spot>
-
-import bar.foo.OtherClass
-
-class MyClass: OtherClass {
-    fun myFun() {
-
-    }
-}

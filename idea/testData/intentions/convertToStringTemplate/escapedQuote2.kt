@@ -1,1 +1,0 @@
-val foo = "foo" + '\"'<caret>

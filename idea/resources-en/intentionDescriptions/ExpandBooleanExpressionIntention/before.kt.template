@@ -1,3 +1,0 @@
-fun f(b: Boolean): Boolean {
-    return b
-}

@@ -1,3 +1,0 @@
-class A<X, Y>
-
-val a = A<Int, String>()

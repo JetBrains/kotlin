@@ -1,2 +1,0 @@
-// INTENTION_TEXT: "Replace with 'Double.POSITIVE_INFINITY'"
-val x = Double.POSITIVE_INFINITY

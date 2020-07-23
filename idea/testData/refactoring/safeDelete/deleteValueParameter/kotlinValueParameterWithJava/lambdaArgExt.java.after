@@ -1,9 +1,0 @@
-package test;
-
-class A {
-    void bar() {
-        LambdaArgExtKt.foo(
-                "", 10
-        );
-    }
-}

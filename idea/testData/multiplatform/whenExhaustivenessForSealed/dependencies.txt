@@ -1,8 +1,0 @@
-MODULE common { platform=[JVM, JS, Native]; additionalCompilerArgs=: -XXLanguage:+SealedInterfaces -XXLanguage:+AllowSealedInheritorsInDifferentFilesOfSamePackage }
-MODULE commonA { platform=[JVM]; additionalCompilerArgs=: -XXLanguage:+SealedInterfaces -XXLanguage:+AllowSealedInheritorsInDifferentFilesOfSamePackage }
-MODULE platformAX { platform=[JVM]; additionalCompilerArgs=: -XXLanguage:+SealedInterfaces -XXLanguage:+AllowSealedInheritorsInDifferentFilesOfSamePackage }
-MODULE platformAY { platform=[JVM]; additionalCompilerArgs=: -XXLanguage:+SealedInterfaces -XXLanguage:+AllowSealedInheritorsInDifferentFilesOfSamePackage }
-
-commonA -> common { kind=DEPENDS_ON }
-platformAX -> commonA { kind=DEPENDS_ON }
-platformAY -> commonA { kind=DEPENDS_ON }

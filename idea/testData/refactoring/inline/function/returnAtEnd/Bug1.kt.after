@@ -1,8 +1,0 @@
-fun main(args: Array<String>) {
-    for (i in 1..10) {
-        val p2 = i + 1
-        println(i)
-        println(p2)
-        println(i + p2)
-    }
-}

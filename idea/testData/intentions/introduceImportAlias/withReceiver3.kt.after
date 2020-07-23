@@ -1,8 +1,0 @@
-// WITH_RUNTIME
-package my.sample
-
-import kotlin.let as let1
-
-fun test() {
-    0.let1 { true }.let1 { println(it) }
-}

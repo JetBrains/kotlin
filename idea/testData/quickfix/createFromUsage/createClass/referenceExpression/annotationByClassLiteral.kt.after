@@ -1,8 +1,0 @@
-// "Create annotation 'Foo'" "true"
- class Test{
-    fun doSth(){
-        Foo::class.java
-    }
-}
-
-annotation class <caret>Foo

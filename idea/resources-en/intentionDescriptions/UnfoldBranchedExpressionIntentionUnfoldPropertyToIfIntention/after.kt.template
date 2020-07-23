@@ -1,6 +1,0 @@
-val res: String
-if (ok) {
-    res = "ok"
-} else {
-    res = "failed"
-}

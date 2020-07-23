@@ -1,5 +1,0 @@
-class Foo<T> {
-<spot>  fun get(): T {
-    return t
-  }</spot>
-}

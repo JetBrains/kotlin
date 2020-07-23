@@ -1,5 +1,0 @@
-import A.*
-
-fun bar() {
-    X = 100
-}

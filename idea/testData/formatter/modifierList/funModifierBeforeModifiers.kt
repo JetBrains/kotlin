@@ -1,4 +1,0 @@
-public
-final fun foo() {
-}
-

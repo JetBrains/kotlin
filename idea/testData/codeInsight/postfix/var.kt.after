@@ -1,5 +1,0 @@
-fun bar() = 1
-fun foo() {
-    var bar = bar()
-    val x = bar
-}

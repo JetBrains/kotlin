@@ -1,4 +1,0 @@
-class Foo {
-    @Deprecated(message = "", replaceWith = ReplaceWith("someString"))
-    fun foo(someString: String) = someString
-}

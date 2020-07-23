@@ -1,5 +1,0 @@
-class Foo {
-fun get(a: Boolean, b: Boolean): Boolean {
-    return !a || !b
-  }
-}

@@ -1,3 +1,0 @@
-// WITH_RUNTIME
-fun foo(s: String): Int =
-    42

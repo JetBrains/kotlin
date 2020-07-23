@@ -1,2 +1,0 @@
-class KotlinClass
-interface KotlinTrait

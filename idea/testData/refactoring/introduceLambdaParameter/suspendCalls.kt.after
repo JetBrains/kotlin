@@ -1,6 +1,0 @@
-// WITH_DEFAULT_VALUE: false
-suspend fun foo(n: Int) = n
-
-suspend fun test(i: suspend () -> Int) {
-    val m = i()
-}

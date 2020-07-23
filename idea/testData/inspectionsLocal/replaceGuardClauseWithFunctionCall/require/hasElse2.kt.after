@@ -1,6 +1,0 @@
-// WITH_RUNTIME
-fun test(flag: Boolean) {
-    <caret>require(flag)
-    println(1)
-    println(2)
-}

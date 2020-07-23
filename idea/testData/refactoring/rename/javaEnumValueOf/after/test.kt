@@ -1,1 +1,0 @@
-val jenum = JavaEnum./*rename*/valueOf("V1")

@@ -1,1 +1,0 @@
-MODULE module { platform=[JVM]; root=moduleMain; testRoot=moduleTest }

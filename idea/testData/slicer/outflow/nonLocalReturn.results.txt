@@ -1,4 +1,0 @@
-5 fun bar(a: Int): Int = foo(a) { if (it > 0) it else return <bold>0</bold> } (in bar(Int))
-5 	<bold>fun bar(a: Int): Int</bold> = foo(a) { if (it > 0) it else return 0 }
-8 		val x = <bold>bar(1)</bold> (in test())
-8 			<bold>val x</bold> = bar(1) (in test())

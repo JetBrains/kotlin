@@ -1,3 +1,0 @@
-expect class A<T> {
-    inner class B<F : T>
-}

@@ -1,4 +1,0 @@
-// "Remove redundant 'if' statement" "true"
-fun bar(p: Int) {
-    val v1 = p > 0
-}

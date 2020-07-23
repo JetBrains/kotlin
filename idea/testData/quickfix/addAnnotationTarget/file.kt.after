@@ -1,6 +1,0 @@
-// "Add annotation target" "true"
-@Ann
-package test
-
-@Target(AnnotationTarget.FILE)
-annotation class Ann

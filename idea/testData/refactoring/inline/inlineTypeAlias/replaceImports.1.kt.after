@@ -1,6 +1,0 @@
-package b
-
-import a.A
-import c.C
-
-typealias S = A<C<Int>>

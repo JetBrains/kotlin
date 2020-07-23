@@ -1,3 +1,0 @@
-expect class Some
-
-expect fun foo(some: List<Some>)

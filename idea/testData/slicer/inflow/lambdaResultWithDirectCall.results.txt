@@ -1,5 +1,0 @@
-4 <bold>val x</bold> = { 1 }() (in test())
-4 	val x = <bold>{ 1 }()</bold> (in test())
-4 		[LAMBDA IN] val x = <bold>{ 1 }</bold>() (in test())
-4 			val x = <bold>{ 1 }</bold>() (in test())
-4 				val x = { <bold>1</bold> }() (in test())

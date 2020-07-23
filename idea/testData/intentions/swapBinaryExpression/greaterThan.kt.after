@@ -1,3 +1,0 @@
-fun main() {
-    val ex = 5 < 4
-}

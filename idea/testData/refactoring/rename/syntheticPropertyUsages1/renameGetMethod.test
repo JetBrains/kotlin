@@ -1,6 +1,0 @@
-{
-  "type": "JAVA_METHOD",
-  "classId": "testing/JavaClass",
-  "methodSignature": "int getSomething()",
-  "newName": "getSomethingNew"
-}

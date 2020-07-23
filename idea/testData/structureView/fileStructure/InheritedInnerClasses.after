@@ -1,6 +1,0 @@
--InheritedInnerClasses.kt
- -B
-  equals(Any?): Boolean location=→Any
-  foo(): Unit location=→A
-  hashCode(): Int location=→Any
-  toString(): String location=→Any

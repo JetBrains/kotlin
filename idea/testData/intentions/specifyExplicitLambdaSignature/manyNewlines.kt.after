@@ -1,5 +1,0 @@
-val foo: (Long) -> String = { it: Long ->
-
-
-    it.toString()
-}

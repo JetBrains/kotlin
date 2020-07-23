@@ -1,8 +1,0 @@
-fun downUnder(): Int = 4
-fun callDown() {
-    val p = downUnder()
-    "first ${p}"
-    "second ${p}"
-    p
-    val result = p
-}

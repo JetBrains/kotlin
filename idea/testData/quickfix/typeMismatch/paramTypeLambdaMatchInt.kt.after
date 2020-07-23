@@ -1,6 +1,0 @@
-// "Surround with lambda" "true"
-fun int() {
-    i({ 123 })
-}
-
-fun i(block: () -> Long) {}

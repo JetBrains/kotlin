@@ -1,1 +1,0 @@
-val x: String by lazy { "Hello" }

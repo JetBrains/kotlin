@@ -1,3 +1,0 @@
-fun foo(): Any  {
-    throw UnsupportedOperationException()
-}

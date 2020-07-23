@@ -1,6 +1,0 @@
-object Obj {
-}
-
-fun f() {
-    println(239)
-}

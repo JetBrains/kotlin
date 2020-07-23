@@ -1,9 +1,0 @@
-// "Create member property 'Foo.foo'" "true"
-
-expect class Foo {
-    var foo: Int
-}
-
-fun test(f: Foo) {
-    f.foo = 1
-}

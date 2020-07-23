@@ -1,4 +1,0 @@
-val v = run {
-    val s = "Hello"
-    s
-}
