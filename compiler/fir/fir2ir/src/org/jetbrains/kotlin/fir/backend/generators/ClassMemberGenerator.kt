@@ -174,19 +174,10 @@ internal class ClassMemberGenerator(
                 // Scope for primary constructor should be left after class declaration
                 declarationStorage.leaveScope(irFunction)
             }
-            if (irFunction is IrSimpleFunction && firFunction != null && containingClass != null) {
-                val scope = containingClass.unsubstitutedScope(session, scopeSession)
-                scope.processFunctionsByName(name) {}
-                val overriddenSet = mutableSetOf<IrSimpleFunctionSymbol>()
-                scope.processDirectlyOverriddenFunctions(firFunction.symbol) {
-                    if ((it.fir as FirSimpleFunction).visibility == Visibilities.PRIVATE) {
-                        return@processDirectlyOverriddenFunctions ProcessorAction.NEXT
-                    }
-                    val overridden = declarationStorage.getIrFunctionSymbol(it)
-                    overriddenSet += overridden as IrSimpleFunctionSymbol
-                    ProcessorAction.NEXT
-                }
-                irFunction.overriddenSymbols = overriddenSet.toList()
+            if (irFunction is IrSimpleFunction && firFunction is FirSimpleFunction && containingClass != null) {
+                irFunction.overriddenSymbols = firFunction.generateOverriddenFunctionSymbols(
+                    containingClass, session, scopeSession, declarationStorage
+                )
             }
         }
         return irFunction

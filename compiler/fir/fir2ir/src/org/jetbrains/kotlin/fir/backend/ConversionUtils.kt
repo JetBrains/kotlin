@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolved
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.SyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.AccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.Fir2IrClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -37,10 +39,8 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassPublicSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -291,6 +291,26 @@ internal tailrec fun FirCallableSymbol<*>.deepestOverriddenSymbol(): FirCallable
 internal tailrec fun FirCallableSymbol<*>.deepestMatchingOverriddenSymbol(root: FirCallableSymbol<*> = this): FirCallableSymbol<*> {
     val overriddenSymbol = overriddenSymbol?.takeIf { it.callableId == root.callableId } ?: return this
     return overriddenSymbol.deepestMatchingOverriddenSymbol(this)
+}
+
+internal fun FirSimpleFunction.generateOverriddenFunctionSymbols(
+    containingClass: FirClass<*>,
+    session: FirSession,
+    scopeSession: ScopeSession,
+    declarationStorage: Fir2IrDeclarationStorage
+): List<IrSimpleFunctionSymbol> {
+    val scope = containingClass.unsubstitutedScope(session, scopeSession)
+    scope.processFunctionsByName(name) {}
+    val overriddenSet = mutableSetOf<IrSimpleFunctionSymbol>()
+    scope.processDirectlyOverriddenFunctions(symbol) {
+        if ((it.fir as FirSimpleFunction).visibility == Visibilities.PRIVATE) {
+            return@processDirectlyOverriddenFunctions ProcessorAction.NEXT
+        }
+        val overridden = declarationStorage.getIrFunctionSymbol(it)
+        overriddenSet += overridden as IrSimpleFunctionSymbol
+        ProcessorAction.NEXT
+    }
+    return overriddenSet.toList()
 }
 
 internal fun IrClass.findMatchingOverriddenSymbolsFromSupertypes(

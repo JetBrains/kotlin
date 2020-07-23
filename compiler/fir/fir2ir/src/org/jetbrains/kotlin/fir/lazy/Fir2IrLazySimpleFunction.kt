@@ -7,12 +7,15 @@ package org.jetbrains.kotlin.fir.lazy
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
-import org.jetbrains.kotlin.fir.backend.findMatchingOverriddenSymbolsFromSupertypes
+import org.jetbrains.kotlin.fir.backend.generateOverriddenFunctionSymbols
 import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.Fir2IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -29,6 +32,7 @@ class Fir2IrLazySimpleFunction(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     fir: FirSimpleFunction,
+    firParent: FirRegularClass,
     symbol: Fir2IrSimpleFunctionSymbol,
     override val isFakeOverride: Boolean
 ) : AbstractFir2IrLazyDeclaration<FirSimpleFunction, IrSimpleFunction>(
@@ -130,9 +134,7 @@ class Fir2IrLazySimpleFunction(
     }
 
     override var overriddenSymbols: List<IrSimpleFunctionSymbol> by lazyVar {
-        val containingClass = parent as? IrClass
-        containingClass?.findMatchingOverriddenSymbolsFromSupertypes(irBuiltIns, this)
-            ?.filterIsInstance<IrSimpleFunctionSymbol>().orEmpty()
+        fir.generateOverriddenFunctionSymbols(firParent, session, scopeSession, declarationStorage)
     }
 
     override var metadata: MetadataSource?

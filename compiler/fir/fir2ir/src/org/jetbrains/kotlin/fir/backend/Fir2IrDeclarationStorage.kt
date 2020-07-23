@@ -927,7 +927,7 @@ class Fir2IrDeclarationStorage(
                                     firFunctionSymbol is FirNamedFunctionSymbol && firFunctionSymbol.isFakeOverride &&
                                             firFunctionSymbol.callableId != firFunctionSymbol.overriddenSymbol?.callableId
                                 Fir2IrLazySimpleFunction(
-                                    components, startOffset, endOffset, parentOrigin, firDeclaration, symbol, isFakeOverride
+                                    components, startOffset, endOffset, parentOrigin, firDeclaration, irParent.fir, symbol, isFakeOverride
                                 ).apply {
                                     parent = irParent
                                 }
