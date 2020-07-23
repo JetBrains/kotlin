@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 fun generateTests(context: JsIrBackendContext, moduleFragment: IrModuleFragment) {
     val generator = TestGenerator(context) { context.createTestContainerFun(moduleFragment) }
@@ -57,7 +59,12 @@ class TestGenerator(val context: JsIrBackendContext, val testContainerFactory: (
     ): FunctionWithBody {
         val body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, emptyList())
 
-        val function = context.jsIrDeclarationBuilder.buildFunction("$name test fun", context.irBuiltIns.anyNType, parentFunction)
+        val function = context.irFactory.buildFun {
+            this.name = Name.identifier("$name test fun")
+            this.returnType = context.irBuiltIns.anyNType
+            this.origin = JsIrBuilder.SYNTHESIZED_DECLARATION
+        }
+        function.parent = parentFunction
         function.body = body
 
         val parentBody = parentFunction.body as IrBlockBody

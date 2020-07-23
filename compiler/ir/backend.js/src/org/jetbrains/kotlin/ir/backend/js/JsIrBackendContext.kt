@@ -14,9 +14,10 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.*
-import org.jetbrains.kotlin.ir.backend.js.ir.JsIrDeclarationBuilder
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
+import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -55,7 +56,6 @@ class JsIrBackendContext(
     override var inVerbosePhase: Boolean = false
 
     override val irFactory: IrFactory = IrFactoryImpl
-    override val jsIrDeclarationBuilder: JsIrDeclarationBuilder = JsIrDeclarationBuilder(irFactory)
 
     val devMode = configuration[JSConfigurationKeys.DEVELOPER_MODE] ?: false
 
@@ -127,9 +127,12 @@ class JsIrBackendContext(
     fun createTestContainerFun(module: IrModuleFragment): IrSimpleFunction {
         return testContainerFuns.getOrPut(module) {
             val file = syntheticFile("tests", module)
-            jsIrDeclarationBuilder.buildFunction("test fun", irBuiltIns.unitType, file).apply {
+            irFactory.addFunction(file) {
+                name = Name.identifier("test fun")
+                returnType = irBuiltIns.unitType
+                origin = JsIrBuilder.SYNTHESIZED_DECLARATION
+            }.apply {
                 body = irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, emptyList())
-                file.declarations += this
             }
         }
     }

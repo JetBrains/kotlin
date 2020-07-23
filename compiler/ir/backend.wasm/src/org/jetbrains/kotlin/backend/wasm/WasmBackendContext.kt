@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsMapping
 import org.jetbrains.kotlin.ir.backend.js.JsSharedVariablesManager
-import org.jetbrains.kotlin.ir.backend.js.ir.JsIrDeclarationBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
@@ -44,7 +43,6 @@ class WasmBackendContext(
     override val lateinitNullableFields = mutableMapOf<IrField, IrField>()
     override val extractedLocalClasses: MutableSet<IrClass> = hashSetOf()
     override val irFactory: IrFactory = IrFactoryImpl
-    override val jsIrDeclarationBuilder: JsIrDeclarationBuilder = JsIrDeclarationBuilder(irFactory)
 
     // Place to store declarations excluded from code generation
     val excludedDeclarations: IrPackageFragment by lazy {

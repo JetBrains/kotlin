@@ -19,11 +19,11 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.ir.JsIrDeclarationBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.toJsArrayLiteral
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -120,8 +120,8 @@ class EnumClassConstructorLowering(val context: JsCommonBackendContext) : Declar
             returnType = enumConstructor.returnType
         }.apply {
             parent = enumClass
-            valueParameters += context.jsIrDeclarationBuilder.buildValueParameter(this, "name", 0, context.irBuiltIns.stringType)
-            valueParameters += context.jsIrDeclarationBuilder.buildValueParameter(this, "ordinal", 1, context.irBuiltIns.intType)
+            valueParameters += JsIrBuilder.buildValueParameter(this, "name", 0, context.irBuiltIns.stringType)
+            valueParameters += JsIrBuilder.buildValueParameter(this, "ordinal", 1, context.irBuiltIns.intType)
             copyParameterDeclarationsFrom(enumConstructor)
 
             val newConstructor = this
@@ -398,7 +398,12 @@ class EnumClassCreateInitializerLowering(val context: JsIrBackendContext) : Decl
     }
 
     private fun createInitEntryInstancesFun(irClass: IrClass, entryInstancesInitializedField: IrField): IrSimpleFunction =
-        context.jsIrDeclarationBuilder.buildFunction(irClass, "${irClass.name.identifier}_initEntries", context.irBuiltIns.unitType).also {
+        context.irFactory.buildFun {
+            name = Name.identifier("${irClass.name.identifier}_initEntries")
+            returnType = context.irBuiltIns.unitType
+            origin = JsIrBuilder.SYNTHESIZED_DECLARATION
+        }.also {
+            it.parent = irClass
             it.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                 statements += context.createIrBuilder(it.symbol).irBlockBody(it) {
                     +irIfThen(irGetField(null, entryInstancesInitializedField), irReturnUnit())
@@ -413,12 +418,6 @@ class EnumClassCreateInitializerLowering(val context: JsIrBackendContext) : Decl
             }
         }
 }
-
-private fun JsIrDeclarationBuilder.buildFunction(
-    irClass: IrClass,
-    name: String,
-    returnType: IrType
-): IrSimpleFunction = buildFunction(name, returnType, irClass)
 
 class EnumEntryCreateGetInstancesFunsLowering(val context: JsIrBackendContext): DeclarationTransformer {
 
@@ -449,11 +448,13 @@ class EnumEntryCreateGetInstancesFunsLowering(val context: JsIrBackendContext): 
         irClass: IrClass, enumEntry: IrEnumEntry, initEntryInstancesFun: IrSimpleFunction
     ): IrSimpleFunction =
         context.mapping.enumEntryToGetInstanceFun.getOrPut(enumEntry) {
-            context.jsIrDeclarationBuilder.buildFunction(
-                irClass,
-                createEntryAccessorName(irClass.name.identifier, enumEntry),
-                enumEntry.getType(irClass)
-            )
+            context.irFactory.buildFun {
+                name = Name.identifier(createEntryAccessorName(irClass.name.identifier, enumEntry))
+                returnType = enumEntry.getType(irClass)
+                origin = JsIrBuilder.SYNTHESIZED_DECLARATION
+            }.apply {
+                parent = irClass
+            }
         }.also {
             it.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                 statements += context.createIrBuilder(it.symbol).irBlockBody(it) {
