@@ -31,6 +31,8 @@ object AndroidSinglePlatformModuleConfigurator :
     AndroidModuleConfigurator {
     override val moduleKind: ModuleKind get() = ModuleKind.singleplatformAndroid
 
+    override fun getNewAndroidManifestPath(module: Module): Path? = null
+
     @NonNls
     override val id = "android"
 
@@ -99,7 +101,7 @@ object AndroidSinglePlatformModuleConfigurator :
         TemplatesPlugin.addFileTemplates.execute(
             listOf(
                 FileTemplate(AndroidModuleConfigurator.FileTemplateDescriptors.activityMainXml, modulePath, settings),
-                FileTemplate(AndroidModuleConfigurator.FileTemplateDescriptors.androidManifestXml, modulePath, settings),
+                FileTemplate(getAndroidManifestXml(module), modulePath, settings),
                 FileTemplate(AndroidModuleConfigurator.FileTemplateDescriptors.colorsXml, modulePath, settings),
                 FileTemplate(AndroidModuleConfigurator.FileTemplateDescriptors.stylesXml, modulePath, settings),
                 FileTemplate(AndroidModuleConfigurator.FileTemplateDescriptors.mainActivityKt(javaPackage), modulePath, settings)
