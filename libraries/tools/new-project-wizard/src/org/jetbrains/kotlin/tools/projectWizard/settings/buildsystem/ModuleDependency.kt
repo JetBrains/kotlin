@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.ModuleDependencyI
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.isIOS
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectPath
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
@@ -58,6 +58,12 @@ sealed class ModuleDependencyType(
     ): TaskResult<Unit> =
         UNIT_SUCCESS
 
+    open fun Writer.runArbitraryTaskBeforeIRsCreated(
+        from: Module,
+        to: Module,
+    ): TaskResult<Unit> =
+        UNIT_SUCCESS
+
     open fun Reader.createToIRs(from: Module, to: Module, data: ModulesToIrConversionData): TaskResult<List<BuildSystemIR>> =
         Success(emptyList())
 
@@ -69,7 +75,12 @@ sealed class ModuleDependencyType(
     object AndroidSinglePlatformToMPP : ModuleDependencyType(
         from = AndroidSinglePlatformModuleConfigurator::class,
         to = MppModuleConfigurator::class
-    )
+    ) {
+        override fun Writer.runArbitraryTaskBeforeIRsCreated(
+            from: Module,
+            to: Module,
+        ): TaskResult<Unit> = addExpectFilesForMppModuleForAndroidAndIos(to)
+    }
 
     object IOSToMppSinglePlatformToMPP : ModuleDependencyType(
         from = IOSSinglePlatformModuleConfigurator::class,
@@ -83,17 +94,35 @@ sealed class ModuleDependencyType(
             to: Module,
             toModulePath: Path,
             data: ModulesToIrConversionData
-        ): TaskResult<Unit> = inContextOfModuleConfigurator(from) {
-            IOSSinglePlatformModuleConfigurator.dependentModule.reference.update {
-                IOSSinglePlatformModuleConfigurator.DependentModuleReference(to).asSuccess()
-            }
-            val dummyFilePath = Defaults.SRC_DIR / "${to.iosTargetSafe()!!.name}Main" / to.configurator.kotlinDirectoryName / "dummyFile.kt"
-            TemplatesPlugin.addFileTemplate.execute(
-                FileTemplate(
-                    FileTemplateDescriptor("ios/dummyFile.kt", dummyFilePath),
-                    projectPath / toModulePath
+        ): TaskResult<Unit> = compute {
+            inContextOfModuleConfigurator(from) {
+                IOSSinglePlatformModuleConfigurator.dependentModule.reference.update {
+                    IOSSinglePlatformModuleConfigurator.DependentModuleReference(to).asSuccess()
+                }
+            }.ensure()
+            addDummyFileIfNeeded(to, toModulePath).ensure()
+        }
+
+        override fun Writer.runArbitraryTaskBeforeIRsCreated(
+            from: Module,
+            to: Module,
+        ): TaskResult<Unit> = addExpectFilesForMppModuleForAndroidAndIos(to)
+
+        private fun Writer.addDummyFileIfNeeded(
+            to: Module,
+            toModulePath: Path,
+        ): TaskResult<Unit> {
+            val needDummyFile = inContextOfModuleConfigurator(to) { MppModuleConfigurator.mppFiles.reference.propertyValue.isEmpty() }
+            return if (needDummyFile) {
+                val dummyFilePath =
+                    Defaults.SRC_DIR / "${to.iosTargetSafe()!!.name}Main" / to.configurator.kotlinDirectoryName / "dummyFile.kt"
+                TemplatesPlugin.addFileTemplate.execute(
+                    FileTemplate(
+                        FileTemplateDescriptor("ios/dummyFile.kt", dummyFilePath),
+                        projectPath / toModulePath
+                    )
                 )
-            )
+            } else UNIT_SUCCESS
         }
 
         override fun additionalAcceptanceChecker(from: Module, to: Module): Boolean =
@@ -152,4 +181,27 @@ sealed class ModuleDependencyType(
         fun isDependencyPossible(from: Module, to: Module): Boolean =
             getPossibleDependencyType(from, to) != null
     }
+}
+
+private fun Writer.addExpectFilesForMppModuleForAndroidAndIos(mppModule: Module): TaskResult<Unit> {
+    val expectFiles = mppFiles {
+        mppfile("Platform.kt") {
+            `class`("Platform") {
+                expectBody = "val platform: String"
+                actualFor(
+                    ModuleSubType.android,
+                    actualBody = """actual val platform: String = "Android ${'$'}{android.os.Build.VERSION.SDK_INT}""""
+                )
+
+                actualFor(
+                    ModuleSubType.iosArm64, ModuleSubType.iosX64,
+                    actualBody =
+                    """actual val platform: String = UIDevice.currentDevice.systemName() + " " +  UIDevice.currentDevice.systemVersion"""
+                ) {
+                    import("platform.UIKit.UIDevice")
+                }
+            }
+        }
+    }
+    return inContextOfModuleConfigurator(mppModule) { MppModuleConfigurator.mppFiles.reference.addValues(expectFiles) }
 }
