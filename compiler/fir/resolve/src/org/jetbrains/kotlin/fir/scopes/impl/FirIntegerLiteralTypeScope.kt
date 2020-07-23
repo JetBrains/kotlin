@@ -108,7 +108,6 @@ class FirIntegerOperator @FirImplementationDetail constructor(
     FirDeclarationOrigin.Synthetic,
     returnTypeRef,
     receiverTypeRef,
-    typeParameters = mutableListOf(),
     valueParameters = mutableListOf(),
     body = null,
     status,
@@ -117,6 +116,7 @@ class FirIntegerOperator @FirImplementationDetail constructor(
     kind.operatorName,
     symbol,
     annotations = mutableListOf(),
+    typeParameters = mutableListOf(),
 ) {
     enum class Kind(val unary: Boolean, val operatorName: Name) {
         PLUS(false, OperatorNameConventions.PLUS),
