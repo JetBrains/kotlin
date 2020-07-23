@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.java.enhancement
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
@@ -289,7 +290,12 @@ class FirSignatureEnhancement(
             parameterContainer = ownerParameter,
             methodContext = memberContext,
             typeInSignature = TypeInSignature.ValueParameter(hasReceiver, index)
-        ).enhance(session, jsr305State, predefinedEnhancementInfo?.parametersInfo?.getOrNull(index))
+        ).enhance(
+            session,
+            jsr305State,
+            predefinedEnhancementInfo?.parametersInfo?.getOrNull(index),
+            forAnnotationValueParameter = owner.classKind == ClassKind.ANNOTATION_CLASS
+        )
         val firResolvedTypeRef = signatureParts.type
         val defaultValueExpression = when (val defaultValue = ownerParameter.getDefaultValueFromAnnotation()) {
             NullDefaultValue -> buildConstExpression(null, FirConstKind.Null, null)

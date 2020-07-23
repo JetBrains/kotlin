@@ -47,7 +47,8 @@ internal class EnhancementSignatureParts(
     internal fun enhance(
         session: FirSession,
         jsr305State: Jsr305State,
-        predefined: TypeEnhancementInfo? = null
+        predefined: TypeEnhancementInfo? = null,
+        forAnnotationValueParameter: Boolean = false
     ): PartEnhancementResult {
         val qualifiers = computeIndexedQualifiersForOverride(session, jsr305State)
 
@@ -57,7 +58,11 @@ internal class EnhancementSignatureParts(
             }
         }
 
-        val typeWithoutEnhancement = current.type.toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack)
+        val typeWithoutEnhancement = current.type.toConeKotlinTypeWithoutEnhancement(
+            session,
+            javaTypeParameterStack,
+            forAnnotationValueParameter
+        )
         val containsFunctionN = typeWithoutEnhancement.contains {
             if (it is ConeClassErrorType) false
             else {

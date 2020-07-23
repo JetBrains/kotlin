@@ -34,6 +34,8 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
     private val FUNCTION_N_CLASS_ID = ClassId.topLevel(FqName("kotlin.jvm.functions.FunctionN"))
     val FUNCTION_N_FQ_NAME = FUNCTION_N_CLASS_ID.asSingleFqName()
     private val K_FUNCTION_CLASS_ID = ClassId.topLevel(FqName("kotlin.reflect.KFunction"))
+    private val K_CLASS_CLASS_ID = ClassId.topLevel(FqName("kotlin.reflect.KClass"))
+    private val CLASS_CLASS_ID = classId(java.lang.Class::class.java)
 
     private val javaToKotlin = HashMap<FqNameUnsafe, ClassId>()
     private val kotlinToJava = HashMap<FqNameUnsafe, ClassId>()
@@ -121,6 +123,11 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
      */
     fun mapJavaToKotlin(fqName: FqName): ClassId? {
         return javaToKotlin[fqName.toUnsafe()]
+    }
+
+    fun mapJavaToKotlinIncludingClassMapping(fqName: FqName): ClassId? {
+        if (fqName == CLASS_CLASS_ID.asSingleFqName()) return K_CLASS_CLASS_ID
+        return mapJavaToKotlin(fqName)
     }
 
     fun mapJavaToKotlin(fqName: FqName, builtIns: KotlinBuiltIns, functionTypeArity: Int? = null): ClassDescriptor? {
