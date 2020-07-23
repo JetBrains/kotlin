@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.name.FqName
@@ -17,18 +18,26 @@ import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class SwapStringEqualsIgnoreCaseIntention : SelfTargetingRangeIntention<KtDotQualifiedExpression>(
     KtDotQualifiedExpression::class.java,
     KotlinBundle.lazyMessage("flip.equals")
 ), LowPriorityAction {
+    companion object {
+        private val equalsFunctionFqName = FqName("kotlin.text.equals")
+        private val equalsFunctionShortName = equalsFunctionFqName.shortName().asString()
+    }
+
     override fun applicabilityRange(element: KtDotQualifiedExpression): TextRange? {
+        val callExpression = element.callExpression ?: return null
+        if (callExpression.calleeExpression?.text != equalsFunctionShortName) return null
+        if (callExpression.valueArguments.mapNotNull { it.getArgumentExpression() }.size != 2) return null
+
         val descriptor = element.getCallableDescriptor() ?: return null
-
-        val fqName: FqName = descriptor.fqNameOrNull() ?: return null
-        if (fqName.asString() != "kotlin.text.equals") return null
-
+        if (descriptor.fqNameOrNull() != equalsFunctionFqName) return null
         val valueParameters = descriptor.valueParameters.takeIf { it.size == 2 } ?: return null
         if (!KotlinBuiltIns.isStringOrNullableString(valueParameters[0].type)) return null
         if (!KotlinBuiltIns.isBoolean(valueParameters[1].type)) return null
@@ -38,9 +47,9 @@ class SwapStringEqualsIgnoreCaseIntention : SelfTargetingRangeIntention<KtDotQua
 
     override fun applyTo(element: KtDotQualifiedExpression, editor: Editor?) {
         val callExpression = element.callExpression ?: return
+        val valueArguments = callExpression.valueArguments
         val offset = (editor?.caretModel?.offset ?: 0) - (callExpression.calleeExpression?.startOffset ?: 0)
         val receiverExpression = element.receiverExpression
-        val valueArguments = callExpression.valueArguments.takeIf { it.size == 2 } ?: return
         val newElement = KtPsiFactory(element).createExpressionByPattern(
             "$0.equals($1, $2)",
             valueArguments[0].getArgumentExpression()!!,
