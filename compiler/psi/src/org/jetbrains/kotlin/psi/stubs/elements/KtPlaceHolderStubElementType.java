@@ -34,7 +34,7 @@ public class KtPlaceHolderStubElementType<T extends KtElementImplStub<? extends 
     }
 
     @Override
-    public KotlinPlaceHolderStub<T> createStub(@NotNull T psi, StubElement parentStub) {
+    public KotlinPlaceHolderStub<T> createStub(@NotNull T psi, StubElement<?> parentStub) {
         return new KotlinPlaceHolderStubImpl<>(parentStub, this);
     }
 

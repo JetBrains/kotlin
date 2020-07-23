@@ -35,7 +35,7 @@ public class KtModifierListElementType<T extends KtModifierList> extends KtStubE
     }
 
     @Override
-    public KotlinModifierListStub createStub(@NotNull T psi, StubElement parentStub) {
+    public KotlinModifierListStub createStub(@NotNull T psi, StubElement<?> parentStub) {
         return new KotlinModifierListStubImpl(parentStub, computeMaskFromModifierList(psi), this);
     }
 

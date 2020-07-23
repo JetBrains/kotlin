@@ -30,7 +30,7 @@ class KtScriptElementType(debugName: String) : KtStubElementType<KotlinScriptStu
     debugName, KtScript::class.java, KotlinScriptStub::class.java
 ) {
 
-    override fun createStub(psi: KtScript, parentStub: StubElement<PsiElement>): KotlinScriptStub {
+    override fun createStub(psi: KtScript, parentStub: StubElement<*>): KotlinScriptStub {
         return KotlinScriptStubImpl(parentStub, StringRef.fromString(psi.fqName.asString()))
     }
 

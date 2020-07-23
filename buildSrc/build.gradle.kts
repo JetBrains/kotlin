@@ -102,7 +102,7 @@ dependencies {
     implementation("com.jakewharton.dex:dex-method-list:3.0.0")
 
     implementation("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
-    implementation("org.jetbrains.intellij.deps:asm-all:7.0.1")
+    implementation("org.jetbrains.intellij.deps:asm-all:8.0.1")
 
     implementation("gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:0.5")
 }

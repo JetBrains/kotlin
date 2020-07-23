@@ -113,7 +113,7 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     }
 
     @NotNull
-    protected <PsiT extends KtElementImplStub<?>, StubT extends StubElement> List<PsiT> getStubOrPsiChildrenAsList(
+    protected <PsiT extends KtElementImplStub<?>, StubT extends StubElement<?>> List<PsiT> getStubOrPsiChildrenAsList(
             @NotNull KtStubElementType<StubT, PsiT> elementType
     ) {
         return Arrays.asList(getStubOrPsiChildren(elementType, elementType.getArrayFactory()));

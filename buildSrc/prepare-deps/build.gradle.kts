@@ -87,6 +87,7 @@ repositories {
     maven("https://www.jetbrains.com/intellij-repository/$intellijReleaseType")
     maven("https://plugins.jetbrains.com/maven")
     maven("https://jetbrains.bintray.com/intellij-third-party-dependencies/")
+    maven("https://www.jetbrains.com/intellij-repository/nightly")
 }
 
 val intellij by configurations.creating
@@ -176,6 +177,7 @@ val mergeSources by tasks.creating(Jar::class.java) {
     archiveBaseName.set("intellij")
     archiveClassifier.set("sources")
     archiveVersion.set(intellijVersion)
+    isZip64 = true
 }
 
 val sourcesFile = mergeSources.outputs.files.singleFile

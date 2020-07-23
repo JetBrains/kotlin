@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.psi.KtProperty;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 
-public abstract class KtStubElementType<StubT extends StubElement, PsiT extends KtElementImplStub<?>> extends IStubElementType<StubT, PsiT> {
+public abstract class KtStubElementType<StubT extends StubElement<?>, PsiT extends KtElementImplStub<?>> extends IStubElementType<StubT, PsiT> {
 
     @NotNull
     private final Constructor<PsiT> byNodeConstructor;

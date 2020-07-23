@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinValueArgumentStubImpl
 class KtValueArgumentElementType<T : KtValueArgument>(debugName: String, psiClass: Class<T>) :
     KtStubElementType<KotlinValueArgumentStub<T>, T>(debugName, psiClass, KotlinValueArgumentStub::class.java) {
 
-    override fun createStub(psi: T, parentStub: StubElement<PsiElement>?): KotlinValueArgumentStub<T> {
+    override fun createStub(psi: T, parentStub: StubElement<*>?): KotlinValueArgumentStub<T> {
         return KotlinValueArgumentStubImpl(parentStub, this, psi.isSpread)
     }
 

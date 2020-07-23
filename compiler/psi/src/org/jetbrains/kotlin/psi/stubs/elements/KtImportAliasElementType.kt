@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinImportAliasStubImpl
 
 class KtImportAliasElementType(debugName: String) :
     KtStubElementType<KotlinImportAliasStub, KtImportAlias>(debugName, KtImportAlias::class.java, KotlinImportAliasStub::class.java) {
-    override fun createStub(psi: KtImportAlias, parentStub: StubElement<PsiElement>?): KotlinImportAliasStub {
-        return KotlinImportAliasStubImpl(parentStub, StringRef.fromString(psi.name))
+    override fun createStub(psi: KtImportAlias, parentStub: StubElement<*>?): KotlinImportAliasStub {
+        return KotlinImportAliasStubImpl(parentStub as StubElement<PsiElement>?, StringRef.fromString(psi.name))
     }
 
     override fun serialize(stub: KotlinImportAliasStub, dataStream: StubOutputStream) {

@@ -30,7 +30,7 @@ class KtAnnotationUseSiteTargetElementType(debugName: String) :
         debugName, KtAnnotationUseSiteTarget::class.java, KotlinAnnotationUseSiteTargetStub::class.java
     ) {
 
-    override fun createStub(psi: KtAnnotationUseSiteTarget, parentStub: StubElement<PsiElement>): KotlinAnnotationUseSiteTargetStub {
+    override fun createStub(psi: KtAnnotationUseSiteTarget, parentStub: StubElement<*>?): KotlinAnnotationUseSiteTargetStub {
         val useSiteTarget = psi.getAnnotationUseSiteTarget().name
         return KotlinAnnotationUseSiteTargetStubImpl(parentStub, StringRef.fromString(useSiteTarget)!!)
     }
