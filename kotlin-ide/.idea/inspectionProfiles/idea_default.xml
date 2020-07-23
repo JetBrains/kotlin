@@ -784,10 +784,6 @@
     <inspection_tool class="Restricted_Python_calls" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ReturnFromFinallyBlockJS" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="SSBasedInspection" enabled="true" level="WARNING" enabled_by_default="true">
-      <searchConfiguration name="SwingUtilities.invokeLater" text="SwingUtilities.invokeLater($runnable$)" recursive="false" caseInsensitive="false" type="JAVA">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="runnable" within="" contains="" />
-      </searchConfiguration>
       <replaceConfiguration name="DirectCallOfDispose" text="$Instance$.dispose()" recursive="false" caseInsensitive="false" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="Disposer.dispose($Instance$)">
         <constraint name="Instance" regexp="super" nameOfExprType="Disposable" withinHierarchy="true" exprTypeWithinHierarchy="true" minCount="0" negateName="true" within="" contains="" />
         <constraint name="__context__" within="" contains="" />
