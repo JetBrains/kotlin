@@ -1,6 +1,0 @@
-<node text="Object (java.lang)">
-  <node text="Enum (java.lang)" base="true">
-    <node text="One ()"/>
-    <node text="G ()"/>
-  </node>
-</node>

@@ -1,8 +1,0 @@
-class A(val n: Int) {
-    val foo<caret>: Boolean
-        get() = n > 1
-}
-
-fun test() {
-    val t = A(1).foo
-}

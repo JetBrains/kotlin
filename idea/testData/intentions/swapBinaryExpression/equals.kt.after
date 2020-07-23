@@ -1,3 +1,0 @@
-fun neq(a: Int, b: Int) {
-    if (b == a) {}
-}

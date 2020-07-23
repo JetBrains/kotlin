@@ -1,3 +1,0 @@
-fun foo() {
-    val s<selection>: String</selection><caret> = "Hello"
-}

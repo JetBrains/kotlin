@@ -1,7 +1,0 @@
-fun test(a: Any): Boolean {
-    return if (a is String) {
-        true
-    } else {
-        false
-    }
-}

@@ -1,5 +1,0 @@
-object O {
-    fun foo() {
-
-    }
-}

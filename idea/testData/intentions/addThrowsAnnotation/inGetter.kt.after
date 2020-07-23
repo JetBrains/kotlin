@@ -1,9 +1,0 @@
-// WITH_RUNTIME
-
-class FooException : Exception()
-
-class Test {
-    val getter: String
-        @Throws(FooException::class)
-        get() = throw FooException()
-}

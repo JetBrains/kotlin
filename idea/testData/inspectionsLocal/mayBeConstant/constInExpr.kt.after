@@ -1,2 +1,0 @@
-const val first = 1
-const val second = first * 2

@@ -1,5 +1,0 @@
-fun foo(p: Int): Boolean {
-    if (p < 0 /* p < 0 */) return false
-    if (p == 5 /* or 5 */) return false
-    return true
-}

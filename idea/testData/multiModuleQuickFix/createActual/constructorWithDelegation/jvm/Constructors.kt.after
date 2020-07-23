@@ -1,6 +1,0 @@
-// Constructors: to be implemented
-actual class Constructors actual constructor(s: String) {
-    actual constructor(i: Int) : this() {
-        TODO("Not yet implemented")
-    }
-}

@@ -1,8 +1,0 @@
-fun foo(x: Boolean) {
-
-}
-
-fun bar() {
-    val x = true
-    foo(/* 1 */x/* 2 */)
-}

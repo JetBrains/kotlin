@@ -1,8 +1,0 @@
-class My {
-    fun run() {
-        val foo1 = 1 + 2
-        val foo = foo1
-        System.out.println(foo)
-    }
-
-}

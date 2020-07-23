@@ -1,3 +1,0 @@
-package d
-
-class `class`

@@ -1,4 +1,0 @@
-var x = 1
-    <spot>set(value) {
-        field = value
-    }</spot>

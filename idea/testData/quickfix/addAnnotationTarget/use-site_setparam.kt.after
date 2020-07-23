@@ -1,9 +1,0 @@
-// "Add annotation target" "true"
-@Target(AnnotationTarget.VALUE_PARAMETER)
-annotation class SetParamAnn
-
-class Bar {
-    @setparam:SetParamAnn
-    var foo = 1
-        set(value) {}
-}

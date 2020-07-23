@@ -1,2 +1,0 @@
-Local variable declaration 4 val kk: KK = KK()
-New instance creation 4 val kk: KK = KK()

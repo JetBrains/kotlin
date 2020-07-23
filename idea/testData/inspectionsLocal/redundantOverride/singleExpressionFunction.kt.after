@@ -1,7 +1,0 @@
-open class Foo {
-    open fun singleExpression() {
-    }
-}
-
-class Bar : Foo() {
-}

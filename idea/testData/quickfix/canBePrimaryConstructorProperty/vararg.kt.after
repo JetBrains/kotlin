@@ -1,3 +1,0 @@
-// "Move to constructor" "true"
-class A(vararg val strings: String) {
-}

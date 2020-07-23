@@ -1,3 +1,0 @@
-fun main() {
-    val foo: (Int) -> String = { x -> "This number is " + x}
-}

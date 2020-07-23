@@ -1,7 +1,0 @@
-// WITH_RUNTIME
-interface KotlinInterface {
-    object O {
-        @JvmField
-        internal val bar = Any()
-    }
-}

@@ -1,7 +1,0 @@
-5 fun foo(n: Int, <bold>s: String</bold> = "???") { (in foo(Int, String = ...))
-5 	fun foo(n: Int, s: String = <bold>"???"</bold>) { (in foo(Int, String = ...))
-4 	FunParamererWithDefaultKt.foo(1, <bold>"2"</bold>);
-11 	foo(1, <bold>"2"</bold>) (in test())
-12 	foo(1, s = <bold>"2"</bold>) (in test())
-13 	foo(n = 1, s = <bold>"2"</bold>) (in test())
-14 	foo(s = <bold>"2"</bold>, n = 1) (in test())

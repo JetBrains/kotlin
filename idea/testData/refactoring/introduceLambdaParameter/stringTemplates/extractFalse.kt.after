@@ -1,6 +1,0 @@
-fun foo(param: Int, b: () -> Boolean = { false }): String {
-    val x = "xy${b()}z"
-    val y = "xyFalsez"
-    val z = false
-    return "ab${b()}def"
-}

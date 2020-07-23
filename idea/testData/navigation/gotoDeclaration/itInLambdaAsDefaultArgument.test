@@ -1,5 +1,0 @@
-// FILE: before.kt
-fun test(a: (Int) -> Unit = { <caret>it }) {}
-
-// FILE: after.kt
-fun test(a: (Int) -> Unit = {<caret> it }) {}

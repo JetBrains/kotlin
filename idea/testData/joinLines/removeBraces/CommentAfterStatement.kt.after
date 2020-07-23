@@ -1,4 +1,0 @@
-fun foo() {
-    if (a) {<caret> bar() // do bar
-    }
-}

@@ -1,2 +1,0 @@
-Class static member access 7 System.out.println("foo = " + O.INSTANCE.getFoo());
-Usage in import 3 import server.O;

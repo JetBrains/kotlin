@@ -1,7 +1,0 @@
-// OPTION: 0
-fun foo(n: Int): Int {
-    val m = -1
-    m<caret>
-
-    return 0
-}

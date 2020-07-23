@@ -1,5 +1,0 @@
-class Test {
-    <caret>init {
-
-    }
-}

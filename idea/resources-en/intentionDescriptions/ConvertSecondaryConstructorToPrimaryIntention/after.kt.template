@@ -1,3 +1,0 @@
-class Foo(val x: Int = 4, y: Int) {
-    val z = y
-}

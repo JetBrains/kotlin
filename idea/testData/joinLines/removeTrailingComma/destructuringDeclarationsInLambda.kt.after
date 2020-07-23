@@ -1,3 +1,0 @@
-fun a() {
-    val a = { (a, b /* awd*//**/), c -> <caret>}
-}

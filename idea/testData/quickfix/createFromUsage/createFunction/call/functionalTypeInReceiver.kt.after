@@ -1,9 +1,0 @@
-// "Create extension function '((Int) -> String).bar'" "true"
-
-fun foo(block: (Int) -> String) {
-    block.bar()
-}
-
-private fun <P1, R> ((P1) -> R).bar() {
-    TODO("Not yet implemented")
-}

@@ -1,6 +1,0 @@
-annotation class Ann
-
-class Foo(
-    <spot>@field:Ann</spot>
-    var bar: String
-)

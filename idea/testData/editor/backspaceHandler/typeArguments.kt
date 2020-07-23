@@ -1,1 +1,0 @@
-val f = ContainerUtil.newArrayList<<caret>>()

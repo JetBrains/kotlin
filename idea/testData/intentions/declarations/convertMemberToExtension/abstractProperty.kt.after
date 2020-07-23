@@ -1,6 +1,0 @@
-// WITH_RUNTIME
-abstract class Owner {
-}
-
-val Owner.p: Int
-    get() = <caret><selection>TODO("Not yet implemented")</selection>

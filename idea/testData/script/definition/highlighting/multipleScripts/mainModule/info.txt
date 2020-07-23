@@ -1,3 +1,0 @@
-This module is needed to have some module in tested project.
-This will lead to absence of sdk roots in ScriptConfigurationManager.allScriptClassRoots,
-because they are indexed by IDEA as module SDK roots

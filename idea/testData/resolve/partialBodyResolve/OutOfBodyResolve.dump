@@ -1,8 +1,0 @@
-Resolve target: val v: kotlin.String
-----------------------------------------------
-val v = ""
-
-fun foo(s: String = <caret>v) {
-    /* STATEMENT DELETED: val local = 1 */
-    /* STATEMENT DELETED: print("foo" + local) */
-}

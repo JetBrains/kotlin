@@ -1,5 +1,0 @@
-{
-  "mainFile": "pack/test.kt",
-  "type": "MOVE_KOTLIN_TOP_LEVEL_DECLARATIONS",
-  "targetPackage": "pack2"
-}

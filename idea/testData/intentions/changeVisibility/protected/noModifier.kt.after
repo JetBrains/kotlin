@@ -1,3 +1,0 @@
-abstract class C {
-    <caret>protected abstract fun foo()
-}

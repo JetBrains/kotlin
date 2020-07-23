@@ -1,8 +1,0 @@
-10 val x = <bold>foo</bold> (in A.test())
-4 	<bold>var foo: Int</bold> = 0 (in A)
-4 		var foo: Int = <bold>0</bold> (in A.foo)
-6 		field = <bold>if (b) value else 0</bold> (in A.foo.set)
-6 			field = if (b) <bold>value</bold> else 0 (in A.foo.set)
-5 				set(<bold>value</bold>) { (in A.foo.set)
-11 					foo = <bold>1</bold> (in A.test())
-6 			field = if (b) value else <bold>0</bold> (in A.foo.set)

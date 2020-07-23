@@ -1,4 +1,0 @@
-fun foo() {
-    val a = 1
-    <caret>val b = 2
-}

@@ -1,3 +1,0 @@
-fun test() {
-    <caret>foo()
-}

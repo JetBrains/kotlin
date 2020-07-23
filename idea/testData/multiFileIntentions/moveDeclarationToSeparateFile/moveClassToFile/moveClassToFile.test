@@ -1,4 +1,0 @@
-{
-  "mainFile": "source/test.kt",
-  "intentionClass": "org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ExtractDeclarationFromCurrentFileIntention"
-}

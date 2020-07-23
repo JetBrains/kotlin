@@ -1,9 +1,0 @@
-interface A {
-    fun foo(value : String) : Unit {}
-}
-
-class C : A {
-    override fun foo(value: String) {
-        <selection><caret>super.foo(value)</selection>
-    }
-}

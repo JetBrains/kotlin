@@ -1,1 +1,0 @@
-function test.foo() on B has 1 usage that is not safe to delete.

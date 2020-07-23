@@ -1,4 +1,0 @@
-// "Remove variable 'flag'" "true"
-
-fun foo() {
-}

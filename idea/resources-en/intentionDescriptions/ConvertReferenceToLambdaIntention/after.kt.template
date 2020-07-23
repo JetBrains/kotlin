@@ -1,3 +1,0 @@
-class Person(val name: String)
-
-val persons = listOf("Jack", "Tom").map { Person(it) }

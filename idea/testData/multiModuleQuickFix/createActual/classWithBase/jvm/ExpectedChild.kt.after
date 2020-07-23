@@ -1,2 +1,0 @@
-// ExpectedChild: to be implemented
-actual class ExpectedChild : SimpleParent()

@@ -1,1 +1,0 @@
-typealias <caret>MyString = String

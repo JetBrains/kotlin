@@ -1,4 +1,0 @@
-// MOVE: right
-fun foo() {
-    bar(b = 2, <caret>a = 1)
-}

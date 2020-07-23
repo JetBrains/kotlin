@@ -1,3 +1,0 @@
-open class A<Y, Z>
-
-class B<T, U>: A<String, U>

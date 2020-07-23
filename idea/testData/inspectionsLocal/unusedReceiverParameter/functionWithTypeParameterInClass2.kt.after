@@ -1,7 +1,0 @@
-class Test<T> {
-    fun foo() {}
-
-    fun test() {
-        foo()
-    }
-}

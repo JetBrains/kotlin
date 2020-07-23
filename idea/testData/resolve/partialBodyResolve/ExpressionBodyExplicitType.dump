@@ -1,8 +1,0 @@
-Resolve target: val v: kotlin.Int
-----------------------------------------------
-fun foo(): String = run {
-    /* STATEMENT DELETED: print("a") */
-    val v = 1
-    print(<caret>v)
-    "x"
-}

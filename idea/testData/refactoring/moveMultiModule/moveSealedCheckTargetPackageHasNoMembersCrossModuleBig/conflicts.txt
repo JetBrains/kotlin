@@ -1,1 +1,0 @@
-Sealed hierarchy of 'SealedInterfaceA' would be split. None of its members reside in the package 'sealed' of module 'B': [sealed.SealedInterfaceA, sealed.SealedInterfaceD, sealed.SealedInterfaceB, sealed.SealedClassB, sealed.SealedInterfaceC, sealed.ClassD, sealed.SealedClassE, sealed.SealedInterfaceG, sealed.InterfaceE].

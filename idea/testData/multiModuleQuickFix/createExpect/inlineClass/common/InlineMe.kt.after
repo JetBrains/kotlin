@@ -1,1 +1,0 @@
-expect inline class <caret>InlineMe(val x: Int) 

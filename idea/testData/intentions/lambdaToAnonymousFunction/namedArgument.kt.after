@@ -1,7 +1,0 @@
-fun baz(name: String, f: (Int) -> String) {}
-
-fun test() {
-    baz(name = "", f = fun(it: Int): String {
-        return "$it"
-    })
-}

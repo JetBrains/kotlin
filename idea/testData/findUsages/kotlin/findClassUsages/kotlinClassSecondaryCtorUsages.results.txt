@@ -1,1 +1,0 @@
-New instance creation 2 A()

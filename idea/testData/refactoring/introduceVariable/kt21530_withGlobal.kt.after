@@ -1,5 +1,0 @@
-fun test() = "123"
-
-val test = test()
-val f = test + "456"
-val x = test

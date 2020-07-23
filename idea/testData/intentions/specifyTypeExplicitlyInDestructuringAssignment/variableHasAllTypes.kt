@@ -1,5 +1,0 @@
-// IS_APPLICABLE: false
-// WITH_RUNTIME
-fun test() {
-    val (i: Int, s: String)<caret> = Pair(1, "s")
-}

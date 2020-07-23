@@ -1,8 +1,0 @@
-import foo.A
-import foo.B
-
-class C : A() {
-    override fun foo(x: MutableList<Any?>?, y: String?): B<*> {
-        <selection><caret>TODO("Not yet implemented")</selection>
-    }
-}

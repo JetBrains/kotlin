@@ -1,5 +1,0 @@
-// "Remove 'val' from parameter" "true"
-
-class Wrapper(vararg x: Int) {
-    val y = x
-}

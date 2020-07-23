@@ -1,8 +1,0 @@
-open class A {
-    open fun getFoo(i: Int): String? = null
-}
-
-class B : A() {
-    private val foo = ""
-
-}

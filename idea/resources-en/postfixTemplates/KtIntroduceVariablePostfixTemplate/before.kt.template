@@ -1,4 +1,0 @@
-fun bar() = 1
-fun foo() {
-    <spot>bar()</spot>$key
-}

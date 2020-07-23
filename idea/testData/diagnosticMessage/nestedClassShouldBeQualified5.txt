@@ -1,2 +1,0 @@
-<!-- nestedClassShouldBeQualified5 -->
-Nested companion object 'Companion' should be qualified as 'E.F.Companion'

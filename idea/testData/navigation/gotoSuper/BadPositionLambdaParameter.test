@@ -1,8 +1,0 @@
-// FILE: before.kt
-fun test() {
-    val a = { <caret>a: Int -> 1}
-}
-// FILE: after.kt
-fun test() {
-    val a = { <caret>a: Int -> 1}
-}

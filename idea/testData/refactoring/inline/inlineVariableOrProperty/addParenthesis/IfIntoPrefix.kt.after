@@ -1,3 +1,0 @@
-fun f() {
-    println(+if (true) a else b)
-}

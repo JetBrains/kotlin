@@ -1,7 +1,0 @@
-class A(a: Int, i: Int = 1 + 2) {
-    val x = i
-}
-
-fun test() {
-    A(1)
-}

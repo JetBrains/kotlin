@@ -1,4 +1,0 @@
-unique_name=org.jetbrains.kotlin.native.windows
-compiler_version=1.0.0
-builtins_platform=NATIVE
-short_name=windows

@@ -1,5 +1,0 @@
-class My(val x: Int)
-
-fun foo(arg: Any?): Int {
-    return (arg as? My)?.x?.hashCode() ?: 42
-}

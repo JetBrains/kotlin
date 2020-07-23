@@ -1,5 +1,0 @@
-object Test {
-    <spot>@JvmStatic</spot>
-    fun main(args: Array<String>) {
-    }
-}

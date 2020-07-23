@@ -1,3 +1,0 @@
-module dependency {
-    exports exported;
-}

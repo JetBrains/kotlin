@@ -1,7 +1,0 @@
-public interface II {
-
-}
-
-public class J implements II {
-
-}

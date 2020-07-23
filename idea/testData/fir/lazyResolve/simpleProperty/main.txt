@@ -1,4 +1,0 @@
-FILE: main.kt
-    public final [BODY_RESOLVE] fun foo(): R|kotlin/Int| {
-        ^foo R|root/myProperty|
-    }

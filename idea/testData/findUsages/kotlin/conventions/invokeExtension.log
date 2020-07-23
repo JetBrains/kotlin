@@ -1,6 +1,0 @@
-Resolved p()
-Searched references to pack.P
-Searched references to parameter p of pack.f(p: P) in non-Java files
-Used plain search of pack.invoke() in LocalSearchScope:
-    CLASS:P
-    FUN:invoke

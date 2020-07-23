@@ -1,4 +1,0 @@
-package kotlin
-
-// Ann: to be implemented
-actual annotation class Ann

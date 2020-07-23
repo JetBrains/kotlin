@@ -1,8 +1,0 @@
-// FIR_COMPARISON
-package test
-
-import dependency.T
-
-class T
-
-fun foo(t: test.T) {}

@@ -1,8 +1,0 @@
-// "Suppress 'REDUNDANT_NULLABLE' for initializer " "true"
-
-fun foo() {
-    var (a, b) = @Suppress("REDUNDANT_NULLABLE")
-    Pair<String??, String>("", "")
-}
-
-data class Pair<A, B>(val a: A, val b: B)

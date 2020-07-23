@@ -1,5 +1,0 @@
-package sample
-
-
-fun main() {
-}

@@ -1,2 +1,0 @@
-includeBuild("subBuild")
-include("subProject")

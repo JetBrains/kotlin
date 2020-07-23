@@ -1,5 +1,0 @@
-9 fun bar(<bold>value: Int</bold>, dataClass: DataClass) { (in bar(Int, DataClass))
-10 	foo(dataClass.copy(value1 = <bold>value</bold>)) (in bar(Int, DataClass))
-3 		data class DataClass(<bold>val value1: Int</bold>, val value2: Int) (in DataClass)
-6 			val v = dataClass.<bold>value1</bold> (in foo(DataClass))
-6 				<bold>val v</bold> = dataClass.value1 (in foo(DataClass))

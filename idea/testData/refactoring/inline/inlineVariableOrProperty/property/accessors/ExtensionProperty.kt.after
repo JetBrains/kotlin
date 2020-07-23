@@ -1,4 +1,0 @@
-fun String.foo() {
-    println("a".length * 2)
-    println(length * 2)
-}

@@ -1,4 +1,0 @@
-// "Replace annotation with kotlin.annotation.Retention" "true"
-
-@<caret>Retention(AnnotationRetention.SOURCE)
-annotation class Foo

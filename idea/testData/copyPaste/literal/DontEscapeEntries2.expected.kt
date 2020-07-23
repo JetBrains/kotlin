@@ -1,1 +1,0 @@
-val a = "begin ${a.length} else end"

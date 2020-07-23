@@ -1,6 +1,0 @@
-Resolve target: inline fun kotlin.CharSequence.isNotEmpty(): kotlin.Boolean
-----------------------------------------------
-fun foo(p: String) {
-    /* STATEMENT DELETED: if (x()) return */
-    println(p.<caret>isNotEmpty())
-}

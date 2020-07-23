@@ -1,6 +1,0 @@
-// NAME: ISomething
-// TARGET_FILE_NAME: extractToExistingFile.1.kt
-class Something : ISomething {
-    // INFO: {checked: "true"}
-    override var independent = 1
-}

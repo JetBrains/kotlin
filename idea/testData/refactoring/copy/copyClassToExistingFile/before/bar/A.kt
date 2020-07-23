@@ -1,5 +1,0 @@
-package bar
-
-fun foo() {
-
-}

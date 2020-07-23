@@ -1,6 +1,0 @@
-{
-  "mainFile": "source/test.kt",
-  "intentionClass": "org.jetbrains.kotlin.idea.intentions.ImplementAbstractMemberAsConstructorParameterIntention",
-  "isApplicable": "false",
-  "withRuntime": "true"
-}

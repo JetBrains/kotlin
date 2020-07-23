@@ -1,5 +1,0 @@
-fun foo(list: List<String>) {
-    for (s in list) {
-
-    }
-}

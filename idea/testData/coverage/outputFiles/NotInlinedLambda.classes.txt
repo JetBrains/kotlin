@@ -1,2 +1,0 @@
-org/demo/coverage/Foo.class
-org/demo/coverage/Foo$bar$1.class

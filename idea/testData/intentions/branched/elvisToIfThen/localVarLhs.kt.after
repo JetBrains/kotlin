@@ -1,4 +1,0 @@
-fun main(args: Array<String>) {
-    var a: String? = "A"
-    if (a != null) a else "bar"
-}

@@ -1,3 +1,0 @@
-<!-- upperBoundViolated3 -->
-Type parameter bound for T in fun <T : R, R : B> baz(t: T, r: R): Unit where T : A
- is not satisfied: inferred type A is not a subtype of B

@@ -1,1 +1,0 @@
-val x: <selection>kotlin.collections.Map.Entry<kotlin.Array<kotlin.String>, dependency.Array></selection>

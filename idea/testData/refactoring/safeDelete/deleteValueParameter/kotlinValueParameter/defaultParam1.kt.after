@@ -1,7 +1,0 @@
-fun foo(a: Int) {
-
-}
-
-fun bar() {
-    foo(1)
-}

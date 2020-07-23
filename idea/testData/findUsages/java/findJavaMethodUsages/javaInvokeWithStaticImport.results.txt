@@ -1,2 +1,0 @@
-[javaInvokeWithStaticImport.0.kt] Implicit 'invoke' 4 INSTANCE()
-[javaInvokeWithStaticImport.1.kt] Implicit 'invoke' 4 INSTANCE()

@@ -1,9 +1,0 @@
-fun f(x : Int) {
-    val y = if (x < 0) 1 else {
-        val i = x - 1
-        when {
-            i < 1 -> 2
-            else -> 3
-        }
-    }
-}

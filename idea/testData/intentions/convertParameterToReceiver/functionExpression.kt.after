@@ -1,7 +1,0 @@
-interface T {
-    val foo: Int
-}
-
-val f = fun T.(): Int {
-    return foo
-}

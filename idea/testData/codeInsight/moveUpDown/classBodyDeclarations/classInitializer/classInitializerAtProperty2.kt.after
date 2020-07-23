@@ -1,7 +1,0 @@
-// MOVE: up
-class A {
-    <caret>init {
-
-    }
-    val y = ""
-}

@@ -1,1 +1,0 @@
-list.joinToString(<spot>separator = </spot>"\n")

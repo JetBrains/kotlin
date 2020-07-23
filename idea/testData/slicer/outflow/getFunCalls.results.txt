@@ -1,3 +1,0 @@
-4 operator <bold>fun get(n: Int)</bold> = this (in A)
-8 	val x = <bold>A()[2]</bold> (in test())
-8 		<bold>val x</bold> = A()[2] (in test())

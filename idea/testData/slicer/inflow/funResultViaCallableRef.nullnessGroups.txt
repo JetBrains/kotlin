@@ -1,3 +1,0 @@
-[NotNull Values]
-9 	<bold>val x</bold> = foo(::bar) (in test())
-9 		<bold>val x</bold> = foo(::bar) (in test())

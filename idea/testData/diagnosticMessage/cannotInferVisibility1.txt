@@ -1,2 +1,0 @@
-<!-- cannotInferVisibility1 -->
-Cannot infer visibility for 'val foo: String'. Please specify it explicitly

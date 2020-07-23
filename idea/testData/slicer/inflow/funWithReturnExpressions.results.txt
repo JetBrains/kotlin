@@ -1,4 +1,0 @@
-3 <bold>fun foo(n: Int): Int</bold> {
-4 	if (n > 0) return <bold>n</bold> (in foo(Int))
-3 		fun foo(<bold>n: Int</bold>): Int { (in foo(Int))
-5 	return <bold>-n</bold> (in foo(Int))

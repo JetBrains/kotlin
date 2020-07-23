@@ -1,6 +1,0 @@
-// WITH_RUNTIME
-fun test(){
-    1.apply {
-        listOf(1, 2, 3).onEach { this.plus(it) }
-    }
-}

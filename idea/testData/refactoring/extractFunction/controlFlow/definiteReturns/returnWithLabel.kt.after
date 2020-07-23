@@ -1,7 +1,0 @@
-fun foo(): Int {
-    return@foo i()
-}
-
-private fun i(): Int {
-    return 1
-}

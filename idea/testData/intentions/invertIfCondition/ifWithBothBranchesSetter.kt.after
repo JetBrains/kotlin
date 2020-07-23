@@ -1,6 +1,0 @@
-var foo: Boolean = false
-    set(arg) {
-        if (field != arg) {
-            field = arg
-        }
-    }

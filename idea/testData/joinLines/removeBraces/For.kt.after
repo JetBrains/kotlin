@@ -1,3 +1,0 @@
-fun foo() {
-    for (element in collection) <caret>println(element)
-}

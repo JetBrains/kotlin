@@ -1,5 +1,0 @@
-// WITH_RUNTIME
-
-fun test(list: List<Int>) {
-    val fold: Int = list.asSequence().filter { it > 1 }.fold(0) { acc, i -> acc + i }
-}

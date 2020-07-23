@@ -1,4 +1,0 @@
-var x = 1
-    set(value) {
-        field = value
-    }

@@ -1,6 +1,0 @@
-// MOVE: down
-fun foo() {
-    // 1
-    <caret>// Move me down
-    // 2
-}

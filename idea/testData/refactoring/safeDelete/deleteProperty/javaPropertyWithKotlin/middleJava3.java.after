@@ -1,7 +1,0 @@
-abstract class C implements B {
-
-    @Override
-    public void setFoo(String value) {
-
-    }
-}

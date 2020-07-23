@@ -1,7 +1,0 @@
-fun foo() {
-    if (<caret>) {
-        "".capitalize()
-        "".capitalize()
-    } else {
-    }
-}

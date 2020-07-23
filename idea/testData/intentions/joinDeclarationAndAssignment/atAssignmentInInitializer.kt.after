@@ -1,8 +1,0 @@
-class A {
-    init {
-        bar()
-        val foo<selection>: String</selection><caret> = ""
-    }
-
-    fun bar() {}
-}

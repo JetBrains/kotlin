@@ -1,5 +1,0 @@
-// FIX: Replace with 'checkNotNull()' call
-// WITH_RUNTIME
-fun test(foo: Int?) {
-    checkNotNull(foo)
-}

@@ -1,3 +1,0 @@
-fun a() {
-    val (a, b<caret>) = 1 to 2
-}

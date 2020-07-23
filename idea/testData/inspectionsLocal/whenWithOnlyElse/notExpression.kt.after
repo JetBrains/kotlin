@@ -1,6 +1,0 @@
-fun println(s: String) {}
-
-fun foo() {
-    println("")
-    1
-}

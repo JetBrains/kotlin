@@ -1,6 +1,0 @@
-/*All (1)*/fun test(/*All (2)*/baz: /*All (3)*/Int/*(3)*//*(2)*/) {
-    /*Full (4)*/fun irrelevant() {
-        /*Full (5)*/val foo = "bar"/*(5)*/
-    }/*(4)*/
-    /*All (6)*/baz/*(6)*/ /*None (7)*/=/*(7)*/ 42
-}/*(1)*/

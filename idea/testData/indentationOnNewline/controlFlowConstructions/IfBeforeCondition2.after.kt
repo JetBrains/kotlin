@@ -1,4 +1,0 @@
-fun some() {
-    if
-        <caret>
-}

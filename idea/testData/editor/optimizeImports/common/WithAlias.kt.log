@@ -1,9 +1,0 @@
-Additional checking of reference Getter: a1
-Additional checking of reference KtSimpleNameReference: a1
-Changed resolve of KtSimpleNameReference: a1
-Additional checking of reference KtInvokeFunctionReference: a1()
-Trying to build import list again with import rules: +pack1.a as a1
-Additional checking of reference Getter: a1
-Additional checking of reference KtSimpleNameReference: a1
-Changed resolve of KtSimpleNameReference: a1
-Additional checking of reference KtInvokeFunctionReference: a1()

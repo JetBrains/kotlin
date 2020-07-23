@@ -1,3 +1,0 @@
-Receiver 10 println("foo = ${a.O.foo}")
-Usage in import 3 import a.A.O
-Value read 11 val obj = a.O

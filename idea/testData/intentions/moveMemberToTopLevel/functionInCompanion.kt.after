@@ -1,6 +1,0 @@
-// WITH_RUNTIME
-
-class A {
-}
-
-private fun foo() = 1

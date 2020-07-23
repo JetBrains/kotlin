@@ -1,9 +1,0 @@
-fun foo() {
-    val a = "aa"
-    when (a.capitalize()) {
-        <caret> -> {
-        }
-        else -> {
-        }
-    }
-}

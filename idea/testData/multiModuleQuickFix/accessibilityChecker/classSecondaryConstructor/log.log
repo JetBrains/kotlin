@@ -1,3 +1,0 @@
-These declarations cannot be transformed:
-actual val a: Some
-constructor(a: Some, b: Int){...}

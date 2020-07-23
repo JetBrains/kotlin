@@ -1,1 +1,0 @@
-Sealed hierarchy of 'HierarchyClassA' would be split. None of its members reside in the package 'another' of module 'A': [sealed.HierarchyClassA, sealed.SealedInterfaceA, sealed.SealedInterfaceB].

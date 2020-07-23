@@ -1,8 +1,0 @@
-package boo
-
-import foo.bar.a
-import foo.bar.b
-
-fun main(args: Array<String>) {
-    println(b + a())
-}

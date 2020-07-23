@@ -1,3 +1,0 @@
-[NotNull Values]
-7 	<bold>val x</bold> = foo (in test())
-7 		<bold>val x</bold> = foo (in test())

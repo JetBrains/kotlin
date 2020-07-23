@@ -1,6 +1,0 @@
-MODULE common { platform=[JVM, JS, Native]; root=common }
-MODULE jvm { platform=[JVM]; root=jvm }
-
-common -> STDLIB_COMMON { kind=DEPENDENCY }
-jvm -> common { kind=DEPENDS_ON }
-jvm -> STDLIB_JVM { kind=DEPENDENCY }

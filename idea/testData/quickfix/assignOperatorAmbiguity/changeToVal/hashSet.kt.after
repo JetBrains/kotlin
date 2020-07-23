@@ -1,7 +1,0 @@
-// "Change 'set' to val" "true"
-// WITH_RUNTIME
-
-fun test() {
-    val set = HashSet<Int>()
-    set <caret>-= 2
-}

@@ -1,5 +1,0 @@
-<idea-plugin>
-  <extensions defaultExtensionNs="com.jetbrains">
-    <javaScriptDebugAware implementation="org.jetbrains.kotlin.idea.debugger.KotlinJavaScriptDebugAware"/>
-  </extensions>
-</idea-plugin>

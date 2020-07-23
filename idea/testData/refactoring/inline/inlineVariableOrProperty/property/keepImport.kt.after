@@ -1,4 +1,0 @@
-package foo.bar
-
-val b = 1
-fun a() = b

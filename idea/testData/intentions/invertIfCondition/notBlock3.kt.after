@@ -1,7 +1,0 @@
-fun foo(i: Int) {
-    if (i <= 0) {
-    } else
-        bar()
-}
-
-fun bar() {}

@@ -1,9 +1,0 @@
-// WITH_RUNTIME
-class FooException : Exception()
-
-class BarException : Exception()
-
-@Throws(exceptionClasses = [BarException::class, FooException::class])
-fun test() {
-    throw FooException()
-}

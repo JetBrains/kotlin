@@ -1,5 +1,0 @@
-// DISABLE-ERRORS
-
-expect interface My {
-    fun foo(param: String)
-}

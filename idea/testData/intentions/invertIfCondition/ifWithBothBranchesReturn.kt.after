@@ -1,7 +1,0 @@
-fun println(s: String) {}
-
-fun foo(y: Boolean) {
-    if (y) {
-        println("no1")
-    }
-}

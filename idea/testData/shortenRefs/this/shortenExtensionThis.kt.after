@@ -1,5 +1,0 @@
-class A(val n: Int) {
-
-}
-
-fun A.foo(): Int = n + 1

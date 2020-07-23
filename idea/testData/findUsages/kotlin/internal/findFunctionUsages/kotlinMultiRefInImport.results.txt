@@ -1,2 +1,0 @@
-Function call 8 foo()
-Usage in import 5 import server.foo

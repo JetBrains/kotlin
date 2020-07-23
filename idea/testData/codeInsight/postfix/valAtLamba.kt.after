@@ -1,3 +1,0 @@
-fun foo() {
-    val function = { y: Int -> "abc" }
-}

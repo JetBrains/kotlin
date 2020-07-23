@@ -1,1 +1,0 @@
-<caret>var foo: String? = null

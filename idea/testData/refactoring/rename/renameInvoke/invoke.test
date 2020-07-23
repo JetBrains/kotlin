@@ -1,7 +1,0 @@
-{
-  "type": "KOTLIN_FUNCTION",
-  "classId": "/A",
-  "oldName": "invoke",
-  "newName": "foo",
-  "mainFile": "invoke.kt"
-}

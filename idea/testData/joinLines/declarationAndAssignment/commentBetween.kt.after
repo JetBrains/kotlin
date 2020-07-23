@@ -1,4 +1,0 @@
-fun foo() {
-    val v: Int<caret> // variable v
-    v = 10
-}

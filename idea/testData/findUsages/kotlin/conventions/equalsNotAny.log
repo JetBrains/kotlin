@@ -1,8 +1,0 @@
-Checked type of A.foo(a: A)
-Resolved A(0) != A(1)
-Resolved A(0) == A(1)
-Resolved a == this
-Searched references to A
-Searched references to parameter a of A.foo(a: A) in non-Java files
-Used plain search of A.equals(other: Any?) in LocalSearchScope:
-    CLASS:A

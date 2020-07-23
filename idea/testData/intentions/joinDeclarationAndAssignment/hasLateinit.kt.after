@@ -1,4 +1,0 @@
-fun foo(a: String, b: String) {
-    var c<selection>: String</selection><caret> = a
-    c = b
-}

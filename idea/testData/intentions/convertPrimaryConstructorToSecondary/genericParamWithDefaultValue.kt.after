@@ -1,7 +1,0 @@
-class Test {
-    val a: Array<Int>
-
-    constructor(a: Array<Int> = arrayOf(0)) {
-        this.a = a
-    }
-}

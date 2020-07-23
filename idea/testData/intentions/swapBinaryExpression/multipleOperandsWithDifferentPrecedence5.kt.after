@@ -1,3 +1,0 @@
-fun main() {
-    val rabbit = 4 + 1 + 2 * 5
-}

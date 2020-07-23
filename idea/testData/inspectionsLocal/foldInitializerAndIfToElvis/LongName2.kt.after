@@ -1,6 +1,0 @@
-fun foo(): Any {
-    val yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy = 7
-    val xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-            = 24 ?: return yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy
-    return 42
-}

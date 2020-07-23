@@ -1,5 +1,0 @@
-class Example(val `in`: String, val `cl ass`: String, val `valid`: Boolean) {
-    override fun toString(): String {
-        return "Example(`in`='$`in`', `cl ass`='$`cl ass`', `valid`=$`valid`)"
-    }
-}

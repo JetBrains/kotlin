@@ -1,9 +1,0 @@
-open class K
-
-fun foo(n: Int) {
-    val x = K1(n)
-}
-
-class K1<caret>(private val n: Int) : K() {
-    fun bar() = n
-}

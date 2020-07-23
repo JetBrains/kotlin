@@ -1,6 +1,0 @@
-fun foo(p: String?): Int? {
-    <caret>if (p != null) {
-        return p.hashCode() // comment
-    }
-    return null
-}

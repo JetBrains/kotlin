@@ -1,5 +1,0 @@
-fun f() {
-    run {
-        println(239)
-    }
-}

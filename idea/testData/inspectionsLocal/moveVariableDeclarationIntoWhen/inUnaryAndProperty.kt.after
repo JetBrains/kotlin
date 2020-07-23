@@ -1,8 +1,0 @@
-fun test() = true
-
-fun foo() {
-    val b = !when (<caret>test()) {
-        true -> true
-        else -> false
-    }
-}

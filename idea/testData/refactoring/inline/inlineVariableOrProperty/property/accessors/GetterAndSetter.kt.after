@@ -1,4 +1,0 @@
-fun foo() {
-    println(1)
-    println("Set value of ${10} for ${2}")
-}

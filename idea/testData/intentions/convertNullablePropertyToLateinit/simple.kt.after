@@ -1,3 +1,0 @@
-class C {
-    private lateinit var foo: String
-}

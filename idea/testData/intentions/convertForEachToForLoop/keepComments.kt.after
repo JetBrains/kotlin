@@ -1,6 +1,0 @@
-// WITH_RUNTIME
-fun foo(list: List<String?>) {
-    for (it in list.filter { it != null } /* filter out nulls */) {
-        print(1..4) /* print x */
-    }
-}

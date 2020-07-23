@@ -1,6 +1,0 @@
-6 val x = <bold>""</bold>.extensionFun() (in foo())
-3 	fun <bold>String</bold>.extensionFun(): Any = this (in extensionFun() on String)
-3 		fun String.extensionFun(): Any = <bold>this</bold> (in extensionFun() on String)
-3 			<bold>fun String.extensionFun(): Any</bold> = this
-6 				val x = "".<bold>extensionFun()</bold> (in foo())
-6 					<bold>val x</bold> = "".extensionFun() (in foo())

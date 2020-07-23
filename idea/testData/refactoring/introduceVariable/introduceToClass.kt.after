@@ -1,4 +1,0 @@
-class X {
-    val i = 10
-    val s = i.toString()
-}

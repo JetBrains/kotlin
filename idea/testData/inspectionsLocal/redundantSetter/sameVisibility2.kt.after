@@ -1,3 +1,0 @@
-class Test {
-    protected var x = 1
-}

@@ -1,8 +1,0 @@
-fun foo() {
-    class A {}
-    if (<caret>) {
-        "bbb"
-    }
-
-    val myClass: A? = null
-}

@@ -1,8 +1,0 @@
-// WITH_RUNTIME
-// FIX: Rename to 'myFunctionAsync'
-
-package kotlinx.coroutines
-
-fun myFunctionAsync(): Deferred<Int> {
-    return GlobalScope.async { 42 }
-}
