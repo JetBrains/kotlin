@@ -4,51 +4,51 @@ public annotation class Ann
 
 @kotlin.Metadata
 public final class Sealed$Derived {
-    inner class Sealed$Derived
     private method <init>(p0: int): void
     public synthetic @Ann method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final inner class Sealed$Derived
 }
 
 @kotlin.Metadata
 public final class Sealed$Inner {
     synthetic final field this$0: Sealed
     private final field z2: int
-    inner class Sealed$Inner
     public synthetic @Ann method <init>(p0: Sealed, p1: int, @Ann p2: int, @Ann p3: java.lang.String, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
     private method <init>(p0: Sealed, p1: int, p2: int, p3: java.lang.String): void
     public final method getZ2-a_XrcN0(): int
+    public final inner class Sealed$Inner
 }
 
 @kotlin.Metadata
 public abstract class Sealed {
     private final field z: int
-    inner class Sealed$Derived
-    inner class Sealed$Inner
     private @Ann method <init>(@Ann p0: int): void
     public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final method getZ-a_XrcN0(): int
+    public final inner class Sealed$Derived
+    public final inner class Sealed$Inner
 }
 
 @kotlin.Metadata
 public final class Test$Inner {
     synthetic final field this$0: Test
     private final field z2: int
-    inner class Test$Inner
     public synthetic @Ann method <init>(p0: Test, p1: int, @Ann p2: int, @Ann p3: java.lang.String, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
     private method <init>(p0: Test, p1: int, p2: int, p3: java.lang.String): void
     public final method getZ2-a_XrcN0(): int
+    public final inner class Test$Inner
 }
 
 @kotlin.Metadata
 public final class Test {
     private final field z: int
-    inner class Test$Inner
     public synthetic @Ann method <init>(@Ann p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
     private method <init>(p0: int): void
     public synthetic @Ann method <init>(p0: int, @Ann p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     private @Ann method <init>(p0: int, @Ann p1: java.lang.String): void
     private method <init>(p0: int, p1: int): void
     public final method getZ-a_XrcN0(): int
+    public final inner class Test$Inner
 }
 
 @kotlin.Metadata

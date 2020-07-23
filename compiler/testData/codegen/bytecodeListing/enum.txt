@@ -41,7 +41,7 @@ public final enum class WithConstructor {
 
 @kotlin.Metadata
 final class WithEntryClass$A {
-    inner class WithEntryClass$A
+    final inner class WithEntryClass$A
     method <init>(p0: java.lang.String, p1: int): void
     public method foo(): void
 }
@@ -50,7 +50,7 @@ final class WithEntryClass$A {
 public abstract enum class WithEntryClass {
     private synthetic final static field $VALUES: WithEntryClass[]
     public final enum static field A: WithEntryClass
-    inner class WithEntryClass$A
+    final inner class WithEntryClass$A
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int): void
     public synthetic method <init>(p0: java.lang.String, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void

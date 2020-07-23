@@ -36,32 +36,32 @@ public final enum class TestEnum {
 public final class TestInner$Inner {
     synthetic final field this$0: TestInner
     private final field z: int
-    inner class TestInner$Inner
     private method <init>(p0: TestInner, p1: int): void
     public synthetic method <init>(p0: TestInner, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final method getZ-a_XrcN0(): int
+    public final inner class TestInner$Inner
 }
 
 @kotlin.Metadata
 public final class TestInner {
-    inner class TestInner$Inner
     public method <init>(): void
+    public final inner class TestInner$Inner
 }
 
 @kotlin.Metadata
 public final class TestSealed$Case {
-    inner class TestSealed$Case
     private method <init>(p0: int): void
     public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final inner class TestSealed$Case
 }
 
 @kotlin.Metadata
 public abstract class TestSealed {
     private final field z: int
-    inner class TestSealed$Case
     private method <init>(p0: int): void
     public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final method getZ-a_XrcN0(): int
+    public final inner class TestSealed$Case
 }
 
 @kotlin.Metadata

@@ -1,37 +1,37 @@
 @kotlin.Metadata
 public final class test/TopLevel$Companion {
-    inner class test/TopLevel$Companion
     private method <init>(): void
     public final method a(): void
     public synthetic deprecated static @kotlin.jvm.JvmStatic method getQ$annotations(): void
     public final @org.jetbrains.annotations.NotNull method getQ(): java.lang.String
+    public final inner class test/TopLevel$Companion
 }
 
 @kotlin.Metadata
 public interface test/TopLevel$InnerInterface {
-    inner class test/TopLevel$InnerInterface
+    public inner class test/TopLevel$InnerInterface
 }
 
 @kotlin.Metadata
 public final class test/TopLevel$InnerObject {
     public final static @org.jetbrains.annotations.NotNull field INSTANCE: test.TopLevel$InnerObject
-    inner class test/TopLevel$InnerObject
     private method <init>(): void
+    public final inner class test/TopLevel$InnerObject
 }
 
 @kotlin.Metadata
 public final class test/TopLevel$NestedClass$NestedInnerClass {
     synthetic final field this$0: test.TopLevel$NestedClass
-    inner class test/TopLevel$NestedClass
-    inner class test/TopLevel$NestedClass$NestedInnerClass
     public method <init>(p0: test.TopLevel$NestedClass): void
+    public final inner class test/TopLevel$NestedClass
+    public final inner class test/TopLevel$NestedClass$NestedInnerClass
 }
 
 @kotlin.Metadata
 public final class test/TopLevel$NestedClass {
-    inner class test/TopLevel$NestedClass
-    inner class test/TopLevel$NestedClass$NestedInnerClass
     public method <init>(): void
+    public final inner class test/TopLevel$NestedClass
+    public final inner class test/TopLevel$NestedClass$NestedInnerClass
 }
 
 @kotlin.Metadata
@@ -40,13 +40,13 @@ public final class test/TopLevel {
     private final static @org.jetbrains.annotations.NotNull field q: java.lang.String
     private final @org.jetbrains.annotations.NotNull field x: java.lang.String
     private final field y: int
-    inner class test/TopLevel$Companion
-    inner class test/TopLevel$InnerInterface
-    inner class test/TopLevel$InnerObject
-    inner class test/TopLevel$NestedClass
     public method <init>(): void
     public final method b(): void
     public final static @org.jetbrains.annotations.NotNull method getQ(): java.lang.String
     public final @org.jetbrains.annotations.NotNull method getX(): java.lang.String
     public final method getY(): int
+    public final inner class test/TopLevel$Companion
+    public final inner class test/TopLevel$InnerObject
+    public final inner class test/TopLevel$NestedClass
+    public inner class test/TopLevel$InnerInterface
 }

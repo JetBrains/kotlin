@@ -21,14 +21,14 @@ public final class Component1Kt {
 
 @kotlin.Metadata
 public final class Foo$DefaultImpls {
-    inner class Foo$DefaultImpls
     public static @org.jetbrains.annotations.Nullable method component1(@org.jetbrains.annotations.NotNull p0: Foo, @org.jetbrains.annotations.NotNull p1: Result, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final inner class Foo$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface Foo {
-    inner class Foo$DefaultImpls
     public abstract @org.jetbrains.annotations.Nullable method component1(@org.jetbrains.annotations.NotNull p0: Result, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public final inner class Foo$DefaultImpls
 }
 
 @kotlin.Metadata

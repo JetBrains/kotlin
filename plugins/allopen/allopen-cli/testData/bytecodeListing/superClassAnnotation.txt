@@ -25,15 +25,15 @@ public abstract class Base_ShouldBeOpen {
 
 @kotlin.Metadata
 public final class Intf$DefaultImpls {
-    inner class Intf$DefaultImpls
     public static method intfMethod(@org.jetbrains.annotations.NotNull p0: Intf): void
+    public final inner class Intf$DefaultImpls
 }
 
 @AllOpen
 @kotlin.Metadata
 public interface Intf {
-    inner class Intf$DefaultImpls
     public abstract method intfMethod(): void
+    public final inner class Intf$DefaultImpls
 }
 
 @kotlin.Metadata

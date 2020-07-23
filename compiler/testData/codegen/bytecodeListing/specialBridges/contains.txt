@@ -105,28 +105,28 @@ public abstract class A8 {
 
 @kotlin.Metadata
 public final class I1$DefaultImpls {
-    inner class I1$DefaultImpls
     public static method contains(@org.jetbrains.annotations.NotNull p0: I1, p1: java.lang.Object): boolean
     public static method containsAll(@org.jetbrains.annotations.NotNull p0: I1, @org.jetbrains.annotations.NotNull p1: java.util.Collection): boolean
+    public final inner class I1$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface I1 {
-    inner class I1$DefaultImpls
     public abstract method contains(p0: java.lang.Object): boolean
     public abstract method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
+    public final inner class I1$DefaultImpls
 }
 
 @kotlin.Metadata
 public final class I2$DefaultImpls {
-    inner class I2$DefaultImpls
     public static method contains(@org.jetbrains.annotations.NotNull p0: I2, @org.jetbrains.annotations.NotNull p1: java.lang.String): boolean
     public static method containsAll(@org.jetbrains.annotations.NotNull p0: I2, @org.jetbrains.annotations.NotNull p1: java.util.Collection): boolean
+    public final inner class I2$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface I2 {
-    inner class I2$DefaultImpls
     public abstract method contains(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
     public abstract method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
+    public final inner class I2$DefaultImpls
 }
