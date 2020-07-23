@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
+import org.jetbrains.kotlin.idea.core.getDirectlyOverriddenDeclarations
 import org.jetbrains.kotlin.idea.core.isOverridable
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.search.excludeKotlinSources
@@ -215,6 +216,19 @@ fun findDeepestSuperMethodsNoWrapping(method: PsiElement): List<PsiElement> {
         is KtCallableDeclaration -> {
             val descriptor = element.resolveToDescriptorIfAny() as? CallableMemberDescriptor ?: return emptyList()
             descriptor.getDeepestSuperDeclarations(false).mapNotNull {
+                it.source.getPsi() ?: DescriptorToSourceUtilsIde.getAnyDeclaration(element.project, it)
+            }
+        }
+        else -> emptyList()
+    }
+}
+
+fun findSuperMethodsNoWrapping(method: PsiElement): List<PsiElement> {
+    return when (val element = method.unwrapped) {
+        is PsiMethod -> element.findSuperMethods().toList()
+        is KtCallableDeclaration -> {
+            val descriptor = element.resolveToDescriptorIfAny() as? CallableMemberDescriptor ?: return emptyList()
+            descriptor.getDirectlyOverriddenDeclarations().mapNotNull {
                 it.source.getPsi() ?: DescriptorToSourceUtilsIde.getAnyDeclaration(element.project, it)
             }
         }

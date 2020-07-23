@@ -44,6 +44,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/function/getOperator.kt");
         }
 
+        @TestMetadata("implementingInterface.kt")
+        public void testImplementingInterface() throws Exception {
+            runTest("testData/refactoring/inline/function/implementingInterface.kt");
+        }
+
         @TestMetadata("InStringTemplates.kt")
         public void testInStringTemplates() throws Exception {
             runTest("testData/refactoring/inline/function/InStringTemplates.kt");
@@ -420,6 +425,16 @@ public class InlineTestGenerated extends AbstractInlineTest {
         public static class JavaUsages extends AbstractInlineTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            @TestMetadata("conflictWithSuperFunctions.kt")
+            public void testConflictWithSuperFunctions() throws Exception {
+                runTest("testData/refactoring/inline/function/javaUsages/conflictWithSuperFunctions.kt");
+            }
+
+            @TestMetadata("removeOverrideInChild.kt")
+            public void testRemoveOverrideInChild() throws Exception {
+                runTest("testData/refactoring/inline/function/javaUsages/removeOverrideInChild.kt");
             }
 
             @TestMetadata("usage.kt")

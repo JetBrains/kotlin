@@ -1,0 +1,12 @@
+open class A {
+    fun ds() = Unit
+}
+
+open class B: A() {
+    fun a() = Unit
+    fun c() = a()
+}
+
+class C : B() {
+    override fun a() = Unit
+}

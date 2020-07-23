@@ -1,0 +1,12 @@
+public class JavaClass extends A {
+    public void a() {
+
+    }
+}
+
+class M extends JavaClass {
+    @Override
+    public void a() {
+
+    }
+}
