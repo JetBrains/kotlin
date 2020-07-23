@@ -144,6 +144,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         runTest("compiler/testData/codegen/bytecodeListing/privateDefaultSetter.kt");
     }
 
+    @TestMetadata("privateNestedClassInInterface.kt")
+    public void testPrivateNestedClassInInterface() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/privateNestedClassInInterface.kt");
+    }
+
     @TestMetadata("samAdapterAndInlinedOne.kt")
     public void testSamAdapterAndInlinedOne() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/samAdapterAndInlinedOne.kt");
