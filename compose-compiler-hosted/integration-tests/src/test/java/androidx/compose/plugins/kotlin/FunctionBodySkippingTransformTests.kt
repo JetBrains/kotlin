@@ -2515,7 +2515,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             @Composable
             fun Box2(modifier: Modifier?, paddingStart: Dp, children: Function3<Composer<*>, Int, Int, Unit>?, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C(Box2)P(1,2:u#unit.Dp):Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(Box2)P(1,2:c#ui.unit.Dp):Test.kt")
               val %dirty = %changed
               val modifier = modifier
               val paddingStart = paddingStart
