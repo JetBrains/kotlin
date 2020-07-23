@@ -73,8 +73,8 @@ benchmark {
             param("isIR", true)
             param("size", 1000)
 
-            //include("CommonCallsBenchmark")
-            include("ControlFlowAnalysisBenchmark")
+            include("CommonCallsBenchmark")
+            //include("ControlFlowAnalysisBenchmark")
             //include("InferenceBaselineCallsBenchmark")
         }
 
