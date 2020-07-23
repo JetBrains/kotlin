@@ -64,7 +64,11 @@ class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatu
     override fun composeSignature(declaration: FirDeclaration): IdSignature? {
         if (declaration is FirAnonymousObject || declaration is FirAnonymousFunction) return null
         val builder = SignatureBuilder()
-        declaration.accept(builder)
+        try {
+            declaration.accept(builder)
+        } catch (t: Throwable) {
+            throw IllegalStateException("Error while composing signature for ${declaration.render()}", t)
+        }
         return when (declaration) {
             is FirRegularClass -> {
                 // TODO: private classes are probably not acceptable here too
