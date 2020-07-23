@@ -9,10 +9,10 @@ import java.nio.file.Paths
 // Should be used to create any kind of files in the generated project
 // Except build files as they will be generated using IR
 sealed class FileDescriptor {
-    abstract val relativePath: Path
+    abstract val relativePath: Path?
 }
 
-data class FileTemplateDescriptor(@NonNls val templateId: String, override val relativePath: Path) : FileDescriptor() {
+data class FileTemplateDescriptor(@NonNls val templateId: String, override val relativePath: Path?) : FileDescriptor() {
     constructor(templateId: String) : this(
         templateId,
         Paths.get(templateId).fileName.toString().removeSuffix(".vm").asPath()

@@ -66,7 +66,7 @@ object IOSSinglePlatformModuleConfigurator : SinglePlatformModuleConfigurator,
             +fileTemplate(DEFAULT_APP_NAME / "Preview_Content" / "Preview_Assets.xcassets" / "Contents.json")
 
             +fileTemplate("${DEFAULT_APP_NAME}Tests" / "Info.plist")
-            +fileTemplate("${DEFAULT_APP_NAME}Tests" / "${DEFAULT_APP_NAME}Tests.swift")
+            +fileTemplate("${DEFAULT_APP_NAME}Tests" / "${DEFAULT_APP_NAME}Tests.swift.vm")
 
             +fileTemplate("${DEFAULT_APP_NAME}UITests" / "Info.plist")
             +fileTemplate("${DEFAULT_APP_NAME}UITests" / "${DEFAULT_APP_NAME}UITests.swift")

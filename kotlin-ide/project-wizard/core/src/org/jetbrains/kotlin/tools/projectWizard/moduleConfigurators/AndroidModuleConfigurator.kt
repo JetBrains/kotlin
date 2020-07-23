@@ -153,13 +153,35 @@ object AndroidTargetConfigurator : TargetConfigurator,
         modulePath: Path
     ): TaskResult<Unit> = computeM {
         val javaPackage = module.javaPackage(configurationData.pomIr)
-        val settings = mapOf("package" to javaPackage.asCodePackage())
+
+        val sharedModule = configurationData.getDependentModules(module).get().find { dependency ->
+            dependency.configurator is MppModuleConfigurator
+        }
+
+        val sharedPackage = sharedModule?.javaPackage(configurationData.pomIr)
+
+        val settings = mapOf(
+            "package" to javaPackage.asCodePackage(),
+            "sharedPackage" to sharedPackage?.asCodePackage()
+        )
+
         TemplatesPlugin.addFileTemplates.execute(
             listOf(
                 FileTemplate(AndroidModuleConfigurator.FileTemplateDescriptors.androidManifestForLibraryXml, modulePath, settings)
             )
         )
     }
+
+    override fun createModuleIRs(reader: Reader, configurationData: ModulesToIrConversionData, module: Module): List<BuildSystemIR> =
+        buildList {
+            +super<AndroidModuleConfigurator>.createModuleIRs(reader, configurationData, module)
+            +ArtifactBasedLibraryDependencyIR(
+                MavenArtifact(DefaultRepository.MAVEN_CENTRAL, "junit", "junit"),
+                version = Versions.JUNIT,
+                dependencyType = DependencyType.TEST
+            )
+        }
+
 
     val androidPlugin by enumSetting<AndroidGradlePlugin>(
         KotlinNewProjectWizardBundle.message("module.configurator.android.setting.android.plugin"),

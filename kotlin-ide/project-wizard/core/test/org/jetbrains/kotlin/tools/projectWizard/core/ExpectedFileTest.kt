@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.core
 
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.mppFiles
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.mppSources
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -13,8 +13,8 @@ import kotlin.test.assertEquals
 class ExpectedFileTest {
     @Test
     fun `it should generate valid expect functions`() {
-        val file = mppFiles {
-            mppfile("file") {
+        val file = mppSources {
+            mppFile("file") {
                 function("f(x: Int): String")
                 function("y(x: Int): String")
             }
@@ -30,8 +30,8 @@ class ExpectedFileTest {
 
     @Test
     fun `it should generate valid expect classes`() {
-        val file = mppFiles {
-            mppfile("file") {
+        val file = mppSources {
+            mppFile("file") {
                 `class`("A")
                 `class`("B")
             }
@@ -47,8 +47,8 @@ class ExpectedFileTest {
 
     @Test
     fun `it should generate valid actual functions`() {
-        val file = mppFiles {
-            mppfile("file") {
+        val file = mppSources {
+            mppFile("file") {
                 function("foo()") {
                     actualFor(
                         ModuleSubType.jvm,
@@ -92,8 +92,8 @@ class ExpectedFileTest {
 
     @Test
     fun `it should generate valid actual classes`() {
-        val file = mppFiles {
-            mppfile("file") {
+        val file = mppSources {
+            mppFile("file") {
                 `class`("A") {
                     actualFor(
                         ModuleSubType.jvm,

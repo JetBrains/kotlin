@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.projectPath
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplateDescriptor
+import org.jetbrains.kotlin.tools.projectWizard.templates.asSrcOf
 import java.nio.file.Path
 import kotlin.reflect.KClass
 
@@ -112,7 +113,7 @@ sealed class ModuleDependencyType(
             to: Module,
             toModulePath: Path,
         ): TaskResult<Unit> {
-            val needDummyFile = inContextOfModuleConfigurator(to) { MppModuleConfigurator.mppFiles.reference.propertyValue.isEmpty() }
+            val needDummyFile = inContextOfModuleConfigurator(to) { MppModuleConfigurator.mppSources.reference.propertyValue.isEmpty() }
             return if (needDummyFile) {
                 val dummyFilePath =
                     Defaults.SRC_DIR / "${to.iosTargetSafe()!!.name}Main" / to.configurator.kotlinDirectoryName / "dummyFile.kt"
@@ -184,8 +185,8 @@ sealed class ModuleDependencyType(
 }
 
 private fun Writer.addExpectFilesForMppModuleForAndroidAndIos(mppModule: Module): TaskResult<Unit> {
-    val expectFiles = mppFiles {
-        mppfile("Platform.kt") {
+    val expectFiles = mppSources {
+        mppFile("Platform.kt") {
             `class`("Platform") {
                 expectBody = "val platform: String"
                 actualFor(
@@ -202,6 +203,14 @@ private fun Writer.addExpectFilesForMppModuleForAndroidAndIos(mppModule: Module)
                 }
             }
         }
+
+        filesFor(ModuleSubType.android) {
+            file(FileTemplateDescriptor("android/androidTest.kt.vm", relativePath = null), "androidTest.kt", SourcesetType.test)
+        }
+
+        filesFor(ModuleSubType.iosArm64, ModuleSubType.iosX64) {
+            file(FileTemplateDescriptor("ios/iosTest.kt.vm", relativePath = null), "iosTest.kt", SourcesetType.test)
+        }
     }
-    return inContextOfModuleConfigurator(mppModule) { MppModuleConfigurator.mppFiles.reference.addValues(expectFiles) }
+    return inContextOfModuleConfigurator(mppModule) { MppModuleConfigurator.mppSources.reference.addValues(listOf(expectFiles)) }
 }
