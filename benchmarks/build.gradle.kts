@@ -111,7 +111,7 @@ tasks.named("classes") {
     }
 }
 
-tasks.register<JavaExec>("runBenchmark") {
+/*tasks.register<JavaExec>("runBenchmark") {
     val jmhArgs: String by project // example: -PjmhArgs='CommonCalls -p size=500 -p isIR=true -p useNI=true -f 1'
     val resultFilePath = "$buildDir/benchmarks/jmh-result.json"
     val ideaHome = intellijRootDir().canonicalPath
@@ -144,4 +144,4 @@ tasks.register<JavaExec>("runBenchmark") {
             }
         }
     }
-}
+}*/
