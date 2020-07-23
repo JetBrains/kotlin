@@ -2502,6 +2502,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
                 runTest("compiler/testData/codegen/bytecodeText/forLoop/stepped/stepNonConstOnNonLiteralProgression.kt");
             }
 
+            @TestMetadata("stepOnNonLiteralRange.kt")
+            public void testStepOnNonLiteralRange() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/stepped/stepOnNonLiteralRange.kt");
+            }
+
             @TestMetadata("stepOne.kt")
             public void testStepOne() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeText/forLoop/stepped/stepOne.kt");
@@ -2628,6 +2633,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             @TestMetadata("stepNonConstOnNonLiteralProgression.kt")
             public void testStepNonConstOnNonLiteralProgression() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeText/forLoop/unsigned/stepNonConstOnNonLiteralProgression.kt");
+            }
+
+            @TestMetadata("stepOnNonLiteralRange.kt")
+            public void testStepOnNonLiteralRange() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/unsigned/stepOnNonLiteralRange.kt");
             }
 
             @TestMetadata("stepThenDifferentStep.kt")
