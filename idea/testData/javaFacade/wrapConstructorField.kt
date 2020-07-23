@@ -1,1 +1,0 @@
-class Test(var <caret>field: Int)

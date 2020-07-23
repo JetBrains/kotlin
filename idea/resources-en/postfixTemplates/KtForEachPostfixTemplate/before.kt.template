@@ -1,3 +1,0 @@
-fun foo(list: List<String>) {
-    <spot>list</spot>$key
-}

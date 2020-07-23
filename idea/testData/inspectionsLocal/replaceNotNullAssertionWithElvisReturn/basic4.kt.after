@@ -1,8 +1,0 @@
-class Foo {
-    fun baz(): Int? = null
-}
-
-fun test(foo: Foo): Int? {
-    foo.baz() ?: return null
-    return 0
-}

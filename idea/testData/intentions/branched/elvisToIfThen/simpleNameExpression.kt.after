@@ -1,5 +1,0 @@
-fun main(args: Array<String>) {
-    val foo: String? = "foo"
-    var bar = "bar"
-    if (foo != null) foo else bar
-}

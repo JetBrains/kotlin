@@ -1,9 +1,0 @@
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-
-fun calcSomething() = 42
-
-object MyCoroutineScope : CoroutineScope {
-    suspend fun foo() = coroutineScope { async { calcSomething() } }
-}

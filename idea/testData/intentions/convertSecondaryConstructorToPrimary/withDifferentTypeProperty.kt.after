@@ -1,6 +1,0 @@
-class WithDifferentTypeProperty(x: Int, z: String) {
-    val x: Number = x
-
-    val y: String = z
-
-}

@@ -1,9 +1,0 @@
-fun foo() {
-    fun test() {}
-    if (<caret>) {
-        "aaa"
-        "aaa"
-    }
-
-    test()
-}

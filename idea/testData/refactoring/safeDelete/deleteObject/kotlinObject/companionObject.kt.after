@@ -1,4 +1,0 @@
-class A {
-    fun foo(): Int = 0
-
-}

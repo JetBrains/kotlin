@@ -1,4 +1,0 @@
-fun method() {
-    println("Here")
-}
-

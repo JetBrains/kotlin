@@ -1,1 +1,0 @@
-Value read 4 val x = Outer.t

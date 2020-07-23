@@ -1,3 +1,0 @@
-4 <bold>val x</bold> = n (in test(Int))
-4 	val x = <bold>n</bold> (in test(Int))
-3 		fun test(<bold>n: Int</bold>) { (in test(Int))

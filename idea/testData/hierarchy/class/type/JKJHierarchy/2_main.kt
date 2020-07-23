@@ -1,1 +1,0 @@
-public open class KotlinClass: SecondClass()

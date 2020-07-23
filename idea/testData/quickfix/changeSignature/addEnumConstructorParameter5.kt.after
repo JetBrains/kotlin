@@ -1,8 +1,0 @@
-// "Add parameter to constructor 'Foo'" "true"
-// DISABLE-ERRORS
-enum class Foo(i: Int) {
-    A(1),
-    B(2),
-    C(1),
-    D(1),
-}

@@ -1,4 +1,0 @@
-class Foo {
-    val foo: String = ""
-        @Deprecated("") get
-}

@@ -1,9 +1,0 @@
-// WITH_DEFAULT_VALUE: false
-fun foo(a: Int, s: String, i: () -> Int): Int {
-    val t = (a + 1) * 2
-    return i() - t
-}
-
-fun test() {
-    foo(1, "2") { 1 + 2 }
-}

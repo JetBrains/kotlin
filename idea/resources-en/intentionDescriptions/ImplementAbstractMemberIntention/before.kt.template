@@ -1,7 +1,0 @@
-interface A {
-    <spot>fun foo(): Int</spot>
-}
-
-class B : A {
-
-}

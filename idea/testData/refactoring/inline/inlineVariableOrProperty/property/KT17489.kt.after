@@ -1,9 +1,0 @@
-class Predicate(val x: Int) {
-    operator fun plusAssign(y: Int) {}
-
-    operator fun unaryMinus() = Predicate(-x)
-}
-
-fun test(p: Predicate) {
-    -p += 42
-}

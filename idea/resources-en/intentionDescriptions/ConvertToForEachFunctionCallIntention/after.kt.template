@@ -1,3 +1,0 @@
-fun foo() {
-    list.forEach { x -> x.bar() }
-}

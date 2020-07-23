@@ -1,7 +1,0 @@
-Resolved java class to descriptor: JavaSAM
-Searched references to JavaClass.takeSAM(JavaSAM sam) in non-Java files
-Searched references to JavaSAM in non-Kotlin files
-Searched references to pack.A
-Used plain search of parameter a of A(val a: Int, val b: String) in LocalSearchScope:
-    CLASS:A
-    { val (x, y) = it }

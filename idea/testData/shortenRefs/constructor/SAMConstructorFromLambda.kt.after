@@ -1,8 +1,0 @@
-import java.util.concurrent.Executors
-
-fun foo() {
-    Executors.callable(
-            Runnable { -> },
-            Unit
-    )
-}

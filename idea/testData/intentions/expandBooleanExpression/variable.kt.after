@@ -1,7 +1,0 @@
-fun test(b: Boolean): Boolean {
-    return <caret>if (b) {
-        true
-    } else {
-        false
-    }
-}

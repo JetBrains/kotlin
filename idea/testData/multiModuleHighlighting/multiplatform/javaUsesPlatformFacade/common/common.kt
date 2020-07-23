@@ -1,5 +1,0 @@
-package c
-
-fun common() {
-
-}

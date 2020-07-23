@@ -1,7 +1,0 @@
-fun foo() {}
-
-fun test() {
-    for (i in 1..4) {
-        /* aaa */ foo() // bbb
-    }
-}

@@ -1,4 +1,0 @@
-fun foo() {
-    val a = 1
-    val y = "x= ${a}_"
-}

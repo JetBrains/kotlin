@@ -1,8 +1,0 @@
-
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
-annotation class PropertyAnnotation(val a: Int = 0)
-
-class TestClass(text: String = "LoremIpsum") {
-    private @PropertyAnnotation(42)
-    val text = text
-}

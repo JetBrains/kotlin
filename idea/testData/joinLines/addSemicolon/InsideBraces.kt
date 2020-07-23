@@ -1,5 +1,0 @@
-fun foo() {
-    {<caret>
-        println()
-    }
-}

@@ -1,3 +1,0 @@
-3 fun foo(n: Int) = <bold>n + 1</bold> (in foo(Int))
-3 	<bold>fun foo(n: Int)</bold> = n + 1
-3 		fun foo(n: Int) = <bold>n + 1</bold> (in foo(Int))

@@ -1,4 +1,0 @@
-Function call 10 A(0) == A(1)
-Function call 11 A(0) != A(1)
-Function call 12 A(0) equals A(1)
-Function call 6 infix override fun equals(other: Any?): Boolean = other is A && other.n == n

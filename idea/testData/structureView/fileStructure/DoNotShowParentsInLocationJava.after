@@ -1,6 +1,0 @@
--DoNotShowParentsInLocationJava.kt
- -Third
-  equals(Any?): Boolean location=→Any
-  foo(): Unit location=→Second
-  hashCode(): Int location=→Any
-  toString(): String location=→Any

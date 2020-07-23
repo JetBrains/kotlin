@@ -1,3 +1,0 @@
-class C {
-    private val<caret> v = 1
-}

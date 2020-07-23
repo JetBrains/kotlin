@@ -1,5 +1,0 @@
-interface A {
-}
-
-class B: A {
-}

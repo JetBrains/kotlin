@@ -1,5 +1,0 @@
-import dependency.PseudoSAM
-
-fun foo() {
-    PseudoSAM.xxx
-}

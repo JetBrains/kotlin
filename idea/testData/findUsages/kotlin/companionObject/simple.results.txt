@@ -1,4 +1,0 @@
-Companion object 5 Foo.f()
-Companion object 6 val x = Foo
-Companion object 8 Foo.Companion.f()
-Companion object 9 val xx = Foo.Companion

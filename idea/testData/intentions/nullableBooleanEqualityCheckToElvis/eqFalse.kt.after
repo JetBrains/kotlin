@@ -1,6 +1,0 @@
-fun foo() {
-    val a: Boolean? = null
-    if (!(a ?: true)) {
-
-    }
-}

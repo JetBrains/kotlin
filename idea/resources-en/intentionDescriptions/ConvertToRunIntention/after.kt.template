@@ -1,7 +1,0 @@
-fun foo() {
-    <spot>a.run {
-        setFoo(1)
-        setBar(2)
-        setBaz(3)
-    }</spot>
-}

@@ -1,3 +1,0 @@
-fun foo(f: <caret>(Int, () -> Unit) -> String) {
-    f(1) {}
-}

@@ -1,4 +1,0 @@
-class My(val x: Int)
-fun foo(arg: Any) {
-    val y = if (arg is My) arg.x.hashCode() else 42
-}

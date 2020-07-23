@@ -1,9 +1,0 @@
-interface A<T> {
-    fun foo(value : T) : Unit = println(value)
-}
-
-class C : A<C> {
-    override fun foo(value: C) {
-        <selection><caret>super.foo(value)</selection>
-    }
-}

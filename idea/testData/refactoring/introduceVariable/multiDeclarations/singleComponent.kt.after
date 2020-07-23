@@ -1,7 +1,0 @@
-class A
-
-operator fun A.component1() = 1
-
-fun test() {
-    val a = A()
-}

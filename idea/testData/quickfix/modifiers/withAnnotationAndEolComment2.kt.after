@@ -1,6 +1,0 @@
-// "Remove 'final' modifier" "true"
-
-class A() {
-    @Deprecated("") // wd
-    constructor(i: Int): this()
-}

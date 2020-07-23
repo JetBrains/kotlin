@@ -1,6 +1,0 @@
-7 val x = <bold>1</bold> (in test())
-7 	<bold>val x</bold> = 1 (in test())
-9 		foo(<bold>x</bold>) (in test())
-2 			fun foo(<bold>n: Int</bold>) { (in foo(Int))
-3 				val y = <bold>n</bold> (in foo(Int))
-3 					<bold>val y</bold> = n (in foo(Int))

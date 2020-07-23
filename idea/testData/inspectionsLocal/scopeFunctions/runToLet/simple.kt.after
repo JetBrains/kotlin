@@ -1,7 +1,0 @@
-// WITH_RUNTIME
-// FIX: Convert to 'let'
-
-val x = "".<caret>let {
-    it.length
-    it.length
-}

@@ -1,3 +1,0 @@
-fun foo() {
-    val i = 42
-}

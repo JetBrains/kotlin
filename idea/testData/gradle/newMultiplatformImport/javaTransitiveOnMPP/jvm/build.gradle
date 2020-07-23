@@ -1,5 +1,0 @@
-apply plugin: 'kotlin-platform-jvm'
-
-dependencies {
-    compile project(':mpp')
-} 

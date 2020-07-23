@@ -1,6 +1,0 @@
-// "Create parameter 'foo'" "true"
-class Cyclic<E : Cyclic<E>>
-
-fun test(foo: Cyclic<*>) {
-    val c : Cyclic<*> = foo
-}

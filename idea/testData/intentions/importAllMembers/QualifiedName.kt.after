@@ -1,8 +1,0 @@
-import java.util.regex.Pattern.*
-
-// INTENTION_TEXT: "Import members from 'java.util.regex.Pattern'"
-// WITH_RUNTIME
-
-fun foo() {
-    CASE_INSENSITIVE
-}

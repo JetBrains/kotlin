@@ -1,7 +1,0 @@
-// WITH_RUNTIME
-// FIX: Replace with `mutableListOf` function
-import java.util.Arrays
-
-fun test() {
-    val a = mutableListOf(1, 3, null)
-}

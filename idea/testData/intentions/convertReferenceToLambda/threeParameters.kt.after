@@ -1,3 +1,0 @@
-fun foo(x: Int, y: Int, z: Int) = x - y / z
-
-val x = { x: Int, y: Int, z: Int -> foo(x, y, z) }

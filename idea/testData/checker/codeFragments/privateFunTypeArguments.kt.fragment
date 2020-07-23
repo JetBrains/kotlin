@@ -1,2 +1,0 @@
-@Suppress("INVISIBLE_MEMBER")
-"${MyClass().privateFun(1)} ${MyClass().privateFun<Int>(<error>"s"</error>)}"

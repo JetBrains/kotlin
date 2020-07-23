@@ -1,3 +1,0 @@
-fun foo()<spot>: String {
-    return "abc"
-}</spot>

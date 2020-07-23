@@ -1,4 +1,0 @@
-<caret>
-fun other() {
-
-}

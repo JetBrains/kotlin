@@ -1,3 +1,0 @@
-fun test() {
-    val x = J().foo(3, A(a + b))
-}

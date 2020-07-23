@@ -1,4 +1,0 @@
-{
-  "mainFile": "test.kt",
-  "intentionClass": "org.jetbrains.kotlin.idea.intentions.MoveMemberToCompanionObjectIntention"
-}

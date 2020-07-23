@@ -1,4 +1,0 @@
-actual class Foo {
-}
-
-actual val Foo.foo get() = 2

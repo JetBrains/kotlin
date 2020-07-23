@@ -1,8 +1,0 @@
-// EXTRACTION_TARGET: property with initializer
-
-fun test() = "123"
-
-private val s = test()
-
-val f = s + "456"
-val x = s

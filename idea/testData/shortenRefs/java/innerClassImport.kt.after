@@ -1,7 +1,0 @@
-import A.B
-
-// IMPORT_NESTED_CLASSES: true
-
-fun bar(s: String) {
-    val t: B = A().B(s)
-}

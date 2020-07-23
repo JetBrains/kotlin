@@ -1,7 +1,0 @@
-// FIX: Assign backing field
-class Test {
-    var foo: Int = 1
-        set(value) {
-            field = value
-        }
-}

@@ -1,1 +1,0 @@
-fun x(): Int = <selection>1</selection>

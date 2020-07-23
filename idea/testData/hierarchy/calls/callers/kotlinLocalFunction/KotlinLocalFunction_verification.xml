@@ -1,6 +1,0 @@
-<node text="KClient.client.foo(String)  ()" base="true">
-  <node text="KClient.client()  ()"/>
-  <node text="KClient.client.bar()  ()"/>
-  <node text="KClient.client.bar.localFun()  ()"/>
-  <node text="KClient.client.KClientObj  ()"/>
-</node>

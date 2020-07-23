@@ -1,1 +1,0 @@
-include ':common-lib1', ':common-lib2', ':jvm-lib1', ':jvm-lib2', ':jvm-app'

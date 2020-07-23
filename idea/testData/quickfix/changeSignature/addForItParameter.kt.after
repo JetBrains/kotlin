@@ -1,8 +1,0 @@
-// "Add parameter to constructor 'Foo'" "true"
-// WITH_RUNTIME
-
-class Foo(s: String)
-
-fun test(name: String) {
-    name.also { Foo(it) }
-}

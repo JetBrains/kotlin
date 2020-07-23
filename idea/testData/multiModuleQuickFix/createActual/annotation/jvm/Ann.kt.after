@@ -1,2 +1,0 @@
-// Ann: to be implemented
-actual annotation class Ann actual constructor(actual val x: Int, actual val y: String)

@@ -1,4 +1,0 @@
-// "Replace annotation with kotlin.annotation.Retention" "true"
-
-@<caret>Retention(AnnotationRetention.BINARY)
-annotation class Foo

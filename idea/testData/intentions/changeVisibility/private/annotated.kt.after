@@ -1,4 +1,0 @@
-annotation class Ann
-
-@Ann
-private annotation class My

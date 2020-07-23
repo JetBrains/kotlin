@@ -1,3 +1,0 @@
-fun foo(x: String) {
-    val y = listOf(x)<caret>
-}

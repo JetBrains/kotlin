@@ -1,5 +1,0 @@
-// HIGHLIGHT: INFORMATION
-// PROBLEM: Use expression body instead of return
-
-fun simple(): Int = 1 *
-       (2 + 3)

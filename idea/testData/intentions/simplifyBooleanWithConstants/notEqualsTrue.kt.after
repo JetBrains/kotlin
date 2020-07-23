@@ -1,5 +1,0 @@
-fun use(arg: Boolean) {
-    if (!arg) {
-
-    }
-}

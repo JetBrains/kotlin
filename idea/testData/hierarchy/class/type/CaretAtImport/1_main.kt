@@ -1,2 +1,0 @@
-import test.A<caret>
-

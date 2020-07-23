@@ -1,3 +1,0 @@
-package unexported
-
-class Unexported

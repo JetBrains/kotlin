@@ -1,3 +1,0 @@
-class C(internal val p: Int) {
-    public fun foo(){}
-}

@@ -1,9 +1,0 @@
-// SUGGESTED_NAMES: b, getX
-fun foo(param: Int): String {
-    val x = "a${b()}123"
-    val x = "aTRUE123"
-    val z = true
-    return "ab${b()}def"
-}
-
-private fun b() = true

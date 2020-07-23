@@ -1,3 +1,0 @@
-[NotNull Values]
-12 	open fun bar(<bold>p: Int</bold>) { (in C.bar(Int))
-12 		open fun bar(<bold>p: Int</bold>) { (in C.bar(Int))

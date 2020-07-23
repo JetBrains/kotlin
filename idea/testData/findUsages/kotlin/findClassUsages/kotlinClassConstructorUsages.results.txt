@@ -1,5 +1,0 @@
-[kotlinClassConstructorUsages.0.kt] Unclassified usage 6 constructor(name: String): this() {
-[kotlinClassConstructorUsages.1.kt] Supertype 24 object ClientObject: Server() {
-[kotlinClassConstructorUsages.1.kt] Supertype 5 class Client: Server() {
-[kotlinClassConstructorUsages.1.kt] Unclassified usage 29 constructor(name: String) {
-[kotlinClassConstructorUsages.1.kt] Unclassified usage 33 constructor(): super() {

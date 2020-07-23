@@ -1,4 +1,0 @@
-package bar
-
-class CrExtended
-

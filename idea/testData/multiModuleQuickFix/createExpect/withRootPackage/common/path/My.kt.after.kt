@@ -1,1 +1,0 @@
-expect class `My.kt.after`

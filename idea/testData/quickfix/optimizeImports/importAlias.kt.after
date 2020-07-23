@@ -1,9 +1,0 @@
-// "Optimize imports" "true"
-
-import A as B
-
-class A
-
-fun foo() {
-    B()
-}

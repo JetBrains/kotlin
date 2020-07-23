@@ -1,9 +1,0 @@
-// "Create function 'bar'" "true"
-
-fun foo(block: (Int) -> String) {
-    bar(block)
-}
-
-fun bar(block: (Int) -> String) {
-    TODO("Not yet implemented")
-}

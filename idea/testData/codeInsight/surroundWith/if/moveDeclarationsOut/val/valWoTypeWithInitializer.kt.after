@@ -1,7 +1,0 @@
-fun foo() {
-    val a = if () {
-        "aaa"
-    }
-
-    a.charAt(1)
-}

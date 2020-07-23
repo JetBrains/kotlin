@@ -1,1 +1,0 @@
-fun test(a: LongArray) = a.size

@@ -1,5 +1,0 @@
-// PROBLEM: Modifiers should follow annotations
-annotation class Test
-
-@Test
-public /* this is a test */ class MyTest

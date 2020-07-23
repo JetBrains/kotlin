@@ -1,6 +1,0 @@
-fun foo(arg: Any): Int {
-    // 1
-    return arg as? Int
-    // 2
-        ?: 10
-}

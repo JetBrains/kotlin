@@ -1,9 +1,0 @@
-// "Make 'Data' public" "true"
-
-class Other {
-    open class Data(val x: Int)
-}
-
-class Another {
-    protected class First : Other.Data(42)
-}

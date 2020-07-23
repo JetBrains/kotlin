@@ -1,7 +1,0 @@
--InheritedMembersWithSubstitutedTypes.kt
- -Third
-  a: U location=→Second
-  equals(Any?): Boolean location=→Any
-  foo(T): Unit location=→First
-  hashCode(): Int location=→Any
-  toString(): String location=→Any

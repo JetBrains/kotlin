@@ -1,3 +1,0 @@
-open class C(p1: Int, p2: Int)
-
-class D : <caret>C(p1 = 1, p2 = 2)

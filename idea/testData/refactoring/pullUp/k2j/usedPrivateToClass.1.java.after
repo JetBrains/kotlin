@@ -1,4 +1,0 @@
-abstract class A {
-
-    protected abstract int foo();
-}

@@ -1,4 +1,0 @@
-New instance creation 11 new A(1, 1.0);
-New instance creation 15 new A(1, 1.0, "1");
-New instance creation 3 new A();
-New instance creation 7 new A(1);

@@ -1,7 +1,0 @@
-class A {
-    companion object {
-        fun foo() {
-
-        }
-    }
-}

@@ -1,3 +1,0 @@
-fun conflict() {}
-class Convertable {}
-fun <caret>conflict(convertable: Convertable) {}

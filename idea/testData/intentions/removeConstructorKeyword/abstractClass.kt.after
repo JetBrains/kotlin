@@ -1,1 +1,0 @@
-abstract class Base(val x: Int)

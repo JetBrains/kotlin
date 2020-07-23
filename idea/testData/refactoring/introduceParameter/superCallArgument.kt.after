@@ -1,9 +1,0 @@
-class A(val i: Int = C.c) : B({ "$i" })
-
-class C() {
-    companion object {
-        val c = 23
-    }
-}
-
-open class B(param: () -> String)

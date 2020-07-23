@@ -1,6 +1,0 @@
-6 <bold>val v</bold> = dataClass.value1 (in foo(DataClass))
-6 	val v = <bold>dataClass.value1</bold> (in foo(DataClass))
-3 		data class DataClass(<bold>val value1: Int</bold>, val value2: Int) (in DataClass)
-10 			val dataClass = DataClass(<bold>1</bold>, 2) (in bar())
-12 			foo(dataClass.copy(value1 = <bold>10</bold>)) (in bar())
-14 			foo(DataClass(value1 = <bold>1</bold>, value2 = 2)) (in bar())

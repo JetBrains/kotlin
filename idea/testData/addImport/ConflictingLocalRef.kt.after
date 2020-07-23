@@ -1,8 +1,0 @@
-// IMPORT: test.a7
-import test.*
-
-fun test() {
-    val kotlinType = ""
-    kotlinType
-    a7()
-}

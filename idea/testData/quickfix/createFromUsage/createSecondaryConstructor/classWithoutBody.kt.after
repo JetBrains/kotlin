@@ -1,9 +1,0 @@
-// "Create secondary constructor" "true"
-
-class A {
-    constructor(i: Int)
-}
-
-fun test() {
-    val a = A(1)
-}

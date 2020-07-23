@@ -1,3 +1,0 @@
-fun foo() {
-    val ff = { x -> x }
-}

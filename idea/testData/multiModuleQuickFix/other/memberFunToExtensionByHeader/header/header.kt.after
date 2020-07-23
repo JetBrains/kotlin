@@ -1,6 +1,0 @@
-// "Convert member to extension" "true"
-
-expect class Foo {
-}
-
-expect fun Foo.foo(n: Int)

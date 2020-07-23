@@ -1,7 +1,0 @@
-Resolve target: value-parameter p: kotlin.Any
-----------------------------------------------
-val error = "error"
-fun foo(p: Any) {
-    /* STATEMENT DELETED: if (p !is String) { print(error) } */
-    println(<caret>p.size)
-}

@@ -1,5 +1,0 @@
-// INTENTION_TEXT: Remove 'private' modifier
-class Test {
-    private var foo: String = ""
-        <caret>private set
-}

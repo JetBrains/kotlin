@@ -1,3 +1,0 @@
-class C {
-    <caret>internal fun foo(){}
-}

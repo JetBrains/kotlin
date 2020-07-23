@@ -1,3 +1,0 @@
-// WITH_RUNTIME
-
-private fun foo() = 1

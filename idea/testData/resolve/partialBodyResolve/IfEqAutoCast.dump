@@ -1,6 +1,0 @@
-Resolve target: value-parameter o: kotlin.String? smart-cast to kotlin.String
-----------------------------------------------
-fun foo(o: String?, o1: String) {
-    if (o != o1) return
-    <caret>o.hashCode()
-}

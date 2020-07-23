@@ -1,8 +1,0 @@
-// MOVE: down
-fun foo() {
-    fun bar1() {}
-    fun bar2() {}
-    val x = 1 +
-            <caret>2 +
-            3
-}

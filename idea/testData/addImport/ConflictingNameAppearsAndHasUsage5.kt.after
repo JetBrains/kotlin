@@ -1,8 +1,0 @@
-// IMPORT: java.util.Calendar
-package p
-
-import dependency.AClass.*
-import dependency.AClass.Date
-import java.util.*
-
-val d = Date()

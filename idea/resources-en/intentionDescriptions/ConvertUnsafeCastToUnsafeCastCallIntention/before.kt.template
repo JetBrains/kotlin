@@ -1,3 +1,0 @@
-fun test(foo: dynamic) {
-    val s = <spot>foo as String</spot>
-}

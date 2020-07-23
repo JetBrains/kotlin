@@ -1,3 +1,0 @@
-fun foo() {
-    <spot>bar(2) { it * 3 }</spot>
-}

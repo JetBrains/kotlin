@@ -1,2 +1,0 @@
-fooBase()
-fooImplicitBase()

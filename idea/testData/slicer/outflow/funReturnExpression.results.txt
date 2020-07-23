@@ -1,4 +1,0 @@
-4 return <bold>n</bold> (in foo(Int))
-3 	<bold>fun foo(n: Int): Int</bold> {
-8 		val x = <bold>foo(1)</bold> (in test())
-8 			<bold>val x</bold> = foo(1) (in test())

@@ -1,7 +1,0 @@
-fun test(value: Any): String {
-    return when (value) {
-        is String -> "$value is String"
-        is Int -> "$value is Int"
-        else -> "$value"
-    }
-}

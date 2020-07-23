@@ -1,9 +1,0 @@
-// NAME: AN
-class A<X, Y>
-
-typealias AN = A<Int, String>?
-
-// SIBLING:
-fun foo() {
-    val a: AN
-}

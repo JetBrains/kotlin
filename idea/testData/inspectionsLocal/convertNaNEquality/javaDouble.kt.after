@@ -1,5 +1,0 @@
-// RUNTIME_WITH_FULL_JDK
-
-fun test() {
-    val t = 5.0.isNaN()
-}

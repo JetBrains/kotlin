@@ -1,9 +1,0 @@
-class B extends A {
-    void bar() {
-        foo();
-    }
-
-    private void foo() {
-
-    }
-}

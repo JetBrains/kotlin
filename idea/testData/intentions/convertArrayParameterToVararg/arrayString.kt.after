@@ -1,5 +1,0 @@
-// INTENTION_TEXT: Convert to vararg parameter (may break code)
-// DISABLE-ERRORS
-fun test(vararg a: String) {
-    a[0] = ""
-}

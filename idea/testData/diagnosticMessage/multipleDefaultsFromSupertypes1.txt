@@ -1,2 +1,0 @@
-<!-- multipleDefaultsFromSupertypes1 -->
-More than one overridden descriptor declares a default value for 'value-parameter x: Int = ... defined in multipleDefaultsFromSupertypes.foo'. As the compiler can not make sure these values agree, this is not allowed.

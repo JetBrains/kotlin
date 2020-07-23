@@ -1,2 +1,0 @@
-Unclassified usage 3 Foo.foo(2);
-Unclassified usage 4 Foo.foo();

@@ -1,3 +1,0 @@
-fun foo(i: Int, i1: Int = 1) {
-    val u = i1 + i
-}

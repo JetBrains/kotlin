@@ -1,1 +1,0 @@
-val s = "foo".le<caret>

@@ -1,2 +1,0 @@
-// "Remove 'out' modifier" "true"
-fun <String> foo() { }

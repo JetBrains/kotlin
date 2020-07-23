@@ -1,7 +1,0 @@
-fun <spot>String</spot>.foo(n: Int): Int {
-    return length() - n
-}
-
-fun test() {
-    "1".foo(2)
-}

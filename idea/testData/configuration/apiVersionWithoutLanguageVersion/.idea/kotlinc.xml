@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="Kotlin2JvmCompilerArguments">
-    <option name="jvmTarget" value="1.8" />
-  </component>
-  <component name="KotlinCommonCompilerArguments">
-    <option name="apiVersion" value="1.1" />
-  </component>
-</project>

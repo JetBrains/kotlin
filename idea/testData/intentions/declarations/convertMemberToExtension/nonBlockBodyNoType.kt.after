@@ -1,4 +1,0 @@
-class Owner {
-}
-
-fun Owner.<caret>f() = 1

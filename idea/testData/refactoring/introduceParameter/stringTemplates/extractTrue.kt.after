@@ -1,6 +1,0 @@
-fun foo(param: Int, b: Boolean = true): String {
-    val x = "a${b}123"
-    val x = "aTRUE123"
-    val z = true
-    return "ab${b}def"
-}

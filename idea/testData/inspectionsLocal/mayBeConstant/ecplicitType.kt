@@ -1,1 +1,0 @@
-val <caret>foo: Int = 0

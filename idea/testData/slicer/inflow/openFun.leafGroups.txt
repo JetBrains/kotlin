@@ -1,4 +1,0 @@
-9 other?.bar(<bold>p + 1</bold>) (in C.foo(Int))
-13 	println(<bold>p</bold> + 2) (in C.bar(Int))
-12 		open fun bar(<bold>p: Int</bold>) { (in C.bar(Int))
-9 			other?.bar(<bold>p + 1</bold>) (in C.foo(Int))

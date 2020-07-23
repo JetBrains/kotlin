@@ -1,4 +1,0 @@
-class Test {
-    internal var foo: String = ""
-        <caret>private set
-}

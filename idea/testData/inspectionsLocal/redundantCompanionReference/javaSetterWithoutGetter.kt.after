@@ -1,9 +1,0 @@
-class Foo : Bar() {
-    fun test() {
-        bar = "baz"
-    }
-
-    companion object {
-        var bar: String = "bar"
-    }
-}

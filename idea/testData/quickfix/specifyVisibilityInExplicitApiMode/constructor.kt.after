@@ -1,7 +1,0 @@
-// "Make '<init>' public explicitly" "true"
-// COMPILER_ARGUMENTS: -Xexplicit-api=strict
-
-public class Foo5 {
-    public constructor() {}
-}
-

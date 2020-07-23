@@ -1,3 +1,0 @@
-if (a && b) {
-    println("a and b")
-}

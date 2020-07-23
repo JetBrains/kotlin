@@ -1,4 +1,0 @@
-annotation class SuperAnnotation
-
-class TestClass(@property:SuperAnnotation val text: String) {
-}

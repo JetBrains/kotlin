@@ -1,9 +1,0 @@
-// WITH_RUNTIME
-fun main() {
-    val list = 1..4
-
-    for (x in list) {
-        if (x != 2) continue
-        list
-    }
-}

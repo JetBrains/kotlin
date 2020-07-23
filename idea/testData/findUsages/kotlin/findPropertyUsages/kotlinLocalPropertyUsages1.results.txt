@@ -1,1 +1,0 @@
-Value read 6 return bar

@@ -1,3 +1,0 @@
-package lib
-
-class LibType

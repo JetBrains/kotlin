@@ -1,9 +1,0 @@
-// RUNTIME_WITH_KOTLIN_TEST
-
-import kotlin.test.assertNotEquals
-
-fun foo() {
-    val a = "a"
-    val b = "b"
-    assertNotEquals(a, b)
-}

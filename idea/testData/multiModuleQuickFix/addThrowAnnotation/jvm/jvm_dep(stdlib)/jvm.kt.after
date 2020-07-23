@@ -1,6 +1,0 @@
-// "Add '@Throws' annotation" "true"
-
-@Throws(Throwable::class)
-fun test() {
-    <caret>throw Throwable()
-}

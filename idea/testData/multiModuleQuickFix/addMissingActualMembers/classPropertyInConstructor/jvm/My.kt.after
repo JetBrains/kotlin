@@ -1,7 +1,0 @@
-// "Add missing actual members" "true"
-// DISABLE-ERRORS
-
-actual class <caret>My(actual val name: String) {
-    actual val age: String
-        get() = TODO("Not yet implemented")
-}

@@ -1,3 +1,0 @@
-private class Foo {
-    fun bar() {}
-}

@@ -1,5 +1,0 @@
-expect class A<T> {
-    class C<F>
-    class D<F : Any>
-    class E<F : Any?>
-}

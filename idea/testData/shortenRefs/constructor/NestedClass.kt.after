@@ -1,3 +1,0 @@
-import java.util.concurrent.locks.ReentrantReadWriteLock
-
-val x = ReentrantReadWriteLock.WriteLock()

@@ -1,3 +1,0 @@
-package incorrect
-
-class Some

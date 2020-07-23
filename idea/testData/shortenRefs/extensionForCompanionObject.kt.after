@@ -1,6 +1,0 @@
-import dependency.AClass
-import dependency.extFun
-
-fun foo() {
-    AClass.extFun()
-}

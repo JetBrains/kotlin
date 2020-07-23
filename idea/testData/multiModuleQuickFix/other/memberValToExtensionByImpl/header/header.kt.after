@@ -1,4 +1,0 @@
-expect class Foo {
-}
-
-expect val Foo.foo: Int

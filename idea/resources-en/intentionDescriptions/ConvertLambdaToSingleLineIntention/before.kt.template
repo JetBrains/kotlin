@@ -1,3 +1,0 @@
-list.forEach { item ->
-    println(item)
-}

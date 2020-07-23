@@ -1,7 +1,0 @@
- library.kt
-class <1>LClass
-
-class <3>A
-class B
-
-fun LClass.<2>f(a: A) {

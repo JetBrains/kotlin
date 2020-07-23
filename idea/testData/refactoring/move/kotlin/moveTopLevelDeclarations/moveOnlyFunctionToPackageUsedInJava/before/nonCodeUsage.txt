@@ -1,4 +1,0 @@
-
-//Here we are using oldPackage.foo name for test pure kotlin naming of top level kotlin function
-
-//And we are using oldPackage.FunKt.foo name for test java naming of top level kotlin function

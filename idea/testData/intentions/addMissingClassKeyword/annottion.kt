@@ -1,1 +1,0 @@
-annotation <caret>Foo

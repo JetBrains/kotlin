@@ -1,6 +1,0 @@
-// "Make bar suspend" "true"
-
-suspend fun foo() {}
-suspend fun bar() {
-    foo()
-}

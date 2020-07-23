@@ -1,1 +1,0 @@
-impl fun foo() = 42

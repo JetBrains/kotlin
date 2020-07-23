@@ -1,8 +1,0 @@
-fun foo(i: Int) { }
-
-fun test() {
-    foo(i())
-}
-
-private fun i() = (1
-        + 2)

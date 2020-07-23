@@ -1,8 +1,0 @@
-fun a(op: (Int) -> Int) {}
-fun b() {
-    a {it}
-    a {
-        val it1 = it
-        it1
-    }
-}

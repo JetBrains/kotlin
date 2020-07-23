@@ -1,2 +1,0 @@
-val x: Int
-    get() = 1

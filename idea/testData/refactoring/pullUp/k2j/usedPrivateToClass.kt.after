@@ -1,6 +1,0 @@
-class B: A() {
-    // INFO: {"checked": "true"}
-    override fun foo(): Int = 1
-
-    fun bar() = foo() + 1
-}

@@ -1,5 +1,0 @@
-class Foo
-open class SomethingBase {
-    // INFO: {checked: "true"}
-    var independent = 1
-}

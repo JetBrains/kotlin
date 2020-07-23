@@ -1,7 +1,0 @@
-// WITH_RUNTIME
-
-val x = hashSetOf("abc").<caret>run {
-    forEach {
-        println(it)
-    }
-}

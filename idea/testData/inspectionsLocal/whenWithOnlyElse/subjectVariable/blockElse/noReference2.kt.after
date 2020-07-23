@@ -1,9 +1,0 @@
-// WITH_RUNTIME
-fun test() {
-    use("")
-    foo()
-}
-
-fun use(s: String) {}
-
-fun foo() {}

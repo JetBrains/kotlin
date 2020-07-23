@@ -1,4 +1,0 @@
-abstract class Owner {
-}
-
-internal fun Owner.<caret>f() = 1

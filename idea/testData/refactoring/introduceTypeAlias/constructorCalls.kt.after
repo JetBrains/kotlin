@@ -1,8 +1,0 @@
-// NAME: B
-open class A
-typealias MyA = B
-typealias B = A
-
-// SIBLING:
-fun fA(p: B): MyA = MyA()
-fun fB(p: B): B = B()

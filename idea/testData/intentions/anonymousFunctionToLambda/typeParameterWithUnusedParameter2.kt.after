@@ -1,5 +1,0 @@
-fun <T> foo(fn: (String) -> T) {}
-
-fun test() {
-    foo { }
-}

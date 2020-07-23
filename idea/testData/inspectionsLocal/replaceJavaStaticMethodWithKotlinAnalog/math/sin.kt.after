@@ -1,6 +1,0 @@
-import kotlin.math.sin
-
-// WITH_RUNTIME
-fun test(x: Double) {
-    sin(x)
-}

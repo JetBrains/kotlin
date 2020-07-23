@@ -1,8 +1,0 @@
-{
-  "type": "KOTLIN_FUNCTION",
-  "classId": "/A",
-  "oldName": "equals",
-  "newName": "foo",
-  "mainFile": "equals.kt",
-  "skipSubstitute": true
-}

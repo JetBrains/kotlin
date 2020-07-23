@@ -1,3 +1,0 @@
-fun main() {
-    val rabbit = 3 == 5 || 1 == 2
-}

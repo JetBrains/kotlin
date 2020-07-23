@@ -1,6 +1,0 @@
-{
-  "mainFile": "B/src/test2/pack/Bar.kt",
-  "type": "MOVE_DIRECTORY_WITH_CLASSES",
-  "sourceDir": "B/src/test2/pack",
-  "targetDir": "A/src/test"
-}

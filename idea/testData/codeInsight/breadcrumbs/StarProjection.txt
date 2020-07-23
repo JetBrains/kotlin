@@ -1,4 +1,0 @@
-Crumbs:
-  foo()
-Tooltips:
-  function <b><code>foo(A&lt;Int, *, String&gt;)</code></b>

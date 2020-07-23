@@ -1,9 +1,0 @@
-class B extends A implements Z {
-    public String getFoo() {
-        return "foo";
-    }
-
-    public void setFoo(String value) {
-
-    }
-}

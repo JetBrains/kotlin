@@ -1,5 +1,0 @@
-Implicit 'invoke' 11 JavaClassInvoke.INSTANCE()
-Implicit 'invoke' 12 JavaClassInvoke.AnotherOther.INSTANCE()
-Implicit 'invoke' 2 c()
-Implicit 'invoke' 6 o()
-Implicit 'invoke' 7 JavaClassInvoke.OtherJavaClass.OJC()

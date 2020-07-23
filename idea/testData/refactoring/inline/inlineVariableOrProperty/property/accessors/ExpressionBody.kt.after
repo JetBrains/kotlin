@@ -1,5 +1,0 @@
-import java.util.*
-
-fun foo() {
-    println(Random().nextInt())
-}

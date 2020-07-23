@@ -1,1 +1,0 @@
-fun a() = try<caret>

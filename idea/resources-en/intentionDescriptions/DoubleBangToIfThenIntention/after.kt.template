@@ -1,4 +1,0 @@
-foo(if (maybeSomething != null)
-        maybeSomething
-    else
-        throw NullPointerException("expression 'maybeSomething' must not be null") )

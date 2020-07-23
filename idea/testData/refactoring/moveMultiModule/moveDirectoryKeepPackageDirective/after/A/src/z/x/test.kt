@@ -1,5 +1,0 @@
-package y
-
-fun foo() {
-
-}

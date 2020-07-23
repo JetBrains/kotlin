@@ -1,8 +1,0 @@
-class C {
-    var s<selection>: Int</selection><caret> = 1
-
-    init {
-        s.hashCode()
-        s = 2
-    }
-}

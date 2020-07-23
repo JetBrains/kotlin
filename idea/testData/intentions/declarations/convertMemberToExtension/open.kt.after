@@ -1,7 +1,0 @@
-// WITH_RUNTIME
-open class Owner {
-}
-
-fun Owner.f() {
-
-}

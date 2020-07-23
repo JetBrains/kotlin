@@ -1,7 +1,0 @@
-// IS_APPLICABLE: true
-
-fun nullable() {}
-
-fun bar() {}
-
-fun foo(f: Boolean) = nullable() ?: if (f) bar() else bar()

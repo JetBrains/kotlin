@@ -1,1 +1,0 @@
-Function already exists: 'public final fun inner2(x: Int, y: Int): Unit defined in outer'

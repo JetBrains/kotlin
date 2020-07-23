@@ -1,6 +1,0 @@
-fun foo(f: (Int) -> Boolean) {
-    f(1)
-}
-fun test() {
-    foo { i -> i > 0 }
-}

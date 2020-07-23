@@ -1,1 +1,0 @@
-Function 'fun refer(): Int' uses function 'fun privateFun(): Int' which won't be accessible from the subclass.

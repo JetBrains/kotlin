@@ -1,3 +1,0 @@
-// "Convert extension property initializer to getter" "true"
-val String.foo: Int
-    get() = 0

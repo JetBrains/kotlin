@@ -1,5 +1,0 @@
-annotation class X(val s: String)
-
-@X("")
-val foo<caret>: String
-    get() = ""

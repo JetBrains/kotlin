@@ -1,3 +1,0 @@
-<inspection_tool class="RemoveRedundantQualifierNameInspection" enabled="true" enabled_by_default="true">
-  <option name="unwrapFakeOverrides" value="false"/>
-</inspection_tool>

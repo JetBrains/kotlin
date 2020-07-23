@@ -1,1 +1,0 @@
-val isInt: (Any) -> Boolean = <caret>{ a -> Int::class.isInstance(a) }

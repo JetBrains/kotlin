@@ -1,5 +1,0 @@
-package oldPackage
-
-fun other() {
-
-}

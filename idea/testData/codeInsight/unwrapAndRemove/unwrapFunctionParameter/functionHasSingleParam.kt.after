@@ -1,9 +1,0 @@
-// OPTION: 0
-fun test() {
-    val i = 1
-    foo(1<caret>)
-}
-
-fun foo(i: Int) {}
-
-fun bar(i: Int) = 1

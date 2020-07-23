@@ -1,6 +1,0 @@
-fun g(): Int = TODO()
-
-fun main(args: Array<String>) {
-    println(1)
-    println(g())
-}

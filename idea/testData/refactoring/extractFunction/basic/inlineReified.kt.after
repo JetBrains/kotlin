@@ -1,7 +1,0 @@
-inline fun <reified T> foo() {
-    __dummyTestFun__<T>()
-}
-
-inline fun <reified T> __dummyTestFun__() {
-    T::class
-}

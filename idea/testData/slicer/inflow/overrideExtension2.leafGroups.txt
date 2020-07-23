@@ -1,8 +1,0 @@
-18 <bold>2</bold>.extensionFun() (in Derived.derivedF())
-4 	open fun <bold>Int</bold>.extensionFun() { (in extensionFun() on Int)
-18 		<bold>2</bold>.extensionFun() (in Derived.derivedF())
-
-9 <bold>1</bold>.extensionFun() (in Base.baseF())
-4 	open fun <bold>Int</bold>.extensionFun() { (in extensionFun() on Int)
-9 		<bold>1</bold>.extensionFun() (in Base.baseF())
-

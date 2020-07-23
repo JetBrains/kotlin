@@ -1,3 +1,0 @@
-fun foo(thread: Thread) {
-    <spot>thread.daemon = true</spot>
-}

@@ -1,9 +1,0 @@
-open class K
-
-fun foo(n: Int) {
-    val x = O(n)
-}
-
-class O(private val n: Int) : K() {
-    fun bar() = n
-}

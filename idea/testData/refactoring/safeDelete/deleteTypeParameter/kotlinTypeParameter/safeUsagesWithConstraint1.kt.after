@@ -1,3 +1,0 @@
-class A<in Y: Number, Z>
-
-val a = A<Int, Any>()

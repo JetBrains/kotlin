@@ -1,8 +1,0 @@
-6 val result = <bold>1</bold>.property (in bar())
-3 	expect val <bold>Int</bold>.property: Any (in property on Int)
-1 		actual val <bold>Int</bold>.property: Any (in property on Int)
-2 			get() = <bold>this</bold> (in property.get on Int)
-2 				<bold>get() = this</bold> (in property on Int)
-6 					val result = 1.<bold>property</bold> (in bar())
-6 						<bold>val result</bold> = 1.property (in bar())
-7 							println(<bold>result</bold>) (in bar())

@@ -1,7 +1,0 @@
-{
-  "type": "MARKED_ELEMENT",
-  "mainFile": "test/test.kt",
-  "newName": "AliasNew",
-  "byRef": "true",
-  "withRuntime": "true"
-}

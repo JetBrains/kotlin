@@ -1,5 +1,0 @@
-{
-    "inspectionClass": "org.jetbrains.kotlin.idea.inspections.KotlinInternalInJavaInspection",
-    "withRuntime": "true",
-    "isMultiModule": "true"
-}

@@ -1,3 +1,0 @@
-class K : I, II {
-
-}

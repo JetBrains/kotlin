@@ -1,6 +1,0 @@
-fun foo() {
-    <spot>val a = MyClass()
-    a.setFoo(1)
-    a.setBar(2)
-    a.setBaz(3)</spot>
-}

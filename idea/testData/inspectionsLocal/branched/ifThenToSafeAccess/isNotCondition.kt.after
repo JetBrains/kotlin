@@ -1,2 +1,0 @@
-// HIGHLIGHT: INFORMATION
-fun foo(arg: Any) = (arg as? String)?.length

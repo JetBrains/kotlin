@@ -1,4 +1,0 @@
-class Test {
-    var foo: String = ""
-        <caret>internal set
-}

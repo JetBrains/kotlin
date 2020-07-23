@@ -1,6 +1,0 @@
-{
-  "type": "JAVA_METHOD",
-  "classId": "testing/rename/A",
-  "methodSignature": "void first()",
-  "newName": "second"
-}

@@ -1,9 +1,0 @@
-// HIGHLIGHT: INFORMATION
-
-fun test(): String {
-    <caret>return try {
-        "success"
-    } catch (e: Exception) {
-        throw e
-    }
-}

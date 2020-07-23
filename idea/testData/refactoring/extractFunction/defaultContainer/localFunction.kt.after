@@ -1,9 +1,0 @@
-fun foo(a: Int, b: Int): Int {
-    fun i() = a + b - 1
-
-    fun bar() {
-        return i()
-    }
-
-    return bar()
-}

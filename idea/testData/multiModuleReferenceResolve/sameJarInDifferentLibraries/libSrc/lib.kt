@@ -1,3 +1,0 @@
-package library
-
-fun foo() {}

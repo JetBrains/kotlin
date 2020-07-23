@@ -1,7 +1,0 @@
-// "Safe delete 'something'" "true"
-
-abstract class Abstract {
-}
-
-class Test: Abstract() {
-}

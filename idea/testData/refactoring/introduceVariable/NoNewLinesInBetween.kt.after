@@ -1,5 +1,0 @@
-fun bar(): Int = 1
-
-fun foo() {
-    val bar = bar();
-}

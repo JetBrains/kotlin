@@ -1,4 +1,0 @@
-// "Remove explicitly specified return type of enclosing function 'foo'" "true"
-fun foo() {
-    return<caret>
-}

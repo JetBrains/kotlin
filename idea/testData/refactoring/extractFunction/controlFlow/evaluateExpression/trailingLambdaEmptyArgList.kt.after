@@ -1,8 +1,0 @@
-fun <T> Array<T>.check(f: (T) -> Boolean): Boolean = false
-
-// SIBLING:
-fun foo(t: Array<Int>) {
-    t.check(function())
-}
-
-private fun function(): (Int) -> Boolean = { it + 1 > 1 }

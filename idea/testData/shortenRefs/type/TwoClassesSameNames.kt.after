@@ -1,6 +1,0 @@
-import java.util.Date
-import java.util.HashMap
-
-class A {
-    val x: HashMap<Date, dependency.Date>
-}

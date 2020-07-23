@@ -1,3 +1,0 @@
-Function call 10 a.inc()
-Function call 11 ++a
-Function call 12 a++

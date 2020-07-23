@@ -1,9 +1,0 @@
-package test
-
-class A {
-
-}
-
-fun A.foo(b: String, c: Any) {
-
-}

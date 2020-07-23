@@ -1,8 +1,0 @@
-// "Import" "true"
-package bar
-
-import foo.foo
-
-fun use() {
-    foo()
-}

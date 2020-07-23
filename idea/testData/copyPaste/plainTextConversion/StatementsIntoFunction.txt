@@ -1,2 +1,0 @@
-    ArrayList<String> list = new ArrayList<String>();
-    list.add(1);

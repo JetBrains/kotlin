@@ -1,9 +1,0 @@
-fun test() {
-    if (true) {
-        __dummyTestFun__()
-    }
-}
-
-private fun __dummyTestFun__() {
-    println("Hello world!")
-}

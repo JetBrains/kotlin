@@ -1,8 +1,0 @@
-14 1.foo(<bold>s</bold>) (in bar(String) on I)
-4 	fun Int.foo(<bold>p: Any</bold>) (in foo(Any) on Int)
-3 		public void foo(int receiver, Object <bold>p</bold>) {
-4 			System.out.println(<bold>p</bold>);
-9 			val v = <bold>p</bold> // this usage will be shown twice due to bug in Java implementation: https://youtrack.jetbrains.com/issue/IDEA-236958 (in foo(Any) on Int)
-9 				<bold>val v</bold> = p // this usage will be shown twice due to bug in Java implementation: https://youtrack.jetbrains.com/issue/IDEA-236958 (in foo(Any) on Int)
-8 		override fun Int.foo(<bold>p: Any</bold>) { (in foo(Any) on Int)
-9 			DUPLICATE: val v = <bold>p</bold> // this usage will be shown twice due to bug in Java implementation: https://youtrack.jetbrains.com/issue/IDEA-236958 (in foo(Any) on Int)

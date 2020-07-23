@@ -1,8 +1,0 @@
-open class F
-class B<out T>
-class K<out T>
-
-private fun check(): () -> B<K<F>> = {
-    class Local : F()
-    B<K<Local>>()
-}

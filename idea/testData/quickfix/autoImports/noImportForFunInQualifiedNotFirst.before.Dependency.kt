@@ -1,4 +1,0 @@
-package some
-
-fun externalFun() {
-}

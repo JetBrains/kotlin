@@ -1,7 +1,0 @@
-// WITH_RUNTIME
-
-fun test() {
-    Foo().apply {
-        <caret>isB = true
-    }
-}

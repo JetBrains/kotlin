@@ -1,6 +1,0 @@
-fun fact(x: Int): Int {
-    return if (x < 2) 1 else {
-        val x1 = x - 1
-        if (x1 < 2) 1 else fact(x1 - 1)
-    }
-}

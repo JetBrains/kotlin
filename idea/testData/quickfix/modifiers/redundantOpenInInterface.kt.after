@@ -1,5 +1,0 @@
-// "Remove redundant 'open' modifier" "true"
-
-interface My {
-    fun foo()
-}

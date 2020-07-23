@@ -1,9 +1,0 @@
-4 val x = foo { <bold>1</bold> } (in test())
-4 	val x = foo <bold>{ 1 }</bold> (in test())
-4 		[LAMBDA CALLS] val x = foo <bold>{ 1 }</bold> (in test())
-7 			[LAMBDA CALLS] fun foo(<bold>callback: () -> Int</bold>): Int { (in foo(() -> Int))
-8 				[LAMBDA CALLS] return <bold>callback</bold>.invoke() (in foo(() -> Int))
-8 					return callback.<bold>invoke()</bold> (in foo(() -> Int))
-7 						<bold>fun foo(callback: () -> Int): Int</bold> {
-4 							val x = <bold>foo { 1 }</bold> (in test())
-4 								<bold>val x</bold> = foo { 1 } (in test())

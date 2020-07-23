@@ -1,3 +1,0 @@
-// DISABLE-ERRORS
-// WITH_RUNTIME
-var x: Int = 1

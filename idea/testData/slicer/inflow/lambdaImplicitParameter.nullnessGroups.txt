@@ -1,3 +1,0 @@
-[NotNull Values]
-9 	val v = <bold>it</bold> (in test())
-9 		val v = <bold>it</bold> (in test())

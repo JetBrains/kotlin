@@ -1,3 +1,0 @@
-// "Remove EXPRESSION target" "true"
-@Retention()
-annotation class Ann

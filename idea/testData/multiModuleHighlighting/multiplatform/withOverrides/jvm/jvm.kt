@@ -1,1 +1,0 @@
-actual fun foo(arg: Int) = arg

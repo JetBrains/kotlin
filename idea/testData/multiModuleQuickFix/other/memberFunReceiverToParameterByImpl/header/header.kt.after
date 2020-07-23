@@ -1,7 +1,0 @@
-expect class Foo {
-    fun foo(s: String, n: Int)
-}
-
-fun Foo.test() {
-    foo("1", 2)
-}

@@ -1,6 +1,0 @@
-{
-  "type": "MARKED_ELEMENT",
-  "file": "JS/src/test/Foo.kt",
-  "newName": "Baz",
-  "isMultiModule": "true"
-}

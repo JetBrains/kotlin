@@ -1,3 +1,0 @@
-fun foo(a: Int, b: Int, c: Int, d: Int) : Boolean {
-    return a >= b || c != d || a >= d
-}

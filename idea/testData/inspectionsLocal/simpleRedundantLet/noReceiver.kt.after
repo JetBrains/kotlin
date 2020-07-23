@@ -1,5 +1,0 @@
-// WITH_RUNTIME
-
-fun String.test(): Int {
-    return length
-}

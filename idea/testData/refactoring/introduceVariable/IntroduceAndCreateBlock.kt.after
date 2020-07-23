@@ -1,6 +1,0 @@
-fun test(n: Int) {
-    val t = if (n > 0) {
-        val i = n + 1
-        i
-    } else n
-}

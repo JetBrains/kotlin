@@ -1,3 +1,0 @@
-3 fun test(m: Int, <bold>n: Int</bold>) { (in test(Int, Int))
-6 	2 -> <bold>n</bold> (in test(Int, Int))
-4 		<bold>val x</bold> = when (m) { (in test(Int, Int))

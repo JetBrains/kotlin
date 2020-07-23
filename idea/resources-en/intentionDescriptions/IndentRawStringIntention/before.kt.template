@@ -1,5 +1,0 @@
-fun test() {
-    val s = <spot>"""foo
-bar
-baz"""</spot>
-}

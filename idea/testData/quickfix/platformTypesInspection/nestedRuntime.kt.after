@@ -1,3 +1,0 @@
-// "Specify return type explicitly" "true"
-
-fun foo(): Array<String><caret> = arrayOf(java.lang.String.valueOf(1))

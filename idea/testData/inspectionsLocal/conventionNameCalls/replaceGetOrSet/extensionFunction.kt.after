@@ -1,8 +1,0 @@
-fun test() {
-    class Test()
-
-    operator fun Test.get(i: Int) : Int = 0
-
-    val test = Test()
-    test<caret>[0]
-}

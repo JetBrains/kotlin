@@ -1,7 +1,0 @@
-fun foo(f: (Int) -> Int) = f(0)
-fun bar(f: () -> Int) = f()
-
-fun test() {
-    foo { val it1 = it
-        bar { (1 + 2) * it1 } }
-}

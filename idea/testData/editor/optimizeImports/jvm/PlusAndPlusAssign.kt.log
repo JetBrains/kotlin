@@ -1,3 +1,0 @@
-Additional checking of reference KtSimpleNameReference: +=
-Changed resolve of KtSimpleNameReference: +=
-Trying to build import list again with import rules: -p2.*, +p1.plus

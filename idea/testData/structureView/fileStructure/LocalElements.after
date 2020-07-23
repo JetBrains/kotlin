@@ -1,7 +1,0 @@
--LocalElements.kt
- -foo(): Unit
-  bar(): Unit
-  -X
-   -<class initializer>
-    quux(): Unit
-   xyzzy(): Unit

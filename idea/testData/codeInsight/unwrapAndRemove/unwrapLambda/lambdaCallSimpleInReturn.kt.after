@@ -1,4 +1,0 @@
-// OPTION: 0
-fun foo() {
-    return println("lambda")<caret>
-}

@@ -1,5 +1,0 @@
-// "Make 'My' 'final'" "true"
-
-class My(open val x: Int) {
-    val y = x
-}

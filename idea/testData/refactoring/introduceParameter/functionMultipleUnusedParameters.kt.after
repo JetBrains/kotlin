@@ -1,7 +1,0 @@
-fun foo(a: Int, s: String, b: Int, i: Int = a + b): Int {
-    return i * 2
-}
-
-fun test() {
-    foo(1, "2", 3)
-}

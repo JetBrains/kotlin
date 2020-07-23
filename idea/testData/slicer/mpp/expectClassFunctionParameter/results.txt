@@ -1,4 +1,0 @@
-10 c.foo(<bold>1</bold>) (in f(ExpectClass))
-6 	fun foo(<bold>p: Any</bold>) (in ExpectClass.foo(Any))
-4 		actual fun foo(<bold>p: Any</bold>) { (in ExpectClass.foo(Any))
-5 			println(<bold>p</bold>) (in ExpectClass.foo(Any))

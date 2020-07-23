@@ -1,3 +1,0 @@
-// "Make internal" "true"
-
-internal expect <caret>class Sample

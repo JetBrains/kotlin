@@ -1,5 +1,0 @@
-// OPTION: 0
-fun foo(n : Int): Int {<caret>
-
-    return 0
-}

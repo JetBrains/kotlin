@@ -1,3 +1,0 @@
-class B {
-    A<Int, Object> a = new A<Int, Object>()
-}

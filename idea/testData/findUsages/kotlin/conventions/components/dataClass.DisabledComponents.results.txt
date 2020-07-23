@@ -1,1 +1,0 @@
-Value read 5 a.n

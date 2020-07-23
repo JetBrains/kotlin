@@ -1,1 +1,0 @@
-val v = <selection>"aaa ${<caret>x + y} bbb"</selection>

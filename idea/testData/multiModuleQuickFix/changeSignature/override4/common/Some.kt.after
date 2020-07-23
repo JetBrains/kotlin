@@ -1,8 +1,0 @@
-// "Convert parameter to receiver" "true"
-expect open class A() {
-    open fun String.c(a: Int<caret>)
-}
-
-class C : A() {
-    override fun String.c(a: Int) {}
-}

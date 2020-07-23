@@ -1,3 +1,0 @@
-14 val x = <bold>""</bold>.extensionFun() (in C.foo())
-5 	fun <bold>String</bold>.extensionFun(): Any { (in extensionFun() on String)
-8 		println(<bold>this@extensionFun</bold>.length) (in extensionFun() on String)

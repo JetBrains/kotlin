@@ -1,5 +1,0 @@
-// "Change to val" "true"
-class Test {
-    val foo
-        get() = 1
-}

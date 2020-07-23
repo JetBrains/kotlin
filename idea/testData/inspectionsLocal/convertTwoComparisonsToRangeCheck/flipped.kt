@@ -1,1 +1,0 @@
-fun foo(arg: Int) = 6 > arg && arg >= 1<caret>

@@ -1,7 +1,0 @@
-fun foo(x: Foo) {
-    x foo { it * 2 }
-}
-
-interface Foo {
-    infix fun foo(f: (Int) -> Int)
-}

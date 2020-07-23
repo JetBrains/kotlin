@@ -1,8 +1,0 @@
-4 <bold>val x</bold> = 1 (in A)
-3 	int x = new A().<bold>getX</bold>();
-6 	val y = <bold>x</bold> (in A.y)
-6 		<bold>val y</bold> = x (in A)
-11 	z = <bold>x</bold> (in A)
-8 		<bold>val z: Int</bold> (in A)
-13 	bar(<bold>x</bold>) (in A)
-16 		fun bar(<bold>m: Int</bold>) { (in A.bar(Int))

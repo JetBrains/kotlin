@@ -1,9 +1,0 @@
-// WITH_RUNTIME
-// INTENTION_TEXT: "Replace with 'filter{}'"
-// IS_APPLICABLE_2: false
-import java.util.ArrayList
-
-fun foo(array: IntArray): List<Int> {
-    val result = array.filter { it % 3 == 0 }
-    return result
-}

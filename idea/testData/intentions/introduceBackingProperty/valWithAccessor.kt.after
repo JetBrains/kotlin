@@ -1,5 +1,0 @@
-class Foo {
-    private val _x = ""
-    val x: String
-        get() = _x + "!"
-}

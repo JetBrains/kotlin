@@ -1,3 +1,0 @@
-// WITH_RUNTIME
-
-val x = "5abc".singleOrNull { it.isDigit() }

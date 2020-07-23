@@ -1,2 +1,0 @@
-class My
-fun bar() {}

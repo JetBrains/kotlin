@@ -1,6 +1,0 @@
-ExpressionOfTypeProcessor is already started for A. Exit for operator A.unaryMinus().
-Resolved -A(1)
-Searched references to A
-Searched references to A.unaryMinus() in non-Java files
-Used plain search of A.unaryMinus() in LocalSearchScope:
-    CLASS:A

@@ -1,5 +1,0 @@
-class TestClass<T>
-private fun test(): () -> TestClass<*> = {
-    class Local
-    TestClass<Local>()
-}

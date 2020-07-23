@@ -1,5 +1,0 @@
-{
-  "filesToMove": ["foo/test.kt", "foo/test2.kt"],
-  "targetPackage": "bar",
-  "type": "COPY_FILES"
-}

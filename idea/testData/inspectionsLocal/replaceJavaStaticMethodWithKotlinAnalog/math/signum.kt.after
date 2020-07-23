@@ -1,6 +1,0 @@
-import kotlin.math.sign
-
-// WITH_RUNTIME
-fun test(x: Double) {
-    sign(x)
-}

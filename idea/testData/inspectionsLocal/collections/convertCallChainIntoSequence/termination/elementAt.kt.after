@@ -1,5 +1,0 @@
-// WITH_RUNTIME
-
-fun test(list: List<Int>) {
-    val elementAt = list.asSequence().filter { it > 1 }.elementAt(1)
-}

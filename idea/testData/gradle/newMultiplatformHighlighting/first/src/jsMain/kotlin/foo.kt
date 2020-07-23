@@ -1,1 +1,0 @@
-fun foo() = "Java Script"

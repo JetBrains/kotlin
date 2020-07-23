@@ -1,6 +1,0 @@
-// MOVE: down
-val x = foo(
-        b, // b
-        <caret>a, // a
-        c // c
-)

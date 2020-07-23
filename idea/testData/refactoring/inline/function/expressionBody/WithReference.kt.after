@@ -1,3 +1,0 @@
-val y = { x: Int -> x }
-
-fun bar(x: Int) = x * x

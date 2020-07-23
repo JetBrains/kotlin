@@ -1,3 +1,0 @@
-fun foo() {
-    val t = true
-}

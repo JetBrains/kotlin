@@ -1,7 +1,0 @@
-fun <T> bar(t: T) {
-    t.toString()
-}
-
-fun <T> foo(a: T) {
-    bar(a)
-}

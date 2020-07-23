@@ -1,4 +1,0 @@
-fun foo(){
-    val Random = {}
-    val x = java.util.Random()
-}

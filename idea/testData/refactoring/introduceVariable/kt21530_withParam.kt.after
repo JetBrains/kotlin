@@ -1,8 +1,0 @@
-fun test() = "123"
-
-val test1 = test()
-val f = test1 + "456"
-
-fun foo(test: String) {
-    val x = test1
-}

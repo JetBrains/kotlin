@@ -1,8 +1,0 @@
-val runnable = object : Runnable {
-    override fun run() {
-        foo()
-    }
-}
-
-fun foo() {
-}

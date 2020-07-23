@@ -1,7 +1,0 @@
-import kotlin.math.min
-
-// FIX: Replace with `min` function
-// WITH_RUNTIME
-fun test(x: Double, y: Double) {
-    min(x, y)
-}

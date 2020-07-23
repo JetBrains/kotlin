@@ -1,9 +1,0 @@
-fun foo(list: List<String>) {
-    for (s in list) {
-        if (s.length <= 0 /* check it */) /* then */ continue
-        bar() // bar()
-    }
-    }
-}
-
-fun bar(){}

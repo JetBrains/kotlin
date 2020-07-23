@@ -1,9 +1,0 @@
-interface B {
-    fun c()
-}
-
-
-<spot>object a : B</spot> {
-    override fun c() {
-    }
-}

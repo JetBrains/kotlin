@@ -1,4 +1,0 @@
-Function call 10 ext() // companion object is extension receiver
-Function call 5 foo()
-Implicit 'get' 8 1[2] // using companion object function by convention
-Value read 6 v

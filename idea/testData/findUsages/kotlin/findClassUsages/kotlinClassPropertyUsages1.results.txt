@@ -1,3 +1,0 @@
-Value read 10 println("${x.a} ${x.b}")
-Value read 10 println("${x.a} ${x.b}")
-Value write 11 x.b = 12

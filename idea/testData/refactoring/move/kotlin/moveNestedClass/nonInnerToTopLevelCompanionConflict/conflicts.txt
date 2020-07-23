@@ -1,2 +1,0 @@
-Implicit companion object will be inaccessible: extBar
-Implicit companion object will be inaccessible: extFoo

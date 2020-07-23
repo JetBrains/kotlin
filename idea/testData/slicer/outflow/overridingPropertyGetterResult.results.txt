@@ -1,6 +1,0 @@
-10 get() = <bold>2</bold> (in B.foo.get)
-10 	<bold>get() = 2</bold> (in B.foo)
-19 		val x = a.<bold>foo</bold> (in test(A, B,…))
-19 			<bold>val x</bold> = a.foo (in test(A, B,…))
-20 		val y = b.<bold>foo</bold> (in test(A, B,…))
-20 			<bold>val y</bold> = b.foo (in test(A, B,…))

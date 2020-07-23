@@ -1,3 +1,0 @@
-[NotNull Values]
-3 	<bold>fun assignmentWithSum(n: Int): Int</bold> {
-3 		<bold>fun assignmentWithSum(n: Int): Int</bold> {

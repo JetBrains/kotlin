@@ -1,8 +1,0 @@
-interface SomeFace
-interface GeneOut<out T> {}
-object Empty : GeneOut<Nothing>
-fun <T> downUnder(): GeneOut<T> = Empty
-
-fun callDown() {
-    val v2 = downUnder<SomeFace>()
-}

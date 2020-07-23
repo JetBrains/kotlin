@@ -1,5 +1,0 @@
-fun foo(vararg x: Int) {}
-
-fun bar() {
-    foo(1)
-}

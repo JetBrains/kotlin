@@ -1,7 +1,0 @@
-//TODO: the result is not correct, should place function declaration before it is used
-1 + 2
-__dummyTestFun__()
-
-fun __dummyTestFun__() {
-    2 + 3
-}

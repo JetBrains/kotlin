@@ -1,4 +1,0 @@
-FILE: main.kt
-    public final fun foofoo(): R|kotlin/Int| {
-        ^foofoo R|bar/barbar|()
-    }

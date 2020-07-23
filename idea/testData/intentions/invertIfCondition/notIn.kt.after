@@ -1,3 +1,0 @@
-fun foo(p: Int) {
-    if (p in 1..10) return
-}

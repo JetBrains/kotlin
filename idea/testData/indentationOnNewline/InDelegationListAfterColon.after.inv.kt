@@ -1,6 +1,0 @@
-// SET_TRUE: ALIGN_MULTILINE_EXTENDS_LIST
-// WITHOUT_CUSTOM_LINE_INDENT_PROVIDER
-
-class Simpleclass() :
-        <caret>
-

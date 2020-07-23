@@ -1,4 +1,0 @@
-4 get() = <bold>0</bold> (in foo.get)
-4 	<bold>get() = 0</bold> (in foo)
-7 		val x = <bold>foo</bold> (in test())
-7 			<bold>val x</bold> = foo (in test())

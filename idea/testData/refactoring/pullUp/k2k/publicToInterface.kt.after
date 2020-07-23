@@ -1,7 +1,0 @@
-interface I {
-    // INFO: {"checked": "true"}
-    fun foo(): Int = 1
-}
-
-class A: I {
-}

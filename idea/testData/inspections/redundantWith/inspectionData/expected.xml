@@ -1,9 +1,0 @@
-<problems>
-  <problem>
-    <file>callReceiver.kt</file>
-    <line>2</line>
-    <entry_point TYPE="file" FQNAME="temp:///src/callReceiver.kt" />
-    <problem_class severity="WEAK WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant 'with' call</problem_class>
-    <description>Redundant 'with' call</description>
-  </problem>
-</problems>

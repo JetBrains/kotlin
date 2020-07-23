@@ -1,7 +1,0 @@
-<problems>
-    <problem>
-        <file>hasFirstUpperCase.kt</file>
-        <line>1</line>
-        <description>Package name &lt;code&gt;one.two.Three&lt;/code&gt; part should not start with an uppercase letter #loc</description>
-    </problem>
-</problems>

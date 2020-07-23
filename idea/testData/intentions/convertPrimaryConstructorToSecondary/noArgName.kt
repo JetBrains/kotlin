@@ -1,2 +1,0 @@
-
-class My<caret>(: Int)

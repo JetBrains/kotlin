@@ -1,8 +1,0 @@
-// "Convert parameter to receiver" "true"
-actual open class A {
-    actual open fun String.c(a: Int<caret>) {}
-}
-
-class B : A() {
-    override fun String.c(a: Int) {}
-}

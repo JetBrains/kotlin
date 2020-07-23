@@ -1,3 +1,0 @@
-// "Remove annotation" "true"
-
-fun removeEmptyThrows() {}

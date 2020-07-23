@@ -1,8 +1,0 @@
-// WITH_RUNTIME
-fun test() {
-    Foo().bar().equa<caret>ls("ABC", ignoreCase = true)
-}
-
-class Foo {
-    fun bar(): String = ""
-}

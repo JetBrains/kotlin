@@ -1,6 +1,0 @@
-fun test(x: Any): Int? {
-    if (x !is String) return null
-    return foo(x)
-}
-
-fun foo(x: String) = 1

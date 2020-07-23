@@ -1,7 +1,0 @@
-// OPTION: 1
-fun foo(n: Int): Int {
-    <caret>println("> 0")
-    n + 10
-
-    return n
-}

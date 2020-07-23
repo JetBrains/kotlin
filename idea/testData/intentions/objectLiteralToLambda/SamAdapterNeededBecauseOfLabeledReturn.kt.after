@@ -1,8 +1,0 @@
-// WITH_RUNTIME
-
-fun bar(p: Int) {
-    Thread(Runnable {
-        if (p < 0) return@Runnable
-        throw UnsupportedOperationException()
-    })
-}

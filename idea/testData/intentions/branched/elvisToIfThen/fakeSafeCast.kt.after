@@ -1,5 +1,0 @@
-class My(val x: Int?)
-fun foo(arg: Any) {
-    val x = (arg as? My)?.x
-    val y = if (x != null) x else 42
-}

@@ -1,5 +1,0 @@
-package test
-
-typealias Str = String
-
-val s: Str = ""

@@ -1,2 +1,0 @@
-rootProject.name = 'MultiTest'
-include 'MultiTest-jvm', 'MultiTest-js' 

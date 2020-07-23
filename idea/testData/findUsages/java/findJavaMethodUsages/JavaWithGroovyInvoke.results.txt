@@ -1,5 +1,0 @@
-Implicit 'invoke' 10 o()
-Implicit 'invoke' 13 o.fieldWithType()
-Implicit 'invoke' 16 o.methodWithType()()
-Implicit 'invoke' 2 c()
-Implicit 'invoke' 6 o()

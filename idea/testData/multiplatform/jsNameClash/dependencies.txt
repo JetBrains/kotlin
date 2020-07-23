@@ -1,5 +1,0 @@
-MODULE common { platform=[JVM, JS, Native] }
-
-MODULE js { platform=[JS] }
-
-js -> common { kind=DEPENDS_ON }

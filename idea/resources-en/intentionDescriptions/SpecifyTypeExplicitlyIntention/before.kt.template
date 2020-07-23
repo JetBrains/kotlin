@@ -1,3 +1,0 @@
-fun main() {
-    val <spot>a</spot> = array(1, 2, 3)
-}

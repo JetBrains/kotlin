@@ -1,6 +1,0 @@
-{
-  "filesToMove": ["foo/test.kt", "foo/test2.kt"],
-  "extractClassOrObject": true,
-  "targetPackage": "bar",
-  "type": "COPY_FILES"
-}

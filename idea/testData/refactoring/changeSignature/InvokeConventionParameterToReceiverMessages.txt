@@ -1,3 +1,0 @@
-Explicit receiver is already present in call element: A()(&quot;&quot;, 42)
-Explicit receiver is already present in call element: a(&quot;&quot;, 42)
-Explicit receiver is already present in call element: a.invoke(&quot;&quot;, 42)

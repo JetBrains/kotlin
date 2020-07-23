@@ -1,5 +1,0 @@
-val a = 1
-val b = 1
-val foo: Int get() = i() - 1
-
-private fun i() = a + b

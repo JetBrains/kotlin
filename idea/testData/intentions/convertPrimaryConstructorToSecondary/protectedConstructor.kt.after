@@ -1,7 +1,0 @@
-class Protected {
-    internal var s: String
-
-    protected constructor(s: String) {
-        this.s = s
-    }
-}

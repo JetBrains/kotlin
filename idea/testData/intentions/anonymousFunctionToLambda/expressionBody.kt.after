@@ -1,7 +1,0 @@
-fun foo3(f: () -> Int) {
-    f()
-}
-
-fun main(args: String) {
-    foo3 { 1 }
-}

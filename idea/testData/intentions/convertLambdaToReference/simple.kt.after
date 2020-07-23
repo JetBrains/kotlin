@@ -1,3 +1,0 @@
-fun foo(y: Int) = y
-
-val x = ::foo

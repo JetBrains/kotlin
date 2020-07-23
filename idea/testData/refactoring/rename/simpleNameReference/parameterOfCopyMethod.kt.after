@@ -1,6 +1,0 @@
-data class A(val y: Int)
-
-fun main(args: Array<String>) {
-    val a = A(y = 1)
-    val b = a.copy(y = 2)
-}

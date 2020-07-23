@@ -1,4 +1,0 @@
-Crumbs:
-  test()
-Tooltips:
-  function <b><code>test((Int) -&gt; Int)</code></b>

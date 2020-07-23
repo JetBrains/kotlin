@@ -1,3 +1,0 @@
-Unclassified usage 2 open class X: A
-Unclassified usage 4 val a = object: A
-Unclassified usage 7 val b = object: X()

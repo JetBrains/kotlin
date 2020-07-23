@@ -1,6 +1,0 @@
-kotlin.targets.filterIsInstance<org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget>().forEach { target ->
-    target.compilations.forEach { compilation ->
-        // enable Kotlin/Native endorsed libs in every compilation
-        compilation.enableEndorsedLibs = true
-    }
-}

@@ -1,7 +1,0 @@
-{
-  "type": "MARKED_ELEMENT",
-  "mainFile": "test.kt",
-  "newName": "Foo",
-  "withRuntime": "true",
-  "hint": "Class 'Foo' is already declared in package"
-}

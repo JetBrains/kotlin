@@ -1,8 +1,0 @@
-5 with(<bold>"A"</bold>) { (in foo())
-6 	<bold>val v</bold> = this (in foo())
-6 		val v = <bold>this</bold> (in foo())
-5 			[LAMBDA CALLS RECEIVER] with("A") <bold>{</bold> (in foo())
-LIB 				(INLINE CALL with) [LAMBDA CALLS RECEIVER] public inline fun <T, R> with(receiver: T, <bold>block: T.() -> R</bold>): R { (in with(T, T.() -> R))
-LIB 					(INLINE CALL with) return <bold>receiver</bold>.block() (in with(T, T.() -> R))
-LIB 						(INLINE CALL with) public inline fun <T, R> with(<bold>receiver: T</bold>, block: T.() -> R): R { (in with(T, T.() -> R))
-5 							with(<bold>"A"</bold>) { (in foo())

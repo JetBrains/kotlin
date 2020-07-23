@@ -1,5 +1,0 @@
-// "Add annotation target" "true"
-@Target(AnnotationTarget.VALUE_PARAMETER)
-annotation class ParamAnn
-
-class Param(@param:ParamAnn val foo: String)

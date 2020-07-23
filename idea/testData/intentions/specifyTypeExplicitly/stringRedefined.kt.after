@@ -1,5 +1,0 @@
-import kotlin.String
-
-class String {}
-
-val x: String = ""

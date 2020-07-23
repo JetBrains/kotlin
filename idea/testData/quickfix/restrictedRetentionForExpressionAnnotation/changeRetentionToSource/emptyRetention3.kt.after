@@ -1,8 +1,0 @@
-import kotlin.annotation.AnnotationRetention
-
-// "Change existent retention to SOURCE" "true"
-class AnnotationRetention
-
-@Retention(AnnotationRetention.SOURCE)
-@Target(AnnotationTarget.EXPRESSION)
-annotation class Ann

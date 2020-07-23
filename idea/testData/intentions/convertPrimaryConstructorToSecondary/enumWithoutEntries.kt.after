@@ -1,4 +1,0 @@
-enum class A {;
-
-    constructor(v: Int)
-}
