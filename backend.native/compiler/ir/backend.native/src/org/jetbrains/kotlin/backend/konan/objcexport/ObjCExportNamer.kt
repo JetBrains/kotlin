@@ -308,7 +308,7 @@ internal class ObjCExportNamerImpl(
     }
 
     private val propertyNames = object : Mapping<PropertyDescriptor, String>() {
-        override fun reserved(name: String) = name in cKeywords
+        override fun reserved(name: String) = name in Reserved.propertyNames
 
         override fun conflict(first: PropertyDescriptor, second: PropertyDescriptor): Boolean =
                 !mapper.canHaveSameName(first, second)
@@ -624,6 +624,11 @@ internal class ObjCExportNamerImpl(
                 "toString" to "description()",
                 "equals" to "isEqual(_:)"
         ).mapKeys { Name.identifier(it.key) }
+    }
+
+    private object Reserved {
+        val propertyNames = cKeywords +
+                setOf("description") // https://youtrack.jetbrains.com/issue/KT-38641
     }
 
     private fun FunctionDescriptor.getMangledName(forSwift: Boolean): String {

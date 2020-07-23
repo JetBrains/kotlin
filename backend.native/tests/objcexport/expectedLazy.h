@@ -443,6 +443,67 @@ __attribute__((swift_name("Kt35940Kt")))
 @end;
 
 __attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KT38641")))
+@interface KtKT38641 : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KT38641.IntType")))
+@interface KtKT38641IntType : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@property (getter=description, setter=setDescription:) int32_t description_ __attribute__((swift_name("description_")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KT38641.Val")))
+@interface KtKT38641Val : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@property (readonly, getter=description) NSString *description_ __attribute__((swift_name("description_")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KT38641.Var")))
+@interface KtKT38641Var : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@property (getter=description, setter=setDescription:) NSString *description_ __attribute__((swift_name("description_")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KT38641.TwoProperties")))
+@interface KtKT38641TwoProperties : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@property (readonly, getter=description) NSString *description_ __attribute__((swift_name("description_")));
+@property (readonly) NSString *description_ __attribute__((swift_name("description_")));
+@end;
+
+__attribute__((swift_name("KT38641.OverrideVal")))
+@interface KtKT38641OverrideVal : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@property (readonly, getter=description) NSString *description_ __attribute__((swift_name("description_")));
+@end;
+
+__attribute__((swift_name("KT38641OverrideVar")))
+@protocol KtKT38641OverrideVar
+@required
+@property (getter=description, setter=setDescription:) NSString *description_ __attribute__((swift_name("description_")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("Kt38641Kt")))
+@interface KtKt38641Kt : KtBase
++ (NSString *)getOverrideValDescriptionImpl:(KtKT38641OverrideVal *)impl __attribute__((swift_name("getOverrideValDescription(impl:)")));
++ (NSString *)getOverrideVarDescriptionImpl:(id<KtKT38641OverrideVar>)impl __attribute__((swift_name("getOverrideVarDescription(impl:)")));
++ (void)setOverrideVarDescriptionImpl:(id<KtKT38641OverrideVar>)impl newValue:(NSString *)newValue __attribute__((swift_name("setOverrideVarDescription(impl:newValue:)")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("LibraryKt")))
 @interface KtLibraryKt : KtBase
 + (NSString *)readDataFromLibraryClassInput:(KtA *)input __attribute__((swift_name("readDataFromLibraryClass(input:)")));
