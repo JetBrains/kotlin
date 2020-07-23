@@ -58,22 +58,17 @@ class TrailingCommaInspection(
             val first = TrailingCommaHelper.elementBeforeFirstElement(commaOwner)
             if (first?.nextLeaf(true)?.isLineBreak() == false) {
                 first.nextSibling?.let {
-                    if (isOnTheFly) { // INFORMATION shouldn't be reported in batch mode
-                        registerProblemForLineBreak(commaOwner, it, ProblemHighlightType.INFORMATION)
-                    }
+                    registerProblemForLineBreak(commaOwner, it, ProblemHighlightType.INFORMATION)
                 }
             }
 
             val last = TrailingCommaHelper.elementAfterLastElement(commaOwner)
             if (last?.prevLeaf(true)?.isLineBreak() == false) {
-                val highlightType = if (addCommaWarning) ProblemHighlightType.GENERIC_ERROR_OR_WARNING else ProblemHighlightType.INFORMATION
-                if (isOnTheFly || highlightType != ProblemHighlightType.INFORMATION) { // INFORMATION shouldn't be reported in batch mode
-                    registerProblemForLineBreak(
-                        commaOwner,
-                        last,
-                        highlightType,
-                    )
-                }
+                registerProblemForLineBreak(
+                    commaOwner,
+                    last,
+                    if (addCommaWarning) ProblemHighlightType.GENERIC_ERROR_OR_WARNING else ProblemHighlightType.INFORMATION,
+                )
             }
         }
 
@@ -142,13 +137,17 @@ class TrailingCommaInspection(
             highlightType: ProblemHighlightType,
         ) {
             val problemElement = commaOwner.parent
-            holder.registerProblem(
-                problemElement,
-                KotlinBundle.message("inspection.trailing.comma.missing.line.break"),
-                highlightType.applyCondition(useTrailingComma),
-                TextRange.from(elementForTextRange.startOffset, 1).shiftLeft(problemElement.startOffset),
-                createQuickFix(KotlinBundle.message("inspection.trailing.comma.add.line.break"), commaOwner),
-            )
+            val highlightTypeWithAppliedCondition = highlightType.applyCondition(useTrailingComma)
+            // INFORMATION shouldn't be reported in batch mode
+            if (isOnTheFly || highlightTypeWithAppliedCondition != ProblemHighlightType.INFORMATION) {
+                holder.registerProblem(
+                    problemElement,
+                    KotlinBundle.message("inspection.trailing.comma.missing.line.break"),
+                    highlightTypeWithAppliedCondition,
+                    TextRange.from(elementForTextRange.startOffset, 1).shiftLeft(problemElement.startOffset),
+                    createQuickFix(KotlinBundle.message("inspection.trailing.comma.add.line.break"), commaOwner),
+                )
+            }
         }
 
         private fun ProblemHighlightType.applyCondition(condition: Boolean): ProblemHighlightType = when {
