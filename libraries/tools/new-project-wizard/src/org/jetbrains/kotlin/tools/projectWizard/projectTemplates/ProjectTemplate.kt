@@ -323,7 +323,7 @@ object MultiplatformMobileApplicationProjectTemplate : ProjectTemplate() {
                 },
                 Module(
                     "ios",
-                    RealNativeTargetConfigurator.configuratorsByModuleType.getValue(ModuleSubType.iosX64),
+                    RealNativeTargetConfigurator.configuratorsByModuleType.getValue(ModuleSubType.ios),
                     null,
                     sourcesets = createDefaultSourcesets(),
                     subModules = emptyList()
