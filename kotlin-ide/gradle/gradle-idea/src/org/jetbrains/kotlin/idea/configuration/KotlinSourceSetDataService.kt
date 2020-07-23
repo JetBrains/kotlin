@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.inspections.gradle.findAll
 import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
 import org.jetbrains.kotlin.idea.roots.migrateNonJvmSourceFolders
+import org.jetbrains.kotlin.idea.roots.populateNonJvmSourceRootTypes
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
@@ -61,6 +62,7 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
 
             if (platform.platforms.any { it != KotlinPlatform.JVM && it != KotlinPlatform.ANDROID }) {
                 migrateNonJvmSourceFolders(rootModel)
+                populateNonJvmSourceRootTypes(nodeToImport, ideModule)
             }
 
             configureFacet(sourceSetData, kotlinSourceSet, mainModuleData, ideModule, modelsProvider)?.let { facet ->

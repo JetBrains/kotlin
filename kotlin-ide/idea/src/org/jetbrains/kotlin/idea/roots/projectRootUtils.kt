@@ -5,6 +5,12 @@
 
 package org.jetbrains.kotlin.idea.roots
 
+import com.intellij.openapi.externalSystem.model.DataNode
+import com.intellij.openapi.externalSystem.model.ProjectKeys
+import com.intellij.openapi.externalSystem.model.project.ContentRootData
+import com.intellij.openapi.externalSystem.model.project.ExternalSystemSourceType
+import com.intellij.openapi.externalSystem.service.project.manage.SourceFolderManager
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
@@ -13,11 +19,14 @@ import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.SourceFolder
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.NonPhysicalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiCodeFragment
 import com.intellij.psi.PsiFile
 import com.intellij.util.containers.ContainerUtil
+import com.intellij.util.io.URLUtil
 import org.jetbrains.jps.model.JpsElement
 import org.jetbrains.jps.model.ex.JpsElementBase
 import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes
@@ -28,6 +37,7 @@ import org.jetbrains.jps.model.module.JpsModuleSourceRoot
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
+import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import java.util.*
 
 private fun JpsModuleSourceRoot.getOrCreateProperties() =
@@ -57,6 +67,29 @@ fun migrateNonJvmSourceFolders(modifiableRootModel: ModifiableRootModel) {
         }
     }
     KotlinSdkType.setUpIfNeeded()
+}
+
+private val ContentRootData.SourceRoot.pathAsUrl
+    get() = VirtualFileManager.constructUrl(URLUtil.FILE_PROTOCOL, FileUtil.toSystemIndependentName(path))
+
+fun populateNonJvmSourceRootTypes(sourceSetNode: DataNode<GradleSourceSetData>, module: Module) {
+    val sourceFolderManager = SourceFolderManager.getInstance(module.project)
+    val contentRootDataNodes = ExternalSystemApiUtil.findAll(sourceSetNode, ProjectKeys.CONTENT_ROOT)
+    val contentRootDataList = contentRootDataNodes.mapNotNull { it.data }
+    if (contentRootDataList.isEmpty()) return
+
+    val externalToKotlinSourceTypes = mapOf(
+        ExternalSystemSourceType.SOURCE to SourceKotlinRootType,
+        ExternalSystemSourceType.TEST to TestSourceKotlinRootType
+    )
+    externalToKotlinSourceTypes.forEach { (externalType, kotlinType) ->
+        val sourcesRoots = contentRootDataList.flatMap { it.getPaths(externalType) }
+        sourcesRoots.forEach {
+            if (!FileUtil.exists(it.path)) {
+                sourceFolderManager.addSourceFolder(module, it.pathAsUrl, kotlinType)
+            }
+        }
+    }
 }
 
 fun getKotlinAwareDestinationSourceRoots(project: Project): List<VirtualFile> {
