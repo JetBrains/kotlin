@@ -693,10 +693,6 @@ tasks {
         dependsOn(":compiler:tests-spec:test")
     }
 
-    register("androidCodegenTest") {
-        dependsOn(":compiler:android-tests:test")
-    }
-
     register("android-ide-tests") {
         dependsOn("dist")
         dependsOn(":kotlin-annotation-processing:test")
