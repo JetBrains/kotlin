@@ -1,3 +1,3 @@
 class Foo
 
-@Foo class Bar
+<!UNRESOLVED_REFERENCE!>@Foo<!> class Bar

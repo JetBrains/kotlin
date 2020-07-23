@@ -43,6 +43,6 @@ annotation class Ann(val x: Byte)
 
 @Ann(10)
 fun test_6() {
-    @Ann(300)
+    <!INAPPLICABLE_CANDIDATE!>@Ann(300)<!>
     val x = ""
 }

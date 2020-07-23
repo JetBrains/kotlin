@@ -100,7 +100,7 @@ private class FirExpressionsResolveTransformerForSpecificAnnotations(
 
     override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         if (annotationArgumentsMode) {
-            return resolveAnnotationCall(annotationCall, data, FirAnnotationResolveStatus.PartiallyResolved)
+            return resolveAnnotationCall(annotationCall, FirAnnotationResolveStatus.PartiallyResolved)
         }
 
         annotationCall.transformAnnotationTypeRef(transformer, data)
@@ -110,7 +110,7 @@ private class FirExpressionsResolveTransformerForSpecificAnnotations(
             return annotationCall.compose()
         }
         annotationArgumentsMode = true
-        return resolveAnnotationCall(annotationCall, data, FirAnnotationResolveStatus.PartiallyResolved).also {
+        return resolveAnnotationCall(annotationCall, FirAnnotationResolveStatus.PartiallyResolved).also {
             annotationArgumentsMode = false
         }
     }

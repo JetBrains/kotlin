@@ -6,7 +6,7 @@ annotation class annotation
 
 package test
 
-@test.annotation class annotation
+<!UNRESOLVED_REFERENCE!>@test.annotation<!> class annotation
 
 // FILE: other/c.kt
 
@@ -14,6 +14,6 @@ package other
 
 annotation class My
 
-@test.annotation class Your
+<!UNRESOLVED_REFERENCE!>@test.annotation<!> class Your
 
 @My class Our

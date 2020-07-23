@@ -1,2 +1,2 @@
 // Class constructor parameter CAN be recursively annotated
-class RecursivelyAnnotated(@RecursivelyAnnotated(1) val x: Int)
+class RecursivelyAnnotated(<!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>@RecursivelyAnnotated(1)<!> val x: Int)

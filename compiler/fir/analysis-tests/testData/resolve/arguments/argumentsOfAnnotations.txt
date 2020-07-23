@@ -1,0 +1,43 @@
+FILE: argumentsOfAnnotations.kt
+    public final annotation class Ann : R|kotlin/Annotation| {
+        public constructor(x: R|kotlin/Int|, y: R|kotlin/String|, z: R|kotlin/String| = String(z)): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public final val y: R|kotlin/String| = R|<local>/y|
+            public get(): R|kotlin/String|
+
+        public final val z: R|kotlin/String| = R|<local>/z|
+            public get(): R|kotlin/String|
+
+    }
+    @R|Ann|(y = String(y), x = Int(10)) public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final annotation class AnnVarargs : R|kotlin/Annotation| {
+        public constructor(x: R|kotlin/Int|, vararg y: R|kotlin/Array<out kotlin/String>|, z: R|kotlin/Int|): R|AnnVarargs| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public final val y: R|kotlin/Array<out kotlin/String>| = R|<local>/y|
+            public get(): R|kotlin/Array<out kotlin/String>|
+
+        public final val z: R|kotlin/Int| = R|<local>/z|
+            public get(): R|kotlin/Int|
+
+    }
+    @R|AnnVarargs|(Int(1), String(a), String(b), String(c), Int(2)) public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

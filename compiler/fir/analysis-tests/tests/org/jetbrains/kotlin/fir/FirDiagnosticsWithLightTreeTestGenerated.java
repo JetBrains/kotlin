@@ -445,6 +445,16 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/ambiguityOnJavaOverride.kt");
         }
 
+        @TestMetadata("argumentsOfAnnotations.kt")
+        public void testArgumentsOfAnnotations() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/arguments/argumentsOfAnnotations.kt");
+        }
+
+        @TestMetadata("argumentsOfJavaAnnotation.kt")
+        public void testArgumentsOfJavaAnnotation() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/arguments/argumentsOfJavaAnnotation.kt");
+        }
+
         @TestMetadata("default.kt")
         public void testDefault() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/default.kt");
@@ -483,6 +493,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         @TestMetadata("invoke.kt")
         public void testInvoke() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/invoke.kt");
+        }
+
+        @TestMetadata("javaAnnotationsWithArrayValue.kt")
+        public void testJavaAnnotationsWithArrayValue() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/arguments/javaAnnotationsWithArrayValue.kt");
         }
 
         @TestMetadata("javaArrayVariance.kt")

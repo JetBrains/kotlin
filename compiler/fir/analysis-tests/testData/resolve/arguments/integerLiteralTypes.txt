@@ -61,6 +61,6 @@ FILE: integerLiteralTypes.kt
             public get(): R|kotlin/Byte|
 
     }
-    @R|Ann|(Int(10)) public final fun test_6(): R|kotlin/Unit| {
+    @R|Ann|(Byte(10)) public final fun test_6(): R|kotlin/Unit| {
         @R|Ann|(Int(300)) lval x: R|kotlin/String| = String()
     }

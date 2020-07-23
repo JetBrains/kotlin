@@ -6,6 +6,6 @@ public @interface A {
 }
 
 // FILE: b.kt
-@A(*arrayOf(1, "b"))
+<!INAPPLICABLE_CANDIDATE!>@A(*arrayOf(1, "b"))<!>
 fun test() {
 }

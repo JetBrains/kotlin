@@ -1,6 +1,6 @@
 class Foo {
     @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-    @kotlin.internal.LowPriorityInOverloadResolution
+    <!HIDDEN!>@kotlin.internal.LowPriorityInOverloadResolution<!>
     val test: Bar = Bar()
 }
 

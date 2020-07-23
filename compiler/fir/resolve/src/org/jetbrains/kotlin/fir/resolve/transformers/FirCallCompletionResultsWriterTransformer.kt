@@ -170,6 +170,28 @@ class FirCallCompletionResultsWriterTransformer(
         return result.compose()
     }
 
+    override fun transformAnnotationCall(
+        annotationCall: FirAnnotationCall,
+        data: ExpectedArgumentType?
+    ): CompositeTransformResult<FirStatement> {
+        val calleeReference = annotationCall.calleeReference as? FirNamedReferenceWithCandidate
+            ?: return annotationCall.compose()
+        annotationCall.transformCalleeReference(
+            StoreCalleeReference,
+            calleeReference.toResolvedReference(),
+        )
+        val subCandidate = calleeReference.candidate
+        val expectedArgumentsTypeMapping = runIf(!calleeReference.isError) { subCandidate.createArgumentsMapping() }
+        annotationCall.argumentList.transformArguments(this, expectedArgumentsTypeMapping)
+        if (!calleeReference.isError) {
+            subCandidate.handleVarargs(annotationCall.argumentList)
+            subCandidate.argumentMapping?.let {
+                annotationCall.replaceArgumentList(buildResolvedArgumentList(it))
+            }
+        }
+        return annotationCall.compose()
+    }
+
     private fun Candidate.handleVarargs(argumentList: FirArgumentList) {
         val argumentMapping = this.argumentMapping
         val varargParameter = argumentMapping?.values?.firstOrNull { it.isVararg }

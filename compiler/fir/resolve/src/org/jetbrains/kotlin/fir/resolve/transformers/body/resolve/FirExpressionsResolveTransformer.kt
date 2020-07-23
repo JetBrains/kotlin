@@ -726,35 +726,22 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 
     override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         if (annotationCall.resolveStatus == FirAnnotationResolveStatus.Resolved) return annotationCall.compose()
-        return resolveAnnotationCall(annotationCall, data, FirAnnotationResolveStatus.Resolved)
+        return resolveAnnotationCall(annotationCall, FirAnnotationResolveStatus.Resolved)
     }
 
     protected fun resolveAnnotationCall(
         annotationCall: FirAnnotationCall,
-        data: ResolutionMode,
         status: FirAnnotationResolveStatus
     ): CompositeTransformResult<FirAnnotationCall> {
         dataFlowAnalyzer.enterAnnotationCall(annotationCall)
         return withFirArrayOfCallTransformer {
-            (annotationCall.transformChildren(transformer, data) as FirAnnotationCall).also {
-                // TODO: it's temporary incorrect solution until we design resolve and completion for annotation calls
-                it.argumentList.transformArguments(integerLiteralTypeApproximator, null)
-                annotationCall.getCorrespondingConstructorReferenceOrNull(session)?.let { calleeReference ->
-                    val callee = calleeReference.resolvedSymbol.fir as FirFunction<*>
-                    val argumentMapping = mapArguments(it.arguments, callee).toArgumentToParameterMapping()
-                    val varargParameter = callee.valueParameters.firstOrNull { param -> param.isVararg }
-                    if (varargParameter == null) {
-                        it.replaceArgumentList(buildResolvedArgumentList(argumentMapping))
-                    } else {
-                        val varargParameterTypeRef = varargParameter.returnTypeRef
-                        val arrayType = varargParameterTypeRef.coneType
-                        val newArgumentMapping = remapArgumentsWithVararg(varargParameter, arrayType, it.argumentList, argumentMapping)
-                        it.replaceArgumentList(buildResolvedArgumentList(newArgumentMapping))
-                    }
-                }
-                it.replaceResolveStatus(status)
-                dataFlowAnalyzer.exitAnnotationCall(it)
-            }.compose()
+            annotationCall.transformAnnotationTypeRef(transformer, ResolutionMode.ContextIndependent)
+            if (status == FirAnnotationResolveStatus.PartiallyResolved) return annotationCall.compose()
+            val result = callResolver.resolveAnnotationCall(annotationCall) ?: return annotationCall.compose()
+            callCompleter.completeCall(result, noExpectedType)
+            result.replaceResolveStatus(status)
+            dataFlowAnalyzer.exitAnnotationCall(result)
+            annotationCall.compose()
         }
     }
 

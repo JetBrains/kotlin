@@ -1,27 +1,27 @@
 // !DIAGNOSTICS: -INVISIBLE_MEMBER -INVISIBLE_REFERENCE
 
 // FILE: b.kt
-@file:JvmPackageName("")
+<!HIDDEN!>@file:JvmPackageName("")<!>
 package b
 fun b() {}
 
 // FILE: c.kt
-@file:JvmPackageName("invalid-fq-name")
+<!HIDDEN!>@file:JvmPackageName("invalid-fq-name")<!>
 package c
 fun c() {}
 
 // FILE: d.kt
-@file:JvmPackageName("d")
+<!HIDDEN!>@file:JvmPackageName("d")<!>
 package d
 class D
 fun d() {}
 
 // FILE: e.kt
-@file:JvmPackageName(42)
+<!HIDDEN!>@file:JvmPackageName(42)<!>
 package e
 fun e() {}
 
 // FILE: f.kt
-@file:JvmPackageName(f)
+<!HIDDEN!>@file:JvmPackageName(f)<!>
 package f
 const val name = "f"

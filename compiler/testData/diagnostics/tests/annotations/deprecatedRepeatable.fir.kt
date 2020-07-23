@@ -2,9 +2,9 @@
 
 import java.lang.annotation.Repeatable
 
-@java.lang.annotation.Repeatable(Annotations::class) annotation class RepAnn
+<!INAPPLICABLE_CANDIDATE!>@java.lang.annotation.Repeatable(Annotations::class)<!> annotation class RepAnn
 
-@Repeatable(OtherAnnotations::class) annotation class OtherAnn
+<!INAPPLICABLE_CANDIDATE!>@Repeatable(OtherAnnotations::class)<!> annotation class OtherAnn
 
 annotation class Annotations(vararg val value: RepAnn)
 

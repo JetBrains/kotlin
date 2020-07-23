@@ -11,5 +11,5 @@ enum class MyEnum {
     A
 }
 
-@AnnE(Test())
+<!INAPPLICABLE_CANDIDATE!>@AnnE(Test())<!>
 class Test2

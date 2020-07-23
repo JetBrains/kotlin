@@ -469,20 +469,13 @@ private fun FirQualifiedAccess.expressionTypeOrUnitForAssignment(): ConeKotlinTy
     return StandardClassIds.Unit.constructClassLikeType(emptyArray(), isNullable = false)
 }
 
-fun FirAnnotationCall.getCorrespondingConstructorReferenceOrNull(session: FirSession): FirResolvedNamedReference? =
-    annotationTypeRef.coneType.classId?.let {
+fun FirAnnotationCall.getCorrespondingClassSymbolOrNull(session: FirSession): FirRegularClassSymbol? {
+    return annotationTypeRef.coneType.fullyExpandedType(session).classId?.let {
         if (it.isLocal) {
             // TODO: How to retrieve local annotaiton's constructor?
             null
         } else {
-            (session.firSymbolProvider.getClassLikeSymbolByFqName(it) as? FirRegularClassSymbol)?.fir
-                ?.getPrimaryConstructorIfAny()
-                ?.let { annotationConstructor ->
-                    buildResolvedNamedReference {
-                        source = this@getCorrespondingConstructorReferenceOrNull.source
-                        name = it.shortClassName
-                        resolvedSymbol = annotationConstructor.symbol
-                    }
-                }
+            (session.firSymbolProvider.getClassLikeSymbolByFqName(it) as? FirRegularClassSymbol)
         }
     }
+}

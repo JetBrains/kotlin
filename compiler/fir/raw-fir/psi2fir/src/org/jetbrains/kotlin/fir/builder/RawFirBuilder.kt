@@ -1288,7 +1288,11 @@ class RawFirBuilder(
                 useSiteTarget = annotationEntry.useSiteTarget?.getAnnotationUseSiteTarget()
                 annotationTypeRef = annotationEntry.typeReference.toFirOrErrorType()
                 annotationEntry.extractArgumentsTo(this)
-                calleeReference = FirReferenceForUnresolvedAnnotations
+                val name = (annotationTypeRef as? FirUserTypeRef)?.qualifier?.last()?.name ?: Name.special("<no-annotation-name>")
+                calleeReference = buildSimpleNamedReference {
+                    source = this@buildAnnotationCall.source
+                    this.name = name
+                }
             }
         }
 

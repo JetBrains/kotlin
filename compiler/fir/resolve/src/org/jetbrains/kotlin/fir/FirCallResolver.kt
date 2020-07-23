@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.isInner
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 
 class FirCallResolver(
     private val components: BodyResolveComponents,
@@ -313,6 +315,55 @@ class FirCallResolver(
         )
 
         return callResolver.selectDelegatingConstructorCall(delegatedConstructorCall, name, result, callInfo)
+    }
+
+    fun resolveAnnotationCall(annotationCall: FirAnnotationCall): FirAnnotationCall? {
+        val reference = annotationCall.calleeReference as? FirSimpleNamedReference ?: return null
+        annotationCall.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
+
+        val callInfo = CallInfo(
+            CallKind.Function,
+            name = reference.name,
+            explicitReceiver = null,
+            annotationCall.argumentList,
+            isPotentialQualifierPart = false,
+            typeArguments = emptyList(),
+            session,
+            file,
+            containingDeclarations
+        )
+
+        val resolutionResult = createCandidateForAnnotationCall(annotationCall, callInfo)
+            ?: ResolutionResult(callInfo, CandidateApplicability.HIDDEN, emptyList())
+        val resolvedReference = createResolvedNamedReference(
+            reference,
+            reference.name,
+            callInfo,
+            resolutionResult.candidates,
+            resolutionResult.applicability,
+            explicitReceiver = null
+        )
+
+        return annotationCall.transformCalleeReference(StoreNameReference, resolvedReference)
+    }
+
+    private fun createCandidateForAnnotationCall(annotationCall: FirAnnotationCall, callInfo: CallInfo): ResolutionResult? {
+        val annotationClassSymbol = annotationCall.getCorrespondingClassSymbolOrNull(session)
+            ?.takeIf { it.fir.classKind == ClassKind.ANNOTATION_CLASS }
+            ?: return null
+        var constructorSymbol: FirConstructorSymbol? = null
+        annotationClassSymbol.fir.buildUseSiteMemberScope(session, scopeSession)?.processDeclaredConstructors {
+            if (it.fir.isPrimary && constructorSymbol == null) {
+                constructorSymbol = it
+            }
+        }
+        if (constructorSymbol == null) return null
+        val candidate = CandidateFactory(components, callInfo).createCandidate(
+            constructorSymbol!!,
+            ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
+        )
+        val applicability = resolutionStageRunner.processCandidate(candidate)
+        return ResolutionResult(callInfo, applicability, listOf(candidate))
     }
 
     @OptIn(PrivateForInline::class)

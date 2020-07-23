@@ -31,6 +31,6 @@ fun test_ann(s: String, arr: Array<String>) {
 
     @Ann("", x = 1)
     foo()
-    @Ann(s = "", x = 1)
+    <!INAPPLICABLE_CANDIDATE!>@Ann(s = "", x = 1)<!>
     foo()
 }

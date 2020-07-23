@@ -3,7 +3,7 @@
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 @kotlin.jvm.JvmName("containsAny")
-@kotlin.internal.LowPriorityInOverloadResolution
+<!HIDDEN!>@kotlin.internal.LowPriorityInOverloadResolution<!>
 public fun <T> Iterable<T>.contains1(element: T): Int = null!!
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
