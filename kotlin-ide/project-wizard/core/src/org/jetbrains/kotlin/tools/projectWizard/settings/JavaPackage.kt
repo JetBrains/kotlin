@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import java.nio.file.Paths
 
 class JavaPackage(val parts: List<String>) {
-    constructor(vararg parts: String) : this(parts.toList())
+    constructor(`package`: String) : this(`package`.split('.'))
 
     fun asPath() = Paths.get(parts.joinToString(separator = "/"))
     fun asCodePackage() = parts.joinToString(separator = ".")

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
@@ -57,24 +58,6 @@ interface ModuleConfiguratorWithModuleType : ModuleConfigurator {
 
 val ModuleConfigurator.moduleType: ModuleType?
     get() = safeAs<ModuleConfiguratorWithModuleType>()?.moduleType
-
-object MppModuleConfigurator : ModuleConfigurator {
-    override val moduleKind = ModuleKind.multiplatform
-
-    @NonNls
-    override val suggestedModuleName = "shared"
-
-    @NonNls
-    override val id = "multiplatform"
-    override val text = KotlinNewProjectWizardBundle.message("module.configurator.mpp")
-    override val canContainSubModules = true
-
-    override fun createKotlinPluginIR(configurationData: ModulesToIrConversionData, module: Module): KotlinBuildSystemPluginIR? =
-        KotlinBuildSystemPluginIR(
-            KotlinBuildSystemPluginIR.Type.multiplatform,
-            version = configurationData.kotlinVersion
-        )
-}
 
 
 interface SinglePlatformModuleConfigurator : ModuleConfigurator {
