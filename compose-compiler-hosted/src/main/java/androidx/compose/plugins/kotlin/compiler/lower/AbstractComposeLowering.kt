@@ -17,7 +17,6 @@
 package androidx.compose.plugins.kotlin.compiler.lower
 
 import androidx.compose.plugins.kotlin.ComposeFqNames
-import androidx.compose.plugins.kotlin.ComposeUtils
 import androidx.compose.plugins.kotlin.KtxNameConventions
 import androidx.compose.plugins.kotlin.allowsComposableCalls
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
@@ -205,11 +204,11 @@ abstract class AbstractComposeLowering(
     }
 
     fun getInternalFunction(name: String) = getTopLevelFunction(
-        ComposeUtils.composeInternalFqName(name)
+        ComposeFqNames.internalFqNameFor(name)
     )
 
     fun getInternalClass(name: String) = getTopLevelClass(
-        ComposeUtils.composeInternalFqName(name)
+        ComposeFqNames.internalFqNameFor(name)
     )
 
     fun getTopLevelPropertyGetter(fqName: FqName): IrFunctionSymbol {

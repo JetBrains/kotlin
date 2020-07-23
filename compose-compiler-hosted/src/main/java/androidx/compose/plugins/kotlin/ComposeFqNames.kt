@@ -34,20 +34,23 @@ import org.jetbrains.kotlin.types.TypeUtils.UNIT_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 
 object ComposeFqNames {
-    val Composable = ComposeUtils.composeFqName("Composable")
-    val CurrentComposerIntrinsic = ComposeUtils.composeFqName("<get-currentComposer>")
-    val ComposableContract = ComposeUtils.composeFqName("ComposableContract")
-    val composableLambda = ComposeUtils.composeInternalFqName("composableLambda")
-    val remember = ComposeUtils.composeFqName("remember")
-    val key = ComposeUtils.composeFqName("key")
-    val StableMarker = ComposeUtils.composeFqName("StableMarker")
-    val Stable = ComposeUtils.composeFqName("Stable")
-    val Composer = ComposeUtils.composeFqName("Composer")
+    private const val root = "androidx.compose"
+    private const val internalRoot = "$root.internal"
+    fun fqNameFor(cname: String) = FqName("$root.$cname")
+    fun internalFqNameFor(cname: String) = FqName("$internalRoot.$cname")
+
+    val Composable = fqNameFor("Composable")
+    val internal = fqNameFor("internal")
+    val CurrentComposerIntrinsic = fqNameFor("<get-currentComposer>")
+    val ComposableContract = fqNameFor("ComposableContract")
+    val composableLambda = internalFqNameFor("composableLambda")
+    val remember = fqNameFor("remember")
+    val key = fqNameFor("key")
+    val StableMarker = fqNameFor("StableMarker")
+    val Stable = fqNameFor("Stable")
+    val Composer = fqNameFor("Composer")
     val ComposeVersion = FqName("androidx.compose.runtime.ComposeVersion")
-    val UiComposer = FqName.fromSegments(listOf("androidx", "ui", "node", "UiComposer"))
-    val Package = FqName.fromSegments(listOf("androidx", "compose"))
-    val Function0 = FqName.fromSegments(listOf("kotlin", "jvm", "functions", "Function0"))
-    val Function1 = FqName.fromSegments(listOf("kotlin", "jvm", "functions", "Function1"))
+    val Package = FqName(root)
     fun makeComposableAnnotation(module: ModuleDescriptor): AnnotationDescriptor =
         object : AnnotationDescriptor {
             override val type: KotlinType

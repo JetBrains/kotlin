@@ -49,7 +49,7 @@ open class UnionAnnotationCheckerProvider() : StorageComponentContainerContribut
 open class UnionAnnotationChecker(val moduleDescriptor: ModuleDescriptor) : AdditionalTypeChecker {
     companion object {
         val UNIONTYPE_ANNOTATION_NAME =
-            ComposeUtils.composeFqName("UnionType")
+            ComposeFqNames.fqNameFor("UnionType")
     }
 
     override fun checkType(

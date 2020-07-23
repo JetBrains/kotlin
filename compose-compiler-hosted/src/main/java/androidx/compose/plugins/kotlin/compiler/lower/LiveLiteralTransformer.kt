@@ -16,7 +16,7 @@
 
 package androidx.compose.plugins.kotlin.compiler.lower
 
-import androidx.compose.plugins.kotlin.ComposeUtils
+import androidx.compose.plugins.kotlin.ComposeFqNames
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.addChild
 import org.jetbrains.kotlin.backend.common.ir.copyTo
@@ -170,9 +170,9 @@ open class LiveLiteralTransformer(
     private val liveLiteralFileInfoAnnotation =
         getInternalClass("LiveLiteralFileInfo").bindIfNecessary()
     private val stateInterface =
-        getTopLevelClass(ComposeUtils.composeFqName("State")).bindIfNecessary()
+        getTopLevelClass(ComposeFqNames.fqNameFor("State")).bindIfNecessary()
     private val NoLiveLiteralsAnnotation =
-        getTopLevelClass(ComposeUtils.composeFqName("NoLiveLiterals")).bindIfNecessary()
+        getTopLevelClass(ComposeFqNames.fqNameFor("NoLiveLiterals")).bindIfNecessary()
 
     private fun IrAnnotationContainer.hasNoLiveLiteralsAnnotation(): Boolean = annotations.any {
         it.symbol.bindIfNecessary().owner == NoLiveLiteralsAnnotation.owner.primaryConstructor
