@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionWithSmartcast
@@ -43,7 +44,7 @@ abstract class AbstractExplicitReceiverValue<E : FirExpression> : AbstractExplic
     override val type: ConeKotlinType
         // NB: safe cast is necessary here
         get() = explicitReceiver.typeRef.coneTypeSafe()
-            ?: ConeKotlinErrorType("No type calculated for: ${explicitReceiver.renderWithType()}") // TODO: assert here
+            ?: ConeKotlinErrorType(ConeIntermediateDiagnostic("No type calculated for: ${explicitReceiver.renderWithType()}")) // TODO: assert here
 
     override val receiverExpression: FirExpression
         get() = explicitReceiver

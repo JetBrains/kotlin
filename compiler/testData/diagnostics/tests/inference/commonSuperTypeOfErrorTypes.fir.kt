@@ -8,7 +8,7 @@ fun <T> consume(x: Foo<out T>, y: Foo<out T>) {}
 fun <T> materialize() = null as T
 
 fun test() {
-    consume(
+    <!INAPPLICABLE_CANDIDATE!>consume<!>(
         materialize<<!UPPER_BOUND_VIOLATED!>Foo<Bar<ErrorType>><!>>(),
         materialize<<!UPPER_BOUND_VIOLATED!>Foo<Bar<ErrorType>><!>>()
     )

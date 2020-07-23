@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorLoop

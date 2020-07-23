@@ -10,7 +10,8 @@ import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.FirResolvedReifiedParameterReferenceBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionWithSmartcast
@@ -177,7 +178,7 @@ fun FirClassifierSymbol<*>.constructType(
                 it is ConeClassErrorType
             }
             if (errorTypeRef is ConeClassErrorType) {
-                ConeClassErrorType(errorTypeRef.reason, errorTypeRef.source)
+                ConeClassErrorType(errorTypeRef.diagnostic)
             } else {
                 ConeClassLikeTypeImpl(this.toLookupTag(), typeArguments, isNullable, attributes)
             }
@@ -206,7 +207,9 @@ fun FirClassifierSymbol<*>.constructType(
     if (this is FirTypeParameterSymbol) {
         for (part in parts) {
             if (part.typeArgumentList.typeArguments.isNotEmpty()) {
-                return ConeClassErrorType("Type arguments not allowed", source = part.typeArgumentList.source)
+                return ConeClassErrorType(
+                    ConeUnexpectedTypeArgumentsError("Type arguments not allowed", part.typeArgumentList.source)
+                )
             }
         }
     }
@@ -230,7 +233,7 @@ fun FirFunction<*>.constructFunctionalTypeRef(isSuspend: Boolean = false): FirRe
         else -> null
     }
     val parameters = valueParameters.map {
-        it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType("No type for parameter")
+        it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType(ConeIntermediateDiagnostic("No type for parameter"))
     }
     val rawReturnType = (this as FirTypedDeclaration).returnTypeRef.coneType
 
@@ -354,7 +357,7 @@ fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirReso
             val implicitReceiver = implicitReceiverStack[labelName]
             buildResolvedTypeRef {
                 source = null
-                type = implicitReceiver?.type ?: ConeKotlinErrorType("Unresolved this@$labelName")
+                type = implicitReceiver?.type ?: ConeKotlinErrorType(ConeIntermediateDiagnostic("Unresolved this@$labelName"))
             }
         }
         is FirSuperReference -> {

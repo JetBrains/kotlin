@@ -7,13 +7,12 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
+import org.jetbrains.kotlin.fir.ConeDiagnostic
+import org.jetbrains.kotlin.fir.ConeStubDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*

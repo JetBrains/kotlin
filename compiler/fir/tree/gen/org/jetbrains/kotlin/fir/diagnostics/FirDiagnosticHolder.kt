@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.diagnostics
 
+import org.jetbrains.kotlin.fir.ConeDiagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.visitors.*

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.providers.impl
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
 import org.jetbrains.kotlin.fir.resolve.constructType
@@ -82,7 +83,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
 
     private fun resolveUserType(typeRef: FirUserTypeRef, symbol: FirClassifierSymbol<*>?): ConeKotlinType {
         if (symbol == null) {
-            return ConeKotlinErrorType("Symbol not found, for `${typeRef.render()}`")
+            return ConeKotlinErrorType(ConeIntermediateDiagnostic("Symbol not found, for `${typeRef.render()}`"))
         }
         return symbol.constructType(typeRef.qualifier, typeRef.isMarkedNullable, symbolOriginSession = session, typeRef.annotations.computeTypeAttributes())
     }
@@ -115,7 +116,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
             is FirUserTypeRef -> resolveUserType(typeRef, resolveToSymbol(typeRef, scope))
             is FirFunctionTypeRef -> createFunctionalType(typeRef)
             is FirDelegatedTypeRef -> resolveType(typeRef.typeRef, scope)
-            is FirDynamicTypeRef -> ConeKotlinErrorType("Not supported: ${typeRef::class.simpleName}")
+            is FirDynamicTypeRef -> ConeKotlinErrorType(ConeIntermediateDiagnostic("Not supported: ${typeRef::class.simpleName}"))
             else -> error("!")
         }
     }

@@ -47,7 +47,7 @@ typealias ArrayOfEnumEntryAlias = Array<RedAlias>
 fun <T> bar(a: Any): T = a as T
 
 fun <T> foo() {
-    foo<Color.RED>()
+    foo<<!UPPER_BOUND_VIOLATED!>Color.RED<!>>()
     foo<RedAlias>()
     <!INAPPLICABLE_CANDIDATE!>bar<!><Color.RED>(Color.RED)
 }

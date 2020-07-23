@@ -10,12 +10,12 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
+import org.jetbrains.kotlin.fir.ConeStubDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
-import org.jetbrains.kotlin.fir.expressions.builder.buildVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildVariableAssignment
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
-import kotlin.math.min
 
 open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
     private inline val builtinTypes: BuiltinTypes get() = session.builtinTypes
@@ -80,7 +79,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     callee.replaceBoundSymbol(it)
                 }
                 qualifiedAccessExpression.resultType = buildResolvedTypeRef {
-                    type = implicitReceiver?.type ?: ConeKotlinErrorType("Unresolved this@$labelName")
+                    type = implicitReceiver?.type ?: ConeKotlinErrorType(ConeIntermediateDiagnostic("Unresolved this@$labelName"))
                 }
                 qualifiedAccessExpression
             }
@@ -614,7 +613,8 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 
     private fun FirConstKind<*>.expectedConeType(): ConeKotlinType {
         fun constructLiteralType(classId: ClassId, isNullable: Boolean = false): ConeKotlinType {
-            val symbol = symbolProvider.getClassLikeSymbolByFqName(classId) ?: return ConeClassErrorType("Missing stdlib class: $classId")
+            val symbol = symbolProvider.getClassLikeSymbolByFqName(classId)
+                ?: return ConeClassErrorType(ConeIntermediateDiagnostic("Missing stdlib class: $classId"))
             return symbol.toLookupTag().constructClassType(emptyArray(), isNullable)
         }
         return when (this) {

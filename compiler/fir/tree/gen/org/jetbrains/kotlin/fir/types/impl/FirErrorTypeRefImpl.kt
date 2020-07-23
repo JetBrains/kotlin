@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.types.impl
 
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -24,7 +24,7 @@ internal class FirErrorTypeRefImpl(
     override val diagnostic: ConeDiagnostic,
 ) : FirErrorTypeRef() {
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    override val type: ConeKotlinType = ConeClassErrorType(diagnostic.reason, source)
+    override val type: ConeKotlinType = ConeClassErrorType(diagnostic)
     override val delegatedTypeRef: FirTypeRef? get() = null
     override val isSuspend: Boolean = false
 

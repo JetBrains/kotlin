@@ -1,0 +1,32 @@
+FILE fqName:<root> fileName:/test.kt
+  FUN name:print visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit
+    VALUE_PARAMETER name:s index:0 type:kotlin.String
+    BLOCK_BODY
+  FUN name:foo visibility:public modality:FINAL <> (je:<root>.JavaEnum) returnType:kotlin.Unit
+    VALUE_PARAMETER name:je index:0 type:<root>.JavaEnum
+    BLOCK_BODY
+      BLOCK type=kotlin.Unit origin=WHEN
+        VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.JavaEnum [val]
+          GET_VAR 'je: <root>.JavaEnum declared in <root>.foo' type=<root>.JavaEnum origin=null
+        WHEN type=kotlin.Unit origin=WHEN
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'val tmp_0: <root>.JavaEnum [val] declared in <root>.foo' type=<root>.JavaEnum origin=null
+              arg1: GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_JAVA_DECLARATION_STUB name:FIRST' type=<root>.JavaEnum
+            then: CALL 'public final fun print (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+              s: CONST String type=kotlin.String value="1"
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'val tmp_0: <root>.JavaEnum [val] declared in <root>.foo' type=<root>.JavaEnum origin=null
+              arg1: GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_JAVA_DECLARATION_STUB name:SECOND' type=<root>.JavaEnum
+            then: CALL 'public final fun print (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+              s: CONST String type=kotlin.String value="2"
+          BRANCH
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'val tmp_0: <root>.JavaEnum [val] declared in <root>.foo' type=<root>.JavaEnum origin=null
+              arg1: GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_JAVA_DECLARATION_STUB name:LAST' type=<root>.JavaEnum
+            then: CALL 'public final fun print (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+              s: CONST String type=kotlin.String value="10"
+          BRANCH
+            if: CONST Boolean type=kotlin.Boolean value=true
+            then: CALL 'public final fun noWhenBranchMatchedException (): kotlin.Nothing declared in kotlin.internal.ir' type=kotlin.Nothing origin=null

@@ -147,7 +147,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         val errorTypeRefImpl = impl(errorTypeRef) {
-            default("type", "ConeClassErrorType(diagnostic.reason, source)")
+            default("type", "ConeClassErrorType(diagnostic)")
             default("delegatedTypeRef") {
                 value = "null"
                 withGetter = true

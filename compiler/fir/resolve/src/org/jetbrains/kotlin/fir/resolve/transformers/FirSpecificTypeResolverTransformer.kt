@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class FirSpecificTypeResolverTransformer(
     override val session: FirSession,
@@ -53,8 +54,10 @@ class FirSpecificTypeResolverTransformer(
             }
         } else {
             buildErrorTypeRef {
-                source = resolvedType.source as FirSourceElement
-                diagnostic = ConeUnexpectedTypeArgumentsError(resolvedType.reason, resolvedType.source)
+                source = resolvedType.diagnostic.safeAs<ConeUnexpectedTypeArgumentsError>()
+                    ?.source.safeAs()
+                    ?: typeRef.source
+                diagnostic = resolvedType.diagnostic
             }
         }.compose()
     }

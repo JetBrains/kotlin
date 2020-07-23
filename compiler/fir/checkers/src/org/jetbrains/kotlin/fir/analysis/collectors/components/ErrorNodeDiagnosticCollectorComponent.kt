@@ -12,9 +12,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory0
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
+import org.jetbrains.kotlin.fir.ConeStubDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind.*
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
@@ -63,6 +64,7 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
             is ConeUnexpectedTypeArgumentsError -> FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.on(diagnostic.source.safeAs() ?: source)
             is ConeSimpleDiagnostic -> diagnostic.getFactory().on(source)
             is ConeStubDiagnostic -> null
+            is ConeIntermediateDiagnostic -> null
             else -> throw IllegalArgumentException("Unsupported diagnostic type: ${diagnostic.javaClass}")
         }
         reporter.report(coneDiagnostic)

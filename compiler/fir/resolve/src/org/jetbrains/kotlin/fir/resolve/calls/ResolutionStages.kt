@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
@@ -230,7 +231,7 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
                 expectedReturnType = extractInputOutputTypesFromCallableReferenceExpectedType(expectedType, callInfo.session)?.outputType
             )
             is FirVariable<*> -> createKPropertyType(fir, resultingReceiverType, returnTypeRef)
-            else -> ConeKotlinErrorType("Unknown callable kind: ${fir::class}")
+            else -> ConeKotlinErrorType(ConeIntermediateDiagnostic("Unknown callable kind: ${fir::class}"))
         }.let(candidate.substitutor::substituteOrSelf)
 
         candidate.resultingTypeForCallableReference = resultingType

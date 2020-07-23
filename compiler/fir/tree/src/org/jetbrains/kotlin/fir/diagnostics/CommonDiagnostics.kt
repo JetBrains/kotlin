@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.diagnostics
 
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.ConeDiagnostic
 
 class ConeUnexpectedTypeArgumentsError(override val reason: String, val source: Any? = null) : ConeDiagnostic()
+
+class ConeIntermediateDiagnostic(override val reason: String) : ConeDiagnostic()

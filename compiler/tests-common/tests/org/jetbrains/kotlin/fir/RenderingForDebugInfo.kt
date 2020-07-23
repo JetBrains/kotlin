@@ -12,7 +12,7 @@ fun ConeKotlinType.renderForDebugInfo(): String {
     return when (this) {
         is ConeTypeVariableType -> "TypeVariable(${this.lookupTag.name})"
         is ConeDefinitelyNotNullType -> "${original.renderForDebugInfo()}!!"
-        is ConeClassErrorType -> "ERROR CLASS: $reason"
+        is ConeClassErrorType -> "ERROR CLASS: ${diagnostic.reason}"
         is ConeCapturedType -> "CapturedType(${constructor.projection.renderForDebugInfo()})"
         is ConeClassLikeType -> {
             buildString {
