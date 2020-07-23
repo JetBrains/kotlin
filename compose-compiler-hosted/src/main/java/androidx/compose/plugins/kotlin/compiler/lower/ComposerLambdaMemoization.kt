@@ -16,8 +16,7 @@
 
 package androidx.compose.plugins.kotlin.compiler.lower
 
-import androidx.compose.plugins.kotlin.ComposeUtils
-import androidx.compose.plugins.kotlin.ComposeUtils.composeInternalFqName
+import androidx.compose.plugins.kotlin.ComposeFqNames
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.plugins.kotlin.composableTrackedContract
 import androidx.compose.plugins.kotlin.irTrace
@@ -60,7 +59,6 @@ import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -165,7 +163,7 @@ class ComposerLambdaMemoization(
 
     private fun irCurrentComposer(): IrExpression {
         val currentComposerSymbol = getTopLevelPropertyGetter(
-            ComposeUtils.composeFqName("currentComposer")
+            ComposeFqNames.fqNameFor("currentComposer")
         )
 
         currentComposerSymbol.bindIfNecessary()
@@ -364,7 +362,7 @@ class ComposerLambdaMemoization(
                 COMPOSABLE_LAMBDA_N_INSTANCE
                 else COMPOSABLE_LAMBDA_INSTANCE
         val restartFactorySymbol =
-            getTopLevelFunction(composeInternalFqName(restartFunctionFactory))
+            getTopLevelFunction(ComposeFqNames.internalFqNameFor(restartFunctionFactory))
         val irBuilder = DeclarationIrBuilder(context,
             symbol = declarationContext.symbol,
             startOffset = expression.startOffset,
@@ -428,7 +426,7 @@ class ComposerLambdaMemoization(
         val descriptor = declaration.descriptor
         val module = descriptor.module
         val rememberFunctions = module
-            .getPackage(FqName(ComposeUtils.generateComposePackageName()))
+            .getPackage(ComposeFqNames.Package)
             .memberScope
             .getContributedFunctions(
                 Name.identifier("remember"),
