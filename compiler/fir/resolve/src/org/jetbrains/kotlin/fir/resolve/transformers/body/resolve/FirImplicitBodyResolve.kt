@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.*
-import org.jetbrains.kotlin.fir.resolve.transformers.TransformImplicitType
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForLocalClass
 import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -87,9 +86,9 @@ fun <F : FirClass<F>> F.runContractAndBodiesResolutionForLocalClass(
         components.session, components.scopeSession,
         implicitBodyResolveComputationSession,
         FirResolvePhase.BODY_RESOLVE,
-        outerBodyResolveContext = newContext,
         implicitTypeOnly = false,
-        returnTypeCalculator
+        returnTypeCalculator,
+        outerBodyResolveContext = newContext
     )
 
     val graphBuilder = components.context.dataFlowAnalyzerContext.graphBuilder
