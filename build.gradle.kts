@@ -762,22 +762,6 @@ tasks {
         )
     }
 
-    register("plugins-tests") {
-        dependsOn("dist")
-        dependsOn(
-            ":kotlin-annotation-processing:test",
-            ":kotlin-allopen-compiler-plugin:test",
-            ":kotlin-noarg-compiler-plugin:test",
-            ":kotlin-sam-with-receiver-compiler-plugin:test",
-            ":plugins:uast-kotlin:test",
-            ":kotlin-annotation-processing-gradle:test",
-            ":kotlinx-serialization-compiler-plugin:test",
-            ":kotlinx-serialization-ide-plugin:test",
-            ":idea:jvm-debugger:jvm-debugger-test:test"
-        )
-    }
-
-
     register("ideaPluginTest") {
         dependsOn(
             "mainIdeTests",
@@ -793,9 +777,16 @@ tasks {
 
     register("miscIdeTests") {
         dependsOn(
+            ":kotlin-allopen-compiler-plugin:test",
+            ":kotlin-noarg-compiler-plugin:test",
+            ":kotlin-sam-with-receiver-compiler-plugin:test",
+            ":plugins:uast-kotlin:test",
+            ":kotlin-annotation-processing-gradle:test",
+            ":kotlinx-serialization-compiler-plugin:test",
+            ":kotlinx-serialization-ide-plugin:test",
+            ":idea:jvm-debugger:jvm-debugger-test:test",
             "idea-plugin-additional-tests",
             "jps-tests",
-            "plugins-tests",
             ":generators:test"
         )
         if (Ide.IJ()) {
