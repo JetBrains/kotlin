@@ -2,14 +2,18 @@ package com.jetbrains.mobile.execution
 
 import com.android.ddmlib.AndroidDebugBridge
 import com.android.sdklib.AndroidVersion
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.AtomicClearableLazyValue
 import com.jetbrains.mobile.AndroidToolkit
 
 class MobileDeviceService(project: Project) : DeviceService(project) {
-    override fun getAll(): List<Device> = getApplePhysicalDevices() + getAndroidDevices() + androidEmulators.value + getAppleSimulators()
+    override fun getAll(): List<Device> = getApplePhysicalDevices() + getAndroidDevices() + getAppleSimulators()
 
-    private fun getAndroidDevices(): List<AndroidPhysicalDevice> =
+    fun getAndroidDevices(): List<AndroidDevice> =
+        getAndroidPhysicalDevices() + androidEmulators.value
+
+    private fun getAndroidPhysicalDevices(): List<AndroidPhysicalDevice> =
         adb?.devices
             ?.filter { !it.isEmulator }
             ?.map(::AndroidPhysicalDevice)
@@ -45,4 +49,11 @@ class MobileDeviceService(project: Project) : DeviceService(project) {
             }
             return _adb
         }
+
+    companion object {
+        fun getInstance(project: Project): MobileDeviceService =
+            DeviceService.getInstance(project) as MobileDeviceService
+
+        private val log = logger<MobileDeviceService>()
+    }
 }
