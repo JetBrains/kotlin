@@ -40,6 +40,21 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
     ModuleConfiguratorWithModuleType,
     GradleModuleConfigurator {
 
+    fun getNewAndroidManifestPath(module: Module): Path?
+
+    private fun getManifestPathOrDefault(module: Module): Path =
+        getNewAndroidManifestPath(module) ?: ("src" / "main" / "AndroidManifest.xml")
+
+    fun getAndroidManifestXml(module: Module) = FileTemplateDescriptor(
+        "android/AndroidManifest.xml.vm",
+        getManifestPathOrDefault(module)
+    )
+
+    fun getAndroidManifestForLibraryXml(module: Module) = FileTemplateDescriptor(
+        "android/AndroidManifestLibrary.xml.vm",
+        getManifestPathOrDefault(module)
+    )
+
     override val moduleType: ModuleType
         get() = ModuleType.android
 
@@ -55,10 +70,11 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
 
         +GradleOnlyPluginByNameIR("kotlin-android-extensions", priority = 3)
         +AndroidConfigIR(
-            when (reader.createAndroidPlugin(module)) {
+            javaPackage = when (reader.createAndroidPlugin(module)) {
                 AndroidGradlePlugin.APPLICATION -> module.javaPackage(configurationData.pomIr)
                 AndroidGradlePlugin.LIBRARY -> null
-            }
+            },
+            newManifestPath = getNewAndroidManifestPath(module)
         )
         +createRepositories(configurationData.kotlinVersion).map(::RepositoryIR)
     }
@@ -91,16 +107,6 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
         val activityMainXml = FileTemplateDescriptor(
             "android/activity_main.xml.vm",
             "src" / "main" / "res" / "layout" / "activity_main.xml"
-        )
-
-        val androidManifestXml = FileTemplateDescriptor(
-            "android/AndroidManifest.xml.vm",
-            "src" / "main" / "AndroidManifest.xml"
-        )
-
-        val androidManifestForLibraryXml = FileTemplateDescriptor(
-            "android/AndroidManifestLibrary.xml.vm",
-            "src" / "main" / "AndroidManifest.xml"
         )
 
         val colorsXml = FileTemplateDescriptor(
@@ -139,6 +145,9 @@ object AndroidTargetConfigurator : TargetConfigurator,
 
     override val text = KotlinNewProjectWizardBundle.message("module.configurator.android")
 
+    override fun getNewAndroidManifestPath(module: Module): Path? =
+        Defaults.SRC_DIR / "${module.name}Main" / "AndroidManifest.xml"
+
     override fun Reader.createAndroidPlugin(module: Module): AndroidGradlePlugin =
         inContextOfModuleConfigurator(module) { androidPlugin.reference.settingValue }
 
@@ -167,7 +176,7 @@ object AndroidTargetConfigurator : TargetConfigurator,
 
         TemplatesPlugin.addFileTemplates.execute(
             listOf(
-                FileTemplate(AndroidModuleConfigurator.FileTemplateDescriptors.androidManifestForLibraryXml, modulePath, settings)
+                FileTemplate(getAndroidManifestForLibraryXml(module), modulePath, settings)
             )
         )
     }
