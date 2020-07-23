@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.buildUseSiteMemberScope
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.Fir2IrClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -119,7 +119,7 @@ class Fir2IrLazyClass(
         val processedNames = mutableSetOf<Name>()
         // NB: it's necessary to take all callables from scope,
         // e.g. to avoid accessing un-enhanced Java declarations with FirJavaTypeRef etc. inside
-        val scope = fir.buildUseSiteMemberScope(session, scopeSession)!!
+        val scope = fir.unsubstitutedScope(session, scopeSession)
         scope.processDeclaredConstructors {
             result += declarationStorage.getIrConstructorSymbol(it).owner
         }

@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.collectCallableNamesFromSupertypes
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.buildUseSiteMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.ir.declarations.*
@@ -63,7 +63,7 @@ class FakeOverrideGenerator(
         val result = mutableListOf<IrDeclaration>()
         if (fakeOverrideMode == FakeOverrideMode.NONE) return emptyList()
         val superTypesCallableNames = klass.collectCallableNamesFromSupertypes(session)
-        val useSiteMemberScope = klass.buildUseSiteMemberScope(session, scopeSession) ?: return emptyList()
+        val useSiteMemberScope = klass.unsubstitutedScope(session, scopeSession)
         for (name in superTypesCallableNames) {
             if (name in processedCallableNames) continue
             processedCallableNames += name

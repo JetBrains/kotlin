@@ -18,11 +18,11 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.buildUseSiteMemberScope
 import org.jetbrains.kotlin.fir.resolve.calls.isFunctional
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -433,7 +433,7 @@ class CallAndReferenceGenerator(
                         // Fallback for FirReferencePlaceholderForResolvedAnnotations from jar
                         val fir = coneType.lookupTag.toSymbol(session)?.fir as? FirClass<*>
                         var constructorSymbol: FirConstructorSymbol? = null
-                        fir?.buildUseSiteMemberScope(session, scopeSession)?.processDeclaredConstructors {
+                        fir?.unsubstitutedScope(session, scopeSession)?.processDeclaredConstructors {
                             if (it.fir.isPrimary && constructorSymbol == null) {
                                 constructorSymbol = it
                             }

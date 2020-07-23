@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.phasedFir
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -360,7 +361,7 @@ class FirCallResolver(
         callInfo: CallInfo
     ): ResolutionResult? {
         var constructorSymbol: FirConstructorSymbol? = null
-        annotationClassSymbol.fir.buildUseSiteMemberScope(session, scopeSession)?.processDeclaredConstructors {
+        annotationClassSymbol.fir.unsubstitutedScope(session, scopeSession).processDeclaredConstructors {
             if (it.fir.isPrimary && constructorSymbol == null) {
                 constructorSymbol = it
             }
