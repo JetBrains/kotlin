@@ -13,14 +13,7 @@ val kotlinReflectJvm = fileFrom(rootDir, "libraries/stdlib/jvm/src/kotlin/reflec
 val builtinsCherryPicked = fileFrom(buildDir, "src")
 val builtinsCherryPickedJvm = fileFrom(buildDir, "src-jvm")
 
-val runtimeElementsJvm by configurations.creating {
-    isCanBeResolved = false
-    isCanBeConsumed = true
-    attributes {
-        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
-        attribute(Attribute.of("builtins.platform", String::class.java), "JVM")
-    }
-}
+val runtimeElementsJvm by configurations.creating
 
 val prepareSources by tasks.registering(Sync::class) {
     from(kotlinReflectCommon) {
