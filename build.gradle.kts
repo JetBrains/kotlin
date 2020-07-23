@@ -766,7 +766,7 @@ tasks {
         dependsOn(
             "mainIdeTests",
             "gradleIdeTest",
-            "androidIdeTest",
+            "kaptIdeTest",
             "miscIdeTests"
         )
     }
@@ -794,8 +794,8 @@ tasks {
         }
     }
 
-    register("androidIdeTest") {
-        dependsOn("android-ide-tests")
+    register("kaptIdeTest") {
+        dependsOn(":kotlin-annotation-processing:test")
     }
 
     register("gradleIdeTest") {
