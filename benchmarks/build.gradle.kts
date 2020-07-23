@@ -111,15 +111,15 @@ tasks.named("classes") {
     }
 }
 
-/*tasks.register<JavaExec>("runBenchmark") {
-    val jmhArgs: String by project // example: -PjmhArgs='CommonCalls -p size=500 -p isIR=true -p useNI=true -f 1'
+tasks.register<JavaExec>("runBenchmark") {
+    // jmhArgs example: -PjmhArgs='CommonCalls -p size=500 -p isIR=true -p useNI=true -f 1'
+    val jmhArgs = if (project.hasProperty("jmhArgs")) project.property("jmhArgs").toString() else ""
     val resultFilePath = "$buildDir/benchmarks/jmh-result.json"
     val ideaHome = intellijRootDir().canonicalPath
 
     val benchmarkJarPath = "$buildDir/benchmarks/main/jars/benchmarks.jar"
     args = mutableListOf("-Didea.home.path=$ideaHome", benchmarkJarPath, "-rf", "json", "-rff", resultFilePath) + jmhArgs.split("\\s".toRegex())
     main = "-jar"
-
 
     doLast {
         if (project.kotlinBuildProperties.isTeamcityBuild) {
@@ -144,4 +144,4 @@ tasks.named("classes") {
             }
         }
     }
-}*/
+}
