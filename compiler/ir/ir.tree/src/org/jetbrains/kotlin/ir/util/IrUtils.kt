@@ -304,16 +304,14 @@ tailrec fun IrElement.getPackageFragment(): IrPackageFragment? {
     }
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrAnnotationContainer.getAnnotation(name: FqName): IrConstructorCall? =
     annotations.find {
-        it.symbol.owner.parentAsClass.descriptor.fqNameSafe == name
+        it.symbol.owner.parentAsClass.fqNameWhenAvailable == name
     }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrAnnotationContainer.hasAnnotation(name: FqName) =
     annotations.any {
-        it.symbol.owner.parentAsClass.descriptor.fqNameSafe == name
+        it.symbol.owner.parentAsClass.fqNameWhenAvailable == name
     }
 
 fun IrAnnotationContainer.hasAnnotation(symbol: IrClassSymbol) =
