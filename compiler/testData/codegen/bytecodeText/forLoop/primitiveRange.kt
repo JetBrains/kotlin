@@ -8,3 +8,4 @@ fun f(r: IntRange) {
 // 0 getEnd
 // 1 getFirst
 // 1 getLast
+// 0 getStep
