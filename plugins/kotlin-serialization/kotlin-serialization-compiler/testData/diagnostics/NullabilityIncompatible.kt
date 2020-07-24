@@ -1,7 +1,9 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER,-UNUSED_VARIABLE,-PROVIDED_RUNTIME_TOO_LOW
+// !DIAGNOSTICS: -UNUSED_PARAMETER,-UNUSED_VARIABLE
 
 // FILE: test.kt
 import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.*
+import kotlinx.serialization.encoding.*
 
 @Serializable(NopeNullableSerializer::class)
 class Nope {}

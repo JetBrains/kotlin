@@ -14,13 +14,13 @@ package
 
     @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public object `$serializer` : kotlinx.serialization.internal.GeneratedSerializer<WithTransients> {
         private constructor `$serializer`()
-        public open override /*1*/ /*synthesized*/ val descriptor: kotlinx.serialization.SerialDescriptor
+        public open override /*1*/ /*synthesized*/ val descriptor: kotlinx.serialization.descriptors.SerialDescriptor
         public open override /*1*/ /*synthesized*/ fun childSerializers(): kotlin.Array<kotlinx.serialization.KSerializer<*>>
-        public open override /*1*/ /*synthesized*/ fun deserialize(/*0*/ decoder: kotlinx.serialization.Decoder): WithTransients
+        public open override /*1*/ /*synthesized*/ fun deserialize(/*0*/ decoder: kotlinx.serialization.encoding.Decoder): WithTransients
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Patch function is deprecated for removal since this functionality is no longer supported by serializer.Some formats may provide implementation-specific patching in their Decoders.") public open override /*1*/ /*fake_override*/ fun patch(/*0*/ decoder: kotlinx.serialization.Decoder, /*1*/ old: WithTransients): WithTransients
-        public open override /*1*/ /*synthesized*/ fun serialize(/*0*/ encoder: kotlinx.serialization.Encoder, /*1*/ value: WithTransients): kotlin.Unit
+        @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Patch function is deprecated for removal since this functionality is no longer supported by serializer.Some formats may provide implementation-specific patching in their Decoders.") public open override /*1*/ /*fake_override*/ fun patch(/*0*/ decoder: kotlinx.serialization.encoding.Decoder, /*1*/ old: WithTransients): WithTransients
+        public open override /*1*/ /*synthesized*/ fun serialize(/*0*/ encoder: kotlinx.serialization.encoding.Encoder, /*1*/ value: WithTransients): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         public open override /*1*/ /*fake_override*/ fun typeParametersSerializers(): kotlin.Array<kotlinx.serialization.KSerializer<*>>
     }
