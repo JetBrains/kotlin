@@ -33,6 +33,16 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/DuplicateSerialName.kt");
     }
 
+    @TestMetadata("IncorrectTransient.kt")
+    public void testIncorrectTransient() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/IncorrectTransient.kt");
+    }
+
+    @TestMetadata("IncorrectTransient2.kt")
+    public void testIncorrectTransient2() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/IncorrectTransient2.kt");
+    }
+
     @TestMetadata("LazyRecursionBug.kt")
     public void testLazyRecursionBug() throws Exception {
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/diagnostics/LazyRecursionBug.kt");

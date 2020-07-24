@@ -1,0 +1,26 @@
+package
+
+public final class A</*0*/ E : kotlin.Any> : Proxy<E> {
+    public constructor A</*0*/ E : kotlin.Any>(/*0*/ left: E)
+    public final val left: E
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class Api {
+    public constructor Api()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final inline fun </*0*/ reified B : kotlin.Any> f(/*0*/ x: B): B
+    public final inline fun </*0*/ reified C : kotlin.Any> g(/*0*/ x: C): C
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun </*0*/ T> magic(): T
+    public final inline fun </*0*/ reified A : kotlin.Any> match(/*0*/ proxy: Proxy<A>): A
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Proxy</*0*/ in D> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

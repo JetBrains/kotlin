@@ -1,9 +1,9 @@
 @kotlin.Metadata
 public final class Foo$Companion {
-    inner class Foo$Companion
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final method funInCompanion(): void
+    public final inner class Foo$Companion
 }
 
 @kotlin.Metadata
@@ -11,7 +11,6 @@ public final class Foo {
     public final static @org.jetbrains.annotations.NotNull field Companion: Foo$Companion
     private final static field constValInCompanion: int
     private final field x: int
-    inner class Foo$Companion
     static method <clinit>(): void
     private synthetic method <init>(p0: int): void
     public synthetic final static method box-impl(p0: int): Foo
@@ -26,4 +25,5 @@ public final class Foo {
     public method toString(): java.lang.String
     public static method toString-impl(p0: int): java.lang.String
     public synthetic final method unbox-impl(): int
+    public final inner class Foo$Companion
 }

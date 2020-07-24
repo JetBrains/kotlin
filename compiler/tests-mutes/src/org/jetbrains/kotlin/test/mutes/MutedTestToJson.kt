@@ -18,12 +18,12 @@ data class MuteTestJson(
     val resolution: JsonNode
 )
 
-internal fun createMuteTestJson(testName: String, description: String, scope: Scope): MuteTestJson {
+internal fun createMuteTestJson(testName: String, description: String, scopeId: String, isBuildType: Boolean): MuteTestJson {
     val assignmentJson = """{ "text" : "$TAG $description" }"""
-    val scopeJson = if (scope.isBuildType)
-        """{"buildTypes":{"buildType":[{"id":"${scope.id}"}]}}"""
+    val scopeJson = if (isBuildType)
+        """{"buildTypes":{"buildType":[{"id":"$scopeId"}]}}"""
     else
-        """{"project":{"id":"${scope.id}"}}"""
+        """{"project":{"id":"$scopeId"}}"""
     val targetJson = """{ "tests" : { "test" : [ { "name" : "$testName" } ] } }"""
     val resolutionJson = """{ "type" : "manually" }"""
 
@@ -34,4 +34,44 @@ internal fun createMuteTestJson(testName: String, description: String, scope: Sc
         jsonObjectMapper.readTree(targetJson),
         jsonObjectMapper.readTree(resolutionJson)
     )
+}
+
+internal fun filterMutedTestsByScope(muteTestJson: List<MuteTestJson>, scopeId: String, isBuildType: Boolean): Map<String, MuteTestJson> {
+    val filterCondition = { testJson: MuteTestJson ->
+        if (isBuildType) {
+            val buildTypes = testJson.scope.get("buildTypes")
+            val buildTypeIds = buildTypes?.get("buildType")?.toList()?.map {
+                it.get("id").textValue()
+            } ?: listOf()
+            buildTypeIds.contains(scopeId)
+        } else {
+            testJson.scope.get("project")?.get("id")?.textValue() == scopeId
+        }
+    }
+
+    return muteTestJson.filter(filterCondition)
+        .flatMap { mutedTestJson ->
+            val testNames = mutedTestJson.target.get("tests").get("test").toList().map { it.get("name").textValue() }
+            testNames.map { testName ->
+                testName to mutedTestJson
+            }
+        }
+        .toMap()
+}
+
+internal fun transformMutedTestsToJson(flakyTests: List<MutedTest>?, scopeId: String, isBuildType: Boolean): Map<String, MuteTestJson> {
+    val mutedMap = mutableMapOf<String, MuteTestJson>()
+    if (flakyTests != null) {
+        for (muted in flakyTests) {
+            val testName = formatClassnameWithInnerClasses(muted.key)
+            mutedMap[testName] = createMuteTestJson(testName, muted.issue ?: "", scopeId, isBuildType)
+        }
+    }
+    return mutedMap
+}
+
+private fun formatClassnameWithInnerClasses(classname: String): String {
+    val classFindRegex = "\\.(?=[A-Z])".toRegex()
+    val (pkg, name) = classname.split(classFindRegex, limit = 2)
+    return "$pkg.${name.replace(classFindRegex, "\\$")}"
 }

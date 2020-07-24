@@ -17,7 +17,7 @@ digraph smartcastOnLambda_kt {
                     3 [label="Enter when branch condition "];
                     4 [label="Access variable R|<local>/func|"];
                     5 [label="Const: Null(null)"];
-                    6 [label="Operator !="];
+                    6 [label="Equality operator !="];
                     7 [label="Exit when branch condition"];
                 }
                 8 [label="Synthetic else branch"];

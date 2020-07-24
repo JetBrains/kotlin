@@ -47,7 +47,7 @@ class DescriptorBasedClassCodegen internal constructor(
             state.bindingTrace.record(
                 CodegenBinding.DELEGATED_PROPERTIES_WITH_METADATA,
                 type,
-                localDelegatedProperties.mapNotNull { it.owner.metadata?.descriptor }
+                localDelegatedProperties.mapNotNull { (it.owner.metadata as? MetadataSource.LocalDelegatedProperty)?.descriptor }
             )
         }
 

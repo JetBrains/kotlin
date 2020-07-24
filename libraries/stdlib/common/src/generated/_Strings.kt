@@ -1122,11 +1122,13 @@ public inline fun CharSequence.forEachIndexed(action: (index: Int, Char) -> Unit
 }
 
 @Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun CharSequence.max(): Char? {
     return maxOrNull()
 }
 
 @Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> CharSequence.maxBy(selector: (Char) -> R): Char? {
     return maxByOrNull(selector)
 }
@@ -1337,6 +1339,7 @@ public fun CharSequence.maxOrNull(): Char? {
 }
 
 @Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun CharSequence.maxWith(comparator: Comparator<in Char>): Char? {
     return maxWithOrNull(comparator)
 }
@@ -1356,11 +1359,13 @@ public fun CharSequence.maxWithOrNull(comparator: Comparator<in Char>): Char? {
 }
 
 @Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun CharSequence.min(): Char? {
     return minOrNull()
 }
 
 @Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> CharSequence.minBy(selector: (Char) -> R): Char? {
     return minByOrNull(selector)
 }
@@ -1571,6 +1576,7 @@ public fun CharSequence.minOrNull(): Char? {
 }
 
 @Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun CharSequence.minWith(comparator: Comparator<in Char>): Char? {
     return minWithOrNull(comparator)
 }

@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.types.JKJavaArrayType
 import org.jetbrains.kotlin.nj2k.types.JKJavaPrimitiveType
 import org.jetbrains.kotlin.nj2k.types.JKNoType
+import org.jetbrains.kotlin.utils.extractRadix
+import org.jetbrains.kotlin.utils.radixPrefix
 import kotlin.math.abs
 
 
@@ -200,8 +202,11 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
         if (correction == 0) return bound
 
         if (bound is JKLiteralExpression && bound.type == JKLiteralExpression.LiteralType.INT) {
-            val value = bound.literal.toInt()
-            return JKLiteralExpression((value + correction).toString(), bound.type)
+            val correctedLiteral = addCorrectionToIntLiteral(bound.literal, correction)
+
+            if (correctedLiteral != null) {
+                return JKLiteralExpression(correctedLiteral, bound.type)
+            }
         }
 
         val sign = if (correction > 0) JKOperatorToken.PLUS else JKOperatorToken.MINUS
@@ -213,6 +218,17 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
                 typeFactory.types.int
             )
         )
+    }
+
+    private fun addCorrectionToIntLiteral(intLiteral: String, correction: Int): String? {
+        require(!intLiteral.startsWith("-")) { "This function does not work with signed literals, but $intLiteral was supplied" }
+
+        val numberWithRadix = extractRadix(intLiteral)
+
+        val value = numberWithRadix.number.toIntOrNull(numberWithRadix.radix) ?: return null
+        val fixedValue = (value + correction).toString(numberWithRadix.radix)
+
+        return "${numberWithRadix.radixPrefix}${fixedValue}"
     }
 
     private fun indicesIterationRange(

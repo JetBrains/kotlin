@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirSimpleTypeImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.Interner
 import org.jetbrains.kotlin.descriptors.commonizer.utils.declarationDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.utils.signature
 import org.jetbrains.kotlin.types.*
 
 object CirTypeFactory {
@@ -40,9 +39,7 @@ object CirTypeFactory {
                     type = create(projection.type)
                 )
             },
-            isMarkedNullable = abbreviation.isMarkedNullable,
-            isDefinitelyNotNullType = abbreviation.isDefinitelyNotNullType,
-            signature = source.signature
+            isMarkedNullable = abbreviation.isMarkedNullable
         )
     }
 
@@ -50,18 +47,14 @@ object CirTypeFactory {
         classifierId: CirClassifierId,
         visibility: Visibility,
         arguments: List<CirTypeProjection>,
-        isMarkedNullable: Boolean,
-        isDefinitelyNotNullType: Boolean,
-        signature: CirTypeSignature
+        isMarkedNullable: Boolean
     ): CirSimpleType {
         return interner.intern(
             CirSimpleTypeImpl(
                 classifierId = classifierId,
                 visibility = visibility,
                 arguments = arguments,
-                isMarkedNullable = isMarkedNullable,
-                isDefinitelyNotNullType = isDefinitelyNotNullType,
-                signature = signature
+                isMarkedNullable = isMarkedNullable
             )
         )
     }

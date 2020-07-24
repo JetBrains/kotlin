@@ -1,7 +1,7 @@
 // !USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi
-// IGNORE_BACKEND: JS, JS_IR, NATIVE
-// IGNORE_BACKEND: JS_IR_ES6
+// IGNORE_BACKEND: NATIVE
 // WITH_REFLECT
+// KJS_WITH_FULL_RUNTIME
 
 package test
 
@@ -25,16 +25,22 @@ fun box(): String {
     assertEquals(KVariance.OUT, c.getOut().variance)
     assertEquals(false, c.getInv().isReified)
 
-    val y = getY<Any, Any>()
-    assertEquals(false, y.isReified)
-    val x = y.upperBounds.single().classifier as KTypeParameter
-    assertEquals(true, x.isReified)
-    assertEquals(KVariance.INVARIANT, x.variance)
+    if (!isJS) {
+        val y = getY<Any, Any>()
+        assertEquals(false, y.isReified)
+        val x = y.upperBounds.single().classifier as KTypeParameter
+        assertEquals(true, x.isReified)
+        assertEquals(KVariance.INVARIANT, x.variance)
+        assertEquals("X", x.toString())
+    }
 
     assertEquals("INV", c.getInv().toString())
-    assertEquals("in IN", c.getIn().toString())
-    assertEquals("out OUT", c.getOut().toString())
-    assertEquals("X", x.toString())
+    if (!isJS) {
+        assertEquals("in IN", c.getIn().toString())
+        assertEquals("out OUT", c.getOut().toString())
+    }
 
     return "OK"
 }
+
+val isJS = 1 as Any is Double

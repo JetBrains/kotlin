@@ -9,4 +9,14 @@ UFile (package = )
                     UQualifiedReferenceExpression
                         UThisExpression (label = null)
                         USimpleNameReferenceExpression (identifier = length)
+        UMethod (name = getRx)
+            UParameter (name = $this$rx)
+                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+            UBlockExpression
+                UReturnExpression
+                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                        UIdentifier (Identifier (toRegex))
+                        USimpleNameReferenceExpression (identifier = toRegex, resolvesTo = null)
     UClass (name = MyReceiverAnnotation)
+        UAnnotationMethod (name = name)
+            ULiteralExpression (value = "")

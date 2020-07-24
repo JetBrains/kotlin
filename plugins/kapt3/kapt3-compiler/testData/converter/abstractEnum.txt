@@ -60,6 +60,7 @@ import java.lang.System;
 public enum E3 {
     /*public static final*/ X /* = new E3() */,
     /*public static final*/ Y /* = new E3() */;
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = null;
 
     @org.jetbrains.annotations.NotNull()
@@ -79,6 +80,7 @@ import java.lang.System;
 @kotlin.Metadata()
 public enum E4 {
     /*public static final*/ X /* = new E4() */;
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = null;
     private final int b = 0;
     private final long c = 0L;

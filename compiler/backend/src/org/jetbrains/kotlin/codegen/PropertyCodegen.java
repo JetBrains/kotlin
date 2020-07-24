@@ -435,10 +435,10 @@ public class PropertyCodegen {
 
             if (annotatedField != null) {
                 // Don't emit nullability annotations for backing field if:
-                // - backing field is invisible from Java (private or synthetic);
+                // - backing field is synthetic;
                 // - property is lateinit (since corresponding field is actually nullable).
                 boolean skipNullabilityAnnotations =
-                        (modifiers & ACC_PRIVATE) != 0 || (modifiers & ACC_SYNTHETIC) != 0 ||
+                        (modifiers & ACC_SYNTHETIC) != 0 ||
                         propertyDescriptor.isLateInit();
                 AnnotationCodegen.forField(fv, memberCodegen, state, skipNullabilityAnnotations)
                         .genAnnotations(annotatedField, type, propertyDescriptor.getType());

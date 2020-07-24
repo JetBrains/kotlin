@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.DefaultScriptingSupport
 import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupport
-import org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupport.Companion.EPN
+import org.jetbrains.kotlin.idea.core.script.scriptingDebugLog
+import org.jetbrains.kotlin.idea.core.script.scriptingErrorLog
+import org.jetbrains.kotlin.idea.core.script.scriptingInfoLog
 import org.jetbrains.kotlin.idea.core.script.ucache.ScriptClassRootsBuilder
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.scripting.gradle.*
@@ -34,7 +36,6 @@ import org.jetbrains.plugins.gradle.config.GradleSettingsListenerAdapter
 import org.jetbrains.plugins.gradle.service.GradleInstallationManager
 import org.jetbrains.plugins.gradle.settings.*
 import org.jetbrains.plugins.gradle.util.GradleConstants
-import java.io.File
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -141,45 +142,51 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
     fun update(sync: KotlinDslGradleBuildSync) {
         val oldRoot = actualizeBuildRoot(sync.workingDir, sync.gradleVersion) ?: return
 
+        try {
+            val newRoot = updateRoot(oldRoot, sync)
+            if (newRoot == null) {
+                markImportingInProgress(sync.workingDir, false)
+                return
+            }
+
+            add(newRoot)
+        } catch (e: Exception) {
+            markImportingInProgress(sync.workingDir, false)
+            return
+        }
+    }
+
+    private fun updateRoot(oldRoot: GradleBuildRoot, sync: KotlinDslGradleBuildSync): Imported? {
         // fast path for linked gradle builds without .gradle.kts support
         if (sync.models.isEmpty()) {
-            if (oldRoot is Imported && oldRoot.data.models.isEmpty()) return
+            if (oldRoot is Imported && oldRoot.data.models.isEmpty()) return null
         }
 
-        scriptingDebugLog { "save gradle project info after import: $sync" }
+        if (oldRoot is Legacy) return null
 
-        if (oldRoot is Legacy) {
-            oldRoot.importing.set(updated)
-            return
+        scriptingDebugLog { "gradle project info after import: $sync" }
+
+        // TODO: can gradleHome be null, what to do in this case
+        val gradleHome = sync.gradleHome
+        if (gradleHome == null) {
+            scriptingInfoLog("Cannot find valid gradle home for ${sync.gradleHome} with version = ${sync.gradleVersion}, script models cannot be saved")
+            return null
         }
 
         oldRoot.importing.set(updatingCaches)
 
-        try {
-            // TODO: can gradleHome be null, what to do in this case
-            val gradleHome = sync.gradleHome
-            if (gradleHome == null) {
-                scriptingInfoLog("Cannot find valid gradle home for ${sync.gradleHome} with version = ${sync.gradleVersion}, script models cannot be saved")
-                return
-            }
+        scriptingDebugLog { "save script models after import: ${sync.models}" }
 
-            scriptingDebugLog { "save script models after import: ${sync.models}" }
+        val newData = GradleBuildRootData(sync.ts, sync.projectRoots, gradleHome, sync.javaHome, sync.models)
+        val mergedData = if (sync.failed && oldRoot is Imported) merge(oldRoot.data, newData) else newData
 
-            val newData = GradleBuildRootData(
-                sync.ts, sync.projectRoots, gradleHome, sync.javaHome, sync.models
-            )
-            val mergedData = if (sync.failed && oldRoot is Imported) merge(oldRoot.data, newData) else newData
+        val newRoot = tryCreateImportedRoot(sync.workingDir, LastModifiedFiles()) { mergedData } ?: return null
+        val buildRootDir = newRoot.dir ?: return null
 
-            val lastModifiedFilesReset = LastModifiedFiles()
-            val newRoot = tryCreateImportedRoot(sync.workingDir, lastModifiedFilesReset) { mergedData } ?: return
-            GradleBuildRootDataSerializer.write(newRoot.dir ?: return, mergedData)
-            newRoot.saveLastModifiedFiles()
+        GradleBuildRootDataSerializer.write(buildRootDir, mergedData)
+        newRoot.saveLastModifiedFiles()
 
-            add(newRoot)
-        } catch (e: Throwable) {
-            markImportingInProgress(sync.workingDir, false)
-            throw e
-        }
+        return newRoot
     }
 
     private fun merge(old: GradleBuildRootData, new: GradleBuildRootData): GradleBuildRootData {
@@ -456,6 +463,6 @@ class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(),
 
     companion object {
         fun getInstance(project: Project): GradleBuildRootsManager =
-            EPN.getPoint(project).extensionList.firstIsInstance()
+            ScriptingSupport.EPN.findExtensionOrFail(GradleBuildRootsManager::class.java, project)
     }
 }

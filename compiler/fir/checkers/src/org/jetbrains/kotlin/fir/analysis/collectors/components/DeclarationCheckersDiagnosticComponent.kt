@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.declarations.*
 
-class DeclarationCheckersDiagnosticComponent(collector: AbstractDiagnosticCollector) : AbstractDiagnosticCollectorComponent(collector) {
+class DeclarationCheckersDiagnosticComponent(
+    collector: AbstractDiagnosticCollector
+) : AbstractDiagnosticCollectorComponent(collector) {
     private val checkers = session.checkersComponent.declarationCheckers
 
     override fun visitProperty(property: FirProperty, data: CheckerContext) {

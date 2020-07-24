@@ -58,28 +58,21 @@ constructor(
             packageJson.apply {
                 listOf(
                     dependencies,
+                    devDependencies,
                     peerDependencies,
                     optionalDependencies
                 ).forEach { it.processDependencies() }
             }
-
-            packageJson.devDependencies.clear()
 
             packageJson.saveTo(this@PublicPackageJsonTask.packageJsonFile)
         }
     }
 
     private fun MutableMap<String, String>.processDependencies() {
-        val newDependencies = mutableMapOf<String, String>()
-        filterNot { (_, version) -> version.isFileVersion() }
-            .forEach { (key, version) ->
-                newDependencies[key] = version
-            }
-
-        clear()
-
-        newDependencies.forEach { (key, version) ->
-            this[key] = version
+        filter { (_, version) ->
+            version.isFileVersion()
+        }.forEach { (key, _) ->
+            remove(key)
         }
     }
 

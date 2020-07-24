@@ -551,6 +551,7 @@ public operator fun LongArray.contains(element: Long): Boolean {
  * Returns `true` if [element] is found in the array.
  */
 @Deprecated("The function has unclear behavior when searching for NaN or zero values and will be removed soon. Use 'any { it == element }' instead to continue using this behavior, or '.asList().contains(element: T)' to get the same search behavior as in a list.", ReplaceWith("any { it == element }"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @Suppress("DEPRECATION")
 public operator fun FloatArray.contains(element: Float): Boolean {
     return indexOf(element) >= 0
@@ -560,6 +561,7 @@ public operator fun FloatArray.contains(element: Float): Boolean {
  * Returns `true` if [element] is found in the array.
  */
 @Deprecated("The function has unclear behavior when searching for NaN or zero values and will be removed soon. Use 'any { it == element }' instead to continue using this behavior, or '.asList().contains(element: T)' to get the same search behavior as in a list.", ReplaceWith("any { it == element }"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @Suppress("DEPRECATION")
 public operator fun DoubleArray.contains(element: Double): Boolean {
     return indexOf(element) >= 0
@@ -1479,6 +1481,7 @@ public fun LongArray.indexOf(element: Long): Int {
  * Returns first index of [element], or -1 if the array does not contain element.
  */
 @Deprecated("The function has unclear behavior when searching for NaN or zero values and will be removed soon. Use 'indexOfFirst { it == element }' instead to continue using this behavior, or '.asList().indexOf(element: T)' to get the same search behavior as in a list.", ReplaceWith("indexOfFirst { it == element }"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun FloatArray.indexOf(element: Float): Int {
     for (index in indices) {
         if (element == this[index]) {
@@ -1492,6 +1495,7 @@ public fun FloatArray.indexOf(element: Float): Int {
  * Returns first index of [element], or -1 if the array does not contain element.
  */
 @Deprecated("The function has unclear behavior when searching for NaN or zero values and will be removed soon. Use 'indexOfFirst { it == element }' instead to continue using this behavior, or '.asList().indexOf(element: T)' to get the same search behavior as in a list.", ReplaceWith("indexOfFirst { it == element }"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun DoubleArray.indexOf(element: Double): Int {
     for (index in indices) {
         if (element == this[index]) {
@@ -2011,6 +2015,7 @@ public fun LongArray.lastIndexOf(element: Long): Int {
  * Returns last index of [element], or -1 if the array does not contain element.
  */
 @Deprecated("The function has unclear behavior when searching for NaN or zero values and will be removed soon. Use 'indexOfLast { it == element }' instead to continue using this behavior, or '.asList().lastIndexOf(element: T)' to get the same search behavior as in a list.", ReplaceWith("indexOfLast { it == element }"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun FloatArray.lastIndexOf(element: Float): Int {
     for (index in indices.reversed()) {
         if (element == this[index]) {
@@ -2024,6 +2029,7 @@ public fun FloatArray.lastIndexOf(element: Float): Int {
  * Returns last index of [element], or -1 if the array does not contain element.
  */
 @Deprecated("The function has unclear behavior when searching for NaN or zero values and will be removed soon. Use 'indexOfLast { it == element }' instead to continue using this behavior, or '.asList().lastIndexOf(element: T)' to get the same search behavior as in a list.", ReplaceWith("indexOfLast { it == element }"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun DoubleArray.lastIndexOf(element: Double): Int {
     for (index in indices.reversed()) {
         if (element == this[index]) {
@@ -6562,8 +6568,9 @@ public expect fun <T> Array<out T>?.contentDeepToString(): String
  * The elements are compared for equality with the [equals][Any.equals] function.
  * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boolean
 
 /**
@@ -6573,8 +6580,9 @@ public expect infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boo
  * The elements are compared for equality with the [equals][Any.equals] function.
  * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect infix fun ByteArray.contentEquals(other: ByteArray): Boolean
 
 /**
@@ -6584,8 +6592,9 @@ public expect infix fun ByteArray.contentEquals(other: ByteArray): Boolean
  * The elements are compared for equality with the [equals][Any.equals] function.
  * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect infix fun ShortArray.contentEquals(other: ShortArray): Boolean
 
 /**
@@ -6595,8 +6604,9 @@ public expect infix fun ShortArray.contentEquals(other: ShortArray): Boolean
  * The elements are compared for equality with the [equals][Any.equals] function.
  * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect infix fun IntArray.contentEquals(other: IntArray): Boolean
 
 /**
@@ -6606,8 +6616,9 @@ public expect infix fun IntArray.contentEquals(other: IntArray): Boolean
  * The elements are compared for equality with the [equals][Any.equals] function.
  * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect infix fun LongArray.contentEquals(other: LongArray): Boolean
 
 /**
@@ -6617,8 +6628,9 @@ public expect infix fun LongArray.contentEquals(other: LongArray): Boolean
  * The elements are compared for equality with the [equals][Any.equals] function.
  * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect infix fun FloatArray.contentEquals(other: FloatArray): Boolean
 
 /**
@@ -6628,8 +6640,9 @@ public expect infix fun FloatArray.contentEquals(other: FloatArray): Boolean
  * The elements are compared for equality with the [equals][Any.equals] function.
  * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean
 
 /**
@@ -6639,8 +6652,9 @@ public expect infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean
  * The elements are compared for equality with the [equals][Any.equals] function.
  * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean
 
 /**
@@ -6650,8 +6664,9 @@ public expect infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean
  * The elements are compared for equality with the [equals][Any.equals] function.
  * For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect infix fun CharArray.contentEquals(other: CharArray): Boolean
 
 /**
@@ -6747,64 +6762,73 @@ public expect infix fun CharArray?.contentEquals(other: CharArray?): Boolean
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect fun <T> Array<out T>.contentHashCode(): Int
 
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect fun ByteArray.contentHashCode(): Int
 
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect fun ShortArray.contentHashCode(): Int
 
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect fun IntArray.contentHashCode(): Int
 
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect fun LongArray.contentHashCode(): Int
 
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect fun FloatArray.contentHashCode(): Int
 
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect fun DoubleArray.contentHashCode(): Int
 
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect fun BooleanArray.contentHashCode(): Int
 
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect fun CharArray.contentHashCode(): Int
 
 /**
@@ -6866,8 +6890,9 @@ public expect fun CharArray?.contentHashCode(): Int
  * 
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect fun <T> Array<out T>.contentToString(): String
 
 /**
@@ -6875,8 +6900,9 @@ public expect fun <T> Array<out T>.contentToString(): String
  * 
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect fun ByteArray.contentToString(): String
 
 /**
@@ -6884,8 +6910,9 @@ public expect fun ByteArray.contentToString(): String
  * 
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect fun ShortArray.contentToString(): String
 
 /**
@@ -6893,8 +6920,9 @@ public expect fun ShortArray.contentToString(): String
  * 
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect fun IntArray.contentToString(): String
 
 /**
@@ -6902,8 +6930,9 @@ public expect fun IntArray.contentToString(): String
  * 
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect fun LongArray.contentToString(): String
 
 /**
@@ -6911,8 +6940,9 @@ public expect fun LongArray.contentToString(): String
  * 
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect fun FloatArray.contentToString(): String
 
 /**
@@ -6920,8 +6950,9 @@ public expect fun FloatArray.contentToString(): String
  * 
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect fun DoubleArray.contentToString(): String
 
 /**
@@ -6929,8 +6960,9 @@ public expect fun DoubleArray.contentToString(): String
  * 
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect fun BooleanArray.contentToString(): String
 
 /**
@@ -6938,8 +6970,9 @@ public expect fun BooleanArray.contentToString(): String
  * 
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 public expect fun CharArray.contentToString(): String
 
 /**
@@ -13396,98 +13429,117 @@ public inline fun CharArray.forEachIndexed(action: (index: Int, Char) -> Unit): 
 }
 
 @Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.1")
 public fun Array<out Double>.max(): Double? {
     return maxOrNull()
 }
 
 @Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.1")
 public fun Array<out Float>.max(): Float? {
     return maxOrNull()
 }
 
 @Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun <T : Comparable<T>> Array<out T>.max(): T? {
     return maxOrNull()
 }
 
 @Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun ByteArray.max(): Byte? {
     return maxOrNull()
 }
 
 @Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun ShortArray.max(): Short? {
     return maxOrNull()
 }
 
 @Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun IntArray.max(): Int? {
     return maxOrNull()
 }
 
 @Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun LongArray.max(): Long? {
     return maxOrNull()
 }
 
 @Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun FloatArray.max(): Float? {
     return maxOrNull()
 }
 
 @Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun DoubleArray.max(): Double? {
     return maxOrNull()
 }
 
 @Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun CharArray.max(): Char? {
     return maxOrNull()
 }
 
 @Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <T, R : Comparable<R>> Array<out T>.maxBy(selector: (T) -> R): T? {
     return maxByOrNull(selector)
 }
 
 @Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> ByteArray.maxBy(selector: (Byte) -> R): Byte? {
     return maxByOrNull(selector)
 }
 
 @Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> ShortArray.maxBy(selector: (Short) -> R): Short? {
     return maxByOrNull(selector)
 }
 
 @Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> IntArray.maxBy(selector: (Int) -> R): Int? {
     return maxByOrNull(selector)
 }
 
 @Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> LongArray.maxBy(selector: (Long) -> R): Long? {
     return maxByOrNull(selector)
 }
 
 @Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> FloatArray.maxBy(selector: (Float) -> R): Float? {
     return maxByOrNull(selector)
 }
 
 @Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> DoubleArray.maxBy(selector: (Double) -> R): Double? {
     return maxByOrNull(selector)
 }
 
 @Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> BooleanArray.maxBy(selector: (Boolean) -> R): Boolean? {
     return maxByOrNull(selector)
 }
 
 @Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> CharArray.maxBy(selector: (Char) -> R): Char? {
     return maxByOrNull(selector)
 }
@@ -15360,46 +15412,55 @@ public fun CharArray.maxOrNull(): Char? {
 }
 
 @Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun <T> Array<out T>.maxWith(comparator: Comparator<in T>): T? {
     return maxWithOrNull(comparator)
 }
 
 @Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun ByteArray.maxWith(comparator: Comparator<in Byte>): Byte? {
     return maxWithOrNull(comparator)
 }
 
 @Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun ShortArray.maxWith(comparator: Comparator<in Short>): Short? {
     return maxWithOrNull(comparator)
 }
 
 @Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun IntArray.maxWith(comparator: Comparator<in Int>): Int? {
     return maxWithOrNull(comparator)
 }
 
 @Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun LongArray.maxWith(comparator: Comparator<in Long>): Long? {
     return maxWithOrNull(comparator)
 }
 
 @Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun FloatArray.maxWith(comparator: Comparator<in Float>): Float? {
     return maxWithOrNull(comparator)
 }
 
 @Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun DoubleArray.maxWith(comparator: Comparator<in Double>): Double? {
     return maxWithOrNull(comparator)
 }
 
 @Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun BooleanArray.maxWith(comparator: Comparator<in Boolean>): Boolean? {
     return maxWithOrNull(comparator)
 }
 
 @Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun CharArray.maxWith(comparator: Comparator<in Char>): Char? {
     return maxWithOrNull(comparator)
 }
@@ -15531,98 +15592,117 @@ public fun CharArray.maxWithOrNull(comparator: Comparator<in Char>): Char? {
 }
 
 @Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.1")
 public fun Array<out Double>.min(): Double? {
     return minOrNull()
 }
 
 @Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.1")
 public fun Array<out Float>.min(): Float? {
     return minOrNull()
 }
 
 @Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun <T : Comparable<T>> Array<out T>.min(): T? {
     return minOrNull()
 }
 
 @Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun ByteArray.min(): Byte? {
     return minOrNull()
 }
 
 @Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun ShortArray.min(): Short? {
     return minOrNull()
 }
 
 @Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun IntArray.min(): Int? {
     return minOrNull()
 }
 
 @Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun LongArray.min(): Long? {
     return minOrNull()
 }
 
 @Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun FloatArray.min(): Float? {
     return minOrNull()
 }
 
 @Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun DoubleArray.min(): Double? {
     return minOrNull()
 }
 
 @Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun CharArray.min(): Char? {
     return minOrNull()
 }
 
 @Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <T, R : Comparable<R>> Array<out T>.minBy(selector: (T) -> R): T? {
     return minByOrNull(selector)
 }
 
 @Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> ByteArray.minBy(selector: (Byte) -> R): Byte? {
     return minByOrNull(selector)
 }
 
 @Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> ShortArray.minBy(selector: (Short) -> R): Short? {
     return minByOrNull(selector)
 }
 
 @Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> IntArray.minBy(selector: (Int) -> R): Int? {
     return minByOrNull(selector)
 }
 
 @Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> LongArray.minBy(selector: (Long) -> R): Long? {
     return minByOrNull(selector)
 }
 
 @Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> FloatArray.minBy(selector: (Float) -> R): Float? {
     return minByOrNull(selector)
 }
 
 @Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> DoubleArray.minBy(selector: (Double) -> R): Double? {
     return minByOrNull(selector)
 }
 
 @Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> BooleanArray.minBy(selector: (Boolean) -> R): Boolean? {
     return minByOrNull(selector)
 }
 
 @Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> CharArray.minBy(selector: (Char) -> R): Char? {
     return minByOrNull(selector)
 }
@@ -17495,46 +17575,55 @@ public fun CharArray.minOrNull(): Char? {
 }
 
 @Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun <T> Array<out T>.minWith(comparator: Comparator<in T>): T? {
     return minWithOrNull(comparator)
 }
 
 @Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun ByteArray.minWith(comparator: Comparator<in Byte>): Byte? {
     return minWithOrNull(comparator)
 }
 
 @Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun ShortArray.minWith(comparator: Comparator<in Short>): Short? {
     return minWithOrNull(comparator)
 }
 
 @Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun IntArray.minWith(comparator: Comparator<in Int>): Int? {
     return minWithOrNull(comparator)
 }
 
 @Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun LongArray.minWith(comparator: Comparator<in Long>): Long? {
     return minWithOrNull(comparator)
 }
 
 @Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun FloatArray.minWith(comparator: Comparator<in Float>): Float? {
     return minWithOrNull(comparator)
 }
 
 @Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun DoubleArray.minWith(comparator: Comparator<in Double>): Double? {
     return minWithOrNull(comparator)
 }
 
 @Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun BooleanArray.minWith(comparator: Comparator<in Boolean>): Boolean? {
     return minWithOrNull(comparator)
 }
 
 @Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun CharArray.minWith(comparator: Comparator<in Char>): Char? {
     return minWithOrNull(comparator)
 }

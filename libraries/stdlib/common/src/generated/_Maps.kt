@@ -180,6 +180,7 @@ public inline fun <K, V> Map<out K, V>.forEach(action: (Map.Entry<K, V>) -> Unit
 }
 
 @Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @kotlin.internal.InlineOnly
 public inline fun <K, V, R : Comparable<R>> Map<out K, V>.maxBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
     return maxByOrNull(selector)
@@ -309,6 +310,7 @@ public inline fun <K, V, R> Map<out K, V>.maxOfWithOrNull(comparator: Comparator
 }
 
 @Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @kotlin.internal.InlineOnly
 public inline fun <K, V> Map<out K, V>.maxWith(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V>? {
     return maxWithOrNull(comparator)
@@ -324,6 +326,7 @@ public inline fun <K, V> Map<out K, V>.maxWithOrNull(comparator: Comparator<in M
 }
 
 @Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <K, V, R : Comparable<R>> Map<out K, V>.minBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
     return minByOrNull(selector)
 }
@@ -452,6 +455,7 @@ public inline fun <K, V, R> Map<out K, V>.minOfWithOrNull(comparator: Comparator
 }
 
 @Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 public fun <K, V> Map<out K, V>.minWith(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V>? {
     return minWithOrNull(comparator)
 }

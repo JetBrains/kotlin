@@ -13,6 +13,6 @@ fun allOfTheAbove(f: (A) -> Unit): Any = f
 fun test() {
     coercionToUnit(A::foo)
     <!INAPPLICABLE_CANDIDATE!>varargToElement<!>(A::foo)
-    <!INAPPLICABLE_CANDIDATE!>defaultAndVararg<!>(A::foo)
-    <!INAPPLICABLE_CANDIDATE!>allOfTheAbove<!>(A::foo)
+    defaultAndVararg(A::foo)
+    allOfTheAbove(A::foo)
 }

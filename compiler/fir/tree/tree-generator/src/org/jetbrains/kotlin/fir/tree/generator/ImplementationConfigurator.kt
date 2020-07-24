@@ -225,24 +225,19 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
         }
 
-        impl(operatorCall) {
-            default("typeRef", """
-                |if (operation in FirOperation.BOOLEANS) {
-                |        FirImplicitBooleanTypeRef(null)
-                |    } else {
-                |        FirImplicitTypeRefImpl(null)
-                |    }
-                """.trimMargin())
-
-            useTypes(implicitTypeRefType, implicitBooleanTypeRefType)
-        }
-
         impl(comparisonExpression) {
             default("typeRef", "FirImplicitBooleanTypeRef(null)")
             useTypes(implicitBooleanTypeRefType)
         }
 
         impl(typeOperatorCall)
+
+        impl(assignmentOperatorStatement)
+
+        impl(equalityOperatorCall) {
+            default("typeRef", "FirImplicitBooleanTypeRef(null)")
+            useTypes(implicitBooleanTypeRefType)
+        }
 
         impl(resolvedQualifier) {
             isMutable("packageFqName", "relativeClassFqName", "isNullableLHSForCallableReference")

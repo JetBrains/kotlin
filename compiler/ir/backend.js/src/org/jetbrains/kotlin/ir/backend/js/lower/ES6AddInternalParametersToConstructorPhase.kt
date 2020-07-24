@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.lower.PrimaryConstructorLowering.*
+import org.jetbrains.kotlin.ir.backend.js.lower.PrimaryConstructorLowering.SYNTHETIC_PRIMARY_CONSTRUCTOR
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -103,7 +103,7 @@ class ES6AddInternalParametersToConstructorPhase(val context: JsIrBackendContext
     private fun buildInitFunction(constructor: IrConstructor, irClass: IrClass): IrSimpleFunction {
         val functionName = "${irClass.name}_init"
 
-        return JsIrBuilder.buildFunction(
+        return context.jsIrDeclarationBuilder.buildFunction(
             functionName,
             context.irBuiltIns.unitType,
             irClass,

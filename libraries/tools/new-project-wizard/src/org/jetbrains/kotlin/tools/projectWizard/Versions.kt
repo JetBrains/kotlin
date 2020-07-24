@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 object Versions {
     val KOTLIN = version("1.4-M1") // used as fallback version
     val GRADLE = version("6.3")
-    val KTOR = version("1.2.6")
+    val KTOR: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("1.3.2-$kotlinVersion") }
 
     object ANDROID {
         val ANDROIDX_CORE_KTX = version("1.2.0")
@@ -21,21 +21,13 @@ object Versions {
 
     object KOTLINX {
         val KOTLINX_HTML: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("0.7.1-$kotlinVersion") }
+        val KOTLINX_NODEJS: Version = version("0.0.3")
     }
 
     object JS_WRAPPERS {
         val KOTLIN_REACT: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("16.13.1-pre.109-kotlin-$kotlinVersion") }
         val KOTLIN_REACT_DOM = KOTLIN_REACT
         val KOTLIN_STYLED: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("1.0.0-pre.109-kotlin-$kotlinVersion") }
-    }
-
-    object NPM {
-        val REACT = version("16.13.1")
-        val REACT_DOM = REACT
-        val REACT_IS = REACT
-
-        val STYLED_COMPONENTS = version("5.0.0")
-        val INLINE_STYLE_PREFIXER = version("5.1.0")
     }
 
     object GRADLE_PLUGINS {

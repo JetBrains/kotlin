@@ -1728,6 +1728,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/builderInference/lackOfNullCheckOnNullableInsideBuild.kt");
         }
 
+        @TestMetadata("substituteStubTypeIntoCR.kt")
+        public void testSubstituteStubTypeIntoCR() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/substituteStubTypeIntoCR.kt");
+        }
+
         @TestMetadata("substituteStubTypeIntolambdaParameterDescriptor.kt")
         public void testSubstituteStubTypeIntolambdaParameterDescriptor() throws Exception {
             runTest("compiler/testData/codegen/box/builderInference/substituteStubTypeIntolambdaParameterDescriptor.kt");
@@ -4371,6 +4376,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("localFunctionInFunction.kt")
         public void testLocalFunctionInFunction() throws Exception {
             runTest("compiler/testData/codegen/box/closures/localFunctionInFunction.kt");
+        }
+
+        @TestMetadata("localFunctionInInitBlock.kt")
+        public void testLocalFunctionInInitBlock() throws Exception {
+            runTest("compiler/testData/codegen/box/closures/localFunctionInInitBlock.kt");
         }
 
         @TestMetadata("localFunctionInInitializer.kt")
@@ -10831,6 +10841,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/genericDelegateWithNoAdditionalInfo.kt");
             }
 
+            @TestMetadata("genericProvideDelegateOnNumberLiteral.kt")
+            public void testGenericProvideDelegateOnNumberLiteral() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/genericProvideDelegateOnNumberLiteral.kt");
+            }
+
             @TestMetadata("hostCheck.kt")
             public void testHostCheck() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/hostCheck.kt");
@@ -13679,6 +13694,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/inference/lastExpressionOfLambdaWithNothingConstraint.kt");
         }
 
+        @TestMetadata("noNothingValueInsideSpecialCall.kt")
+        public void testNoNothingValueInsideSpecialCall() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/noNothingValueInsideSpecialCall.kt");
+        }
+
         @TestMetadata("plusAssignInsideLambda.kt")
         public void testPlusAssignInsideLambda() throws Exception {
             runTest("compiler/testData/codegen/box/inference/plusAssignInsideLambda.kt");
@@ -15813,6 +15833,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
 
         public void testAllFilesPresentInIr() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ir"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+
+        @TestMetadata("anonymousClassLeak.kt")
+        public void testAnonymousClassLeak() throws Exception {
+            runTest("compiler/testData/codegen/box/ir/anonymousClassLeak.kt");
         }
 
         @TestMetadata("anonymousObjectInForLoopIteratorAndBody.kt")

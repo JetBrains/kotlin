@@ -21,15 +21,26 @@ class JavaClassMembersEnhancementScope(
     private val useSiteMemberScope: JavaClassUseSiteMemberScope,
 ) : FirTypeScope() {
     private val overriddenFunctions = mutableMapOf<FirFunctionSymbol<*>, Collection<FirFunctionSymbol<*>>>()
+    private val overriddenProperties = mutableMapOf<FirPropertySymbol, Collection<FirPropertySymbol>>()
 
     private val overrideBindCache = mutableMapOf<Name, Map<FirCallableSymbol<*>?, List<FirCallableSymbol<*>>>>()
     private val signatureEnhancement = FirSignatureEnhancement(owner.fir, session) {
-        overriddenMembers()
+        overriddenMembers(name)
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         useSiteMemberScope.processPropertiesByName(name) process@{ original ->
-            processor(signatureEnhancement.enhancedProperty(original, name))
+            val enhancedPropertySymbol = signatureEnhancement.enhancedProperty(original, name)
+
+            if (enhancedPropertySymbol is FirPropertySymbol) {
+                val enhancedProperty = enhancedPropertySymbol.fir
+                overriddenProperties[enhancedPropertySymbol] =
+                    enhancedProperty
+                        .overriddenMembers(enhancedProperty.name)
+                        .mapNotNull { it.symbol as? FirPropertySymbol }
+            }
+
+            processor(enhancedPropertySymbol)
         }
 
         return super.processPropertiesByName(name, processor)
@@ -37,23 +48,24 @@ class JavaClassMembersEnhancementScope(
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         useSiteMemberScope.processFunctionsByName(name) process@{ original ->
-            val enhancedFunction = signatureEnhancement.enhancedFunction(original, name)
+            val enhancedFunctionSymbol = signatureEnhancement.enhancedFunction(original, name)
+            val enhancedFunction = enhancedFunctionSymbol.fir as? FirSimpleFunction
 
-            overriddenFunctions[enhancedFunction] =
-                (enhancedFunction.fir as? FirSimpleFunction)
-                    ?.overriddenMembers()
+            overriddenFunctions[enhancedFunctionSymbol] =
+                enhancedFunction
+                    ?.overriddenMembers(enhancedFunction.name)
                     ?.mapNotNull { it.symbol as? FirFunctionSymbol<*> }
                     .orEmpty()
 
-            processor(enhancedFunction)
+            processor(enhancedFunctionSymbol)
         }
 
         return super.processFunctionsByName(name, processor)
     }
 
-    private fun FirSimpleFunction.overriddenMembers(): List<FirCallableMemberDeclaration<*>> {
-        val backMap = overrideBindCache.getOrPut(this.name) {
-            useSiteMemberScope.bindOverrides(this.name)
+    private fun FirCallableMemberDeclaration<*>.overriddenMembers(name: Name): List<FirCallableMemberDeclaration<*>> {
+        val backMap = overrideBindCache.getOrPut(name) {
+            useSiteMemberScope.bindOverrides(name)
             useSiteMemberScope
                 .overrideByBase
                 .toList()
@@ -73,8 +85,19 @@ class JavaClassMembersEnhancementScope(
         }
     }
 
-    override fun processOverriddenFunctions(
+    override fun processOverriddenFunctionsWithDepth(
         functionSymbol: FirFunctionSymbol<*>,
-        processor: (FirFunctionSymbol<*>) -> ProcessorAction
-    ): ProcessorAction = doProcessOverriddenFunctions(functionSymbol, processor, overriddenFunctions, useSiteMemberScope)
+        processor: (FirFunctionSymbol<*>, Int) -> ProcessorAction
+    ): ProcessorAction = doProcessOverriddenCallables(
+        functionSymbol, processor, overriddenFunctions, useSiteMemberScope,
+        FirTypeScope::processOverriddenFunctionsWithDepth
+    )
+
+    override fun processOverriddenPropertiesWithDepth(
+        propertySymbol: FirPropertySymbol,
+        processor: (FirPropertySymbol, Int) -> ProcessorAction
+    ): ProcessorAction = doProcessOverriddenCallables(
+        propertySymbol, processor, overriddenProperties, useSiteMemberScope,
+        FirTypeScope::processOverriddenPropertiesWithDepth
+    )
 }

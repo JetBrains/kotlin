@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 @file:Suppress("unused")
 
 // usages in build scripts are not tracked properly
@@ -97,9 +102,11 @@ fun Project.kotlinStdlib(suffix: String? = null, classifier: String? = null): An
         dependencies.project(listOfNotNull(":kotlin-stdlib", suffix).joinToString("-"), classifier)
 }
 
-fun Project.kotlinBuiltins(): Any =
+fun Project.kotlinBuiltins(): Any = kotlinBuiltins(forJvm = false)
+
+fun Project.kotlinBuiltins(forJvm: Boolean): Any =
     if (kotlinBuildProperties.useBootstrapStdlib) "org.jetbrains.kotlin:builtins:$bootstrapKotlinVersion"
-    else dependencies.project(":core:builtins")
+    else dependencies.project(":core:builtins", configuration = "runtimeElementsJvm".takeIf { forJvm })
 
 fun DependencyHandler.projectTests(name: String): ProjectDependency = project(name, configuration = "tests-jar")
 fun DependencyHandler.projectRuntimeJar(name: String): ProjectDependency = project(name, configuration = "runtimeJar")

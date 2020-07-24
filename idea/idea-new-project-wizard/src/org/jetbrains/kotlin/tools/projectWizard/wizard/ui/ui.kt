@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
@@ -95,7 +94,8 @@ val ModuleSubType.icon: Icon
 val ModuleKind.icon: Icon
     get() = when (this) {
         ModuleKind.multiplatform -> KotlinIcons.MPP
-        ModuleKind.singleplatformJs -> KotlinIcons.Wizard.JS
+        ModuleKind.singleplatformJsBrowser -> KotlinIcons.Wizard.JS
+        ModuleKind.singleplatformJsNode -> KotlinIcons.Wizard.NODE_JS
         ModuleKind.singleplatformJvm -> KotlinIcons.Wizard.JVM
         ModuleKind.target -> AllIcons.Nodes.Module
         ModuleKind.singleplatformAndroid -> KotlinIcons.Wizard.ANDROID

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
-interface CirNodeVisitor<R, T> {
+interface CirNodeVisitor<T, R> {
     fun visitRootNode(node: CirRootNode, data: T): R
     fun visitModuleNode(node: CirModuleNode, data: T): R
     fun visitPackageNode(node: CirPackageNode, data: T): R

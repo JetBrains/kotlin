@@ -253,6 +253,7 @@ data class KotlinWebpackConfig(
                     },
                     library: "${output.library}",
                     libraryTarget: "${output.libraryTarget}",
+                    globalObject: "${output.globalObject}"
                 };
                 
             """.trimIndent()

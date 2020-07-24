@@ -264,3 +264,12 @@ class CompatibilityWarningOnArgument(
         reporter.onCallArgument(argument, this)
     }
 }
+
+class AdaptedCallableReferenceIsUsedWithReflection(
+    val argument: CallableReferenceKotlinCallArgument,
+) : KotlinCallDiagnostic(RESOLVED_WITH_ERROR) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCallArgument(argument, this)
+    }
+
+}

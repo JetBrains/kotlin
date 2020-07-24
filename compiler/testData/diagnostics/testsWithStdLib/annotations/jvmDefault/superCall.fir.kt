@@ -41,7 +41,7 @@ class ManySupers: Foo2(), B {
     fun foo() {
         super<Foo2>.test()
         super<<!QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE!>B<!>>.test()
-        super.test()
+        super.<!UNRESOLVED_REFERENCE!>test<!>()
     }
 }
 
@@ -49,7 +49,7 @@ class ManySupers2: Foo2(), C {
     fun foo() {
         super<Foo2>.test()
         super<C>.test()
-        super.<!AMBIGUITY!>test<!>()
+        super.<!UNRESOLVED_REFERENCE!>test<!>()
     }
 }
 
@@ -57,6 +57,6 @@ class ManySupers3: Bar2(), C {
     fun foo() {
         super<Bar2>.test()
         super<C>.test()
-        super.<!AMBIGUITY!>test<!>()
+        super.<!UNRESOLVED_REFERENCE!>test<!>()
     }
 }

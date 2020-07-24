@@ -50,6 +50,6 @@ fun test() {
     var y = noParameters()
     y = noParameters()
 
-    y().foo().a() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><A<Any, Double, Short, Long>>() }
+    y().foo().a() checkType { _<A<Any, Double, Short, Long>>() }
     y().bar() <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><A<Any, Double, Short, Char>>() }
 }

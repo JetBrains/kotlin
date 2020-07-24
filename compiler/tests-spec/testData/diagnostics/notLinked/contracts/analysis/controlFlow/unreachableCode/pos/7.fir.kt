@@ -8,7 +8,7 @@ import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1
 fun case_1(x: Double = 1.0, block: () -> Unit): Double {
-    contract { callsInPlace(block, InvocationKind.AT_LEAST_ONCE) }
+    <!WRONG_INVOCATION_KIND!>contract { callsInPlace(block, InvocationKind.AT_LEAST_ONCE) }<!>
     return x
 }
 

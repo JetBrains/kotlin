@@ -148,6 +148,16 @@ abstract class AbstractAnnotationDeserializer(
         return annotations.map { deserializeAnnotation(it, nameResolver) }
     }
 
+    open fun loadExtensionReceiverParameterAnnotations(
+        containerSource: DeserializedContainerSource?,
+        callableProto: MessageLite,
+        nameResolver: NameResolver,
+        typeTable: TypeTable,
+        kind: CallableKind
+    ): List<FirAnnotationCall> {
+        return emptyList()
+    }
+
     abstract fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotationCall>
 
     fun deserializeAnnotation(

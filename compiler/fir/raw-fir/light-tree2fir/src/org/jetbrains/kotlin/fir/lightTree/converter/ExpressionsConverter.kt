@@ -270,7 +270,7 @@ class ExpressionsConverter(
             if (firOperation in FirOperation.ASSIGNMENTS) {
                 return leftArgNode.generateAssignment(binaryExpression.toFirSourceElement(), rightArg, rightArgAsFir, firOperation) { getAsFirExpression(this) }
             } else {
-                buildOperatorCall {
+                buildEqualityOperatorCall {
                     source = binaryExpression.toFirSourceElement()
                     operation = firOperation
                     argumentList = buildBinaryArgumentList(leftArgAsFir, rightArgAsFir)
@@ -378,14 +378,7 @@ class ExpressionsConverter(
                     explicitReceiver = getAsFirExpression(argument, "No operand")
                 }
             }
-            else -> {
-                val firOperation = operationToken.toFirOperation()
-                buildOperatorCall {
-                    source = unaryExpression.toFirSourceElement()
-                    operation = firOperation
-                    argumentList = buildUnaryArgumentList(getAsFirExpression<FirExpression>(argument, "No operand"))
-                }
-            }
+            else -> throw IllegalStateException("Unexpected expression: ${unaryExpression.asText}")
         }
     }
 
@@ -704,7 +697,7 @@ class ExpressionsConverter(
             }
         }
         return if (whenRefWithSubject != null) {
-            buildOperatorCall {
+            buildEqualityOperatorCall {
                 source = whenCondition.toFirSourceElement()
                 operation = FirOperation.EQ
                 argumentList = buildBinaryArgumentList(

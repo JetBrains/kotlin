@@ -24,26 +24,22 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.carriers.PropertyCarrier
 import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 
 abstract class IrPropertyCommonImpl(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val name: Name,
-    override val visibility: Visibility,
-    override val modality: Modality,
+    override var visibility: Visibility,
     override val isVar: Boolean,
     override val isConst: Boolean,
     override val isLateinit: Boolean,
     override val isDelegated: Boolean,
     override val isExternal: Boolean,
     override val isExpect: Boolean,
-    override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE
 ) : IrDeclarationBase<PropertyCarrier>(startOffset, endOffset, origin),
     IrProperty,
     PropertyCarrier {
@@ -114,103 +110,19 @@ class IrPropertyImpl(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrPropertySymbol,
-    override val name: Name,
-    override val visibility: Visibility,
+    name: Name,
+    visibility: Visibility,
     override val modality: Modality,
-    override val isVar: Boolean,
-    override val isConst: Boolean,
-    override val isLateinit: Boolean,
-    override val isDelegated: Boolean,
-    override val isExternal: Boolean,
-    override val isExpect: Boolean = false,
-    override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE
-) : IrPropertyCommonImpl(startOffset, endOffset, origin, name, visibility, modality, isVar, isConst, isLateinit, isDelegated, isExternal, isExpect, isFakeOverride) {
-
-    @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.WARNING)
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: PropertyDescriptor,
-        symbol: IrPropertySymbol = IrPropertySymbolImpl(descriptor),
-        name: Name = descriptor.name,
-        visibility: Visibility = descriptor.visibility,
-        modality: Modality = descriptor.modality,
-        isVar: Boolean = descriptor.isVar,
-        isConst: Boolean = descriptor.isConst,
-        isLateinit: Boolean = descriptor.isLateInit,
-        isDelegated: Boolean = descriptor.isDelegated,
-        isExternal: Boolean = descriptor.isExternal
-    ) : this(
-        startOffset, endOffset, origin,
-        symbol,
-        name, visibility, modality,
-        isVar = isVar,
-        isConst = isConst,
-        isLateinit = isLateinit,
-        isDelegated = isDelegated,
-        isExternal = isExternal,
-        isExpect = descriptor.isExpect
-    )
-
-    @Suppress("DEPRECATION")
-    @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.WARNING)
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        isDelegated: Boolean,
-        descriptor: PropertyDescriptor
-    ) : this(
-        startOffset, endOffset, origin, descriptor,
-        name = descriptor.name,
-        visibility = descriptor.visibility,
-        modality = descriptor.modality,
-        isVar = descriptor.isVar,
-        isConst = descriptor.isConst,
-        isLateinit = descriptor.isLateInit,
-        isDelegated = isDelegated,
-        isExternal = descriptor.isEffectivelyExternal()
-    )
-
-    @Suppress("DEPRECATION")
-    @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.WARNING)
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: PropertyDescriptor
-    ) : this(startOffset, endOffset, origin, descriptor.isDelegated, descriptor)
-
-    @Suppress("DEPRECATION")
-    @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.WARNING)
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        isDelegated: Boolean,
-        descriptor: PropertyDescriptor,
-        backingField: IrField?
-    ) : this(startOffset, endOffset, origin, isDelegated, descriptor) {
-        this.backingField = backingField
-    }
-
-    @Suppress("DEPRECATION")
-    @Deprecated(message = "Don't use descriptor-based API for IrProperty", level = DeprecationLevel.WARNING)
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        isDelegated: Boolean,
-        descriptor: PropertyDescriptor,
-        backingField: IrField?,
-        getter: IrSimpleFunction?,
-        setter: IrSimpleFunction?
-    ) : this(startOffset, endOffset, origin, isDelegated, descriptor, backingField) {
-        this.getter = getter
-        this.setter = setter
-    }
-
+    isVar: Boolean,
+    isConst: Boolean,
+    isLateinit: Boolean,
+    isDelegated: Boolean,
+    isExternal: Boolean,
+    isExpect: Boolean = false,
+    override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+) : IrPropertyCommonImpl(
+    startOffset, endOffset, origin, name, visibility, isVar, isConst, isLateinit, isDelegated, isExternal, isExpect,
+) {
     init {
         symbol.bind(this)
     }
@@ -224,7 +136,7 @@ class IrFakeOverridePropertyImpl(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     name: Name,
-    override var visibility: Visibility,
+    visibility: Visibility,
     override var modality: Modality,
     isVar: Boolean,
     isConst: Boolean,
@@ -232,9 +144,12 @@ class IrFakeOverridePropertyImpl(
     isDelegated: Boolean,
     isExternal: Boolean,
     isExpect: Boolean,
-) : IrPropertyCommonImpl(startOffset, endOffset, origin, name, visibility, modality, isVar, isConst, isLateinit,
-    isDelegated, isExternal, isExpect, isFakeOverride = true)
-{
+) : IrPropertyCommonImpl(
+    startOffset, endOffset, origin, name, visibility, isVar, isConst, isLateinit, isDelegated, isExternal, isExpect,
+), IrFakeOverrideProperty {
+    override val isFakeOverride: Boolean
+        get() = true
+
     private var _symbol: IrPropertySymbol? = null
 
     override val symbol: IrPropertySymbol
@@ -245,7 +160,7 @@ class IrFakeOverridePropertyImpl(
         get() = _symbol?.descriptor ?: WrappedPropertyDescriptor()
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
-    fun acquireSymbol(symbol: IrPropertySymbol) {
+    override fun acquireSymbol(symbol: IrPropertySymbol) {
         assert(_symbol == null) { "$this already has symbol _symbol" }
         _symbol = symbol
         symbol.bind(this)

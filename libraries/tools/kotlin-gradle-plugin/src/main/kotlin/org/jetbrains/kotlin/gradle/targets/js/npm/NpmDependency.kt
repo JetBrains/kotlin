@@ -158,7 +158,4 @@ internal fun moduleName(directory: File): String {
     return directory.name
 }
 
-fun NpmDependency.isPublicDependency(): Boolean =
-    scope != DEV
-
 const val FILE_VERSION_PREFIX = "file:"

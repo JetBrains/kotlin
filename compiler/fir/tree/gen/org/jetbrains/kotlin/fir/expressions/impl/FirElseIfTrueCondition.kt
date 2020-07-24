@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.fakeElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBooleanTypeRef
-import org.jetbrains.kotlin.fir.withKind
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -24,7 +24,7 @@ class FirElseIfTrueCondition @FirImplementationDetail constructor(
     override val source: FirSourceElement?,
     override val annotations: MutableList<FirAnnotationCall>,
 ) : FirExpression() {
-    override var typeRef: FirTypeRef = FirImplicitBooleanTypeRef(source?.withKind(FirFakeSourceElementKind.ImplicitTypeRef))
+    override var typeRef: FirTypeRef = FirImplicitBooleanTypeRef(source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef))
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)

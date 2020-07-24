@@ -91,3 +91,5 @@ private fun parseMutedTest(str: String): MutedTest {
 }
 
 private class ParseError(message: String, override val cause: Throwable? = null) : IllegalArgumentException(message)
+
+internal fun flakyTests(file: File) = loadMutedTests(file).filter { it.isFlaky }

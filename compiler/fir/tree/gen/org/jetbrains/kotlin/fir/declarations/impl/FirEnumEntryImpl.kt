@@ -67,6 +67,7 @@ internal class FirEnumEntryImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
         transformReturnTypeRef(transformer, data)
         transformInitializer(transformer, data)
+        transformTypeParameters(transformer, data)
         transformStatus(transformer, data)
         transformOtherChildren(transformer, data)
         return this
@@ -103,6 +104,11 @@ internal class FirEnumEntryImpl(
         return this
     }
 
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
+        typeParameters.transformInplace(transformer, data)
+        return this
+    }
+
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
         status = status.transformSingle(transformer, data)
         return this
@@ -110,7 +116,6 @@ internal class FirEnumEntryImpl(
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirEnumEntryImpl {
         transformAnnotations(transformer, data)
-        typeParameters.transformInplace(transformer, data)
         return this
     }
 

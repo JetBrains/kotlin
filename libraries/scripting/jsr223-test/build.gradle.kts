@@ -3,8 +3,6 @@ plugins {
     kotlin("jvm")
 }
 
-jvmTarget = "1.6"
-
 val embeddableTestRuntime by configurations.creating {
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))

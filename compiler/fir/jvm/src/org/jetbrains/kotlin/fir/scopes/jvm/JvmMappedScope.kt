@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
 class JvmMappedScope(
@@ -42,9 +39,9 @@ class JvmMappedScope(
     // JvmMappedScope is basically used as declaration scope but it's being wrapped into substitution scopes where
     // a use-site (FirOverrideAwareScope) is expected
     // So, we put here a stub implementation
-    override fun processOverriddenFunctions(
+    override fun processOverriddenFunctionsWithDepth(
         functionSymbol: FirFunctionSymbol<*>,
-        processor: (FirFunctionSymbol<*>) -> ProcessorAction
+        processor: (FirFunctionSymbol<*>, Int) -> ProcessorAction
     ) = ProcessorAction.NONE
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
@@ -69,6 +66,11 @@ class JvmMappedScope(
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         declaredMemberScope.processPropertiesByName(name, processor)
     }
+
+    override fun processOverriddenPropertiesWithDepth(
+        propertySymbol: FirPropertySymbol,
+        processor: (FirPropertySymbol, Int) -> ProcessorAction
+    ): ProcessorAction = ProcessorAction.NONE
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
         declaredMemberScope.processClassifiersByNameWithSubstitution(name, processor)

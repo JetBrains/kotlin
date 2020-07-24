@@ -11,8 +11,9 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.lower.ES6AddInternalParametersToConstructorPhase.*
-import org.jetbrains.kotlin.ir.backend.js.lower.PrimaryConstructorLowering.*
+import org.jetbrains.kotlin.ir.backend.js.lower.ES6AddInternalParametersToConstructorPhase.ES6_INIT_BOX_PARAMETER
+import org.jetbrains.kotlin.ir.backend.js.lower.ES6AddInternalParametersToConstructorPhase.ES6_RESULT_TYPE_PARAMETER
+import org.jetbrains.kotlin.ir.backend.js.lower.PrimaryConstructorLowering.SYNTHETIC_PRIMARY_CONSTRUCTOR
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -538,7 +539,7 @@ private fun getSuperCall(constructor: IrConstructor): IrDelegatingConstructorCal
 }
 
 private fun changeIrConstructorToIrFunction(context: JsIrBackendContext, container: IrConstructor) {
-    val newConstructor = JsIrBuilder.buildFunction(
+    val newConstructor = context.jsIrDeclarationBuilder.buildFunction(
         "${container.parentAsClass.name}_constructor",
         container.returnType,
         container.parent

@@ -20,7 +20,6 @@ data class CirFunctionImpl(
     override val containingClassDetails: CirContainingClassDetails?,
     override val valueParameters: List<CirValueParameter>,
     override val hasStableParameterNames: Boolean,
-    override val hasSynthesizedParameterNames: Boolean,
     override val extensionReceiver: CirExtensionReceiver?,
     override val returnType: CirType,
     override val kind: CallableMemberDescriptor.Kind,

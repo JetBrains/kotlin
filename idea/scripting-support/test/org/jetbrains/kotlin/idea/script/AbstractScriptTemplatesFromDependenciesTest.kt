@@ -78,8 +78,8 @@ abstract class AbstractScriptTemplatesFromDependenciesTest : HeavyPlatformTestCa
         }
 
         val roots: Collection<VirtualFile> = FileBasedIndex.getInstance().getContainingFiles(
-            ScriptTemplatesClassRootsIndex.KEY,
-            ScriptTemplatesClassRootsIndex.VALUE,
+            ScriptTemplatesClassRootsIndex.NAME,
+            Unit,
             GlobalSearchScope.allScope(project)
         )
 

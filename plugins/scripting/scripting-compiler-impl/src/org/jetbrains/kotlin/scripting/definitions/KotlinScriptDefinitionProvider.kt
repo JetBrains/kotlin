@@ -26,6 +26,9 @@ interface ScriptDefinitionProvider {
     companion object {
         fun getInstance(project: Project): ScriptDefinitionProvider? =
             ServiceManager.getService(project, ScriptDefinitionProvider::class.java)
+
+        fun getServiceIfCreated(project: Project): ScriptDefinitionProvider? =
+            ServiceManager.getServiceIfCreated(project, ScriptDefinitionProvider::class.java)
     }
 }
 

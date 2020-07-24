@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 
-abstract class IrFunctionBase<T : FunctionBaseCarrier<T>>(
+abstract class IrFunctionBase<T : FunctionBaseCarrier>(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
@@ -40,7 +40,7 @@ abstract class IrFunctionBase<T : FunctionBaseCarrier<T>>(
 ) :
     IrDeclarationBase<T>(startOffset, endOffset, origin),
     IrFunction,
-    FunctionBaseCarrier<T> {
+    FunctionBaseCarrier {
 
     override var returnTypeFieldField: IrType = returnType
 

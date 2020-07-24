@@ -4,6 +4,8 @@ apply plugin: 'kotlin-platform-common'
 
 configurePublishing(project)
 
+jvmTarget = "1.6"
+
 dependencies {
     compile kotlinStdlib("common")
     testCompile project(":kotlin-test:kotlin-test-annotations-common")

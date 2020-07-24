@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -71,6 +72,7 @@ abstract class KotlinIrLinker(
     abstract val fakeOverrideBuilder: FakeOverrideBuilder
 
     private val haveSeen = mutableSetOf<IrSymbol>()
+    private val fakeOverrideClassQueue = mutableListOf<IrClass>()
 
     private lateinit var linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>
 
@@ -228,7 +230,7 @@ abstract class KotlinIrLinker(
         inlineBodies: Boolean,
         deserializeFakeOverrides: Boolean,
         private val moduleDeserializer: IrModuleDeserializer
-    ) : IrFileDeserializer(logger, builtIns, symbolTable, !onlyHeaders, deserializeFakeOverrides) {
+    ) : IrFileDeserializer(logger, builtIns, symbolTable, !onlyHeaders, deserializeFakeOverrides, fakeOverrideClassQueue) {
 
         private var fileLoops = mutableMapOf<Int, IrLoop>()
 
@@ -588,13 +590,10 @@ abstract class KotlinIrLinker(
 
     override fun postProcess() {
         finalizeExpectActualLinker()
-
-        if (!deserializeFakeOverrides) {
-            deserializersForModules.values.forEach {
-                it.postProcess {
-                    fakeOverrideBuilder.provideFakeOverrides(it)
-                }
-            }
+        
+        while (fakeOverrideClassQueue.isNotEmpty()) {
+            val klass = fakeOverrideClassQueue.removeLast()
+            fakeOverrideBuilder.provideFakeOverrides(klass)
         }
 
         // TODO: fix IrPluginContext to make it not produce additional external reference

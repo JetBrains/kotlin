@@ -39,7 +39,7 @@ class AnnotationsCommonizer : AbstractStandardCommonizer<List<CirAnnotation>, Li
 
     override fun doCommonizeWith(next: List<CirAnnotation>): Boolean {
         val nextDeprecatedAnnotation = next.firstOrNull { annotation ->
-            (annotation.type.classifierId as? CirClassifierId.ClassOrTypeAlias)?.classId == DEPRECATED_ANNOTATION_CID
+            (annotation.type.classifierId as? CirClassifierId.Class)?.classId == DEPRECATED_ANNOTATION_CID
         } ?: return true
 
         val deprecatedAnnotationCommonizer = deprecatedAnnotationCommonizer
@@ -164,9 +164,7 @@ private class DeprecatedAnnotationCommonizer : Commonizer<CirAnnotation, CirAnno
             classifierId = CirClassifierIdFactory.createForClass(classId),
             visibility = Visibilities.PUBLIC,
             arguments = emptyList(),
-            isMarkedNullable = false,
-            isDefinitelyNotNullType = false,
-            signature = classId.asString()
+            isMarkedNullable = false
         )
 
         private fun CirAnnotation.getDeprecationMessage(): String? = constantValueArguments.getString(PROPERTY_NAME_MESSAGE)

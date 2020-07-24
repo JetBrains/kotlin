@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irString
@@ -21,11 +21,8 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 
@@ -98,22 +95,19 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     }
 
     // Copy value parameter with type substitution
-    private fun IrValueParameter.copyWithSubstitution(target: IrSimpleFunction, substitutionMap: Map<IrTypeParameterSymbol, IrType>)
-            : IrValueParameter {
-        val descriptor = WrappedValueParameterDescriptor(this.descriptor.annotations)
-        return IrValueParameterImpl(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            IrDeclarationOrigin.IR_BUILTINS_STUB,
-            IrValueParameterSymbolImpl(descriptor),
-            name,
-            index,
-            type.substitute(substitutionMap),
-            varargElementType?.substitute(substitutionMap),
-            isCrossinline,
-            isNoinline
-        ).apply {
-            descriptor.bind(this)
-            parent = target
+    private fun IrValueParameter.copyWithSubstitution(
+        target: IrSimpleFunction, substitutionMap: Map<IrTypeParameterSymbol, IrType>
+    ): IrValueParameter {
+        val parameter = this
+        return buildValueParameter(target) {
+            wrappedDescriptorAnnotations = descriptor.annotations
+            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
+            name = parameter.name
+            index = parameter.index
+            type = parameter.type.substitute(substitutionMap)
+            varargElementType = parameter.varargElementType?.substitute(substitutionMap)
+            isCrossInline = parameter.isCrossinline
+            isNoinline = parameter.isNoinline
         }
     }
 

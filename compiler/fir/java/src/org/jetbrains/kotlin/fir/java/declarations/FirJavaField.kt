@@ -42,7 +42,6 @@ class FirJavaField @FirImplementationDetail constructor(
     override val isVar: Boolean,
     override val annotations: MutableList<FirAnnotationCall>,
     override val typeParameters: MutableList<FirTypeParameter>,
-    val isEnumEntry: Boolean
 ) : FirField() {
     init {
         symbol.bind(this)
@@ -73,7 +72,6 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirField {
         transformAnnotations(transformer, data)
-        typeParameters.transformInplace(transformer, data)
         return this
     }
 
@@ -93,6 +91,7 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirJavaField {
         transformReturnTypeRef(transformer, data)
+        transformTypeParameters(transformer, data)
         transformOtherChildren(transformer, data)
         return this
     }
@@ -108,6 +107,11 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirJavaField {
         annotations.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirField {
+        typeParameters.transformInplace(transformer, data)
         return this
     }
 
@@ -138,7 +142,6 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
     var modality: Modality? = null
     lateinit var visibility: Visibility
     var isStatic: Boolean by Delegates.notNull()
-    var isEnumEntry: Boolean by Delegates.notNull()
 
     override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
 
@@ -162,7 +165,6 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
             isVar,
             annotations,
             typeParameters,
-            isEnumEntry
         )
     }
 

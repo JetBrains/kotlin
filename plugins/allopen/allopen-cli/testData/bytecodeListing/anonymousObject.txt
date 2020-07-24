@@ -28,7 +28,7 @@ final class Test$b$2 {
 @AllOpen
 @kotlin.Metadata
 public class Test {
-    private final field a: java.lang.Runnable
+    private final @org.jetbrains.annotations.NotNull field a: java.lang.Runnable
     inner (anonymous) class Test$a$1
     inner (anonymous) class Test$b$1
     inner (anonymous) class Test$b$2

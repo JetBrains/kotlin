@@ -30,5 +30,10 @@ declare namespace JS_TESTS {
         class FC extends foo.OC {
             constructor();
         }
+        const O1: {
+        } & foo.OC;
+        const O2: {
+            foo(): number;
+        } & foo.OC;
     }
 }

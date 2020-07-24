@@ -1,6 +1,6 @@
 @kotlin.Metadata
 synthetic final class SuspendMainKt$$$main {
-    private final field args: java.lang.String[]
+    private synthetic final field args: java.lang.String[]
     synthetic method <init>(p0: java.lang.String[]): void
     public synthetic final method invoke(p0: java.lang.Object): java.lang.Object
 }

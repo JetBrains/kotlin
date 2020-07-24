@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -36,6 +37,8 @@ class FirTypeIntersectionScope private constructor(
     private val typeContext = ConeTypeCheckerContext(isErrorTypeEqualsToAnything = false, isStubTypeEqualsToAnything = false, session)
 
     private val overriddenSymbols: MutableMap<FirCallableSymbol<*>, Collection<FirCallableSymbol<*>>> = mutableMapOf()
+
+    private val intersectionOverrides: MutableMap<FirCallableSymbol<*>, FirCallableSymbol<*>> = mutableMapOf()
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         if (!processCallablesByName(name, processor, absentFunctions, FirScope::processFunctionsByName)) {
@@ -91,11 +94,70 @@ class FirTypeIntersectionScope private constructor(
             val extractedOverrides = extractBothWaysOverridable(maxByVisibility, allMembers)
 
             val mostSpecific = selectMostSpecificMember(extractedOverrides)
-            overriddenSymbols[mostSpecific] = extractedOverrides
-            processor(mostSpecific)
+            if (extractedOverrides.size > 1) {
+                val intersectionOverride = intersectionOverrides.getOrPut(mostSpecific) {
+                    @Suppress("UNCHECKED_CAST")
+                    when (mostSpecific) {
+                        is FirNamedFunctionSymbol -> {
+                            createIntersectionOverride(mostSpecific, extractedOverrides as Collection<FirNamedFunctionSymbol>)
+                        }
+                        is FirPropertySymbol -> {
+                            createIntersectionOverride(mostSpecific)
+                        }
+                        else -> {
+                            throw IllegalStateException("Should not be here")
+                        }
+                    }
+                }
+                overriddenSymbols[intersectionOverride] = extractedOverrides
+                @Suppress("UNCHECKED_CAST")
+                processor(intersectionOverride as D)
+            } else {
+                overriddenSymbols[mostSpecific] = extractedOverrides
+                processor(mostSpecific)
+            }
         }
 
         return true
+    }
+
+    private fun createIntersectionOverride(
+        mostSpecific: FirNamedFunctionSymbol,
+        extractedOverrides: Collection<FirNamedFunctionSymbol>
+    ): FirNamedFunctionSymbol {
+        val newSymbol = FirNamedFunctionSymbol(mostSpecific.callableId, mostSpecific.isFakeOverride, mostSpecific)
+        val mostSpecificFunction = mostSpecific.fir
+        createFunctionCopy(mostSpecific.fir, newSymbol).apply {
+            resolvePhase = mostSpecificFunction.resolvePhase
+            origin = FirDeclarationOrigin.IntersectionOverride
+            typeParameters += mostSpecificFunction.typeParameters
+            valueParameters += mostSpecificFunction.valueParameters.mapIndexed { index, mostSpecificParameter ->
+                val overriddenWithDefault =
+                    extractedOverrides.firstOrNull {
+                        it.fir.valueParameters.getOrNull(index)?.defaultValue != null
+                    }?.fir
+                if (overriddenWithDefault == null) {
+                    mostSpecificParameter
+                } else {
+                    val overriddenWithDefaultParameter = overriddenWithDefault.valueParameters[index]
+                    createValueParameterCopy(mostSpecificParameter, overriddenWithDefaultParameter.defaultValue).apply {
+                        annotations += mostSpecificParameter.annotations
+                    }.build()
+                }
+            }
+        }.build()
+        return newSymbol
+    }
+
+    private fun createIntersectionOverride(mostSpecific: FirPropertySymbol): FirPropertySymbol {
+        val newSymbol = FirPropertySymbol(mostSpecific.callableId, mostSpecific.isFakeOverride, mostSpecific)
+        val mostSpecificProperty = mostSpecific.fir
+        createPropertyCopy(mostSpecific.fir, newSymbol).apply {
+            resolvePhase = mostSpecificProperty.resolvePhase
+            origin = FirDeclarationOrigin.IntersectionOverride
+            typeParameters += mostSpecificProperty.typeParameters
+        }.build()
+        return newSymbol
     }
 
     private fun <D : FirCallableSymbol<*>> selectMostSpecificMember(overridables: Collection<D>): D {
@@ -232,20 +294,42 @@ class FirTypeIntersectionScope private constructor(
         super.processClassifiersByNameWithSubstitution(name, processor)
     }
 
-    override fun processOverriddenFunctions(
-        functionSymbol: FirFunctionSymbol<*>,
-        processor: (FirFunctionSymbol<*>) -> ProcessorAction
-    ): ProcessorAction {
-        @Suppress("UNCHECKED_CAST")
-        val directOverriddenSymbols =
-            overriddenSymbols[functionSymbol] as Collection<FirFunctionSymbol<*>>?
-                ?: return ProcessorAction.NEXT
+    @Suppress("UNCHECKED_CAST")
+    private fun <S : FirCallableSymbol<*>> getDirectOverriddenSymbols(symbol: S): Collection<S> =
+        overriddenSymbols[symbol].orEmpty() as Collection<S>
 
-        for (directOverridden in directOverriddenSymbols) {
+    override fun processOverriddenFunctionsWithDepth(
+        functionSymbol: FirFunctionSymbol<*>,
+        processor: (FirFunctionSymbol<*>, Int) -> ProcessorAction
+    ): ProcessorAction {
+        for (overridden in getDirectOverriddenSymbols(functionSymbol)) {
+            val overriddenDepth = if (overridden is FirNamedFunctionSymbol && overridden.overriddenSymbol != null) 0 else 1
+            if (!processor(overridden, overriddenDepth)) return ProcessorAction.STOP
             // TODO: Preserve the scope where directOverridden came from
             for (scope in scopes) {
-                if (!processor(directOverridden)) return ProcessorAction.STOP
-                if (!scope.processOverriddenFunctions(directOverridden, processor)) return ProcessorAction.STOP
+                if (!scope.processOverriddenFunctionsWithDepth(overridden) { symbol, depth ->
+                        processor(symbol, depth + overriddenDepth)
+                    }
+                ) return ProcessorAction.STOP
+            }
+        }
+
+        return ProcessorAction.NEXT
+    }
+
+    override fun processOverriddenPropertiesWithDepth(
+        propertySymbol: FirPropertySymbol,
+        processor: (FirPropertySymbol, Int) -> ProcessorAction
+    ): ProcessorAction {
+        for (overridden in getDirectOverriddenSymbols(propertySymbol)) {
+            val overriddenDepth = if (overridden.overriddenSymbol != null) 0 else 1
+            if (!processor(overridden, overriddenDepth)) return ProcessorAction.STOP
+            // TODO: Preserve the scope where directOverridden came from
+            for (scope in scopes) {
+                if (!scope.processOverriddenPropertiesWithDepth(overridden) { symbol, depth ->
+                        processor(symbol, depth + overriddenDepth)
+                    }
+                ) return ProcessorAction.STOP
             }
         }
 

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
+import org.jetbrains.kotlin.ir.util.createIrClassFromDescriptor
 import org.jetbrains.kotlin.ir.util.withScope
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtPureElement
@@ -75,8 +76,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
     }
 
     fun generateClass(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor, symbol: IrClassSymbol): IrClass {
-
-        val irClass = IrClassImpl(startOffset, endOffset, origin, symbol, descriptor)
+        val irClass = createIrClassFromDescriptor(startOffset, endOffset, origin, symbol, descriptor)
 
         symbolTable.withScope(irClass) {
             irClass.metadata = MetadataSource.Class(descriptor)
@@ -110,14 +110,10 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
         origin: IrDeclarationOrigin,
         descriptor: TypeAliasDescriptor,
         symbol: IrTypeAliasSymbol
-    ): IrTypeAlias {
-        val irAlias = IrTypeAliasImpl.fromSymbolDescriptor(
-            startOffset, endOffset, symbol, descriptor.expandedType.toIrType(), origin, descriptor
-        )
-
-        generateGlobalTypeParametersDeclarations(irAlias, descriptor.declaredTypeParameters)
-
-        return irAlias
+    ): IrTypeAlias = with(descriptor) {
+        IrTypeAliasImpl(startOffset, endOffset, symbol, name, visibility, expandedType.toIrType(), isActual, origin).also {
+            generateGlobalTypeParametersDeclarations(it, declaredTypeParameters)
+        }
     }
 
     protected fun declareParameter(descriptor: ParameterDescriptor, ktElement: KtPureElement?, irOwnerElement: IrElement): IrValueParameter {
@@ -133,7 +129,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
     protected fun generateValueParameterDeclarations(
         irFunction: IrFunction,
         functionDescriptor: FunctionDescriptor,
-        defaultArgumentFactory: IrFunction.(ValueParameterDescriptor) -> IrExpressionBody?
+        defaultArgumentFactory: IrFunction.(IrValueParameter) -> IrExpressionBody?
     ) {
 
         // TODO: KtElements
@@ -150,16 +146,21 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
         irFunction.valueParameters = functionDescriptor.valueParameters.map { valueParameterDescriptor ->
             val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
             declareParameter(valueParameterDescriptor, ktParameter, irFunction).also {
-                it.defaultValue = irFunction.defaultArgumentFactory(valueParameterDescriptor)
+                it.defaultValue = irFunction.defaultArgumentFactory(it)
             }
         }
     }
 
     fun generateConstructor(
         startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassConstructorDescriptor, symbol: IrConstructorSymbol,
-        defaultArgumentFactory: IrFunction.(ValueParameterDescriptor) -> IrExpressionBody? = { null }
+        defaultArgumentFactory: IrFunction.(IrValueParameter) -> IrExpressionBody? = { null }
     ): IrConstructor {
-        val irConstructor = IrConstructorImpl(startOffset, endOffset, origin, symbol, IrUninitializedType, descriptor)
+        val irConstructor = with(descriptor) {
+            IrConstructorImpl(
+                startOffset, endOffset, origin, symbol, name, visibility, IrUninitializedType, isInline,
+                isEffectivelyExternal(), isPrimary, isExpect
+            )
+        }
         irConstructor.metadata = MetadataSource.Function(descriptor)
 
         symbolTable.withScope(irConstructor) {
@@ -178,9 +179,14 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
 
     fun generateSimpleFunction(
         startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: FunctionDescriptor, symbol: IrSimpleFunctionSymbol,
-        defaultArgumentFactory: IrFunction.(ValueParameterDescriptor) -> IrExpressionBody? = { null }
+        defaultArgumentFactory: IrFunction.(IrValueParameter) -> IrExpressionBody? = { null }
     ): IrSimpleFunction {
-        val irFunction = IrFunctionImpl(startOffset, endOffset, origin, symbol, IrUninitializedType, descriptor)
+        val irFunction = with(descriptor) {
+            IrFunctionImpl(
+                startOffset, endOffset, origin, symbol, name, visibility, modality, IrUninitializedType,
+                isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect
+            )
+        }
         irFunction.metadata = MetadataSource.Function(descriptor)
 
         symbolTable.withScope(descriptor) {

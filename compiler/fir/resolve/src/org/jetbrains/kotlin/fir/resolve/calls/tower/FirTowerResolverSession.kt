@@ -7,17 +7,15 @@ package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.asReversedFrozen
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.isInner
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.FirQualifiedAccessExpressionBuilder
 import org.jetbrains.kotlin.fir.references.FirSuperReference
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.buildResolvedQualifierForClass
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.scope
-import org.jetbrains.kotlin.fir.resolve.transformQualifiedAccessUsingSmartcastInfo
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -26,6 +24,7 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -563,11 +562,13 @@ class FirTowerResolverSession internal constructor(
         val invokeBuiltinExtensionMode = invokeResolveMode == InvokeResolveMode.RECEIVER_FOR_INVOKE_BUILTIN_EXTENSION
 
         for (invokeReceiverCandidate in candidateFactoriesAndCollectors.invokeReceiverCollector!!.bestCandidates()) {
-            val symbol = invokeReceiverCandidate.symbol
-            if (symbol !is FirCallableSymbol<*> && symbol !is FirRegularClassSymbol) continue
-
-            val isExtensionFunctionType =
-                (symbol as? FirCallableSymbol<*>)?.fir?.returnTypeRef?.isExtensionFunctionType(components.session) == true
+            val returnTypeRef = when (val symbol = invokeReceiverCandidate.symbol) {
+                is FirTypeAliasSymbol -> symbol.fir.expandedTypeRef
+                is FirCallableSymbol<*> -> symbol.fir.returnTypeRef
+                is FirRegularClassSymbol -> null
+                else -> continue
+            }
+            val isExtensionFunctionType = returnTypeRef?.isExtensionFunctionType(components.session) == true
 
             if (invokeBuiltinExtensionMode && !isExtensionFunctionType) {
                 continue
@@ -653,6 +654,11 @@ private fun BodyResolveComponents.createExplicitReceiverForInvoke(
             candidate, info, invokeBuiltinExtensionMode, extensionReceiverExpression, symbol
         )
         is FirRegularClassSymbol -> buildResolvedQualifierForClass(symbol, sourceElement = null)
+        is FirTypeAliasSymbol -> {
+            val type = symbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType(session)
+            val expansionRegularClass = type.lookupTag.toSymbol(session)?.fir as? FirRegularClass
+            buildResolvedQualifierForClass(expansionRegularClass!!.symbol, sourceElement = symbol.fir.source)
+        }
         else -> throw AssertionError()
     }
 }

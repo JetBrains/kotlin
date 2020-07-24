@@ -1870,6 +1870,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
 
+        @TestMetadata("constructorAccessors.kt")
+        public void testConstructorAccessors() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/enum/constructorAccessors.kt");
+        }
+
         @TestMetadata("enumCheckcasts.kt")
         public void testEnumCheckcasts() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/enum/enumCheckcasts.kt");
@@ -2854,6 +2859,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("defaultParametersDontBox.kt")
         public void testDefaultParametersDontBox() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/defaultParametersDontBox.kt");
+        }
+
+        @TestMetadata("delegatedPropertyMangling.kt")
+        public void testDelegatedPropertyMangling() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/delegatedPropertyMangling.kt");
         }
 
         @TestMetadata("equalsDoesNotBox.kt")

@@ -349,13 +349,15 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    private fun declareIrSimpleFunction(
+    internal fun declareIrSimpleFunction(
         signature: IdSignature?,
         containerSource: DeserializedContainerSource?,
         factory: (IrSimpleFunctionSymbol) -> IrSimpleFunction
     ): IrSimpleFunction {
         if (signature == null) {
-            val descriptor = WrappedSimpleFunctionDescriptor()
+            val descriptor =
+                if (containerSource != null) WrappedFunctionDescriptorWithContainerSource(containerSource)
+                else WrappedSimpleFunctionDescriptor()
             return symbolTable.declareSimpleFunction(descriptor, factory).apply { descriptor.bind(this) }
         }
         return symbolTable.declareSimpleFunction(signature, { Fir2IrSimpleFunctionSymbol(signature, containerSource) }, factory)
@@ -396,7 +398,8 @@ class Fir2IrDeclarationStorage(
                     isSuspend = isSuspend,
                     isExpect = simpleFunction?.isExpect == true,
                     isFakeOverride = updatedOrigin == IrDeclarationOrigin.FAKE_OVERRIDE,
-                    isOperator = simpleFunction?.isOperator == true
+                    isOperator = simpleFunction?.isOperator == true,
+                    isInfix = simpleFunction?.isInfix == true
                 ).apply {
                     metadata = FirMetadataSource.Function(function)
                     convertAnnotationsFromLibrary(function)
@@ -419,9 +422,6 @@ class Fir2IrDeclarationStorage(
             (function.symbol.overriddenSymbol as? FirNamedFunctionSymbol)?.let {
                 created.overriddenSymbols += getIrFunctionSymbol(it) as IrSimpleFunctionSymbol
             }
-        }
-        if (!created.isFakeOverride && thisReceiverOwner != null) {
-            created.populateOverriddenSymbols(thisReceiverOwner)
         }
         functionCache[function] = created
         return created
@@ -523,7 +523,7 @@ class Fir2IrDeclarationStorage(
                 isExternal = propertyAccessor?.isExternal == true,
                 isTailrec = false, isSuspend = false, isExpect = false,
                 isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
-                isOperator = false
+                isOperator = false, isInfix = false
             ).apply {
                 correspondingPropertySymbol = correspondingProperty.symbol
                 if (propertyAccessor != null) {
@@ -553,7 +553,7 @@ class Fir2IrDeclarationStorage(
                 if (irParent != null) {
                     parent = irParent
                 }
-                if (!isFakeOverride && thisReceiverOwner != null) {
+                if (correspondingProperty is Fir2IrLazyProperty && !isFakeOverride && thisReceiverOwner != null) {
                     populateOverriddenSymbols(thisReceiverOwner)
                 }
             }
@@ -593,6 +593,7 @@ class Fir2IrDeclarationStorage(
         get() = when {
             isLateInit -> setter?.visibility ?: status.visibility
             isConst -> status.visibility
+            hasJvmFieldAnnotation -> status.visibility
             else -> Visibilities.PRIVATE
         }
 
@@ -602,7 +603,9 @@ class Fir2IrDeclarationStorage(
         factory: (IrPropertySymbol) -> IrProperty
     ): IrProperty {
         if (signature == null) {
-            val descriptor = WrappedPropertyDescriptor()
+            val descriptor =
+                if (containerSource != null) WrappedPropertyDescriptorWithContainerSource(containerSource)
+                else WrappedPropertyDescriptor()
             return symbolTable.declareProperty(0, 0, IrDeclarationOrigin.DEFINED, descriptor, isDelegated = false, factory).apply {
                 descriptor.bind(this)
             }

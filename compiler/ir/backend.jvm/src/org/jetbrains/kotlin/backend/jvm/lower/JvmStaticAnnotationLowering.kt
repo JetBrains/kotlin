@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
-import org.jetbrains.kotlin.ir.builders.declarations.buildFunWithDescriptorForInlining
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.builders.irGet
@@ -114,7 +114,7 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
             annotations = target.annotations.map { it.deepCopyWithSymbols() }
 
             val proxy = this
-            val companionInstanceField = context.declarationFactory.getFieldForObjectInstance(companion)
+            val companionInstanceField = context.cachedDeclarations.getFieldForObjectInstance(companion)
             body = context.createIrBuilder(symbol).run {
                 irExprBody(irCall(target).apply {
                     passTypeArgumentsFrom(proxy)
@@ -142,7 +142,7 @@ private class SingletonObjectJvmStaticLowering(
             jvmStaticFunction.dispatchReceiverParameter?.let { oldDispatchReceiverParameter ->
                 jvmStaticFunction.dispatchReceiverParameter = null
                 jvmStaticFunction.body = jvmStaticFunction.body?.replaceThisByStaticReference(
-                    context.declarationFactory,
+                    context.cachedDeclarations,
                     irClass,
                     oldDispatchReceiverParameter
                 )
@@ -192,7 +192,7 @@ private class MakeCallsStatic(
     }
 
     private fun IrSimpleFunction.copyRemovingDispatchReceiver(): IrSimpleFunction =
-        buildFunWithDescriptorForInlining(descriptor) {
+        buildFun(descriptor) {
             updateFrom(this@copyRemovingDispatchReceiver)
             name = this@copyRemovingDispatchReceiver.name
             returnType = this@copyRemovingDispatchReceiver.returnType
@@ -210,4 +210,3 @@ private fun isJvmStaticFunction(declaration: IrDeclaration): Boolean =
             (declaration.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) ||
                     declaration.correspondingPropertySymbol?.owner?.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) == true) &&
             declaration.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS
-

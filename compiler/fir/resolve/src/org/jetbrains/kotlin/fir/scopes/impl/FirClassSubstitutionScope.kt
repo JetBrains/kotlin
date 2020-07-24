@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.fir.withKind
+import org.jetbrains.kotlin.fir.fakeElement
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -64,12 +64,20 @@ class FirClassSubstitutionScope(
         return super.processFunctionsByName(name, processor)
     }
 
-    override fun processOverriddenFunctions(
+    override fun processOverriddenFunctionsWithDepth(
         functionSymbol: FirFunctionSymbol<*>,
-        processor: (FirFunctionSymbol<*>) -> ProcessorAction
+        processor: (FirFunctionSymbol<*>, Int) -> ProcessorAction
     ): ProcessorAction {
-        val unwrapped = functionSymbol.overriddenSymbol as FirFunctionSymbol<*>? ?: functionSymbol
-        return useSiteMemberScope.processOverriddenFunctions(unwrapped, processor)
+        if (!useSiteMemberScope.processOverriddenFunctionsWithDepth(functionSymbol, processor)) {
+            return ProcessorAction.STOP
+        }
+        val unwrapped = functionSymbol.overriddenSymbol as FirFunctionSymbol<*>? ?: return ProcessorAction.NEXT
+        if (!processor(unwrapped, 1)) {
+            return ProcessorAction.STOP
+        }
+        return useSiteMemberScope.processOverriddenFunctionsWithDepth(unwrapped) { symbol, depth ->
+            processor(symbol, depth + 1)
+        }
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
@@ -91,6 +99,22 @@ class FirClassSubstitutionScope(
                     processor(original)
                 }
             }
+        }
+    }
+
+    override fun processOverriddenPropertiesWithDepth(
+        propertySymbol: FirPropertySymbol,
+        processor: (FirPropertySymbol, Int) -> ProcessorAction
+    ): ProcessorAction {
+        if (!useSiteMemberScope.processOverriddenPropertiesWithDepth(propertySymbol, processor)) {
+            return ProcessorAction.STOP
+        }
+        val unwrapped = propertySymbol.overriddenSymbol ?: return ProcessorAction.NEXT
+        if (!processor(unwrapped, 1)) {
+            return ProcessorAction.STOP
+        }
+        return useSiteMemberScope.processOverriddenPropertiesWithDepth(unwrapped) { symbol, depth ->
+            processor(symbol, depth + 1)
         }
     }
 
@@ -524,12 +548,18 @@ fun FirTypeRef.withReplacedReturnType(newType: ConeKotlinType?): FirTypeRef {
     }
 }
 
-fun FirTypeRef.withReplacedConeType(newType: ConeKotlinType?, sourceElementKind: FirFakeSourceElementKind? = null): FirResolvedTypeRef {
+fun FirTypeRef.withReplacedConeType(
+    newType: ConeKotlinType?,
+    firFakeSourceElementKind: FirFakeSourceElementKind? = null
+): FirResolvedTypeRef {
     require(this is FirResolvedTypeRef)
     if (newType == null) return this
 
     return buildResolvedTypeRef {
-        source = this@withReplacedConeType.source?.withKind(sourceElementKind)
+        source = if (firFakeSourceElementKind != null)
+            this@withReplacedConeType.source?.fakeElement(firFakeSourceElementKind)
+        else
+            this@withReplacedConeType.source
         type = newType
         annotations += this@withReplacedConeType.annotations
     }

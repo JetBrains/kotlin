@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
+import org.jetbrains.kotlin.fir.fakeElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBooleanTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.fir.withKind
 
 /*
  * This file was generated automatically

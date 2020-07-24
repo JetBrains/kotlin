@@ -13,7 +13,7 @@ class CirFunctionNode(
     override val targetDeclarations: CommonizedGroup<CirFunction>,
     override val commonDeclaration: NullableLazyValue<CirFunction>
 ) : CirNode<CirFunction, CirFunction> {
-    override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T) =
+    override fun <T, R> accept(visitor: CirNodeVisitor<T, R>, data: T) =
         visitor.visitFunctionNode(this, data)
 
     override fun toString() = CirNode.toString(this)

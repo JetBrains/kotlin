@@ -1926,6 +1926,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/callableReference/noAmbiguityWhenAllReferencesAreInapplicable.kt");
             }
 
+            @TestMetadata("noCompatibilityResolveWithProressiveModeForNI.kt")
+            public void testNoCompatibilityResolveWithProressiveModeForNI() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/noCompatibilityResolveWithProressiveModeForNI.kt");
+            }
+
             @TestMetadata("noExceptionOnRedCodeWithArrayLikeCall.kt")
             public void testNoExceptionOnRedCodeWithArrayLikeCall() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/noExceptionOnRedCodeWithArrayLikeCall.kt");
@@ -2596,6 +2601,16 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                 }
 
+                @TestMetadata("adaptedReferenceAgainstKCallable.kt")
+                public void testAdaptedReferenceAgainstKCallable() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/adaptedReferenceAgainstKCallable.kt");
+                }
+
+                @TestMetadata("adaptedReferenceAgainstReflectionType.kt")
+                public void testAdaptedReferenceAgainstReflectionType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/adaptedReferenceAgainstReflectionType.kt");
+                }
+
                 public void testAllFilesPresentInResolve() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/resolve"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
@@ -2658,6 +2673,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("commonSupertypeFromReturnTypesOfCallableReference.kt")
                 public void testCommonSupertypeFromReturnTypesOfCallableReference() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/resolve/commonSupertypeFromReturnTypesOfCallableReference.kt");
+                }
+
+                @TestMetadata("compatibilityWarningOnReferenceAgainstReflectiveType.kt")
+                public void testCompatibilityWarningOnReferenceAgainstReflectiveType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/compatibilityWarningOnReferenceAgainstReflectiveType.kt");
                 }
 
                 @TestMetadata("constructor.kt")
@@ -2798,6 +2818,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("resolveReferenceAgainstKFunctionAndKPrpoerty.kt")
                 public void testResolveReferenceAgainstKFunctionAndKPrpoerty() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/resolve/resolveReferenceAgainstKFunctionAndKPrpoerty.kt");
+                }
+
+                @TestMetadata("resolveTwoReferencesAgainstGenerics.kt")
+                public void testResolveTwoReferencesAgainstGenerics() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/resolveTwoReferencesAgainstGenerics.kt");
                 }
 
                 @TestMetadata("valVsFun.kt")
@@ -4683,6 +4708,16 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/coroutines"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }
 
+            @TestMetadata("suspendInvokeInsideTry.kt")
+            public void testSuspendInvokeInsideTry() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/coroutines/suspendInvokeInsideTry.kt");
+            }
+
+            @TestMetadata("suspendInvokeInsideWhen.kt")
+            public void testSuspendInvokeInsideWhen() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/coroutines/suspendInvokeInsideWhen.kt");
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/coroutines/callableReference")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -6532,6 +6567,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedHidden.kt");
             }
 
+            @TestMetadata("deprecatedHiddenOnCallableReferenceArgument.kt")
+            public void testDeprecatedHiddenOnCallableReferenceArgument() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedHiddenOnCallableReferenceArgument.kt");
+            }
+
             @TestMetadata("deprecatedInheritance.kt")
             public void testDeprecatedInheritance() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedInheritance.kt");
@@ -6672,6 +6712,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("deprecatedSinceKotlinDeclaration.kt")
                 public void testDeprecatedSinceKotlinDeclaration() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedSinceKotlin/deprecatedSinceKotlinDeclaration.kt");
+                }
+
+                @TestMetadata("deprecatedSinceKotlinHiddenOnReferenceArgument.kt")
+                public void testDeprecatedSinceKotlinHiddenOnReferenceArgument() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedSinceKotlin/deprecatedSinceKotlinHiddenOnReferenceArgument.kt");
                 }
 
                 @TestMetadata("deprecatedSinceKotlinOutsideKotlinPackage.kt")
@@ -9367,6 +9412,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/generics/starProjections/collectionInheritedFromJava.kt");
                 }
 
+                @TestMetadata("foldRecursiveTypesToStarProjection.kt")
+                public void testFoldRecursiveTypesToStarProjection() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/generics/starProjections/foldRecursiveTypesToStarProjection.kt");
+                }
+
                 @TestMetadata("inheritedFromJava.kt")
                 public void testInheritedFromJava() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/generics/starProjections/inheritedFromJava.kt");
@@ -10061,6 +10111,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/inference/commonSuperTypeOfErrorTypes.kt");
             }
 
+            @TestMetadata("commonSuperTypeOfTypesWithErrorSupertypes.kt")
+            public void testCommonSuperTypeOfTypesWithErrorSupertypes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/commonSuperTypeOfTypesWithErrorSupertypes.kt");
+            }
+
             @TestMetadata("compatibilityResolveWhenVariableHasComplexIntersectionType.kt")
             public void testCompatibilityResolveWhenVariableHasComplexIntersectionType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/compatibilityResolveWhenVariableHasComplexIntersectionType.kt");
@@ -10409,6 +10464,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestMetadata("returningLambdaInSuspendContext.kt")
             public void testReturningLambdaInSuspendContext() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/returningLambdaInSuspendContext.kt");
+            }
+
+            @TestMetadata("simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt")
+            public void testSimpleLambdaInCallWithAnotherLambdaWithBuilderInference() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt");
             }
 
             @TestMetadata("skipedUnresolvedInBuilderInferenceWithStubReceiverType.kt")
@@ -10983,6 +11043,16 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     public void testTakingExtensibilityFromDeclarationOfAnonymousFunction() throws Exception {
                         runTest("compiler/testData/diagnostics/tests/inference/completion/postponedArgumentsAnalysis/takingExtensibilityFromDeclarationOfAnonymousFunction.kt");
                     }
+
+                    @TestMetadata("wrongVariableFixationOrder.kt")
+                    public void testWrongVariableFixationOrder() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/completion/postponedArgumentsAnalysis/wrongVariableFixationOrder.kt");
+                    }
+
+                    @TestMetadata("wrongVariableFixationOrder2.kt")
+                    public void testWrongVariableFixationOrder2() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inference/completion/postponedArgumentsAnalysis/wrongVariableFixationOrder2.kt");
+                    }
                 }
             }
 
@@ -11329,6 +11399,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/nothingWithCallableReference.kt");
                 }
 
+                @TestMetadata("nullableExpectedTypeFromVariable.kt")
+                public void testNullableExpectedTypeFromVariable() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nothingType/nullableExpectedTypeFromVariable.kt");
+                }
+
                 @TestMetadata("platformNothingAsUsefulConstraint.kt")
                 public void testPlatformNothingAsUsefulConstraint() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/platformNothingAsUsefulConstraint.kt");
@@ -11337,6 +11412,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("reifiedParameterWithRecursiveBound.kt")
                 public void testReifiedParameterWithRecursiveBound() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/reifiedParameterWithRecursiveBound.kt");
+                }
+
+                @TestMetadata("specialCallWithMaterializeAndExpectedType.kt")
+                public void testSpecialCallWithMaterializeAndExpectedType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nothingType/specialCallWithMaterializeAndExpectedType.kt");
                 }
             }
 
@@ -13841,6 +13921,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                     runTest("compiler/testData/diagnostics/tests/j+k/sam/recursiveSamsAndInvoke.kt");
                 }
 
+                @TestMetadata("referenceToSamFunctionAgainstExpectedType.kt")
+                public void testReferenceToSamFunctionAgainstExpectedType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/sam/referenceToSamFunctionAgainstExpectedType.kt");
+                }
+
                 @TestMetadata("samOnTypeParameter.kt")
                 public void testSamOnTypeParameter() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/j+k/sam/samOnTypeParameter.kt");
@@ -14031,6 +14116,16 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 @TestMetadata("arrayList.kt")
                 public void testArrayList() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/j+k/types/arrayList.kt");
+                }
+
+                @TestMetadata("notNullTypeParameterWithKotlinNullable.kt")
+                public void testNotNullTypeParameterWithKotlinNullable() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/types/notNullTypeParameterWithKotlinNullable.kt");
+                }
+
+                @TestMetadata("notNullTypeParameterWithKotlinNullableWarnings.kt")
+                public void testNotNullTypeParameterWithKotlinNullableWarnings() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/types/notNullTypeParameterWithKotlinNullableWarnings.kt");
                 }
 
                 @TestMetadata("returnCollection.kt")
@@ -19708,6 +19803,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/samConversions/checkSamConversionsAreDisabledByDefault.kt");
             }
 
+            @TestMetadata("conversionOnLambdaAsLastExpression.kt")
+            public void testConversionOnLambdaAsLastExpression() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/samConversions/conversionOnLambdaAsLastExpression.kt");
+            }
+
             @TestMetadata("DisabledForKTSimple.kt")
             public void testDisabledForKTSimple() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/samConversions/DisabledForKTSimple.kt");
@@ -24649,6 +24749,16 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
             @TestMetadata("chainedUnitSuspendConversion.kt")
             public void testChainedUnitSuspendConversion() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/unitConversion/chainedUnitSuspendConversion.kt");
+            }
+
+            @TestMetadata("noUnitConversionForGenericTypeFromArrow.kt")
+            public void testNoUnitConversionForGenericTypeFromArrow() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/unitConversion/noUnitConversionForGenericTypeFromArrow.kt");
+            }
+
+            @TestMetadata("noUnitConversionOnReturningGenericFunctionalType.kt")
+            public void testNoUnitConversionOnReturningGenericFunctionalType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/unitConversion/noUnitConversionOnReturningGenericFunctionalType.kt");
             }
 
             @TestMetadata("unitConversionCompatibility.kt")

@@ -66,14 +66,8 @@ class KotlinBuildProperties(
 
     val isTeamcityBuild: Boolean = getBoolean("teamcity") || System.getenv("TEAMCITY_VERSION") != null
 
-    val intellijUltimateEnabled: Boolean
-        get() {
-            val explicitlyEnabled = getBoolean("intellijUltimateEnabled")
-            if (!kotlinUltimateExists && explicitlyEnabled) {
-                error("intellijUltimateEnabled property is set, while kotlin-ultimate repository is not provided")
-            }
-            return kotlinUltimateExists && (explicitlyEnabled || isTeamcityBuild)
-        }
+    val intellijUltimateEnabled: Boolean = getBoolean("intellijUltimateEnabled", isTeamcityBuild) ||
+            getBoolean("kotlin.build.dependencies.iu.enabled", isTeamcityBuild)
 
     val includeCidrPlugins: Boolean = kotlinUltimateExists && getBoolean("cidrPluginsEnabled")
 

@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
-import org.jetbrains.kotlin.synthetic.isVisibleOutside
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.isNullabilityFlexible
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -284,8 +283,6 @@ abstract class AnnotationCodegen(
                     true
                 declaration.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ->
                     true
-                declaration is IrDeclarationWithVisibility ->
-                    !declaration.visibility.isVisibleOutside()
                 else ->
                     false
             }

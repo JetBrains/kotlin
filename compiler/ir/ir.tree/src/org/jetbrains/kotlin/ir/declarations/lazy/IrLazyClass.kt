@@ -91,6 +91,10 @@ class IrLazyClass(
     val nameResolver: NameResolver? get() = (descriptor as? DeserializedClassDescriptor)?.c?.nameResolver
     override val source: SourceElement get() = descriptor.source
 
+    override var metadata: MetadataSource?
+        get() = null
+        set(_) = error("We should never need to store metadata of external declarations.")
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitClass(this, data)
 

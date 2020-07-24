@@ -144,6 +144,8 @@ class ConstraintInjector(
         private var baseLowerType = position.initialConstraint.a
         private var baseUpperType = position.initialConstraint.b
 
+        private var isIncorporatingConstraintFromDeclaredUpperBound = false
+
         fun extractAllConstraints() = possibleNewConstraints.also { possibleNewConstraints = null }
 
         fun addPossibleNewConstraint(variable: TypeVariableMarker, constraint: Constraint) {
@@ -252,16 +254,26 @@ class ConstraintInjector(
             )
         }
 
+        private fun addNewIncorporatedConstraintFromDeclaredUpperBound(runIsSubtypeOf: Runnable) {
+            isIncorporatingConstraintFromDeclaredUpperBound = true
+            runIsSubtypeOf.run()
+            isIncorporatingConstraintFromDeclaredUpperBound = false
+        }
+
         // from ConstraintIncorporator.Context
         override fun addNewIncorporatedConstraint(
             lowerType: KotlinTypeMarker,
             upperType: KotlinTypeMarker,
             shouldTryUseDifferentFlexibilityForUpperType: Boolean,
-            isFromNullabilityConstraint: Boolean
+            isFromNullabilityConstraint: Boolean,
+            isFromDeclaredUpperBound: Boolean
         ) {
             if (lowerType === upperType) return
             if (c.isAllowedType(lowerType) && c.isAllowedType(upperType)) {
-                runIsSubtypeOf(lowerType, upperType, shouldTryUseDifferentFlexibilityForUpperType, isFromNullabilityConstraint)
+                fun runIsSubtypeOf() =
+                    runIsSubtypeOf(lowerType, upperType, shouldTryUseDifferentFlexibilityForUpperType, isFromNullabilityConstraint)
+
+                if (isFromDeclaredUpperBound) addNewIncorporatedConstraintFromDeclaredUpperBound(::runIsSubtypeOf) else runIsSubtypeOf()
             }
         }
 
@@ -306,6 +318,8 @@ class ConstraintInjector(
                     return
                 }
             }
+
+            val position = if (isIncorporatingConstraintFromDeclaredUpperBound) position.copy(isFromDeclaredUpperBound = true) else position
 
             val newConstraint = Constraint(
                 kind, targetType, position,

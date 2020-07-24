@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
@@ -57,8 +56,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
-import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
-import org.jetbrains.kotlin.psi2ir.generators.createGeneratorContext
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -288,18 +285,10 @@ fun loadIr(
 }
 
 private fun runAnalysisAndPreparePsi2Ir(depsDescriptors: ModulesStructure): GeneratorContext {
-    val analysisResult = depsDescriptors.runAnalysis()
-    val mangler = JsManglerDesc
-    val signaturer = IdSignatureDescriptor(mangler)
-
-    return createGeneratorContext(
-        Psi2IrConfiguration(),
-        analysisResult.moduleDescriptor,
-        analysisResult.bindingContext,
-        depsDescriptors.compilerConfiguration.languageVersionSettings,
-        SymbolTable(signaturer),
-        GeneratorExtensions()
-    )
+    val (bindingContext, moduleDescriptor) = depsDescriptors.runAnalysis()
+    val psi2Ir = Psi2IrTranslator(depsDescriptors.compilerConfiguration.languageVersionSettings, Psi2IrConfiguration())
+    val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc))
+    return psi2Ir.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable)
 }
 
 fun GeneratorContext.generateModuleFragmentWithPlugins(
@@ -308,8 +297,7 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
     irLinker: IrDeserializer,
     expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>? = null
 ): IrModuleFragment {
-    val signaturer = IdSignatureDescriptor(JsManglerDesc)
-    val psi2Ir = Psi2IrTranslator(languageVersionSettings, configuration, signaturer)
+    val psi2Ir = Psi2IrTranslator(languageVersionSettings, configuration)
 
     val extensions = IrGenerationExtension.getInstances(project)
 

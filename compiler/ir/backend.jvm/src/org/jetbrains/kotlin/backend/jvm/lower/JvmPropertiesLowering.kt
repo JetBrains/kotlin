@@ -15,13 +15,11 @@ import org.jetbrains.kotlin.backend.jvm.ir.needsAccessor
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
@@ -29,7 +27,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.coerceToUnit
+import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.resolveFakeOverride
+import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
@@ -119,7 +120,7 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
     private fun shouldSubstituteAccessorWithField(property: IrProperty, accessor: IrSimpleFunction?): Boolean =
         accessor != null && !property.needsAccessor(accessor)
 
-    private fun createSyntheticMethodForAnnotations(declaration: IrProperty): IrFunctionImpl =
+    private fun createSyntheticMethodForAnnotations(declaration: IrProperty): IrSimpleFunction =
         buildFun {
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS
             name = Name.identifier(computeSyntheticMethodName(declaration))

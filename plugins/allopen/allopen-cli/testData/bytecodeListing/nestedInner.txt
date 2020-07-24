@@ -5,23 +5,23 @@ public annotation class AllOpen
 @kotlin.Metadata
 public final class Test$Inner {
     synthetic final field this$0: Test
-    inner class Test$Inner
     public method <init>(p0: Test): void
     public final method innerMethod(): void
+    public final inner class Test$Inner
 }
 
 @kotlin.Metadata
 public final class Test$Nested {
-    inner class Test$Nested
     public method <init>(): void
     public final method nestedMethod(): void
+    public final inner class Test$Nested
 }
 
 @AllOpen
 @kotlin.Metadata
 public class Test {
-    inner class Test$Inner
-    inner class Test$Nested
     public method <init>(): void
     public method testMethod(): void
+    public final inner class Test$Inner
+    public final inner class Test$Nested
 }

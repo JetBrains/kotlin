@@ -20,6 +20,8 @@ var A3 = JS_TESTS.foo.A3;
 var _valCustom = JS_TESTS.foo._valCustom;
 var _valCustomWithField = JS_TESTS.foo._valCustomWithField;
 var A4 = JS_TESTS.foo.A4;
+var O = JS_TESTS.foo.O;
+var takesO = JS_TESTS.foo.takesO;
 function assert(condition) {
     if (!condition) {
         throw "Assertion failed";
@@ -75,5 +77,8 @@ function box() {
     assert(a4._varCustomWithField === 10);
     a4._varCustomWithField = 10;
     assert(a4._varCustomWithField === 1000);
+    assert(O.x === 10);
+    assert(O.foo() === 20);
+    assert(takesO(O) === 30);
     return "OK";
 }

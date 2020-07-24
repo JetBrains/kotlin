@@ -81,9 +81,10 @@ class DelegatedPropertyConstraintPosition(val topLevelCall: KotlinCall) : Constr
     override fun toString() = "Constraint from call $topLevelCall for delegated property"
 }
 
-class IncorporationConstraintPosition(
+data class IncorporationConstraintPosition(
     val from: ConstraintPosition,
-    val initialConstraint: InitialConstraint
+    val initialConstraint: InitialConstraint,
+    var isFromDeclaredUpperBound: Boolean = false
 ) : ConstraintPosition() {
     override fun toString() =
         "Incorporate $initialConstraint from position $from"

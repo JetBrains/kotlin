@@ -22,5 +22,5 @@ interface TypePredicate : (KotlinType) -> Boolean {
 
 fun <T : Any?> TypePredicate.expectedTypeFor(keys: Iterable<T>): Map<T, TypePredicate> =
     keys.fold(SmartFMap.emptyMap<T, TypePredicate>()) { map, key ->
-        map.plus(key, this)
+        map.plus(<!NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER!>key<!>, this)
     }

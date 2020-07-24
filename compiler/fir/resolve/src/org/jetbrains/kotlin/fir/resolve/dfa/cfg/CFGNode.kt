@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level: Int, private val id: Int) {
@@ -125,8 +126,15 @@ interface ExitNodeMarker
 // ----------------------------------- EnterNode for declaration with CFG -----------------------------------
 
 sealed class CFGNodeWithCfgOwner<out E : FirControlFlowGraphOwner>(owner: ControlFlowGraph, level: Int, id: Int) : CFGNode<E>(owner, level, id) {
-    val subGraph: ControlFlowGraph?
-        get() = fir.controlFlowGraphReference.controlFlowGraph
+    private val _subGraphs = mutableListOf<ControlFlowGraph>()
+
+    fun addSubGraph(graph: ControlFlowGraph){
+        _subGraphs += graph
+    }
+
+    val subGraphs: List<ControlFlowGraph> by lazy {
+        _subGraphs.also { it.addIfNotNull(fir.controlFlowGraphReference.controlFlowGraph) }
+    }
 }
 
 // ----------------------------------- Named function -----------------------------------
@@ -141,6 +149,12 @@ class FunctionExitNode(owner: ControlFlowGraph, override val fir: FirFunction<*>
         return visitor.visitFunctionExitNode(this, data)
     }
 }
+class LocalFunctionDeclarationNode(owner: ControlFlowGraph, override val fir: FirFunction<*>, level: Int, id: Int) : CFGNodeWithCfgOwner<FirFunction<*>>(owner, level, id) {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitLocalFunctionDeclarationNode(this, data)
+    }
+}
+
 
 // ----------------------------------- Default arguments -----------------------------------
 
@@ -216,9 +230,17 @@ class AnonymousObjectExitNode(owner: ControlFlowGraph, override val fir: FirAnon
     }
 }
 
+// ----------------------------------- Initialization -----------------------------------
+
+class PartOfClassInitializationNode(owner: ControlFlowGraph, override val fir: FirControlFlowGraphOwner, level: Int, id: Int) : CFGNodeWithCfgOwner<FirControlFlowGraphOwner>(owner, level, id), EnterNodeMarker {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitPartOfClassInitializationNode(this, data)
+    }
+}
+
 // ----------------------------------- Property -----------------------------------
 
-class PropertyInitializerEnterNode(owner: ControlFlowGraph, override val fir: FirProperty, level: Int, id: Int) : CFGNodeWithCfgOwner<FirProperty>(owner, level, id), EnterNodeMarker {
+class PropertyInitializerEnterNode(owner: ControlFlowGraph, override val fir: FirProperty, level: Int, id: Int) : CFGNode<FirProperty>(owner, level, id), EnterNodeMarker {
     init {
         owner.enterNode = this
     }
@@ -239,7 +261,7 @@ class PropertyInitializerExitNode(owner: ControlFlowGraph, override val fir: Fir
 
 // ----------------------------------- Init -----------------------------------
 
-class InitBlockEnterNode(owner: ControlFlowGraph, override val fir: FirAnonymousInitializer, level: Int, id: Int) : CFGNodeWithCfgOwner<FirAnonymousInitializer>(owner, level, id), EnterNodeMarker {
+class InitBlockEnterNode(owner: ControlFlowGraph, override val fir: FirAnonymousInitializer, level: Int, id: Int) : CFGNode<FirAnonymousInitializer>(owner, level, id), EnterNodeMarker {
     init {
         owner.enterNode = this
     }
@@ -456,15 +478,15 @@ class TypeOperatorCallNode(owner: ControlFlowGraph, override val fir: FirTypeOpe
     }
 }
 
-class OperatorCallNode(owner: ControlFlowGraph, override val fir: FirOperatorCall, level: Int, id: Int) : AbstractBinaryExitNode<FirOperatorCall>(owner, level, id) {
-    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
-        return visitor.visitOperatorCallNode(this, data)
-    }
-}
-
 class ComparisonExpressionNode(owner: ControlFlowGraph, override val fir: FirComparisonExpression, level: Int, id: Int) : CFGNode<FirComparisonExpression>(owner, level, id) {
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitComparisonExpressionNode(this, data)
+    }
+}
+
+class EqualityOperatorCallNode(owner: ControlFlowGraph, override val fir: FirEqualityOperatorCall, level: Int, id: Int) : AbstractBinaryExitNode<FirEqualityOperatorCall>(owner, level, id) {
+    override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
+        return visitor.visitEqualityOperatorCallNode(this, data)
     }
 }
 

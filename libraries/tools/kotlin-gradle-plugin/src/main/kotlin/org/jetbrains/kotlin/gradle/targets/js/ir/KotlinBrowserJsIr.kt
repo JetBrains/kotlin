@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Task
-import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.Sync
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
@@ -21,6 +24,9 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
+import org.jetbrains.kotlin.gradle.utils.decamelize
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import java.io.File
 import javax.inject.Inject
 
 open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
@@ -71,7 +77,11 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
             .all { binary ->
                 binary as Executable
 
-                val type = binary.mode
+                val mode = binary.mode
+
+                val runCompileSync = registerRunCompileSync(
+                    binary
+                )
 
                 val runTask = registerSubTargetTask<KotlinWebpack>(
                     disambiguateCamelCased(
@@ -79,26 +89,32 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                         RUN_TASK_NAME
                     ),
                     listOf(compilation)
-                ) {
-                    it.commonConfigure(
-                        compilation = compilation,
-                        binary = binary,
-                        configurationActions = commonRunConfigurations,
-                        nodeJs = nodeJs
-                    )
+                ) { task ->
+                    val entryFileProvider = runCompileSync.map {
+                        it.destinationDir
+                            .resolve(binary.linkTask.get().outputFile.name)
+                    }
 
-                    it.bin = "webpack-dev-server/bin/webpack-dev-server.js"
-                    it.description = "start ${type.name.toLowerCase()} webpack dev server"
+                    task.bin = "webpack-dev-server/bin/webpack-dev-server.js"
+                    task.description = "start ${mode.name.toLowerCase()} webpack dev server"
 
-                    it.devServer = KotlinWebpackConfig.DevServer(
+                    task.devServer = KotlinWebpackConfig.DevServer(
                         open = true,
                         contentBase = listOf(compilation.output.resourcesDir.canonicalPath)
                     )
 
-                    it.outputs.upToDateWhen { false }
+                    task.outputs.upToDateWhen { false }
+
+                    task.commonConfigure(
+                        compilation = compilation,
+                        mode = mode,
+                        entryFileProvider = entryFileProvider,
+                        configurationActions = commonRunConfigurations,
+                        nodeJs = nodeJs
+                    )
                 }
 
-                if (type == KotlinJsBinaryMode.DEVELOPMENT) {
+                if (mode == KotlinJsBinaryMode.DEVELOPMENT) {
                     target.runTask.dependsOn(runTask)
                     commonRunTask.configure {
                         it.dependsOn(runTask)
@@ -132,30 +148,33 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
             .all { binary ->
                 binary as Executable
 
-                val type = binary.mode
+                val mode = binary.mode
                 val webpackTask = registerSubTargetTask<KotlinWebpack>(
                     disambiguateCamelCased(
                         binary.executeTaskBaseName,
                         WEBPACK_TASK_NAME
                     ),
                     listOf(compilation)
-                ) {
-                    it.commonConfigure(
-                        compilation = compilation,
-                        binary = binary,
-                        configurationActions = commonWebpackConfigurations,
-                        nodeJs = nodeJs
-                    )
+                ) { task ->
+                    val entryFileProvider = binary.linkTask.map { it.outputFile }
 
-                    it.dependsOn(
+                    task.dependsOn(
                         distributeResourcesTask
                     )
 
-                    it.description = "build webpack ${type.name.toLowerCase()} bundle"
-                    it._destinationDirectory = distribution.directory
+                    task.description = "build webpack ${mode.name.toLowerCase()} bundle"
+                    task._destinationDirectory = distribution.directory
+
+                    task.commonConfigure(
+                        compilation = compilation,
+                        mode = mode,
+                        entryFileProvider = entryFileProvider,
+                        configurationActions = commonWebpackConfigurations,
+                        nodeJs = nodeJs
+                    )
                 }
 
-                if (type == KotlinJsBinaryMode.PRODUCTION) {
+                if (mode == KotlinJsBinaryMode.PRODUCTION) {
                     assembleTaskProvider.dependsOn(webpackTask)
                     val webpackCommonTask = registerSubTargetTask<Task>(
                         disambiguateCamelCased(WEBPACK_TASK_NAME)
@@ -172,37 +191,63 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
             }
     }
 
+    private fun registerRunCompileSync(binary: Executable): TaskProvider<Sync> {
+        val compilation = binary.compilation
+        val runCompileSyncTaskName = lowerCamelCaseName(
+            compilation.target.disambiguationClassifier,
+            compilation.name.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+            binary.name,
+            RUN_COMPILE_COPY
+        )
+
+        return registerSubTargetTask(
+            runCompileSyncTaskName
+        ) { task ->
+            task.from(
+                project.layout.file(binary.linkTask.map { it.destinationDir })
+            )
+
+            task.into(
+                binary.linkTask.map {
+                    it.destinationDir.parentFile
+                        .resolve(binary.name.decamelize())
+                }
+            )
+        }
+    }
+
     private fun KotlinWebpack.commonConfigure(
         compilation: KotlinJsCompilation,
-        binary: Executable,
+        mode: KotlinJsBinaryMode,
+        entryFileProvider: Provider<File>,
         configurationActions: List<KotlinWebpack.() -> Unit>,
         nodeJs: NodeJsRootExtension
     ) {
-        val type = binary.mode
-
         dependsOn(
             nodeJs.npmInstallTaskProvider,
             target.project.tasks.named(compilation.processResourcesTaskName)
         )
 
-        configureOptimization(type)
+        configureOptimization(mode)
 
-        entryProperty.set(project.layout.file(binary.linkTask.map { it.outputFile }))
+        entryProperty.set(
+            project.layout.file(entryFileProvider)
+        )
 
         configurationActions.forEach { configure ->
             configure()
         }
     }
 
-    private fun KotlinWebpack.configureOptimization(kind: KotlinJsBinaryMode) {
-        mode = getByKind(
-            kind = kind,
+    private fun KotlinWebpack.configureOptimization(mode: KotlinJsBinaryMode) {
+        this.mode = getByKind(
+            kind = mode,
             releaseValue = Mode.PRODUCTION,
             debugValue = Mode.DEVELOPMENT
         )
 
         devtool = getByKind(
-            kind = kind,
+            kind = mode,
             releaseValue = WebpackDevtool.SOURCE_MAP,
             debugValue = WebpackDevtool.EVAL_SOURCE_MAP
         )
@@ -221,5 +266,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         private const val WEBPACK_TASK_NAME = "webpack"
         private const val DISTRIBUTE_RESOURCES_TASK_NAME = "distributeResources"
         private const val DISTRIBUTION_TASK_NAME = "distribution"
+
+        private const val RUN_COMPILE_COPY = "runCompileSync"
     }
 }

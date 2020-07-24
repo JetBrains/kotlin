@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
@@ -60,18 +61,28 @@ class IrConstTransformer(irBuiltIns: IrBuiltIns) : IrElementTransformerVoid() {
             for (i in 0 until annotation.valueArgumentsCount) {
                 val arg = annotation.getValueArgument(i) ?: continue
                 when (arg) {
-                    is IrVararg -> arg.transformVarArg()
+                    is IrVararg -> annotation.putValueArgument(i, arg.transformVarArg())
                     else -> annotation.putValueArgument(i, arg.transformSingleArg(annotation.symbol.owner.valueParameters[i].type))
                 }
             }
         }
     }
 
-    private fun IrVararg.transformVarArg() {
-        for (i in this.elements.indices) {
-            val irVarargElement = this.elements[i] as? IrExpression ?: continue
-            this.putElement(i, irVarargElement.transformSingleArg(this.varargElementType))
+    private fun IrVararg.transformVarArg(): IrVararg {
+        if (elements.isEmpty()) return this
+        val newIrVararg = IrVarargImpl(this.startOffset, this.endOffset, this.type, this.varargElementType)
+        for (element in this.elements) {
+            when (element) {
+                is IrExpression -> newIrVararg.addElement(element.transformSingleArg(this.varargElementType))
+                is IrSpreadElement -> {
+                    when (val expression = element.expression) {
+                        is IrVararg -> expression.transformVarArg().elements.forEach { newIrVararg.addElement(it) }
+                        else -> newIrVararg.addElement(expression.transformSingleArg(this.varargElementType))
+                    }
+                }
+            }
         }
+        return newIrVararg
     }
 
     private fun IrExpression.transformSingleArg(expectedType: IrType): IrExpression {

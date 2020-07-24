@@ -28,9 +28,7 @@ kotlin {
     }
     sourceSets {
         commonMain {
-            dependencies {
-                implementation kotlin('stdlib-common')
-            }
+
         }
         commonTest {
             dependencies {
@@ -40,7 +38,6 @@ kotlin {
         }
         androidMain {
             dependencies {
-                implementation kotlin('stdlib-jdk7')
                 implementation 'androidx.core:core-ktx:1.2.0'
             }
         }

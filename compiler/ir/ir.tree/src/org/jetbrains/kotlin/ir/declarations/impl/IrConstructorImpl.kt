@@ -19,13 +19,13 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.impl.carriers.ConstructorCarrier
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 
 class IrConstructorImpl(
     startOffset: Int,
@@ -48,24 +48,6 @@ class IrConstructorImpl(
     ),
     IrConstructor,
     ConstructorCarrier {
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        symbol: IrConstructorSymbol,
-        returnType: IrType,
-        descriptor: ClassConstructorDescriptor,
-        name: Name = descriptor.name
-    ) : this(
-        startOffset, endOffset, origin, symbol,
-        name = name, visibility = descriptor.visibility,
-        returnType = returnType,
-        isInline = descriptor.isInline,
-        isExternal = descriptor.isEffectivelyExternal(),
-        isPrimary = descriptor.isPrimary,
-        isExpect = descriptor.isExpect
-    )
 
     init {
         symbol.bind(this)

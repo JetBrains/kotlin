@@ -4,7 +4,7 @@ import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1
 inline fun case_1(block: () -> Unit) {
-    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    <!WRONG_INVOCATION_KIND!>contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }<!>
     block()
     case_1(block)
 }

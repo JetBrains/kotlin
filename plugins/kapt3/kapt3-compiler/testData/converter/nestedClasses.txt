@@ -2,6 +2,7 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class A {
+    @org.jetbrains.annotations.Nullable()
     private final A x = null;
 
     @org.jetbrains.annotations.Nullable()

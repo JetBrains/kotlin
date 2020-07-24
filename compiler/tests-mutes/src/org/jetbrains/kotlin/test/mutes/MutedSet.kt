@@ -14,9 +14,6 @@ class MutedSet(muted: List<MutedTest>) {
             .groupBy { it.methodKey } // Method key -> List of muted tests
             .mapValues { (_, tests) -> tests.groupBy { it.simpleClassName } }
 
-    val flakyTests: List<MutedTest> =
-        muted.filter { it.isFlaky }
-
     fun mutedTest(testClass: Class<*>, methodKey: String): MutedTest? {
         val mutedTests = cache[methodKey]?.get(testClass.simpleName) ?: return null
 

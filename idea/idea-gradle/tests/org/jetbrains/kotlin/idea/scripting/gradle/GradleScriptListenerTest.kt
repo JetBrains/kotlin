@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.scripting.gradle
 import com.intellij.openapi.application.impl.LaterInvocator
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
@@ -42,21 +41,11 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
     override fun setUpTestProject() {
         val rootDir = "idea/testData/script/definition/loading/gradle/"
 
-        val settings: KtFile = addFileToProject(rootDir + GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME)
-        val prop: PsiFile = addFileToProject(rootDir + "gradle.properties")
+        val settings: KtFile = copyFromTestdataToProject(rootDir + GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME)
+        val prop: PsiFile = copyFromTestdataToProject(rootDir + "gradle.properties")
 
-        val gradleWrapperProperties = VfsUtil.virtualToIoFile(settings.virtualFile.parent)
-            .resolve("gradle/wrapper/gradle-wrapper.properties")
-        gradleWrapperProperties.parentFile.mkdirs()
-        gradleWrapperProperties.writeText(
-            """
-            distributionBase=GRADLE_USER_HOME
-            distributionPath=wrapper/dists
-            distributionUrl=https\://services.gradle.org/distributions/gradle-1.0.0-bin.zip
-            zipStoreBase=GRADLE_USER_HOME
-            zipStorePath=wrapper/dists
-        """.trimIndent()
-        )
+        val gradleCoreJar = createFileInProject("gradle/lib/gradle-core-1.0.0.jar")
+        val gradleWrapperProperties = createFileInProject("gradle/wrapper/gradle-wrapper.properties")
 
         val buildGradleKts = File(rootDir).walkTopDown().find { it.name == GradleConstants.KOTLIN_DSL_SCRIPT_NAME }
             ?: error("Couldn't find main script")
@@ -64,7 +53,8 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
         val build = (myFile as? KtFile) ?: error("")
 
         val newProjectSettings = GradleProjectSettings()
-        newProjectSettings.distributionType = DistributionType.DEFAULT_WRAPPED
+        newProjectSettings.gradleHome = gradleCoreJar.parentFile.parent
+        newProjectSettings.distributionType = DistributionType.LOCAL
         newProjectSettings.externalProjectPath = settings.virtualFile.parent.path
         ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID).linkProject(newProjectSettings)
 
@@ -76,9 +66,16 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
         )
     }
 
-    private inline fun <reified T : Any> addFileToProject(file: String): T {
+    private inline fun <reified T : Any> copyFromTestdataToProject(file: String): T {
         createFileAndSyncDependencies(File(file))
         return (myFile as? T) ?: error("Couldn't configure project by $file")
+    }
+
+    private fun createFileInProject(path: String): File {
+        val file = File(project.basePath, path)
+        file.parentFile.mkdirs()
+        file.createNewFile()
+        return file
     }
 
     fun testSectionChange() {

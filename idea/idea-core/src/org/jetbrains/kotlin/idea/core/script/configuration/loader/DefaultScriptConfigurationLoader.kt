@@ -8,15 +8,13 @@ package org.jetbrains.kotlin.idea.core.script.configuration.loader
 import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationInputs
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.ScriptConfigurationSnapshot
-import org.jetbrains.kotlin.idea.core.script.debug
+import org.jetbrains.kotlin.idea.core.script.scriptingDebugLog
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
-import org.jetbrains.kotlin.scripting.definitions.runReadAction
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.LegacyResolverWrapper
 import org.jetbrains.kotlin.scripting.resolve.refineScriptCompilationConfiguration
@@ -57,7 +55,7 @@ open class DefaultScriptConfigurationLoader(val project: Project) : ScriptConfig
         vFile: VirtualFile,
         scriptDefinition: ScriptDefinition
     ): ScriptConfigurationSnapshot {
-        debug(file) { "start dependencies loading" }
+        scriptingDebugLog(file) { "start dependencies loading" }
 
         val inputs = getInputsStamp(vFile, file)
         val scriptingApiResult = try {
@@ -76,7 +74,7 @@ open class DefaultScriptConfigurationLoader(val project: Project) : ScriptConfig
             scriptingApiResult.valueOrNull()
         )
 
-        debug(file) { "finish dependencies loading" }
+        scriptingDebugLog(file) { "finish dependencies loading" }
         return result
     }
 

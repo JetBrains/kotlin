@@ -45,10 +45,27 @@ object SamTypeConversions : ParameterTypeConversion {
 
     override fun conversionIsNeededBeforeSubtypingCheck(argument: KotlinCallArgument): Boolean {
         return when (argument) {
+            is SubKotlinCallArgument -> {
+                val stableType = argument.receiver.stableType
+                hasNonAnalyzedLambdaAsReturnType(argument.callResult.subResolvedAtoms, stableType)
+            }
             is SimpleKotlinCallArgument -> argument.receiver.stableType.isFunctionType
             is LambdaKotlinCallArgument, is CallableReferenceKotlinCallArgument -> true
             else -> false
         }
+    }
+
+    private fun hasNonAnalyzedLambdaAsReturnType(subResolvedAtoms: List<ResolvedAtom>?, type: UnwrappedType): Boolean {
+        subResolvedAtoms?.forEach {
+            if (it is LambdaWithTypeVariableAsExpectedTypeAtom) {
+                if (it.expectedType.constructor == type.constructor) return true
+            }
+
+            val hasNonAnalyzedLambda = hasNonAnalyzedLambdaAsReturnType(it.subResolvedAtoms, type)
+            if (hasNonAnalyzedLambda) return true
+        }
+
+        return false
     }
 
     override fun conversionIsNeededAfterSubtypingCheck(argument: KotlinCallArgument): Boolean {
@@ -91,7 +108,7 @@ object SamTypeConversions : ParameterTypeConversion {
         )
 
         if (needCompatibilityResolveForSAM(candidate, expectedParameterType)) {
-            candidate.addDiagnostic(LowerPriorityToPreserveCompatibility)
+            candidate.markCandidateForCompatibilityResolve()
         }
 
         val samDescriptor = originalExpectedType.constructor.declarationDescriptor

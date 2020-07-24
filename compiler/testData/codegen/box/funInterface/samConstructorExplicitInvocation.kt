@@ -1,5 +1,4 @@
 // !LANGUAGE: +FunctionalInterfaceConversion
-// SKIP_DCE_DRIVEN
 
 fun interface S {
     fun invoke(): String

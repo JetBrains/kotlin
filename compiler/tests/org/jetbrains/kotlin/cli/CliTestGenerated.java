@@ -540,6 +540,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/multipleTextRangesInDiagnosticsOrder.args");
         }
 
+        @TestMetadata("newInferenceImpliesProgressiveModeForNI.args")
+        public void testNewInferenceImpliesProgressiveModeForNI() throws Exception {
+            runTest("compiler/testData/cli/jvm/newInferenceImpliesProgressiveModeForNI.args");
+        }
+
         @TestMetadata("newInferenceImpliesSamConversions.args")
         public void testNewInferenceImpliesSamConversions() throws Exception {
             runTest("compiler/testData/cli/jvm/newInferenceImpliesSamConversions.args");

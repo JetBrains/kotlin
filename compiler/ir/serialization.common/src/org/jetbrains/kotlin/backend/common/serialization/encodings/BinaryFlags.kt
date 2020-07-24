@@ -54,6 +54,7 @@ inline class FunctionFlags(val flags: Long) {
     val visibility: Visibility get() = ProtoEnumFlags.visibility(IrFlags.VISIBILITY.get(flags.toInt()))
 
     val isOperator: Boolean get() = IrFlags.IS_OPERATOR.get(flags.toInt())
+    val isInfix: Boolean get() = IrFlags.IS_INFIX.get(flags.toInt())
     val isInline: Boolean get() = IrFlags.IS_INLINE.get(flags.toInt())
     val isTailrec: Boolean get() = IrFlags.IS_TAILREC.get(flags.toInt())
     val isExternal: Boolean get() = IrFlags.IS_EXTERNAL_FUNCTION.get(flags.toInt())
@@ -76,7 +77,7 @@ inline class FunctionFlags(val flags: Long) {
 
                 val flags = IrFlags.getFunctionFlags(
                     hasAnnotation, visibility, modality, kind,
-                    isOperator, false, isInline, isTailrec, isExternal, isSuspend, isExpect
+                    isOperator, isInfix, isInline, isTailrec, isExternal, isSuspend, isExpect
                 )
 
                 return flags.toLong()

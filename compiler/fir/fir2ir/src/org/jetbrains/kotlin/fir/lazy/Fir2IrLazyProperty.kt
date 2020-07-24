@@ -150,6 +150,10 @@ class Fir2IrLazyProperty(
         )
     }
 
+    override var metadata: MetadataSource?
+        get() = null
+        set(_) = error("We should never need to store metadata of external declarations.")
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitProperty(this, data)
     }

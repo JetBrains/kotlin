@@ -3,8 +3,6 @@ plugins {
     kotlin("jvm")
 }
 
-jvmTarget = "1.6"
-
 val allTestsRuntime by configurations.creating
 val testCompile by configurations
 testCompile.extendsFrom(allTestsRuntime)

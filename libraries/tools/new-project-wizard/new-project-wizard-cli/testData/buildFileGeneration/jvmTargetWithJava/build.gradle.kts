@@ -18,11 +18,7 @@ kotlin {
         withJava()
     }
     sourceSets {
-        val jvmMain by getting {
-            dependencies {
-                implementation(kotlin("stdlib-jdk8"))
-            }
-        }
+        val jvmMain by getting
         val jvmTest by getting {
             dependencies {
                 implementation(kotlin("test-junit"))

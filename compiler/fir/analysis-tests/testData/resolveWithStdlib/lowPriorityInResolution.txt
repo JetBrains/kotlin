@@ -1,5 +1,5 @@
 FILE: lowPriorityInResolution.kt
-    @R|kotlin/Suppress|(String(INVISIBLE_MEMBER), String(INVISIBLE_REFERENCE)) @R|kotlin/internal/LowPriorityInOverloadResolution|() public final fun foo(): R|kotlin/Int| {
+    @R|kotlin/Suppress|(vararg(String(INVISIBLE_MEMBER), String(INVISIBLE_REFERENCE))) @R|kotlin/internal/LowPriorityInOverloadResolution|() public final fun foo(): R|kotlin/Int| {
         ^foo Int(1)
     }
     public final fun foo(): R|kotlin/String| {

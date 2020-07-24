@@ -195,7 +195,16 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
         val returnTypeRef = proto.returnType(c.typeTable).toTypeRef(local)
 
-        val getter = if (Flags.HAS_GETTER.get(flags)) {
+        val hasGetter = Flags.HAS_GETTER.get(flags)
+        val receiverAnnotations = if (hasGetter && proto.hasReceiver()) {
+            c.annotationDeserializer.loadExtensionReceiverParameterAnnotations(
+                c.containerSource, proto, local.nameResolver, local.typeTable, AbstractAnnotationDeserializer.CallableKind.PROPERTY_GETTER
+            )
+        } else {
+            emptyList()
+        }
+
+        val getter = if (hasGetter) {
             val getterFlags = if (proto.hasGetterFlags()) proto.getterFlags else defaultAccessorFlags
             val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(getterFlags))
             val modality = ProtoEnumFlags.modality(Flags.MODALITY.get(getterFlags))
@@ -254,7 +263,9 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             session = c.session
             origin = FirDeclarationOrigin.Library
             this.returnTypeRef = returnTypeRef
-            receiverTypeRef = proto.receiverType(c.typeTable)?.toTypeRef(local)
+            receiverTypeRef = proto.receiverType(c.typeTable)?.toTypeRef(local).apply {
+                annotations += receiverAnnotations
+            }
             name = callableName
             this.isVar = isVar
             this.symbol = symbol
@@ -292,9 +303,13 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
     fun loadFunction(proto: ProtoBuf.Function, classProto: ProtoBuf.Class? = null): FirSimpleFunction {
         val flags = if (proto.hasFlags()) proto.flags else loadOldFlags(proto.oldFlags)
 
-        val receiverAnnotations =
-            // TODO: support annotations
-            Annotations.EMPTY
+        val receiverAnnotations = if (proto.hasReceiver()) {
+            c.annotationDeserializer.loadExtensionReceiverParameterAnnotations(
+                c.containerSource, proto, c.nameResolver, c.typeTable, AbstractAnnotationDeserializer.CallableKind.OTHERS
+            )
+        } else {
+            emptyList()
+        }
 
         val versionRequirementTable =
             // TODO: Support case for KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME
@@ -309,7 +324,9 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             session = c.session
             origin = FirDeclarationOrigin.Library
             returnTypeRef = proto.returnType(local.typeTable).toTypeRef(local)
-            receiverTypeRef = proto.receiverType(local.typeTable)?.toTypeRef(local)
+            receiverTypeRef = proto.receiverType(local.typeTable)?.toTypeRef(local).apply {
+                annotations += receiverAnnotations
+            }
             name = callableName
             status = FirDeclarationStatusImpl(
                 ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),

@@ -23,12 +23,12 @@ class B<T>(data: T) : A<T>(data)
 
 fun case1() {
     val tryVal: B<String> =
-    <!TYPE_MISMATCH, TYPE_MISMATCH!>try {
+    try <!TYPE_MISMATCH!>{
         throwExceptionA(false)
         A("")
-    } catch (e: Exception) {
+    }<!> catch (e: Exception) {
         B("")
-    }<!>
+    }
 
 
 }
@@ -37,10 +37,10 @@ fun case1() {
 
 fun case2() {
     val tryVal: A<String> =
-    <!TYPE_MISMATCH, TYPE_MISMATCH!>try {
+    try {
         throwExceptionA(false)
         A("")
-    } catch (e: Exception) {
+    } catch (e: Exception) <!TYPE_MISMATCH!>{
         null
     }<!>
 }
@@ -51,12 +51,12 @@ fun case2() {
  */
 fun case3() {
     val tryVal: A<Int> =
-    <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>try {
+    try {
         throwExceptionA(false)
         A(2)
-    } catch (e: ExcA) {
+    } catch (e: ExcA) <!TYPE_MISMATCH, TYPE_MISMATCH!>{
         A(<!NULL_FOR_NONNULL_TYPE!>null<!>) //diag duplication
-    } catch (e: ExcB) {
+    }<!> catch (e: ExcB) <!TYPE_MISMATCH, TYPE_MISMATCH!>{
         B(<!NULL_FOR_NONNULL_TYPE!>null<!>) //diag duplication
     }<!>
 }

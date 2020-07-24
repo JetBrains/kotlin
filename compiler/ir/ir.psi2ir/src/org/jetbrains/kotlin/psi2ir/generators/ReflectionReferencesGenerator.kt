@@ -358,6 +358,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
                 isTailrec = false,
                 isSuspend = adapteeDescriptor.isSuspend || hasSuspendConversion,
                 isOperator = adapteeDescriptor.isOperator, // TODO ?
+                isInfix = adapteeDescriptor.isInfix,
                 isExpect = false,
                 isFakeOverride = false
             ).also { irAdapterFun ->

@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.backend.common.lower.loops
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.irChar
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.builders.irLong
@@ -190,7 +189,6 @@ internal abstract class UnsignedProgressionType(
     }
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class UIntProgressionType(symbols: Symbols<CommonBackendContext>) :
     UnsignedProgressionType(
         symbols,
@@ -201,14 +199,13 @@ internal class UIntProgressionType(symbols: Symbols<CommonBackendContext>) :
         // Uses `getProgressionLastElement(UInt, UInt, Int): UInt`
         getProgressionLastElementFunction = symbols.getProgressionLastElementByReturnType[symbols.uInt!!],
         unsignedType = symbols.uInt!!.defaultType,
-        unsignedConversionFunction = symbols.toUIntByExtensionReceiver.getValue(symbols.int.defaultType.toKotlinType())
+        unsignedConversionFunction = symbols.toUIntByExtensionReceiver.getValue(symbols.int)
     ) {
     override fun DeclarationIrBuilder.minValueExpression() = irInt(UInt.MIN_VALUE.toInt())
 
     override fun DeclarationIrBuilder.zeroStepExpression() = irInt(0)
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class ULongProgressionType(symbols: Symbols<CommonBackendContext>) :
     UnsignedProgressionType(
         symbols,
@@ -219,7 +216,7 @@ internal class ULongProgressionType(symbols: Symbols<CommonBackendContext>) :
         // Uses `getProgressionLastElement(ULong, ULong, Long): ULong`
         getProgressionLastElementFunction = symbols.getProgressionLastElementByReturnType[symbols.uLong!!],
         unsignedType = symbols.uLong!!.defaultType,
-        unsignedConversionFunction = symbols.toULongByExtensionReceiver.getValue(symbols.long.defaultType.toKotlinType())
+        unsignedConversionFunction = symbols.toULongByExtensionReceiver.getValue(symbols.long)
     ) {
     override fun DeclarationIrBuilder.minValueExpression() = irLong(ULong.MIN_VALUE.toLong())
 

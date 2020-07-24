@@ -7,7 +7,13 @@ plugins {
 
 kotlin {
     js(IR) {
-        nodejs()
+        nodejs {
+            testTask {
+                useMocha {
+                    timeout = "10s"
+                }
+            }
+        }
     }
 }
 
@@ -27,6 +33,8 @@ val builtInsHeader = """@file:Suppress(
 """
 
 val commonMainSources by task<Sync> {
+    dependsOn(":prepare:build.version:writeStdlibVersion")
+
     val sources = listOf(
         "libraries/stdlib/common/src/",
         "libraries/stdlib/src/kotlin/",

@@ -243,6 +243,11 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
             processMemberAccess(expression.symbol.owner, data)
         }
 
+        override fun visitFunctionExpression(expression: IrFunctionExpression, data: ClosureBuilder?) {
+            super.visitFunctionExpression(expression, data)
+            processMemberAccess(expression.function, data)
+        }
+
         override fun visitPropertyReference(expression: IrPropertyReference, data: ClosureBuilder?) {
             super.visitPropertyReference(expression, data)
             expression.getter?.let { processMemberAccess(it.owner, data) }

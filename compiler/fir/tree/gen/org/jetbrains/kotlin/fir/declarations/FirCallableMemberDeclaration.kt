@@ -46,5 +46,7 @@ interface FirCallableMemberDeclaration<F : FirCallableMemberDeclaration<F>> : Fi
 
     override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirCallableMemberDeclaration<F>
 
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirCallableMemberDeclaration<F>
+
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirCallableMemberDeclaration<F>
 }

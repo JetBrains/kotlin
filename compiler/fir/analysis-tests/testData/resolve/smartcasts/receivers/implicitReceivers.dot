@@ -302,6 +302,7 @@ digraph implicitReceivers_kt {
     82 -> {83};
     83 -> {89};
     83 -> {85} [color=red];
+    83 -> {89} [style=dashed];
     84 -> {86} [color=red];
     85 -> {86} [color=green];
     86 -> {87};
@@ -311,6 +312,7 @@ digraph implicitReceivers_kt {
     91 -> {92};
     92 -> {97};
     92 -> {93} [color=red];
+    92 -> {97} [style=dashed];
     93 -> {94};
     94 -> {95};
     95 -> {96};
@@ -321,6 +323,7 @@ digraph implicitReceivers_kt {
     99 -> {100};
     100 -> {109};
     100 -> {102} [color=red];
+    100 -> {109} [style=dashed];
     101 -> {103} [color=red];
     102 -> {103} [color=green];
     103 -> {104};

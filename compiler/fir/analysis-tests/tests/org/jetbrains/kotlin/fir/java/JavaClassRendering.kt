@@ -9,12 +9,14 @@ import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.buildUseSiteMemberScope
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
 fun renderJavaClass(renderer: FirRenderer, javaClass: FirJavaClass, session: FirSession) {
     val memberScope = javaClass.buildUseSiteMemberScope(session, ScopeSession())
@@ -28,6 +30,16 @@ fun renderJavaClass(renderer: FirRenderer, javaClass: FirJavaClass, session: Fir
         renderer.renderSupertypes(javaClass)
         renderer.renderInBraces {
             val renderedDeclarations = mutableListOf<FirDeclaration>()
+
+            fun renderAndCache(symbol: FirCallableSymbol<*>) {
+                val enhanced = symbol.fir
+                if (enhanced !in renderedDeclarations) {
+                    enhanced.accept(renderer, null)
+                    renderer.newLine()
+                    renderedDeclarations += enhanced
+                }
+            }
+
             for (declaration in javaClass.declarations) {
                 if (declaration in renderedDeclarations) continue
 
@@ -38,30 +50,10 @@ fun renderJavaClass(renderer: FirRenderer, javaClass: FirJavaClass, session: Fir
                         memberScope
 
                 when (declaration) {
-                    is FirJavaConstructor -> scopeToUse!!.processDeclaredConstructors { symbol ->
-                        val enhanced = symbol.fir
-                        if (enhanced !in renderedDeclarations) {
-                            enhanced.accept(renderer, null)
-                            renderer.newLine()
-                            renderedDeclarations += enhanced
-                        }
-                    }
-                    is FirJavaMethod -> scopeToUse!!.processFunctionsByName(declaration.name) { symbol ->
-                        val enhanced = symbol.fir
-                        if (enhanced !in renderedDeclarations) {
-                            enhanced.accept(renderer, null)
-                            renderer.newLine()
-                            renderedDeclarations += enhanced
-                        }
-                    }
-                    is FirJavaField -> scopeToUse!!.processPropertiesByName(declaration.name) { symbol ->
-                        val enhanced = symbol.fir
-                        if (enhanced !in renderedDeclarations) {
-                            enhanced.accept(renderer, null)
-                            renderer.newLine()
-                            renderedDeclarations += enhanced
-                        }
-                    }
+                    is FirJavaConstructor -> scopeToUse!!.processDeclaredConstructors(::renderAndCache)
+                    is FirJavaMethod -> scopeToUse!!.processFunctionsByName(declaration.name, ::renderAndCache)
+                    is FirJavaField -> scopeToUse!!.processPropertiesByName(declaration.name, ::renderAndCache)
+                    is FirEnumEntry -> scopeToUse!!.processPropertiesByName(declaration.name, ::renderAndCache)
                     else -> {
                         declaration.accept(renderer, null)
                         renderer.newLine()

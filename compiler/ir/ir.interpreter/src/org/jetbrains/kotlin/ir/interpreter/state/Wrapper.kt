@@ -5,18 +5,18 @@
 
 package org.jetbrains.kotlin.ir.interpreter.state
 
-import org.jetbrains.kotlin.ir.interpreter.builtins.evaluateIntrinsicAnnotation
-import org.jetbrains.kotlin.ir.interpreter.*
-import org.jetbrains.kotlin.ir.interpreter.getEvaluateIntrinsicValue
-import org.jetbrains.kotlin.ir.interpreter.getPrimitiveClass
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.interpreter.*
+import org.jetbrains.kotlin.ir.interpreter.builtins.evaluateIntrinsicAnnotation
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import java.lang.invoke.MethodHandle
 import java.lang.invoke.MethodHandles
 import java.lang.invoke.MethodType
@@ -144,7 +144,7 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex(
 
         private fun IrFunction.getOriginalOverriddenSymbols(): MutableList<IrFunctionSymbol> {
             val overriddenSymbols = mutableListOf<IrFunctionSymbol>()
-            if (this is IrFunctionImpl) {
+            if (this is IrSimpleFunction) {
                 val pool = this.overriddenSymbols.toMutableList()
                 val iterator = pool.listIterator()
                 for (symbol in iterator) {

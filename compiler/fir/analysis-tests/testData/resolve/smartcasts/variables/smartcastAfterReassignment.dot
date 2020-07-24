@@ -45,7 +45,7 @@ digraph smartcastAfterReassignment_kt {
                     15 [label="Enter when branch condition "];
                     16 [label="Access variable R|<local>/x|"];
                     17 [label="Const: Null(null)"];
-                    18 [label="Operator =="];
+                    18 [label="Equality operator =="];
                     19 [label="Exit when branch condition"];
                 }
                 20 [label="Synthetic else branch"];

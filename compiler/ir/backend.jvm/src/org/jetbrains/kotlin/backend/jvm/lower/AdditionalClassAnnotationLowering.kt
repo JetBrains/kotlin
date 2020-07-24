@@ -68,7 +68,7 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
         val irClass = this
         parent = annotationPackage
         annotationPackage.addChild(this)
-        thisReceiver = buildValueParameter {
+        thisReceiver = buildValueParameter(this) {
             name = Name.identifier("\$this")
             type = IrSimpleTypeImpl(irClass.symbol, false, emptyList(), emptyList())
         }

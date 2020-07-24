@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.*
+import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
@@ -176,7 +177,13 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             val receiverField = info.function.extensionReceiverParameter?.let {
                 assert(info.arity != 0)
                 // Do not put '$' at the start, to avoid being caught by inlineCodegenUtils.isCapturedFieldName()
-                addField("p\$", it.type)
+                addField {
+                    name = Name.identifier("p\$")
+                    // NB extension receiver can't be crossinline
+                    origin = LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE
+                    type = it.type
+                    visibility = Visibilities.PRIVATE
+                }
             }
 
             val parametersFields = info.function.valueParameters.map {
@@ -341,7 +348,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
     private fun IrBlockBodyBuilder.callInvokeSuspend(invokeSuspend: IrSimpleFunction, lambda: IrExpression): IrExpression {
         // SingletonReferencesLowering has finished a while ago, so `irUnit()` won't work anymore.
         val unitClass = context.irBuiltIns.unitClass
-        val unitField = this@AddContinuationLowering.context.declarationFactory.getFieldForObjectInstance(unitClass.owner)
+        val unitField = this@AddContinuationLowering.context.cachedDeclarations.getFieldForObjectInstance(unitClass.owner)
         return irCallOp(invokeSuspend.symbol, invokeSuspend.returnType, lambda, irGetField(null, unitField))
     }
 
@@ -421,7 +428,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                     addField {
                         name = Name.identifier("this$0")
                         type = it.type
-                        origin = DeclarationFactory.FIELD_FOR_OUTER_THIS
+                        origin = InnerClassesSupport.FIELD_FOR_OUTER_THIS
                         visibility = JavaVisibilities.PACKAGE_VISIBILITY
                         isFinal = true
                     }
@@ -583,7 +590,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                 if (function.body == null || !function.hasContinuation()) return result
 
                 if (flag.capturesCrossinline || function.isInline) {
-                    result += buildFunWithDescriptorForInlining(view.descriptor) {
+                    result += buildFun(view.descriptor) {
                         name = Name.identifier(view.name.asString() + FOR_INLINE_SUFFIX)
                         returnType = view.returnType
                         modality = view.modality
@@ -651,7 +658,7 @@ internal fun IrFunction.suspendFunctionOriginal(): IrFunction =
 
 private fun IrFunction.createSuspendFunctionStub(context: JvmBackendContext): IrFunction {
     require(this.isSuspend && this is IrSimpleFunction)
-    return buildFunWithDescriptorForInlining(descriptor) {
+    return buildFun(descriptor) {
         updateFrom(this@createSuspendFunctionStub)
         name = this@createSuspendFunctionStub.name
         origin = this@createSuspendFunctionStub.origin

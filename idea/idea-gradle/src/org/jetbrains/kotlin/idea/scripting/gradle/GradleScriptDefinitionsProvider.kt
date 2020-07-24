@@ -12,10 +12,7 @@ import com.intellij.util.EnvironmentUtil
 import com.intellij.util.PathUtil
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
-import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
-import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionSourceAsContributor
-import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
-import org.jetbrains.kotlin.idea.core.script.loadDefinitionsFromTemplates
+import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslSyncListener
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.Imported
@@ -64,6 +61,10 @@ class GradleScriptDefinitionsContributor(private val project: Project) : ScriptD
             }
 
             val root = LightGradleBuildRoot(workingDir, gradleHome, javaHome)
+            with(contributor) {
+                if (root.isError()) return null
+            }
+
             val definitions = contributor.definitionsByRoots[root]
             if (definitions == null) {
                 scriptingInfoLog(

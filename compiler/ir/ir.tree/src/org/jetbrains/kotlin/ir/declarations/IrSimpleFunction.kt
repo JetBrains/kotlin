@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 
@@ -20,6 +19,7 @@ interface IrSimpleFunction :
     val isSuspend: Boolean
     val isFakeOverride: Boolean
     val isOperator: Boolean
+    val isInfix: Boolean
 
     var correspondingPropertySymbol: IrPropertySymbol?
 }

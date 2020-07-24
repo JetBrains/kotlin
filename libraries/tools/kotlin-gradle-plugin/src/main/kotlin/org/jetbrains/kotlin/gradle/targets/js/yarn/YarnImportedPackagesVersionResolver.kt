@@ -30,14 +30,23 @@ class YarnImportedPackagesVersionResolver(
     }
 
     fun resolveAndUpdatePackages(): MutableList<String> {
-        resolveAndUpdate(externalModules, false)
-        resolveAndUpdate(internalCompositeModules, true)
-        return importedProjectWorkspaces
-    }
+        resolve(externalModules, false)
+        resolve(internalCompositeModules, true)
 
-    private fun resolveAndUpdate(modules: MutableSet<GradleNodeModule>, isWorkspace: Boolean) {
-        resolve(modules, isWorkspace)
-        updatePackages(modules)
+        npmProjects.forEach {
+            writePackageJson(
+                packageJson = it.packageJson,
+                path = it.npmProject.packageJsonFile,
+                forceWrite = true
+            )
+        }
+
+        if (resolvedVersion.isNotEmpty()) {
+            updatePackages(externalModules)
+            updatePackages(internalCompositeModules)
+        }
+
+        return importedProjectWorkspaces
     }
 
     private fun resolve(modules: MutableSet<GradleNodeModule>, isWorkspace: Boolean) {
@@ -63,28 +72,27 @@ class YarnImportedPackagesVersionResolver(
     }
 
     private fun updatePackages(modules: MutableSet<GradleNodeModule>) {
-        if (resolvedVersion.isEmpty()) return
-
-        npmProjects.forEach {
-            updatePackageJson(it.packageJson, it.npmProject.packageJsonFile)
-        }
-
         modules.forEach {
             val packageJsonFile = it.path.resolve(NpmProject.PACKAGE_JSON)
             val packageJson = packageJsonFile.reader().use {
                 Gson().fromJson<PackageJson>(it, PackageJson::class.java)
             }
 
-            updatePackageJson(packageJson, packageJsonFile)
+            writePackageJson(
+                packageJson = packageJson,
+                path = packageJsonFile,
+                forceWrite = false
+            )
         }
     }
 
-    private fun updatePackageJson(
+    private fun writePackageJson(
         packageJson: PackageJson,
-        path: File
+        path: File,
+        forceWrite: Boolean
     ) {
         val updates = listOf(packageJson.dependencies, packageJson.devDependencies).map { updateVersionsMap(it) }
-        if (updates.any { it }) {
+        if (forceWrite || updates.any { it }) {
             packageJson.saveTo(path)
         }
     }

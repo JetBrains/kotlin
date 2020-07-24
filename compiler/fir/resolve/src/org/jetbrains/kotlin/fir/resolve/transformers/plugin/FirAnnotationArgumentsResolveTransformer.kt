@@ -145,10 +145,6 @@ private class FirExpressionsResolveTransformerForSpecificAnnotations(
         return comparisonExpression.compose()
     }
 
-    override fun transformOperatorCall(operatorCall: FirOperatorCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        return operatorCall.compose()
-    }
-
     override fun transformTypeOperatorCall(
         typeOperatorCall: FirTypeOperatorCall,
         data: ResolutionMode

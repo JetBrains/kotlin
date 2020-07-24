@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.*
-import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.referenceClassifier
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
@@ -306,6 +304,7 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
                     isTailrec = false,
                     isSuspend = isSuspend,
                     isOperator = true,
+                    isInfix = false,
                     isExpect = false,
                     isFakeOverride = false
                 )
@@ -356,19 +355,12 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
         }
     }
 
-    private fun IrFunction.createValueParameter(descriptor: ParameterDescriptor): IrValueParameter {
-        val symbol = IrValueParameterSymbolImpl(descriptor)
-        val varargType = if (descriptor is ValueParameterDescriptor) descriptor.varargElementType else null
-        return IrValueParameterImpl(
-            offset,
-            offset,
-            memberOrigin,
-            descriptor,
-            symbol = symbol,
-            type = toIrType(descriptor.type),
-            varargElementType = varargType?.let { toIrType(it) }
+    private fun IrFunction.createValueParameter(descriptor: ParameterDescriptor): IrValueParameter = with(descriptor) {
+        IrValueParameterImpl(
+            offset, offset, memberOrigin, IrValueParameterSymbolImpl(this), name, indexOrMinusOne, toIrType(type),
+            (this as? ValueParameterDescriptor)?.varargElementType?.let(::toIrType), isCrossinline, isNoinline
         ).also {
-            it.parent = this
+            it.parent = this@createValueParameter
         }
     }
 
@@ -383,7 +375,7 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
                 descriptor.run {
                     IrFunctionImpl(
                         offset, offset, memberOrigin, it, name, visibility, modality, returnType,
-                        isInline, isExternal, isTailrec, isSuspend, isOperator, isExpect, true
+                        isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect, true
                     )
                 }
             }

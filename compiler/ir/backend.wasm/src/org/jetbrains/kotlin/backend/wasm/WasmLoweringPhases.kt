@@ -149,20 +149,20 @@ private val localClassExtractionPhase = makeWasmModulePhase(
 )
 
 private val innerClassesLoweringPhase = makeWasmModulePhase(
-    ::InnerClassesLowering,
+    { context -> InnerClassesLowering(context, context.innerClassesSupport) },
     name = "InnerClassesLowering",
     description = "Capture outer this reference to inner class"
 )
 
 private val innerClassesMemberBodyLoweringPhase = makeWasmModulePhase(
-    ::InnerClassesMemberBodyLowering,
+    { context -> InnerClassesMemberBodyLowering(context, context.innerClassesSupport) },
     name = "InnerClassesMemberBody",
     description = "Replace `this` with 'outer this' field references",
     prerequisite = setOf(innerClassesLoweringPhase)
 )
 
 private val innerClassConstructorCallsLoweringPhase = makeWasmModulePhase(
-    ::InnerClassConstructorCallsLowering,
+    { context -> InnerClassConstructorCallsLowering(context, context.innerClassesSupport) },
     name = "InnerClassConstructorCallsLowering",
     description = "Replace inner class constructor invocation"
 )

@@ -74,10 +74,14 @@ class BinaryJavaClass(
     }
 
     init {
-        ClassReader(classContent ?: virtualFile.contentsToByteArray()).accept(
-            this,
-            ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES
-        )
+        try {
+            ClassReader(classContent ?: virtualFile.contentsToByteArray()).accept(
+                this,
+                ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES
+            )
+        } catch (e: Throwable) {
+            throw IllegalStateException("Could not read class: $virtualFile", e)
+        }
     }
 
     override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {

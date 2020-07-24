@@ -51,7 +51,7 @@ digraph conditionalEffects_kt {
                 17 [label="Enter contract"];
                 18 [label="Access variable R|<local>/x|"];
                 19 [label="Const: Null(null)"];
-                20 [label="Operator !="];
+                20 [label="Equality operator !="];
                 21 [label="Exit contract"];
             }
             22 [label="Access variable R|<local>/x|"];
@@ -81,14 +81,14 @@ digraph conditionalEffects_kt {
             27 [label="Enter block"];
             28 [label="Access variable R|<local>/x|"];
             29 [label="Const: Null(null)"];
-            30 [label="Operator !="];
+            30 [label="Equality operator !="];
             31 [label="Function call: R|kotlin/require|(...)"];
             subgraph cluster_8 {
                 color=blue
                 32 [label="Enter contract"];
                 33 [label="Access variable R|<local>/x|"];
                 34 [label="Const: Null(null)"];
-                35 [label="Operator !="];
+                35 [label="Equality operator !="];
                 36 [label="Exit contract"];
             }
             37 [label="Access variable R|<local>/x|"];
@@ -127,7 +127,7 @@ digraph conditionalEffects_kt {
                 47 [label="Enter right part of &&"];
                 48 [label="Access variable R|<local>/y|"];
                 49 [label="Const: Null(null)"];
-                50 [label="Operator !="];
+                50 [label="Equality operator !="];
                 51 [label="Exit &&"];
             }
             52 [label="Function call: R|kotlin/require|(...)"];
@@ -143,7 +143,7 @@ digraph conditionalEffects_kt {
                     58 [label="Enter right part of &&"];
                     59 [label="Access variable R|<local>/y|"];
                     60 [label="Const: Null(null)"];
-                    61 [label="Operator !="];
+                    61 [label="Equality operator !="];
                     62 [label="Exit &&"];
                 }
                 63 [label="Exit contract"];

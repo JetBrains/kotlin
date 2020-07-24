@@ -24,7 +24,7 @@ class CirRootNode(
     val modules: MutableMap<Name, CirModuleNode> = THashMap()
     val cache = CirClassifiersCacheImpl()
 
-    override fun <R, T> accept(visitor: CirNodeVisitor<R, T>, data: T): R =
+    override fun <T, R> accept(visitor: CirNodeVisitor<T, R>, data: T): R =
         visitor.visitRootNode(this, data)
 
     override fun toString() = CirNode.toString(this)

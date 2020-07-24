@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepo
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repository
 import org.jetbrains.kotlin.tools.projectWizard.settings.javaPackage
-import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplateDescriptor
 import java.nio.file.Path
@@ -99,7 +98,7 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
             "src" / "main" / "AndroidManifest.xml"
         )
 
-        val androidanifestForLibraryXml = FileTemplateDescriptor(
+        val androidManifestForLibraryXml = FileTemplateDescriptor(
             "android/AndroidManifestLibrary.xml.vm",
             "src" / "main" / "AndroidManifest.xml"
         )
@@ -157,7 +156,7 @@ object AndroidTargetConfigurator : TargetConfigurator,
         val settings = mapOf("package" to javaPackage.asCodePackage())
         TemplatesPlugin::addFileTemplates.execute(
             listOf(
-                FileTemplate(AndroidModuleConfigurator.FileTemplateDescriptors.androidanifestForLibraryXml, modulePath, settings)
+                FileTemplate(AndroidModuleConfigurator.FileTemplateDescriptors.androidManifestForLibraryXml, modulePath, settings)
             )
         )
     }

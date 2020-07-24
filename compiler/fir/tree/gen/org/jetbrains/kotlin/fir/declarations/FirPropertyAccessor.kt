@@ -69,4 +69,6 @@ abstract class FirPropertyAccessor : FirPureAbstractElement(), FirFunction<FirPr
     abstract fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirPropertyAccessor
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirPropertyAccessor
+
+    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirPropertyAccessor
 }

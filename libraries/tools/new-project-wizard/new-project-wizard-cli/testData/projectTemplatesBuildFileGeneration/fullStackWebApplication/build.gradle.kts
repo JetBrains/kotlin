@@ -17,6 +17,9 @@ repositories {
         url = uri("https://dl.bintray.com/kotlin/kotlin-dev")
     }
     maven {
+        url = uri("https://dl.bintray.com/kotlin/kotlinx")
+    }
+    maven {
         url = uri("https://dl.bintray.com/kotlin/kotlin-js-wrappers")
     }
 }
@@ -45,11 +48,7 @@ kotlin {
         }
     }
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(kotlin("stdlib-common"))
-            }
-        }
+        val commonMain by getting
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test-common"))
@@ -58,9 +57,8 @@ kotlin {
         }
         val jvmMain by getting {
             dependencies {
-                implementation(kotlin("stdlib-jdk8"))
-                implementation("io.ktor:ktor-server-netty:1.2.6")
-                implementation("io.ktor:ktor-html-builder:1.2.6")
+                implementation("io.ktor:ktor-server-netty:1.3.2-KOTLIN_VERSION")
+                implementation("io.ktor:ktor-html-builder:1.3.2-KOTLIN_VERSION")
                 implementation("org.jetbrains.kotlinx:kotlinx-html-jvm:0.7.1-KOTLIN_VERSION")
             }
         }
@@ -71,16 +69,10 @@ kotlin {
         }
         val jsMain by getting {
             dependencies {
-                implementation(kotlin("stdlib-js"))
                 implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.7.1-KOTLIN_VERSION")
                 implementation("org.jetbrains:kotlin-react:16.13.1-pre.109-kotlin-KOTLIN_VERSION")
                 implementation("org.jetbrains:kotlin-react-dom:16.13.1-pre.109-kotlin-KOTLIN_VERSION")
-                implementation(npm("react","16.13.1"))
-                implementation(npm("react-dom","16.13.1"))
-                implementation(npm("react-is","16.13.1"))
                 implementation("org.jetbrains:kotlin-styled:1.0.0-pre.109-kotlin-KOTLIN_VERSION")
-                implementation(npm("styled-components","5.0.0"))
-                implementation(npm("inline-style-prefixer","5.1.0"))
             }
         }
         val jsTest by getting {

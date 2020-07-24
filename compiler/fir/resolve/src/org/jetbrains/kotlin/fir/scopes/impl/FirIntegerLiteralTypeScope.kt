@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeImpl
@@ -96,9 +97,14 @@ class FirIntegerLiteralTypeScope(private val session: FirSession, val isUnsigned
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
     }
 
-    override fun processOverriddenFunctions(
+    override fun processOverriddenFunctionsWithDepth(
         functionSymbol: FirFunctionSymbol<*>,
-        processor: (FirFunctionSymbol<*>) -> ProcessorAction
+        processor: (FirFunctionSymbol<*>, Int) -> ProcessorAction
+    ): ProcessorAction = ProcessorAction.NEXT
+
+    override fun processOverriddenPropertiesWithDepth(
+        propertySymbol: FirPropertySymbol,
+        processor: (FirPropertySymbol, Int) -> ProcessorAction
     ): ProcessorAction = ProcessorAction.NEXT
 }
 

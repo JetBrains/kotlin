@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.types.Variance
 
 typealias CirTypeSignature = String
 
-sealed class CirType {
-    abstract val signature: CirTypeSignature
-}
+sealed class CirType
 
 /**
  * All attributes are read from the abbreviation type: [AbbreviatedType.abbreviation].
@@ -30,12 +28,8 @@ abstract class CirSimpleType : CirType(), CirHasVisibility {
     abstract val classifierId: CirClassifierId
     abstract val arguments: List<CirTypeProjection>
     abstract val isMarkedNullable: Boolean
-    abstract val isDefinitelyNotNullType: Boolean
 }
+
+data class CirFlexibleType(val lowerBound: CirSimpleType, val upperBound: CirSimpleType) : CirType()
 
 data class CirTypeProjection(val projectionKind: Variance, val isStarProjection: Boolean, val type: CirType)
-
-data class CirFlexibleType(val lowerBound: CirSimpleType, val upperBound: CirSimpleType) : CirType() {
-    override val signature: CirTypeSignature
-        get() = lowerBound.signature
-}

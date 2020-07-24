@@ -250,6 +250,7 @@ import java.lang.System;
 @kotlin.Metadata()
 @test.IFoo.IBar.Anno(value = {test.IFoo.IBar.IZoo.class, test.Foo.Bar.class})
 public final class Test1 extends test.Foo.Bar implements test.IFoo.IBar, test.IFoo.IBar.IZoo {
+    @org.jetbrains.annotations.NotNull()
     private final test.Foo.Bar.Zoo zoo = null;
 
     @org.jetbrains.annotations.NotNull()

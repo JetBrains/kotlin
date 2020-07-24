@@ -228,8 +228,6 @@
 
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings"/>
 
-    <projectService serviceImplementation="org.jetbrains.kotlin.idea.parameterInfo.custom.KotlinCodeHintsModel"/>
-
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerWorkspaceSettings"/>
 
     <projectService serviceImplementation="org.jetbrains.kotlin.asJava.classes.FacadeCache"/>
@@ -375,7 +373,10 @@
     <codeInsight.parameterInfo language="kotlin" implementationClass="org.jetbrains.kotlin.idea.parameterInfo.KotlinArrayAccessParameterInfoHandler"/>
     <codeInsight.parameterInfo language="kotlin" implementationClass="org.jetbrains.kotlin.idea.parameterInfo.KotlinClassTypeArgumentInfoHandler"/>
     <codeInsight.parameterInfo language="kotlin" implementationClass="org.jetbrains.kotlin.idea.parameterInfo.KotlinFunctionTypeArgumentInfoHandler"/>
-    <codeInsight.parameterNameHints language="kotlin" implementationClass="org.jetbrains.kotlin.idea.parameterInfo.KotlinInlayParameterHintsProvider"/>
+    <codeInsight.parameterNameHints language="kotlin" implementationClass="org.jetbrains.kotlin.idea.codeInsight.hints.KotlinInlayParameterHintsProvider"/>
+
+    <codeInsight.inlayProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.codeInsight.hints.KotlinReferencesTypeHintsProvider"/>
+    <codeInsight.inlayProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.codeInsight.hints.KotlinLambdasHintsProvider"/>
 
     <codeInsight.gotoSuper language="kotlin" implementationClass="org.jetbrains.kotlin.idea.codeInsight.GotoSuperActionHandler"/>
 
@@ -405,9 +406,6 @@
 
     <statistician key="completion" implementationClass="org.jetbrains.kotlin.idea.completion.KotlinCompletionStatistician"/>
     <statistician key="proximity" implementationClass="org.jetbrains.kotlin.idea.completion.KotlinProximityStatistician"/>
-
-    <editor.linePainter order="first" implementation="org.jetbrains.kotlin.idea.parameterInfo.custom.ReturnHintLinePainter"/>
-
 
     <weigher key="completion" implementationClass="org.jetbrains.kotlin.idea.completion.KotlinLookupElementProximityWeigher" id="kotlin.proximity" order="after proximity"/>
 

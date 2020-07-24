@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.coroutines
 
+import kotlin.contracts.*
 import kotlin.coroutines.intrinsics.*
 import kotlin.internal.InlineOnly
 
@@ -138,12 +139,14 @@ public fun <R, T> (suspend R.() -> T).startCoroutine(
  */
 @SinceKotlin("1.3")
 @InlineOnly
-public suspend inline fun <T> suspendCoroutine(crossinline block: (Continuation<T>) -> Unit): T =
-    suspendCoroutineUninterceptedOrReturn { c: Continuation<T> ->
+public suspend inline fun <T> suspendCoroutine(crossinline block: (Continuation<T>) -> Unit): T {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    return suspendCoroutineUninterceptedOrReturn { c: Continuation<T> ->
         val safe = SafeContinuation(c.intercepted())
         block(safe)
         safe.getOrThrow()
     }
+}
 
 /**
  * Returns the context of the current coroutine.

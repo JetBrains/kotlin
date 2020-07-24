@@ -524,6 +524,17 @@ class HierarchicalMppIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testTransitiveDependencyOnSelf() = with(Project("transitive-dep-on-self-hmpp")) {
+        testDependencyTransformations(subproject = "lib") { reports ->
+            reports.single {
+                it.sourceSetName == "commonTest" && it.scope == "implementation" && "libtests" in it.groupAndModule
+            }.let {
+                assertEquals(setOf("commonMain", "jvmAndJsMain"), it.allVisibleSourceSets)
+            }
+        }
+    }
+
     private fun Project.testDependencyTransformations(
         subproject: String? = null,
         check: CompiledProject.(reports: Iterable<DependencyTransformationReport>) -> Unit

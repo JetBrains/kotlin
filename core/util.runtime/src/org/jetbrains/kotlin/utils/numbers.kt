@@ -23,3 +23,11 @@ fun extractRadix(value: String): NumberWithRadix = when {
     value.startsWith("0b") || value.startsWith("0B") -> NumberWithRadix(value.substring(2), 2)
     else -> NumberWithRadix(value, 10)
 }
+
+val NumberWithRadix.radixPrefix: String
+    get() = when (radix) {
+        2 -> "0b"
+        10 -> ""
+        16 -> "0x"
+        else -> error("Invalid radix for $this")
+    }

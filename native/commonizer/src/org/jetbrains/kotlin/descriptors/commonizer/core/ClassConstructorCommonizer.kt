@@ -19,7 +19,6 @@ class ClassConstructorCommonizer(cache: CirClassifiersCache) : AbstractStandardC
     private val typeParameters = TypeParameterListCommonizer(cache)
     private val valueParameters = ValueParameterListCommonizer(cache)
     private var hasStableParameterNames = true
-    private var hasSynthesizedParameterNames = false
 
     override fun commonizationResult() = CirClassConstructorFactory.create(
         annotations = emptyList(),
@@ -28,7 +27,6 @@ class ClassConstructorCommonizer(cache: CirClassifiersCache) : AbstractStandardC
         containingClassDetails = CirContainingClassDetailsFactory.DOES_NOT_MATTER,
         valueParameters = valueParameters.result,
         hasStableParameterNames = hasStableParameterNames,
-        hasSynthesizedParameterNames = hasSynthesizedParameterNames,
         isPrimary = isPrimary,
         kind = kind
     )
@@ -49,7 +47,6 @@ class ClassConstructorCommonizer(cache: CirClassifiersCache) : AbstractStandardC
 
         if (result) {
             hasStableParameterNames = hasStableParameterNames && next.hasStableParameterNames
-            hasSynthesizedParameterNames = hasSynthesizedParameterNames || next.hasSynthesizedParameterNames
         }
 
         return result

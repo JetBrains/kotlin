@@ -52,10 +52,10 @@ class FirPropertyBuilder : FirTypeParametersOwnerBuilder, FirAnnotationContainer
     var getter: FirPropertyAccessor? = null
     var setter: FirPropertyAccessor? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     var containerSource: DeserializedContainerSource? = null
     lateinit var symbol: FirPropertySymbol
     var isLocal: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     lateinit var status: FirDeclarationStatus
 
     override fun build(): FirProperty {
@@ -74,10 +74,10 @@ class FirPropertyBuilder : FirTypeParametersOwnerBuilder, FirAnnotationContainer
             getter,
             setter,
             annotations,
+            typeParameters,
             containerSource,
             symbol,
             isLocal,
-            typeParameters,
             status,
         )
     }

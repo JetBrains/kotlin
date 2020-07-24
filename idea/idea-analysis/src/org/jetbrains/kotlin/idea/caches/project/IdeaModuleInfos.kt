@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.framework.effectiveKind
 import org.jetbrains.kotlin.idea.framework.platform
+import org.jetbrains.kotlin.idea.klib.AbstractKlibLibraryInfo
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.findAnalyzerServices
 import org.jetbrains.kotlin.idea.project.getStableName
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.idea.project.isHMPPEnabled
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.idea.util.rootManager
+import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -62,6 +64,7 @@ import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.types.typeUtil.closure
 import org.jetbrains.kotlin.utils.addIfNotNull
+import java.lang.StringBuilder
 import java.util.*
 
 internal val LOG = Logger.getInstance(IdeaModuleInfo::class.java)
@@ -139,34 +142,57 @@ private fun ideaModelDependencies(
     forProduction: Boolean,
     platform: TargetPlatform
 ): List<IdeaModuleInfo> {
+    // Use StringBuilder so that all lines are written into the log atomically (otherwise
+    // logs of call to ideaModelDependencies for several different modules interleave, leading
+    // to unreadable mess)
+    val debugString: StringBuilder? = if (LOG.isDebugEnabled) StringBuilder() else null
+    debugString?.appendLine("Building idea model dependencies for module $module, platform=${platform}, forProduction=$forProduction")
+
     //NOTE: lib dependencies can be processed several times during recursive traversal
     val result = LinkedHashSet<IdeaModuleInfo>()
     val dependencyEnumerator = ModuleRootManager.getInstance(module).orderEntries().compileOnly().recursively().exportedOnly()
     if (forProduction && module.getBuildSystemType() == BuildSystemType.JPS) {
         dependencyEnumerator.productionOnly()
     }
+
+    debugString?.append("    IDEA dependencies: [")
     dependencyEnumerator.forEach { orderEntry ->
+        debugString?.append("${orderEntry.presentableName} ")
         if (orderEntry.acceptAsDependency(forProduction)) {
             result.addAll(orderEntryToModuleInfo(module.project, orderEntry!!, forProduction))
+            debugString?.append("OK; ")
+        } else {
+            debugString?.append("SKIP; ")
         }
         true
     }
-    return result.filterNot { it is LibraryInfo && !platform.canDependOn(it.platform, module.isHMPPEnabled) }
+    debugString?.appendLine("]")
+
+    // Some dependencies prohibited (e.g. common can not depend on a platform)
+    val correctedResult = result.filterNot { it is LibraryInfo && !platform.canDependOn(it, module.isHMPPEnabled) }
+    debugString?.appendLine("    Corrected result: ${correctedResult.joinToString(prefix = "[", postfix = "]", separator = ";") { it.displayedName }}")
+
+    LOG.debug(debugString?.toString())
+
+    return correctedResult
 }
 
-private fun TargetPlatform.canDependOn(other: TargetPlatform, isHmppEnabled: Boolean): Boolean {
+private fun TargetPlatform.canDependOn(other: IdeaModuleInfo, isHmppEnabled: Boolean): Boolean {
     if (isHmppEnabled) {
-        val platformsWhichAreNotContainedInOther = this.componentPlatforms - other.componentPlatforms
+        // HACK: allow depending on stdlib even if platforms do not match
+        if (isNative() && other is AbstractKlibLibraryInfo && other.libraryRoot.endsWith(KONAN_STDLIB_NAME)) return true
+
+        val platformsWhichAreNotContainedInOther = this.componentPlatforms - other.platform.componentPlatforms
         if (platformsWhichAreNotContainedInOther.isEmpty()) return true
 
         // unspecifiedNativePlatform is effectively a wildcard for NativePlatform
         return platformsWhichAreNotContainedInOther.all { it is NativePlatform } &&
-                NativePlatforms.unspecifiedNativePlatform.componentPlatforms.single() in other.componentPlatforms
+                NativePlatforms.unspecifiedNativePlatform.componentPlatforms.single() in other.platform.componentPlatforms
     } else {
-        return this.isJvm() && other.isJvm() ||
-                this.isJs() && other.isJs() ||
-                this.isNative() && other.isNative() ||
-                this.isCommon() && other.isCommon()
+        return this.isJvm() && other.platform.isJvm() ||
+                this.isJs() && other.platform.isJs() ||
+                this.isNative() && other.platform.isNative() ||
+                this.isCommon() && other.platform.isCommon()
     }
 }
 

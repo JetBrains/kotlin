@@ -5,12 +5,20 @@
 
 package org.jetbrains.kotlin.gradle.internal.kapt.incremental
 
+import org.gradle.api.artifacts.transform.TransformOutputs
+import org.gradle.api.artifacts.transform.TransformParameters
+import org.gradle.api.file.FileSystemLocation
+import org.gradle.api.internal.file.DefaultFileSystemLocation
+import org.gradle.api.internal.provider.DefaultProvider
+import org.gradle.api.provider.Provider
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import java.io.File
+import java.util.concurrent.Callable
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
@@ -32,10 +40,10 @@ class ClasspathAnalyzerTest {
                 it.writeBytes(emptyClass("A"))
             }
         }
-        val transform = StructureArtifactTransform().also { it.outputDirectory = tmp.newFolder() }
-        val outputs = transform.transform(classesDir)
+        val outputs = TransformOutputsMock(tmp.newFolder())
+        StructureTransformTestAction(classesDir).transform(outputs)
 
-        val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.single())
+        val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.createdOutputs.single())
         assertEquals(setOf("test/A", "test/B"), data.classAbiHash.keys)
         assertEquals(setOf("test/A", "test/B"), data.classDependencies.keys)
         assertEquals(emptySet<String>(), data.classDependencies["test/A"]!!.abiTypes)
@@ -68,10 +76,10 @@ class ClasspathAnalyzerTest {
                 it.closeEntry()
             }
         }
-        val transform = StructureArtifactTransform().also { it.outputDirectory = tmp.newFolder() }
-        val outputs = transform.transform(inputJar)
+        val outputs = TransformOutputsMock(tmp.newFolder())
+        StructureTransformTestAction(inputJar).transform(outputs)
 
-        val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.single())
+        val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.createdOutputs.single())
         assertEquals(setOf("test/A", "test/B"), data.classAbiHash.keys)
         assertEquals(setOf("test/A", "test/B"), data.classDependencies.keys)
         assertEquals(emptySet<String>(), data.classDependencies["test/A"]!!.abiTypes)
@@ -94,7 +102,8 @@ class ClasspathAnalyzerTest {
                 it.closeEntry()
             }
         }
-        val outputA = StructureArtifactTransform().also { it.outputDirectory = tmp.newFolder() }.transform(jarA).single()
+        val outputsA = TransformOutputsMock(tmp.newFolder())
+        StructureTransformTestAction(jarA).transform(outputsA)
 
         val jarB = tmp.newFile("inputB.jar").also { jar ->
             ZipOutputStream(jar.outputStream()).use {
@@ -107,25 +116,80 @@ class ClasspathAnalyzerTest {
                 it.closeEntry()
             }
         }
-        val outputB = StructureArtifactTransform().also { it.outputDirectory = tmp.newFolder() }.transform(jarB).single()
+        val outputsB = TransformOutputsMock(tmp.newFolder())
+        StructureTransformTestAction(jarB).transform(outputsB)
 
-        assertArrayEquals(outputA.readBytes(), outputB.readBytes())
+        assertArrayEquals(outputsA.createdOutputs.single().readBytes(), outputsB.createdOutputs.single().readBytes())
     }
 
     @Test
     fun emptyInput() {
-        val inputDir = tmp.newFolder("input")
-        val transform = StructureArtifactTransform().also { it.outputDirectory = tmp.newFolder() }
-        val outputs = transform.transform(inputDir)
+        val transformAction = StructureTransformTestAction(tmp.newFolder("input"))
+        val outputs = TransformOutputsMock(tmp.newFolder())
 
-        val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.single())
+        transformAction.transform(outputs)
+
+        val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.createdOutputs.single())
         assertTrue(data.classAbiHash.isEmpty())
         assertTrue(data.classDependencies.isEmpty())
     }
 
-    private fun emptyClass(internalName: String): ByteArray {
+    @Test
+    fun testJarsWithDependenciesWithinClasses() {
+        val inputJar = tmp.newFile("input.jar").also { jar ->
+            ZipOutputStream(jar.outputStream()).use {
+                it.putNextEntry(ZipEntry("test/A.class"))
+                it.write(emptyClass("test/A", "test/B"))
+                it.closeEntry()
+
+                it.putNextEntry(ZipEntry("test/B.class"))
+                it.write(emptyClass("test/B"))
+                it.closeEntry()
+
+                it.putNextEntry(ZipEntry("test/C.class"))
+                it.write(emptyClass("test/C"))
+                it.closeEntry()
+            }
+        }
+        val transformAction = StructureTransformTestAction(inputJar)
+        val outputs = TransformOutputsMock(tmp.newFolder())
+
+        transformAction.transform(outputs)
+
+        val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.createdOutputs.single())
+        assertEquals(setOf("test/A", "test/B", "test/C"), data.classAbiHash.keys)
+        assertEquals(setOf("test/A", "test/B", "test/C"), data.classDependencies.keys)
+    }
+
+    private fun emptyClass(internalName: String, superClass: String = "java/lang/Object"): ByteArray {
         val writer = ClassWriter(Opcodes.API_VERSION)
-        writer.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, internalName, null, "java/lang/Object", emptyArray())
+        writer.visit(Opcodes.V1_8, Opcodes.ACC_PUBLIC, internalName, null, superClass, emptyArray())
         return writer.toByteArray()
     }
+}
+
+class StructureTransformTestAction(val input: File) : StructureTransformAction() {
+    override val inputArtifact: File = input
+
+    override fun getParameters(): TransformParameters.None? {
+        //no need for StructureTransformAction and so for test
+        return null
+    }
+}
+
+class TransformOutputsMock(val outputDir: File) : TransformOutputs {
+    val createdOutputs = mutableListOf<File>()
+
+    override fun file(name: Any): File {
+        val newFile = outputDir.resolve(name as String)
+        createdOutputs.add(newFile)
+        return newFile
+    }
+
+    override fun dir(name: Any): File {
+        val newDir = outputDir.resolve(name as String)
+        createdOutputs.add(newDir)
+        return newDir
+    }
+
 }

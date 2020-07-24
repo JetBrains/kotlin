@@ -9,8 +9,10 @@ package org.jetbrains.kotlin.backend.common.lower.loops
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.lower.loops.handlers.*
 import org.jetbrains.kotlin.backend.common.lower.matchers.IrCallMatcher
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -64,7 +66,7 @@ internal class ProgressionHeaderInfo(
     canOverflow: Boolean? = null,
     direction: ProgressionDirection,
     additionalNotEmptyCondition: IrExpression? = null,
-    val additionalVariables: List<IrVariable> = listOf()
+    val additionalStatements: List<IrStatement> = listOf()
 ) : NumericHeaderInfo(
     progressionType, first, last, step,
     canCacheLast = true,
@@ -141,7 +143,7 @@ internal class ProgressionHeaderInfo(
         isReversed = !isReversed,
         direction = direction.asReversed(),
         additionalNotEmptyCondition = additionalNotEmptyCondition,
-        additionalVariables = additionalVariables
+        additionalStatements = additionalStatements
     )
 }
 
@@ -188,7 +190,7 @@ internal class IndexedGetHeaderInfo(
  */
 internal class WithIndexHeaderInfo(val nestedInfo: HeaderInfo) : HeaderInfo() {
     // We cannot easily reverse `withIndex()` so we do not attempt to handle it. We would have to start from the last value of the index,
-    // easily calculable (or even impossible) in most cases.
+    // which is not easily calculable (or even impossible) in most cases.
     override fun asReversed(): HeaderInfo? = null
 }
 
@@ -295,7 +297,13 @@ internal class DefaultHeaderInfoBuilder(context: CommonBackendContext, scopeOwne
     HeaderInfoBuilder(context, scopeOwnerSymbol) {
     override val callHandlers = listOf(
         ReversedHandler(context, this),
-        WithIndexHandler(context, NestedHeaderInfoBuilderForWithIndex(context, scopeOwnerSymbol))
+        WithIndexHandler(
+            context,
+            NestedHeaderInfoBuilderForWithIndex(
+                context,
+                scopeOwnerSymbol
+            )
+        )
     )
 
     // NOTE: StringIterationHandler MUST come before CharSequenceIterationHandler.
@@ -312,7 +320,7 @@ internal class DefaultHeaderInfoBuilder(context: CommonBackendContext, scopeOwne
 // DefaultHeaderInfoBuilder. The differences between the two are that NestedHeaderInfoBuilderForWithIndex:
 //
 //   - Has NO WithIndexHandler. We do not attempt to optimize `*.withIndex().withIndex()`.
-//   - Has DefaultIterableHandler. This allows us to optimize `Iterable<*>.withIndex()` and `Sequence<*>.withIndex()`.
+//   - Has Default(Iterable|Sequence)Handler. This allows us to optimize `Iterable<*>.withIndex()` and `Sequence<*>.withIndex()`.
 internal class NestedHeaderInfoBuilderForWithIndex(context: CommonBackendContext, scopeOwnerSymbol: () -> IrSymbol) :
     HeaderInfoBuilder(context, scopeOwnerSymbol) {
     // NOTE: No WithIndexHandler; we cannot lower `iterable.withIndex().withIndex()`.
@@ -322,12 +330,13 @@ internal class NestedHeaderInfoBuilderForWithIndex(context: CommonBackendContext
 
     // NOTE: StringIterationHandler MUST come before CharSequenceIterationHandler.
     // String is subtype of CharSequence and therefore its handler is more specialized.
-    // DefaultIterableHandler must come last as it is handles iterables not handled by more specialized handlers.
+    // Default(Iterable|Sequence)Handler must come last as they handle iterables not handled by more specialized handlers.
     override val expressionHandlers = listOf(
         ArrayIterationHandler(context),
         DefaultProgressionHandler(context),
         StringIterationHandler(context),
         CharSequenceIterationHandler(context),
-        DefaultIterableHandler(context)
+        DefaultIterableHandler(context),
+        DefaultSequenceHandler(context),
     )
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.typeResolver
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -21,16 +22,30 @@ class FirSpecificTypeResolverTransformer(
 ) : FirAbstractTreeTransformer<FirScope>(phase = FirResolvePhase.SUPER_TYPES) {
     private val typeResolver = session.typeResolver
 
+    @set:PrivateForInline
+    var areBareTypesAllowed: Boolean = false
+
+    @OptIn(PrivateForInline::class)
+    inline fun <R> withAllowedBareTypes(block: () -> R): R {
+        val oldValue = areBareTypesAllowed
+        areBareTypesAllowed = true
+        return try {
+            block()
+        } finally {
+            areBareTypesAllowed = oldValue
+        }
+    }
+
     override fun transformTypeRef(typeRef: FirTypeRef, data: FirScope): CompositeTransformResult<FirTypeRef> {
         typeRef.transformChildren(this, data)
-        return transformType(typeRef, typeResolver.resolveType(typeRef, data))
+        return transformType(typeRef, typeResolver.resolveType(typeRef, data, areBareTypesAllowed))
     }
 
     override fun transformFunctionTypeRef(functionTypeRef: FirFunctionTypeRef, data: FirScope): CompositeTransformResult<FirTypeRef> {
         functionTypeRef.transformChildren(this, data)
         return buildResolvedFunctionTypeRef {
             source = functionTypeRef.source
-            type = typeResolver.resolveType(functionTypeRef, data).takeIfAcceptable() ?: return functionTypeRef.compose()
+            type = typeResolver.resolveType(functionTypeRef, data, areBareTypesAllowed).takeIfAcceptable() ?: return functionTypeRef.compose()
             isMarkedNullable = functionTypeRef.isMarkedNullable
             isSuspend = functionTypeRef.isSuspend
             receiverTypeRef = functionTypeRef.receiverTypeRef

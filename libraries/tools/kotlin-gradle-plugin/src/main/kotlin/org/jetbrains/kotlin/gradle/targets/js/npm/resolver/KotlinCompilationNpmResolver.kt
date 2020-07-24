@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
+import org.jetbrains.kotlin.gradle.plugin.sources.compilationDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
@@ -133,10 +134,15 @@ internal class KotlinCompilationNpmResolver(
         all.isCanBeResolved = true
         all.description = "NPM configuration for $compilation."
 
-        compilation.allKotlinSourceSets.forEach { sourceSet ->
-            KotlinDependencyScope.values().forEach { scope ->
-                val configuration = project.sourceSetDependencyConfigurationByScope(sourceSet, scope)
-                all.extendsFrom(configuration)
+        KotlinDependencyScope.values().forEach { scope ->
+            val compilationConfiguration = project.compilationDependencyConfigurationByScope(
+                compilation,
+                scope
+            )
+            all.extendsFrom(compilationConfiguration)
+            compilation.allKotlinSourceSets.forEach { sourceSet ->
+                val sourceSetConfiguration = project.sourceSetDependencyConfigurationByScope(sourceSet, scope)
+                all.extendsFrom(sourceSetConfiguration)
             }
         }
 
@@ -179,8 +185,7 @@ internal class KotlinCompilationNpmResolver(
                 internalDependencies.add(projectResolver[main])
             }
 
-            val hasPublicNpmDependencies = externalNpmDependencies
-                .any { it.isPublicDependency() }
+            val hasPublicNpmDependencies = externalNpmDependencies.isNotEmpty()
 
             if (compilation.isMain() && hasPublicNpmDependencies) {
                 project.tasks
@@ -352,7 +357,7 @@ internal class KotlinCompilationNpmResolver(
             }
 
             if (!skipWriting) {
-                packageJson.saveTo(npmProject.packageJsonFile)
+                packageJson.saveTo(npmProject.prePackageJsonFile)
             }
 
             return KotlinCompilationNpmResolution(

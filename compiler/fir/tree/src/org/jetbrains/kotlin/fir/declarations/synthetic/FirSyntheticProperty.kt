@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 class FirSyntheticProperty(
     override val session: FirSession,
-    override var returnTypeRef: FirTypeRef,
     override val name: Name,
     override val isVar: Boolean,
     override val symbol: FirAccessorSymbol,
@@ -35,6 +34,9 @@ class FirSyntheticProperty(
     init {
         symbol.bind(this)
     }
+
+    override val returnTypeRef: FirTypeRef
+        get() = getter.returnTypeRef
 
     override val source: FirSourceElement?
         get() = null
@@ -125,12 +127,16 @@ class FirSyntheticProperty(
         throw AssertionError("Transformation of synthetic property isn't supported")
     }
 
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirProperty {
+        throw AssertionError("Transformation of synthetic property isn't supported")
+    }
+
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
     }
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
-        returnTypeRef = newReturnTypeRef
+        throw AssertionError("Mutation of synthetic property isn't supported")
     }
 
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {

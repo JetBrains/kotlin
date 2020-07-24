@@ -2,6 +2,6 @@
 enum class E : Cloneable {
     A;
     override fun clone(): Any {
-        return super.<!AMBIGUITY!>clone<!>()
+        return super.<!UNRESOLVED_REFERENCE!>clone<!>()
     }
 }

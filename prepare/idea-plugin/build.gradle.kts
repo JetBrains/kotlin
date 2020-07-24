@@ -161,7 +161,7 @@ dependencies {
         embedded(project(it)) { isTransitive = false }
     }
     embedded(protobufFull())
-    embedded(kotlinBuiltins())
+    embedded(kotlinBuiltins(forJvm = true))
 
     libraries(commonDep("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:${property("versions.kotlinx-collections-immutable")}"))
     libraries(commonDep("javax.inject"))

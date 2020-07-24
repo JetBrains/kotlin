@@ -44,8 +44,8 @@ private class ObjectClassLowering(val context: JvmBackendContext) : IrElementTra
     private fun process(irClass: IrClass) {
         if (!irClass.isObject) return
 
-        val publicInstanceField = context.declarationFactory.getFieldForObjectInstance(irClass)
-        val privateInstanceField = context.declarationFactory.getPrivateFieldForObjectInstance(irClass)
+        val publicInstanceField = context.cachedDeclarations.getFieldForObjectInstance(irClass)
+        val privateInstanceField = context.cachedDeclarations.getPrivateFieldForObjectInstance(irClass)
 
         val constructor = irClass.constructors.find { it.isPrimary }
             ?: throw AssertionError("Object should have a primary constructor: ${irClass.name}")

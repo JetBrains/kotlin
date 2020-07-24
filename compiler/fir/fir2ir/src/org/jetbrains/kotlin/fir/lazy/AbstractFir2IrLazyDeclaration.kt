@@ -39,10 +39,6 @@ abstract class AbstractFir2IrLazyDeclaration<F : FirMemberDeclaration, D : IrSym
 
     lateinit var typeParameters: List<IrTypeParameter>
 
-    override var metadata: MetadataSource?
-        get() = null
-        set(_) = error("We should never need to store metadata of external declarations.")
-
     override lateinit var parent: IrDeclarationParent
 
     @ObsoleteDescriptorBasedAPI

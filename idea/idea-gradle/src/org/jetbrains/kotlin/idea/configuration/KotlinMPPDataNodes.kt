@@ -70,7 +70,8 @@ class KotlinTargetData @PropertyMapping("externalName") constructor(externalName
     }
 }
 
-class KotlinOutputPathsData(val paths: MultiMap<ExternalSystemSourceType, String>) : AbstractExternalEntityData(GradleConstants.SYSTEM_ID) {
+class KotlinOutputPathsData @PropertyMapping("paths") constructor(val paths: MultiMap<ExternalSystemSourceType, String>) :
+    AbstractExternalEntityData(GradleConstants.SYSTEM_ID) {
     companion object {
         val KEY = ExternalKey.create(KotlinOutputPathsData::class.java, ProjectKeys.CONTENT_ROOT.processingWeight + 1)
     }

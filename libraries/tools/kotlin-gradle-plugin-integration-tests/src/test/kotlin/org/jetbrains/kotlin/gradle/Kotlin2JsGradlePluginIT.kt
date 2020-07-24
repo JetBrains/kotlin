@@ -576,22 +576,31 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
             zipFile.getInputStream(packageJsonCandidates.single()).use {
                 it.reader().use {
                     val packageJson = Gson().fromJson(it, PackageJson::class.java)
-                    assertTrue("There is no expected dev dependencies in package.json") {
-                        packageJson.devDependencies.isEmpty()
+                    val devDep = "42"
+                    val devDepVersion = "0.0.1"
+                    assertTrue("There is expected dev dependency \"$devDep\": \"$devDepVersion\" in package.json") {
+                        val devDependencies = packageJson.devDependencies
+                        devDependencies
+                            .containsKey(devDep) &&
+                                devDependencies[devDep] == devDepVersion
                     }
 
-                    assertTrue("There is expected dependency \"@yworks/optimizer\": \"1.0.6\" in package.json") {
+                    val dep = "@yworks/optimizer"
+                    val depVersion = "1.0.6"
+                    assertTrue("There is expected dependency \"$dep\": \"$depVersion\" in package.json") {
                         val dependencies = packageJson.dependencies
                         dependencies
-                            .containsKey("@yworks/optimizer") &&
-                                dependencies["@yworks/optimizer"] == "1.0.6"
+                            .containsKey(dep) &&
+                                dependencies[dep] == depVersion
                     }
 
-                    assertTrue("There is expected peer dependency \"date-arithmetic\": \"4.1.0\" in package.json") {
+                    val peerDep = "date-arithmetic"
+                    val peerDepVersion = "4.1.0"
+                    assertTrue("There is expected peer dependency \"$peerDep\": \"$peerDepVersion\" in package.json") {
                         val peerDependencies = packageJson.peerDependencies
                         peerDependencies
-                            .containsKey("date-arithmetic") &&
-                                peerDependencies["date-arithmetic"] == "4.1.0"
+                            .containsKey(peerDep) &&
+                                peerDependencies[peerDep] == peerDepVersion
                     }
                 }
             }

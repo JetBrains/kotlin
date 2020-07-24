@@ -22,7 +22,6 @@ object CirClassConstructorFactory {
         containingClassDetails = CirContainingClassDetailsFactory.create(source),
         valueParameters = source.valueParameters.map(CirValueParameterFactory::create),
         hasStableParameterNames = source.hasStableParameterNames(),
-        hasSynthesizedParameterNames = source.hasSynthesizedParameterNames(),
         isPrimary = source.isPrimary,
         kind = source.kind
     )
@@ -35,7 +34,6 @@ object CirClassConstructorFactory {
         containingClassDetails: CirContainingClassDetails,
         valueParameters: List<CirValueParameter>,
         hasStableParameterNames: Boolean,
-        hasSynthesizedParameterNames: Boolean,
         isPrimary: Boolean,
         kind: CallableMemberDescriptor.Kind
     ): CirClassConstructor {
@@ -46,7 +44,6 @@ object CirClassConstructorFactory {
             containingClassDetails = containingClassDetails,
             valueParameters = valueParameters,
             hasStableParameterNames = hasStableParameterNames,
-            hasSynthesizedParameterNames = hasSynthesizedParameterNames,
             isPrimary = isPrimary,
             kind = kind
         )

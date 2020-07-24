@@ -28,13 +28,13 @@ fun main() {
     checkSubtype<Outer<String>.Inner>(outer.bar())
     checkSubtype<Outer<String>.Inner>(outer.Inner())
 
-    outer.<!INAPPLICABLE_CANDIDATE!>set<!>(outer.bar())
-    outer.<!INAPPLICABLE_CANDIDATE!>set<!>(outer.Inner())
+    outer.set(outer.bar())
+    outer.set(outer.Inner())
 
     val x: Outer<String>.Inner = factoryString()
     outer.<!INAPPLICABLE_CANDIDATE!>set<!>(x)
     val y: Outer<CharSequence>.Inner = infer<CharSequence>("")
-    outer.<!INAPPLICABLE_CANDIDATE!>set<!>(y)
+    outer.set(y)
 
     outer.set(infer<Any>(""))
 }

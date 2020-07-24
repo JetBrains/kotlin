@@ -27,6 +27,7 @@
         <testTasksProvider implementation="org.jetbrains.kotlin.idea.run.KotlinMPPGradleTestTasksProvider"/>
 
         <projectModelContributor implementation="org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModelContributor"/>
+        <executionEnvironmentProvider implementation="org.jetbrains.kotlin.idea.gradle.execution.KotlinGradleAppEnvProvider"/>
     </extensions>
 
     <extensions defaultExtensionNs="com.intellij">

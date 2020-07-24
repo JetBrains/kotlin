@@ -6,9 +6,12 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrDeclarationBuilder
 
 interface JsCommonBackendContext : CommonBackendContext {
     override val mapping: JsMapping
+
+    val jsIrDeclarationBuilder: JsIrDeclarationBuilder
 
     val es6mode: Boolean
         get() = false

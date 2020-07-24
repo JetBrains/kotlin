@@ -72,7 +72,7 @@ internal class FirAnonymousFunctionImpl(
         transformBody(transformer, data)
         typeRef = typeRef.transformSingle(transformer, data)
         label = label?.transformSingle(transformer, data)
-        typeParameters.transformInplace(transformer, data)
+        transformTypeParameters(transformer, data)
         return this
     }
 
@@ -103,6 +103,11 @@ internal class FirAnonymousFunctionImpl(
 
     override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
         body = body?.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
+        typeParameters.transformInplace(transformer, data)
         return this
     }
 

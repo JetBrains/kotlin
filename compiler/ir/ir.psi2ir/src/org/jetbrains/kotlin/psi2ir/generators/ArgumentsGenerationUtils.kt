@@ -401,7 +401,7 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
             irSuspendFunReturnType,
             isInline = false, isExternal = false, isTailrec = false,
             isSuspend = true,
-            isOperator = false, isExpect = false, isFakeOverride = false
+            isOperator = false, isInfix = false, isExpect = false, isFakeOverride = false
         )
     }
     adapterFunctionDescriptor.bind(irAdapterFun)

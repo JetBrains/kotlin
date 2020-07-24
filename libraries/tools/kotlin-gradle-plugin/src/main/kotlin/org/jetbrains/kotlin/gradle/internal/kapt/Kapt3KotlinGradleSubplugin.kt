@@ -26,12 +26,12 @@ import org.gradle.tooling.provider.model.ToolingModelBuilder
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.CLASS_STRUCTURE_ARTIFACT_TYPE
-import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureArtifactTransform
+import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureTransformAction
 import org.jetbrains.kotlin.gradle.model.builder.KaptModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTaskData
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTaskData
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import java.io.ByteArrayOutputStream
@@ -43,9 +43,7 @@ import javax.inject.Inject
 
 // apply plugin: 'kotlin-kapt'
 class Kapt3GradleSubplugin @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) :
-    KotlinCompilerPluginSupportPlugin,
-    @Suppress("DEPRECATION") // implementing to fix KT-39809
-    KotlinGradleSubplugin<AbstractCompile> {
+    KotlinCompilerPluginSupportPlugin {
 
     override fun apply(target: Project) {
         target.extensions.create("kapt", KaptExtension::class.java)
@@ -509,15 +507,14 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
     private fun maybeRegisterTransform(project: Project) {
         if (!project.extensions.extraProperties.has("KaptStructureTransformAdded")) {
-            project.dependencies.registerTransform { variantTransform ->
-                variantTransform.artifactTransform(StructureArtifactTransform::class.java)
-                variantTransform.from.attribute(artifactType, "jar")
-                variantTransform.to.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
+            project.dependencies.registerTransform(StructureTransformAction::class.java) { transformSpec ->
+                transformSpec.from.attribute(artifactType, "jar")
+                transformSpec.to.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
             }
-            project.dependencies.registerTransform { variantTransform ->
-                variantTransform.artifactTransform(StructureArtifactTransform::class.java)
-                variantTransform.from.attribute(artifactType, "directory")
-                variantTransform.to.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
+
+            project.dependencies.registerTransform(StructureTransformAction::class.java) { transformSpec ->
+                transformSpec.from.attribute(artifactType, "directory")
+                transformSpec.to.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
             }
 
             project.extensions.extraProperties["KaptStructureTransformAdded"] = true
@@ -591,21 +588,8 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
     override fun getPluginArtifact(): SubpluginArtifact =
         JetBrainsSubpluginArtifact(artifactId = KAPT_ARTIFACT_NAME)
-
-    //region Stub implementation for legacy API, KT-39809
-    internal constructor(): this(object : ToolingModelBuilderRegistry {
-        override fun register(p0: ToolingModelBuilder) = Unit
-        override fun getBuilder(p0: String): ToolingModelBuilder? = null
-    })
-
-    override fun isApplicable(project: Project, task: AbstractCompile): Boolean = false
-
-    override fun apply(
-        project: Project, kotlinCompile: AbstractCompile, javaCompile: AbstractCompile?, variantData: Any?, androidProjectHandler: Any?,
-        kotlinCompilation: KotlinCompilation<KotlinCommonOptions>?
-    ): List<SubpluginOption> = emptyList()
-    //endregion
 }
+
 private val artifactType = Attribute.of("artifactType", String::class.java)
 
 // Don't reference the BaseVariant type in the Kapt plugin signatures, as those type references will fail to link when there's no Android
@@ -709,3 +693,19 @@ private val BaseVariant.dataBindingDependencyArtifactsIfSupported: FileCollectio
         .find { it.name == "getDataBindingDependencyArtifacts" }
         ?.also { it.isAccessible = true }
         ?.invoke(this) as? FileCollection
+
+//region Stub implementation for legacy API, KT-39809
+@Suppress("DEPRECATION") // implementing to fix KT-39809
+class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
+    override fun isApplicable(project: Project, task: AbstractCompile): Boolean = false
+
+    override fun apply(
+        project: Project, kotlinCompile: AbstractCompile, javaCompile: AbstractCompile?, variantData: Any?, androidProjectHandler: Any?,
+        kotlinCompilation: KotlinCompilation<KotlinCommonOptions>?
+    ): List<SubpluginOption> = emptyList()
+
+    override fun getCompilerPluginId(): String = Kapt3GradleSubplugin.KAPT_SUBPLUGIN_ID
+
+    override fun getPluginArtifact(): SubpluginArtifact = JetBrainsSubpluginArtifact(artifactId = Kapt3GradleSubplugin.KAPT_ARTIFACT_NAME)
+}
+//endregion

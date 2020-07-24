@@ -359,4 +359,5 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         }
 
     }
+
 }

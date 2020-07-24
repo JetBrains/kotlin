@@ -11,6 +11,7 @@ import com.intellij.diff.util.DiffUtil
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
+import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
@@ -19,6 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.LightVirtualFileBase
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
@@ -26,7 +28,9 @@ import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModelResolver
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRoot
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
+import org.jetbrains.plugins.gradle.service.GradleInstallationManager
 import org.jetbrains.plugins.gradle.service.project.GradlePartialResolverPolicy
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -52,7 +56,10 @@ fun runPartialGradleImport(project: Project, root: GradleBuildRoot) {
     )
 }
 
-fun getMissingConfigurationActionText() = KotlinIdeaGradleBundle.message("action.text.load.script.configurations")
+fun configurationsAreMissingRequestNeeded() = KotlinIdeaGradleBundle.message("notification.wasNotImportedAfterCreation.text")
+fun getConfigurationsActionText() = KotlinIdeaGradleBundle.message("action.text.load.script.configurations")
+fun configurationsAreMissingRequestNeededHelp(): String? = KotlinIdeaGradleBundle.message("notification.wasNotImportedAfterCreation.help")
+fun configurationsAreMissingAfterRequest(): String = KotlinIdeaGradleBundle.message("notification.notEvaluatedInLastImport.text")
 
 fun autoReloadScriptConfigurations(project: Project, file: VirtualFile): Boolean {
     val definition = file.findScriptDefinition(project) ?: return false
@@ -98,10 +105,14 @@ class LoadConfigurationAction : AnAction(
 
     private fun getNotificationVisibility(editor: Editor): Boolean {
         if (!scriptConfigurationsNeedToBeUpdatedBalloon) return false
-
         if (DiffUtil.isDiffEditor(editor)) return false
 
         val project = editor.project ?: return false
+
+        // prevent services initializtion
+        // (all services actually initialized under the ScriptDefinitionProvider during startup activity)
+        if (ScriptDefinitionProvider.getServiceIfCreated(project) == null) return false
+
         val file = getKotlinScriptFile(editor) ?: return false
 
         if (autoReloadScriptConfigurations(project, file)) {
@@ -124,5 +135,8 @@ class LoadConfigurationAction : AnAction(
 }
 
 fun getGradleVersion(project: Project, settings: GradleProjectSettings): String {
-    return settings.resolveGradleVersion().version
+    return GradleInstallationManager.getGradleVersion(
+        ServiceManager.getService(GradleInstallationManager::class.java)
+            .getGradleHome(project, settings.externalProjectPath)?.path
+    ) ?: GradleVersion.current().version
 }

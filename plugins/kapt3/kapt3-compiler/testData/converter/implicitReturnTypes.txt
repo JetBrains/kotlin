@@ -19,6 +19,7 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class Cl {
+    @org.jetbrains.annotations.NotNull()
     private java.lang.String name;
 
     @org.jetbrains.annotations.NotNull()
@@ -48,8 +49,11 @@ public final class TestKt {
     public TestKt() {
         super();
     }
+    @org.jetbrains.annotations.NotNull()
     private static final lib.Prop<test.Cl> TEST = null;
+    @org.jetbrains.annotations.NotNull()
     private static final lib.Prop<test.Cl>[] TESTS_ARRAY = null;
+    @org.jetbrains.annotations.NotNull()
     private static final java.util.List<lib.Prop<test.Cl>> TESTS_LIST = null;
 
     @org.jetbrains.annotations.NotNull()

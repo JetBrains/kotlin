@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -52,26 +51,6 @@ class IrClassImpl(
     IrDeclarationBase<ClassCarrier>(startOffset, endOffset, origin),
     IrClass,
     ClassCarrier {
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        symbol: IrClassSymbol,
-        descriptor: ClassDescriptor,
-        name: Name = descriptor.name,
-        visibility: Visibility = descriptor.visibility,
-        modality: Modality = descriptor.modality
-    ) : this(
-        startOffset, endOffset, origin, symbol,
-        name, kind = descriptor.kind,
-        visibility = visibility, modality = modality,
-        isCompanion = descriptor.isCompanionObject, isInner = descriptor.isInner,
-        isData = descriptor.isData, isExternal = descriptor.isEffectivelyExternal(),
-        isInline = descriptor.isInline, isExpect = descriptor.isExpect,
-        isFun = descriptor.isFun,
-        source = descriptor.source
-    )
 
     init {
         symbol.bind(this)

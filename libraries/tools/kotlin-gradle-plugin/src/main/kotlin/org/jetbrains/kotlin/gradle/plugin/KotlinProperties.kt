@@ -202,6 +202,15 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val jsCompiler: KotlinJsCompilerType
         get() = property(jsCompilerProperty)?.let { KotlinJsCompilerType.byArgumentOrNull(it) } ?: KotlinJsCompilerType.LEGACY
 
+    /**
+     * Use Kotlin/JS backend compiler type
+     */
+    val jsGenerateExecutableDefault: Boolean
+        get() = booleanProperty("kotlin.js.generate.executable.default") ?: true
+
+    val stdlibDefaultDependency: Boolean
+        get() = booleanProperty("kotlin.stdlib.default.dependency") ?: true
+
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
         val deprecatedProperty = property(deprecatedPropName)
         if (deprecatedProperty != null) {

@@ -227,11 +227,6 @@ fun KotlinType.containsTypeProjectionsInTopLevelArguments(): Boolean {
     return possiblyInnerType.arguments.any { it.isStarProjection || it.projectionKind != Variance.INVARIANT }
 }
 
-fun UnwrappedType.canHaveUndefinedNullability(): Boolean =
-    constructor is NewTypeVariableConstructor ||
-            constructor.declarationDescriptor is TypeParameterDescriptor ||
-            this is NewCapturedType
-
 val TypeParameterDescriptor.representativeUpperBound: KotlinType
     get() {
         assert(upperBounds.isNotEmpty()) { "Upper bounds should not be empty: $this" }

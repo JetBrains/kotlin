@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.declarations.impl.carriers
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 
-interface PropertyCarrier : DeclarationCarrier<PropertyCarrier> {
+interface PropertyCarrier : DeclarationCarrier {
     var backingFieldField: IrField?
     var getterField: IrSimpleFunction?
     var setterField: IrSimpleFunction?

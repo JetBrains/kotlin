@@ -178,7 +178,9 @@ class DiagnosticReporterByTrackingStrategy(
 
             ArgumentTypeMismatchDiagnostic::class.java -> {
                 require(diagnostic is ArgumentTypeMismatchDiagnostic)
-                val expression = callArgument.safeAs<PSIKotlinCallArgument>()?.valueArgument?.getArgumentExpression()
+                val expression = callArgument.safeAs<PSIKotlinCallArgument>()?.valueArgument?.getArgumentExpression()?.let {
+                    KtPsiUtil.deparenthesize(it) ?: it
+                }
                 if (expression != null) {
                     if (expression.isNull() && expression is KtConstantExpression) {
                         trace.reportDiagnosticOnce(NULL_FOR_NONNULL_TYPE.on(expression, diagnostic.expectedType))
@@ -231,6 +233,14 @@ class DiagnosticReporterByTrackingStrategy(
                     COMPATIBILITY_WARNING.on(
                         callArgument.psiCallArgument.valueArgument.asElement(),
                         (diagnostic as CompatibilityWarningOnArgument).candidate
+                    )
+                )
+            }
+
+            AdaptedCallableReferenceIsUsedWithReflection::class.java -> {
+                trace.report(
+                    ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE.on(
+                        callArgument.psiCallArgument.valueArgument.asElement()
                     )
                 )
             }

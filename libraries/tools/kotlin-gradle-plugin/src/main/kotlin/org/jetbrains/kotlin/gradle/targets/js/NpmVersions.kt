@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
  * Package versions used by tasks
  */
 class NpmVersions {
-    val dukat = NpmPackageVersion("dukat", "0.5.4")
+    val dukat = NpmPackageVersion("dukat", "0.5.7")
 
     val webpack = NpmPackageVersion("webpack", "4.42.1")
     val webpackCli = NpmPackageVersion("webpack-cli", "3.3.11")

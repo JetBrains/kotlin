@@ -279,12 +279,12 @@ class KotlinConstraintSystemCompleter(
         diagnosticsHolder: KotlinDiagnosticsHolder
     ): Boolean {
         while (true) {
-            val variableForFixation = getVariableReadyForFixation(
+            val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
+                this,
+                getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms),
+                postponedArguments,
                 completionMode,
-                topLevelAtoms,
-                topLevelType,
-                collectVariablesFromContext,
-                postponedArguments
+                topLevelType
             ) ?: break
 
             if (!variableForFixation.hasProperConstraint && completionMode == ConstraintSystemCompletionMode.PARTIAL)
@@ -383,27 +383,15 @@ class KotlinConstraintSystemCompleter(
         return result.toList()
     }
 
-    private fun Context.getVariableReadyForFixation(
-        completionMode: ConstraintSystemCompletionMode,
-        topLevelAtoms: List<ResolvedAtom>,
-        topLevelType: UnwrappedType,
-        collectVariablesFromContext: Boolean,
-        postponedArguments: List<PostponedResolvedAtom>
-    ) = variableFixationFinder.findFirstVariableForFixation(
-        this,
-        getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms),
-        postponedArguments,
-        completionMode,
-        topLevelType
-    )
-
     private fun Context.isThereAnyReadyForFixationVariable(
         completionMode: ConstraintSystemCompletionMode,
         topLevelAtoms: List<ResolvedAtom>,
         topLevelType: UnwrappedType,
         collectVariablesFromContext: Boolean,
         postponedArguments: List<PostponedResolvedAtom>
-    ) = getVariableReadyForFixation(completionMode, topLevelAtoms, topLevelType, collectVariablesFromContext, postponedArguments) != null
+    ) = variableFixationFinder.findFirstVariableForFixation(
+        this, getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms), postponedArguments, completionMode, topLevelType
+    ) != null
 
     companion object {
         fun getOrderedNotAnalyzedPostponedArguments(topLevelAtoms: List<ResolvedAtom>): List<PostponedResolvedAtom> {

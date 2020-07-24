@@ -27,8 +27,8 @@ fun ControlFlowGraphBuilder.createInitBlockExitNode(fir: FirAnonymousInitializer
 fun ControlFlowGraphBuilder.createTypeOperatorCallNode(fir: FirTypeOperatorCall): TypeOperatorCallNode =
     TypeOperatorCallNode(currentGraph, fir, levelCounter, createId())
 
-fun ControlFlowGraphBuilder.createOperatorCallNode(fir: FirOperatorCall): OperatorCallNode =
-    OperatorCallNode(currentGraph, fir, levelCounter, createId())
+fun ControlFlowGraphBuilder.createEqualityOperatorCallNode(fir: FirEqualityOperatorCall): EqualityOperatorCallNode =
+    EqualityOperatorCallNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createWhenBranchConditionExitNode(fir: FirWhenBranch): WhenBranchConditionExitNode =
     WhenBranchConditionExitNode(currentGraph, fir, levelCounter, createId())
@@ -49,6 +49,9 @@ fun ControlFlowGraphBuilder.createBlockEnterNode(fir: FirBlock): BlockEnterNode 
 
 fun ControlFlowGraphBuilder.createBlockExitNode(fir: FirBlock): BlockExitNode = BlockExitNode(currentGraph, fir, levelCounter, createId())
 
+fun ControlFlowGraphBuilder.createPartOfClassInitializationNode(fir: FirControlFlowGraphOwner): PartOfClassInitializationNode =
+    PartOfClassInitializationNode(currentGraph, fir, levelCounter, createId())
+
 fun ControlFlowGraphBuilder.createPropertyInitializerExitNode(fir: FirProperty): PropertyInitializerExitNode =
     PropertyInitializerExitNode(currentGraph, fir, levelCounter, createId())
 
@@ -64,6 +67,9 @@ fun ControlFlowGraphBuilder.createFunctionExitNode(fir: FirFunction<*>): Functio
     FunctionExitNode(currentGraph, fir, levelCounter, createId()).also {
         currentGraph.exitNode = it
     }
+
+fun ControlFlowGraphBuilder.createLocalFunctionDeclarationNode(fir: FirFunction<*>): LocalFunctionDeclarationNode =
+    LocalFunctionDeclarationNode(currentGraph, fir, levelCounter, createId())
 
 fun ControlFlowGraphBuilder.createBinaryOrEnterNode(fir: FirBinaryLogicExpression): BinaryOrEnterNode =
     BinaryOrEnterNode(currentGraph, fir, levelCounter, createId())

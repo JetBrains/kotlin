@@ -12,9 +12,9 @@ import com.intellij.ui.table.TableView;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager;
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings;
-import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition;
 
 import javax.swing.*;
@@ -42,13 +42,15 @@ public class KotlinScriptingSettingsConfigurable implements SearchableConfigurab
         model = KotlinScriptDefinitionsModel.Companion.createModel(manager.getAllDefinitions(), settings);
 
         panelScriptDefinitionsChooser.setLayout(new BorderLayout());
+        TableView<ModelDescriptor> table = new TableView<>(model);
         panelScriptDefinitionsChooser.add(
-                ToolbarDecorator.createDecorator(new TableView<>(model))
+                ToolbarDecorator.createDecorator(table)
                         .disableAddAction()
                         .disableRemoveAction()
                         .createPanel()
         );
 
+        table.setVisibleRowCount(15);
         return root;
     }
 

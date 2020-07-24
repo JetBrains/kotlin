@@ -18,4 +18,6 @@ interface FirTypeParametersOwner : FirTypeParameterRefsOwner {
     override val typeParameters: List<FirTypeParameter>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeParametersOwner(this, data)
+
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirTypeParametersOwner
 }

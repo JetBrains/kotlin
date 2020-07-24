@@ -33,7 +33,9 @@ internal abstract class KotlinToolRunner(
     abstract val isolatedClassLoaderCacheKey: Any
     private fun getIsolatedClassLoader(): ClassLoader = isolatedClassLoadersMap.computeIfAbsent(isolatedClassLoaderCacheKey) {
         val arrayOfURLs = classpath.map { File(it.absolutePath).toURI().toURL() }.toTypedArray()
-        URLClassLoader(arrayOfURLs, null)
+        URLClassLoader(arrayOfURLs, null).apply {
+            setDefaultAssertionStatus(enableAssertions)
+        }
     }
 
     open val defaultMaxHeapSize: String get() = "3G"

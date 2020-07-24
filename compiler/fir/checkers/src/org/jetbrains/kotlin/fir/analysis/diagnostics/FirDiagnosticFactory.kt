@@ -36,7 +36,7 @@ class FirDiagnosticFactory0<E : FirSourceElement, P : PsiElement>(
     }
 }
 
-class FirDiagnosticFactory1<E : FirSourceElement, P : PsiElement, A>(
+class FirDiagnosticFactory1<E : FirSourceElement, P : PsiElement, A : Any>(
     name: String, severity: Severity, override val psiDiagnosticFactory: DiagnosticFactory1<P, A>
 ) : AbstractFirDiagnosticFactory<E, FirDiagnosticWithParameters1<E, A>>(name, severity) {
     fun on(element: E, a: A): FirDiagnosticWithParameters1<E, A> {
@@ -50,7 +50,7 @@ class FirDiagnosticFactory1<E : FirSourceElement, P : PsiElement, A>(
     }
 }
 
-class FirDiagnosticFactory2<E : FirSourceElement, P : PsiElement, A, B>(
+class FirDiagnosticFactory2<E : FirSourceElement, P : PsiElement, A : Any, B : Any>(
     name: String, severity: Severity, override val psiDiagnosticFactory: DiagnosticFactory2<P, A, B>
 ) : AbstractFirDiagnosticFactory<E, FirDiagnosticWithParameters2<E, A, B>>(name, severity) {
     fun on(element: E, a: A, b: B): FirDiagnosticWithParameters2<E, A, B> {
@@ -64,7 +64,7 @@ class FirDiagnosticFactory2<E : FirSourceElement, P : PsiElement, A, B>(
     }
 }
 
-class FirDiagnosticFactory3<E : FirSourceElement, P : PsiElement, A, B, C>(
+class FirDiagnosticFactory3<E : FirSourceElement, P : PsiElement, A : Any, B : Any, C : Any>(
     name: String, severity: Severity, override val psiDiagnosticFactory: DiagnosticFactory3<P, A, B, C>
 ) : AbstractFirDiagnosticFactory<E, FirDiagnosticWithParameters3<E, A, B, C>>(name, severity) {
     fun on(element: E, a: A, b: B, c: C): FirDiagnosticWithParameters3<E, A, B, C> {

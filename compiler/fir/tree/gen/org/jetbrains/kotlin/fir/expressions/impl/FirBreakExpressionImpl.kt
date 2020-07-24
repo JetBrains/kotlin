@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.fir.FirTarget
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBreakExpression
 import org.jetbrains.kotlin.fir.expressions.FirLoop
+import org.jetbrains.kotlin.fir.fakeElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNothingTypeRef
-import org.jetbrains.kotlin.fir.withKind
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -26,7 +26,7 @@ internal class FirBreakExpressionImpl(
     override val annotations: MutableList<FirAnnotationCall>,
     override val target: FirTarget<FirLoop>,
 ) : FirBreakExpression() {
-    override var typeRef: FirTypeRef = FirImplicitNothingTypeRef(source?.withKind(FirFakeSourceElementKind.ImplicitTypeRef))
+    override var typeRef: FirTypeRef = FirImplicitNothingTypeRef(source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef))
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)

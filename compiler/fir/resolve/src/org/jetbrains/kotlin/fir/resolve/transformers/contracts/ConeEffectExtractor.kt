@@ -96,15 +96,15 @@ class ConeEffectExtractor(
         return ConeBinaryLogicExpression(left, right, binaryLogicExpression.kind)
     }
 
-    override fun visitOperatorCall(operatorCall: FirOperatorCall, data: Nothing?): ConeContractDescriptionElement? {
-        val isNegated = when (operatorCall.operation) {
+    override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: Nothing?): ConeContractDescriptionElement? {
+        val isNegated = when (equalityOperatorCall.operation) {
             FirOperation.EQ -> false
             FirOperation.NOT_EQ -> true
             else -> return null
         }
-        val const = operatorCall.arguments[1] as? FirConstExpression<*> ?: return null
+        val const = equalityOperatorCall.arguments[1] as? FirConstExpression<*> ?: return null
         if (const.kind != FirConstKind.Null) return null
-        val arg = operatorCall.arguments[0].accept(this, null) as? ConeValueParameterReference ?: return null
+        val arg = equalityOperatorCall.arguments[0].accept(this, null) as? ConeValueParameterReference ?: return null
         return ConeIsNullPredicate(arg, isNegated)
     }
 

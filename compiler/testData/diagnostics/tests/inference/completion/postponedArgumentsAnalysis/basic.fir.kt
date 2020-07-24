@@ -68,7 +68,7 @@ fun main() {
     select(id1 { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: it"), UNRESOLVED_REFERENCE!>it<!>.<!UNRESOLVED_REFERENCE!>inv<!>() }, id2 { x: Int -> })
     selectWithInv(id1 { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: it"), UNRESOLVED_REFERENCE!>it<!>.<!UNRESOLVED_REFERENCE!>inv<!>() }, id2(Inv { x: Int -> }))
     select(id1 { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: it"), UNRESOLVED_REFERENCE!>it<!>.<!UNRESOLVED_REFERENCE!>inv<!>() }, id1 { x: Number -> TODO() }, id1(id2 { x: Int -> x }))
-    select(id1 { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: it"), UNRESOLVED_REFERENCE!>it<!>.<!UNRESOLVED_REFERENCE!>inv<!>() }, id1 { x: Number -> TODO() }, id1(id2(::takeInt)))
+    select(id1 { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!>.inv() }, id1 { x: Number -> TODO() }, id1(id2(::takeInt)))
     select(id1 { x: Inv<out Number> -> TODO() }, id1 { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: it"), UNRESOLVED_REFERENCE!>it<!>.<!UNRESOLVED_REFERENCE!>x<!>.<!UNRESOLVED_REFERENCE!>inv<!>() }, id1 { x: Inv<Int> -> TODO() })
     select(id1 { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: it"), UNRESOLVED_REFERENCE!>it<!> }, id1 { x: Inv<Number> -> TODO() }, id1 { x: Inv<Int> -> TODO() })
     select(id(id2 { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: it"), UNRESOLVED_REFERENCE!>it<!>.<!UNRESOLVED_REFERENCE!>inv<!>() }), id(id { x: Int -> x }))
@@ -184,20 +184,20 @@ fun main() {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function<kotlin.Any?>")!>select(A3(), { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: it"), UNRESOLVED_REFERENCE!>it<!> }, { a -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a<!> })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction<kotlin.Any>")!>select(A3(), <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction2<A3, kotlin.Int, kotlin.Unit>")!>A3::foo1<!>)<!>
     // Should be error as `A3::foo1` is `KFunction2`, but the remaining arguments are `KFuncion1` or `Function1`
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function<kotlin.Any?>")!>select(A3(), <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction2<A3, kotlin.Int, kotlin.Unit>")!>A3::foo1<!>, { a -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>a<!> }, { it -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>it<!> })<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction<kotlin.Any?>")!>select(A3(), <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction2<A3, kotlin.Int, kotlin.Unit>")!>A3::foo1<!>, { a -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>a<!> }, { it -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>it<!> })<!>
     // It's OK because `A3::foo2` is from companion of `A3`
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Nothing, kotlin.Any>")!>select(A3(), <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit>")!>A3::foo2<!>, { a -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>a<!> }, { it -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!> })<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Int, kotlin.Any>")!>select(A3(), <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit>")!>A3::foo2<!>, { a -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>a<!> }, { it -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!> })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Int, kotlin.Comparable<kotlin.Float & kotlin.String> & java.io.Serializable>")!>select(A4(), { x: Number -> "" })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Comparable<kotlin.Float & kotlin.String> & java.io.Serializable>")!>select(A5<Int, Int>(), { x: Number, y: Int -> "" })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("A2")!>select(A2(), id { a, b, c -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>a<!>; <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>b<!>; <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>c<!> })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function<kotlin.Any?>")!>select(id(A3()), { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: it"), UNRESOLVED_REFERENCE!>it<!> }, { a -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a<!> })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction<kotlin.Any>")!>select(A3(), id(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction2<A3, kotlin.Int, kotlin.Unit>")!>A3::foo1<!>))<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function<kotlin.Any>")!>select(A3(), <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction2<A3, kotlin.Int, kotlin.Unit>")!>A3::foo1<!>, id { a -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>a<!> }, { it -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!> })<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function<kotlin.Any>")!>select(A3(), <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction2<A3, kotlin.Int, kotlin.Unit>")!>A3::foo1<!>, { a -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>a<!> }, id { it -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!> })<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function<kotlin.Any?>")!>select(id(A3()), id(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction2<A3, kotlin.Int, kotlin.Unit>")!>A3::foo1<!>), { a -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>a<!> }, { it -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>it<!> })<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function<kotlin.Any>")!>select(id(A3()), id(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction2<A3, kotlin.Int, kotlin.Unit>")!>A3::foo1<!>), { a -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>a<!> }, id { it -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!> })<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction<kotlin.Any?>")!>select(A3(), <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction2<A3, kotlin.Int, kotlin.Unit>")!>A3::foo1<!>, id { a -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>a<!> }, { it -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!> })<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction<kotlin.Any?>")!>select(A3(), <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction2<A3, kotlin.Int, kotlin.Unit>")!>A3::foo1<!>, { a -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>a<!> }, id { it -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!> })<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction<kotlin.Any?>")!>select(id(A3()), id(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction2<A3, kotlin.Int, kotlin.Unit>")!>A3::foo1<!>), { a -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>a<!> }, { it -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>it<!> })<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction<kotlin.Any?>")!>select(id(A3()), id(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction2<A3, kotlin.Int, kotlin.Unit>")!>A3::foo1<!>), { a -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>a<!> }, id { it -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!> })<!>
     // If lambdas' parameters are specified explicitly, we don't report an error, because there is proper CST – Function<Unit>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function<kotlin.Any>")!>select(id(A3()), id(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction2<A3, kotlin.Int, kotlin.Unit>")!>A3::foo1<!>), { a: Number -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>a<!> })<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction<kotlin.Any>")!>select(id(A3()), id(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction2<A3, kotlin.Int, kotlin.Unit>")!>A3::foo1<!>), { a: Number -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>a<!> })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction<kotlin.Any>")!>select(id(A3()), id(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction2<A3, kotlin.Int, kotlin.Unit>")!>A3::foo1<!>), id { a: Number -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>a<!> })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("A4")!>select(A4(), id { x: Number -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>x<!> })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("A5<kotlin.Int, kotlin.Int>")!>select(id(A5<Int, Int>()), id { x: Number, y: Int -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>x<!>;<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>y<!> })<!>
@@ -222,7 +222,7 @@ fun main() {
 
     // Anonymous functions
     val x69: (C) -> Unit = selectB({ <!UNRESOLVED_REFERENCE!>it<!> }, { }, id(fun (x) { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!> }))
-    select(id1(fun(it) { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!>.<!UNRESOLVED_REFERENCE!>inv<!>() }), id1 { x: Number -> TODO() }, id1(id2(::takeInt)))
+    select(id1(fun(it) { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!>.inv() }), id1 { x: Number -> TODO() }, id1(id2(::takeInt)))
     select(id(fun (it) { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!> }), id(id<(Int) -> Unit> { x: Number -> Unit }))
     select(id(fun (it) { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!>.inv() }), id<(Int) -> Unit> { })
     val x70: (Int) -> Unit = selectNumber(id(fun (it) { }), id {}, id {})

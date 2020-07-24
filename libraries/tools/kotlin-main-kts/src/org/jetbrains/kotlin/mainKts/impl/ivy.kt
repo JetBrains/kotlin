@@ -24,6 +24,8 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.dependencies.ExternalDependenciesResolver
 import kotlin.script.experimental.dependencies.RepositoryCoordinates
 import kotlin.script.experimental.dependencies.impl.toRepositoryUrlOrNull
+import kotlin.script.experimental.dependencies.impl.dependencyScopes
+import kotlin.script.experimental.dependencies.impl.transitive
 
 class IvyResolver : ExternalDependenciesResolver {
 
@@ -111,10 +113,12 @@ class IvyResolver : ExternalDependenciesResolver {
             val depArtifact = DefaultDependencyArtifactDescriptor(depsDescriptor, artifactName, type, type, null, null)
             depsDescriptor.addDependencyArtifact(conf, depArtifact)
         }
-        depsDescriptor.addDependencyConfiguration("default", "master,compile")
+
+        val dependencyScopes = listOf("master") + (options.dependencyScopes ?: listOf("compile"))
+        depsDescriptor.addDependencyConfiguration("default", dependencyScopes.joinToString(","))
         moduleDescriptor.addDependency(depsDescriptor)
 
-        val isTransitive = options.flag("transitive") != false
+        val isTransitive = options.transitive != false
 
         val resolveOptions = ResolveOptions().apply {
             confs = arrayOf("default")

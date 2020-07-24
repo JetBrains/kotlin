@@ -348,6 +348,7 @@ task runMocha(type: NodeTask, dependsOn: [testClasses, installMocha, ':kotlin-te
         args = ['--reporter', 'min']
     }
 
+    args += ['--timeout', '10s']
     args += [jsTestOutputFile, kotlinTestJsTestOutputFile]
 
     execOverrides {

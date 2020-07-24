@@ -29,7 +29,7 @@ class IrLazyTypeAlias(
     override val symbol: IrTypeAliasSymbol,
     override val descriptor: TypeAliasDescriptor,
     override val name: Name,
-    override val visibility: Visibility,
+    override var visibility: Visibility,
     override val isActual: Boolean,
     stubGenerator: DeclarationStubGenerator,
     typeTranslator: TypeTranslator

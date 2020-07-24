@@ -94,6 +94,7 @@ digraph returnValuesFromLambda_kt {
     13 -> {14};
     14 -> {21};
     14 -> {16} [color=red];
+    14 -> {21} [style=dashed];
     15 -> {17} [color=red];
     16 -> {17} [color=green];
     17 -> {18};
@@ -152,6 +153,7 @@ digraph returnValuesFromLambda_kt {
     40 -> {41};
     41 -> {48};
     41 -> {43} [color=red];
+    41 -> {48} [style=dashed];
     42 -> {44} [color=red];
     43 -> {44} [color=green];
     44 -> {45};
@@ -199,6 +201,7 @@ digraph returnValuesFromLambda_kt {
     56 -> {57};
     57 -> {65};
     57 -> {59} [color=red];
+    57 -> {65} [style=dashed];
     58 -> {60} [style=dotted];
     59 -> {60} [style=dotted];
     60 -> {64 61} [style=dotted];

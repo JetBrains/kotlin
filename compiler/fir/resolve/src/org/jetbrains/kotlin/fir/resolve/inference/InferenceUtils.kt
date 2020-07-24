@@ -23,7 +23,10 @@ fun ConeKotlinType.isBuiltinFunctionalType(session: FirSession): Boolean {
     if (this !is ConeClassLikeType) return false
     val classId = fullyExpandedType(session).lookupTag.classId
     val kind = FunctionClassDescriptor.Kind.byClassNamePrefix(classId.packageFqName, classId.relativeClassName.asString()) ?: return false
-    return kind == FunctionClassDescriptor.Kind.Function || kind == FunctionClassDescriptor.Kind.SuspendFunction
+    return kind == FunctionClassDescriptor.Kind.Function ||
+            kind == FunctionClassDescriptor.Kind.KFunction ||
+            kind == FunctionClassDescriptor.Kind.SuspendFunction ||
+            kind == FunctionClassDescriptor.Kind.KSuspendFunction
 }
 
 @OptIn(ExperimentalContracts::class)
@@ -34,7 +37,8 @@ fun ConeKotlinType.isSuspendFunctionType(session: FirSession): Boolean {
     if (this !is ConeClassLikeType) return false
     val classId = this.fullyExpandedType(session).lookupTag.classId
     val kind = FunctionClassDescriptor.Kind.byClassNamePrefix(classId.packageFqName, classId.relativeClassName.asString()) ?: return false
-    return kind == FunctionClassDescriptor.Kind.SuspendFunction
+    return kind == FunctionClassDescriptor.Kind.SuspendFunction ||
+            kind == FunctionClassDescriptor.Kind.KSuspendFunction
 }
 
 fun ConeKotlinType.receiverType(expectedTypeRef: FirTypeRef?, session: FirSession): ConeKotlinType? {

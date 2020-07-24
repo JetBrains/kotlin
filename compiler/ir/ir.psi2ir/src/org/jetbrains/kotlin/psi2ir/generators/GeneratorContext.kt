@@ -14,40 +14,12 @@ import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrDeclarationReference
 import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
-import org.jetbrains.kotlin.ir.util.IdSignatureComposer
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-
-fun createGeneratorContext(
-    configuration: Psi2IrConfiguration,
-    moduleDescriptor: ModuleDescriptor,
-    bindingContext: BindingContext,
-    languageVersionSettings: LanguageVersionSettings,
-    symbolTable: SymbolTable,
-    extensions: GeneratorExtensions
-): GeneratorContext {
-    val typeTranslator = TypeTranslator(
-        symbolTable, languageVersionSettings, builtIns = moduleDescriptor.builtIns, extensions = extensions
-    )
-    val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
-    typeTranslator.constantValueGenerator = constantValueGenerator
-    constantValueGenerator.typeTranslator = typeTranslator
-    return GeneratorContext(
-        configuration,
-        moduleDescriptor,
-        bindingContext,
-        languageVersionSettings,
-        symbolTable,
-        extensions,
-        typeTranslator,
-        constantValueGenerator,
-        IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
-    )
-}
 
 class GeneratorContext(
     val configuration: Psi2IrConfiguration,

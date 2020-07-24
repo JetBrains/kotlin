@@ -13,7 +13,9 @@ public final class Outer {
 
     @kotlin.Metadata()
     final class Inner {
+        @org.jetbrains.annotations.NotNull()
         private final java.lang.String foo = null;
+        @org.jetbrains.annotations.NotNull()
         private final java.lang.String bar = null;
 
         @org.jetbrains.annotations.NotNull()
@@ -35,7 +37,9 @@ public final class Outer {
 
     @kotlin.Metadata()
     static final class Nested {
+        @org.jetbrains.annotations.NotNull()
         private final java.lang.String foo = null;
+        @org.jetbrains.annotations.NotNull()
         private final java.lang.String bar = null;
 
         @org.jetbrains.annotations.NotNull()

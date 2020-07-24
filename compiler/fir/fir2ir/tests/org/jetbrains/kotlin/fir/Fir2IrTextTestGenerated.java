@@ -289,6 +289,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/declarations/delegatedProperties.kt");
         }
 
+        @TestMetadata("deprecatedProperty.kt")
+        public void testDeprecatedProperty() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/deprecatedProperty.kt");
+        }
+
         @TestMetadata("extensionProperties.kt")
         public void testExtensionProperties() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/extensionProperties.kt");
@@ -1080,6 +1085,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @TestMetadata("kt30796.kt")
         public void testKt30796() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/kt30796.kt");
+        }
+
+        @TestMetadata("kt35730.kt")
+        public void testKt35730() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/kt35730.kt");
         }
 
         @TestMetadata("kt36956.kt")

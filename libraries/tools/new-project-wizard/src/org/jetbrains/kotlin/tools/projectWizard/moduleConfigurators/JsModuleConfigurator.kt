@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ModuleConfiguratorSetting
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ModuleConfiguratorSettingReference
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.KotlinBuildSystemPluginIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleIRListBuilder
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
+import org.jetbrains.kotlin.tools.projectWizard.templates.SimpleJsClientTemplate
 
 interface JSConfigurator : ModuleConfiguratorWithModuleType, ModuleConfiguratorWithSettings {
     override val moduleType: ModuleType get() = ModuleType.js
@@ -41,7 +43,11 @@ interface JSConfigurator : ModuleConfiguratorWithModuleType, ModuleConfiguratorW
                 if (reader.isApplication(module)) {
                     applicationCssSupport()
                 }
-                testCssSupport()
+            }
+            if (this@JSConfigurator is ModuleConfiguratorWithTests
+                && reader.settingValue(module, ModuleConfiguratorWithTests.testFramework) != KotlinTestFramework.NONE
+            ) {
+                testTask(cssSupport = reader.hasCssSupport(module))
             }
         }
     }
@@ -60,6 +66,13 @@ interface JSConfigurator : ModuleConfiguratorWithModuleType, ModuleConfiguratorW
             GenerationPhase.PROJECT_GENERATION
         ) {
             defaultValue = value(JsTargetKind.APPLICATION)
+            filter = filter@{ reference, kindCandidate ->
+                when {
+                    reference !is ModuleConfiguratorSettingReference<*, *> -> false
+                    kindCandidate == JsTargetKind.LIBRARY && reference.module?.template is SimpleJsClientTemplate -> false
+                    else -> true
+                }
+            }
         }
 
         val cssSupport by booleanSetting(
@@ -71,21 +84,17 @@ interface JSConfigurator : ModuleConfiguratorWithModuleType, ModuleConfiguratorW
     }
 }
 
-object JsSingleplatformModuleConfigurator : JSConfigurator, ModuleConfiguratorWithTests, SinglePlatformModuleConfigurator,
+abstract class JsSinglePlatformModuleConfigurator :
+    JSConfigurator,
+    ModuleConfiguratorWithTests,
+    SinglePlatformModuleConfigurator,
     ModuleConfiguratorWithSettings {
     override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> =
         super<ModuleConfiguratorWithTests>.getConfiguratorSettings() +
-                super<JSConfigurator>.getConfiguratorSettings() +
-                JSConfigurator.cssSupport
-
-    override val moduleKind = ModuleKind.singleplatformJs
+                super<JSConfigurator>.getConfiguratorSettings()
 
     @NonNls
     override val suggestedModuleName = "js"
-
-    @NonNls
-    override val id = "jsSinglepaltform"
-    override val text = KotlinNewProjectWizardBundle.message("module.configurator.js")
 
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JS
 
@@ -104,10 +113,43 @@ object JsSingleplatformModuleConfigurator : JSConfigurator, ModuleConfiguratorWi
     ): List<BuildSystemIR> = irsList {
         "kotlin" {
             "js" {
-                browserSubTarget(module, reader)
+                subTarget(module, reader)
             }
         }
     }
+
+    protected abstract fun GradleIRListBuilder.subTarget(module: Module, reader: Reader)
+}
+
+object BrowserJsSinglePlatformModuleConfigurator : JsSinglePlatformModuleConfigurator() {
+    @NonNls
+    override val id = "jsBrowserSinglePlatform"
+
+    override val moduleKind = ModuleKind.singleplatformJsBrowser
+
+    override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> {
+        return super.getConfiguratorSettings() +
+                JSConfigurator.cssSupport
+    }
+
+    override fun GradleIRListBuilder.subTarget(module: Module, reader: Reader) {
+        browserSubTarget(module, reader)
+    }
+
+    override val text = KotlinNewProjectWizardBundle.message("module.configurator.simple.js.browser")
+}
+
+object NodeJsSinglePlatformModuleConfigurator : JsSinglePlatformModuleConfigurator() {
+    @NonNls
+    override val id = "jsNodeSinglePlatform"
+
+    override val moduleKind = ModuleKind.singleplatformJsNode
+
+    override fun GradleIRListBuilder.subTarget(module: Module, reader: Reader) {
+        nodejsSubTarget(module, reader)
+    }
+
+    override val text = KotlinNewProjectWizardBundle.message("module.configurator.simple.js.node")
 }
 
 fun GradleIRListBuilder.applicationSupport() {
@@ -123,11 +165,13 @@ fun GradleIRListBuilder.applicationCssSupport() {
     }
 }
 
-fun GradleIRListBuilder.testCssSupport() {
+fun GradleIRListBuilder.testTask(cssSupport: Boolean) {
     "testTask" {
         "useKarma" {
             +"useChromeHeadless()"
-            +"webpackConfig.cssSupport.enabled = true"
+            if (cssSupport) {
+                +"webpackConfig.cssSupport.enabled = true"
+            }
         }
     }
 }

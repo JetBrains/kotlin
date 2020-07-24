@@ -65,5 +65,7 @@ abstract class FirErrorProperty : FirVariable<FirErrorProperty>(), FirDiagnostic
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorProperty
 
+    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirErrorProperty
+
     abstract override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirErrorProperty
 }

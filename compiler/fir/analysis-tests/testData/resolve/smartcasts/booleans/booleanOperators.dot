@@ -269,7 +269,7 @@ digraph booleanOperators_kt {
                         95 [label="Access variable R|<local>/x|"];
                         96 [label="Access variable R|kotlin/String.length|"];
                         97 [label="Const: Int(0)"];
-                        98 [label="Operator =="];
+                        98 [label="Equality operator =="];
                         99 [label="Exit ||"];
                     }
                     100 [label="Exit when branch condition"];

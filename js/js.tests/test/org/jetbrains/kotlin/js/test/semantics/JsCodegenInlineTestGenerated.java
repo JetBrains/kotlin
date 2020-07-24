@@ -121,6 +121,11 @@ public class JsCodegenInlineTestGenerated extends AbstractJsCodegenInlineTest {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/defineClass.kt");
         }
 
+        @TestMetadata("functionExpression.kt")
+        public void testFunctionExpression() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/functionExpression.kt");
+        }
+
         @TestMetadata("inlineCallInsideInlineLambda.kt")
         public void testInlineCallInsideInlineLambda() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/inlineCallInsideInlineLambda.kt");

@@ -13,6 +13,8 @@ sealed class FirDeclarationOrigin {
     object SamConstructor : FirDeclarationOrigin()
     object FakeOverride : FirDeclarationOrigin()
     object Enhancement : FirDeclarationOrigin()
+    object ImportedFromObject : FirDeclarationOrigin()
+    object IntersectionOverride : FirDeclarationOrigin()
 
     class Plugin(val key: FirPluginKey) : FirDeclarationOrigin()
 }

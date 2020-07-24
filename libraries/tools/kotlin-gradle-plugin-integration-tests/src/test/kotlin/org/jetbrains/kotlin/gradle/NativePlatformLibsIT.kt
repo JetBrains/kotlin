@@ -12,9 +12,20 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import org.junit.Assume
+import org.junit.BeforeClass
 import org.junit.Test
 
 class NativePlatformLibsIT : BaseGradleIT() {
+
+    companion object {
+        @BeforeClass
+        @JvmStatic
+        fun skipOnWindows() {
+            // This test class causes build timeouts on Windows CI machines.
+            // We temporary disable it for windows until a proper fix is found.
+            Assume.assumeFalse(HostManager.hostIsMingw)
+        }
+    }
 
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.FOR_MPP_SUPPORT

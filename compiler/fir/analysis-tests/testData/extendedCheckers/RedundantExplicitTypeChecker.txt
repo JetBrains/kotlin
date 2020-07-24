@@ -1,0 +1,100 @@
+FILE: RedundantExplicitTypeChecker.kt
+    @R|kotlin/annotation/Target|(vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final annotation class A : R|kotlin/Annotation| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun annotated(): R|kotlin/Unit| {
+        lval x: @R|A|() R|kotlin/Int| = Int(1)
+    }
+    public final object SomeObj : R|kotlin/Any| {
+        private constructor(): R|SomeObj| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun fer(): R|kotlin/Unit| {
+        lval x: R|kotlin/Any| = Q|SomeObj|
+    }
+    public final fun f2(y: R|kotlin/String?|): R|kotlin/String| {
+        lval f: R|kotlin/reflect/KClass<*>| = <getClass>(R|<local>/y| ?: ^f2 String())
+        ^f2 String()
+    }
+    public final object Obj : R|kotlin/Any| {
+        private constructor(): R|Obj| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract interface IA : R|kotlin/Any| {
+    }
+    public abstract interface IB : R|IA| {
+    }
+    public final fun R|IA|.extFun(x: R|IB|): R|kotlin/Unit| {
+    }
+    public final fun testWithExpectedType(): R|kotlin/Unit| {
+        lval extFun_AB_A: R|IA.(IB) -> kotlin/Unit| = Q|IA|::R|/extFun|
+    }
+    public abstract interface Point : R|kotlin/Any| {
+        public abstract val x: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public abstract val y: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+    }
+    public final class PointImpl : R|Point| {
+        public constructor(x: R|kotlin/Int|, y: R|kotlin/Int|): R|PointImpl| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final override val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public final override val y: R|kotlin/Int| = R|<local>/y|
+            public get(): R|kotlin/Int|
+
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        lval s: R|kotlin/String| = <strcat>(String(Hello ), Int(10).R|kotlin/Int.plus|(Int(1)).R|kotlin/Any.toString|())
+        lval str: R|kotlin/String?| = String()
+        lval o: R|Obj| = Q|Obj|
+        lval p: R|Point| = R|/PointImpl.PointImpl|(Int(1), Int(2))
+        lval a: R|kotlin/Boolean| = Boolean(true)
+        lval i: R|kotlin/Int| = Int(2).R|kotlin/Int.times|(Int(2))
+        lval l: R|kotlin/Long| = Long(1234567890123)
+        lval s: R|kotlin/String?| = Null(null)
+        lval sh: R|kotlin/Short| = Short(42)
+        lval integer: R|kotlin/Int| = Int(42)
+        lval piFloat: R|kotlin/Float| = Float(3.14)
+        lval piDouble: R|kotlin/Double| = Double(3.14)
+        lval charZ: R|kotlin/Char| = Char(z)
+        lvar alpha: R|kotlin/Int| = Int(0)
+    }
+    public final fun test(boolean: R|kotlin/Boolean|): R|kotlin/Unit| {
+        lval expectedLong: R|kotlin/Long| = when () {
+            R|<local>/boolean| ->  {
+                Int(42)
+            }
+            else ->  {
+                ^test Unit
+            }
+        }
+
+    }
+    public final class My : R|kotlin/Any| {
+        public constructor(): R|My| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Int|
+
+    }
+    public final val ZERO: R|kotlin/Int| = Int(0)
+        public get(): R|kotlin/Int|
+    public final fun main(): R|kotlin/Unit| {
+        lval id: R|Id| = Int(11)
+    }
+    public final typealias Id = R|kotlin/Int|

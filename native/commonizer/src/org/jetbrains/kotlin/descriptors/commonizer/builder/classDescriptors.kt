@@ -113,7 +113,6 @@ private fun CirClassConstructor.buildDescriptor(
     constructorDescriptor.isActual = isActual
 
     constructorDescriptor.setHasStableParameterNames(hasStableParameterNames)
-    constructorDescriptor.setHasSynthesizedParameterNames(hasSynthesizedParameterNames)
 
     val classTypeParameters = containingDeclaration.declaredTypeParameters
     val (constructorTypeParameters, typeParameterResolver) = typeParameters.buildDescriptorsAndTypeParameterResolver(

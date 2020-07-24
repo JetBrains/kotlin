@@ -15,15 +15,15 @@ fun <E : FirSourceElement, P : PsiElement> warning0(): DiagnosticFactory0Delegat
     return DiagnosticFactory0DelegateProvider(Severity.WARNING, null)
 }
 
-fun <E : FirSourceElement, P : PsiElement, A> warning1(): DiagnosticFactory1DelegateProvider<E, P, A> {
+fun <E : FirSourceElement, P : PsiElement, A : Any> warning1(): DiagnosticFactory1DelegateProvider<E, P, A> {
     return DiagnosticFactory1DelegateProvider(Severity.WARNING, null)
 }
 
-fun <E : FirSourceElement, P : PsiElement, A, B> warning2(): DiagnosticFactory2DelegateProvider<E, P, A, B> {
+fun <E : FirSourceElement, P : PsiElement, A : Any, B : Any> warning2(): DiagnosticFactory2DelegateProvider<E, P, A, B> {
     return DiagnosticFactory2DelegateProvider(Severity.WARNING, null)
 }
 
-fun <E : FirSourceElement, P : PsiElement, A, B, C> warning3(): DiagnosticFactory3DelegateProvider<E, P, A, B, C> {
+fun <E : FirSourceElement, P : PsiElement, A : Any, B : Any, C : Any> warning3(): DiagnosticFactory3DelegateProvider<E, P, A, B, C> {
     return DiagnosticFactory3DelegateProvider(Severity.WARNING, null)
 }
 
@@ -31,15 +31,15 @@ fun <E : FirSourceElement, P : PsiElement> error0(): DiagnosticFactory0DelegateP
     return DiagnosticFactory0DelegateProvider(Severity.ERROR, null)
 }
 
-fun <E : FirSourceElement, P : PsiElement, A> error1(): DiagnosticFactory1DelegateProvider<E, P, A> {
+fun <E : FirSourceElement, P : PsiElement, A : Any> error1(): DiagnosticFactory1DelegateProvider<E, P, A> {
     return DiagnosticFactory1DelegateProvider(Severity.ERROR, null)
 }
 
-fun <E : FirSourceElement, P : PsiElement, A, B> error2(): DiagnosticFactory2DelegateProvider<E, P, A, B> {
+fun <E : FirSourceElement, P : PsiElement, A : Any, B : Any> error2(): DiagnosticFactory2DelegateProvider<E, P, A, B> {
     return DiagnosticFactory2DelegateProvider(Severity.ERROR, null)
 }
 
-fun <E : FirSourceElement, P : PsiElement, A, B, C> error3(): DiagnosticFactory3DelegateProvider<E, P, A, B, C> {
+fun <E : FirSourceElement, P : PsiElement, A : Any, B : Any, C : Any> error3(): DiagnosticFactory3DelegateProvider<E, P, A, B, C> {
     return DiagnosticFactory3DelegateProvider(Severity.ERROR, null)
 }
 
@@ -53,19 +53,19 @@ fun <E : FirSourceElement, P : PsiElement> existing(
     return DiagnosticFactory0DelegateProvider(Severity.ERROR, psiDiagnosticFactory)
 }
 
-fun <E : FirSourceElement, P : PsiElement, A> existing(
+fun <E : FirSourceElement, P : PsiElement, A : Any> existing(
     psiDiagnosticFactory: DiagnosticFactory1<P, A>
 ): DiagnosticFactory1DelegateProvider<E, P, A> {
     return DiagnosticFactory1DelegateProvider(Severity.ERROR, psiDiagnosticFactory)
 }
 
-fun <E : FirSourceElement, P : PsiElement, A, B> existing(
+fun <E : FirSourceElement, P : PsiElement, A : Any, B : Any> existing(
     psiDiagnosticFactory: DiagnosticFactory2<P, A, B>
 ): DiagnosticFactory2DelegateProvider<E, P, A, B> {
     return DiagnosticFactory2DelegateProvider(Severity.ERROR, psiDiagnosticFactory)
 }
 
-fun <E : FirSourceElement, P : PsiElement, A, B, C> existing(
+fun <E : FirSourceElement, P : PsiElement, A : Any, B : Any, C : Any> existing(
     psiDiagnosticFactory: DiagnosticFactory3<P, A, B, C>
 ): DiagnosticFactory3DelegateProvider<E, P, A, B, C> {
     return DiagnosticFactory3DelegateProvider(Severity.ERROR, psiDiagnosticFactory)
@@ -85,7 +85,7 @@ class DiagnosticFactory0DelegateProvider<E : FirSourceElement, P : PsiElement>(
     }
 }
 
-class DiagnosticFactory1DelegateProvider<E : FirSourceElement, P : PsiElement, A>(
+class DiagnosticFactory1DelegateProvider<E : FirSourceElement, P : PsiElement, A : Any>(
     private val severity: Severity,
     private val psiDiagnosticFactory: DiagnosticFactory1<P, A>?
 ) {
@@ -97,7 +97,7 @@ class DiagnosticFactory1DelegateProvider<E : FirSourceElement, P : PsiElement, A
     }
 }
 
-class DiagnosticFactory2DelegateProvider<E : FirSourceElement, P : PsiElement, A, B>(
+class DiagnosticFactory2DelegateProvider<E : FirSourceElement, P : PsiElement, A : Any, B : Any>(
     private val severity: Severity,
     private val psiDiagnosticFactory: DiagnosticFactory2<P, A, B>?
 ) {
@@ -109,7 +109,7 @@ class DiagnosticFactory2DelegateProvider<E : FirSourceElement, P : PsiElement, A
     }
 }
 
-class DiagnosticFactory3DelegateProvider<E : FirSourceElement, P : PsiElement, A, B, C>(
+class DiagnosticFactory3DelegateProvider<E : FirSourceElement, P : PsiElement, A : Any, B : Any, C : Any>(
     private val severity: Severity,
     private val psiDiagnosticFactory: DiagnosticFactory3<P, A, B, C>?
 ) {

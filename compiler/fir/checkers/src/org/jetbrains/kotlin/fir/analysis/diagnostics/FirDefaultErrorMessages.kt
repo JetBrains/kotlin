@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMB
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGN_OPERATOR_AMBIGUITY
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_INVOCATION_KIND
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CAPTURED_IN_PLACE_LAMBDA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_MODIFIER_PAIR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESERIALIZATION_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ENUM_AS_SUPERTYPE
@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_VAR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_LABEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRING_IMPLIES_CONDITION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_INVOCATION_KIND
 
 @Suppress("unused")
 class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
@@ -80,8 +81,9 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
 
             // Control flow diagnostics
             map.put(UNINITIALIZED_VARIABLE, "{2} must be initialized before access", PROPERTY_NAME)
-            map.put(WRONG_INVOCATION_KIND, "{2} wrong invocation kind. Found possible {3} case.", TO_STRING, TO_STRING)
             map.put(WRING_IMPLIES_CONDITION, "Wrong implies condition")
+            map.put(WRONG_INVOCATION_KIND, "{2} wrong invocation kind. Found possible {3} case.", TO_STRING, TO_STRING)
+            map.put(CAPTURED_IN_PLACE_LAMBDA, "Captured in-place lambda: {2}", TO_STRING)
         }
     }
 }

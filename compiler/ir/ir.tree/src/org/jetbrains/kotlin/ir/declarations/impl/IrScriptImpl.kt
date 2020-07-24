@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -37,7 +37,6 @@ class IrScriptImpl(
         }
 
     override var annotations: List<IrConstructorCall> = SmartList()
-    override val metadata: MetadataSource? get() = null
 
     override val declarations: MutableList<IrDeclaration> = mutableListOf()
     override val statements: MutableList<IrStatement> = mutableListOf()

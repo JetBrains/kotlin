@@ -4478,6 +4478,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                         runTest("idea/testData/quickfix/createFromUsage/createFunction/call/abstract/notAbstractClass.kt");
                     }
 
+                    @TestMetadata("notWritableAbstractSuperclass.kt")
+                    public void testNotWritableAbstractSuperclass() throws Exception {
+                        runTest("idea/testData/quickfix/createFromUsage/createFunction/call/abstract/notWritableAbstractSuperclass.kt");
+                    }
+
                     @TestMetadata("otherExplicitReceiver.kt")
                     public void testOtherExplicitReceiver() throws Exception {
                         runTest("idea/testData/quickfix/createFromUsage/createFunction/call/abstract/otherExplicitReceiver.kt");
@@ -9531,6 +9536,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("createCoroutine.kt")
             public void testCreateCoroutine() throws Exception {
                 runTest("idea/testData/quickfix/modifiers/suspend/createCoroutine.kt");
+            }
+
+            @TestMetadata("inLambda.kt")
+            public void testInLambda() throws Exception {
+                runTest("idea/testData/quickfix/modifiers/suspend/inLambda.kt");
+            }
+
+            @TestMetadata("inLambda2.kt")
+            public void testInLambda2() throws Exception {
+                runTest("idea/testData/quickfix/modifiers/suspend/inLambda2.kt");
+            }
+
+            @TestMetadata("inLambda3.kt")
+            public void testInLambda3() throws Exception {
+                runTest("idea/testData/quickfix/modifiers/suspend/inLambda3.kt");
             }
 
             @TestMetadata("init.kt")

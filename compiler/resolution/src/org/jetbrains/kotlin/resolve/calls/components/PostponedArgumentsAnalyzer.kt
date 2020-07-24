@@ -58,7 +58,7 @@ class PostponedArgumentsAnalyzer(
                 )
 
             is ResolvedCallableReferenceAtom ->
-                callableReferenceResolver.processCallableReferenceArgument(c.getBuilder(), argument, diagnosticsHolder)
+                callableReferenceResolver.processCallableReferenceArgument(c.getBuilder(), argument, diagnosticsHolder, resolutionCallbacks)
 
             is ResolvedCollectionLiteralAtom -> TODO("Not supported")
 
@@ -187,7 +187,7 @@ class PostponedArgumentsAnalyzer(
 
         lambda.setAnalyzedResults(returnArgumentsInfo, subResolvedKtPrimitives)
 
-        if (inferenceSession != null) {
+        if (inferenceSession != null && lambda.atom.hasBuilderInferenceAnnotation) {
             val storageSnapshot = c.getBuilder().currentStorage()
 
             val postponedVariables = inferenceSession.inferPostponedVariables(lambda, storageSnapshot, diagnosticHolder)

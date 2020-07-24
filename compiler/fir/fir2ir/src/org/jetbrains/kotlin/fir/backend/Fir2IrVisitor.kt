@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
 import org.jetbrains.kotlin.fir.backend.generators.ClassMemberGenerator
 import org.jetbrains.kotlin.fir.backend.generators.OperatorExpressionGenerator
 import org.jetbrains.kotlin.fir.declarations.*
@@ -37,7 +38,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -55,6 +55,8 @@ class Fir2IrVisitor(
     private val components: Fir2IrComponents,
     private val conversionScope: Fir2IrConversionScope
 ) : Fir2IrComponents by components, FirDefaultVisitor<IrElement, Any?>(), IrGeneratorContextInterface {
+
+    private val annotationGenerator = AnnotationGenerator(this)
 
     private val integerApproximator = IntegerLiteralTypeApproximationTransformer(
         session.firSymbolProvider,
@@ -94,36 +96,58 @@ class Fir2IrVisitor(
                 it.accept(this@Fir2IrVisitor, data) as? IrConstructorCall
             }
 
-            (this as IrFileImpl).metadata = FirMetadataSource.File(file, components.session)
+            metadata = FirMetadataSource.File(file, components.session)
         }
     }
 
-    private fun FirDeclaration.toIrDeclaration(): IrDeclaration? {
-        if (this is FirTypeAlias) return null
-        return accept(this@Fir2IrVisitor, null) as IrDeclaration
-    }
+    private fun FirDeclaration.toIrDeclaration(): IrDeclaration? =
+        accept(this@Fir2IrVisitor, null) as IrDeclaration
 
     // ==================================================================================
 
+    override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Any?): IrElement {
+        val irTypeAlias = classifierStorage.getCachedTypeAlias(typeAlias)!!
+        annotationGenerator.generate(irTypeAlias, typeAlias)
+        return irTypeAlias
+    }
+
     override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Any?): IrElement {
         val irEnumEntry = classifierStorage.getCachedIrEnumEntry(enumEntry)!!
-        val correspondingClass = irEnumEntry.correspondingClass ?: return irEnumEntry
-        declarationStorage.enterScope(irEnumEntry)
-        classifierStorage.putEnumEntryClassInScope(enumEntry, correspondingClass)
-        converter.processAnonymousObjectMembers(enumEntry.initializer as FirAnonymousObject, correspondingClass)
-        conversionScope.withParent(correspondingClass) {
-            memberGenerator.convertClassContent(correspondingClass, enumEntry.initializer as FirAnonymousObject)
-            val constructor = correspondingClass.constructors.first()
-            irEnumEntry.initializerExpression = IrExpressionBodyImpl(
-                IrEnumConstructorCallImpl(
-                    startOffset, endOffset, enumEntry.returnTypeRef.toIrType(),
-                    constructor.symbol,
-                    typeArgumentsCount = constructor.typeParameters.size,
-                    valueArgumentsCount = constructor.valueParameters.size
+        annotationGenerator.generate(irEnumEntry, enumEntry)
+        val correspondingClass = irEnumEntry.correspondingClass
+        val initializer = enumEntry.initializer
+        // If the enum entry has its own members, we need to introduce a synthetic class.
+        if (correspondingClass != null) {
+            declarationStorage.enterScope(irEnumEntry)
+            classifierStorage.putEnumEntryClassInScope(enumEntry, correspondingClass)
+            val anonymousObject = enumEntry.initializer as FirAnonymousObject
+            converter.processAnonymousObjectMembers(anonymousObject, correspondingClass)
+            conversionScope.withParent(correspondingClass) {
+                conversionScope.withContainingFirClass(anonymousObject) {
+                    memberGenerator.convertClassContent(correspondingClass, anonymousObject)
+                }
+                val constructor = correspondingClass.constructors.first()
+                irEnumEntry.initializerExpression = IrExpressionBodyImpl(
+                    IrEnumConstructorCallImpl(
+                        startOffset, endOffset, enumEntry.returnTypeRef.toIrType(),
+                        constructor.symbol,
+                        typeArgumentsCount = constructor.typeParameters.size,
+                        valueArgumentsCount = constructor.valueParameters.size
+                    )
                 )
-            )
+            }
+            declarationStorage.leaveScope(irEnumEntry)
+        } else if (initializer is FirAnonymousObject) {
+            // Otherwise, this is a default-ish enum entry, which doesn't need its own synthetic class.
+            // During raw FIR building, we put the delegated constructor call inside an anonymous object.
+            val primaryConstructor = initializer.getPrimaryConstructorIfAny()
+            val delegatedConstructor = primaryConstructor?.delegatedConstructor
+            if (delegatedConstructor != null) {
+                with(memberGenerator) {
+                    irEnumEntry.initializerExpression = IrExpressionBodyImpl(delegatedConstructor.toIrDelegatingConstructorCall())
+                }
+            }
         }
-        declarationStorage.leaveScope(irEnumEntry)
         return irEnumEntry
     }
 
@@ -142,7 +166,9 @@ class Fir2IrVisitor(
         }
         val irClass = classifierStorage.getCachedIrClass(regularClass)!!
         return conversionScope.withParent(irClass) {
-            memberGenerator.convertClassContent(irClass, regularClass)
+            conversionScope.withContainingFirClass(regularClass) {
+                memberGenerator.convertClassContent(irClass, regularClass)
+            }
         }
     }
 
@@ -153,7 +179,9 @@ class Fir2IrVisitor(
             ?: classifierStorage.createIrAnonymousObject(anonymousObject, irParent = irParent)
         converter.processAnonymousObjectMembers(anonymousObject, irAnonymousObject)
         conversionScope.withParent(irAnonymousObject) {
-            memberGenerator.convertClassContent(irAnonymousObject, anonymousObject)
+            conversionScope.withContainingFirClass(anonymousObject) {
+                memberGenerator.convertClassContent(irAnonymousObject, anonymousObject)
+            }
         }
         val anonymousClassType = irAnonymousObject.thisReceiver!!.type
         return anonymousObject.convertWithOffsets { startOffset, endOffset ->
@@ -179,7 +207,7 @@ class Fir2IrVisitor(
     override fun visitConstructor(constructor: FirConstructor, data: Any?): IrElement {
         val irConstructor = declarationStorage.getCachedIrConstructor(constructor)!!
         return conversionScope.withFunction(irConstructor) {
-            memberGenerator.convertFunctionContent(irConstructor, constructor)
+            memberGenerator.convertFunctionContent(irConstructor, constructor, containingClass = conversionScope.containerFirClass())
         }
     }
 
@@ -193,21 +221,26 @@ class Fir2IrVisitor(
 
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?): IrElement {
         val irFunction = if (simpleFunction.visibility == Visibilities.LOCAL) {
-            val irParent = conversionScope.parent()
-            declarationStorage.createIrFunction(simpleFunction, irParent)
+            declarationStorage.createIrFunction(
+                simpleFunction, irParent = conversionScope.parent()
+            )
         } else {
             declarationStorage.getCachedIrFunction(simpleFunction)!!
         }
         return conversionScope.withFunction(irFunction) {
-            memberGenerator.convertFunctionContent(irFunction, simpleFunction)
+            memberGenerator.convertFunctionContent(
+                irFunction, simpleFunction, containingClass = conversionScope.containerFirClass()
+            )
         }
     }
 
     override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Any?): IrElement {
         return anonymousFunction.convertWithOffsets { startOffset, endOffset ->
-            val irFunction = declarationStorage.createIrFunction(anonymousFunction, conversionScope.parent())
+            val irFunction = declarationStorage.createIrFunction(
+                anonymousFunction, irParent = conversionScope.parent()
+            )
             conversionScope.withFunction(irFunction) {
-                memberGenerator.convertFunctionContent(irFunction, anonymousFunction)
+                memberGenerator.convertFunctionContent(irFunction, anonymousFunction, containingClass = null)
             }
 
             val type = anonymousFunction.typeRef.toIrType()
@@ -235,7 +268,7 @@ class Fir2IrVisitor(
         if (property.isLocal) return visitLocalVariable(property)
         val irProperty = declarationStorage.getCachedIrProperty(property)!!
         return conversionScope.withProperty(irProperty) {
-            memberGenerator.convertPropertyContent(irProperty, property)
+            memberGenerator.convertPropertyContent(irProperty, property, containingClass = conversionScope.containerFirClass())
         }
     }
 
@@ -436,8 +469,9 @@ class Fir2IrVisitor(
         if (castTypeRef is FirResolvedTypeRef && originalTypeRef is FirResolvedTypeRef) {
             val castType = castTypeRef.type
             if (castType is ConeIntersectionType) {
+                val unwrappedSymbol = (referencedSymbol as? FirCallableSymbol)?.overriddenSymbol ?: referencedSymbol
                 castType.intersectedTypes.forEach {
-                    if (it.doesContainReferencedSymbolInScope(referencedSymbol, calleeReference.name)) {
+                    if (it.doesContainReferencedSymbolInScope(unwrappedSymbol, calleeReference.name)) {
                         return implicitCastOrExpression(value, it)
                     }
                 }
@@ -805,9 +839,6 @@ class Fir2IrVisitor(
     override fun visitComparisonExpression(comparisonExpression: FirComparisonExpression, data: Any?): IrElement =
         operatorGenerator.convertComparisonExpression(comparisonExpression)
 
-    override fun visitOperatorCall(operatorCall: FirOperatorCall, data: Any?): IrElement =
-        operatorGenerator.convertOperatorCall(operatorCall)
-
     override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: Any?): IrElement {
         return stringConcatenationCall.convertWithOffsets { startOffset, endOffset ->
             IrStringConcatenationImpl(
@@ -833,6 +864,10 @@ class Fir2IrVisitor(
                 convertToIrExpression(typeOperatorCall.argument)
             )
         }
+    }
+
+    override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: Any?): IrElement {
+        return operatorGenerator.convertEqualityOperatorCall(equalityOperatorCall)
     }
 
     override fun visitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, data: Any?): IrElement {

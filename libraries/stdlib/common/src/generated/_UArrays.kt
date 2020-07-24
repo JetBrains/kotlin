@@ -3194,8 +3194,9 @@ public inline fun ShortArray.asUShortArray(): UShortArray {
  * Returns `true` if the two specified arrays are *structurally* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.3")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 @ExperimentalUnsignedTypes
 public infix fun UIntArray.contentEquals(other: UIntArray): Boolean {
     return this.contentEquals(other)
@@ -3205,8 +3206,9 @@ public infix fun UIntArray.contentEquals(other: UIntArray): Boolean {
  * Returns `true` if the two specified arrays are *structurally* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.3")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 @ExperimentalUnsignedTypes
 public infix fun ULongArray.contentEquals(other: ULongArray): Boolean {
     return this.contentEquals(other)
@@ -3216,8 +3218,9 @@ public infix fun ULongArray.contentEquals(other: ULongArray): Boolean {
  * Returns `true` if the two specified arrays are *structurally* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.3")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 @ExperimentalUnsignedTypes
 public infix fun UByteArray.contentEquals(other: UByteArray): Boolean {
     return this.contentEquals(other)
@@ -3227,8 +3230,9 @@ public infix fun UByteArray.contentEquals(other: UByteArray): Boolean {
  * Returns `true` if the two specified arrays are *structurally* equal to one another,
  * i.e. contain the same number of the same elements in the same order.
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.3")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 @ExperimentalUnsignedTypes
 public infix fun UShortArray.contentEquals(other: UShortArray): Boolean {
     return this.contentEquals(other)
@@ -3277,8 +3281,9 @@ public infix fun UShortArray?.contentEquals(other: UShortArray?): Boolean {
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.3")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 @ExperimentalUnsignedTypes
 public fun UIntArray.contentHashCode(): Int {
     return this.contentHashCode()
@@ -3287,8 +3292,9 @@ public fun UIntArray.contentHashCode(): Int {
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.3")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 @ExperimentalUnsignedTypes
 public fun ULongArray.contentHashCode(): Int {
     return this.contentHashCode()
@@ -3297,8 +3303,9 @@ public fun ULongArray.contentHashCode(): Int {
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.3")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 @ExperimentalUnsignedTypes
 public fun UByteArray.contentHashCode(): Int {
     return this.contentHashCode()
@@ -3307,8 +3314,9 @@ public fun UByteArray.contentHashCode(): Int {
 /**
  * Returns a hash code based on the contents of this array as if it is [List].
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.3")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 @ExperimentalUnsignedTypes
 public fun UShortArray.contentHashCode(): Int {
     return this.contentHashCode()
@@ -3355,8 +3363,9 @@ public fun UShortArray?.contentHashCode(): Int {
  * 
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.3")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 @ExperimentalUnsignedTypes
 public fun UIntArray.contentToString(): String {
     return this.contentToString()
@@ -3367,8 +3376,9 @@ public fun UIntArray.contentToString(): String {
  * 
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.3")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 @ExperimentalUnsignedTypes
 public fun ULongArray.contentToString(): String {
     return this.contentToString()
@@ -3379,8 +3389,9 @@ public fun ULongArray.contentToString(): String {
  * 
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.3")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 @ExperimentalUnsignedTypes
 public fun UByteArray.contentToString(): String {
     return this.contentToString()
@@ -3391,8 +3402,9 @@ public fun UByteArray.contentToString(): String {
  * 
  * @sample samples.collections.Arrays.ContentOperations.contentToString
  */
+@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.3")
-@kotlin.internal.LowPriorityInOverloadResolution
+@DeprecatedSinceKotlin(hiddenSince = "1.4")
 @ExperimentalUnsignedTypes
 public fun UShortArray.contentToString(): String {
     return this.contentToString()
@@ -5835,6 +5847,7 @@ public inline fun UShortArray.forEachIndexed(action: (index: Int, UShort) -> Uni
 }
 
 @Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UIntArray.max(): UInt? {
@@ -5842,6 +5855,7 @@ public fun UIntArray.max(): UInt? {
 }
 
 @Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun ULongArray.max(): ULong? {
@@ -5849,6 +5863,7 @@ public fun ULongArray.max(): ULong? {
 }
 
 @Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UByteArray.max(): UByte? {
@@ -5856,6 +5871,7 @@ public fun UByteArray.max(): UByte? {
 }
 
 @Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UShortArray.max(): UShort? {
@@ -5863,6 +5879,7 @@ public fun UShortArray.max(): UShort? {
 }
 
 @Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -5871,6 +5888,7 @@ public inline fun <R : Comparable<R>> UIntArray.maxBy(selector: (UInt) -> R): UI
 }
 
 @Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -5879,6 +5897,7 @@ public inline fun <R : Comparable<R>> ULongArray.maxBy(selector: (ULong) -> R): 
 }
 
 @Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -5887,6 +5906,7 @@ public inline fun <R : Comparable<R>> UByteArray.maxBy(selector: (UByte) -> R): 
 }
 
 @Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -6759,6 +6779,7 @@ public fun UShortArray.maxOrNull(): UShort? {
 }
 
 @Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UIntArray.maxWith(comparator: Comparator<in UInt>): UInt? {
@@ -6766,6 +6787,7 @@ public fun UIntArray.maxWith(comparator: Comparator<in UInt>): UInt? {
 }
 
 @Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun ULongArray.maxWith(comparator: Comparator<in ULong>): ULong? {
@@ -6773,6 +6795,7 @@ public fun ULongArray.maxWith(comparator: Comparator<in ULong>): ULong? {
 }
 
 @Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UByteArray.maxWith(comparator: Comparator<in UByte>): UByte? {
@@ -6780,6 +6803,7 @@ public fun UByteArray.maxWith(comparator: Comparator<in UByte>): UByte? {
 }
 
 @Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UShortArray.maxWith(comparator: Comparator<in UShort>): UShort? {
@@ -6847,6 +6871,7 @@ public fun UShortArray.maxWithOrNull(comparator: Comparator<in UShort>): UShort?
 }
 
 @Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UIntArray.min(): UInt? {
@@ -6854,6 +6879,7 @@ public fun UIntArray.min(): UInt? {
 }
 
 @Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun ULongArray.min(): ULong? {
@@ -6861,6 +6887,7 @@ public fun ULongArray.min(): ULong? {
 }
 
 @Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UByteArray.min(): UByte? {
@@ -6868,6 +6895,7 @@ public fun UByteArray.min(): UByte? {
 }
 
 @Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UShortArray.min(): UShort? {
@@ -6875,6 +6903,7 @@ public fun UShortArray.min(): UShort? {
 }
 
 @Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -6883,6 +6912,7 @@ public inline fun <R : Comparable<R>> UIntArray.minBy(selector: (UInt) -> R): UI
 }
 
 @Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -6891,6 +6921,7 @@ public inline fun <R : Comparable<R>> ULongArray.minBy(selector: (ULong) -> R): 
 }
 
 @Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -6899,6 +6930,7 @@ public inline fun <R : Comparable<R>> UByteArray.minBy(selector: (UByte) -> R): 
 }
 
 @Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
@@ -7771,6 +7803,7 @@ public fun UShortArray.minOrNull(): UShort? {
 }
 
 @Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UIntArray.minWith(comparator: Comparator<in UInt>): UInt? {
@@ -7778,6 +7811,7 @@ public fun UIntArray.minWith(comparator: Comparator<in UInt>): UInt? {
 }
 
 @Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun ULongArray.minWith(comparator: Comparator<in ULong>): ULong? {
@@ -7785,6 +7819,7 @@ public fun ULongArray.minWith(comparator: Comparator<in ULong>): ULong? {
 }
 
 @Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UByteArray.minWith(comparator: Comparator<in UByte>): UByte? {
@@ -7792,6 +7827,7 @@ public fun UByteArray.minWith(comparator: Comparator<in UByte>): UByte? {
 }
 
 @Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UShortArray.minWith(comparator: Comparator<in UShort>): UShort? {

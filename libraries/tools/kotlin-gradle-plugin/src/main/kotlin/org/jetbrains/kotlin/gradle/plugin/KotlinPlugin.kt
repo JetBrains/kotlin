@@ -6,11 +6,8 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import com.android.build.gradle.*
-import com.android.build.gradle.api.AndroidSourceSet
-import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.api.SourceKind
+import com.android.build.gradle.api.*
 import org.gradle.api.*
-import org.gradle.api.artifacts.ExternalDependency
 import org.gradle.api.artifacts.maven.Conf2ScopeMappingContainer
 import org.gradle.api.artifacts.maven.MavenResolver
 import org.gradle.api.attributes.Usage
@@ -32,8 +29,9 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
+import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.checkAndroidAnnotationProcessorDependencyUsage
+import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -412,7 +410,7 @@ internal abstract class AbstractKotlinPlugin(
 
         rewriteMppDependenciesInPom(target)
 
-        configureProjectGlobalSettings(project, kotlinPluginVersion)
+        configureProjectGlobalSettings(project)
         registry.register(KotlinModelBuilder(kotlinPluginVersion, null))
 
         project.components.addAll(target.components)
@@ -452,8 +450,8 @@ internal abstract class AbstractKotlinPlugin(
     }
 
     companion object {
-        fun configureProjectGlobalSettings(project: Project, kotlinPluginVersion: String) {
-            configureDefaultVersionsResolutionStrategy(project, kotlinPluginVersion)
+        fun configureProjectGlobalSettings(project: Project) {
+            customizeKotlinDependencies(project)
             configureClassInspectionForIC(project)
             project.setupGeneralKotlinExtensionParameters()
         }
@@ -590,17 +588,6 @@ internal abstract class AbstractKotlinPlugin(
     }
 }
 
-internal fun configureDefaultVersionsResolutionStrategy(project: Project, kotlinPluginVersion: String) {
-    project.configurations.all { configuration ->
-        // Use the API introduced in Gradle 4.4 to modify the dependencies directly before they are resolved:
-        configuration.withDependencies { dependencySet ->
-            dependencySet.filterIsInstance<ExternalDependency>()
-                .filter { it.group == "org.jetbrains.kotlin" && it.version.isNullOrEmpty() }
-                .forEach { it.version { constraint -> constraint.require(kotlinPluginVersion) } }
-        }
-    }
-}
-
 internal open class KotlinPlugin(
     kotlinPluginVersion: String,
     registry: ToolingModelBuilderRegistry
@@ -703,7 +690,7 @@ internal open class KotlinAndroidPlugin(
 
         applyUserDefinedAttributes(androidTarget)
 
-        configureDefaultVersionsResolutionStrategy(project, kotlinPluginVersion)
+        customizeKotlinDependencies(project)
 
         registry.register(KotlinModelBuilder(kotlinPluginVersion, androidTarget))
 
@@ -748,6 +735,11 @@ class KotlinConfigurationTools internal constructor(
 )
 
 abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTools: KotlinConfigurationTools) {
+    companion object {
+        fun kotlinSourceSetNameForAndroidSourceSet(kotlinAndroidTarget: KotlinAndroidTarget, androidSourceSetName: String) =
+            lowerCamelCaseName(kotlinAndroidTarget.disambiguationClassifier, androidSourceSetName)
+    }
+
     protected val logger = Logging.getLogger(this.javaClass)
 
     abstract fun getFlavorNames(variant: BaseVariant): List<String>
@@ -775,7 +767,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
         ext.sourceSets.all { sourceSet ->
             logger.kotlinDebug("Creating KotlinBaseSourceSet for source set $sourceSet")
             val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(
-                lowerCamelCaseName(kotlinAndroidTarget.disambiguationClassifier, sourceSet.name)
+                kotlinSourceSetNameForAndroidSourceSet(kotlinAndroidTarget, sourceSet.name)
             ).apply {
                 kotlin.srcDir(project.file(project.file("src/${sourceSet.name}/kotlin")))
                 kotlin.srcDirs(sourceSet.java.srcDirs)
@@ -875,7 +867,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
          * see [org.jetbrains.kotlin.gradle.plugin.AbstractAndroidProjectHandler.configureTarget]
          */
         (project.extensions.getByName("android") as BaseExtension).sourceSets.forEach { androidSourceSet ->
-            val kotlinSourceSetName = lowerCamelCaseName(kotlinAndroidTarget.disambiguationClassifier, androidSourceSet.name)
+            val kotlinSourceSetName = kotlinSourceSetNameForAndroidSourceSet(kotlinAndroidTarget, androidSourceSet.name)
             project.kotlinExtension.sourceSets.findByName(kotlinSourceSetName)?.let { kotlinSourceSet ->
                 addDependenciesToAndroidSourceSet(
                     androidSourceSet,

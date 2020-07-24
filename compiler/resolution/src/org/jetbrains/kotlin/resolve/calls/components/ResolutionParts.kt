@@ -238,6 +238,10 @@ internal object PostponedVariablesInitializerResolutionPart : ResolutionPart() {
             if (!callComponents.statelessCallbacks.isCoroutineCall(argument, parameter)) continue
             val receiverType = parameter.type.getReceiverTypeFromFunctionType() ?: continue
 
+            if (argument is LambdaKotlinCallArgument && !argument.hasBuilderInferenceAnnotation) {
+                argument.hasBuilderInferenceAnnotation = true
+            }
+
             for (freshVariable in resolvedCall.freshVariablesSubstitutor.freshVariables) {
                 if (resolvedCall.typeArgumentMappingByOriginal.getTypeArgument(freshVariable.originalTypeParameter) is SimpleTypeArgument)
                     continue
@@ -261,7 +265,7 @@ internal object CompatibilityOfTypeVariableAsIntersectionTypePart : ResolutionPa
 
             // See TypeBoundsImpl.computeValues(). It returns several values for such situation which means an error in OI
             if (callComponents.statelessCallbacks.isOldIntersectionIsEmpty(constraints.map { it.type }.cast())) {
-                addDiagnostic(LowerPriorityToPreserveCompatibility)
+                markCandidateForCompatibilityResolve()
                 return
             }
         }
@@ -638,7 +642,7 @@ internal object EagerResolveOfCallableReferences : ResolutionPart() {
         getSubResolvedAtoms()
             .filterIsInstance<EagerCallableReferenceAtom>()
             .forEach {
-                callableReferenceResolver.processCallableReferenceArgument(csBuilder, it, this)
+                callableReferenceResolver.processCallableReferenceArgument(csBuilder, it, this, resolutionCallbacks)
             }
     }
 }

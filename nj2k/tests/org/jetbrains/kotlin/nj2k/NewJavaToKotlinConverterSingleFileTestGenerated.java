@@ -3538,6 +3538,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/literalExpression/kt-15991.java");
         }
 
+        @TestMetadata("kt-40363.java")
+        public void testKt_40363() throws Exception {
+            runTest("nj2k/testData/newJ2k/literalExpression/kt-40363.java");
+        }
+
         @TestMetadata("long.java")
         public void testLong() throws Exception {
             runTest("nj2k/testData/newJ2k/literalExpression/long.java");

@@ -13,7 +13,9 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.Alarm
 import com.intellij.util.containers.HashSetQueue
 import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager
-import org.jetbrains.kotlin.idea.core.script.debug
+import org.jetbrains.kotlin.idea.core.script.configuration.utils.DefaultBackgroundExecutor.Companion.PROGRESS_INDICATOR_DELAY
+import org.jetbrains.kotlin.idea.core.script.configuration.utils.DefaultBackgroundExecutor.Companion.PROGRESS_INDICATOR_MIN_QUEUE
+import org.jetbrains.kotlin.idea.core.script.scriptingDebugLog
 import org.jetbrains.kotlin.idea.core.util.KotlinIdeaCoreBundle
 import java.util.*
 import javax.swing.SwingUtilities
@@ -72,7 +74,7 @@ internal class DefaultBackgroundExecutor(
         val task = LoadTask(key, actions)
 
         if (queue.add(task)) {
-            debug(task.key) { "added to update queue" }
+            scriptingDebugLog(task.key) { "added to update queue" }
 
             // If the queue is longer than PROGRESS_INDICATOR_MIN_QUEUE, show progress and cancel button
             if (queue.size > PROGRESS_INDICATOR_MIN_QUEUE) {
