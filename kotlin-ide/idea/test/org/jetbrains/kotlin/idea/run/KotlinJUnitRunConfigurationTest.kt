@@ -11,9 +11,7 @@ import com.intellij.execution.actions.ConfigurationFromContext
 import com.intellij.execution.junit.TestInClassConfigurationProducer
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ModuleRootModificationUtil.updateModel
 import com.intellij.openapi.roots.OrderRootType
-import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
@@ -70,11 +68,11 @@ class KotlinJUnitRunConfigurationTest : AbstractRunConfigurationTest() {
         val junitLibraryFile = File("$platformPath/lib/junit-4.12.jar")
         val junitLibraryVirtualFile = LocalFileSystem.getInstance().refreshAndFindFileByPath(junitLibraryFile.canonicalPath)!!
 
-        updateModel(module) { model ->
-            val editor = NewLibraryEditor()
-            editor.name = "JUnit"
-            editor.addRoot(JarFileSystem.getInstance().getJarRootForLocalFile(junitLibraryVirtualFile)!!, OrderRootType.CLASSES)
-            ConfigLibraryUtil.addLibrary(editor, model)
+        ConfigLibraryUtil.addLibrary(module, "JUnit") {
+            val jar = JarFileSystem.getInstance().getJarRootForLocalFile(junitLibraryVirtualFile)
+                ?: error("Jar not found for $junitLibraryVirtualFile")
+
+            addRoot(jar, OrderRootType.CLASSES)
         }
     }
 

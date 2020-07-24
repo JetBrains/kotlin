@@ -24,7 +24,6 @@ import com.intellij.refactoring.introduceParameter.Util
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.DocCommentPolicy
 import com.intellij.refactoring.util.occurrences.ExpressionOccurrenceManager
-import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
@@ -337,7 +336,7 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
         val fileText = FileUtil.loadFile(mainFile, true)
 
         withCustomCompilerOptions(fileText, project, module) {
-            ConfigLibraryUtil.configureLibrariesByDirective(module, PlatformTestUtil.getCommunityPath(), fileText)
+            ConfigLibraryUtil.configureLibrariesByDirective(module, fileText)
 
             val addKotlinRuntime = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// WITH_RUNTIME") != null
             if (addKotlinRuntime) {

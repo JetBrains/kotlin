@@ -10,7 +10,6 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.refactoring.util.CommonRefactoringUtil
-import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.TestActionEvent
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
@@ -58,7 +57,7 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
         var mainPsiFile: KtFile? = null
 
         try {
-            ConfigLibraryUtil.configureLibrariesByDirective(module, PlatformTestUtil.getCommunityPath(), fileText)
+            ConfigLibraryUtil.configureLibrariesByDirective(module, fileText)
 
             val mainFile = testDataFile()
             val mainFileName = mainFile.name

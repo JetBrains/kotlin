@@ -16,7 +16,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.rt.execution.junit.FileComparisonFailure
 import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.LightProjectDescriptor
-import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.highlighter.markers.TestableLineMarkerNavigator
@@ -51,10 +50,10 @@ abstract class AbstractLineMarkersTest : KotlinLightCodeInsightFixtureTestCase()
         return checkHighlighting(psiFile, documentToAnalyze, expectedHighlighting, expectedFile)
     }
 
-    fun doTest(path: String, additionalCheck: () -> Unit) {
+    fun doTest(unused: String, additionalCheck: () -> Unit) {
         val fileText = FileUtil.loadFile(testDataFile())
         try {
-            ConfigLibraryUtil.configureLibrariesByDirective(myFixture.module, PlatformTestUtil.getCommunityPath(), fileText)
+            ConfigLibraryUtil.configureLibrariesByDirective(myFixture.module, fileText)
             if (InTextDirectivesUtils.findStringWithPrefixes(fileText, "METHOD_SEPARATORS") != null) {
                 DaemonCodeAnalyzerSettings.getInstance().SHOW_METHOD_SEPARATORS = true
             }

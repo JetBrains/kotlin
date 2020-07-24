@@ -9,12 +9,10 @@ import com.intellij.codeInsight.navigation.GotoTargetHandler
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiFile
-import com.intellij.testFramework.PlatformTestUtil
 import org.jetbrains.kotlin.idea.navigation.NavigationTestUtils
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractNavigationTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -31,7 +29,7 @@ abstract class AbstractNavigationTest : KotlinLightCodeInsightFixtureTestCase() 
         val fileText = FileUtil.loadFile(mainFile, true)
 
         try {
-            ConfigLibraryUtil.configureLibrariesByDirective(module, PlatformTestUtil.getCommunityPath(), fileText)
+            ConfigLibraryUtil.configureLibrariesByDirective(module, fileText)
 
             myFixture.testDataPath = mainFile.parent
 

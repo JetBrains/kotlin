@@ -13,11 +13,9 @@ import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
-import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.EdtTestUtil
 import com.intellij.util.ThrowableRunnable
@@ -31,6 +29,7 @@ import org.jetbrains.kotlin.idea.debugger.test.util.KotlinOutputChecker
 import org.jetbrains.kotlin.idea.debugger.test.util.LogPropagator
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.addRoot
 import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.KotlinBaseTest.TestFile
 import org.jetbrains.kotlin.test.KotlinTestUtils.*
@@ -212,14 +211,10 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
     }
 
     private fun attachLibrary(model: ModifiableRootModel, libraryName: String, classes: List<File>, sources: List<File>) {
-        val customLibEditor = NewLibraryEditor().apply {
-            name = libraryName
-
-            classes.forEach { addRoot(VfsUtil.getUrlForLibraryRoot(it), OrderRootType.CLASSES) }
-            sources.forEach { addRoot(VfsUtil.getUrlForLibraryRoot(it), OrderRootType.SOURCES) }
+        ConfigLibraryUtil.addLibrary(model, libraryName) {
+            classes.forEach { addRoot(it, OrderRootType.CLASSES) }
+            sources.forEach { addRoot(it, OrderRootType.SOURCES) }
         }
-
-        ConfigLibraryUtil.addLibrary(customLibEditor, model, null)
     }
 
     override fun checkTestOutput() {

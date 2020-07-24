@@ -17,11 +17,9 @@ import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
-import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.util.ThrowableRunnable
@@ -113,10 +111,9 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
         name: String = KotlinJdkAndLibraryProjectDescriptor.LIBRARY_NAME,
         kind: PersistentLibraryKind<*>? = null
     ) {
-        ConfigLibraryUtil.addLibrary(NewLibraryEditor().apply {
-            this.name = name
-            addRoot(VfsUtil.getUrlForLibraryRoot(jar), OrderRootType.CLASSES)
-        }, this, kind)
+        ConfigLibraryUtil.addLibrary(this, name, kind) {
+            addRoot(jar, OrderRootType.CLASSES)
+        }
     }
 
     fun Module.enableMultiPlatform(additionalCompilerArguments: String = "") {

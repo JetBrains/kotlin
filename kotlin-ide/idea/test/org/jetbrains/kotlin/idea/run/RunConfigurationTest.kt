@@ -122,7 +122,10 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
     }
 
     fun testInJsModule() {
-        doTest(ConfigLibraryUtil::configureKotlinJsRuntimeAndSdk)
+        doTest { module, sdk ->
+            ConfigLibraryUtil.configureSdk(module, sdk)
+            ConfigLibraryUtil.configureKotlinStdlibJs(module)
+        }
     }
 
     fun testUpdateOnClassRename() = withTestFiles {

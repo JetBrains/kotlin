@@ -166,16 +166,11 @@ abstract class KotlinDescriptorTestCaseWithStackFrames() : KotlinDescriptorTestC
 
     private fun addLibraries(artifacts: MutableList<OrderRoot>) {
         runInEdtAndWait {
-            runWriteAction {
-                val model = ModuleRootManager.getInstance(myModule).modifiableModel
-                val customLibEditor = NewLibraryEditor().apply {
-                    for (artifact in artifacts) {
-                        classPath.add(artifact.file.presentableUrl) // for sandbox jvm
-                        addRoot(artifact.file, artifact.type)
-                    }
+            ConfigLibraryUtil.addLibrary(module, "ARTIFACTS") {
+                for (artifact in artifacts) {
+                    classPath.add(artifact.file.presentableUrl) // for sandbox jvm
+                    addRoot(artifact.file, artifact.type)
                 }
-                ConfigLibraryUtil.addLibrary(customLibEditor, model, null) // for kotlin compiler
-                model.commit()
             }
         }
     }

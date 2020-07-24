@@ -19,7 +19,6 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiFile
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.util.CommonRefactoringUtil
-import com.intellij.testFramework.PlatformTestUtil
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
 import org.jetbrains.kotlin.formatter.FormatSettingsUtil
@@ -100,7 +99,7 @@ abstract class AbstractIntentionTest : KotlinLightCodeInsightFixtureTestCase() {
 
         val fileText = FileUtil.loadFile(mainFile, true)
         withCustomCompilerOptions(fileText, project, module) {
-            ConfigLibraryUtil.configureLibrariesByDirective(module, PlatformTestUtil.getCommunityPath(), fileText)
+            ConfigLibraryUtil.configureLibrariesByDirective(module, fileText)
             configureCodeStyleAndRun(project, { FormatSettingsUtil.createConfigurator(fileText, it).configureSettings() }) {
                 configureRegistryAndRun(fileText) {
                     try {

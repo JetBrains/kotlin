@@ -40,12 +40,15 @@ abstract class AbstractMultiModuleMoveTest : KotlinMultiFileTestCase() {
 
                 modulesWithJsRuntime =
                     (config["modulesWithJsRuntime"]?.asJsonArray?.map { moduleManager.findModuleByName(it.asString!!)!! } ?: emptyList())
-                modulesWithJsRuntime.forEach { ConfigLibraryUtil.configureKotlinJsRuntimeAndSdk(it, PluginTestCaseBase.mockJdk()) }
+                modulesWithJsRuntime.forEach { module ->
+                    ConfigLibraryUtil.configureSdk(module, PluginTestCaseBase.mockJdk())
+                    ConfigLibraryUtil.configureKotlinStdlibJs(module)
+                }
 
                 modulesWithCommonRuntime =
                     (config["modulesWithCommonRuntime"]?.asJsonArray?.map { moduleManager.findModuleByName(it.asString!!)!! }
                         ?: emptyList())
-                modulesWithCommonRuntime.forEach { ConfigLibraryUtil.configureKotlinCommonRuntime(it) }
+                modulesWithCommonRuntime.forEach { ConfigLibraryUtil.configureKotlinStdlibCommon(it) }
             } else {
                 modulesWithJvmRuntime = emptyList()
                 modulesWithJsRuntime = emptyList()

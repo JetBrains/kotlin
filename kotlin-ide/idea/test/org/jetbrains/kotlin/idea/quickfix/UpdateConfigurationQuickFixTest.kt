@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.facet.FacetManager
 import com.intellij.facet.impl.FacetUtil
-import com.intellij.openapi.roots.ModuleRootModificationUtil.updateModel
 import com.intellij.openapi.roots.OrderRootType
-import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -27,7 +25,6 @@ import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.configureKotlinFacet
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
@@ -196,13 +193,9 @@ class UpdateConfigurationQuickFixTest : BasePlatformTestCase() {
         FileUtil.copy(sourcePath, tempFile)
         val tempVFile = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(tempFile) ?: error("Can't find file: $tempFile")
 
-        updateModel(myFixture.module) { model ->
-            val editor = NewLibraryEditor()
-            editor.name = "KotlinJavaRuntime"
-
-            editor.addRoot(JarFileSystem.getInstance().getJarRootForLocalFile(tempVFile)!!, OrderRootType.CLASSES)
-
-            ConfigLibraryUtil.addLibrary(editor, model)
+        ConfigLibraryUtil.addLibrary(module, "KotlinJavaRuntime") {
+            val jarRoot = JarFileSystem.getInstance().getJarRootForLocalFile(tempVFile) ?: error("Root not found for $tempVFile")
+            addRoot(jarRoot, OrderRootType.CLASSES)
         }
     }
 

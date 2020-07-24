@@ -20,8 +20,6 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.OrderRootType
-import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
-import com.intellij.openapi.vfs.VfsUtil
 import java.io.File
 
 open class KotlinJdkAndLibraryProjectDescriptor(private val libraryFiles: List<File>) : KotlinLightProjectDescriptor() {
@@ -37,16 +35,14 @@ open class KotlinJdkAndLibraryProjectDescriptor(private val libraryFiles: List<F
     override fun getSdk(): Sdk? = PluginTestCaseBase.mockJdk()
 
     override fun configureModule(module: Module, model: ModifiableRootModel) {
-        val editor = NewLibraryEditor()
-        editor.name = LIBRARY_NAME
-        for (libraryFile in libraryFiles) {
-            editor.addRoot(VfsUtil.getUrlForLibraryRoot(libraryFile), OrderRootType.CLASSES)
+        ConfigLibraryUtil.addLibrary(model, LIBRARY_NAME) {
+            for (libraryFile in libraryFiles) {
+                addRoot(libraryFile, OrderRootType.CLASSES)
+            }
         }
-
-        ConfigLibraryUtil.addLibrary(editor, model)
     }
 
     companion object {
-        val LIBRARY_NAME = "myLibrary"
+        const val LIBRARY_NAME = "myLibrary"
     }
 }

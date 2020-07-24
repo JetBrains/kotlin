@@ -17,6 +17,7 @@ import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
 import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.idea.artifacts.AdditionalKotlinArtifacts
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
@@ -31,51 +32,51 @@ import kotlin.test.assertNotNull
  * Helper for configuring kotlin runtime in tested project.
  */
 object ConfigLibraryUtil {
-    private const val LIB_NAME_JAVA_RUNTIME = "JAVA_RUNTIME_LIB_NAME"
+    private const val LIB_NAME_JAVA_RUNTIME = "KOTLIN_STDLIB_LIB_NAME"
     private const val LIB_NAME_KOTLIN_TEST = "KOTLIN_TEST_LIB_NAME"
-    private const val LIB_NAME_KOTLIN_STDLIB_JS = "KOTLIN_JS_STDLIB_NAME"
-    private const val LIB_NAME_KOTLIN_STDLIB_COMMON = "KOTLIN_COMMON_STDLIB_NAME"
+    private const val LIB_NAME_KOTLIN_STDLIB_JS = "KOTLIN_STDLIB_JS_LIB_NAME"
+    private const val LIB_NAME_KOTLIN_STDLIB_COMMON = "KOTLIN_STDLIB_COMMON_LIB_NAME"
 
-    private val LIBRARY_NAME_TO_JAR_PATH = mapOf(
-            "JUnit" to com.intellij.util.PathUtil.getJarPathForClass(junit.framework.TestCase::class.java),
-            "TestNG" to com.intellij.util.PathUtil.getJarPathForClass(org.testng.annotations.Test::class.java)
+    private val ATTACHABLE_LIBRARIES = mapOf(
+        "JUnit" to File(PathUtil.getJarPathForClass(junit.framework.TestCase::class.java)),
+        "TestNG" to File(PathUtil.getJarPathForClass(org.testng.annotations.Test::class.java))
     )
-
-    private fun getKotlinRuntimeLibEditor(libName: String, library: File): NewLibraryEditor {
-        val editor = NewLibraryEditor()
-        editor.name = libName
-        editor.addRoot(VfsUtil.getUrlForLibraryRoot(library), OrderRootType.CLASSES)
-
-        return editor
-    }
 
     fun configureKotlinRuntimeAndSdk(module: Module, sdk: Sdk) {
         configureSdk(module, sdk)
         configureKotlinRuntime(module)
     }
 
-    fun configureKotlinJsRuntimeAndSdk(module: Module, sdk: Sdk) {
-        configureSdk(module, sdk)
-        addLibrary(getKotlinRuntimeLibEditor(LIB_NAME_KOTLIN_STDLIB_JS, KotlinArtifacts.instance.kotlinStdlibJs), module, JSLibraryKind)
+    fun configureKotlinStdlibJs(module: Module) {
+        addLibrary(module, LIB_NAME_KOTLIN_STDLIB_JS, JSLibraryKind) {
+            addRoot(KotlinArtifacts.instance.kotlinStdlibJs, OrderRootType.CLASSES)
+        }
     }
 
-    fun configureKotlinCommonRuntime(module: Module) {
-        addLibrary(getKotlinRuntimeLibEditor(LIB_NAME_KOTLIN_STDLIB_COMMON, AdditionalKotlinArtifacts.kotlinStdlibCommon), module, CommonLibraryKind)
+    fun configureKotlinStdlibCommon(module: Module) {
+        addLibrary(module, LIB_NAME_KOTLIN_STDLIB_COMMON, CommonLibraryKind) {
+            addRoot(AdditionalKotlinArtifacts.kotlinStdlibCommon, OrderRootType.CLASSES)
+        }
     }
 
     fun configureKotlinRuntime(module: Module) {
-        addLibrary(getKotlinRuntimeLibEditor(LIB_NAME_JAVA_RUNTIME, KotlinArtifacts.instance.kotlinStdlib), module)
-        addLibrary(getKotlinRuntimeLibEditor(LIB_NAME_KOTLIN_TEST, KotlinArtifacts.instance.kotlinTest), module)
+        addLibrary(module, LIB_NAME_JAVA_RUNTIME) {
+            addRoot(KotlinArtifacts.instance.kotlinStdlib, OrderRootType.CLASSES)
+        }
+
+        addLibrary(module, LIB_NAME_KOTLIN_TEST) {
+            addRoot(KotlinArtifacts.instance.kotlinTest, OrderRootType.CLASSES)
+        }
     }
 
-    fun unConfigureKotlinRuntime(module: Module) {
+    fun unconfigureKotlinRuntime(module: Module) {
         removeLibrary(module, LIB_NAME_JAVA_RUNTIME)
         removeLibrary(module, LIB_NAME_KOTLIN_TEST)
     }
 
     fun unConfigureKotlinRuntimeAndSdk(module: Module, sdk: Sdk) {
         configureSdk(module, sdk)
-        unConfigureKotlinRuntime(module)
+        unconfigureKotlinRuntime(module)
     }
 
     fun unConfigureKotlinJsRuntimeAndSdk(module: Module, sdk: Sdk) {
@@ -104,19 +105,30 @@ object ConfigLibraryUtil {
         }
     }
 
-    fun addLibrary(editor: NewLibraryEditor, module: Module, kind: PersistentLibraryKind<*>? = null): Library =
+    fun addLibrary(module: Module, name: String, kind: PersistentLibraryKind<*>? = null, init: Library.ModifiableModel.() -> Unit) {
         runWriteAction {
-            val rootManager = ModuleRootManager.getInstance(module)
-            val model = rootManager.modifiableModel
+            ModuleRootManager.getInstance(module).modifiableModel.apply {
+                addLibrary(this, name, kind, init)
+                commit()
+            }
+        }
+    }
 
-            val library = try {
-                addLibrary(editor, model, kind)
-            } finally {
-                model.commit()
+    fun addLibrary(
+        rootModel: ModifiableRootModel,
+        name: String, kind: PersistentLibraryKind<*>? = null,
+        init: Library.ModifiableModel.() -> Unit
+    ) {
+        rootModel.moduleLibraryTable.modifiableModel.apply {
+            val library = createLibrary(name, kind)
+            library.modifiableModel.apply {
+                init()
+                commit()
             }
 
-            library
+            commit()
         }
+    }
 
     fun addLibrary(editor: NewLibraryEditor, model: ModifiableRootModel, kind: PersistentLibraryKind<*>? = null): Library {
         val libraryTableModifiableModel = model.moduleLibraryTable.modifiableModel
@@ -174,28 +186,12 @@ object ConfigLibraryUtil {
         }
     }
 
-    private fun addLibrary(module: Module, libraryName: String, jarPaths: List<String>) {
-        val editor = NewLibraryEditor()
-        editor.name = libraryName
-        for (jarPath in jarPaths) {
-            val jarFile = File(jarPath)
-
-            require(jarFile.exists()) {
-                "Cannot configure library with given path, file doesn't exists $jarPath"
-            }
-            editor.addRoot(VfsUtil.getUrlForLibraryRoot(jarFile), OrderRootType.CLASSES)
-        }
-
-        addLibrary(editor, module)
-    }
-
-    private fun libraryNameToJar(libraryName: String): String =
-            LIBRARY_NAME_TO_JAR_PATH[libraryName] ?: error("$libraryName isn't registered")
-
-    private fun configureLibraries(module: Module, rootPath: String, libraryNames: List<String>) {
+    private fun configureLibraries(module: Module, libraryNames: List<String>) {
         for (libraryName in libraryNames) {
-            val jarPaths = libraryName.split(";".toRegex()).dropLastWhile { it.isEmpty() }.map { libraryNameToJar(it) }
-            addLibrary(module, libraryName, jarPaths)
+            addLibrary(module, libraryName) {
+                val jar = ATTACHABLE_LIBRARIES[libraryName] ?: error("$libraryName isn't registered")
+                addRoot(jar, OrderRootType.CLASSES)
+            }
         }
     }
 
@@ -208,18 +204,22 @@ object ConfigLibraryUtil {
             }
         }
 
-        if (libraryNames.isNotEmpty()) throw AssertionError("Couldn't find the following libraries: " + libraryNames)
+        if (libraryNames.isNotEmpty()) throw AssertionError("Couldn't find the following libraries: $libraryNames")
     }
 
-    fun configureLibrariesByDirective(module: Module, rootPath: String, fileText: String) {
-        configureLibraries(module, rootPath, InTextDirectivesUtils.findListWithPrefixes(fileText, "// CONFIGURE_LIBRARY: "))
+    fun configureLibrariesByDirective(module: Module, fileText: String) {
+        configureLibraries(module, InTextDirectivesUtils.findListWithPrefixes(fileText, "// CONFIGURE_LIBRARY: "))
     }
 
     fun unconfigureLibrariesByDirective(module: Module, fileText: String) {
         val libraryNames =
-                InTextDirectivesUtils.findListWithPrefixes(fileText, "// CONFIGURE_LIBRARY: ") +
-                InTextDirectivesUtils.findListWithPrefixes(fileText, "// UNCONFIGURE_LIBRARY: ")
+            InTextDirectivesUtils.findListWithPrefixes(fileText, "// CONFIGURE_LIBRARY: ") +
+            InTextDirectivesUtils.findListWithPrefixes(fileText, "// UNCONFIGURE_LIBRARY: ")
 
         unconfigureLibrariesByName(module, libraryNames.toMutableList())
     }
+}
+
+fun Library.ModifiableModel.addRoot(file: File, kind: OrderRootType) {
+    addRoot(VfsUtil.getUrlForLibraryRoot(file), kind)
 }

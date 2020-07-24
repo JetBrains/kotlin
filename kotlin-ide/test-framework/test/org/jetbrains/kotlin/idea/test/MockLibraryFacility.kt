@@ -2,8 +2,6 @@ package org.jetbrains.kotlin.idea.test
 
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.OrderRootType
-import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
-import com.intellij.openapi.util.io.FileUtilRt
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.platform.js.JsPlatform
 import org.jetbrains.kotlin.test.KotlinCompilerStandalone
@@ -36,20 +34,16 @@ data class MockLibraryFacility(
             classpath = classpath
         ).compile()
 
-        val libraryEditor = NewLibraryEditor().apply {
-            name = MOCK_LIBRARY_NAME
-
-            addRoot("jar://" + FileUtilRt.toSystemIndependentName(libraryJar.absolutePath) + "!/", OrderRootType.CLASSES)
+        val kind = if (platform is JsPlatform) JSLibraryKind else null
+        ConfigLibraryUtil.addLibrary(module, MOCK_LIBRARY_NAME, kind) {
+            addRoot(libraryJar, OrderRootType.CLASSES)
 
             if (attachSources) {
                 for (source in sources) {
-                    addRoot("file://" + FileUtilRt.toSystemIndependentName(source.absolutePath), OrderRootType.SOURCES)
+                    addRoot(source, OrderRootType.SOURCES)
                 }
             }
         }
-
-        val libraryKind = if (platform is JsPlatform) JSLibraryKind else null
-        ConfigLibraryUtil.addLibrary(libraryEditor, module, libraryKind)
     }
 
     fun tearDown(module: Module) {
