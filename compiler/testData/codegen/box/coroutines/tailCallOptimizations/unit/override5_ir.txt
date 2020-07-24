@@ -1,10 +1,12 @@
 @kotlin.Metadata
 public interface Base {
+    // source: 'override5.kt'
     public abstract @org.jetbrains.annotations.Nullable method generic(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
 public final class Override5Kt$box$1$invokeSuspend$$inlined$inlineMe$1 {
+    // source: 'override5.kt'
     inner (anonymous) class Override5Kt$box$1$invokeSuspend$$inlined$inlineMe$1
     inner (anonymous) class Override5Kt$inlineMe$1$generic$2
     public method <init>(): void
@@ -14,6 +16,7 @@ public final class Override5Kt$box$1$invokeSuspend$$inlined$inlineMe$1 {
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class Override5Kt$box$1 {
+    // source: 'override5.kt'
     field label: int
     inner (anonymous) class Override5Kt$box$1
     method <init>(p0: kotlin.coroutines.Continuation): void
@@ -25,6 +28,7 @@ final class Override5Kt$box$1 {
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 public final class Override5Kt$inlineMe$1$generic$1 {
+    // source: 'override5.kt'
     field L$0: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
@@ -37,6 +41,7 @@ public final class Override5Kt$inlineMe$1$generic$1 {
 
 @kotlin.Metadata
 public final class Override5Kt$inlineMe$1$generic$2 {
+    // source: 'override5.kt'
     public final static field INSTANCE: Override5Kt$inlineMe$1$generic$2
     inner (anonymous) class Override5Kt$inlineMe$1
     inner (anonymous) class Override5Kt$inlineMe$1$generic$2
@@ -48,6 +53,7 @@ public final class Override5Kt$inlineMe$1$generic$2 {
 
 @kotlin.Metadata
 public final class Override5Kt$inlineMe$1 {
+    // source: 'override5.kt'
     synthetic final field $c: kotlin.jvm.functions.Function1
     inner (anonymous) class Override5Kt$inlineMe$1
     inner (anonymous) class Override5Kt$inlineMe$1$generic$1
@@ -59,6 +65,7 @@ public final class Override5Kt$inlineMe$1 {
 
 @kotlin.Metadata
 public final class Override5Kt {
+    // source: 'override5.kt'
     private static @org.jetbrains.annotations.Nullable field c: kotlin.coroutines.Continuation
     inner (anonymous) class Override5Kt$box$1
     inner (anonymous) class Override5Kt$inlineMe$1

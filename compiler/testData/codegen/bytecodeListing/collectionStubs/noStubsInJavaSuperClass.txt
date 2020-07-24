@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public class test/A {
+    // source: 'main.kt'
     public method <init>(): void
     public method add(p0: java.lang.Object): boolean
     public method addAll(p0: java.util.Collection): boolean
@@ -19,6 +20,7 @@ public class test/A {
 
 @kotlin.Metadata
 public final class test/C {
+    // source: 'main.kt'
     public method <init>(): void
     public method add(p0: int, p1: java.lang.Object): void
     public method addAll(p0: int, p1: java.util.Collection): boolean
@@ -33,4 +35,6 @@ public final class test/C {
 }
 
 @kotlin.Metadata
-public interface test/L
+public interface test/L {
+    // source: 'main.kt'
+}

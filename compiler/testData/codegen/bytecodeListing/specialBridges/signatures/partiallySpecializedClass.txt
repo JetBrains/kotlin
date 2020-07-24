@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public abstract class<<V:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/Map<Ljava/lang/String;TV;>;Lkotlin/jvm/internal/markers/KMutableMap;>  AbstractStringMap {
+    // source: 'partiallySpecializedClass.kt'
     public @org.jetbrains.annotations.NotNull <()Ljava/util/Collection<TV;>;> method getValues(): java.util.Collection
     public bridge final <()Ljava/util/Collection<TV;>;> method values(): java.util.Collection
     public @org.jetbrains.annotations.NotNull <()Ljava/util/Set<Ljava/lang/String;>;> method getKeys(): java.util.Set
@@ -26,6 +27,7 @@ public abstract class<<V:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/Map<Lja
 
 @kotlin.Metadata
 public final class<<V:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/Map<Ljava/lang/String;TV;>;Lkotlin/jvm/internal/markers/KMutableMap;>  StringMap {
+    // source: 'partiallySpecializedClass.kt'
     public @org.jetbrains.annotations.NotNull <()Ljava/util/Collection<TV;>;> method getValues(): java.util.Collection
     public bridge final <()Ljava/util/Collection<TV;>;> method values(): java.util.Collection
     public @org.jetbrains.annotations.NotNull <()Ljava/util/Set<Ljava/lang/String;>;> method getKeys(): java.util.Set

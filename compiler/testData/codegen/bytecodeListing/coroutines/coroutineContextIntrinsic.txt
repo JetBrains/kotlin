@@ -1,5 +1,6 @@
 @kotlin.Metadata
 final class CoroutineContextIntrinsicKt$notTailCall$1 {
+    // source: 'coroutineContextIntrinsic.kt'
     synthetic field data: java.lang.Object
     synthetic field exception: java.lang.Throwable
     inner (anonymous) class CoroutineContextIntrinsicKt$notTailCall$1
@@ -11,6 +12,7 @@ final class CoroutineContextIntrinsicKt$notTailCall$1 {
 
 @kotlin.Metadata
 public final class CoroutineContextIntrinsicKt {
+    // source: 'coroutineContextIntrinsic.kt'
     inner (anonymous) class CoroutineContextIntrinsicKt$notTailCall$1
     public final static @org.jetbrains.annotations.Nullable method mustBeTailCall(@org.jetbrains.annotations.NotNull p0: COROUTINES_PACKAGE.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method notTailCall(@org.jetbrains.annotations.NotNull p0: COROUTINES_PACKAGE.Continuation): java.lang.Object

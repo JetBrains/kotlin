@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public abstract class A {
+    // source: 'noSpecialBridgeIfPresentInSuperClass.kt'
     public method <init>(): void
     public method add(p0: int, p1: java.lang.Object): void
     public method add(p0: java.lang.Object): boolean
@@ -25,5 +26,6 @@ public abstract class A {
 
 @kotlin.Metadata
 public abstract class B {
+    // source: 'noSpecialBridgeIfPresentInSuperClass.kt'
     public method <init>(): void
 }

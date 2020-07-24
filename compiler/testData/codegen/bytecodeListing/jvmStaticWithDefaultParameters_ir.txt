@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public final class AnObject {
+    // source: 'jvmStaticWithDefaultParameters.kt'
     public final static @org.jetbrains.annotations.NotNull field INSTANCE: AnObject
     static method <clinit>(): void
     private method <init>(): void
@@ -9,6 +10,7 @@ public final class AnObject {
 
 @kotlin.Metadata
 public final class WithCompanion$Companion {
+    // source: 'jvmStaticWithDefaultParameters.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic static method foo$default(p0: WithCompanion$Companion, p1: int, p2: int, p3: java.lang.Object): void
@@ -18,6 +20,7 @@ public final class WithCompanion$Companion {
 
 @kotlin.Metadata
 public final class WithCompanion {
+    // source: 'jvmStaticWithDefaultParameters.kt'
     public final static @org.jetbrains.annotations.NotNull field Companion: WithCompanion$Companion
     static method <clinit>(): void
     public method <init>(): void

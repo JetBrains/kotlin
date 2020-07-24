@@ -1,54 +1,70 @@
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class org/springframework/boot/test/context/SpringBootTest
+public annotation class org/springframework/boot/test/context/SpringBootTest {
+    // source: 'springBootTest.kt'
+}
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class org/springframework/cache/annotation/Cacheable
+public annotation class org/springframework/cache/annotation/Cacheable {
+    // source: 'cacheable.kt'
+}
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class org/springframework/scheduling/annotation/Async
+public annotation class org/springframework/scheduling/annotation/Async {
+    // source: 'async.kt'
+}
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class org/springframework/stereotype/Component
+public annotation class org/springframework/stereotype/Component {
+    // source: 'component.kt'
+}
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class org/springframework/transaction/annotation/Transactional
+public annotation class org/springframework/transaction/annotation/Transactional {
+    // source: 'transactional.kt'
+}
 
 @kotlin.Metadata
 public final class test/NoAnno {
+    // source: 'main.kt'
     public method <init>(): void
 }
 
 @org.springframework.scheduling.annotation.Async
 @kotlin.Metadata
 public class test/TestAsync {
+    // source: 'main.kt'
     public method <init>(): void
 }
 
 @org.springframework.cache.annotation.Cacheable
 @kotlin.Metadata
 public class test/TestCacheable {
+    // source: 'main.kt'
     public method <init>(): void
 }
 
 @org.springframework.stereotype.Component
 @kotlin.Metadata
 public class test/TestComponent {
+    // source: 'main.kt'
     public method <init>(): void
 }
 
 @org.springframework.boot.test.context.SpringBootTest
 @kotlin.Metadata
 public class test/TestSpringBootTest {
+    // source: 'main.kt'
     public method <init>(): void
 }
 
 @org.springframework.transaction.annotation.Transactional
 @kotlin.Metadata
 public class test/TestTransactional {
+    // source: 'main.kt'
     public method <init>(): void
 }

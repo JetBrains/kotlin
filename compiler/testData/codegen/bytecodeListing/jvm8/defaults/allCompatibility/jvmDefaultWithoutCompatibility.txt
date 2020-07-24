@@ -1,12 +1,14 @@
 @kotlin.jvm.JvmDefaultWithoutCompatibility
 @kotlin.Metadata
 public final class KotlinClass {
+    // source: 'jvmDefaultWithoutCompatibility.kt'
     public method <init>(): void
 }
 
 @kotlin.jvm.JvmDefaultWithoutCompatibility
 @kotlin.Metadata
 public interface NoDefaultImpl {
+    // source: 'jvmDefaultWithoutCompatibility.kt'
     public @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
     public method test(): void
 }
@@ -14,11 +16,13 @@ public interface NoDefaultImpl {
 @kotlin.jvm.JvmDefaultWithoutCompatibility
 @kotlin.Metadata
 public interface NoDefaultImpl2FromDefaultImpls {
+    // source: 'jvmDefaultWithoutCompatibility.kt'
     public method test2(): void
 }
 
 @kotlin.Metadata
 public final class WithDefaultImpl$DefaultImpls {
+    // source: 'jvmDefaultWithoutCompatibility.kt'
     public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method getProp(@org.jetbrains.annotations.NotNull p0: WithDefaultImpl): java.lang.String
     public deprecated static @java.lang.Deprecated method test(@org.jetbrains.annotations.NotNull p0: WithDefaultImpl): void
     public final inner class WithDefaultImpl$DefaultImpls
@@ -26,6 +30,7 @@ public final class WithDefaultImpl$DefaultImpls {
 
 @kotlin.Metadata
 public interface WithDefaultImpl {
+    // source: 'jvmDefaultWithoutCompatibility.kt'
     public synthetic static method access$getProp$jd(p0: WithDefaultImpl): java.lang.String
     public synthetic static method access$test$jd(p0: WithDefaultImpl): void
     public final inner class WithDefaultImpl$DefaultImpls
@@ -33,6 +38,7 @@ public interface WithDefaultImpl {
 
 @kotlin.Metadata
 public final class WithDefaultImplPure$DefaultImpls {
+    // source: 'jvmDefaultWithoutCompatibility.kt'
     public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method getProp(@org.jetbrains.annotations.NotNull p0: WithDefaultImplPure): java.lang.String
     public deprecated static @java.lang.Deprecated method test(@org.jetbrains.annotations.NotNull p0: WithDefaultImplPure): void
     public final inner class WithDefaultImplPure$DefaultImpls
@@ -40,6 +46,7 @@ public final class WithDefaultImplPure$DefaultImpls {
 
 @kotlin.Metadata
 public interface WithDefaultImplPure {
+    // source: 'jvmDefaultWithoutCompatibility.kt'
     public synthetic static method access$getProp$jd(p0: WithDefaultImplPure): java.lang.String
     public synthetic static method access$test$jd(p0: WithDefaultImplPure): void
     public @org.jetbrains.annotations.NotNull method getProp(): java.lang.String

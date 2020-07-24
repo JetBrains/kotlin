@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public interface ImmutableCollection {
+    // source: 'immutableCollection.kt'
     public abstract @org.jetbrains.annotations.NotNull method add(p0: java.lang.Object): ImmutableCollection
     public abstract @org.jetbrains.annotations.NotNull method addAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): ImmutableCollection
     public abstract @org.jetbrains.annotations.NotNull method remove(p0: java.lang.Object): ImmutableCollection
@@ -7,6 +8,7 @@ public interface ImmutableCollection {
 
 @kotlin.Metadata
 public final class ImmutableCollectionmpl {
+    // source: 'immutableCollection.kt'
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method add(p0: java.lang.Object): ImmutableCollection
     public method add(p0: java.lang.Object): boolean

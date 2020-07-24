@@ -1,14 +1,24 @@
 @kotlin.Metadata
-public interface K
+public interface K {
+    // source: 'K.kt'
+}
 
 @kotlin.Metadata
-public interface MyList
+public interface MyList {
+    // source: 'K.kt'
+}
 
 @kotlin.Metadata
-public interface MyMap
+public interface MyMap {
+    // source: 'K.kt'
+}
 
 @kotlin.Metadata
-public interface MyMap2
+public interface MyMap2 {
+    // source: 'K.kt'
+}
 
 @kotlin.Metadata
-public interface MySet
+public interface MySet {
+    // source: 'K.kt'
+}

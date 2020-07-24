@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public final class A {
+    // source: 'callableNameIntrinsic.kt'
     private final @org.jetbrains.annotations.NotNull field a: java.lang.String
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method b(): java.lang.String

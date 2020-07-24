@@ -1,6 +1,7 @@
 @kotlin.Metadata
 @kotlin.coroutines.jvm.internal.DebugMetadata
 final class OomInReturnUnitKt$test$1 {
+    // source: 'oomInReturnUnit.kt'
     field L$0: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
@@ -11,6 +12,7 @@ final class OomInReturnUnitKt$test$1 {
 
 @kotlin.Metadata
 public final class OomInReturnUnitKt {
+    // source: 'oomInReturnUnit.kt'
     inner (anonymous) class OomInReturnUnitKt$test$1
     public final static @org.jetbrains.annotations.Nullable method some(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
     public final static @org.jetbrains.annotations.Nullable method test(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object

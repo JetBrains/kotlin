@@ -1,6 +1,7 @@
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class LambdaWithLongReceiverKt$box$1$1 {
+    // source: 'lambdaWithLongReceiver.kt'
     field label: int
     private synthetic field p$: long
     inner (anonymous) class LambdaWithLongReceiverKt$box$1
@@ -14,6 +15,7 @@ final class LambdaWithLongReceiverKt$box$1$1 {
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class LambdaWithLongReceiverKt$box$1 {
+    // source: 'lambdaWithLongReceiver.kt'
     synthetic final field $res: kotlin.jvm.internal.Ref$ObjectRef
     field L$0: java.lang.Object
     field label: int
@@ -27,6 +29,7 @@ final class LambdaWithLongReceiverKt$box$1 {
 
 @kotlin.Metadata
 public final class LambdaWithLongReceiverKt {
+    // source: 'lambdaWithLongReceiver.kt'
     inner (anonymous) class LambdaWithLongReceiverKt$box$1
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void

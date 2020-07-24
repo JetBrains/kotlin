@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public final class A {
+    // source: 'defaultTargets.kt'
     private final @AnnField @AnnParameterField @AnnTypeField field a: int
     private final @AnnField @AnnTypeField field x: int
     public method <init>(@AnnParameterProperty @AnnParameterField p0: int): void
@@ -13,46 +14,61 @@ public final class A {
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public annotation class AnnField
+public annotation class AnnField {
+    // source: 'defaultTargets.kt'
+}
 
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public annotation class AnnFieldProperty
+public annotation class AnnFieldProperty {
+    // source: 'defaultTargets.kt'
+}
 
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public annotation class AnnParameterField
+public annotation class AnnParameterField {
+    // source: 'defaultTargets.kt'
+}
 
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public annotation class AnnParameterProperty
+public annotation class AnnParameterProperty {
+    // source: 'defaultTargets.kt'
+}
 
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public annotation class AnnProperty
+public annotation class AnnProperty {
+    // source: 'defaultTargets.kt'
+}
 
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public annotation class AnnTypeField
+public annotation class AnnTypeField {
+    // source: 'defaultTargets.kt'
+}
 
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public annotation class Anno
+public annotation class Anno {
+    // source: 'defaultTargets.kt'
+}
 
 @kotlin.Metadata
 public final class DefaultTargetsKt {
+    // source: 'defaultTargets.kt'
     private final static @Anno field p2: int
     static method <clinit>(): void
     public final static method getP2(): int

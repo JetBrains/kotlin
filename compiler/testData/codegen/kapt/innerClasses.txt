@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public final class test/TopLevel$Companion {
+    // source: 'innerClasses.kt'
     private method <init>(): void
     public final method a(): void
     public synthetic deprecated static @kotlin.jvm.JvmStatic method getQ$annotations(): void
@@ -9,11 +10,13 @@ public final class test/TopLevel$Companion {
 
 @kotlin.Metadata
 public interface test/TopLevel$InnerInterface {
+    // source: 'innerClasses.kt'
     public inner class test/TopLevel$InnerInterface
 }
 
 @kotlin.Metadata
 public final class test/TopLevel$InnerObject {
+    // source: 'innerClasses.kt'
     public final static @org.jetbrains.annotations.NotNull field INSTANCE: test.TopLevel$InnerObject
     private method <init>(): void
     public final inner class test/TopLevel$InnerObject
@@ -21,6 +24,7 @@ public final class test/TopLevel$InnerObject {
 
 @kotlin.Metadata
 public final class test/TopLevel$NestedClass$NestedInnerClass {
+    // source: 'innerClasses.kt'
     synthetic final field this$0: test.TopLevel$NestedClass
     public method <init>(p0: test.TopLevel$NestedClass): void
     public final inner class test/TopLevel$NestedClass
@@ -29,6 +33,7 @@ public final class test/TopLevel$NestedClass$NestedInnerClass {
 
 @kotlin.Metadata
 public final class test/TopLevel$NestedClass {
+    // source: 'innerClasses.kt'
     public method <init>(): void
     public final inner class test/TopLevel$NestedClass
     public final inner class test/TopLevel$NestedClass$NestedInnerClass
@@ -36,6 +41,7 @@ public final class test/TopLevel$NestedClass {
 
 @kotlin.Metadata
 public final class test/TopLevel {
+    // source: 'innerClasses.kt'
     public final static @org.jetbrains.annotations.NotNull field Companion: test.TopLevel$Companion
     private final static @org.jetbrains.annotations.NotNull field q: java.lang.String
     private final @org.jetbrains.annotations.NotNull field x: java.lang.String

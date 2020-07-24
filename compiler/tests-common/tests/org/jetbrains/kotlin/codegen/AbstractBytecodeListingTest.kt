@@ -179,6 +179,14 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
             }
         }.toString()
 
+    override fun visitSource(source: String?, debug: String?) {
+        if (source != null) {
+            declarationsInsideClass.add(Declaration("// source: '$source'"))
+        } else {
+            declarationsInsideClass.add(Declaration("// source: null"))
+        }
+    }
+
     override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
         if (!filter.shouldWriteMethod(access, name, desc)) {
             return null

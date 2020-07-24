@@ -1,5 +1,6 @@
 @kotlin.Metadata
 final class InlineWithoutStateMachineKt$box$1 {
+    // source: 'inlineWithoutStateMachine.kt'
     synthetic final field $result: kotlin.jvm.internal.Ref$ObjectRef
     field L$0: java.lang.Object
     field L$1: java.lang.Object
@@ -12,6 +13,7 @@ final class InlineWithoutStateMachineKt$box$1 {
 
 @kotlin.Metadata
 final class InlineWithoutStateMachineKt$complexSuspend$1 {
+    // source: 'inlineWithoutStateMachine.kt'
     field L$0: java.lang.Object
     field L$1: java.lang.Object
     synthetic field data: java.lang.Object
@@ -25,6 +27,7 @@ final class InlineWithoutStateMachineKt$complexSuspend$1 {
 
 @kotlin.Metadata
 public final class InlineWithoutStateMachineKt {
+    // source: 'inlineWithoutStateMachine.kt'
     inner (anonymous) class InlineWithoutStateMachineKt$box$1
     inner (anonymous) class InlineWithoutStateMachineKt$complexSuspend$1
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String

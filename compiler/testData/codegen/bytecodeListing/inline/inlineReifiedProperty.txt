@@ -1,10 +1,12 @@
 @kotlin.Metadata
 public final class Foo {
+    // source: 'inlineReifiedProperty.kt'
     public method <init>(): void
     public synthetic final method getExtProp(p0: java.lang.Object): java.lang.String
 }
 
 @kotlin.Metadata
 public final class InlineReifiedPropertyKt {
+    // source: 'inlineReifiedProperty.kt'
     public synthetic final static method getExtProp(p0: java.lang.Object): java.lang.String
 }

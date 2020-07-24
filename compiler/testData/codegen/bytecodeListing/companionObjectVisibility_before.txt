@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public final class TestInternalCompanionInClass$Companion {
+    // source: 'companionObjectVisibility_before.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final inner class TestInternalCompanionInClass$Companion
@@ -7,6 +8,7 @@ public final class TestInternalCompanionInClass$Companion {
 
 @kotlin.Metadata
 public final class TestInternalCompanionInClass {
+    // source: 'companionObjectVisibility_before.kt'
     public final static @org.jetbrains.annotations.NotNull field Companion: TestInternalCompanionInClass$Companion
     static method <clinit>(): void
     public method <init>(): void
@@ -15,6 +17,7 @@ public final class TestInternalCompanionInClass {
 
 @kotlin.Metadata
 final class TestPrivateCompanionInClass$Companion {
+    // source: 'companionObjectVisibility_before.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     private final inner class TestPrivateCompanionInClass$Companion
@@ -22,6 +25,7 @@ final class TestPrivateCompanionInClass$Companion {
 
 @kotlin.Metadata
 public final class TestPrivateCompanionInClass {
+    // source: 'companionObjectVisibility_before.kt'
     public deprecated final static @java.lang.Deprecated @org.jetbrains.annotations.NotNull field Companion: TestPrivateCompanionInClass$Companion
     static method <clinit>(): void
     public method <init>(): void
@@ -30,6 +34,7 @@ public final class TestPrivateCompanionInClass {
 
 @kotlin.Metadata
 final class TestPrivateCompanionInInterface$Companion {
+    // source: 'companionObjectVisibility_before.kt'
     synthetic final static field $$INSTANCE: TestPrivateCompanionInInterface$Companion
     static method <clinit>(): void
     private method <init>(): void
@@ -38,6 +43,7 @@ final class TestPrivateCompanionInInterface$Companion {
 
 @kotlin.Metadata
 public interface TestPrivateCompanionInInterface {
+    // source: 'companionObjectVisibility_before.kt'
     public deprecated final static @java.lang.Deprecated @org.jetbrains.annotations.NotNull field Companion: TestPrivateCompanionInInterface$Companion
     static method <clinit>(): void
     public final inner class TestPrivateCompanionInInterface$Companion
@@ -45,6 +51,7 @@ public interface TestPrivateCompanionInInterface {
 
 @kotlin.Metadata
 public final class TestProtectedCompanionInClass$Companion {
+    // source: 'companionObjectVisibility_before.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     protected final inner class TestProtectedCompanionInClass$Companion
@@ -52,6 +59,7 @@ public final class TestProtectedCompanionInClass$Companion {
 
 @kotlin.Metadata
 public class TestProtectedCompanionInClass {
+    // source: 'companionObjectVisibility_before.kt'
     public deprecated final static @java.lang.Deprecated @org.jetbrains.annotations.NotNull field Companion: TestProtectedCompanionInClass$Companion
     static method <clinit>(): void
     public method <init>(): void

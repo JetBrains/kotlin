@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public final class DeprecatedLateinitVarKt {
+    // source: 'deprecatedLateinitVar.kt'
     public deprecated static field lateinitVar: java.lang.String
     public synthetic deprecated static @kotlin.Deprecated method getLateinitVar$annotations(): void
     public deprecated final static @org.jetbrains.annotations.NotNull method getLateinitVar(): java.lang.String

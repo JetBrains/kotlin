@@ -1,8 +1,11 @@
 @kotlin.Metadata
-public interface test/A
+public interface test/A {
+    // source: 'main.kt'
+}
 
 @kotlin.Metadata
 public abstract class test/B {
+    // source: 'main.kt'
     public method <init>(): void
     public method add(p0: java.lang.Object): boolean
     public method addAll(p0: java.util.Collection): boolean

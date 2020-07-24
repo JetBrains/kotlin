@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public abstract class A {
+    // source: 'noRemoveAtInReadOnly.kt'
     public method <init>(): void
     public method add(p0: int, p1: java.lang.Object): void
     public method add(p0: java.lang.Object): boolean
@@ -25,6 +26,7 @@ public abstract class A {
 
 @kotlin.Metadata
 public abstract class B {
+    // source: 'noRemoveAtInReadOnly.kt'
     public method <init>(): void
     public method add(p0: int): boolean
     public method add(p0: int, p1: int): void

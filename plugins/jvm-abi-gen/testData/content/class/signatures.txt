@@ -1,10 +1,12 @@
 @kotlin.Metadata
 public final class test/BaseClass$Companion {
+    // source: 'classes.kt'
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final inner class test/BaseClass$Companion
 }
 @kotlin.Metadata
 public class test/BaseClass {
+    // source: 'classes.kt'
     public final static @org.jetbrains.annotations.NotNull field Companion: test.BaseClass$Companion
     public final static field basePublicConst: int
     public method <init>(): void
@@ -18,25 +20,31 @@ public class test/BaseClass {
 }
 @kotlin.Metadata
 public final class test/Class$NestedInnerClass$NestedNestedInnerClass {
+    // source: 'classes.kt'
     public method <init>(): void
     private final inner class test/Class$NestedInnerClass
     public final inner class test/Class$NestedInnerClass$NestedNestedInnerClass
 }
 @kotlin.Metadata
 final class test/Class$NestedInnerClass {
+    // source: 'classes.kt'
     public method <init>(): void
     private final inner class test/Class$NestedInnerClass
     public final inner class test/Class$NestedInnerClass$NestedNestedInnerClass
 }
 @kotlin.Metadata
 public final class test/Class {
+    // source: 'classes.kt'
     public method <init>(): void
     public final method classPublicMethod(): void
     private final inner class test/Class$NestedInnerClass
 }
 @kotlin.Metadata
-public interface test/Interface
+public interface test/Interface {
+    // source: 'classes.kt'
+}
 @kotlin.Metadata
 final class test/PrivateClass {
+    // source: 'classes.kt'
     public method <init>(): void
 }

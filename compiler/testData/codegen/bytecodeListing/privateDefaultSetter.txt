@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public class Test {
+    // source: 'privateDefaultSetter.kt'
     private @org.jetbrains.annotations.NotNull field internalProperty: java.lang.String
     private @org.jetbrains.annotations.NotNull field protectedProperty: java.lang.String
     private @org.jetbrains.annotations.NotNull field publicProperty: java.lang.String

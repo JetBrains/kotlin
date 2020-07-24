@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public final class NullabilityInExpansionKt {
+    // source: 'nullabilityInExpansion.kt'
     public final static @org.jetbrains.annotations.Nullable method qwrap1(p0: int): Q1
     public final static @org.jetbrains.annotations.Nullable method qwrap2(p0: int): Q2
     public final static @org.jetbrains.annotations.Nullable method qwrapN(p0: int): QN
@@ -20,6 +21,7 @@ public final class NullabilityInExpansionKt {
 
 @kotlin.Metadata
 public final class Q1 {
+    // source: 'nullabilityInExpansion.kt'
     private final @org.jetbrains.annotations.Nullable field x: java.lang.Integer
     private synthetic method <init>(p0: java.lang.Integer): void
     public synthetic final static method box-impl(p0: java.lang.Integer): Q1
@@ -37,6 +39,7 @@ public final class Q1 {
 
 @kotlin.Metadata
 public final class Q2 {
+    // source: 'nullabilityInExpansion.kt'
     private final @org.jetbrains.annotations.NotNull field z: java.lang.Integer
     private synthetic method <init>(p0: java.lang.Integer): void
     public synthetic final static method box-impl(p0: java.lang.Integer): Q2
@@ -54,6 +57,7 @@ public final class Q2 {
 
 @kotlin.Metadata
 public final class QN {
+    // source: 'nullabilityInExpansion.kt'
     private final @org.jetbrains.annotations.Nullable field z: Q1
     private synthetic method <init>(p0: Q1): void
     public synthetic final static method box-impl(p0: Q1): QN
@@ -71,6 +75,7 @@ public final class QN {
 
 @kotlin.Metadata
 public final class S1 {
+    // source: 'nullabilityInExpansion.kt'
     private final @org.jetbrains.annotations.NotNull field x: java.lang.String
     private synthetic method <init>(p0: java.lang.String): void
     public synthetic final static method box-impl(p0: java.lang.String): S1
@@ -88,6 +93,7 @@ public final class S1 {
 
 @kotlin.Metadata
 public final class S2 {
+    // source: 'nullabilityInExpansion.kt'
     private final @org.jetbrains.annotations.NotNull field z: java.lang.String
     private synthetic method <init>(p0: java.lang.String): void
     public synthetic final static method box-impl(p0: java.lang.String): S2
@@ -105,6 +111,7 @@ public final class S2 {
 
 @kotlin.Metadata
 public final class SN {
+    // source: 'nullabilityInExpansion.kt'
     private final @org.jetbrains.annotations.Nullable field z: java.lang.String
     private synthetic method <init>(p0: java.lang.String): void
     public synthetic final static method box-impl(p0: java.lang.String): SN
@@ -122,6 +129,7 @@ public final class SN {
 
 @kotlin.Metadata
 public final class SN2 {
+    // source: 'nullabilityInExpansion.kt'
     private final @org.jetbrains.annotations.NotNull field z: java.lang.String
     private synthetic method <init>(p0: java.lang.String): void
     public synthetic final static method box-impl(p0: java.lang.String): SN2
@@ -139,6 +147,7 @@ public final class SN2 {
 
 @kotlin.Metadata
 public final class W1 {
+    // source: 'nullabilityInExpansion.kt'
     private final @org.jetbrains.annotations.Nullable field x: java.lang.String
     private synthetic method <init>(p0: java.lang.String): void
     public synthetic final static method box-impl(p0: java.lang.String): W1
@@ -156,6 +165,7 @@ public final class W1 {
 
 @kotlin.Metadata
 public final class W2 {
+    // source: 'nullabilityInExpansion.kt'
     private final @org.jetbrains.annotations.NotNull field z: java.lang.String
     private synthetic method <init>(p0: java.lang.String): void
     public synthetic final static method box-impl(p0: java.lang.String): W2
@@ -173,6 +183,7 @@ public final class W2 {
 
 @kotlin.Metadata
 public final class WN {
+    // source: 'nullabilityInExpansion.kt'
     private final @org.jetbrains.annotations.Nullable field z: W1
     private synthetic method <init>(p0: W1): void
     public synthetic final static method box-impl(p0: W1): WN
@@ -190,6 +201,7 @@ public final class WN {
 
 @kotlin.Metadata
 public final class Z1 {
+    // source: 'nullabilityInExpansion.kt'
     private final field x: int
     private synthetic method <init>(p0: int): void
     public synthetic final static method box-impl(p0: int): Z1
@@ -207,6 +219,7 @@ public final class Z1 {
 
 @kotlin.Metadata
 public final class Z2 {
+    // source: 'nullabilityInExpansion.kt'
     private final field z: int
     private synthetic method <init>(p0: int): void
     public synthetic final static method box-impl(p0: int): Z2
@@ -224,6 +237,7 @@ public final class Z2 {
 
 @kotlin.Metadata
 public final class ZN {
+    // source: 'nullabilityInExpansion.kt'
     private final @org.jetbrains.annotations.Nullable field z: Z1
     private synthetic method <init>(p0: Z1): void
     public synthetic final static method box-impl(p0: Z1): ZN
@@ -241,6 +255,7 @@ public final class ZN {
 
 @kotlin.Metadata
 public final class ZN2 {
+    // source: 'nullabilityInExpansion.kt'
     private final @org.jetbrains.annotations.NotNull field z: Z1
     private synthetic method <init>(p0: Z1): void
     public synthetic final static method box-impl(p0: Z1): ZN2

@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public final class DeprecatedPropertyKt {
+    // source: 'deprecatedProperty.kt'
     public deprecated static field testLateinitVar: java.lang.Object
     private deprecated final static field testVal: int
     private deprecated final static field testValWithExplicitDefaultGet: int

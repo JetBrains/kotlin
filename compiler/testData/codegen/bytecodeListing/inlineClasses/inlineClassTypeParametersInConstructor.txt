@@ -1,14 +1,21 @@
 @kotlin.Metadata
-public interface PrivateMarker
+public interface PrivateMarker {
+    // source: 'inlineClassTypeParametersInConstructor.kt'
+}
 
 @kotlin.Metadata
-public interface ProtectedMarker
+public interface ProtectedMarker {
+    // source: 'inlineClassTypeParametersInConstructor.kt'
+}
 
 @kotlin.Metadata
-public interface PublicMarker
+public interface PublicMarker {
+    // source: 'inlineClassTypeParametersInConstructor.kt'
+}
 
 @kotlin.Metadata
 public class TestBasic {
+    // source: 'inlineClassTypeParametersInConstructor.kt'
     private final field z: int
     private method <init>(p0: int): void
     private method <init>(p0: int, p1: PrivateMarker): void
@@ -22,6 +29,7 @@ public class TestBasic {
 
 @kotlin.Metadata
 public final enum class TestEnum {
+    // source: 'inlineClassTypeParametersInConstructor.kt'
     private synthetic final static field $VALUES: TestEnum[]
     public final enum static field ANSWER: TestEnum
     private final field z: int
@@ -34,6 +42,7 @@ public final enum class TestEnum {
 
 @kotlin.Metadata
 public final class TestInner$Inner {
+    // source: 'inlineClassTypeParametersInConstructor.kt'
     synthetic final field this$0: TestInner
     private final field z: int
     private method <init>(p0: TestInner, p1: int): void
@@ -44,12 +53,14 @@ public final class TestInner$Inner {
 
 @kotlin.Metadata
 public final class TestInner {
+    // source: 'inlineClassTypeParametersInConstructor.kt'
     public method <init>(): void
     public final inner class TestInner$Inner
 }
 
 @kotlin.Metadata
 public final class TestSealed$Case {
+    // source: 'inlineClassTypeParametersInConstructor.kt'
     private method <init>(p0: int): void
     public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final inner class TestSealed$Case
@@ -57,6 +68,7 @@ public final class TestSealed$Case {
 
 @kotlin.Metadata
 public abstract class TestSealed {
+    // source: 'inlineClassTypeParametersInConstructor.kt'
     private final field z: int
     private method <init>(p0: int): void
     public synthetic method <init>(p0: int, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
@@ -66,6 +78,7 @@ public abstract class TestSealed {
 
 @kotlin.Metadata
 public final class Z {
+    // source: 'inlineClassTypeParametersInConstructor.kt'
     private final field x: int
     private synthetic method <init>(p0: int): void
     public synthetic final static method box-impl(p0: int): Z

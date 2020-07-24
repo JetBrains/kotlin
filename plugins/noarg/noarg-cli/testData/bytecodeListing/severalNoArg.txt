@@ -1,15 +1,20 @@
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class NoArg
+public annotation class NoArg {
+    // source: 'severalNoArg.kt'
+}
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class NoArg2
+public annotation class NoArg2 {
+    // source: 'severalNoArg.kt'
+}
 
 @NoArg
 @NoArg2
 @kotlin.Metadata
 public final class Test {
+    // source: 'severalNoArg.kt'
     public method <init>(): void
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }

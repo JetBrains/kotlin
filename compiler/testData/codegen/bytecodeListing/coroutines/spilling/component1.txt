@@ -1,6 +1,7 @@
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class Component1Kt$test$1 {
+    // source: 'component1.kt'
     field L$0: java.lang.Object
     field label: int
     private synthetic field p$: Foo
@@ -13,6 +14,7 @@ final class Component1Kt$test$1 {
 
 @kotlin.Metadata
 public final class Component1Kt {
+    // source: 'component1.kt'
     inner (anonymous) class Component1Kt$test$1
     public final static @org.jetbrains.annotations.NotNull method generate(): Result
     public final static method test(): void
@@ -21,15 +23,19 @@ public final class Component1Kt {
 
 @kotlin.Metadata
 public final class Foo$DefaultImpls {
+    // source: 'component1.kt'
     public static @org.jetbrains.annotations.Nullable method component1(@org.jetbrains.annotations.NotNull p0: Foo, @org.jetbrains.annotations.NotNull p1: Result, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
     public final inner class Foo$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface Foo {
+    // source: 'component1.kt'
     public abstract @org.jetbrains.annotations.Nullable method component1(@org.jetbrains.annotations.NotNull p0: Result, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public final inner class Foo$DefaultImpls
 }
 
 @kotlin.Metadata
-public interface Result
+public interface Result {
+    // source: 'component1.kt'
+}

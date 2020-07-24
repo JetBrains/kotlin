@@ -1,9 +1,12 @@
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class AllOpen
+public annotation class AllOpen {
+    // source: 'anonymousObject.kt'
+}
 
 @kotlin.Metadata
 public final class Test$a$1 {
+    // source: 'anonymousObject.kt'
     inner (anonymous) class Test$a$1
     method <init>(): void
     public method run(): void
@@ -11,6 +14,7 @@ public final class Test$a$1 {
 
 @kotlin.Metadata
 public final class Test$b$1 {
+    // source: 'anonymousObject.kt'
     inner (anonymous) class Test$b$1
     method <init>(): void
     public method run(): void
@@ -18,6 +22,7 @@ public final class Test$b$1 {
 
 @kotlin.Metadata
 final class Test$b$2 {
+    // source: 'anonymousObject.kt'
     public final static field INSTANCE: Test$b$2
     inner (anonymous) class Test$b$2
     static method <clinit>(): void
@@ -28,6 +33,7 @@ final class Test$b$2 {
 @AllOpen
 @kotlin.Metadata
 public class Test {
+    // source: 'anonymousObject.kt'
     private final @org.jetbrains.annotations.NotNull field a: java.lang.Runnable
     inner (anonymous) class Test$a$1
     inner (anonymous) class Test$b$1

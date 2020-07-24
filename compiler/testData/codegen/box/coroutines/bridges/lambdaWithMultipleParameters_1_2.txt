@@ -1,5 +1,6 @@
 @kotlin.Metadata
 final class LambdaWithMultipleParametersKt$box$1$1 {
+    // source: 'lambdaWithMultipleParameters.kt'
     private synthetic field p$0: java.lang.String
     private synthetic field p$1: long
     private synthetic field p$2: long
@@ -16,6 +17,7 @@ final class LambdaWithMultipleParametersKt$box$1$1 {
 
 @kotlin.Metadata
 final class LambdaWithMultipleParametersKt$box$1 {
+    // source: 'lambdaWithMultipleParameters.kt'
     synthetic final field $res: kotlin.jvm.internal.Ref$ObjectRef
     field L$0: java.lang.Object
     inner (anonymous) class LambdaWithMultipleParametersKt$box$1
@@ -28,6 +30,7 @@ final class LambdaWithMultipleParametersKt$box$1 {
 
 @kotlin.Metadata
 public final class LambdaWithMultipleParametersKt {
+    // source: 'lambdaWithMultipleParameters.kt'
     inner (anonymous) class LambdaWithMultipleParametersKt$box$1
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void

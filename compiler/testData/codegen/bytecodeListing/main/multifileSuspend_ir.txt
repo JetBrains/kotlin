@@ -1,11 +1,13 @@
 @kotlin.Metadata
 public final class Hello/Foo {
+    // source: 'Foo>'
     public final static method main(@org.jetbrains.annotations.NotNull p0: java.lang.String[]): void
     public final static @org.jetbrains.annotations.Nullable method main(@org.jetbrains.annotations.NotNull p0: java.lang.String[], @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
 synthetic final class Hello/Foo__MultifileSuspendKt$main$2 {
+    // source: 'multifileSuspend.kt'
     private synthetic field args: java.lang.String[]
     inner (anonymous) class Hello/Foo__MultifileSuspendKt$main$2
     method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String[]): void
@@ -16,6 +18,7 @@ synthetic final class Hello/Foo__MultifileSuspendKt$main$2 {
 @kotlin.Metadata
 @kotlin.jvm.JvmName
 synthetic final class Hello/Foo__MultifileSuspendKt {
+    // source: 'multifileSuspend.kt'
     inner (anonymous) class Hello/Foo__MultifileSuspendKt$main$2
     public final static @org.jetbrains.annotations.Nullable method main(@org.jetbrains.annotations.NotNull p0: java.lang.String[], @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic final static method main(p0: java.lang.String[]): void

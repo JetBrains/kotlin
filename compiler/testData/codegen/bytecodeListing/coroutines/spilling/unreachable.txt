@@ -1,6 +1,7 @@
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class UnreachableKt$test$1 {
+    // source: 'unreachable.kt'
     field label: int
     private synthetic field p$0: java.lang.String
     inner (anonymous) class UnreachableKt$test$1
@@ -12,6 +13,7 @@ final class UnreachableKt$test$1 {
 
 @kotlin.Metadata
 public final class UnreachableKt {
+    // source: 'unreachable.kt'
     inner (anonymous) class UnreachableKt$test$1
     public final static method test(): void
     public final static method use(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function2): void

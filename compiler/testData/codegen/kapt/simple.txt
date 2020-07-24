@@ -1,4 +1,5 @@
 @kotlin.Metadata
 public final class Simple {
+    // source: 'simple.kt'
     public method <init>(): void
 }

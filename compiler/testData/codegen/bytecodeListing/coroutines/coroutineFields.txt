@@ -1,5 +1,6 @@
 @kotlin.Metadata
 final class Controller$multipleSuspensions$1 {
+    // source: 'coroutineFields.kt'
     field L$0: java.lang.Object
     synthetic field data: java.lang.Object
     synthetic field exception: java.lang.Throwable
@@ -13,6 +14,7 @@ final class Controller$multipleSuspensions$1 {
 
 @kotlin.Metadata
 final class Controller$nonTailCall$1 {
+    // source: 'coroutineFields.kt'
     field L$0: java.lang.Object
     synthetic field data: java.lang.Object
     synthetic field exception: java.lang.Throwable
@@ -26,6 +28,7 @@ final class Controller$nonTailCall$1 {
 
 @kotlin.Metadata
 public final class Controller {
+    // source: 'coroutineFields.kt'
     inner (anonymous) class Controller$multipleSuspensions$1
     inner (anonymous) class Controller$nonTailCall$1
     public method <init>(): void
@@ -37,6 +40,7 @@ public final class Controller {
 
 @kotlin.Metadata
 final class CoroutineFieldsKt$box$1 {
+    // source: 'coroutineFields.kt'
     synthetic final field $result: kotlin.jvm.internal.Ref$ObjectRef
     field J$0: long
     field L$0: java.lang.Object
@@ -52,6 +56,7 @@ final class CoroutineFieldsKt$box$1 {
 
 @kotlin.Metadata
 public final class CoroutineFieldsKt {
+    // source: 'coroutineFields.kt'
     inner (anonymous) class CoroutineFieldsKt$box$1
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function2): void

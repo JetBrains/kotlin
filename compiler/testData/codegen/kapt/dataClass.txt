@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public final class User {
+    // source: 'dataClass.kt'
     private final field age: int
     private final @org.jetbrains.annotations.NotNull field name: java.lang.String
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String, p1: int): void

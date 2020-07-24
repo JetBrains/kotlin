@@ -7,6 +7,7 @@ synthetic final class SuspendMainKt$$$main {
 
 @kotlin.Metadata
 public final class SuspendMainKt {
+    // source: 'suspendMain.kt'
     public final static @org.jetbrains.annotations.Nullable method main(@org.jetbrains.annotations.NotNull p0: java.lang.String[], @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
     public synthetic static method main(p0: java.lang.String[]): void
 }

@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public class A1 {
+    // source: 'redundantStubForSize.kt'
     private final field size: int
     public method <init>(): void
     public method getSize(): int
@@ -7,6 +8,7 @@ public class A1 {
 
 @kotlin.Metadata
 public final class A2 {
+    // source: 'redundantStubForSize.kt'
     public method <init>(): void
     public synthetic method add(p0: java.lang.Object): boolean
     public method add(p0: java.lang.String): boolean

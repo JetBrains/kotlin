@@ -1,10 +1,12 @@
 @kotlin.Metadata
 public final class A {
+    // source: 'privateSuspendFun.kt'
     public method <init>(): void
     synthetic final method foo(p0: kotlin.coroutines.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata
 public final class PrivateSuspendFunKt {
+    // source: 'privateSuspendFun.kt'
     synthetic final static method foo(p0: kotlin.coroutines.Continuation): java.lang.Object
 }

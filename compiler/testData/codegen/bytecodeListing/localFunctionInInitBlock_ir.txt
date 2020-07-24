@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public final class C {
+    // source: 'localFunctionInInitBlock.kt'
     public method <init>(): void
     public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     public method <init>(p0: int): void

@@ -1,4 +1,5 @@
 @kotlin.Metadata
 public final class SuspendMain_beforeKt {
+    // source: 'suspendMain_before.kt'
     public final static @org.jetbrains.annotations.Nullable method main(@org.jetbrains.annotations.NotNull p0: java.lang.String[], @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.experimental.Continuation): java.lang.Object
 }

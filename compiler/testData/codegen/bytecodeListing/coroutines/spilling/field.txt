@@ -1,6 +1,7 @@
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class FieldKt$test$1 {
+    // source: 'field.kt'
     field label: int
     private synthetic field p$: Foo
     inner (anonymous) class FieldKt$test$1
@@ -12,6 +13,7 @@ final class FieldKt$test$1 {
 
 @kotlin.Metadata
 public final class FieldKt {
+    // source: 'field.kt'
     inner (anonymous) class FieldKt$test$1
     public final static @org.jetbrains.annotations.NotNull method generate(): Result
     public final static method test(): void
@@ -20,15 +22,19 @@ public final class FieldKt {
 
 @kotlin.Metadata
 public final class Foo$DefaultImpls {
+    // source: 'field.kt'
     public static @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.NotNull p0: Foo, @org.jetbrains.annotations.NotNull p1: Result): java.lang.Object
     public final inner class Foo$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface Foo {
+    // source: 'field.kt'
     public abstract @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.NotNull p0: Result): java.lang.Object
     public final inner class Foo$DefaultImpls
 }
 
 @kotlin.Metadata
-public interface Result
+public interface Result {
+    // source: 'field.kt'
+}
