@@ -216,7 +216,11 @@ sealed class AnnotationStub(val classifier: Classifier) {
             AnnotationStub(Classifier.topLevel(cinteropPackage, "CLength"))
 
     class Deprecated(val message: String, val replaceWith: String) :
-            AnnotationStub(Classifier.topLevel("kotlin", "Deprecated"))
+            AnnotationStub(Classifier.topLevel("kotlin", "Deprecated")) {
+        companion object {
+            val unableToImport = Deprecated("Unable to import this declaration", "")
+        }
+    }
 
 
     class CEnumEntryAlias(val entryName: String) :
@@ -241,7 +245,7 @@ data class IntegralConstantStub(val value: Long, val size: Int, val isSigned: Bo
 data class DoubleConstantStub(val value: Double, val size: Int) : ConstantStub()
 
 
-class PropertyStub(
+data class PropertyStub(
         val name: String,
         val type: StubType,
         val kind: Kind,
@@ -460,7 +464,7 @@ sealed class PropertyAccessor : FunctionalStub {
 
 }
 
-class FunctionStub(
+data class FunctionStub(
         val name: String,
         val returnType: StubType,
         override val parameters: List<FunctionParameterStub>,
