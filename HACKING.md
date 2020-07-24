@@ -229,6 +229,9 @@ $ ./gradlew backend.native:tests:runExternal -Ptest_two_stage=true 2>&1 | tee lo
 
 ## LLVM
 
+See [BUILDING_LLVM.md](BUILDING_LLVM.md) if you want to use your own LLVM distribution
+instead of provided one.
+
 Following compiler phases control different parts of LLVM pipeline:
 1. `LinkBitcodeDependencies`. Linkage of produced bitcode with runtime and some other dependencies.
 2. `BitcodeOptimization`. Running LLVM optimization pipeline.
