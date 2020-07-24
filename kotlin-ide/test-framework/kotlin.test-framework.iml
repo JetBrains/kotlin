@@ -32,6 +32,7 @@
     <orderEntry type="module" module-name="kotlin.core" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.fir.frontend-independent" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.idea" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.jvm" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.formatter" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.testFramework" exported="" scope="TEST" />
