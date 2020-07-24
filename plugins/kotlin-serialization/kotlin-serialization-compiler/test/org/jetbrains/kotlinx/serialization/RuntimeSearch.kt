@@ -27,8 +27,7 @@ class RuntimeLibraryInClasspathTest {
     fun testRuntimeHasSufficientVersion() {
         val version = VersionReader.getVersionsFromManifest(runtimeLibraryPath!!)
         assertTrue(version.currentCompilerMatchRequired(), "Runtime version too high")
-        // todo: uncomment this when corresponding runtime version would be published
-//        assertTrue(version.implementationVersionMatchSupported(), "Runtime version too low")
+        assertTrue(version.implementationVersionMatchSupported(), "Runtime version too low")
     }
 }
 

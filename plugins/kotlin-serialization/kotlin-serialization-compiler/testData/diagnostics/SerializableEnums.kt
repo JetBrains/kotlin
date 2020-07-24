@@ -1,7 +1,8 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER,-UNUSED_VARIABLE,-PROVIDED_RUNTIME_TOO_LOW
+// !DIAGNOSTICS: -UNUSED_PARAMETER,-UNUSED_VARIABLE
 
 // FILE: test.kt
 import kotlinx.serialization.*
+import kotlinx.serialization.encoding.*
 
 enum class SimpleEnum { A, B }
 
