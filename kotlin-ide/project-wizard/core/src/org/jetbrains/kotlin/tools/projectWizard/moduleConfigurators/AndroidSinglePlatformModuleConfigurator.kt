@@ -96,8 +96,15 @@ object AndroidSinglePlatformModuleConfigurator :
         module: Module,
         modulePath: Path
     ): TaskResult<Unit> = computeM {
+        val sharedModule = configurationData.allModules.firstOrNull { it.configurator == MppModuleConfigurator }
+
         val javaPackage = module.javaPackage(configurationData.pomIr)
-        val settings = mapOf("package" to javaPackage.asCodePackage())
+        val sharedPackage = sharedModule?.javaPackage(configurationData.pomIr)
+
+        val settings = mapOf(
+            "package" to javaPackage.asCodePackage(),
+            "sharedPackage" to sharedPackage?.asCodePackage()
+        )
         TemplatesPlugin.addFileTemplates.execute(
             listOf(
                 FileTemplate(AndroidModuleConfigurator.FileTemplateDescriptors.activityMainXml, modulePath, settings),

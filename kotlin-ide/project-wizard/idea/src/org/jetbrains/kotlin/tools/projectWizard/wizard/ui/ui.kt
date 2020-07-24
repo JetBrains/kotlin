@@ -83,7 +83,7 @@ val ModuleSubType.icon: Icon
         ModuleSubType.jvm -> KotlinIcons.Wizard.JVM
         ModuleSubType.js -> KotlinIcons.Wizard.JS
         ModuleSubType.android, ModuleSubType.androidNativeArm32, ModuleSubType.androidNativeArm64 -> KotlinIcons.Wizard.ANDROID
-        ModuleSubType.iosArm32, ModuleSubType.iosArm64, ModuleSubType.iosX64 -> KotlinIcons.Wizard.IOS
+        ModuleSubType.iosArm32, ModuleSubType.iosArm64, ModuleSubType.iosX64, ModuleSubType.ios -> KotlinIcons.Wizard.IOS
         ModuleSubType.linuxArm32Hfp, ModuleSubType.linuxMips32, ModuleSubType.linuxMipsel32, ModuleSubType.linuxX64 ->
             KotlinIcons.Wizard.LINUX
         ModuleSubType.macosX64 -> KotlinIcons.Wizard.MAC_OS

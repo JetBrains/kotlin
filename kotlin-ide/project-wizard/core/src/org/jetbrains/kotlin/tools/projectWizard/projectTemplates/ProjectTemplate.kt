@@ -330,7 +330,6 @@ object MultiplatformMobileApplicationProjectTemplate : ProjectTemplate() {
                 )
             )
         )
-        +shared
         +Module(
             "iosApp",
             IOSSinglePlatformModuleConfigurator,
@@ -347,6 +346,7 @@ object MultiplatformMobileApplicationProjectTemplate : ProjectTemplate() {
             subModules = emptyList(),
             dependencies = mutableListOf(ModuleReference.ByModule(shared))
         )
+        +shared // shared module must be the last so dependent modules could create actual files
     }
 }
 
