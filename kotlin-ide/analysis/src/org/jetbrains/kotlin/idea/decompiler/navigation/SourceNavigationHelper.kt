@@ -14,20 +14,19 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.ProjectScope
 import com.intellij.psi.stubs.StringStubIndexExtension
 import com.intellij.util.containers.ContainerUtil
 import gnu.trove.THashSet
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.project.BinaryModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.ScriptDependenciesInfo
 import org.jetbrains.kotlin.idea.caches.project.getBinaryLibrariesModuleInfos
 import org.jetbrains.kotlin.idea.caches.project.getLibrarySourcesModuleInfos
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.decompiler.navigation.MemberMatching.*
-import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
-import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
-import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyFqnNameIndex
-import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelTypeAliasFqNameIndex
+import org.jetbrains.kotlin.idea.stubindex.*
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -63,7 +62,14 @@ object SourceNavigationHelper {
                 val additionalScope = binaryModuleInfos.flatMap {
                     it.associatedCommonLibraries()
                 }.mapNotNull { it.sourcesModuleInfo?.sourceScope() }.union()
-                primaryScope + additionalScope
+
+                if (binaryModuleInfos.any { it is ScriptDependenciesInfo }) {
+                    // NOTE: this is a workaround for https://github.com/gradle/gradle/issues/13783:
+                    // script configuration for *.gradle.kts files doesn't include sources for included plugins
+                    primaryScope + additionalScope + ProjectScope.getContentScope(containingFile.project)
+                } else {
+                    primaryScope + additionalScope
+                }
             }
 
             NavigationKind.SOURCES_TO_CLASS_FILES -> getLibrarySourcesModuleInfos(
