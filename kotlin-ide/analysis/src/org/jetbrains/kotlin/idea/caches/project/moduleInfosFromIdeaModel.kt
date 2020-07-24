@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.idea.caches.project
 
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.JdkOrderEntry
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.libraries.Library
+import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.caches.project.cacheInvalidatingOnRootModifications
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -21,22 +24,28 @@ import java.util.concurrent.ConcurrentHashMap
 
 /** null-platform means that we should get all modules */
 fun getModuleInfosFromIdeaModel(project: Project, platform: TargetPlatform? = null): List<IdeaModuleInfo> {
-    val modelInfosCache = project.cacheInvalidatingOnRootModifications {
-        collectModuleInfosFromIdeaModel(project)
-    }
+    val ideaModelInfosCache = getIdeaModelInfosCache(project)
 
     return if (platform != null)
-        modelInfosCache.forPlatform(platform)
+        ideaModelInfosCache.forPlatform(platform)
     else
-        modelInfosCache.allModules()
+        ideaModelInfosCache.allModules()
 }
 
-private class IdeaModelInfosCache(
-    val moduleSourceInfos: List<ModuleSourceInfo>,
-    val libraryInfos: List<LibraryInfo>,
-    val sdkInfos: List<SdkInfo>
+fun getIdeaModelInfosCache(project: Project): IdeaModelInfosCache = project.cacheInvalidatingOnRootModifications {
+    collectModuleInfosFromIdeaModel(project)
+}
+
+class IdeaModelInfosCache(
+    private val moduleSourceInfosByModules: MultiMap<Module, ModuleSourceInfo>,
+    private val libraryInfosByLibraries: MultiMap<Library, LibraryInfo>,
+    private val sdkInfosBySdks: Map<Sdk, SdkInfo>,
 ) {
     private val resultByPlatform = ConcurrentHashMap<TargetPlatform, List<IdeaModuleInfo>>()
+
+    private val moduleSourceInfos = moduleSourceInfosByModules.values().toList()
+    private val libraryInfos = libraryInfosByLibraries.values().toList()
+    private val sdkInfos = sdkInfosBySdks.values.toList()
 
     fun forPlatform(platform: TargetPlatform): List<IdeaModuleInfo> {
         return resultByPlatform.getOrPut(platform) {
@@ -45,8 +54,11 @@ private class IdeaModelInfosCache(
     }
 
     fun allModules(): List<IdeaModuleInfo> = moduleSourceInfos + libraryInfos + sdkInfos
-}
 
+    fun getModuleInfosForModule(module: Module): Collection<ModuleSourceInfo> = moduleSourceInfosByModules[module]
+    fun getLibraryInfosForLibrary(library: Library): Collection<LibraryInfo> = libraryInfosByLibraries[library]
+    fun getSdkInfoForSdk(sdk: Sdk): SdkInfo? = sdkInfosBySdks[sdk]
+}
 
 private fun collectModuleInfosFromIdeaModel(
     project: Project
@@ -67,16 +79,19 @@ private fun collectModuleInfosFromIdeaModel(
     }
 
     return IdeaModelInfosCache(
-        moduleSourceInfos = ideaModules.flatMap {
-            checkCanceled()
-            it.correspondingModuleInfos()
+        moduleSourceInfosByModules = MultiMap.create<Module, ModuleSourceInfo>().also { moduleInfosByModules ->
+            for (module in ideaModules) {
+                checkCanceled()
+                moduleInfosByModules.putValues(module, module.correspondingModuleInfos())
+            }
         },
-        libraryInfos = ideaLibraries.flatMap {
-            checkCanceled()
-
-            createLibraryInfo(project, it)
+        libraryInfosByLibraries = MultiMap.create<Library, LibraryInfo>().also { libraryInfosByLibraries ->
+            for (library in ideaLibraries) {
+                checkCanceled()
+                libraryInfosByLibraries.putValues(library, createLibraryInfo(project, library))
+            }
         },
-        sdkInfos = (sdksFromModulesDependencies + getAllProjectSdks()).filterNotNull().toSet().map { SdkInfo(project, it) }
+        sdkInfosBySdks = (sdksFromModulesDependencies + getAllProjectSdks()).filterNotNull().toSet().associateWith { SdkInfo(project, it) }
     )
 }
 
