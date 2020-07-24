@@ -177,8 +177,14 @@
     <projectService serviceInterface="org.jetbrains.kotlin.idea.util.ImportInsertHelper"
                     serviceImplementation="org.jetbrains.kotlin.idea.util.ImportInsertHelperImpl"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.ResolutionAnchorCacheService"
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.ResolutionAnchorCacheServiceImpl"/>
+
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.ResolutionAnchorProvider"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.KotlinIdeResolutionAnchorService"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.trackers.ModuleDependencyProviderExtension"
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.project.ResolutionAnchorModuleDependencyProviderExtension"/>
 
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.project.KotlinLibraryToSourceAnalysisStateComponent"/>
 

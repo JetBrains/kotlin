@@ -53,7 +53,8 @@ class KotlinCodeBlockModificationListener(project: Project) : PsiTreeChangePrepr
 
     var kotlinOutOfCodeBlockTracker: ModificationTracker
 
-    internal val perModuleOutOfCodeBlockTrackerUpdater = KotlinModuleOutOfCodeBlockModificationTracker.Updater(project)
+    // TODO: close back exposed API
+    val perModuleOutOfCodeBlockTrackerUpdater = KotlinModuleOutOfCodeBlockModificationTracker.Updater(project)
 
     override fun treeChanged(event: PsiTreeChangeEventImpl) {
         if (!PsiModificationTrackerImpl.canAffectPsi(event)) {

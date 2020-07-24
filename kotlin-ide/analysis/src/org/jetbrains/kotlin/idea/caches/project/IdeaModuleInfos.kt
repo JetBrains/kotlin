@@ -40,10 +40,7 @@ import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.framework.effectiveKind
 import org.jetbrains.kotlin.idea.framework.platform
 import org.jetbrains.kotlin.idea.klib.AbstractKlibLibraryInfo
-import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
-import org.jetbrains.kotlin.idea.project.findAnalyzerServices
-import org.jetbrains.kotlin.idea.project.getStableName
-import org.jetbrains.kotlin.idea.project.isHMPPEnabled
+import org.jetbrains.kotlin.idea.project.*
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.idea.util.rootManager
@@ -336,7 +333,9 @@ private class ModuleTestSourceScope(module: Module) : ModuleSourceScope(module) 
     override fun toString() = "ModuleTestSourceScope($module)"
 }
 
-abstract class LibraryInfo(override val project: Project, val library: Library) : IdeaModuleInfo, LibraryModuleInfo, BinaryModuleInfo {
+abstract class LibraryInfo(override val project: Project, val library: Library) :
+    IdeaModuleInfo, LibraryModuleInfo, BinaryModuleInfo, TrackableModuleInfo {
+
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.LIBRARY
 
@@ -369,6 +368,13 @@ abstract class LibraryInfo(override val project: Project, val library: Library) 
 
     override fun getLibraryRoots(): Collection<String> =
         library.getFiles(OrderRootType.CLASSES).mapNotNull(PathUtil::getLocalPath)
+
+    override fun createModificationTracker(): ModificationTracker {
+        if (!project.libraryToSourceAnalysisEnabled)
+            return ModificationTracker.NEVER_CHANGED
+
+        return ResolutionAnchorAwareLibraryModificationTracker(this)
+    }
 
     override fun toString() = "${this::class.simpleName}(libraryName=${library.name}, libraryRoots=${getLibraryRoots()})"
 
