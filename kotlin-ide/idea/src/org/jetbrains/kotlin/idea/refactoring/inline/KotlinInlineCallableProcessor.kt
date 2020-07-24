@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.refactoring.inline
 
-import com.intellij.codeInsight.AnnotationUtil
 import com.intellij.lang.Language
 import com.intellij.lang.findUsages.DescriptiveNameUtil
 import com.intellij.lang.refactoring.InlineHandler
@@ -32,6 +31,7 @@ import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewBundle
 import com.intellij.usageView.UsageViewDescriptor
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.idea.refactoring.safeDelete.removeOverrideModifier
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.search.declarationsSearch.findSuperMethodsNoWrapping
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingElement
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
 private val LOG = Logger.getInstance(KotlinInlineCallableProcessor::class.java)
@@ -104,15 +103,12 @@ class KotlinInlineCallableProcessor(
             usages += UsageInfo(usage)
         }
 
-        declaration.forEachOverridingElement(scope = myRefactoringScope, searchDeeply = false) { _, overridingMember ->
-            val hasOverrideModifier = when (overridingMember) {
-                is PsiMethod -> AnnotationUtil.isAnnotated(overridingMember, Override::class.java.name, 0)
-                is KtModifierListOwner -> overridingMember.hasModifier(KtTokens.OVERRIDE_KEYWORD)
-                else -> false
-            }
-
-            if (hasOverrideModifier) {
-                usages += UsageInfo(overridingMember)
+        declaration.forEachOverridingElement(scope = myRefactoringScope) { _, overridingMember ->
+            for (superMethod in findSuperMethodsNoWrapping(overridingMember)){
+                if (superMethod.unwrapped == declaration) {
+                    usages += UsageInfo(overridingMember)
+                    return@forEachOverridingElement true
+                }
             }
 
             true

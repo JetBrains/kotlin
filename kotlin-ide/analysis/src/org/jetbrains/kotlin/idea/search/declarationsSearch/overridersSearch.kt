@@ -166,10 +166,7 @@ fun KtNamedDeclaration.forEachOverridingElement(
     }
 
     return forEachKotlinOverride(ktClass, listOf(this), scope, searchDeeply) { baseElement, overrider ->
-        processor(
-            baseElement,
-            overrider
-        )
+        processor(baseElement, overrider)
     }
 }
 

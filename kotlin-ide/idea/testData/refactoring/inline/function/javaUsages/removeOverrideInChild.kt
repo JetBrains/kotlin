@@ -8,6 +8,15 @@ open class B: A() {
     fun c() = a()
 }
 
+open class B2: A() {
+    override fun a() = Unit
+    fun c() = a()
+}
+
 class C : B() {
+    override fun a() = Unit
+}
+
+class C2 : B() {
     override fun a() = Unit
 }
