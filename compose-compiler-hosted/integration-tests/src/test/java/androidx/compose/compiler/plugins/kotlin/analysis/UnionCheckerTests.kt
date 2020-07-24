@@ -23,10 +23,10 @@ class UnionCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testUnionTypeReporting001() {
         doTest(
             """
-            import androidx.compose.*;
+            import androidx.compose.runtime.*;
 
             @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
-            @OptIn(androidx.compose.ExperimentalComposeApi::class)
+            @OptIn(androidx.compose.runtime.ExperimentalComposeApi::class)
             @Composable fun foo(value: @UnionType(Int::class, String::class) Any) {
                 System.out.println(value)
             }
@@ -43,16 +43,16 @@ class UnionCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testUnionTypeReporting002() {
         doTest(
             """
-            import androidx.compose.*;
+            import androidx.compose.runtime.*;
 
             @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
-            @OptIn(androidx.compose.ExperimentalComposeApi::class)
+            @OptIn(androidx.compose.runtime.ExperimentalComposeApi::class)
             @Composable fun foo(value: @UnionType(Int::class, String::class) Any) {
                 System.out.println(value)
             }
 
             @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
-            @OptIn(androidx.compose.ExperimentalComposeApi::class)
+            @OptIn(androidx.compose.runtime.ExperimentalComposeApi::class)
             @Composable
             fun bar(value: @UnionType(Int::class, String::class) Any) {
                 foo(value)
@@ -63,16 +63,16 @@ class UnionCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testUnionTypeReporting003() {
         doTest(
             """
-            import androidx.compose.*;
+            import androidx.compose.runtime.*;
 
             @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
-            @OptIn(androidx.compose.ExperimentalComposeApi::class)
+            @OptIn(androidx.compose.runtime.ExperimentalComposeApi::class)
             @Composable fun foo(value: @UnionType(Int::class, String::class, Float::class) Any) {
                 System.out.println(value)
             }
 
             @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
-            @OptIn(androidx.compose.ExperimentalComposeApi::class)
+            @OptIn(androidx.compose.runtime.ExperimentalComposeApi::class)
             @Composable
             fun bar(value: @UnionType(Int::class, String::class) Any) {
                 foo(value)
@@ -83,16 +83,16 @@ class UnionCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testUnionTypeReporting004() {
         doTest(
             """
-            import androidx.compose.*;
+            import androidx.compose.runtime.*;
 
             @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
-            @OptIn(androidx.compose.ExperimentalComposeApi::class)
+            @OptIn(androidx.compose.runtime.ExperimentalComposeApi::class)
             @Composable fun foo(value: @UnionType(Int::class, String::class) Any) {
                 System.out.println(value)
             }
 
             @Suppress("EXPERIMENTAL_IS_NOT_ENABLED")
-            @OptIn(androidx.compose.ExperimentalComposeApi::class)
+            @OptIn(androidx.compose.runtime.ExperimentalComposeApi::class)
             @Composable
             fun bar(value: @UnionType(Int::class, String::class, Float::class) Any) {
                 foo(<!ILLEGAL_ASSIGN_TO_UNIONTYPE!>value<!>)

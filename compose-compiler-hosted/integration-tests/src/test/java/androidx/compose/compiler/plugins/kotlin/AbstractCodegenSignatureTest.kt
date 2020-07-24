@@ -80,7 +80,7 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
         val fileName = "$className.kt"
 
         val loader = classLoader("""
-           import androidx.compose.*
+           import androidx.compose.runtime.*
 
            $src
         """, fileName, dumpClasses)
@@ -105,7 +105,7 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
         val className = "Test_REPLACEME_${uniqueNumber++}"
         val compiledClasses = classLoader(
             """
-                import androidx.compose.*
+                import androidx.compose.runtime.*
                 import android.widget.LinearLayout
                 import android.content.Context
                 import androidx.ui.node.UiApplier
@@ -186,7 +186,7 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
             """
            import android.content.Context
            import android.widget.*
-           import androidx.compose.*
+           import androidx.compose.runtime.*
 
            $text
 

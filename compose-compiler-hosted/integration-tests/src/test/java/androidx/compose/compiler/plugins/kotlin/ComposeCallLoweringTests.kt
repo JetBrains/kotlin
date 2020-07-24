@@ -116,7 +116,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     fun testVarargs(): Unit = ensureSetup {
         codegen(
             """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             @Immutable class Foo
 
@@ -137,7 +137,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     fun testComposableLambdaCall(): Unit = ensureSetup {
         codegen(
             """
-                import androidx.compose.*
+                import androidx.compose.runtime.*
 
                 @Composable
                 fun test(children: @Composable () -> Unit) {
@@ -151,7 +151,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     fun testProperties(): Unit = ensureSetup {
         codegen(
             """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             @Composable val foo get() = 123
 
@@ -211,7 +211,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     fun testComposableLambdaCallWithGenerics(): Unit = ensureSetup {
         codegen(
             """
-                import androidx.compose.*
+                import androidx.compose.runtime.*
 
                 @Composable fun <T> A(value: T, block: @Composable (T) -> Unit) {
                     block(value)
@@ -241,7 +241,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     fun testMethodInvocations(): Unit = ensureSetup {
         codegen(
             """
-                import androidx.compose.*
+                import androidx.compose.runtime.*
 
                 val x = ambientOf<Int> { 123 }
 
@@ -293,7 +293,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     fun testInlineChildren(): Unit = ensureSetup {
         codegen(
             """
-                import androidx.compose.*
+                import androidx.compose.runtime.*
 
                 @Composable
                 inline fun PointerInputWrapper(
@@ -312,7 +312,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     fun testNoComposerImport(): Unit = ensureSetup {
         codegenNoImports(
             """
-        import androidx.compose.Composable
+        import androidx.compose.runtime.Composable
 
         @Composable fun Wrap(content: @Composable () -> Unit) { content() }
 
@@ -453,7 +453,7 @@ fun <T> B(foo: T, bar: String) { }
     fun testSimpleFunctionResolution(): Unit = ensureSetup {
         compose(
             """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             @Composable
             fun noise(text: String) {}
@@ -472,7 +472,7 @@ fun <T> B(foo: T, bar: String) { }
     fun testSimpleClassResolution(): Unit = ensureSetup {
         compose(
             """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             @Composable
             fun bar() {
@@ -524,7 +524,7 @@ fun <T> B(foo: T, bar: String) { }
     fun testObservable(): Unit = ensureSetup {
         compose(
             """
-                import androidx.compose.*
+                import androidx.compose.runtime.*
 
                 @Composable
                 fun SimpleComposable() {
@@ -821,7 +821,7 @@ fun <T> B(foo: T, bar: String) { }
     fun testImplicitReceiverScopeCall(): Unit = ensureSetup {
         compose(
             """
-                import androidx.compose.*
+                import androidx.compose.runtime.*
 
                 class Bar(val text: String)
 
@@ -1166,7 +1166,7 @@ fun <T> B(foo: T, bar: String) { }
     fun testForDevelopment(): Unit = ensureSetup {
         codegen(
             """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             @Composable
             fun bar() {

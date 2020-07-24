@@ -372,7 +372,7 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
             internal class LiveLiterals%TestKt {
               val Int%arg-0%call-print%fun-A: Int = 1
               var State%Int%arg-0%call-print%fun-A: State<Int>?
-              @LiveLiteralInfo(key = "Int%arg-0%call-print%fun-A", offset = 54)
+              @LiveLiteralInfo(key = "Int%arg-0%call-print%fun-A", offset = 62)
               fun Int%arg-0%call-print%fun-A(): Int {
                 val tmp0 = State%Int%arg-0%call-print%fun-A
                 return if (tmp0 == null) {
@@ -386,7 +386,7 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
               }
               val String%arg-0%call-print-1%fun-A: String = "Hello World"
               var State%String%arg-0%call-print-1%fun-A: State<String>?
-              @LiveLiteralInfo(key = "String%arg-0%call-print-1%fun-A", offset = 66)
+              @LiveLiteralInfo(key = "String%arg-0%call-print-1%fun-A", offset = 74)
               fun String%arg-0%call-print-1%fun-A(): String {
                 val tmp0 = State%String%arg-0%call-print-1%fun-A
                 return if (tmp0 == null) {
@@ -400,7 +400,7 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
               }
               val Boolean%cond%if%fun-A: Boolean = true
               var State%Boolean%cond%if%fun-A: State<Boolean>?
-              @LiveLiteralInfo(key = "Boolean%cond%if%fun-A", offset = 86)
+              @LiveLiteralInfo(key = "Boolean%cond%if%fun-A", offset = 94)
               fun Boolean%cond%if%fun-A(): Boolean {
                 val tmp0 = State%Boolean%cond%if%fun-A
                 return if (tmp0 == null) {
@@ -414,7 +414,7 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
               }
               val Int%%this%call-plus%arg-0%call-print%branch%if%fun-A: Int = 3
               var State%Int%%this%call-plus%arg-0%call-print%branch%if%fun-A: State<Int>?
-              @LiveLiteralInfo(key = "Int%%this%call-plus%arg-0%call-print%branch%if%fun-A", offset = 104)
+              @LiveLiteralInfo(key = "Int%%this%call-plus%arg-0%call-print%branch%if%fun-A", offset = 112)
               fun Int%%this%call-plus%arg-0%call-print%branch%if%fun-A(): Int {
                 val tmp0 = State%Int%%this%call-plus%arg-0%call-print%branch%if%fun-A
                 return if (tmp0 == null) {
@@ -428,7 +428,7 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
               }
               val Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A: Int = 4
               var State%Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A: State<Int>?
-              @LiveLiteralInfo(key = "Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A", offset = 108)
+              @LiveLiteralInfo(key = "Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A", offset = 116)
               fun Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A(): Int {
                 val tmp0 = State%Int%arg-0%call-plus%arg-0%call-print%branch%if%fun-A
                 return if (tmp0 == null) {
@@ -442,7 +442,7 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
               }
               val Boolean%cond%if-1%fun-A: Boolean = true
               var State%Boolean%cond%if-1%fun-A: State<Boolean>?
-              @LiveLiteralInfo(key = "Boolean%cond%if-1%fun-A", offset = 121)
+              @LiveLiteralInfo(key = "Boolean%cond%if-1%fun-A", offset = 129)
               fun Boolean%cond%if-1%fun-A(): Boolean {
                 val tmp0 = State%Boolean%cond%if-1%fun-A
                 return if (tmp0 == null) {
@@ -456,7 +456,7 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
               }
               val Float%arg-0%call-print%branch%if-1%fun-A: Float = 1.0f
               var State%Float%arg-0%call-print%branch%if-1%fun-A: State<Float>?
-              @LiveLiteralInfo(key = "Float%arg-0%call-print%branch%if-1%fun-A", offset = 139)
+              @LiveLiteralInfo(key = "Float%arg-0%call-print%branch%if-1%fun-A", offset = 147)
               fun Float%arg-0%call-print%branch%if-1%fun-A(): Float {
                 val tmp0 = State%Float%arg-0%call-print%branch%if-1%fun-A
                 return if (tmp0 == null) {
@@ -470,7 +470,7 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
               }
               val Int%arg-0%call-print-2%fun-A: Int = 3
               var State%Int%arg-0%call-print-2%fun-A: State<Int>?
-              @LiveLiteralInfo(key = "Int%arg-0%call-print-2%fun-A", offset = 157)
+              @LiveLiteralInfo(key = "Int%arg-0%call-print-2%fun-A", offset = 165)
               fun Int%arg-0%call-print-2%fun-A(): Int {
                 val tmp0 = State%Int%arg-0%call-print-2%fun-A
                 return if (tmp0 == null) {
@@ -579,12 +579,12 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
         dumpTree: Boolean = false
     ) = verifyComposeIrTransform(
         """
-            import androidx.compose.Composable
+            import androidx.compose.runtime.Composable
             $checked
         """.trimIndent(),
         expectedTransformed,
         """
-            import androidx.compose.Composable
+            import androidx.compose.runtime.Composable
             $unchecked
         """.trimIndent(),
         dumpTree

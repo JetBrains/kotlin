@@ -17,7 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import android.widget.TextView
-import androidx.compose.Composer
+import androidx.compose.runtime.Composer
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -44,7 +44,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     "x/I.kt" to """
                       package x
 
-                      import androidx.compose.Composable
+                      import androidx.compose.runtime.Composable
 
                       @Composable fun bar(arg: @Composable () -> Unit) {
                           arg()
@@ -56,7 +56,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                       package y
 
                       import x.bar
-                      import androidx.compose.Composable
+                      import androidx.compose.runtime.Composable
 
                       @Composable fun baz() {
                           bar {
@@ -127,7 +127,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     "x/A.kt" to """
                         package x
 
-                        import androidx.compose.Composable
+                        import androidx.compose.runtime.Composable
 
                         inline class I(val i: Int)
                         inline class J(val j: Int)
@@ -140,7 +140,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     "y/B.kt" to """
                         package y
 
-                        import androidx.compose.Composable
+                        import androidx.compose.runtime.Composable
                         import x.*
 
                         @Composable fun bar(k: Int) {
@@ -154,12 +154,12 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
             // Check that the composable functions were properly mangled
             assert(
                 it.contains(
-                    "public final static foo-pxsymTM(ILandroidx/compose/Composer;II)V"
+                    "public final static foo-YmYloa0(ILandroidx/compose/runtime/Composer;II)V"
                 )
             )
             assert(
                 it.contains(
-                    "public final static foo-UYB6V-A(ILandroidx/compose/Composer;II)V"
+                    "public final static foo-xHwECpg(ILandroidx/compose/runtime/Composer;II)V"
                 )
             )
             // Check that we didn't leave any references to the original name, which probably
@@ -176,7 +176,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     "x/Base.kt" to """
                     package x
 
-                    import androidx.compose.Composable
+                    import androidx.compose.runtime.Composable
 
                     class Foo
 
@@ -189,7 +189,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     "b/Extends.kt" to """
                     package b
 
-                    import androidx.compose.Composable
+                    import androidx.compose.runtime.Composable
                     import x.Base
                     import x.Foo
 
@@ -241,7 +241,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     "x/A.kt" to """
                     package x
 
-                    import androidx.compose.Composable
+                    import androidx.compose.runtime.Composable
 
                     @Composable
                     inline fun <T> key(
@@ -253,7 +253,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     "b/B.kt" to """
                     package b
 
-                    import androidx.compose.Composable
+                    import androidx.compose.runtime.Composable
                     import x.key
 
                     @Composable fun Test() {
@@ -273,7 +273,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     "x/A.kt" to """
                     package x
 
-                    import androidx.compose.Composable
+                    import androidx.compose.runtime.Composable
 
                     @Composable
                     inline fun key(
@@ -287,7 +287,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     "b/B.kt" to """
                     package b
 
-                    import androidx.compose.Composable
+                    import androidx.compose.runtime.Composable
                     import x.key
 
                     @Composable fun Test() {
@@ -372,7 +372,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     "x/A.kt" to """
                     package x
 
-                    import androidx.compose.Composable
+                    import androidx.compose.runtime.Composable
 
                     class Foo {
                       @Composable val value: Int get() = 123
@@ -383,7 +383,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     "b/B.kt" to """
                     package b
 
-                    import androidx.compose.Composable
+                    import androidx.compose.runtime.Composable
                     import x.Foo
 
                     val foo = Foo()
@@ -440,7 +440,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
             mapOf(
                 "library module" to mapOf(
                     "x/C.kt" to """
-                    import androidx.compose.Composable
+                    import androidx.compose.runtime.Composable
 
                     @Composable
                     fun ghi() {
@@ -449,8 +449,8 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     }
                     """,
                     "x/A.kt" to """
-                    import androidx.compose.Composable
-                    import androidx.compose.currentComposer
+                    import androidx.compose.runtime.Composable
+                    import androidx.compose.runtime.currentComposer
 
                     @Composable
                     inline fun abc(): Any {
@@ -458,7 +458,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     }
                     """,
                     "x/B.kt" to """
-                    import androidx.compose.Composable
+                    import androidx.compose.runtime.Composable
 
                     @Composable
                     fun def() {
@@ -481,7 +481,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
             mapOf(
                 "library module" to mapOf(
                     "C.kt" to """
-                    import androidx.compose.*
+                    import androidx.compose.runtime.*
 
                     @Composable
                     fun b() {
@@ -489,7 +489,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     }
                     """,
                     "A.kt" to """
-                    import androidx.compose.*
+                    import androidx.compose.runtime.*
 
                     @Composable
                     fun a() {
@@ -497,7 +497,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     }
                     """,
                     "B.kt" to """
-                    import androidx.compose.*
+                    import androidx.compose.runtime.*
 
                     @Composable
                     fun c() {
@@ -522,7 +522,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     "a/A.kt" to """
                     package a
 
-                    import androidx.compose.*
+                    import androidx.compose.runtime.*
 
                     @Composable
                     fun FromA() {}
@@ -533,7 +533,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     package b
 
                     import a.FromA
-                    import androidx.compose.*
+                    import androidx.compose.runtime.*
 
                     @Composable
                     fun FromB() {
@@ -582,7 +582,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     "a/Foo.kt" to """
                     package a
 
-                    import androidx.compose.*
+                    import androidx.compose.runtime.*
 
                     class Foo {
                         @Composable
@@ -593,7 +593,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                 "Main" to mapOf(
                     "B.kt" to """
                     import a.Foo
-                    import androidx.compose.*
+                    import androidx.compose.runtime.*
 
                     @Composable
                     fun FromB() {
@@ -613,7 +613,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     "a/Foo.kt" to """
                     package a
 
-                    import androidx.compose.*
+                    import androidx.compose.runtime.*
 
                     @Composable val foo: Int get() { return 123 }
                  """
@@ -621,7 +621,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                 "Main" to mapOf(
                     "B.kt" to """
                     import a.foo
-                    import androidx.compose.*
+                    import androidx.compose.runtime.*
 
                     @Composable
                     fun FromB() {
@@ -641,7 +641,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     "a/Foo.kt" to """
                     package a
 
-                    import androidx.compose.*
+                    import androidx.compose.runtime.*
 
                     interface Foo {
                         @Composable fun foo()
@@ -651,7 +651,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                 "Main" to mapOf(
                     "B.kt" to """
                     import a.Foo
-                    import androidx.compose.*
+                    import androidx.compose.runtime.*
 
                     class B : Foo {
                         @Composable override fun foo() {}
@@ -675,7 +675,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     "a/Foo.kt" to """
                     package a
 
-                    import androidx.compose.*
+                    import androidx.compose.runtime.*
 
                     class Foo(val bar: @Composable () -> Unit)
                  """
@@ -683,7 +683,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                 "Main" to mapOf(
                     "B.kt" to """
                     import a.Foo
-                    import androidx.compose.*
+                    import androidx.compose.runtime.*
 
                     @Composable fun Example(bar: @Composable () -> Unit) {
                         val foo = Foo(bar)
@@ -704,7 +704,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     "my/test/lib/InternalComp.kt" to """
                     package my.test.lib
 
-                    import androidx.compose.*
+                    import androidx.compose.runtime.*
 
                     @Composable fun InternalComp(block: @Composable () -> Unit) {
                         block()
@@ -716,7 +716,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                    package my.test.app
 
                    import android.widget.*
-                   import androidx.compose.*
+                   import androidx.compose.runtime.*
                    import androidx.ui.viewinterop.emitView
                    import my.test.lib.*
 

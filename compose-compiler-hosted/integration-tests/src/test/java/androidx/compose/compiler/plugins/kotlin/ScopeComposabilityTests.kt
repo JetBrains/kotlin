@@ -31,7 +31,7 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
 
     fun testNormalFunctions() = assertComposability(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             fun Foo() {
                 <normal>
@@ -45,7 +45,7 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
 
     fun testPropGetter() = assertComposability(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             val baz: Int get() { <normal>return 123 }
         """
@@ -53,7 +53,7 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
 
     fun testBasicComposable() = assertComposability(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             @Composable
             fun Foo() {
@@ -64,7 +64,7 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
 
     fun testBasicComposable2() = assertComposability(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             val foo = @Composable { <composable> }
 
@@ -82,7 +82,7 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
     // TODO(b/147250515): get inlined lambdas to analyze correctly
     fun xtestBasicComposable3() = assertComposability(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             @Composable
             fun Bar() {
@@ -96,7 +96,7 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
 
     fun testBasicComposable4() = assertComposability(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             @Composable fun Wrap(block: @Composable () -> Unit) { block() }
 
@@ -115,7 +115,7 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
 
     fun testBasicComposable5() = assertComposability(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             @Composable fun Callback(block: () -> Unit) { block() }
 
@@ -131,7 +131,7 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
 
     fun testBasicComposable6() = assertComposability(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             fun kickOff(block: @Composable () -> Unit) {  }
 

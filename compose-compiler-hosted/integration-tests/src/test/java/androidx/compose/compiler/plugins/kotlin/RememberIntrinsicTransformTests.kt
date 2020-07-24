@@ -26,14 +26,14 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
         dumpTree: Boolean = false
     ) = verifyComposeIrTransform(
         """
-            import androidx.compose.Composable
-            import androidx.compose.remember
+            import androidx.compose.runtime.Composable
+            import androidx.compose.runtime.remember
 
             $checked
         """.trimIndent(),
         expectedTransformed,
         """
-            import androidx.compose.Composable
+            import androidx.compose.runtime.Composable
 
             $unchecked
         """.trimIndent(),
@@ -175,7 +175,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
     @Test
     fun testAmbientCallBeforeRemember(): Unit = comparisonPropagation(
         """
-            import androidx.compose.ambientOf
+            import androidx.compose.runtime.ambientOf
 
             class Foo
             class Bar
@@ -211,7 +211,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
     @Test
     fun testAmbientCallAsInput(): Unit = comparisonPropagation(
         """
-            import androidx.compose.ambientOf
+            import androidx.compose.runtime.ambientOf
 
             class Foo
             class Bar

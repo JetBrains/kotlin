@@ -21,11 +21,11 @@ import android.os.Bundle
 import android.os.Looper.getMainLooper
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import androidx.compose.Composer
-import androidx.compose.Composition
-import androidx.compose.ExperimentalComposeApi
-import androidx.compose.Recomposer
-import androidx.compose.compositionFor
+import androidx.compose.runtime.Composer
+import androidx.compose.runtime.Composition
+import androidx.compose.runtime.ExperimentalComposeApi
+import androidx.compose.runtime.Recomposer
+import androidx.compose.runtime.compositionFor
 import androidx.ui.core.ContextAmbient
 import androidx.ui.node.UiApplier
 import org.robolectric.Robolectric

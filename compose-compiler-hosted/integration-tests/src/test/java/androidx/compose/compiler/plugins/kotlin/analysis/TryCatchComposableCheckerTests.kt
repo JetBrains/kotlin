@@ -27,7 +27,7 @@ class TryCatchComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testTryCatchReporting001() {
         doTest(
             """
-            import androidx.compose.*;
+            import androidx.compose.runtime.*;
 
             @Composable fun foo() { }
 
@@ -43,7 +43,7 @@ class TryCatchComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testTryCatchReporting002() {
         doTest(
             """
-            import androidx.compose.*;
+            import androidx.compose.runtime.*;
 
             fun foo() { }
 
@@ -59,7 +59,7 @@ class TryCatchComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testTryCatchReporting003() {
         doTest(
             """
-            import androidx.compose.*;
+            import androidx.compose.runtime.*;
 
             @Composable fun foo() { }
 
@@ -77,7 +77,7 @@ class TryCatchComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testTryCatchReporting004() {
         doTest(
             """
-            import androidx.compose.*;
+            import androidx.compose.runtime.*;
 
             @Composable fun foo() { }
 

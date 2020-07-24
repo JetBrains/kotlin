@@ -32,11 +32,11 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
             )
             package test
 
-            import androidx.compose.ExperimentalComposeApi
-            import androidx.compose.InternalComposeApi
-            import androidx.compose.ComposeCompilerApi
-            import androidx.compose.Composable
-            import androidx.compose.ComposableContract
+            import androidx.compose.runtime.ExperimentalComposeApi
+            import androidx.compose.runtime.InternalComposeApi
+            import androidx.compose.runtime.ComposeCompilerApi
+            import androidx.compose.runtime.Composable
+            import androidx.compose.runtime.ComposableContract
 
             $source
         """.trimIndent(),

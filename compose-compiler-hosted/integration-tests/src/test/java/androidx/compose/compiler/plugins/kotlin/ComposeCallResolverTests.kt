@@ -32,7 +32,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
 
     fun testProperties() = assertInterceptions(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             @Composable val foo get() = 123
 
@@ -54,7 +54,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
 
     fun testBasicCallTypes() = assertInterceptions(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
             import android.widget.TextView
 
             @Composable fun Foo() {}
@@ -71,7 +71,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
 
     fun testReceiverScopeCall() = assertInterceptions(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             @Composable fun Int.Foo() {}
 
@@ -89,7 +89,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
 
     fun testInvokeOperatorCall() = assertInterceptions(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             @Composable operator fun Int.invoke(y: Int) {}
 
@@ -103,7 +103,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
 
     fun testComposableLambdaCall() = assertInterceptions(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             @Composable
             fun test(children: @Composable () -> Unit) {
@@ -114,7 +114,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
 
     fun testComposableLambdaCallWithGenerics() = assertInterceptions(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             @Composable fun <T> A(value: T, block: @Composable (T) -> Unit) {
                 <call>block(value)
@@ -142,7 +142,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
     // TODO(chuckj): Replace with another nested function call.
     fun xtestMethodInvocations() = assertInterceptions(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             val x = Ambient.of<Int> { 123 }
 
@@ -157,7 +157,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
 
     fun testReceiverLambdaInvocation() = assertInterceptions(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             class TextSpanScope
 
@@ -174,7 +174,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
 
     fun testReceiverLambda2() = assertInterceptions(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             class DensityScope(val density: Density)
 
@@ -194,7 +194,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
 
     fun testInlineChildren() = assertInterceptions(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
             import android.widget.LinearLayout
 
             @Composable fun Group(content: @Composable () -> Unit) { content() }

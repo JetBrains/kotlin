@@ -26,14 +26,14 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         dumpTree: Boolean = false
     ) = verifyComposeIrTransform(
         """
-            import androidx.compose.Composable
-            import androidx.compose.ComposableContract
+            import androidx.compose.runtime.Composable
+            import androidx.compose.runtime.ComposableContract
 
             $checked
         """.trimIndent(),
         expectedTransformed,
         """
-            import androidx.compose.Composable
+            import androidx.compose.runtime.Composable
 
             $unchecked
         """.trimIndent(),
@@ -167,8 +167,8 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
     @Test
     fun testSimpleColumn(): Unit = comparisonPropagation(
         """
-            import androidx.compose.Stable
-            import androidx.compose.Immutable
+            import androidx.compose.runtime.Stable
+            import androidx.compose.runtime.Immutable
 
             @Stable
             interface Modifier {
@@ -365,7 +365,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
     @Test
     fun testSimplerBox(): Unit = comparisonPropagation(
         """
-            import androidx.compose.Stable
+            import androidx.compose.runtime.Stable
 
             @Stable
             interface Modifier {
@@ -452,7 +452,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
     @Test
     fun testSimpleBoxWithShape(): Unit = comparisonPropagation(
         """
-            import androidx.compose.Stable
+            import androidx.compose.runtime.Stable
 
             @Stable
             interface Modifier {
@@ -516,7 +516,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
     @Test
     fun testSimpleBox(): Unit = comparisonPropagation(
         """
-            import androidx.compose.Stable
+            import androidx.compose.runtime.Stable
 
             @Stable
             interface Modifier {
@@ -581,7 +581,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
     @Test
     fun testComposableLambdaWithStableParams(): Unit = comparisonPropagation(
         """
-            import androidx.compose.Immutable
+            import androidx.compose.runtime.Immutable
 
             @Immutable class Foo
             @Composable fun A(x: Int) {}
@@ -724,7 +724,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
     @Test
 fun testStableVarargParams(): Unit = comparisonPropagation(
         """
-            import androidx.compose.Immutable
+            import androidx.compose.runtime.Immutable
             @Immutable class Foo
         """,
         """
@@ -1289,7 +1289,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
     @Test
     fun testStaticDetection(): Unit = comparisonPropagation(
         """
-            import androidx.compose.Stable
+            import androidx.compose.runtime.Stable
 
             enum class Foo {
                 Bar,
@@ -1731,7 +1731,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
     @Test
     fun testReceiverLambdaCall(): Unit = comparisonPropagation(
         """
-            import androidx.compose.Stable
+            import androidx.compose.runtime.Stable
 
             interface Foo { val x: Int }
             @Stable
@@ -2342,8 +2342,8 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
         """,
         """
-            import androidx.compose.currentComposer
-            import androidx.compose.ExperimentalComposeApi
+            import androidx.compose.runtime.currentComposer
+            import androidx.compose.runtime.ExperimentalComposeApi
 
             open class Foo {
                 @ComposableContract(readonly = true)
@@ -2385,7 +2385,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
     @Test
     fun testStaticAndNonStaticDefaultValueSkipping(): Unit = comparisonPropagation(
         """
-            import androidx.compose.ambientOf
+            import androidx.compose.runtime.ambientOf
 
             val AmbientColor = ambientOf { 123 }
             @Composable fun A(a: Int) {}
@@ -2501,7 +2501,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
             import androidx.ui.core.Modifier
             import androidx.compose.ui.unit.Dp
-            import androidx.compose.emptyContent
+            import androidx.compose.runtime.emptyContent
 
             @Composable
             fun Box2(

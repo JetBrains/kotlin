@@ -20,7 +20,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
     fun testImplicitlyPassedReceiverScope1() = doTest(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             @Composable
             fun Int.Foo(children: @Composable Int.() -> Unit) {
@@ -31,7 +31,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
     fun testImplicitlyPassedReceiverScope2() = doTest(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             @Composable
             fun Int.Foo(children: @Composable Int.(foo: String) -> Unit) {
@@ -47,7 +47,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
     fun testSmartCastsAndPunning() = doTest(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             @Composable
             fun Foo(bar: String) { print(bar) }
@@ -65,7 +65,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
     fun testExtensionInvoke() = doTest(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             class Foo {}
             @Composable operator fun Foo.invoke() {}
@@ -78,7 +78,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
     fun testResolutionInsideWhenExpression() = doTest(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
             
             @Composable fun TextView(text: String) { print(text) }
 
@@ -93,7 +93,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
     fun testUsedParameters() = doTest(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
             import android.widget.LinearLayout
 
             @Composable fun Foo(x: Int, composeItem: @Composable () -> Unit = {}) {
@@ -136,7 +136,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
     fun testDispatchInvoke() = doTest(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             class Bam {
                 @Composable fun Foo() {}
@@ -152,7 +152,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
     fun testDispatchAndExtensionReceiver() = doTest(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             class Bam {
                 inner class Foo {}
@@ -170,7 +170,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
     fun testDispatchAndExtensionReceiverLocal() = doTest(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             class Foo {}
 
@@ -186,7 +186,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
     fun testMissingAttributes() = doTest(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             data class Foo(val value: Int)
 
@@ -215,7 +215,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
     fun testDuplicateAttributes() = doTest(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             data class Foo(val value: Int)
 
@@ -234,7 +234,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
     fun testChildrenNamedAndBodyDuplicate() = doTest(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             @Composable fun A(children: @Composable () -> Unit) { children() }
 
@@ -247,7 +247,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
     fun testAbstractClassTags() = doTest(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
             import android.content.Context
             import android.widget.LinearLayout
 
@@ -265,7 +265,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
     fun testGenerics() = doTest(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             class A { fun a() {} }
             class B { fun b() {} }
@@ -300,7 +300,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
     fun testUnresolvedAttributeValueResolvedTarget() = doTest(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             @Composable fun Fam(bar: Int, x: Int) {
                 print(bar)
@@ -333,7 +333,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
     // TODO(lmr): this triggers an exception!
     fun testEmptyAttributeValue() = doTest(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             @Composable fun Foo(abc: Int, xyz: Int) {
                 print(abc)
@@ -354,7 +354,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
     fun testMismatchedAttributes() = doTest(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             open class A {}
             class B : A() {}
@@ -388,7 +388,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
     fun testErrorAttributeValue() = doTest(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             @Composable fun Foo(x: Int = 1) { print(x) }
 
@@ -404,7 +404,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
     fun testUnresolvedQualifiedTag() = doTest(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
 
             object MyNamespace {
                 @Composable fun Bar(children: @Composable () -> Unit = {}) { 
@@ -462,7 +462,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
     // TODO(lmr): overloads creates resolution exception
     fun testChildren() = doTest(
         """
-            import androidx.compose.*
+            import androidx.compose.runtime.*
             import android.widget.Button
             import android.widget.LinearLayout
 
