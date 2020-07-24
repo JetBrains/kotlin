@@ -26,8 +26,8 @@ import androidx.compose.runtime.Composition
 import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.Recomposer
 import androidx.compose.runtime.compositionFor
-import androidx.ui.core.ContextAmbient
-import androidx.ui.node.UiApplier
+import androidx.compose.ui.node.UiApplier
+import androidx.compose.ui.platform.ContextAmbient
 import org.robolectric.Robolectric
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows.shadowOf

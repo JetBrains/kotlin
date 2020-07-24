@@ -717,7 +717,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
 
                    import android.widget.*
                    import androidx.compose.runtime.*
-                   import androidx.ui.viewinterop.emitView
+                   import androidx.compose.ui.viewinterop.emitView
                    import my.test.lib.*
 
                    var bar = 0
