@@ -6,7 +6,7 @@ import org.jetbrains.dokka.utilities.DokkaConsoleLogger
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import testApi.logger.TestLogger
+import org.jetbrains.dokka.testApi.logger.TestLogger
 
 class FailOnWarningTest : AbstractCoreTest() {
 
