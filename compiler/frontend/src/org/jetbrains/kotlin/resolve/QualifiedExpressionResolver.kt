@@ -237,9 +237,9 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
         if (!languageVersionSettings.isLibraryToSourceAnalysisEnabled) return primaryImportingScope
 
         val resolutionAnchor = moduleDescriptor.getResolutionAnchorIfAny() ?: return primaryImportingScope
-        val secondaryImportingScope = processReferenceInContextOf(resolutionAnchor) ?: return primaryImportingScope
-        if (primaryImportingScope == null) return secondaryImportingScope
-        return CompositePrioritizedImportingScope(primaryImportingScope, secondaryImportingScope)
+        val anchorImportingScope = processReferenceInContextOf(resolutionAnchor) ?: return primaryImportingScope
+        if (primaryImportingScope == null) return anchorImportingScope
+        return CompositePrioritizedImportingScope(anchorImportingScope, primaryImportingScope)
     }
 
     private fun doProcessImportReference(
