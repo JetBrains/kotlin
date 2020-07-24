@@ -17,7 +17,7 @@ class FirControlFlowAnalyzer {
 
     fun analyzeClassInitializer(klass: FirClass<*>, graph: ControlFlowGraph, context: CheckerContext, reporter: DiagnosticReporter) {
         if (graph.owner != null) return
-        // TODO()
+        propertyInitializationAnalyzer.analyze(graph, reporter)
     }
 
     fun analyzeFunction(function: FirFunction<*>, graph: ControlFlowGraph, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -27,6 +27,6 @@ class FirControlFlowAnalyzer {
 
     fun analyzePropertyInitializer(property: FirProperty, graph: ControlFlowGraph, context: CheckerContext, reporter: DiagnosticReporter) {
         if (graph.owner != null) return
-        // TODO()
+        propertyInitializationAnalyzer.analyze(graph, reporter)
     }
 }

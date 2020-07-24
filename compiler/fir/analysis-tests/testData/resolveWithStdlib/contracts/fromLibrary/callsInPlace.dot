@@ -37,6 +37,7 @@ digraph callsInPlace_kt {
     2 -> {3};
     3 -> {11};
     3 -> {5} [color=red];
+    3 -> {11} [style=dashed];
     4 -> {6} [color=red];
     5 -> {6} [color=green];
     6 -> {7};
@@ -81,6 +82,7 @@ digraph callsInPlace_kt {
     19 -> {20};
     20 -> {25};
     20 -> {21} [color=red];
+    20 -> {25} [style=dashed];
     21 -> {22};
     22 -> {23};
     23 -> {24};
@@ -120,6 +122,7 @@ digraph callsInPlace_kt {
     31 -> {32};
     32 -> {38};
     32 -> {33} [color=red];
+    32 -> {38} [style=dashed];
     33 -> {34};
     34 -> {35};
     35 -> {36};
@@ -166,6 +169,7 @@ digraph callsInPlace_kt {
     45 -> {46};
     46 -> {52};
     46 -> {48} [color=red];
+    46 -> {52} [style=dashed];
     47 -> {49} [color=red];
     48 -> {49} [color=green];
     49 -> {50};
@@ -216,6 +220,7 @@ digraph callsInPlace_kt {
     63 -> {64};
     64 -> {70};
     64 -> {66} [color=red];
+    64 -> {70} [style=dashed];
     65 -> {67} [color=red];
     66 -> {67} [color=green];
     67 -> {68};
@@ -290,9 +295,11 @@ digraph callsInPlace_kt {
     86 -> {87};
     87 -> {94};
     87 -> {88} [color=red];
+    87 -> {94} [style=dashed];
     88 -> {89};
     89 -> {99};
     89 -> {90} [color=red];
+    89 -> {99} [style=dashed];
     90 -> {91};
     91 -> {92};
     92 -> {93};
@@ -350,9 +357,11 @@ digraph callsInPlace_kt {
     105 -> {106};
     106 -> {113};
     106 -> {107} [color=red];
+    106 -> {113} [style=dashed];
     107 -> {108};
     108 -> {118};
     108 -> {109} [color=red];
+    108 -> {118} [style=dashed];
     109 -> {110};
     110 -> {111};
     111 -> {112};
@@ -412,6 +421,7 @@ digraph callsInPlace_kt {
     128 -> {129};
     129 -> {130};
     130 -> {131 135};
+    130 -> {135} [style=dashed];
     131 -> {132};
     132 -> {133};
     133 -> {134};

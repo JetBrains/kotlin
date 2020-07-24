@@ -181,6 +181,7 @@ digraph safeCalls_kt {
     55 -> {56 60};
     56 -> {57};
     57 -> {58 65};
+    57 -> {65} [style=dashed];
     58 -> {59};
     59 -> {60};
     60 -> {61};
@@ -282,6 +283,7 @@ digraph safeCalls_kt {
     91 -> {92};
     92 -> {107};
     92 -> {94} [color=red];
+    92 -> {107} [style=dashed];
     93 -> {95} [style=dotted];
     94 -> {95} [style=dotted];
     95 -> {106 96} [style=dotted];

@@ -69,6 +69,7 @@ digraph exactlyOnce_kt {
     12 -> {13};
     13 -> {21};
     13 -> {15} [color=red];
+    13 -> {21} [style=dashed];
     14 -> {16} [color=red];
     15 -> {16} [color=green];
     16 -> {17};
@@ -117,6 +118,7 @@ digraph exactlyOnce_kt {
     29 -> {30};
     30 -> {38};
     30 -> {32} [color=red];
+    30 -> {38} [style=dashed];
     31 -> {33} [color=red];
     32 -> {33} [color=green];
     33 -> {34};

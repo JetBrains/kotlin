@@ -160,7 +160,7 @@ class ControlFlowGraphBuilder {
 
     // ----------------------------------- Regular function -----------------------------------
 
-    fun enterFunction(function: FirFunction<*>): Pair<FunctionEnterNode, CFGNode<*>?> {
+    fun enterFunction(function: FirFunction<*>): Triple<FunctionEnterNode, LocalFunctionDeclarationNode?, CFGNode<*>?> {
         require(function !is FirAnonymousFunction)
         val name = when (function) {
             is FirSimpleFunction -> function.name.asString()
@@ -170,10 +170,15 @@ class ControlFlowGraphBuilder {
         }
         val graph = ControlFlowGraph(function, name, ControlFlowGraph.Kind.Function)
         // function is local
-        if (mode == Mode.Body) {
+        val localFunctionNode = runIf(mode == Mode.Body) {
             assert(currentGraph.kind.withBody)
             currentGraph.addSubGraph(graph)
+
+            createLocalFunctionDeclarationNode(function).also {
+                addNewSimpleNode(it)
+            }
         }
+
         pushGraph(
             graph = graph,
             mode = Mode.Body
@@ -195,7 +200,7 @@ class ControlFlowGraphBuilder {
             exitTargetsForTry.push(it)
         }
 
-        return enterNode to previousNode
+        return Triple(enterNode, localFunctionNode, previousNode)
     }
 
     fun exitFunction(function: FirFunction<*>): Pair<FunctionExitNode, ControlFlowGraph> {
@@ -360,17 +365,27 @@ class ControlFlowGraphBuilder {
         pushGraph(classGraph, Mode.ClassInitializer)
         val exitNode = createClassExitNode(klass)
         var node: CFGNode<*> = createClassEnterNode(klass)
+        var prevInitPartNode: CFGNode<*>? = null
         for (declaration in klass.declarations) {
             val graph = when (declaration) {
                 is FirProperty -> declaration.controlFlowGraphReference.controlFlowGraph
                 is FirAnonymousInitializer -> declaration.controlFlowGraphReference.controlFlowGraph
                 else -> null
             } ?: continue
-            addEdge(node, graph.enterNode, preferredKind = EdgeKind.CfgForward)
-            node = graph.exitNode
-            classGraph.addSubGraph(graph)
+
+            createPartOfClassInitializationNode(declaration as FirControlFlowGraphOwner).also {
+                addEdge(node, it, preferredKind = EdgeKind.CfgForward)
+                addEdge(it, graph.enterNode, preferredKind = EdgeKind.CfgForward)
+                node = graph.exitNode
+
+                if (prevInitPartNode != null) addEdge(prevInitPartNode!!, it, preferredKind = EdgeKind.DeadForward)
+                it.updateDeadStatus()
+                prevInitPartNode = it
+            }
         }
         addEdge(node, exitNode, preferredKind = EdgeKind.CfgForward)
+        if (prevInitPartNode != null) addEdge(prevInitPartNode!!, exitNode, preferredKind = EdgeKind.DeadForward)
+        exitNode.updateDeadStatus()
         return popGraph()
     }
 
@@ -393,6 +408,8 @@ class ControlFlowGraphBuilder {
         val node = createLocalClassExitNode(klass).also {
             addNewSimpleNodeIfPossible(it)
         }
+        visitLocalClassFunctions(klass, node)
+        addEdge(node, graph.enterNode, preferredKind = EdgeKind.CfgForward)
         return node to graph
     }
 
@@ -406,7 +423,19 @@ class ControlFlowGraphBuilder {
                 addNewSimpleNode(it)
             }
         }
+        visitLocalClassFunctions(anonymousObject, node)
+        addEdge(node, graph.enterNode, preferredKind = EdgeKind.CfgForward)
         return node to graph
+    }
+
+    fun visitLocalClassFunctions(klass: FirClass<*>, node: CFGNodeWithCfgOwner<*>) {
+        klass.declarations.filterIsInstance<FirFunction<*>>().forEach { function ->
+            val functionGraph = function.controlFlowGraphReference.controlFlowGraph
+            if (functionGraph != null && functionGraph.owner == null) {
+                addEdge(node, functionGraph.enterNode, preferredKind = EdgeKind.CfgForward)
+                node.addSubGraph(functionGraph)
+            }
+        }
     }
 
     // ----------------------------------- Value parameters (and it's defaults) -----------------------------------
@@ -1191,3 +1220,5 @@ class ControlFlowGraphBuilder {
     }
 
 }
+
+fun FirDeclaration?.isLocalClassOrAnonymousObject() = ((this as? FirRegularClass)?.isLocal == true) || this is FirAnonymousObject

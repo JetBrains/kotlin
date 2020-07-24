@@ -99,6 +99,7 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     22 -> {23};
     23 -> {32};
     23 -> {24} [color=red];
+    23 -> {32} [style=dashed];
     24 -> {25};
     25 -> {26};
     26 -> {27};
@@ -171,6 +172,7 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     41 -> {42};
     42 -> {57};
     42 -> {43} [color=red];
+    42 -> {57} [style=dashed];
     43 -> {44};
     44 -> {45};
     45 -> {46};
@@ -222,6 +224,7 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     63 -> {64};
     64 -> {72};
     64 -> {65} [color=red];
+    64 -> {72} [style=dashed];
     65 -> {66};
     66 -> {67};
     67 -> {68};
