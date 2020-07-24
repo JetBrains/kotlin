@@ -61,5 +61,3 @@ org.jetbrains.kotlin.jvm.compiler.CompileKotlinAgainstJavaTestGenerated.WithoutA
 org.jetbrains.kotlin.idea.debugger.test.AsyncStackTraceTestGenerated.testAsyncLambdas, redesign test AsyncStackTraces,,
 org.jetbrains.kotlin.idea.debugger.test.KotlinSteppingTestGenerated.StepOver.testStepOverInlinedLambdaStdlib, fails after advancing bootstrap KT-37879,,
 org.jetbrains.kotlin.incremental.IncrementalJsKlibCompilerRunnerTestGenerated.ClassHierarchyAffected.testMethodRemoved, full fledged FO in klib required,,
-org.jetbrains.kotlinx.serialization.SerializationIrBytecodeListingTestGenerated.testBasic, Serialization runtime needs update,,
-org.jetbrains.kotlinx.serialization.SerializationPluginBytecodeListingTestGenerated.testBasic, Serialization runtime needs update,,
