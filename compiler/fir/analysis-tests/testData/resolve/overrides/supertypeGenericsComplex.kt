@@ -1,6 +1,6 @@
 class Out<out T>
 
-interface X : Out<String>
+interface X : <!INTERFACE_WITH_SUPERCLASS!>Out<String><!>
 
 abstract class Base<E> {
     fun <D : Out<E>> f(t: MutableList<D>, e: MutableList<E>) {}

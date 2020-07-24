@@ -1,0 +1,21 @@
+FILE: classInSupertypeForEnum.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract interface C : R|kotlin/Any| {
+    }
+    public final enum class B : R|C|, R|A|, R|kotlin/Any|, R|kotlin/Enum<B>| {
+        private constructor(): R|B| {
+            super<R|kotlin/Enum<B>|>()
+        }
+
+        public final static fun values(): R|kotlin/Array<B>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|B| {
+        }
+
+    }

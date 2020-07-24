@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirSealedClassConstructorCallChecker
+
 object CommonExpressionCheckers : ExpressionCheckers() {
     override val expressionCheckers: List<FirBasicExpresionChecker> = listOf()
     override val qualifiedAccessCheckers: List<FirQualifiedAccessChecker> = listOf(
@@ -16,6 +18,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirProjectionsOnNonClassTypeArgumentChecker,
         FirUpperBoundViolatedChecker,
         FirTypeArgumentsNotAllowedExpressionChecker,
+        FirSealedClassConstructorCallChecker,
     )
     override val functionCallCheckers: List<FirFunctionCallChecker> = listOf()
 }

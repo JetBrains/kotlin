@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
-import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -208,7 +207,7 @@ fun FirSimpleFunction.overriddenFunctions(
     val firTypeScope = containingClass.unsubstitutedScope(
         context.sessionHolder.session,
         context.sessionHolder.scopeSession
-    ) as FirTypeScope
+    )
 
     val overriddenFunctions = mutableListOf<FirFunctionSymbol<*>>()
     firTypeScope.processFunctionsByName(symbol.fir.name) { }
@@ -272,4 +271,27 @@ private fun FirDeclaration.hasBody(): Boolean = when (this) {
     is FirSimpleFunction -> this.body != null && this.body !is FirEmptyExpressionBlock
     is FirProperty -> this.setter?.body !is FirEmptyExpressionBlock? || this.getter?.body !is FirEmptyExpressionBlock?
     else -> false
+}
+
+/**
+ * Finds any non-interface supertype and returns it
+ * or null if couldn't find any.
+ */
+fun FirClass<*>.findNonInterfaceSupertype(context: CheckerContext): FirTypeRef? {
+    for (it in superTypeRefs) {
+        val classId = it.safeAs<FirResolvedTypeRef>()
+            ?.type.safeAs<ConeClassLikeType>()
+            ?.lookupTag?.classId
+            ?: continue
+
+        val fir = context.session.firSymbolProvider.getClassLikeSymbolByFqName(classId)
+            ?.fir.safeAs<FirClass<*>>()
+            ?: continue
+
+        if (fir.classKind != ClassKind.INTERFACE) {
+            return it
+        }
+    }
+
+    return null
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.CallableId
@@ -14,71 +15,86 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
-private open class RepresentationBuilder {
-    var receiver = ""
-    var name = ""
+/**
+ * Provides representations for FirElement's.
+ */
+interface FirDeclarationPresenter {
+    open class RepresentationBuilder {
+        var receiver = ""
+        var name = ""
 
-    open fun build() = "[$receiver] $name"
+        open fun build() = "[$receiver] $name"
+    }
+
+    fun buildRepresentation(init: RepresentationBuilder.() -> Unit): String {
+        return RepresentationBuilder().apply(init).build()
+    }
+
+    class FunctionRepresentationBuilder : RepresentationBuilder() {
+        var representsOperator = false
+        var typeArguments = ""
+        var parameters = ""
+
+        override fun build() = "<$typeArguments> [$receiver] ${if (representsOperator) "operator " else ""}$name ($parameters)"
+    }
+
+    fun buildFunctionRepresentation(init: FunctionRepresentationBuilder.() -> Unit): String {
+        return FunctionRepresentationBuilder().apply(init).build()
+    }
+
+    fun represent(it: FirElement) = "NO_REPRESENTATION"
+
+    fun represent(it: ClassId) = it.packageFqName.asString() + '/' + it.relativeClassName.asString()
+
+    fun represent(it: CallableId) = if (it.className != null) {
+        it.packageName.asString() + '/' + it.className + '.' + it.callableName
+    } else {
+        it.packageName.asString() + '/' + it.callableName
+    }
+
+    fun represent(it: FirTypeRef) = when (it) {
+        is FirResolvedTypeRef -> it.type.toString()
+        is FirErrorTypeRef -> "ERROR"
+        else -> "?"
+    }
+
+    fun represent(it: FirTypeParameter) = it.name.asString() + " : " + it.bounds
+        .map { represent(it) }
+        .sorted()
+        .joinToString()
+
+    fun represent(it: FirValueParameter): String {
+        val prefix = if (it.isVararg) "vararg " else ""
+        return prefix + " " + represent(it.returnTypeRef)
+    }
+
+    fun represent(it: FirProperty) = buildRepresentation {
+        it.receiverTypeRef?.let {
+            receiver = represent(it)
+        }
+        name = represent(it.symbol.callableId)
+    }
+
+    fun represent(it: FirSimpleFunction) = buildFunctionRepresentation {
+        typeArguments = it.typeParameters.joinToString { represent(it) }
+        it.receiverTypeRef?.let {
+            receiver = represent(it)
+        }
+        representsOperator = it.isOperator
+        name = represent(it.symbol.callableId)
+        parameters = it.valueParameters.joinToString { represent(it) }
+    }
+
+    fun represent(it: FirTypeAlias) = buildRepresentation {
+        name = represent(it.symbol.classId)
+    }
+
+    fun represent(it: FirRegularClass) = buildRepresentation {
+        name = represent(it.symbol.classId)
+    }
 }
 
-private fun buildRepresentation(init: RepresentationBuilder.() -> Unit): String {
-    return RepresentationBuilder().apply(init).build()
-}
-
-private class FunctionRepresentationBuilder : RepresentationBuilder() {
-    var typeArguments = ""
-    var parameters = ""
-
-    override fun build() = "<$typeArguments> [$receiver] $name ($parameters)"
-}
-
-private fun buildFunctionRepresentation(init: FunctionRepresentationBuilder.() -> Unit): String {
-    return FunctionRepresentationBuilder().apply(init).build()
-}
-
-private fun ClassId.represent() = packageFqName.asString() + '/' + relativeClassName.asString()
-
-private fun CallableId.represent() = if (className != null) {
-    packageName.asString() + '/' + className + '.' + callableName
-} else {
-    packageName.asString() + '/' + callableName
-}
-
-private fun FirTypeRef.represent() = when (this) {
-    is FirResolvedTypeRef -> type.toString()
-    is FirErrorTypeRef -> "ERROR"
-    else -> "?"
-}
-
-private fun FirTypeParameter.represent() = name.asString() + " : " + bounds
-    .map { it.represent() }
-    .sorted()
-    .joinToString()
-
-private fun FirValueParameter.represent(): String {
-    val prefix = if (this.isVararg) "vararg " else ""
-    return prefix + " " + this.returnTypeRef.represent()
-}
-
-private fun FirProperty.represent() = buildRepresentation {
-    receiver = receiverTypeRef?.represent() ?: ""
-    name = symbol.callableId.represent()
-}
-
-private fun FirSimpleFunction.represent() = buildFunctionRepresentation {
-    typeArguments = typeParameters.joinToString { it.represent() }
-    receiver = receiverTypeRef?.represent() ?: ""
-    name = symbol.callableId.represent()
-    parameters = valueParameters.joinToString { it.represent() }
-}
-
-private fun FirTypeAlias.represent() = buildRepresentation {
-    name = symbol.classId.represent()
-}
-
-private fun FirRegularClass.represent() = buildRepresentation {
-    name = symbol.classId.represent()
-}
+private class FirDefaultDeclarationPresenter : FirDeclarationPresenter
 
 private val NO_NAME_PROVIDED = Name.special("<no name provided>")
 
@@ -94,7 +110,12 @@ private fun FirDeclaration.isCollectable() = when (this) {
     else -> true
 }
 
-class FirDeclarationInspector {
+/**
+ * Collects FirDeclarations for further analysis.
+ */
+class FirDeclarationInspector(
+    private val presenter: FirDeclarationPresenter = FirDefaultDeclarationPresenter()
+) {
     val otherDeclarations = mutableMapOf<String, MutableList<FirDeclaration>>()
     val functionDeclarations = mutableMapOf<String, MutableList<FirSimpleFunction>>()
 
@@ -108,9 +129,9 @@ class FirDeclarationInspector {
         }
 
         val key = when (declaration) {
-            is FirRegularClass -> declaration.represent()
-            is FirTypeAlias -> declaration.represent()
-            is FirProperty -> declaration.represent()
+            is FirRegularClass -> presenter.represent(declaration)
+            is FirTypeAlias -> presenter.represent(declaration)
+            is FirProperty -> presenter.represent(declaration)
             else -> return
         }
 
@@ -125,7 +146,7 @@ class FirDeclarationInspector {
     }
 
     private fun collectFunction(declaration: FirSimpleFunction) {
-        val key = declaration.represent()
+        val key = presenter.represent(declaration)
         var value = functionDeclarations[key]
 
         if (value == null) {
@@ -136,11 +157,11 @@ class FirDeclarationInspector {
         value.add(declaration)
     }
 
-    private fun contains(declaration: FirDeclaration) = when (declaration) {
-        is FirSimpleFunction -> declaration.represent() in functionDeclarations
-        is FirRegularClass -> declaration.represent() in otherDeclarations
-        is FirTypeAlias -> declaration.represent() in otherDeclarations
-        is FirProperty -> declaration.represent() in otherDeclarations
+    fun contains(declaration: FirDeclaration) = when (declaration) {
+        is FirSimpleFunction -> presenter.represent(declaration) in functionDeclarations
+        is FirRegularClass -> presenter.represent(declaration) in otherDeclarations
+        is FirTypeAlias -> presenter.represent(declaration) in otherDeclarations
+        is FirProperty -> presenter.represent(declaration) in otherDeclarations
         else -> false
     }
 }

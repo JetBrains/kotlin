@@ -1,0 +1,19 @@
+FILE: interfaceWithSuperclass.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract interface B : R|A| {
+    }
+    public abstract interface C : R|kotlin/Any| {
+    }
+    public final class D : R|kotlin/Any| {
+        public constructor(): R|D| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract interface E : R|A|, R|C|, R|D| {
+    }
