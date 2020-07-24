@@ -153,7 +153,9 @@ abstract class ClassCodegen protected constructor(
         if (withinInline || !smap.isTrivial) {
             visitor.visitSMAP(smap, !context.state.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax))
         } else {
-            visitor.visitSource(smap.sourceInfo!!.source, null)
+            smap.sourceInfo!!.sourceFileName?.let {
+                visitor.visitSource(it, null)
+            }
         }
 
         visitor.done()

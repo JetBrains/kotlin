@@ -104,6 +104,16 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         runTest("compiler/testData/codegen/bytecodeListing/localFunctionInInitBlock.kt");
     }
 
+    @TestMetadata("multiClassPartSourceMultipleParts.kt")
+    public void testMultiClassPartSourceMultipleParts() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/multiClassPartSourceMultipleParts.kt");
+    }
+
+    @TestMetadata("multiClassPartSourceSinglePart.kt")
+    public void testMultiClassPartSourceSinglePart() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/multiClassPartSourceSinglePart.kt");
+    }
+
     @TestMetadata("noCollectionStubMethodsInInterface.kt")
     public void testNoCollectionStubMethodsInInterface() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/noCollectionStubMethodsInInterface.kt");
