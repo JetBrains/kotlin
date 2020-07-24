@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileDescriptor
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
-import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplateDescriptorWithPath
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTextDescriptor
 import java.nio.file.Path
 
@@ -93,6 +92,7 @@ object MppModuleConfigurator : ModuleConfigurator,
                 FileTemplate(
                     file.fileDescriptor,
                     projectPath / pathForFileInTarget(modulePath, module, file.javaPackage, file.filename, target, file.type),
+                    mapOf("package" to file.javaPackage?.asCodePackage())
                 )
             }
             TemplatesPlugin.fileTemplatesToRender.addValues(fileTemplates)
@@ -168,7 +168,7 @@ class MppSources(val mppFiles: List<MppFile>, val simpleFiles: List<SimpleFiles>
     fun getFilesFor(moduleSubType: ModuleSubType): List<SimpleFile> =
         simpleFiles.filter { moduleSubType in it.moduleSubTypes }.flatMap { it.files }
 
-    class Builder {
+    class Builder(val javaPackage: JavaPackage?) {
         private val mppFiles = mutableListOf<MppFile>()
         private val simpleFiles = mutableListOf<SimpleFiles>()
 
@@ -177,7 +177,7 @@ class MppSources(val mppFiles: List<MppFile>, val simpleFiles: List<SimpleFiles>
         }
 
         fun filesFor(vararg moduleSubTypes: ModuleSubType, init: SimpleFiles.Builder.() -> Unit) {
-            simpleFiles += SimpleFiles.Builder(moduleSubTypes.toList()).apply(init).build()
+            simpleFiles += SimpleFiles.Builder(moduleSubTypes.toList(), javaPackage).apply(init).build()
         }
 
         fun build() = MppSources(mppFiles, simpleFiles)
@@ -186,11 +186,13 @@ class MppSources(val mppFiles: List<MppFile>, val simpleFiles: List<SimpleFiles>
 
 
 data class SimpleFiles(val moduleSubTypes: List<ModuleSubType>, val files: List<SimpleFile>) {
-    class Builder(private val moduleSubTypes: List<ModuleSubType>) {
+    class Builder(private val moduleSubTypes: List<ModuleSubType>, val filesPackage: JavaPackage?) {
         private val files = mutableListOf<SimpleFile>()
 
         fun file(fileDescriptor: FileDescriptor, filename: String, type: SourcesetType, init: SimpleFile.Builder.() -> Unit = {}) {
-            files += SimpleFile.Builder(fileDescriptor, filename, type).apply(init).build()
+            files += SimpleFile.Builder(fileDescriptor, filename, type).apply(init).apply {
+                javaPackage = filesPackage
+            }.build()
         }
 
         fun build() = SimpleFiles(moduleSubTypes, files)
@@ -208,8 +210,8 @@ data class SimpleFile(val fileDescriptor: FileDescriptor, val javaPackage: JavaP
 }
 
 
-fun mppSources(init: MppSources.Builder.() -> Unit): MppSources =
-    MppSources.Builder().apply(init).build()
+fun mppSources(javaPackage: JavaPackage, init: MppSources.Builder.() -> Unit): MppSources =
+    MppSources.Builder(javaPackage).apply(init).build()
 
 sealed class MppDeclaration {
     @Suppress("SpellCheckingInspection")

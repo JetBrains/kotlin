@@ -1,0 +1,9 @@
+package ${package}
+
+#set( $TEMPLATE_BEGIN= '${' )
+
+class Greeting {
+    fun greeting(): String {
+        return "Hello, ${TEMPLATE_BEGIN}Platform().platform}!"
+    }
+}

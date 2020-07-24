@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConver
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectPath
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
+import org.jetbrains.kotlin.tools.projectWizard.settings.JavaPackage
+import org.jetbrains.kotlin.tools.projectWizard.settings.javaPackage
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplateDescriptor
 import org.jetbrains.kotlin.tools.projectWizard.templates.asSrcOf
@@ -77,10 +79,12 @@ sealed class ModuleDependencyType(
         from = AndroidSinglePlatformModuleConfigurator::class,
         to = MppModuleConfigurator::class
     ) {
-        override fun Writer.runArbitraryTaskBeforeIRsCreated(
+        override fun Writer.runArbitraryTask(
             from: Module,
             to: Module,
-        ): TaskResult<Unit> = addExpectFilesForMppModuleForAndroidAndIos(to)
+            toModulePath: Path,
+            data: ModulesToIrConversionData
+        ): TaskResult<Unit> = addExpectFilesForMppModuleForAndroidAndIos(to, data)
     }
 
     object IOSToMppSinglePlatformToMPP : ModuleDependencyType(
@@ -96,6 +100,7 @@ sealed class ModuleDependencyType(
             toModulePath: Path,
             data: ModulesToIrConversionData
         ): TaskResult<Unit> = compute {
+            addExpectFilesForMppModuleForAndroidAndIos(to, data)
             inContextOfModuleConfigurator(from) {
                 IOSSinglePlatformModuleConfigurator.dependentModule.reference.update {
                     IOSSinglePlatformModuleConfigurator.DependentModuleReference(to).asSuccess()
@@ -103,11 +108,6 @@ sealed class ModuleDependencyType(
             }.ensure()
             addDummyFileIfNeeded(to, toModulePath).ensure()
         }
-
-        override fun Writer.runArbitraryTaskBeforeIRsCreated(
-            from: Module,
-            to: Module,
-        ): TaskResult<Unit> = addExpectFilesForMppModuleForAndroidAndIos(to)
 
         private fun Writer.addDummyFileIfNeeded(
             to: Module,
@@ -196,9 +196,13 @@ sealed class ModuleDependencyType(
     }
 }
 
-private fun Writer.addExpectFilesForMppModuleForAndroidAndIos(mppModule: Module): TaskResult<Unit> {
-    val expectFiles = mppSources {
+private fun Writer.addExpectFilesForMppModuleForAndroidAndIos(mppModule: Module, data: ModulesToIrConversionData): TaskResult<Unit> {
+    val javaPackage = mppModule.javaPackage(data.pomIr)
+
+    val expectFiles = mppSources(javaPackage) {
         mppFile("Platform.kt") {
+            `package` = javaPackage.asCodePackage()
+
             `class`("Platform") {
                 expectBody = "val platform: String"
                 actualFor(
@@ -207,7 +211,7 @@ private fun Writer.addExpectFilesForMppModuleForAndroidAndIos(mppModule: Module)
                 )
 
                 actualFor(
-                    ModuleSubType.iosArm64, ModuleSubType.iosX64,
+                    ModuleSubType.iosArm64, ModuleSubType.iosX64, ModuleSubType.ios,
                     actualBody =
                     """actual val platform: String = UIDevice.currentDevice.systemName() + " " +  UIDevice.currentDevice.systemVersion"""
                 ) {
@@ -216,11 +220,15 @@ private fun Writer.addExpectFilesForMppModuleForAndroidAndIos(mppModule: Module)
             }
         }
 
+        filesFor(ModuleSubType.common) {
+            file(FileTemplateDescriptor("mppCommon/Greeting.kt.vm", relativePath = null), "Greeting.kt", SourcesetType.main)
+        }
+
         filesFor(ModuleSubType.android) {
             file(FileTemplateDescriptor("android/androidTest.kt.vm", relativePath = null), "androidTest.kt", SourcesetType.test)
         }
 
-        filesFor(ModuleSubType.iosArm64, ModuleSubType.iosX64) {
+        filesFor(ModuleSubType.iosArm64, ModuleSubType.iosX64, ModuleSubType.ios) {
             file(FileTemplateDescriptor("ios/iosTest.kt.vm", relativePath = null), "iosTest.kt", SourcesetType.test)
         }
     }
