@@ -7,7 +7,7 @@ object KotlinRoot {
     @JvmField
     val DIR: File = run {
         var current = File(".").canonicalFile
-        while (current != null && !current.resolve("kotlin.kotlin-ide.iml").isFile) {
+        while (!current.resolve("kotlin.kotlin-ide.iml").isFile) {
             current = current.parentFile
         }
         checkNotNull(current) { "Can't find kotlin-ide root" }
