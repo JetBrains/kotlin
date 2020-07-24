@@ -8,7 +8,7 @@ fun bar(): String = ""
 abstract class SubInt : () -> Int
 
 fun test(g: () -> Double, s: SubInt) {
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(::bar)
+    foo(::bar)
     <!INAPPLICABLE_CANDIDATE!>foo<!>(g)
     <!INAPPLICABLE_CANDIDATE!>foo<!>(s)
 }

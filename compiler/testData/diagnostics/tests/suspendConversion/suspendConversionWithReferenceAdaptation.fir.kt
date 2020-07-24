@@ -14,8 +14,8 @@ fun unitCoercionAndDefaults(f: suspend () -> Unit) {}
 fun all(s: String = ""): Int = 0
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>unitCoercion<!>(::foo)
-    <!INAPPLICABLE_CANDIDATE!>defaults<!>(::bar)
+    unitCoercion(::foo)
+    defaults(::bar)
     <!INAPPLICABLE_CANDIDATE!>varargs<!>(::baz)
-    <!INAPPLICABLE_CANDIDATE!>unitCoercionAndDefaults<!>(::all)
+    unitCoercionAndDefaults(::all)
 }

@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -18,22 +21,28 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.isFunctional
 import org.jetbrains.kotlin.fir.resolve.getCorrespondingConstructorReferenceOrNull
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
+import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.toArrayOrPrimitiveArrayType
-import org.jetbrains.kotlin.ir.util.parentClassOrNull
+import org.jetbrains.kotlin.ir.types.typeOrNull
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
 
@@ -87,12 +96,18 @@ class CallAndReferenceGenerator(
                 }
                 is IrFunctionSymbol -> {
                     val function = symbol.owner
-                    IrFunctionReferenceImpl(
-                        startOffset, endOffset, type, symbol,
-                        typeArgumentsCount = function.typeParameters.size,
-                        valueArgumentsCount = function.valueParameters.size,
-                        reflectionTarget = symbol
-                    )
+                    // TODO: should refer to LanguageVersionSettings.SuspendConversion
+                    if (requiresSuspendConversion(type, function)) {
+                        val adaptedType = callableReferenceAccess.typeRef.coneType.kFunctionTypeToFunctionType()
+                        generateAdaptedCallableReference(callableReferenceAccess, symbol, adaptedType)
+                    } else {
+                        IrFunctionReferenceImpl(
+                            startOffset, endOffset, type, symbol,
+                            typeArgumentsCount = function.typeParameters.size,
+                            valueArgumentsCount = function.valueParameters.size,
+                            reflectionTarget = symbol
+                        )
+                    }
                 }
                 else -> {
                     IrErrorCallExpressionImpl(
@@ -101,6 +116,156 @@ class CallAndReferenceGenerator(
                 }
             }
         }.applyTypeArguments(callableReferenceAccess).applyReceivers(callableReferenceAccess, explicitReceiverExpression)
+    }
+
+    private fun requiresSuspendConversion(type: IrType, function: IrFunction): Boolean =
+        type.isKSuspendFunction() && !function.isSuspend
+
+    private fun ConeKotlinType.kFunctionTypeToFunctionType(): IrSimpleType {
+        val kind =
+            if (isSuspendFunctionType(session)) FunctionClassDescriptor.Kind.SuspendFunction
+            else FunctionClassDescriptor.Kind.Function
+        val functionalTypeId = ClassId(kind.packageFqName, kind.numberedClassName(typeArguments.size - 1))
+        val coneType = ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(functionalTypeId), typeArguments, isNullable = false)
+        return coneType.toIrType() as IrSimpleType
+    }
+
+    private fun generateAdaptedCallableReference(
+        callableReferenceAccess: FirCallableReferenceAccess,
+        adapteeSymbol: IrFunctionSymbol,
+        type: IrSimpleType
+    ): IrExpression {
+        val firAdaptee = callableReferenceAccess.toResolvedCallableReference()?.resolvedSymbol?.fir as? FirSimpleFunction
+        val adaptee = adapteeSymbol.owner
+        // TODO: handle bound receiver, e.g., c::foo
+        return callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
+            val irAdapterFunction = createAdapterFunctionForSuspendConversion(startOffset, endOffset, firAdaptee!!, adaptee, type)
+            val irCall = createAdapteeCall(callableReferenceAccess, adapteeSymbol, irAdapterFunction)
+            irAdapterFunction.body = irFactory.createBlockBody(startOffset, endOffset) {
+                if (firAdaptee.returnTypeRef.isUnit) {
+                    statements.add(irCall)
+                } else {
+                    statements.add(IrReturnImpl(startOffset, endOffset, irBuiltIns.nothingType, irAdapterFunction.symbol, irCall))
+                }
+            }
+
+            IrFunctionExpressionImpl(startOffset, endOffset, type, irAdapterFunction, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE)
+        }
+    }
+
+    private fun createAdapterFunctionForSuspendConversion(
+        startOffset: Int,
+        endOffset: Int,
+        firAdaptee: FirSimpleFunction,
+        adaptee: IrFunction,
+        type: IrSimpleType,
+    ): IrSimpleFunction {
+        val returnType = type.arguments.last().typeOrNull!!
+        val parameterTypes = type.arguments.dropLast(1).map { it.typeOrNull!! }
+        val adapterFunctionDescriptor = WrappedSimpleFunctionDescriptor()
+        return symbolTable.declareSimpleFunction(adapterFunctionDescriptor) { irAdapterSymbol ->
+            irFactory.createFunction(
+                startOffset, endOffset,
+                IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE,
+                irAdapterSymbol,
+                adaptee.name,
+                Visibilities.LOCAL,
+                Modality.FINAL,
+                returnType,
+                isInline = firAdaptee.isInline,
+                isExternal = firAdaptee.isExternal,
+                isTailrec = firAdaptee.isTailRec,
+                isSuspend = true,
+                isOperator = firAdaptee.isOperator,
+                isInfix = firAdaptee.isInfix,
+                isExpect = firAdaptee.isExpect,
+                isFakeOverride = false
+            ).also { irAdapterFunction ->
+                adapterFunctionDescriptor.bind(irAdapterFunction)
+                irAdapterFunction.metadata = FirMetadataSource.Function(firAdaptee)
+                symbolTable.enterScope(irAdapterFunction)
+                irAdapterFunction.valueParameters += parameterTypes.mapIndexed { index, parameterType ->
+                    createAdapterParameter(irAdapterFunction, Name.identifier("p$index"), index, parameterType)
+                }
+                symbolTable.leaveScope(irAdapterFunction)
+                irAdapterFunction.parent = conversionScope.parent()!!
+            }
+        }
+    }
+
+    private fun createAdapterParameter(
+        adapterFunction: IrFunction,
+        name: Name,
+        index: Int,
+        type: IrType
+    ): IrValueParameter {
+        val startOffset = adapterFunction.startOffset
+        val endOffset = adapterFunction.endOffset
+        val descriptor = WrappedValueParameterDescriptor()
+        return symbolTable.declareValueParameter(
+            startOffset, endOffset, IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE, descriptor, type
+        ) { irAdapterParameterSymbol ->
+            irFactory.createValueParameter(
+                startOffset, endOffset,
+                IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE,
+                irAdapterParameterSymbol,
+                name,
+                index,
+                type,
+                varargElementType = null,
+                isCrossinline = false,
+                isNoinline = false
+            ).also { irAdapterValueParameter ->
+                descriptor.bind(irAdapterValueParameter)
+                irAdapterValueParameter.parent = adapterFunction
+            }
+        }
+    }
+
+    private fun createAdapteeCall(
+        callableReferenceAccess: FirCallableReferenceAccess,
+        adapteeSymbol: IrFunctionSymbol,
+        adapterFunction: IrFunction
+    ): IrExpression {
+        val adapteeFunction = adapteeSymbol.owner
+        val startOffset = adapteeFunction.startOffset
+        val endOffset = adapteeFunction.endOffset
+        val type = adapteeFunction.returnType
+        val irCall =
+            if (adapteeSymbol is IrConstructorSymbol) {
+                IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, adapteeSymbol)
+            } else {
+                IrCallImpl(
+                    startOffset,
+                    endOffset,
+                    type,
+                    adapteeSymbol,
+                    callableReferenceAccess.typeArguments.size,
+                    adapteeFunction.valueParameters.size,
+                    origin = null,
+                    superQualifierSymbol = null
+                )
+            }
+
+        // TODO: handle non-transient, bound dispatch/extension receiver
+
+        adapteeFunction.valueParameters.mapIndexed { index, valueParameter ->
+            when {
+                valueParameter.hasDefaultValue() -> {
+                    irCall.putValueArgument(index, null)
+                }
+                valueParameter.isVararg -> {
+                    // TODO: handle vararg and spread
+                    irCall.putValueArgument(index, null)
+                }
+                else -> {
+                    val irValueArgument = adapterFunction.valueParameters[index]
+                    irCall.putValueArgument(index, IrGetValueImpl(startOffset, endOffset, irValueArgument.type, irValueArgument.symbol))
+                }
+            }
+        }
+
+        return irCall.applyTypeArguments(callableReferenceAccess)
     }
 
     private fun FirQualifiedAccess.tryConvertToSamConstructorCall(type: IrType): IrTypeOperatorCall? {

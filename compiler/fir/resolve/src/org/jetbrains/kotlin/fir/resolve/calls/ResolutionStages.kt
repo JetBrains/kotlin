@@ -220,12 +220,18 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
         }
 
         val returnTypeRef = candidate.bodyResolveComponents.returnTypeCalculator.tryCalculateReturnType(fir)
-
+        // If the expected type is a suspend function type and the current argument of interest is a function reference, we need to do
+        // "suspend conversion." Here, during resolution, we bypass constraint system by making resulting type be KSuspendFunction.
+        // Then, during conversion, we need to create an adapter function and replace the function reference created here with an adapted
+        // callable reference.
+        // TODO: should refer to LanguageVersionSettings.SuspendConversion
+        val requireSuspendConversion = expectedType?.isSuspendFunctionType(callInfo.session) == true
+        // TODO: handle callable reference with vararg
         val resultingType: ConeKotlinType = when (fir) {
             is FirFunction -> callInfo.session.createKFunctionType(
                 fir, resultingReceiverType, returnTypeRef,
                 expectedParameterNumberWithReceiver = expectedType?.let { it.typeArguments.size - 1 },
-                isSuspend = (fir as? FirSimpleFunction)?.isSuspend == true,
+                isSuspend = (fir as? FirSimpleFunction)?.isSuspend == true || requireSuspendConversion,
                 expectedReturnType = extractInputOutputTypesFromCallableReferenceExpectedType(expectedType, callInfo.session)?.outputType
             )
             is FirVariable<*> -> createKPropertyType(fir, resultingReceiverType, returnTypeRef)

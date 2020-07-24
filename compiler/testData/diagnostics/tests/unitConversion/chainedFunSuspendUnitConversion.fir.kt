@@ -14,5 +14,5 @@ abstract class SubInt : () -> Int
 fun test(f: () -> String, s: SubInt) {
     <!INAPPLICABLE_CANDIDATE!>foo<!>(f)
     <!INAPPLICABLE_CANDIDATE!>foo<!>(s)
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(::bar)
+    foo(::bar)
 }

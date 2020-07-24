@@ -11,7 +11,7 @@ object Test1 {
 
         fun test() {
             val result = foo(::bar)
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>result<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>result<!>
         }
     }
 }
@@ -29,7 +29,7 @@ object Test2 {
 
             fun test() {
                 val result = foo(::bar)
-                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Double")!>result<!>
+                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>result<!>
             }
         }
     }
