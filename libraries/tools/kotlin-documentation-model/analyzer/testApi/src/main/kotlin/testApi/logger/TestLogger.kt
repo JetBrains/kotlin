@@ -1,4 +1,4 @@
-package testApi.logger
+package org.jetbrains.dokka.testApi.logger
 
 import org.jetbrains.dokka.utilities.DokkaLogger
 
