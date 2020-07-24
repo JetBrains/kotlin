@@ -16,13 +16,13 @@ class C<X> {
 }
 
 fun box(): String {
-    val fqn = className("test", "Container")
+    val fqn = className("test.Container")
     assertEquals("$fqn<X>", C<Any>().notNull().toString())
     assertEquals("$fqn<X?>", C<Any>().nullable().toString())
     return "OK"
 }
 
-fun className(qualifier: String, name: String): String {
+fun className(fqName: String): String {
     val isJS = 1 as Any is Double
-    return if (isJS) name else "$qualifier.$name"
+    return if (isJS) fqName.substringAfterLast('.') else fqName
 }

@@ -16,25 +16,25 @@ fun <X, Y, Z> test() where X : Y?, Y : List<Z>, Z : Set<String>
 
 fun box(): String {
     val type = test<MutableList<Set<String>>?, MutableList<Set<String>>, Set<String>>()
-    val containerNmae = className("test", "Container")
+    val containerNmae = className("test.Container")
     assertEquals("$containerNmae<X>", type.toString())
 
     val x = type.arguments.single().type!!.classifier as KTypeParameter
     assertEquals("Y?", x.upperBounds.joinToString())
 
     val y = x.upperBounds.single().classifier as KTypeParameter
-    val listName = className("kotlin.collections", "List")
+    val listName = className("kotlin.collections.List")
     assertEquals("$listName<Z>", y.upperBounds.joinToString())
 
     val z = y.upperBounds.single().arguments.single().type!!.classifier as KTypeParameter
-    val setName = className("kotlin.collections", "Set")
-    val stringName = className("kotlin", "String")
+    val setName = className("kotlin.collections.Set")
+    val stringName = className("kotlin.String")
     assertEquals("$setName<$stringName>", z.upperBounds.joinToString())
 
     return "OK"
 }
 
-fun className(qualifier: String, name: String): String {
+fun className(fqName: String): String {
     val isJS = 1 as Any is Double
-    return if (isJS) name else "$qualifier.$name"
+    return if (isJS) fqName.substringAfterLast('.') else fqName
 }

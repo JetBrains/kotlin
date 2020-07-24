@@ -17,13 +17,13 @@ fun box(): String {
     val type = test<Any>()
     val x = type.arguments.single().type!!.classifier as KTypeParameter
 
-    val expected = className("kotlin", "Any?")
+    val expected = className("kotlin.Any?")
     assertEquals(expected, x.upperBounds.joinToString())
 
     return "OK"
 }
 
-fun className(qualifier: String, name: String): String {
+fun className(fqName: String): String {
     val isJS = 1 as Any is Double
-    return if (isJS) name else "$qualifier.$name"
+    return if (isJS) fqName.substringAfterLast('.') else fqName
 }
