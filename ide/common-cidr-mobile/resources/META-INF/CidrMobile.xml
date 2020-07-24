@@ -1,6 +1,5 @@
 <idea-plugin>
   <extensions defaultExtensionNs="com.intellij">
     <projectService serviceImplementation="com.jetbrains.mobile.execution.DeviceService"/>
-    <executionTargetProvider implementation="com.jetbrains.mobile.execution.DeviceExecutionTargetProvider"/>
   </extensions>
 </idea-plugin>
