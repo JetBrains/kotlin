@@ -116,12 +116,18 @@ abstract class ClassCodegen protected constructor(
         if (generated) return reifiedTypeParametersUsages
         generated = true
 
+        // We remove unused cached KProperties.
+        val classDelegatedPropertiesArray = irClass.fields.singleOrNull {
+            it.origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
+        }
+        val delegatedPropertyTracker = if (classDelegatedPropertiesArray != null) DelegatedPropertyOptimizer() else null
+
         val smap = context.getSourceMapper(irClass)
         for (declaration in irClass.declarations) {
             when (declaration) {
-                is IrClass, classInitializer -> Unit // see below
+                is IrClass, classInitializer, classDelegatedPropertiesArray -> Unit // see below
                 is IrField -> generateField(declaration)
-                is IrFunction -> generateMethod(declaration, smap)
+                is IrFunction -> generateMethod(declaration, smap, delegatedPropertyTracker)
                 else -> throw AssertionError("unexpected class member $declaration at codegen")
             }
         }
@@ -130,7 +136,10 @@ abstract class ClassCodegen protected constructor(
         // might need to generate the `$assertionsDisabled` field initializer.
         classInitializer?.let {
             generatingClInit = true
-            generateMethod(it, smap)
+            generateMethod(it, smap, delegatedPropertyTracker)
+            if (classDelegatedPropertiesArray != null && delegatedPropertyTracker?.needsDelegatedProperties == true) {
+                generateField(classDelegatedPropertiesArray)
+            }
         }
 
         // Generate nested classes at the end, to ensure that when the companion's metadata is serialized
@@ -281,13 +290,19 @@ abstract class ClassCodegen protected constructor(
 
     protected abstract fun bindMethodMetadata(method: IrFunction, signature: Method)
 
-    private fun generateMethod(method: IrFunction, classSMAP: SourceMapper) {
+    private fun generateMethod(method: IrFunction, classSMAP: SourceMapper, delegatedPropertyOptimizer: DelegatedPropertyOptimizer?) {
         if (method.isFakeOverride) {
             jvmSignatureClashDetector.trackFakeOverrideMethod(method)
             return
         }
 
         val (node, smap) = generateMethodNode(method)
+        if (delegatedPropertyOptimizer != null) {
+            delegatedPropertyOptimizer.transform(node)
+            if (method.name.asString() == "<clinit>") {
+                delegatedPropertyOptimizer.transformClassInitializer(node)
+            }
+        }
         node.preprocessSuspendMarkers(
             method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE || method.isEffectivelyInlineOnly(),
             method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
