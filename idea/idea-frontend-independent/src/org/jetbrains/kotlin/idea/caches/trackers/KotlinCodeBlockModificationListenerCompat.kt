@@ -50,7 +50,8 @@ abstract class KotlinCodeBlockModificationListenerCompat(protected val project: 
 
     lateinit var kotlinOutOfCodeBlockTracker: ModificationTracker
 
-    internal val perModuleOutOfCodeBlockTrackerUpdater = KotlinModuleOutOfCodeBlockModificationTracker.Updater(project)
+    // TODO: close back exposed API
+    val perModuleOutOfCodeBlockTrackerUpdater = KotlinModuleOutOfCodeBlockModificationTracker.Updater(project)
 
     protected fun init(
         treeAspect: TreeAspect,
