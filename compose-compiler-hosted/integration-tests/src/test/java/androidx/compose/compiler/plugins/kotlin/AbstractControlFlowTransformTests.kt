@@ -23,15 +23,15 @@ abstract class AbstractControlFlowTransformTests : ComposeIrTransformTest() {
         dumpTree: Boolean = false
     ) = verifyComposeIrTransform(
         """
-            import androidx.compose.Composable
-            import androidx.compose.key
-            import androidx.compose.ComposableContract
+            import androidx.compose.runtime.Composable
+            import androidx.compose.runtime.key
+            import androidx.compose.runtime.ComposableContract
 
             $source
         """.trimIndent(),
         expectedTransformed,
         """
-            import androidx.compose.Composable
+            import androidx.compose.runtime.Composable
 
             inline class InlineClass(val value: Int)
 

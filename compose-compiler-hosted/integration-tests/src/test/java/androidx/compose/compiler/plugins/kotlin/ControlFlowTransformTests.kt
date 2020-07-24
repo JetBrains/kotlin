@@ -412,7 +412,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               %composer.startReplaceableGroup(<> xor %key, "C(Example):Test.kt")
               when {
                 %composer.startReplaceableGroup(<>, "<R(a)>")
-                val tmp0_group = x == R(a, %composer, 0b01110111010101111000001000010110, 0)
+                val tmp0_group = x == R(a, %composer, 0b01110111010101111000001000101110, 0)
                 %composer.endReplaceableGroup()
                 tmp0_group -> {
                   NA()
@@ -456,7 +456,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
               %composer.startReplaceableGroup(<>)
               when {
                 %composer.startReplaceableGroup(<>, "<R(a)>")
-                val tmp0_group = x == R(a, %composer, 0b01110111010101111000000110111110, 0)
+                val tmp0_group = x == R(a, %composer, 0b01110111010101111000000111010110, 0)
                 %composer.endReplaceableGroup()
                 tmp0_group -> {
                   NA()
@@ -2228,8 +2228,8 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testApplyOnComposableCallResult(): Unit = controlFlow(
         """
-            import androidx.compose.state
-            import androidx.compose.State
+            import androidx.compose.runtime.state
+            import androidx.compose.runtime.State
 
             @Composable
             fun <T> provided(value: T): State<T> = state { value }.apply {
@@ -2255,8 +2255,8 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testReturnInlinedExpressionWithCall(): Unit = controlFlow(
         """
-            import androidx.compose.state
-            import androidx.compose.State
+            import androidx.compose.runtime.state
+            import androidx.compose.runtime.State
 
             @Composable
             fun Test(x: Int): Int {
@@ -2988,9 +2988,9 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     @Test
     fun testSourceInformationWithPackageName(): Unit = verifyComposeIrTransform(
         source = """
-            package androidx.compose.tests
+            package androidx.compose.runtime.tests
 
-            import androidx.compose.Composable
+            import androidx.compose.runtime.Composable
 
             @Composable
             fun Test(value: LocalInlineClass) {
@@ -2998,14 +2998,14 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """,
         extra = """
-            package androidx.compose.tests
+            package androidx.compose.runtime.tests
 
             inline class LocalInlineClass(val value: Int)
         """,
         expectedTransformed = """
             @Composable
             fun Test(value: LocalInlineClass, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C(Test)P(0:c#tests.LocalInlineClass):Test.kt#tekjnk")
+              %composer.startRestartGroup(<> xor %key, "C(Test)P(0:c#runtime.tests.LocalInlineClass):Test.kt#992ot2")
               val %dirty = %changed
               if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(value.value)) 0b0100 else 0b0010

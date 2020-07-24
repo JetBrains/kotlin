@@ -80,7 +80,7 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
            )
            package test
 
-           import androidx.compose.*
+           import androidx.compose.runtime.*
 
            $src
         """, fileName, dumpClasses)
@@ -153,7 +153,7 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
         import android.widget.Button
         import android.view.Gravity
         import android.widget.LinearLayout
-        import androidx.compose.Composable
+        import androidx.compose.runtime.Composable
         import androidx.ui.viewinterop.emitView
     """.trimIndent()
 

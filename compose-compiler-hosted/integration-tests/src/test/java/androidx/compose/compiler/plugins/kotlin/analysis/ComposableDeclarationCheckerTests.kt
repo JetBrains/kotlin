@@ -26,7 +26,7 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testPropertyWithInitializer() {
         doTest(
             """
-            import androidx.compose.Composable
+            import androidx.compose.runtime.Composable
 
             @Composable
             val <!COMPOSABLE_PROPERTY_BACKING_FIELD!>foo<!>: Int = 123
@@ -36,7 +36,7 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testPropertyWithJustGetter() {
         doTest(
             """
-            import androidx.compose.Composable
+            import androidx.compose.runtime.Composable
 
             @Composable
             val bar: Int get() = 123
@@ -46,7 +46,7 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testPropertyWithGetterAndSetter() {
         doTest(
             """
-            import androidx.compose.Composable
+            import androidx.compose.runtime.Composable
 
             @Composable
             var <!COMPOSABLE_VAR!>bam<!>: Int 
@@ -58,7 +58,7 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
     fun testSuspendComposable() {
         doTest(
             """
-            import androidx.compose.Composable
+            import androidx.compose.runtime.Composable
 
             @Composable suspend fun <!COMPOSABLE_SUSPEND_FUN!>Foo<!>() {}
 

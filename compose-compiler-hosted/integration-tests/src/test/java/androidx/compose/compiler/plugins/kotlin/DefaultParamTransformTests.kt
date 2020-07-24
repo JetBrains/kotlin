@@ -26,15 +26,15 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
         dumpTree: Boolean = false
     ) = verifyComposeIrTransform(
         """
-            import androidx.compose.Composable
-            import androidx.compose.ComposableContract
+            import androidx.compose.runtime.Composable
+            import androidx.compose.runtime.ComposableContract
 
             $checked
         """.trimIndent(),
         expectedTransformed,
         """
-            import androidx.compose.Composable
-            import androidx.compose.ComposableContract
+            import androidx.compose.runtime.Composable
+            import androidx.compose.runtime.ComposableContract
 
             $unchecked
         """.trimIndent(),

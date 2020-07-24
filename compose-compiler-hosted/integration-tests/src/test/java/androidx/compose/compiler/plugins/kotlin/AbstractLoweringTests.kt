@@ -17,7 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import android.view.View
-import androidx.compose.Composer
+import androidx.compose.runtime.Composer
 import org.robolectric.RuntimeEnvironment
 import java.net.URLClassLoader
 
@@ -28,7 +28,7 @@ abstract class AbstractLoweringTests : AbstractCodegenTest() {
             """
            import android.content.Context
            import android.widget.*
-           import androidx.compose.*
+           import androidx.compose.runtime.*
            $COMPOSE_VIEW_STUBS_IMPORTS
 
            $text
@@ -79,7 +79,7 @@ abstract class AbstractLoweringTests : AbstractCodegenTest() {
         val compiledClasses = classLoader(
             """
        import android.widget.*
-       import androidx.compose.*
+       import androidx.compose.runtime.*
        import androidx.ui.androidview.adapters.*
 
        $COMPOSE_VIEW_STUBS_IMPORTS

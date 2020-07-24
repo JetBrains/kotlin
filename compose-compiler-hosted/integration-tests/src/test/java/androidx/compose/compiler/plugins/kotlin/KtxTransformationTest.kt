@@ -20,8 +20,8 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testObserveLowering() = ensureSetup { testCompileWithViewStubs(
         """
-            import androidx.compose.MutableState
-            import androidx.compose.mutableStateOf
+            import androidx.compose.runtime.MutableState
+            import androidx.compose.runtime.mutableStateOf
 
             @Composable
             fun SimpleComposable() {
@@ -41,7 +41,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testEmptyComposeFunction() = ensureSetup { testCompile(
         """
-        import androidx.compose.*
+        import androidx.compose.runtime.*
 
         class Foo {
             @Composable
@@ -93,7 +93,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testSingleComposite() = ensureSetup { testCompile(
         """
-         import androidx.compose.*
+         import androidx.compose.runtime.*
 
         @Composable
         fun Bar() {}
@@ -109,7 +109,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testMultipleRootComposite() = ensureSetup { testCompile(
         """
-         import androidx.compose.*
+         import androidx.compose.runtime.*
 
         @Composable
         fun Bar() {}
@@ -143,7 +143,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testForEach() = ensureSetup { testCompile(
         """
-         import androidx.compose.*
+         import androidx.compose.runtime.*
 
         @Composable
         fun Bar() {}
@@ -161,7 +161,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testForLoop() = ensureSetup { testCompile(
         """
-         import androidx.compose.*
+         import androidx.compose.runtime.*
 
         @Composable
         fun Bar() {}
@@ -179,7 +179,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testEarlyReturns() = ensureSetup { testCompile(
         """
-         import androidx.compose.*
+         import androidx.compose.runtime.*
 
         @Composable
         fun Bar() {}
@@ -198,7 +198,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testConditionalRendering() = ensureSetup { testCompile(
         """
-         import androidx.compose.*
+         import androidx.compose.runtime.*
 
         @Composable
         fun Bar() {}
@@ -263,7 +263,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
     fun testChildrenDeepCaptureVariables() = ensureSetup { testCompile(
         """
         import android.widget.*
-        import androidx.compose.*
+        import androidx.compose.runtime.*
 
         @Composable fun A(children: @Composable () -> Unit) {
             children()
@@ -292,7 +292,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         testCompile(
         """
         import android.widget.*
-        import androidx.compose.*
+        import androidx.compose.runtime.*
 
         @Composable fun A(children: @Composable (x: String) -> Unit) {
             children("")
@@ -353,7 +353,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testGenericsInnerClass() = ensureSetup { testCompile(
         """
-        import androidx.compose.*
+        import androidx.compose.runtime.*
 
         class A<T>(val value: T) {
             @Composable fun Getter(x: T? = null) {
@@ -372,7 +372,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testXGenericConstructorParams() = ensureSetup { testCompile(
         """
-        import androidx.compose.*
+        import androidx.compose.runtime.*
 
         @Composable fun <T> A(
             value: T,
@@ -399,7 +399,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testSimpleNoArgsComponent() = ensureSetup { testCompile(
         """
-        import androidx.compose.*
+        import androidx.compose.runtime.*
 
         @Composable
         fun Simple() {}
@@ -413,7 +413,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testDotQualifiedObjectToClass() = ensureSetup { testCompile(
         """
-        import androidx.compose.*
+        import androidx.compose.runtime.*
 
         object Obj {
             @Composable
@@ -429,7 +429,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testLocalLambda() = ensureSetup { testCompile(
         """
-        import androidx.compose.*
+        import androidx.compose.runtime.*
 
         @Composable
         fun Simple() {}
@@ -444,7 +444,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testPropertyLambda() = ensureSetup { testCompile(
         """
-        import androidx.compose.*
+        import androidx.compose.runtime.*
 
         class Test(var children: @Composable () () -> Unit) {
             @Composable
@@ -457,7 +457,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testLambdaWithArgs() = ensureSetup { testCompile(
         """
-        import androidx.compose.*
+        import androidx.compose.runtime.*
 
         class Test(var children: @Composable (x: Int) -> Unit) {
             @Composable
@@ -470,7 +470,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testLocalMethod() = ensureSetup { testCompile(
         """
-        import androidx.compose.*
+        import androidx.compose.runtime.*
 
         class Test {
             @Composable
@@ -485,7 +485,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testSimpleLambdaChildren() = ensureSetup { testCompile(
         """
-        import androidx.compose.*
+        import androidx.compose.runtime.*
         import android.widget.*
         import android.content.*
 
@@ -504,7 +504,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testFunctionComponentsWithChildrenSimple() = ensureSetup { testCompile(
         """
-        import androidx.compose.*
+        import androidx.compose.runtime.*
 
         @Composable
         fun Example(children: @Composable () -> Unit) {}
@@ -520,7 +520,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testFunctionComponentWithChildrenOneArg() = ensureSetup { testCompile(
         """
-        import androidx.compose.*
+        import androidx.compose.runtime.*
 
         @Composable
         fun Example(children: @Composable (String) -> Unit) {}
@@ -536,7 +536,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testKtxLambdaInForLoop() = ensureSetup { testCompile(
         """
-        import androidx.compose.*
+        import androidx.compose.runtime.*
         import android.widget.TextView
 
         @Composable
@@ -569,7 +569,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
     fun testKtxVariableTagsProperlyCapturedAcrossKtxLambdas() = ensureSetup {
         testCompile(
         """
-        import androidx.compose.*
+        import androidx.compose.runtime.*
         import androidx.ui.androidview.adapters.*
 
         @Composable fun Foo(children: @Composable (sub: @Composable () -> Unit) -> Unit) {
@@ -596,7 +596,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
 
     fun testInvocableObject() = ensureSetup { testCompile(
         """
-        import androidx.compose.*
+        import androidx.compose.runtime.*
 
         class Foo { }
         @Composable

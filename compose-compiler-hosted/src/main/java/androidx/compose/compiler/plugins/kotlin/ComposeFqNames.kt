@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.types.TypeUtils.UNIT_EXPECTED_TYPE
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 
 object ComposeFqNames {
-    private const val root = "androidx.compose"
+    private const val root = "androidx.compose.runtime"
     private const val internalRoot = "$root.internal"
     fun fqNameFor(cname: String) = FqName("$root.$cname")
     fun internalFqNameFor(cname: String) = FqName("$internalRoot.$cname")
@@ -49,7 +49,7 @@ object ComposeFqNames {
     val StableMarker = fqNameFor("StableMarker")
     val Stable = fqNameFor("Stable")
     val Composer = fqNameFor("Composer")
-    val ComposeVersion = FqName("androidx.compose.runtime.ComposeVersion")
+    val ComposeVersion = fqNameFor("ComposeVersion")
     val Package = FqName(root)
     fun makeComposableAnnotation(module: ModuleDescriptor): AnnotationDescriptor =
         object : AnnotationDescriptor {
