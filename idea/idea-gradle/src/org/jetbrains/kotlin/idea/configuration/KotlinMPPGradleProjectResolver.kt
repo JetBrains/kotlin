@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibrariesDepende
 import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibrariesFixer
 import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.KOTLIN_NATIVE_LIBRARY_PREFIX_PLUS_SPACE
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
+import org.jetbrains.kotlin.idea.util.NotNullableCopyableDataNodeUserDataProperty
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.plugins.gradle.model.*
@@ -194,6 +195,10 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
             Key.create<MutableMap<String/* artifact path */, MutableList<String> /* module ids*/>>("gradleMPPArtifactsMap")
         val proxyObjectCloningCache = WeakHashMap<Any, Any>()
 
+        //flag for avoid double resolve from KotlinMPPGradleProjectResolver and KotlinAndroidMPPGradleProjectResolver
+        private var DataNode<ModuleData>.isMppDataInitialized
+                by NotNullableCopyableDataNodeUserDataProperty(Key.create<Boolean>("IS_MPP_DATA_INITIALIZED"), false)
+
         private var nativeDebugAdvertised = false
         private val androidPluginPresent = PluginManager.getPlugin(PluginId.findId("org.jetbrains.android"))?.isEnabled ?: false
 
@@ -265,6 +270,8 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
             projectDataNode: DataNode<ProjectData>,
             resolverCtx: ProjectResolverContext
         ) {
+            if (mainModuleNode.isMppDataInitialized) return
+
             val mainModuleData = mainModuleNode.data
             val mainModuleConfigPath = mainModuleData.linkedExternalProjectPath
             val mainModuleFileDirectoryPath = mainModuleData.moduleFileDirectoryPath
@@ -272,6 +279,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
             val externalProject = resolverCtx.getExtraProject(gradleModule, ExternalProject::class.java)
             val mppModel = resolverCtx.getMppModel(gradleModule)
             if (mppModel == null || externalProject == null) return
+            mainModuleNode.isMppDataInitialized = true
 
             val jdkName = gradleModule.jdkNameIfAny
 
