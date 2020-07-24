@@ -146,17 +146,19 @@ class KotlinInlineCallableProcessor(
 
     override fun getCommandName(): String = commandName
 
-    override fun createUsageViewDescriptor(usages: Array<out UsageInfo>): UsageViewDescriptor {
-        return object : UsageViewDescriptor {
-            override fun getCommentReferencesText(usagesCount: Int, filesCount: Int) =
-                RefactoringBundle.message("comments.elements.header", UsageViewBundle.getOccurencesString(usagesCount, filesCount))
+    override fun createUsageViewDescriptor(usages: Array<out UsageInfo>): UsageViewDescriptor = object : UsageViewDescriptor {
+            override fun getCommentReferencesText(usagesCount: Int, filesCount: Int) = RefactoringBundle.message(
+                "comments.elements.header",
+                UsageViewBundle.getOccurencesString(usagesCount, filesCount),
+            )
 
-            override fun getCodeReferencesText(usagesCount: Int, filesCount: Int) =
-                RefactoringBundle.message("invocations.to.be.inlined", UsageViewBundle.getReferencesString(usagesCount, filesCount))
+            override fun getCodeReferencesText(usagesCount: Int, filesCount: Int) = RefactoringBundle.message(
+                "invocations.to.be.inlined",
+                UsageViewBundle.getReferencesString(usagesCount, filesCount),
+            )
 
             override fun getElements() = arrayOf(declaration)
 
             override fun getProcessedElementsHeader() = KotlinBundle.message("text.0.to.inline", kind.capitalize())
         }
-    }
 }
