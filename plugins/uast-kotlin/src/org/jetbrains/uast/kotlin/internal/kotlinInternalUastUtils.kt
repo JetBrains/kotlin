@@ -511,7 +511,7 @@ private fun KotlinType.containsLocalTypes(): Boolean {
 }
 
 private fun PsiElement.getMaybeLightElement(sourcePsi: KtExpression? = null): PsiElement? {
-    if (this is KtNamedDeclaration && sourcePsi?.readWriteAccess()?.isWrite == true) {
+    if (this is KtProperty && sourcePsi?.readWriteAccess()?.isWrite == true) {
         with(getAccessorLightMethods()) {
             (setter ?: backingField)?.let { return it } // backingField is for val property assignments in init blocks
         }
