@@ -6,7 +6,7 @@ import javax.swing.Icon
 
 abstract class Device(
     private val uniqueID: String,
-    val name: String,
+    private val name: String,
     val osName: String,
     val osVersion: String
 ) : ExecutionTarget() {
