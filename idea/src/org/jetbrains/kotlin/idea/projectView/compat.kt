@@ -8,4 +8,4 @@ package org.jetbrains.kotlin.idea.projectView
 import com.intellij.ide.util.treeView.AbstractTreeNode
 
 // BUNCH: 193
-typealias AbstractTreeNodeAny = AbstractTreeNode<Any>
+typealias AbstractTreeNodeAny = AbstractTreeNode<*>

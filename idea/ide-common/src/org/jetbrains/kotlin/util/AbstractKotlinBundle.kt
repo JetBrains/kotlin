@@ -5,6 +5,6 @@
 
 package org.jetbrains.kotlin.util
 
-import com.intellij.AbstractBundle
+import com.intellij.DynamicBundle
 
-abstract class AbstractKotlinBundle protected constructor(pathToBundle: String) : AbstractBundle(pathToBundle)
+abstract class AbstractKotlinBundle protected constructor(pathToBundle: String) : DynamicBundle(pathToBundle)

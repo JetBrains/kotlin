@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.wm.ToolWindow
 import com.intellij.openapi.wm.ToolWindowAnchor
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.ui.content.ContentFactory
@@ -24,10 +25,10 @@ class ShowFirAction : AnAction() {
         val project = e.project ?: return
         val toolWindowManager = ToolWindowManager.getInstance(project)
 
-        var toolWindow = toolWindowManager.getToolWindow(TOOLWINDOW_ID)
+        var toolWindow: ToolWindow? = toolWindowManager.getToolWindow(TOOLWINDOW_ID)
         if (toolWindow == null) {
             toolWindow = toolWindowManager.registerToolWindow(TOOLWINDOW_ID, false, ToolWindowAnchor.RIGHT)
-            toolWindow.icon = KotlinIcons.SMALL_LOGO_13
+            toolWindow.setIcon(KotlinIcons.SMALL_LOGO_13)
 
             val contentManager = toolWindow.contentManager
             val contentFactory = ContentFactory.SERVICE.getInstance()

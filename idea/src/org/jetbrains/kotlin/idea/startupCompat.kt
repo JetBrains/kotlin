@@ -5,9 +5,15 @@
 
 package org.jetbrains.kotlin.idea
 
+import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.idea.util.runWhenSmart
 
-// BUNCH: 193
+// BUNCH: 201
+
 fun runActivity(project: Project) {
-    // nothing for 193
+    project.runWhenSmart {
+        val daemonCodeAnalyzer = DaemonCodeAnalyzerImpl.getInstanceEx(project) as DaemonCodeAnalyzerImpl
+        daemonCodeAnalyzer.runLocalInspectionPassAfterCompletionOfGeneralHighlightPass(true)
+    }
 }

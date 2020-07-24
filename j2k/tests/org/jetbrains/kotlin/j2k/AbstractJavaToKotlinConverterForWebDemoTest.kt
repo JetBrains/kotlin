@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.codeInsight.ContainerProvider
 import com.intellij.codeInsight.NullableNotNullManager
+import com.intellij.codeInsight.NullableNotNullManagerImpl
 import com.intellij.codeInsight.runner.JavaMainMethodProvider
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.core.JavaCoreApplicationEnvironment
@@ -26,7 +27,6 @@ import com.intellij.lang.MetaLanguage
 import com.intellij.lang.jvm.facade.JvmElementProvider
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.extensions.ExtensionsArea
-import com.intellij.openapi.fileTypes.FileTypeExtensionPoint
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.*
@@ -36,7 +36,6 @@ import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.impl.JavaClassSupersImpl
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.meta.MetaDataContributor
-import com.intellij.psi.stubs.BinaryFileStubBuilders
 import com.intellij.psi.util.JavaClassSupers
 import junit.framework.TestCase
 import org.jetbrains.kotlin.utils.PathUtil
@@ -74,7 +73,7 @@ abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
             }
         }
 
-        javaCoreEnvironment.project.registerService(NullableNotNullManager::class.java, object : NullableNotNullManager(javaCoreEnvironment.project) {
+        javaCoreEnvironment.project.registerService(NullableNotNullManager::class.java, object : NullableNotNullManagerImpl(javaCoreEnvironment.project) {
             override fun isNullable(owner: PsiModifierListOwner, checkBases: Boolean) = !isNotNull(owner, checkBases)
             override fun isNotNull(owner: PsiModifierListOwner, checkBases: Boolean) = true
             override fun hasHardcodedContracts(element: PsiElement): Boolean = false
@@ -103,7 +102,6 @@ abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
     }
 
     private fun registerExtensionPoints(area: ExtensionsArea) {
-        CoreApplicationEnvironment.registerExtensionPoint(area, BinaryFileStubBuilders.EP_NAME, FileTypeExtensionPoint::class.java)
         CoreApplicationEnvironment.registerExtensionPoint(area, FileContextProvider.EP_NAME, FileContextProvider::class.java)
 
         CoreApplicationEnvironment.registerExtensionPoint(area, MetaDataContributor.EP_NAME, MetaDataContributor::class.java)

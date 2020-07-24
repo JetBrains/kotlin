@@ -540,6 +540,20 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         )
     }
 
+
+    /**
+     * Returns only those dependencies with RUNTIME scope which are not present with compile scope
+     */
+    private fun Collection<KotlinDependency>.onlyNewDependencies(compileDependencies: Collection<KotlinDependency>): List<KotlinDependency> {
+        val compileDependencyArtefacts = compileDependencies.flatMap { (it as? ExternalProjectDependency)?.projectDependencyArtifacts ?: emptyList()  }
+        return this.filter {
+            if (it is ExternalProjectDependency)
+                !(compileDependencyArtefacts.containsAll(it.projectDependencyArtifacts))
+            else
+                true
+        }
+    }
+
     private fun buildCompilationDependencies(
         gradleCompilation: Named,
         classifier: String?,
@@ -555,11 +569,16 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             )
             this += buildDependencies(
                 gradleCompilation, dependencyResolver, "getRuntimeDependencyConfigurationName", "RUNTIME", project, transformationBuilder
-            )
+            ).onlyNewDependencies(this)
+
             this += sourceSetMap[compilationFullName(
                 gradleCompilation.name,
                 classifier
             )]?.dependencies?.map { dependencyMapper.getDependency(it) }?.filterNotNull() ?: emptySet()
+
+            dependencyMapper.toDependencyMap().values.forEach {
+                (it as? DefaultExternalProjectDependency)?.configurationName = "default"
+            }
         }
     }
 
@@ -633,7 +652,8 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             )
             this += buildDependencies(
                 gradleSourceSet, dependencyResolver, "getRuntimeOnlyMetadataConfigurationName", "RUNTIME", project, transformationBuilder
-            )
+            ).onlyNewDependencies(this)
+
             this += buildAndroidSourceSetDependencies(androidDeps, gradleSourceSet)
         }
     }
@@ -768,7 +788,6 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
 
         private val projectDependencyTransformation =
             transformations.filter { it.projectPath != null }.associateBy { it.projectPath }
-        //TODO
 
         val dependenciesByProjectPath by lazy {
             configuration
