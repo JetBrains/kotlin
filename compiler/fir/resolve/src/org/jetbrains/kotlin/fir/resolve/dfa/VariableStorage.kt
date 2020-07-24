@@ -28,7 +28,7 @@ import kotlin.contracts.contract
 @OptIn(DfaInternals::class)
 class VariableStorage(val session: FirSession) {
     private var counter = 1
-    private val realVariables: MutableMap<Identifier, RealVariable> = HashMap()
+    val realVariables: MutableMap<Identifier, RealVariable> = HashMap()
     private val syntheticVariables: MutableMap<FirElement, SyntheticVariable> = HashMap()
 
     fun getOrCreateRealVariableWithoutUnwrappingAlias(flow: Flow, symbol: AbstractFirBasedSymbol<*>, fir: FirElement): RealVariable {

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 class FirControlFlowAnalyzer {
     private val propertyInitializationAnalyzer = FirPropertyInitializationAnalyzer()
     private val callsEffectAnalyzer = FirCallsEffectAnalyzer()
+    private val returnsImpliesAnalyzer = FirReturnsImpliesAnalyzer()
 
     fun analyzeClassInitializer(klass: FirClass<*>, graph: ControlFlowGraph, context: CheckerContext, reporter: DiagnosticReporter) {
         if (graph.owner != null) return
@@ -25,6 +26,7 @@ class FirControlFlowAnalyzer {
         if (graph.owner != null) return
         propertyInitializationAnalyzer.analyze(graph, reporter)
         callsEffectAnalyzer.analyze(function, graph, reporter)
+        returnsImpliesAnalyzer.analyze(function, graph, reporter)
     }
 
     fun analyzePropertyInitializer(property: FirProperty, graph: ControlFlowGraph, context: CheckerContext, reporter: DiagnosticReporter) {
