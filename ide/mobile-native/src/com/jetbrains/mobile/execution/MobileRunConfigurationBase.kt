@@ -11,8 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.jetbrains.cidr.execution.CidrRunConfiguration
 import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
-import com.jetbrains.mobile.isAndroid
-import com.jetbrains.mobile.isApple
+import com.jetbrains.mobile.MobileBundle
 import com.jetbrains.mobile.isMobileAppMain
 import org.jdom.Element
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
@@ -39,11 +38,6 @@ abstract class MobileRunConfigurationBase(project: Project, factory: Configurati
             .filter { it.displayName in executionTargetNames }
 
     protected abstract fun isSuitable(module: Module): Boolean
-
-    override fun canRunOn(target: ExecutionTarget): Boolean =
-        target is Device &&
-                (module?.isApple == true && target is AppleDevice) ||
-                (module?.isAndroid == true && target is AndroidDevice)
 
     override fun getProductBundle(device: Device): File {
         val moduleRoot = ExternalSystemApiUtil.getExternalProjectPath(module!!)?.let { File(it) }
@@ -109,7 +103,7 @@ abstract class MobileRunConfigurationBase(project: Project, factory: Configurati
         super<CidrRunConfiguration>.checkConfiguration()
         _module.checkForWarning()
         if (executionTargetNames.isEmpty()) {
-//            throw RuntimeConfigurationError(MobileBundle.message("device.not.selected"))
+            throw RuntimeConfigurationError(MobileBundle.message("device.not.selected"))
         }
     }
 

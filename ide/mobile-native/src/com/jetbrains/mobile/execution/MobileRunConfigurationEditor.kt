@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.event.ItemEvent
+import java.util.*
 import javax.swing.DefaultComboBoxModel
 import javax.swing.JComponent
 import javax.swing.JPanel
@@ -24,9 +25,9 @@ open class MobileRunConfigurationEditor(
 ) : SettingsEditor<MobileRunConfigurationBase>() {
 
     protected lateinit var modulesComboBox: ModulesComboBox
-    private lateinit var executionTargetNames: MutableList<String>
-    private lateinit var appleDeviceComboBox: ComboBox<*>
-    private lateinit var androidDeviceComboBox: ComboBox<*>
+    private lateinit var executionTargetNames: SortedSet<String>
+    private lateinit var appleDeviceComboBox: ComboBox<DeviceWrapper>
+    private lateinit var androidDeviceComboBox: ComboBox<DeviceWrapper>
 
     override fun createEditor(): JComponent {
         val panel = JPanel(GridBagLayout())
@@ -50,8 +51,8 @@ open class MobileRunConfigurationEditor(
             panel.add(appleDeviceLabel, g.nextLine().next())
 
             val noDeviceSelected = arrayOf(DeviceWrapper(null))
-            val appleDeviceOptions = noDeviceSelected + devices.map(::DeviceWrapper)
-            val comboBox = ComboBox(DefaultComboBoxModel(appleDeviceOptions))
+            val deviceOptions = noDeviceSelected + devices.map(::DeviceWrapper)
+            val comboBox = ComboBox(DefaultComboBoxModel(deviceOptions))
             comboBox.addItemListener { event ->
                 val item = event.item as DeviceWrapper
                 item.device ?: return@addItemListener
@@ -73,10 +74,10 @@ open class MobileRunConfigurationEditor(
         val deviceService = MobileDeviceService.getInstance(project)
 
         val appleDevices = deviceService.getAppleDevices()
-        appleDeviceComboBox = addComboBox("Apple device:", appleDevices)
+        appleDeviceComboBox = addComboBox(MobileBundle.message("device.apple.select"), appleDevices)
 
         val androidDevices = deviceService.getAndroidDevices()
-        androidDeviceComboBox = addComboBox("Android device:", androidDevices)
+        androidDeviceComboBox = addComboBox(MobileBundle.message("device.android.select"), androidDevices)
 
         return panel
     }
@@ -92,6 +93,17 @@ open class MobileRunConfigurationEditor(
 
     override fun resetEditorFrom(runConfiguration: MobileRunConfigurationBase) {
         modulesComboBox.selectedModule = runConfiguration.module
-        executionTargetNames = runConfiguration.executionTargetNames.toMutableList()
+        executionTargetNames = runConfiguration.executionTargetNames.toSortedSet()
+
+        fun selectItem(comboBox: ComboBox<DeviceWrapper>) {
+            for (i in 0 until comboBox.itemCount) {
+                if (comboBox.getItemAt(i).toString() in executionTargetNames) {
+                    comboBox.selectedIndex = i
+                    break
+                }
+            }
+        }
+        selectItem(appleDeviceComboBox)
+        selectItem(androidDeviceComboBox)
     }
 }
