@@ -38,7 +38,6 @@
     <orderEntry type="module" module-name="kotlin.jvm-debugger.sequence" />
     <orderEntry type="module" module-name="kotlin.jvm-debugger.test" />
     <orderEntry type="module" module-name="kotlin.jvm-debugger.util" />
-    <orderEntry type="module" module-name="kotlin.kotlin-ide" />
     <orderEntry type="module" module-name="kotlin.maven" />
     <orderEntry type="module" module-name="kotlin.native" />
     <orderEntry type="module" module-name="kotlin.project-wizard.cli" />
