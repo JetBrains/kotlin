@@ -61,7 +61,6 @@
     <orderEntry type="module" module-name="intellij.java.langInjection" />
     <orderEntry type="module" module-name="intellij.junit" />
     <orderEntry type="module" module-name="intellij.properties.psi.impl" />
-    <orderEntry type="module" module-name="intellij.diagram.properties" />
     <orderEntry type="module" module-name="intellij.properties" />
     <orderEntry type="module" module-name="intellij.testng" />
     <orderEntry type="module" module-name="intellij.xml.psi.impl" />
