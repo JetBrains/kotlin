@@ -56,7 +56,7 @@ import static java.util.Collections.singletonList;
 @RunWith(JUnit38ClassRunner.class)
 public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
     public void testNewLibrary_copyJar() {
-        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.COPY);
+        doTestSingleJvmModule(KotlinWithLibraryConfigurator.FileState.COPY);
 
         ModuleRootManager.getInstance(getModule()).orderEntries().forEachLibrary(library -> {
             assertSameElements(
@@ -72,36 +72,36 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
     }
 
     public void testNewLibrary_doNotCopyJar() {
-        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY);
+        doTestSingleJvmModule(KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY);
     }
 
     public void testLibraryWithoutPaths_jarExists() {
-        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.EXISTS);
+        doTestSingleJvmModule(KotlinWithLibraryConfigurator.FileState.EXISTS);
     }
 
     public void testNewLibrary_jarExists() {
-        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.EXISTS);
+        doTestSingleJvmModule(KotlinWithLibraryConfigurator.FileState.EXISTS);
     }
 
     public void testLibraryWithoutPaths_copyJar() {
-        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.COPY);
+        doTestSingleJvmModule(KotlinWithLibraryConfigurator.FileState.COPY);
     }
 
     public void testLibraryWithoutPaths_doNotCopyJar() {
-        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY);
+        doTestSingleJvmModule(KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY);
     }
 
     public void testTwoModules_exists() {
         Module[] modules = getModules();
         for (Module module : modules) {
             if (module.getName().equals("module1")) {
-                configure(module, KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY, Companion.getJAVA_CONFIGURATOR());
-                Companion.assertConfigured(module, Companion.getJAVA_CONFIGURATOR());
+                configure(module, KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY, getJvmConfigurator());
+                assertConfigured(module, getJvmConfigurator());
             }
             else if (module.getName().equals("module2")) {
-                Companion.assertNotConfigured(module, Companion.getJAVA_CONFIGURATOR());
-                configure(module, KotlinWithLibraryConfigurator.FileState.EXISTS, Companion.getJAVA_CONFIGURATOR());
-                Companion.assertConfigured(module, Companion.getJAVA_CONFIGURATOR());
+                assertNotConfigured(module, getJvmConfigurator());
+                configure(module, KotlinWithLibraryConfigurator.FileState.EXISTS, getJvmConfigurator());
+                assertConfigured(module, getJvmConfigurator());
             }
         }
     }
@@ -112,49 +112,49 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
         // Move fake runtime jar to default library path to pretend library is already configured
         FileUtil.copy(
                 new File(getProject().getBasePath() + "/lib/" + KotlinArtifactNames.KOTLIN_STDLIB),
-                new File(Companion.getJAVA_CONFIGURATOR().getDefaultPathToJarFile(getProject()) + "/" + KotlinArtifactNames.KOTLIN_STDLIB));
+                new File(getJvmConfigurator().getDefaultPathToJarFile(getProject()) + "/" + KotlinArtifactNames.KOTLIN_STDLIB));
 
-        Companion.assertNotConfigured(module, Companion.getJAVA_CONFIGURATOR());
-        Companion.getJAVA_CONFIGURATOR().configure(myProject, emptyList());
-        Companion.assertProperlyConfigured(module, Companion.getJAVA_CONFIGURATOR());
+        assertNotConfigured(module, getJvmConfigurator());
+        getJvmConfigurator().configure(myProject, emptyList());
+        assertProperlyConfigured(module, getJvmConfigurator());
     }
 
     public void testTwoModulesWithNonDefaultPath_doNotCopyInDefault() {
-        doTestConfigureModulesWithNonDefaultSetup(Companion.getJAVA_CONFIGURATOR());
-        assertEmpty(ConfigureKotlinInProjectUtilsKt.getCanBeConfiguredModules(myProject, Companion.getJS_CONFIGURATOR()));
+        doTestConfigureModulesWithNonDefaultSetup(getJvmConfigurator());
+        assertEmpty(ConfigureKotlinInProjectUtilsKt.getCanBeConfiguredModules(myProject, getJsConfigurator()));
     }
 
     public void testTwoModulesWithJSNonDefaultPath_doNotCopyInDefault() {
-        doTestConfigureModulesWithNonDefaultSetup(Companion.getJS_CONFIGURATOR());
-        assertEmpty(ConfigureKotlinInProjectUtilsKt.getCanBeConfiguredModules(myProject, Companion.getJAVA_CONFIGURATOR()));
+        doTestConfigureModulesWithNonDefaultSetup(getJsConfigurator());
+        assertEmpty(ConfigureKotlinInProjectUtilsKt.getCanBeConfiguredModules(myProject, getJvmConfigurator()));
     }
 
     public void testNewLibrary_jarExists_js() {
-        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.EXISTS);
+        doTestSingleJsModule(KotlinWithLibraryConfigurator.FileState.EXISTS);
     }
 
     public void testNewLibrary_copyJar_js() {
-        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.COPY);
+        doTestSingleJsModule(KotlinWithLibraryConfigurator.FileState.COPY);
     }
 
     public void testNewLibrary_doNotCopyJar_js() {
-        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY);
+        doTestSingleJsModule(KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY);
     }
 
     public void testJsLibraryWithoutPaths_jarExists() {
-        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.EXISTS);
+        doTestSingleJsModule(KotlinWithLibraryConfigurator.FileState.EXISTS);
     }
 
     public void testJsLibraryWithoutPaths_copyJar() {
-        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.COPY);
+        doTestSingleJsModule(KotlinWithLibraryConfigurator.FileState.COPY);
     }
 
     public void testJsLibraryWithoutPaths_doNotCopyJar() {
-        doTestOneJsModule(KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY);
+        doTestSingleJsModule(KotlinWithLibraryConfigurator.FileState.DO_NOT_COPY);
     }
 
     public void testJsLibraryWrongKind() {
-        AbstractConfigureKotlinTest.Companion.assertProperlyConfigured(getModule(), AbstractConfigureKotlinTest.Companion.getJS_CONFIGURATOR());
+        assertProperlyConfigured(getModule(), getJsConfigurator());
         assertEquals(1, ModuleRootManager.getInstance(getModule()).orderEntries().process(new LibraryCountingRootPolicy(), 0).intValue());
     }
 
@@ -312,7 +312,7 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
     }
 
     private void checkAddStdlibModule() {
-        doTestOneJavaModule(KotlinWithLibraryConfigurator.FileState.COPY);
+        doTestSingleJvmModule(KotlinWithLibraryConfigurator.FileState.COPY);
 
         Module module = getModule();
         Sdk moduleSdk = ModuleRootManager.getInstance(getModule()).getSdk();
