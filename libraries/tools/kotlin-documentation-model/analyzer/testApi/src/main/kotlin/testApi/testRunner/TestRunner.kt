@@ -7,9 +7,9 @@ import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import org.jetbrains.dokka.pages.RootPageNode
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.DokkaPlugin
+import org.jetbrains.dokka.testApi.logger.TestLogger
 import org.jetbrains.dokka.utilities.DokkaConsoleLogger
 import org.junit.rules.TemporaryFolder
-import testApi.logger.TestLogger
 import java.io.File
 import java.nio.charset.Charset
 import java.nio.file.Files
