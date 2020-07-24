@@ -33,4 +33,7 @@ class KotlinUastResolveEverythingTest : AbstractKotlinResolveEverythingTest() {
     @Test
     fun testResolve() = doTest("Resolve")
 
+    @Test
+    fun testPropertyReferences() = doTest("PropertyReferences")
+
 }
