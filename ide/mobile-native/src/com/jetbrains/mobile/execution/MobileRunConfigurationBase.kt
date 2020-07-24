@@ -91,7 +91,7 @@ abstract class MobileRunConfigurationBase(project: Project, factory: Configurati
 
         val deviceNames = mutableListOf<String>()
         val devicesElement = element.getChild(DEVICES_ELEMENT)
-        for (deviceElement in devicesElement.getChildren(DEVICES_ELEMENT)) {
+        for (deviceElement in devicesElement.getChildren(DEVICE_ELEMENT)) {
             val deviceName = deviceElement.getAttributeValue(DEVICE_NAME_ATTRIBUTE)
             deviceNames.add(deviceName)
         }
