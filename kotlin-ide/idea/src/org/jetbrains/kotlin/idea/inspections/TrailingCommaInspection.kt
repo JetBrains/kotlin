@@ -88,16 +88,12 @@ class TrailingCommaInspection(
             when (trailingCommaContext.state) {
                 TrailingCommaState.MISSING -> {
                     if (!trailingCommaAllowedInModule(commaOwner)) return
-                    val highlightType =
-                        if (addCommaWarning) ProblemHighlightType.GENERIC_ERROR_OR_WARNING else ProblemHighlightType.INFORMATION
-                    if (isOnTheFly || highlightType != ProblemHighlightType.INFORMATION) { // INFORMATION shouldn't be reported in batch mode
-                        reportProblem(
-                            trailingCommaOrLastElement,
-                            KotlinBundle.message("inspection.trailing.comma.missing.trailing.comma"),
-                            KotlinBundle.message("inspection.trailing.comma.add.trailing.comma"),
-                            highlightType,
-                        )
-                    }
+                    reportProblem(
+                        trailingCommaOrLastElement,
+                        KotlinBundle.message("inspection.trailing.comma.missing.trailing.comma"),
+                        KotlinBundle.message("inspection.trailing.comma.add.trailing.comma"),
+                        if (addCommaWarning) ProblemHighlightType.GENERIC_ERROR_OR_WARNING else ProblemHighlightType.INFORMATION,
+                    )
                 }
                 TrailingCommaState.REDUNDANT -> {
                     reportProblem(
@@ -122,13 +118,17 @@ class TrailingCommaInspection(
             val commaOwner = commaOrElement.parent as KtElement
             // case for KtFunctionLiteral, where PsiWhiteSpace after KtTypeParameterList isn't included in this list
             val problemOwner = commaOwner.parent
-            holder.registerProblem(
-                problemOwner,
-                message,
-                highlightType.applyCondition(!checkTrailingCommaSettings || useTrailingComma),
-                commaOrElement.textRangeOfCommaOrSymbolAfter.shiftLeft(problemOwner.startOffset),
-                createQuickFix(fixMessage, commaOwner),
-            )
+            val highlightTypeWithAppliedCondition = highlightType.applyCondition(!checkTrailingCommaSettings || useTrailingComma)
+            // INFORMATION shouldn't be reported in batch mode
+            if (isOnTheFly || highlightTypeWithAppliedCondition != ProblemHighlightType.INFORMATION) {
+                holder.registerProblem(
+                    problemOwner,
+                    message,
+                    highlightTypeWithAppliedCondition,
+                    commaOrElement.textRangeOfCommaOrSymbolAfter.shiftLeft(problemOwner.startOffset),
+                    createQuickFix(fixMessage, commaOwner),
+                )
+            }
         }
 
         private fun registerProblemForLineBreak(
