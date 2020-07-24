@@ -1,21 +1,19 @@
 package org.jetbrains.kotlin.test
 
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Paths
+import java.nio.file.Path
 
 object KotlinRoot {
     @JvmField
-    val PATH: String = run {
-        var current = Paths.get(".").toAbsolutePath().normalize()
-        while (current != null && !Files.isRegularFile(current.resolve("kotlin.kotlin-ide.iml"))) {
-            current = current.parent
+    val DIR: File = run {
+        var current = File(".").canonicalFile
+        while (current != null && !current.resolve("kotlin.kotlin-ide.iml").isFile) {
+            current = current.parentFile
         }
-        checkNotNull(current) { "Cannot find kotiln-ide root" }
-        current = current.resolve("kotlin")
-        return@run current.toString()
+        checkNotNull(current) { "Can't find kotlin-ide root" }
+        return@run current.resolve("kotlin")
     }
 
     @JvmField
-    val DIR: File = File(PATH)
+    val PATH: Path = DIR.toPath()
 }

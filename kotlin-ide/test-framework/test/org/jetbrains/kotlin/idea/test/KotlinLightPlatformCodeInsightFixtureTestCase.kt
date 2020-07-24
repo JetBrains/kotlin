@@ -19,7 +19,7 @@ abstract class KotlinLightPlatformCodeInsightFixtureTestCase : LightPlatformCode
     override fun setUp() {
         super.setUp()
         enableKotlinOfficialCodeStyle(project)
-        VfsRootAccess.allowRootAccess(myFixture.testRootDisposable, KotlinRoot.PATH)
+        VfsRootAccess.allowRootAccess(myFixture.testRootDisposable, KotlinRoot.DIR.path)
 
         if (!isFirPlugin()) {
             invalidateLibraryCache(project)
