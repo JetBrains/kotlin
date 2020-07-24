@@ -1,1 +1,1 @@
-androidx.compose.plugins.kotlin.ComposeCommandLineProcessor
+androidx.compose.compiler.plugins.kotlin.ComposeCommandLineProcessor
