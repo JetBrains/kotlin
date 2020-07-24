@@ -19,6 +19,7 @@ fun CFGNode<*>.render(): String =
             when (this@render) {
                 is FunctionEnterNode -> "Enter function \"${fir.name()}\""
                 is FunctionExitNode -> "Exit function \"${fir.name()}\""
+                is LocalFunctionDeclarationNode -> "Local function declaration ${owner.name}"
 
                 is BlockEnterNode -> "Enter block"
                 is BlockExitNode -> "Exit block"
@@ -81,6 +82,7 @@ fun CFGNode<*>.render(): String =
                 is BinaryOrEnterRightOperandNode -> "Enter right part of ||"
                 is BinaryOrExitNode -> "Exit ||"
 
+                is PartOfClassInitializationNode -> "Part of class initialization"
                 is PropertyInitializerEnterNode -> "Enter property"
                 is PropertyInitializerExitNode -> "Exit property"
                 is InitBlockEnterNode -> "Enter init block"

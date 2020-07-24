@@ -68,6 +68,7 @@ digraph atMostOnce_kt {
     12 -> {13};
     13 -> {20};
     13 -> {14} [color=red];
+    13 -> {20} [style=dashed];
     14 -> {15};
     15 -> {16};
     16 -> {17};
@@ -113,6 +114,7 @@ digraph atMostOnce_kt {
     28 -> {29};
     29 -> {36};
     29 -> {30} [color=red];
+    29 -> {36} [style=dashed];
     30 -> {31};
     31 -> {32};
     32 -> {33};

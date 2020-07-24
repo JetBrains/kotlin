@@ -18,9 +18,7 @@ fun <D> ControlFlowGraph.traverse(
 ) {
     for (node in getNodesInOrder(direction)) {
         node.accept(visitor, data)
-        if (node is CFGNodeWithCfgOwner<*>) {
-            node.subGraph?.traverse(direction, visitor, data)
-        }
+        (node as? CFGNodeWithCfgOwner<*>)?.subGraphs?.forEach { it.traverse(direction, visitor, data) }
     }
 }
 
@@ -72,7 +70,7 @@ private fun <I : ControlFlowInfo<I, K, V>, K : Any, V : Any> ControlFlowGraph.co
             }
         }
         if (node is CFGNodeWithCfgOwner<*>) {
-            node.subGraph?.collectDataForNodeInternal(direction, initialInfo, visitor, nodeMap, changed)
+            node.subGraphs.forEach { it.collectDataForNodeInternal(direction, initialInfo, visitor, nodeMap, changed) }
         }
     }
 }
