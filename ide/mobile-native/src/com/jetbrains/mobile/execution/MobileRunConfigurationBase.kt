@@ -1,11 +1,9 @@
 package com.jetbrains.mobile.execution
 
 import com.intellij.execution.ExecutionTarget
-import com.intellij.execution.configurations.CommandLineState
-import com.intellij.execution.configurations.ConfigurationFactory
-import com.intellij.execution.configurations.RunConfiguration
-import com.intellij.execution.configurations.RunConfigurationModule
+import com.intellij.execution.configurations.*
 import com.intellij.execution.runners.ExecutionEnvironment
+import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.options.SettingsEditor
@@ -32,6 +30,13 @@ abstract class MobileRunConfigurationBase(project: Project, factory: Configurati
         set(value) {
             _module.module = value
         }
+
+    // Storing names instead of IDs to make it more convenient for sharing run configurations
+    var executionTargetNames: List<String> = emptyList()
+
+    val executionTargets: List<Device>
+        get() = MobileDeviceService.getInstance(project).getAll()
+            .filter { it.displayName in executionTargetNames }
 
     protected abstract fun isSuitable(module: Module): Boolean
 
@@ -70,25 +75,51 @@ abstract class MobileRunConfigurationBase(project: Project, factory: Configurati
     override fun writeExternal(element: Element) {
         super<CidrRunConfiguration>.writeExternal(element)
         _module.writeExternal(element)
+
+        val devicesElement = Element(DEVICES_ELEMENT)
+        for (deviceName in executionTargetNames) {
+            val deviceElement = Element(DEVICE_ELEMENT)
+                .setAttribute(DEVICE_NAME_ATTRIBUTE, deviceName)
+            devicesElement.addContent(deviceElement)
+        }
+        element.addContent(devicesElement)
     }
 
     override fun readExternal(element: Element) {
         super<CidrRunConfiguration>.readExternal(element)
         _module.readExternal(element)
+
+        val deviceNames = mutableListOf<String>()
+        val devicesElement = element.getChild(DEVICES_ELEMENT)
+        for (deviceElement in devicesElement.getChildren(DEVICES_ELEMENT)) {
+            val deviceName = deviceElement.getAttributeValue(DEVICE_NAME_ATTRIBUTE)
+            deviceNames.add(deviceName)
+        }
+        executionTargetNames = deviceNames
     }
 
     override fun clone(): MobileRunConfigurationBase {
         val result = super.clone() as MobileRunConfigurationBase
         result._module = RunConfigurationModule(project).also { it.module = this.module }
+        result.executionTargetNames = executionTargetNames.toMutableList()
         return result
     }
 
     override fun checkConfiguration() {
         super<CidrRunConfiguration>.checkConfiguration()
         _module.checkForWarning()
+        if (executionTargetNames.isEmpty()) {
+//            throw RuntimeConfigurationError(MobileBundle.message("device.not.selected"))
+        }
     }
 
-    companion object
+    companion object {
+        private val log = logger<MobileRunConfigurationBase>()
+
+        private const val DEVICES_ELEMENT = "devices"
+        private const val DEVICE_ELEMENT = "device"
+        private const val DEVICE_NAME_ATTRIBUTE = "display-name"
+    }
 }
 
 class MobileAppRunConfiguration(project: Project, factory: ConfigurationFactory, name: String) :
