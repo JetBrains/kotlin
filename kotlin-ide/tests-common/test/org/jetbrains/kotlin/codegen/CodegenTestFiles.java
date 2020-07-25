@@ -35,38 +35,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CodegenTestFiles {
-
     @NotNull
     private final List<KtFile> psiFiles;
-    @NotNull
-    private final List<Pair<String, String>> expectedValues;
-    @NotNull
-    private final List<Object> scriptParameterValues;
 
-    private CodegenTestFiles(
-            @NotNull List<KtFile> psiFiles,
-            @NotNull List<Pair<String, String>> expectedValues,
-            @NotNull List<Object> scriptParameterValues
-    ) {
+    private CodegenTestFiles(@NotNull List<KtFile> psiFiles) {
         this.psiFiles = psiFiles;
-        this.expectedValues = expectedValues;
-        this.scriptParameterValues = scriptParameterValues;
     }
 
     @NotNull
     public KtFile getPsiFile() {
         assert psiFiles.size() == 1;
         return psiFiles.get(0);
-    }
-
-    @NotNull
-    public List<Pair<String, String>> getExpectedValues() {
-        return expectedValues;
-    }
-
-    @NotNull
-    public List<Object> getScriptParameterValues() {
-        return scriptParameterValues;
     }
 
     @NotNull
@@ -77,7 +56,7 @@ public class CodegenTestFiles {
     @NotNull
     public static CodegenTestFiles create(@NotNull List<KtFile> ktFiles) {
         assert !ktFiles.isEmpty() : "List should have at least one file";
-        return new CodegenTestFiles(ktFiles, Collections.emptyList(), Collections.emptyList());
+        return new CodegenTestFiles(ktFiles);
     }
 
     public static CodegenTestFiles create(Project project, String[] names) {
@@ -133,6 +112,6 @@ public class CodegenTestFiles {
             }
         }
 
-        return new CodegenTestFiles(Collections.singletonList(file), expectedValues, scriptParameterValues);
+        return new CodegenTestFiles(Collections.singletonList(file));
     }
 }

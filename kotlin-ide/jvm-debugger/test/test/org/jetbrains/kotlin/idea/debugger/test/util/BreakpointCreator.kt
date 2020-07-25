@@ -12,13 +12,13 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.xdebugger.XDebuggerManager
-import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import com.intellij.debugger.engine.evaluation.CodeFragmentKind
 import com.intellij.debugger.engine.evaluation.TextWithImportsImpl
 import com.intellij.debugger.ui.breakpoints.Breakpoint
 import com.intellij.debugger.ui.breakpoints.BreakpointManager
 import com.intellij.debugger.ui.breakpoints.LineBreakpoint
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile

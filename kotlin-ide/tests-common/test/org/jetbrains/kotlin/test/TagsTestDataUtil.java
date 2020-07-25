@@ -45,10 +45,10 @@ public class TagsTestDataUtil {
 
     public static String generateTextWithCaretAndSelection(@NotNull Editor editor) {
         List<TagInfo> points = Lists.newArrayList();
-        points.add(new TagInfo<String>(editor.getCaretModel().getOffset(), true, "caret"));
+        points.add(new TagInfo<>(editor.getCaretModel().getOffset(), true, "caret"));
         if (editor.getSelectionModel().hasSelection()) {
-            points.add(new TagInfo<String>(editor.getSelectionModel().getSelectionStart(), true, "selection"));
-            points.add(new TagInfo<String>(editor.getSelectionModel().getSelectionEnd(), false, "selection"));
+            points.add(new TagInfo<>(editor.getSelectionModel().getSelectionStart(), true, "selection"));
+            points.add(new TagInfo<>(editor.getSelectionModel().getSelectionEnd(), false, "selection"));
         }
 
         return insertTagsInText(points, editor.getDocument().getText(), (TagInfo t) -> null);

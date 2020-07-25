@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.test
 
 import com.intellij.facet.FacetManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ContentEntry
 import com.intellij.openapi.roots.ModifiableRootModel
@@ -24,7 +25,6 @@ import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.config.CompilerSettings
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.facet.*
-import org.jetbrains.kotlin.test.testFramework.runWriteAction
 
 class KotlinProjectDescriptorWithFacet(
     private val languageVersion: LanguageVersion,

@@ -242,14 +242,4 @@ public final class InTextDirectivesUtils {
     public static boolean isIgnoredTarget(TargetBackend targetBackend, File file) {
         return isIgnoredTarget(targetBackend, file, IGNORE_BACKEND_DIRECTIVE_PREFIX);
     }
-
-    public static boolean dontRunGeneratedCode(TargetBackend targetBackend, File file) {
-        List<String> backends = findListWithPrefixes(textWithDirectives(file), "// DONT_RUN_GENERATED_CODE: ");
-        return backends.contains(targetBackend.name());
-    }
-
-    // Whether the target test is supposed to pass successfully on targetBackend
-    public static boolean isPassingTarget(TargetBackend targetBackend, File file) {
-        return isCompatibleTarget(targetBackend, file) && !isIgnoredTarget(targetBackend, file);
-    }
 }

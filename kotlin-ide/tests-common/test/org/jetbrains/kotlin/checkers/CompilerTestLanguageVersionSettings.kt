@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.checkers
 
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
-import java.io.File
 import java.util.regex.Pattern
 
 const val LANGUAGE_DIRECTIVE = "LANGUAGE"
@@ -101,15 +99,11 @@ fun languageVersionSettingsFromText(fileTexts: List<String>): LanguageVersionSet
     return parseLanguageVersionSettingsOrDefault(allDirectives)
 }
 
-fun setupLanguageVersionSettingsForMultifileCompilerTests(files: List<File>, environment: KotlinCoreEnvironment) {
-    environment.configuration.languageVersionSettings = languageVersionSettingsFromText(files.map { it.readText() })
-}
-
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 private fun <T : Any> analysisFlag(flag: AnalysisFlag<T>, value: @kotlin.internal.NoInfer T?): Pair<AnalysisFlag<T>, T>? =
     value?.let(flag::to)
 
-private val languagePattern = Pattern.compile("(\\+|\\-|warn:)(\\w+)\\s*")
+private val languagePattern = Pattern.compile("(\\+|-|warn:)(\\w+)\\s*")
 
 private fun collectLanguageFeatureMap(directives: String): Map<LanguageFeature, LanguageFeature.State> {
     val matcher = languagePattern.matcher(directives)

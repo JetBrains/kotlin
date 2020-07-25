@@ -24,6 +24,6 @@ import java.lang.annotation.Target;
  * Marks the annotated parameter as referencing a file in the testdata directory.
  */
 @Retention(RetentionPolicy.SOURCE)
-@Target({ElementType.PARAMETER})
+@Target(ElementType.PARAMETER)
 public @interface TestDataFile {
 }

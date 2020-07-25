@@ -38,7 +38,7 @@ public class ForTestCompileRuntime {
             for (File file : files) {
                 urls.add(file.toURI().toURL());
             }
-            return new URLClassLoader(urls.toArray(new URL[urls.size()]), null);
+            return new URLClassLoader(urls.toArray(new URL[0]), null);
         }
         catch (MalformedURLException e) {
             throw ExceptionUtilsKt.rethrow(e);

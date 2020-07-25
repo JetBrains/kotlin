@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.intellij.ide.highlighter.JavaFileType;
-import com.intellij.openapi.util.io.FileUtil;
 import kotlin.collections.CollectionsKt;
-import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -28,25 +25,12 @@ import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertTrue;
-
 public class CodegenTestUtil {
     private CodegenTestUtil() {
-    }
-
-    public static Method findDeclaredMethodByNameOrNull(@NotNull Class<?> aClass, @NotNull String name) {
-        for (Method method : aClass.getDeclaredMethods()) {
-            if (method.getName().equals(name)) {
-                return method;
-            }
-        }
-        return null;
     }
 
     public static void compileJava(

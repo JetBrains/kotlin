@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.wizard
 
 import com.intellij.openapi.application.impl.ApplicationInfoImpl
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.projectRoots.JavaSdk
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.idea.core.script.configuration.utils.getKtFile
 import org.jetbrains.kotlin.idea.scripting.gradle.getGradleProjectSettings
 import org.jetbrains.kotlin.idea.test.KotlinSdkCreationChecker
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.jetbrains.kotlin.tools.projectWizard.cli.*
 import org.jetbrains.kotlin.tools.projectWizard.core.service.Services
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager

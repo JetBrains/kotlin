@@ -62,10 +62,6 @@ fun PsiFile.findElementsByCommentPrefix(prefix: String): Map<PsiElement, String>
     return result
 }
 
-fun findLastModifiedFile(dir: File, skipFile: (File) -> Boolean): File {
-    return dir.walk().filterNot(skipFile).maxBy { it.lastModified() }!!
-}
-
 val CodeInsightTestFixture.elementByOffset: PsiElement
     get() {
         return file.findElementAt(editor.caretModel.offset) ?: error("Can't find element at offset. Probably <caret> is missing.")

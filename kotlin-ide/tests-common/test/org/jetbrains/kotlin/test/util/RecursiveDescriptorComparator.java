@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.contracts.description.*;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SubpackagesScope;
-import org.jetbrains.kotlin.jvm.compiler.ExpectedLoadErrorsUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.platform.TargetPlatformKt;
 import org.jetbrains.kotlin.renderer.*;
@@ -50,11 +49,12 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 import static org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden;
 
 public class RecursiveDescriptorComparator {
+    private static final String EXPECT_LOAD_ERROR_ANNO_CLASS_NAME = "org.jetbrains.kotlin.jvm.compiler.annotation.ExpectLoadError";
 
     private static final DescriptorRenderer DEFAULT_RENDERER = DescriptorRenderer.Companion.withOptions(
             options -> {
                 options.setWithDefinedIn(false);
-                options.setExcludedAnnotationClasses(Collections.singleton(new FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)));
+                options.setExcludedAnnotationClasses(Collections.singleton(new FqName(EXPECT_LOAD_ERROR_ANNO_CLASS_NAME)));
                 options.setOverrideRenderingPolicy(OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE);
                 options.setIncludePropertyConstant(true);
                 options.setClassifierNamePolicy(ClassifierNamePolicy.FULLY_QUALIFIED.INSTANCE);
@@ -67,12 +67,6 @@ public class RecursiveDescriptorComparator {
 
     public static final Configuration DONT_INCLUDE_METHODS_OF_OBJECT = new Configuration(false, false, false, false,
                                                                                          false, descriptor -> true, errorTypesForbidden(), DEFAULT_RENDERER);
-    public static final Configuration RECURSIVE = new Configuration(false, false, true, false,
-                                                                    false, descriptor -> true, errorTypesForbidden(), DEFAULT_RENDERER);
-
-    public static final Configuration RECURSIVE_ALL = new Configuration(true, true, true, false,
-                                                                        true, descriptor -> true, errorTypesForbidden(), DEFAULT_RENDERER);
-
     public static final Predicate<DeclarationDescriptor> SKIP_BUILT_INS_PACKAGES = descriptor -> {
         if (descriptor instanceof PackageViewDescriptor) {
             return !KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(((PackageViewDescriptor) descriptor).getFqName());
@@ -389,27 +383,7 @@ public class RecursiveDescriptorComparator {
             );
         }
 
-        public Configuration checkFunctionContracts(boolean checkFunctionContracts) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny,
-                                     renderDeclarationsFromOtherModules, checkFunctionContracts, recursiveFilter, validationStrategy, renderer);
-        }
-
-        public Configuration includeMethodsOfKotlinAny(boolean includeMethodsOfKotlinAny) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny,
-                                     renderDeclarationsFromOtherModules, checkFunctionContracts, recursiveFilter, validationStrategy, renderer);
-        }
-
-        public Configuration renderDeclarationsFromOtherModules(boolean renderDeclarationsFromOtherModules) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny,
-                                     renderDeclarationsFromOtherModules, checkFunctionContracts, recursiveFilter, validationStrategy, renderer);
-        }
-
         public Configuration withValidationStrategy(@NotNull DescriptorValidator.ValidationVisitor validationStrategy) {
-            return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny,
-                                     renderDeclarationsFromOtherModules, checkFunctionContracts, recursiveFilter, validationStrategy, renderer);
-        }
-
-        public Configuration withRenderer(@NotNull DescriptorRenderer renderer) {
             return new Configuration(checkPrimaryConstructors, checkPropertyAccessors, includeMethodsOfKotlinAny,
                                      renderDeclarationsFromOtherModules, checkFunctionContracts, recursiveFilter, validationStrategy, renderer);
         }

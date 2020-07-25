@@ -12,6 +12,7 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInspection.InspectionEP
 import com.intellij.codeInspection.LocalInspectionEP
 import com.intellij.ide.highlighter.JavaFileType
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.PlainTextFileType
@@ -35,7 +36,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestFiles
-import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern

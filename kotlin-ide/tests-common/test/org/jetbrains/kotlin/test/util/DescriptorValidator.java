@@ -62,10 +62,6 @@ public class DescriptorValidator {
             return new ValidationVisitor();
         }
 
-        public static ValidationVisitor errorTypesAllowed() {
-            return new ValidationVisitor().allowErrorTypes();
-        }
-
         private boolean allowErrorTypes = false;
         private Predicate<DeclarationDescriptor> recursiveFilter = descriptor -> true;
 
@@ -75,12 +71,6 @@ public class DescriptorValidator {
         @NotNull
         public ValidationVisitor withStepIntoFilter(@NotNull Predicate<DeclarationDescriptor> filter) {
             this.recursiveFilter = filter;
-            return this;
-        }
-
-        @NotNull
-        public ValidationVisitor allowErrorTypes() {
-            this.allowErrorTypes = true;
             return this;
         }
 
@@ -178,8 +168,7 @@ public class DescriptorValidator {
         private static void validateAccessor(
                 PropertyDescriptor descriptor,
                 DiagnosticCollector collector,
-                PropertyAccessorDescriptor accessor,
-                String name
+                PropertyAccessorDescriptor accessor
         ) {
             // TODO: fix the discrepancies in descriptor construction and enable these checks
             //assertEquals(accessor, collector, name + " visibility", descriptor.getVisibility(), accessor.getVisibility());
@@ -318,7 +307,7 @@ public class DescriptorValidator {
             PropertyGetterDescriptor getter = descriptor.getGetter();
             if (getter != null) {
                 assertEqualTypes(getter, collector, "getter return type", descriptor.getType(), getter.getReturnType());
-                validateAccessor(descriptor, collector, getter, "getter");
+                validateAccessor(descriptor, collector, getter);
             }
 
             PropertySetterDescriptor setter = descriptor.getSetter();
@@ -366,7 +355,7 @@ public class DescriptorValidator {
     private static class ScopeValidatorVisitor implements DeclarationDescriptorVisitor<Void, MemberScope> {
         private final DiagnosticCollector collector;
 
-        public ScopeValidatorVisitor(DiagnosticCollector collector) {
+        private ScopeValidatorVisitor(DiagnosticCollector collector) {
             this.collector = collector;
         }
 
@@ -377,13 +366,12 @@ public class DescriptorValidator {
         private void assertFound(
                 @NotNull MemberScope scope,
                 @NotNull DeclarationDescriptor expected,
-                @Nullable DeclarationDescriptor found,
-                boolean shouldBeSame
+                @Nullable DeclarationDescriptor found
         ) {
             if (found == null) {
                 report(expected, "Not found in " + scope);
             }
-            if (shouldBeSame ? expected != found : !expected.equals(found)) {
+            if (true ? expected != found : !expected.equals(found)) {
                 report(expected, "Lookup error in " + scope + ": " + found);
             }
         }
@@ -432,7 +420,7 @@ public class DescriptorValidator {
         public Void visitTypeParameterDescriptor(
                 TypeParameterDescriptor descriptor, MemberScope scope
         ) {
-            assertFound(scope, descriptor, scope.getContributedClassifier(descriptor.getName(), NoLookupLocation.FROM_TEST), true);
+            assertFound(scope, descriptor, scope.getContributedClassifier(descriptor.getName(), NoLookupLocation.FROM_TEST));
             return null;
         }
 
@@ -440,7 +428,7 @@ public class DescriptorValidator {
         public Void visitClassDescriptor(
                 ClassDescriptor descriptor, MemberScope scope
         ) {
-            assertFound(scope, descriptor, scope.getContributedClassifier(descriptor.getName(), NoLookupLocation.FROM_TEST), true);
+            assertFound(scope, descriptor, scope.getContributedClassifier(descriptor.getName(), NoLookupLocation.FROM_TEST));
             return null;
         }
 
@@ -533,11 +521,6 @@ public class DescriptorValidator {
         @NotNull
         public String getMessage() {
             return message;
-        }
-
-        @NotNull
-        public Throwable getStackTrace() {
-            return stackTrace;
         }
 
         public void printStackTrace(@NotNull PrintStream out) {

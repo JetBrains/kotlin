@@ -22,21 +22,7 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.test.testFramework.resetApplicationToNull
 
 object MockComponentManagerCreationTracer {
-
     private val creationTraceMap = ContainerUtil.createConcurrentWeakMap<MockComponentManager, Throwable>()
-
-    @JvmStatic
-    fun onCreate(manager: MockComponentManager) {
-        creationTraceMap[manager] = Exception("Creation trace")
-    }
-
-    @JvmStatic
-    fun onGetComponentInstance(manager: MockComponentManager) {
-        if (manager.isDisposed) {
-            val trace = creationTraceMap[manager] ?: return
-            trace.printStackTrace(System.err)
-        }
-    }
 
     @JvmStatic
     fun diagnoseDisposedButNotClearedApplication(app: Application) {

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.checkers.parseLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.JvmTarget.Companion.fromString
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
@@ -58,19 +57,6 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
         files: List<F>
     ) {
         throw UnsupportedOperationException("Multi-file test cases are not supported in this test")
-    }
-
-    protected open fun getTestJdkKind(files: List<F>): TestJdkKind {
-        for (file in files) {
-            if (InTextDirectivesUtils.isDirectiveDefined(file.content, "FULL_JDK")) {
-                return TestJdkKind.FULL_JDK
-            }
-        }
-        return TestJdkKind.MOCK_JDK
-    }
-
-    protected open fun extractConfigurationKind(files: List<F>): ConfigurationKind {
-        return Companion.extractConfigurationKind(files)
     }
 
     protected open fun updateConfiguration(configuration: CompilerConfiguration) {}
@@ -193,15 +179,6 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
             }
         }
 
-        @JvmStatic
-        fun updateConfigurationByDirectivesInTestFiles(
-            testFilesWithConfigurationDirectives: List<TestFile>,
-            configuration: CompilerConfiguration
-        ) {
-            updateConfigurationByDirectivesInTestFiles(testFilesWithConfigurationDirectives, configuration, "", false)
-        }
-
-
         private fun updateConfigurationByDirectivesInTestFiles(
             testFilesWithConfigurationDirectives: List<TestFile>,
             configuration: CompilerConfiguration,
@@ -294,11 +271,6 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
                     configuration.put(JVMConfigurationKeys.ASSERTIONS_MODE, mode)
                 }
             }
-        }
-
-        fun extractConfigurationKind(files: List<TestFile>): ConfigurationKind {
-            val addReflect = files.any { InTextDirectivesUtils.isDirectiveDefined(it.content, "WITH_REFLECT") }
-            return if (addReflect) ConfigurationKind.STDLIB_REFLECT else ConfigurationKind.STDLIB
         }
     }
 }

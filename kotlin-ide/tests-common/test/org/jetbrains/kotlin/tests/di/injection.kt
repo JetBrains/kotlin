@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
-import org.jetbrains.kotlin.types.expressions.FakeCallResolver
 
 fun createContainerForTests(project: Project, module: ModuleDescriptor): ContainerForTests {
     return ContainerForTests(createContainer("Tests", JvmPlatformAnalyzerServices) {
@@ -47,10 +46,6 @@ fun createContainerForTests(project: Project, module: ModuleDescriptor): Contain
 }
 
 class ContainerForTests(container: StorageComponentContainer) {
-    val descriptorResolver: DescriptorResolver by container
-    val functionDescriptorResolver: FunctionDescriptorResolver by container
-    val typeResolver: TypeResolver by container
-    val fakeCallResolver: FakeCallResolver by container
     val expressionTypingServices: ExpressionTypingServices by container
     val dataFlowValueFactory: DataFlowValueFactory by container
 }

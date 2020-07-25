@@ -9,6 +9,7 @@ import com.intellij.debugger.impl.DescriptorTestCase
 import com.intellij.debugger.impl.OutputChecker
 import com.intellij.execution.configurations.JavaParameters
 import com.intellij.execution.process.ProcessOutputTypes
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ModuleRootManager
@@ -33,7 +34,6 @@ import org.jetbrains.kotlin.idea.test.addRoot
 import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.KotlinBaseTest.TestFile
 import org.jetbrains.kotlin.test.KotlinTestUtils.*
-import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.junit.ComparisonFailure
 import java.io.File
 

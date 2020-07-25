@@ -6,7 +6,6 @@ package org.jetbrains.kotlin.checkers
 
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.TestFiles.TestFileFactory
 import java.io.File
@@ -100,11 +99,5 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
                 file.writeText(content, Charsets.UTF_8)
             }
         }, coroutinesPackage)
-    }
-
-    companion object {
-        private fun isScriptingNeeded(file: File): Boolean {
-            return file.name.endsWith(KotlinParserDefinition.STD_SCRIPT_EXT)
-        }
     }
 }

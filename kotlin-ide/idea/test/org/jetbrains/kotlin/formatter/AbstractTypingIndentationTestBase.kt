@@ -5,6 +5,7 @@
 package org.jetbrains.kotlin.formatter
 
 import com.intellij.openapi.actionSystem.IdeActions
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.codeStyle.lineIndent.LineIndentProvider
 import com.intellij.testFramework.EditorTestUtil
@@ -14,7 +15,6 @@ import org.jetbrains.kotlin.idea.test.KotlinLightPlatformCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.configureCodeStyleAndRun
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.junit.Assert
 import java.io.File
 

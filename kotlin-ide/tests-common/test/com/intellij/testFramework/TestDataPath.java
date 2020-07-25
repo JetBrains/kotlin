@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
  * $PROJECT_ROOT to use the project base directory.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE})
+@Target(ElementType.TYPE)
 public @interface TestDataPath {
   String value();
 }

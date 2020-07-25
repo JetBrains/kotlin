@@ -131,24 +131,6 @@ public class KotlinTestUtils {
         return new File(KotlinRoot.DIR, "compiler/testData/mockJDK/jre/lib/rt.jar");
     }
 
-    // Differs from common mock JDK only by one additional 'nonExistingMethod' in Collection and constructor from Double in Throwable
-    // It's needed to test the way we load additional built-ins members that neither in black nor white lists
-    public static File findMockJdkRtModified() {
-        return new File(KotlinRoot.DIR, "compiler/testData/mockJDKModified/rt.jar");
-    }
-
-    public static File findAndroidApiJar() {
-        String androidJarProp = System.getProperty("android.jar");
-        File androidJarFile = androidJarProp == null ? null : new File(androidJarProp);
-        if (androidJarFile == null || !androidJarFile.isFile()) {
-            throw new RuntimeException(
-                    "Unable to get a valid path from 'android.jar' property (" +
-                    androidJarProp +
-                    "), please point it to the 'android.jar' file location");
-        }
-        return androidJarFile;
-    }
-
     @NotNull
     public static File findAndroidSdk() {
         String androidSdkProp = System.getProperty("android.sdk");
@@ -213,7 +195,6 @@ public class KotlinTestUtils {
 
         virtualFile.setCharset(CharsetToolkit.UTF8_CHARSET);
         PsiFileFactoryImpl factory = (PsiFileFactoryImpl) PsiFileFactory.getInstance(project);
-        //noinspection ConstantConditions
         return (KtFile) factory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false);
     }
 
@@ -237,10 +218,6 @@ public class KotlinTestUtils {
                     messageWithFullPath,
                     fileNotFoundException);
         }
-    }
-
-    public static String getFilePath(File file) {
-        return FileUtil.toSystemIndependentName(file.getPath());
     }
 
     @NotNull
@@ -434,7 +411,7 @@ public class KotlinTestUtils {
             }
         }, "");
 
-        Assert.assertTrue("Exactly two files expected: ", files.size() == 2);
+        Assert.assertEquals("Exactly two files expected: ", 2, files.size());
 
         return files;
     }
@@ -616,7 +593,7 @@ public class KotlinTestUtils {
         test.invoke(absoluteTestDataFilePath);
     }
 
-    private static DoTest testWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, String ignoreDirective) throws Exception {
+    private static DoTest testWithCustomIgnoreDirective(DoTest test, TargetBackend targetBackend, String ignoreDirective) {
         return filePath -> {
             File testDataFile = new File(filePath);
 

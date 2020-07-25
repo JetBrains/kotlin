@@ -16,6 +16,7 @@
 
 package org.jetbrains.uast.test.kotlin
 
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiLanguageInjectionHost
@@ -36,7 +37,6 @@ import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.findFunctionByName
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.junit.internal.runners.JUnit38ClassRunner
-import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import org.jetbrains.uast.*
 import org.jetbrains.uast.test.env.kotlin.findUElementByTextFromPsi
 import org.junit.runner.RunWith

@@ -35,7 +35,6 @@ public class TestCheckerUtil {
         ensureParsed(myFile);
         TestCase.assertEquals("light virtual file text mismatch", text, ((LightVirtualFile) myFile.getVirtualFile()).getContent().toString());
         TestCase.assertEquals("virtual file text mismatch", text, LoadTextUtil.loadText(myFile.getVirtualFile()));
-        //noinspection ConstantConditions
         TestCase.assertEquals("doc text mismatch", text, myFile.getViewProvider().getDocument().getText());
         TestCase.assertEquals("psi text mismatch", text, myFile.getText());
         return myFile;

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.util
 
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ModuleRootModificationUtil
@@ -17,7 +18,6 @@ import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.HeavyPlatformTestCase
-import org.jetbrains.kotlin.test.testFramework.runWriteAction
 import java.io.File
 
 fun HeavyPlatformTestCase.projectLibrary(
