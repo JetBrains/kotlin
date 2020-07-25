@@ -16,6 +16,7 @@ import com.intellij.openapi.options.ex.Settings
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.ComboBox
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.ui.panel.ComponentPanelBuilder.createCommentComponent
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
@@ -109,7 +110,7 @@ class FileColorsConfigurable(project: Project) : SearchableConfigurable, NoScrol
 
     val south = JPanel(VerticalLayout(5))
     south.border = Borders.emptyTop(5)
-    south.add(VerticalLayout.TOP, JLabel(message("settings.file.colors.description")))
+    south.add(VerticalLayout.TOP, createCommentComponent(message("settings.file.colors.description"), true))
     south.add(VerticalLayout.TOP, ActionLink(message("settings.file.colors.manage.scopes")) {
       Settings.KEY.getData(DataManager.getInstance().getDataContext(south))?.let {
         try {
