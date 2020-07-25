@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.asJava
+package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiClass
@@ -19,10 +19,10 @@ object LightClassTestCommon {
     private const val NOT_GENERATED_DIRECTIVE = "// NOT_GENERATED"
 
     fun testLightClass(
-        expectedFile: File,
-        testDataFile: File,
-        findLightClass: (String) -> PsiClass?,
-        normalizeText: (String) -> String
+            expectedFile: File,
+            testDataFile: File,
+            findLightClass: (String) -> PsiClass?,
+            normalizeText: (String) -> String
     ) {
         val text = FileUtil.loadFile(testDataFile, true)
         val matcher = SUBJECT_FQ_NAME_PATTERN.matcher(text)
