@@ -17,10 +17,11 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
-import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -162,3 +163,15 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
 }
 
 val TEST_KOTLIN_MODEL_DIR = File("plugins/uast-kotlin/testData")
+
+private fun loadScriptingPlugin(configuration: CompilerConfiguration) {
+    val artifacts = KotlinArtifacts.instance
+    val pluginClasspath = listOf(
+            artifacts.kotlinScriptingCompiler,
+            artifacts.kotlinScriptingCompilerImpl,
+            artifacts.kotlinScriptingCommon,
+            artifacts.kotlinScriptingJvm
+    ).map { it.absolutePath }
+
+    PluginCliParser.loadPluginsSafe(pluginClasspath, null, configuration)
+}

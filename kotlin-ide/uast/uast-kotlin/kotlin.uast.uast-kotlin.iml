@@ -27,9 +27,10 @@
     <orderEntry type="library" scope="TEST" name="JUnit4" level="project" />
     <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
     <orderEntry type="library" name="kotlinc.kotlin-compiler" level="project" />
+    <orderEntry type="module" module-name="kotlin.common" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.core" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.tests-common" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.test-framework" scope="TEST" />
-    <orderEntry type="module" module-name="kotlin.core" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.uast" />
     <orderEntry type="module" module-name="intellij.platform.uast.tests" scope="TEST" />
     <orderEntry type="module" module-name="intellij.java.psi.impl" />
