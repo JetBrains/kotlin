@@ -3,7 +3,7 @@
   <library name="JUnit4" type="repository">
     <properties maven-id="junit:junit:4.12" />
     <ANNOTATIONS>
-      <root url="file://$PROJECT_DIR$/intellij-community/lib/annotations/junit4" />
+      <root url="file://$PROJECT_DIR$/intellij/lib/annotations/junit4" />
     </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/junit/junit/4.12/junit-4.12.jar!/" />

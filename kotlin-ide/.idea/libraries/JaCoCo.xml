@@ -2,17 +2,17 @@
 <component name="libraryTable">
   <library name="JaCoCo">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/intellij-community/plugins/coverage/lib/jacocoant.jar!/" />
-      <root url="jar://$PROJECT_DIR$/intellij-community/plugins/coverage/lib/jacocoagent.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/plugins/coverage/lib/jacocoant.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/plugins/coverage/lib/jacocoagent.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/intellij-community/plugins/coverage/lib/jacoco_src.zip!/v0.5.6/org.jacoco.ant/src" />
-      <root url="jar://$PROJECT_DIR$/intellij-community/plugins/coverage/lib/jacoco_src.zip!/v0.5.6/org.jacoco.core/src" />
-      <root url="jar://$PROJECT_DIR$/intellij-community/plugins/coverage/lib/jacoco_src.zip!/v0.5.6/org.jacoco.agent/src" />
-      <root url="jar://$PROJECT_DIR$/intellij-community/plugins/coverage/lib/jacoco_src.zip!/v0.5.6/org.jacoco.report/src" />
-      <root url="jar://$PROJECT_DIR$/intellij-community/plugins/coverage/lib/jacoco_src.zip!/v0.5.6/jacoco-maven-plugin/src" />
-      <root url="jar://$PROJECT_DIR$/intellij-community/plugins/coverage/lib/jacoco_src.zip!/v0.5.6/org.jacoco.agent.rt/src" />
+      <root url="jar://$PROJECT_DIR$/intellij/plugins/coverage/lib/jacoco_src.zip!/v0.5.6/org.jacoco.ant/src" />
+      <root url="jar://$PROJECT_DIR$/intellij/plugins/coverage/lib/jacoco_src.zip!/v0.5.6/org.jacoco.core/src" />
+      <root url="jar://$PROJECT_DIR$/intellij/plugins/coverage/lib/jacoco_src.zip!/v0.5.6/org.jacoco.agent/src" />
+      <root url="jar://$PROJECT_DIR$/intellij/plugins/coverage/lib/jacoco_src.zip!/v0.5.6/org.jacoco.report/src" />
+      <root url="jar://$PROJECT_DIR$/intellij/plugins/coverage/lib/jacoco_src.zip!/v0.5.6/jacoco-maven-plugin/src" />
+      <root url="jar://$PROJECT_DIR$/intellij/plugins/coverage/lib/jacoco_src.zip!/v0.5.6/org.jacoco.agent.rt/src" />
     </SOURCES>
   </library>
 </component>

@@ -11,7 +11,7 @@
       </exclude>
     </properties>
     <ANNOTATIONS>
-      <root url="file://$PROJECT_DIR$/intellij-community/lib/annotations/guava" />
+      <root url="file://$PROJECT_DIR$/intellij/lib/annotations/guava" />
     </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/com/google/guava/guava/29.0-jre/guava-29.0-jre.jar!/" />

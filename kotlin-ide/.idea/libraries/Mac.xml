@@ -2,11 +2,11 @@
 <component name="libraryTable">
   <library name="Mac">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/intellij-community/lib/eawtstub.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/eawtstub.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/intellij-community/lib/src/eawtstub_src.zip!/src" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/src/eawtstub_src.zip!/src" />
     </SOURCES>
   </library>
 </component>

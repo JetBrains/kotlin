@@ -6,12 +6,12 @@
   <component name="CompilerConfiguration">
     <option name="BUILD_PROCESS_HEAP_SIZE" value="4000" />
     <excludeFromCompile>
-      <file url="file://$PROJECT_DIR$/intellij-community/java/execution/jshell-frontend/src/com/intellij/execution/jshell/frontend/Main.java" />
-      <file url="file://$PROJECT_DIR$/intellij-community/android/tools-base/sdk-common/src/test/java/com/android/ide/common/blame/parser/SourceFragmentPositionRangeJsonTest.java" />
-      <file url="file://$PROJECT_DIR$/intellij-community/android/uitest-framework/testSrc/com/android/tools/idea/tests/gui/framework/fixture/RecordingDialogFixture.java" />
-      <file url="file://$PROJECT_DIR$/intellij-community/android/uitest-framework/testSrc/com/android/tools/idea/tests/gui/framework/fixture/TestClassNameInputDialogFixture.java" />
-      <file url="file://$PROJECT_DIR$/intellij-community/android/android-uitests/testSrc/com/android/tools/idea/tests/gui/espresso/EspressoRecorderTest.java" />
-      <file url="file://$PROJECT_DIR$/intellij-community/plugins/javaFX/javaFX-CE/testSrc/org/jetbrains/plugins/javaFX/fxml/JavaFxGenerateDefaultPropertyValuesScript.java" />
+      <file url="file://$PROJECT_DIR$/intellij/java/execution/jshell-frontend/src/com/intellij/execution/jshell/frontend/Main.java" />
+      <file url="file://$PROJECT_DIR$/intellij/android/tools-base/sdk-common/src/test/java/com/android/ide/common/blame/parser/SourceFragmentPositionRangeJsonTest.java" />
+      <file url="file://$PROJECT_DIR$/intellij/android/uitest-framework/testSrc/com/android/tools/idea/tests/gui/framework/fixture/RecordingDialogFixture.java" />
+      <file url="file://$PROJECT_DIR$/intellij/android/uitest-framework/testSrc/com/android/tools/idea/tests/gui/framework/fixture/TestClassNameInputDialogFixture.java" />
+      <file url="file://$PROJECT_DIR$/intellij/android/android-uitests/testSrc/com/android/tools/idea/tests/gui/espresso/EspressoRecorderTest.java" />
+      <file url="file://$PROJECT_DIR$/intellij/plugins/javaFX/javaFX-CE/testSrc/org/jetbrains/plugins/javaFX/fxml/JavaFxGenerateDefaultPropertyValuesScript.java" />
     </excludeFromCompile>
     <resourceExtensions>
       <entry name=".+\.(properties|gif|png|jpeg|jpg|xml|dtd|tld|xsd|ft|html|template)" />

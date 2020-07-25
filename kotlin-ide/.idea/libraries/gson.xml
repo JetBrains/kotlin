@@ -3,7 +3,7 @@
   <library name="gson" type="repository">
     <properties maven-id="com.google.code.gson:gson:2.8.6" />
     <ANNOTATIONS>
-      <root url="file://$PROJECT_DIR$/intellij-community/lib/annotations/gson" />
+      <root url="file://$PROJECT_DIR$/intellij/lib/annotations/gson" />
     </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/com/google/code/gson/gson/2.8.6/gson-2.8.6.jar!/" />

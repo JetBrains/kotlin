@@ -3,7 +3,7 @@
   <library name="fastutil-min" type="repository">
     <properties include-transitive-deps="false" maven-id="org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil:8.3.1-3" />
     <ANNOTATIONS>
-      <root url="file://$PROJECT_DIR$/intellij-community/lib/annotations/fastutil" />
+      <root url="file://$PROJECT_DIR$/intellij/lib/annotations/fastutil" />
     </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/fastutil/intellij-deps-fastutil/8.3.1-3/intellij-deps-fastutil-8.3.1-3.jar!/" />

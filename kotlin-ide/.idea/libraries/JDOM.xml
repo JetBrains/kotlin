@@ -3,7 +3,7 @@
   <library name="JDOM" type="repository">
     <properties maven-id="org.jetbrains.intellij.deps:jdom:2.0.6" />
     <ANNOTATIONS>
-      <root url="file://$PROJECT_DIR$/intellij-community/lib/annotations/jdom" />
+      <root url="file://$PROJECT_DIR$/intellij/lib/annotations/jdom" />
     </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/jdom/2.0.6/jdom-2.0.6.jar!/" />

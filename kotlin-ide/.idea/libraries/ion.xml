@@ -3,7 +3,7 @@
   <library name="ion" type="repository">
     <properties include-transitive-deps="false" maven-id="org.jetbrains.intellij.deps:ion-java:1.6.2-3" />
     <ANNOTATIONS>
-      <root url="file://$PROJECT_DIR$/intellij-community/lib/annotations/ion" />
+      <root url="file://$PROJECT_DIR$/intellij/lib/annotations/ion" />
     </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/ion-java/1.6.2-3/ion-java-1.6.2-3.jar!/" />

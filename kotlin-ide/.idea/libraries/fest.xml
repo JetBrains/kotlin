@@ -2,15 +2,15 @@
 <component name="libraryTable">
   <library name="fest">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/intellij-community/lib/fest-assert-1.5.0-SNAPSHOT.jar!/" />
-      <root url="jar://$PROJECT_DIR$/intellij-community/lib/fest-reflect-2.0-SNAPSHOT.jar!/" />
-      <root url="jar://$PROJECT_DIR$/intellij-community/lib/fest-util-1.3.0-SNAPSHOT.jar!/" />
-      <root url="jar://$PROJECT_DIR$/intellij-community/lib/MultithreadedTC-1.01.jar!/" />
-      <root url="jar://$PROJECT_DIR$/intellij-community/lib/jsr305.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/fest-assert-1.5.0-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/fest-reflect-2.0-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/fest-util-1.3.0-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/MultithreadedTC-1.01.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/jsr305.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/intellij-community/lib/jsr305.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/jsr305.jar!/" />
     </SOURCES>
   </library>
 </component>

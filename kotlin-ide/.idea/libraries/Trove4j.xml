@@ -3,7 +3,7 @@
   <library name="Trove4j" type="repository">
     <properties maven-id="org.jetbrains.intellij.deps:trove4j:1.0.20200330" />
     <ANNOTATIONS>
-      <root url="file://$PROJECT_DIR$/intellij-community/lib/annotations/trove4j" />
+      <root url="file://$PROJECT_DIR$/intellij/lib/annotations/trove4j" />
     </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/trove4j/1.0.20200330/trove4j-1.0.20200330.jar!/" />

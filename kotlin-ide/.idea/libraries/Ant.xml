@@ -2,12 +2,12 @@
 <component name="libraryTable">
   <library name="Ant">
     <CLASSES>
-      <root url="file://$PROJECT_DIR$/intellij-community/lib/ant/lib" />
+      <root url="file://$PROJECT_DIR$/intellij/lib/ant/lib" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/intellij-community/lib/ant/src.zip!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/ant/src.zip!/" />
     </SOURCES>
-    <jarDirectory url="file://$PROJECT_DIR$/intellij-community/lib/ant/lib" recursive="false" />
+    <jarDirectory url="file://$PROJECT_DIR$/intellij/lib/ant/lib" recursive="false" />
   </library>
 </component>

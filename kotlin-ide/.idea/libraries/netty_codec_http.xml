@@ -3,7 +3,7 @@
   <library name="netty-codec-http" type="repository">
     <properties maven-id="io.netty:netty-codec-http2:4.1.51.Final" />
     <ANNOTATIONS>
-      <root url="file://$PROJECT_DIR$/intellij-community/lib/annotations/netty" />
+      <root url="file://$PROJECT_DIR$/intellij/lib/annotations/netty" />
     </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/io/netty/netty-codec-http2/4.1.51.Final/netty-codec-http2-4.1.51.Final.jar!/" />

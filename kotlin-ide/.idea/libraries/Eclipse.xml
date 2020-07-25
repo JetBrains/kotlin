@@ -2,7 +2,7 @@
 <component name="libraryTable">
   <library name="Eclipse">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/intellij-community/lib/ecj-4.16.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/ecj-4.16.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

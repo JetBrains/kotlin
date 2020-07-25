@@ -2,11 +2,11 @@
 <component name="libraryTable">
   <library name="microba">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/intellij-community/lib/microba.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/microba.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/intellij-community/lib/src/microba-src.zip!/src/main/java" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/src/microba-src.zip!/src/main/java" />
     </SOURCES>
   </library>
 </component>

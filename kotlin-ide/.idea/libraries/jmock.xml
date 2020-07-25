@@ -2,15 +2,15 @@
 <component name="libraryTable">
   <library name="jmock">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/intellij-community/lib/dev/jmock-2.5.1.jar!/" />
-      <root url="jar://$PROJECT_DIR$/intellij-community/lib/dev/jmock-junit4-2.5.1.jar!/" />
-      <root url="jar://$PROJECT_DIR$/intellij-community/lib/dev/jmock-legacy-2.5.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/dev/jmock-2.5.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/dev/jmock-junit4-2.5.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/dev/jmock-legacy-2.5.1.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/intellij-community/lib/dev/jmock-2.5.1.jar!/" />
-      <root url="jar://$PROJECT_DIR$/intellij-community/lib/dev/jmock-junit4-2.5.1.jar!/" />
-      <root url="jar://$PROJECT_DIR$/intellij-community/lib/dev/jmock-legacy-2.5.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/dev/jmock-2.5.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/dev/jmock-junit4-2.5.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/dev/jmock-legacy-2.5.1.jar!/" />
     </SOURCES>
   </library>
 </component>

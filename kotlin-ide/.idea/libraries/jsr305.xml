@@ -2,11 +2,11 @@
 <component name="libraryTable">
   <library name="jsr305">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/intellij-community/lib/jsr305.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/jsr305.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$PROJECT_DIR$/intellij-community/lib/jsr305.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/jsr305.jar!/" />
     </SOURCES>
   </library>
 </component>

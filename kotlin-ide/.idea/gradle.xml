@@ -7,10 +7,10 @@
         <option name="delegatedBuild" value="false" />
         <option name="testRunner" value="PLATFORM" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/intellij-community/build/dependencies" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/intellij/build/dependencies" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/intellij-community/build/dependencies" />
+            <option value="$PROJECT_DIR$/intellij/build/dependencies" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

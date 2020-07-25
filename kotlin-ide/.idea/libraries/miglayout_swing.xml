@@ -3,7 +3,7 @@
   <library name="miglayout-swing" type="repository">
     <properties maven-id="com.miglayout:miglayout-swing:5.2" />
     <ANNOTATIONS>
-      <root url="file://$PROJECT_DIR$/intellij-community/lib/annotations/migLayout" />
+      <root url="file://$PROJECT_DIR$/intellij/lib/annotations/migLayout" />
     </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/com/miglayout/miglayout-swing/5.2/miglayout-swing-5.2.jar!/" />

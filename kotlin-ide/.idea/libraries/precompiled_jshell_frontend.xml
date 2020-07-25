@@ -2,7 +2,7 @@
 <component name="libraryTable">
   <library name="precompiled_jshell-frontend">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/intellij-community/lib/jshell-frontend.jar!/" />
+      <root url="jar://$PROJECT_DIR$/intellij/lib/jshell-frontend.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

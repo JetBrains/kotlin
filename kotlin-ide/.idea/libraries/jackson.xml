@@ -3,7 +3,7 @@
   <library name="jackson" type="repository">
     <properties maven-id="com.fasterxml.jackson.core:jackson-core:2.11.0" />
     <ANNOTATIONS>
-      <root url="file://$PROJECT_DIR$/intellij-community/lib/annotations/jackson" />
+      <root url="file://$PROJECT_DIR$/intellij/lib/annotations/jackson" />
     </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-core/2.11.0/jackson-core-2.11.0.jar!/" />
