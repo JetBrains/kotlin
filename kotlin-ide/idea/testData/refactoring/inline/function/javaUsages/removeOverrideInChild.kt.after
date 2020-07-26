@@ -19,3 +19,17 @@ class C : B() {
 class C2 : B() {
     override fun a() = Unit
 }
+
+interface KotlinInterface {
+    fun a()
+}
+
+open class B3: A(), KotlinInterface {
+    override fun a() = Unit
+}
+
+interface NextKotlinInterface : KotlinInterface
+
+open class B4: A(), NextKotlinInterface {
+    override fun a() = Unit
+}
