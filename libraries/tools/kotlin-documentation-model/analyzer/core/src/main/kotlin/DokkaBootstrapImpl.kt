@@ -74,10 +74,17 @@ class DokkaBootstrapImpl : DokkaBootstrap {
 
         fun defaultLinks(config: DokkaSourceSetImpl): List<ExternalDocumentationLinkImpl> {
             val links = mutableListOf<ExternalDocumentationLinkImpl>()
-            if (!config.noJdkLink)
+            if (!config.noJdkLink) {
+                val javadocLink =
+                    if (config.jdkVersion < 11) "https://docs.oracle.com/javase/${config.jdkVersion}/docs/api/"
+                    else "https://docs.oracle.com/en/java/javase/${config.jdkVersion}/docs/api/java.base/"
+                val packageListLink =
+                    if (config.jdkVersion < 11) "${javadocLink}/package-list"
+                    else "https://docs.oracle.com/en/java/javase/${config.jdkVersion}/docs/api/element-list"
                 links += DokkaConfiguration.ExternalDocumentationLink
-                    .Builder("https://docs.oracle.com/javase/${config.jdkVersion}/docs/api/")
+                    .Builder(javadocLink, packageListLink)
                     .build() as ExternalDocumentationLinkImpl
+            }
 
             if (!config.noStdlibLink)
                 links += DokkaConfiguration.ExternalDocumentationLink
