@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.idea.configuration.KotlinBuildScriptManipulator.Comp
 import org.jetbrains.kotlin.idea.configuration.KotlinBuildScriptManipulator.Companion.getKotlinModuleDependencySnippet
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
-import org.jetbrains.kotlin.idea.statistics.NewProjectWizardsFUSCollector
+import org.jetbrains.kotlin.idea.statistics.KotlinCreateActionsFUSCollector
 import org.jetbrains.kotlin.idea.util.isSnapshot
 import org.jetbrains.kotlin.idea.versions.MAVEN_JS_STDLIB_ID
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
@@ -99,7 +99,7 @@ abstract class KotlinDslGradleKotlinFrameworkSupportProvider(
             GradlePropertiesFileFacade.forProject(module.project).addCodeStyleProperty(KotlinStyleGuideCodeStyle.CODE_STYLE_SETTING)
         }
 
-        NewProjectWizardsFUSCollector.log(this.presentableName, "Gradle", true)
+        KotlinCreateActionsFUSCollector.logProjectTemplate("Gradle", this.presentableName)
     }
 
     protected abstract fun getOldSyntaxPluginDefinition(): String

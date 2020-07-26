@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.idea.configuration.BuildSystemType
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
-import org.jetbrains.kotlin.idea.statistics.NewProjectWizardsFUSCollector
+import org.jetbrains.kotlin.idea.statistics.KotlinCreateActionsFUSCollector
 import javax.swing.JComponent
 
 class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
@@ -57,7 +57,7 @@ class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
                 if (isNewProject) {
                     ProjectCodeStyleImporter.apply(module.project, KotlinStyleGuideCodeStyle.INSTANCE)
                 }
-                NewProjectWizardsFUSCollector.log("Kotlin/JVM", "Java", false)
+                KotlinCreateActionsFUSCollector.logProjectTemplate("Kotlin/JVM", "Java")
             }
 
             override fun onFrameworkSelectionChanged(selected: Boolean) {

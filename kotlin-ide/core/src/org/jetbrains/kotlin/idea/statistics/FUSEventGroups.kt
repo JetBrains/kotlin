@@ -16,7 +16,6 @@ enum class FUSEventGroups(groupIdSuffix: String, val events: Set<String> = setOf
 
     GradleTarget("gradle.target", gradleTargetEvents),
     Refactoring("ide.refactoring", refactoringEvents),
-    NPWizards("ide.npwizards"),
     Debug("ide.debugger"),
     J2K("ide.j2k"),
     Editor("ide.editor"),

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 class KtScratchFileCreationHelper : ScratchFileCreationHelper() {
 
     override fun prepareText(project: Project, context: Context, dataContext: DataContext): Boolean {
-        KotlinCreateActionsFUSCollector.logTemplate("Kotlin Scratch")
+        KotlinCreateActionsFUSCollector.logFileTemplate("Kotlin Scratch")
         context.fileExtension = KotlinParserDefinition.STD_SCRIPT_SUFFIX
 
         return super.prepareText(project, context, dataContext)
