@@ -2499,7 +2499,7 @@ fun testStableVarargParams(): Unit = comparisonPropagation(
         """
         """,
         """
-            import androidx.ui.core.Modifier
+            import androidx.compose.ui.Modifier
             import androidx.compose.ui.unit.Dp
             import androidx.compose.runtime.emptyContent
 

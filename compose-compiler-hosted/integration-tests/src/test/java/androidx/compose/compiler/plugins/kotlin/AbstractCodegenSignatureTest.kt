@@ -108,7 +108,7 @@ abstract class AbstractCodegenSignatureTest : AbstractCodegenTest() {
                 import androidx.compose.runtime.*
                 import android.widget.LinearLayout
                 import android.content.Context
-                import androidx.ui.node.UiApplier
+                import androidx.compose.ui.node.UiApplier
 
                 $src
 
