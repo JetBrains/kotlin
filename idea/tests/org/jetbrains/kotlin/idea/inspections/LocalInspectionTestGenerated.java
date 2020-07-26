@@ -9179,6 +9179,29 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         }
     }
 
+    @TestMetadata("idea/testData/inspectionsLocal/removeExplicitTypeArguments")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RemoveExplicitTypeArguments extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInRemoveExplicitTypeArguments() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/inspectionsLocal/removeExplicitTypeArguments"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), null, true);
+        }
+
+        @TestMetadata("removeTypeFromFunction.kt")
+        public void testRemoveTypeFromFunction() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeExplicitTypeArguments/removeTypeFromFunction.kt");
+        }
+
+        @TestMetadata("removeTypeFromProperty.kt")
+        public void testRemoveTypeFromProperty() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeExplicitTypeArguments/removeTypeFromProperty.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/inspectionsLocal/removeRedundantBackticks")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

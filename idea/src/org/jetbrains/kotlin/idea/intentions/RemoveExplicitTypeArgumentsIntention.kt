@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
@@ -20,6 +23,7 @@ import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
@@ -35,6 +39,24 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 @Suppress("DEPRECATION")
 class RemoveExplicitTypeArgumentsInspection : IntentionBasedInspection<KtTypeArgumentList>(RemoveExplicitTypeArgumentsIntention::class) {
     override fun problemHighlightType(element: KtTypeArgumentList): ProblemHighlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
+
+    override fun additionalFixes(element: KtTypeArgumentList): List<LocalQuickFix>? {
+        val declaration = element.getStrictParentOfType<KtCallableDeclaration>() ?: return null
+        if (!RemoveExplicitTypeIntention.isApplicableTo(declaration)) return null
+        return listOf(RemoveExplicitTypeFix(declaration.nameAsSafeName.asString()))
+    }
+
+    private class RemoveExplicitTypeFix(private val declarationName: String) : LocalQuickFix {
+        override fun getName() = KotlinBundle.message("remove.explicit.type.specification.from.0", declarationName)
+
+        override fun getFamilyName() = name
+
+        override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+            val element = descriptor.psiElement as? KtTypeArgumentList ?: return
+            val declaration = element.getStrictParentOfType<KtCallableDeclaration>() ?: return
+            RemoveExplicitTypeIntention.removeExplicitType(declaration)
+        }
+    }
 }
 
 class RemoveExplicitTypeArgumentsIntention : SelfTargetingOffsetIndependentIntention<KtTypeArgumentList>(
