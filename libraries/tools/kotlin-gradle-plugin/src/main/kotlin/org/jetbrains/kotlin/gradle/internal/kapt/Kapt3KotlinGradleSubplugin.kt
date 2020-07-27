@@ -9,6 +9,7 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.AndroidSourceSet
 import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.api.SourceKind
+import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.lang.JavaVersion
 import org.gradle.api.GradleException
 import org.gradle.api.Project
@@ -22,7 +23,6 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.process.CommandLineArgumentProvider
-import org.gradle.tooling.provider.model.ToolingModelBuilder
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.CLASS_STRUCTURE_ARTIFACT_TYPE
@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTaskData
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.ObjectOutputStream
@@ -474,8 +475,14 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         val dslJavacOptions: Provider<Map<String, String>> = project.provider {
             kaptExtension.getJavacOptions().toMutableMap().also { result ->
                 if (javaCompile != null && "-source" !in result && "--source" !in result && "--release" !in result) {
-                    val current = JavaVersion.parse(project.providers.systemProperty("java.version").forUseAtConfigurationTime().get())
-                    val sourceOptionKey = if (current.feature >= 12) {
+                    val atLeast12Java =
+                        if (isConfigurationCacheAvailable(project.gradle)) {
+                            val currentJavaVersion = JavaVersion.parse(project.providers.systemProperty("java.version").forUseAtConfigurationTime().get())
+                            currentJavaVersion.feature >= 12
+                        } else {
+                            SystemInfo.isJavaVersionAtLeast(12, 0, 0)
+                        }
+                    val sourceOptionKey = if (atLeast12Java) {
                         "--source"
                     } else {
                         "-source"
