@@ -501,7 +501,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
                 if (hasFilesInTaskBuildDirectory()) changedFiles else ChangedFiles.Unknown(),
                 taskBuildDirectory,
                 usePreciseJavaTracking = usePreciseJavaTracking,
-                disableMultiModuleIC = disableMultiModuleIC(),
+                disableMultiModuleIC = disableMultiModuleIC,
                 multiModuleICSettings = multiModuleICSettings
             )
         } else null
@@ -524,32 +524,31 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
     }
 
     @get:Input
-    val illegalTaskIsPresent: Boolean by lazy {
-        var illegalTaskOrNull: AbstractCompile? = null
-        project.tasks.configureEach {
-            if (it is AbstractCompile &&
-                it !is JavaCompile &&
-                it !is AbstractKotlinCompile<*> &&
-                javaOutputDir!!.isParentOf(it.destinationDir)
-            ) {
-                illegalTaskOrNull = illegalTaskOrNull ?: it
+    val disableMultiModuleIC: Boolean by lazy {
+        if (!isIncrementalCompilationEnabled() || javaOutputDir == null) {
+            false
+        } else {
+
+            var illegalTaskOrNull: AbstractCompile? = null
+            project.tasks.configureEach {
+                if (it is AbstractCompile &&
+                    it !is JavaCompile &&
+                    it !is AbstractKotlinCompile<*> &&
+                    javaOutputDir!!.isParentOf(it.destinationDir)
+                ) {
+                    illegalTaskOrNull = illegalTaskOrNull ?: it
+                }
             }
+            if (illegalTaskOrNull != null) {
+                val illegalTask = illegalTaskOrNull!!
+                logger.info(
+                    "Kotlin inter-project IC is disabled: " +
+                            "unknown task '$illegalTask' destination dir ${illegalTask.destinationDir} " +
+                            "intersects with java destination dir $javaOutputDir"
+                )
+            }
+            illegalTaskOrNull != null
         }
-        if (illegalTaskOrNull != null) {
-            val illegalTask = illegalTaskOrNull!!
-            logger.info(
-                "Kotlin inter-project IC is disabled: " +
-                        "unknown task '$illegalTask' destination dir ${illegalTask.destinationDir} " +
-                        "intersects with java destination dir $javaOutputDir"
-            )
-        }
-        illegalTaskOrNull != null
-    }
-
-    private fun disableMultiModuleIC(): Boolean {
-        if (!isIncrementalCompilationEnabled() || javaOutputDir == null) return false
-
-        return illegalTaskIsPresent
     }
 
     // override setSource to track source directory sets and files (for generated android folders)
