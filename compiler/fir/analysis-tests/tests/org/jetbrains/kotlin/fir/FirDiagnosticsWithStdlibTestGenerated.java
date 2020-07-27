@@ -747,6 +747,37 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
                         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies/typePredicate.kt");
                     }
                 }
+
+                @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class VariousContracts extends AbstractFirDiagnosticsWithStdlibTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInVariousContracts() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                    }
+
+                    @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts/newSyntax")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class NewSyntax extends AbstractFirDiagnosticsWithStdlibTest {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInNewSyntax() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts/newSyntax"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                        }
+
+                        @TestMetadata("functionsWithContract.kt")
+                        public void testFunctionsWithContract() throws Exception {
+                            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts/newSyntax/functionsWithContract.kt");
+                        }
+                    }
+                }
             }
         }
     }
