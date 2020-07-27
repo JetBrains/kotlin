@@ -34,3 +34,15 @@ interface NextKotlinInterface : KotlinInterface
 open class B4: A(), NextKotlinInterface {
     override fun a() = Unit
 }
+
+abstract class B5 : A() {
+    abstract override fun a()
+}
+
+class C3 : B5() {
+    override fun a() = Unit
+}
+
+class B6 : A() {
+    final fun a() = Unit
+}

@@ -170,6 +170,16 @@ fun KtNamedDeclaration.forEachOverridingElement(
     }
 }
 
+fun KtNamedDeclaration.hasOverridingElement(): Boolean {
+    var hasUsage = false
+    forEachOverridingElement(searchDeeply = false) { _, _ ->
+        hasUsage = true
+        false
+    }
+
+    return hasUsage
+}
+
 fun PsiMethod.forEachOverridingMethod(
     scope: SearchScope = runReadAction { useScope },
     processor: (PsiMethod) -> Boolean
