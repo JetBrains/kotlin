@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 interface UsageReplacementStrategy {
     fun createReplacer(usage: KtReferenceExpression): (() -> KtElement?)?
@@ -85,7 +86,7 @@ fun UsageReplacementStrategy.replaceUsages(
                     // we should delete imports later to not affect other usages
                     val importsToDelete = mutableListOf<KtImportDirective>()
 
-                    var usagesToProcess = usagesInFile
+                    var usagesToProcess = usagesInFile.sortedBy { it.startOffset }
                     while (usagesToProcess.isNotEmpty()) {
                         if (processUsages(usagesToProcess, targetDeclaration, importsToDelete)) break
 
