@@ -1264,6 +1264,32 @@ class DeclarationsConverter(
                 symbol = FirAnonymousFunctionSymbol()
                 isLambda = false
             }
+        } else if (modifiers.hasContract()) {
+            val functionName = identifier.nameAsSafeName()
+            val labelName = runIf(!functionName.isSpecial) { functionName.identifier }
+            target = FirFunctionTarget(labelName, isLambda = false)
+            FirContractFunctionBuilder().apply {
+                source = functionDeclaration.toFirSourceElement()
+                receiverTypeRef = receiverType
+                name = functionName
+                status = FirDeclarationStatusImpl(
+                    if (isLocal) Visibilities.LOCAL else modifiers.getVisibility(),
+                    modifiers.getModality()
+                ).apply {
+                    isExpect = modifiers.hasExpect() || classWrapper?.hasExpect() == true
+                    isActual = modifiers.hasActual()
+                    isOverride = modifiers.hasOverride()
+                    isOperator = modifiers.hasOperator()
+                    isInfix = modifiers.hasInfix()
+                    isInline = modifiers.hasInline()
+                    isTailRec = modifiers.hasTailrec()
+                    isExternal = modifiers.hasExternal()
+                    isSuspend = modifiers.hasSuspend()
+                    isContract = modifiers.hasContract()
+                }
+
+                symbol = FirContractFunctionSymbol(callableIdForName(functionName, isLocal))
+            }
         } else {
             val functionName = identifier.nameAsSafeName()
             val labelName = runIf(!functionName.isSpecial) { functionName.identifier }
@@ -1295,23 +1321,31 @@ class DeclarationsConverter(
         return functionBuilder.apply {
             session = baseSession
             origin = FirDeclarationOrigin.Source
-            returnTypeRef = returnType!!
+            returnTypeRef = if (this is FirContractFunctionBuilder) {
+                implicitUnitType // contract functions have return type Unit
+            } else {
+                returnType!!
+            }
 
             context.firFunctionTargets += target
             annotations += modifiers.annotations
 
             withCapturedTypeParameters {
-                if (this is FirSimpleFunctionBuilder) {
-                    typeParameters += firTypeParameters
-                    addCapturedTypeParameters(typeParameters)
+                when (this) {
+                    is FirSimpleFunctionBuilder -> {
+                        typeParameters += firTypeParameters
+                        addCapturedTypeParameters(typeParameters)
+                    }
+                    is FirContractFunctionBuilder -> {
+                        typeParameters += firTypeParameters
+                        addCapturedTypeParameters(typeParameters)
+                    }
                 }
                 valueParametersList?.let { list -> valueParameters += convertValueParameters(list).map { it.firValueParameter } }
 
-                if (modifiers.hasContract()) { // if the function is a contract function
+                if (this is FirContractFunctionBuilder) { // if the function is a contract function
                     outerContractDescription?.let {
-                        if (this is FirSimpleFunctionBuilder) {
-                            contractDescription = it
-                        }
+                        this.contractDescription = it
                     }
                 } else {
                     val hasContractEffectList = outerContractDescription != null
