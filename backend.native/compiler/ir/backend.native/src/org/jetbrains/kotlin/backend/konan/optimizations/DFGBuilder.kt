@@ -49,6 +49,9 @@ private fun IrClass.getOverridingOf(function: IrFunction) = (function as? IrSimp
 private fun IrTypeOperator.isCast() =
         this == IrTypeOperator.CAST || this == IrTypeOperator.IMPLICIT_CAST || this == IrTypeOperator.SAFE_CAST
 
+private fun IrTypeOperator.callsInstanceOf() =
+        this == IrTypeOperator.CAST || this == IrTypeOperator.SAFE_CAST
+                || this == IrTypeOperator.INSTANCEOF || this == IrTypeOperator.NOT_INSTANCEOF
 
 private class VariableValues {
     data class Variable(val loop: IrLoop?, val values: MutableSet<IrExpression>)
@@ -355,6 +358,19 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                 expressions += jobInvocation to currentLoop
             }
 
+            // TODO: A little bit hacky but it is the simplest solution.
+            // See ObjC instanceOf code generation for details.
+            if (expression is IrTypeOperatorCall && expression.operator.callsInstanceOf()
+                    && expression.typeOperand.isObjCObjectType()) {
+                val objcObjGetter = IrCallImpl(expression.startOffset, expression.endOffset,
+                        objCObjectRawValueGetter.owner.returnType,
+                        objCObjectRawValueGetter
+                ).apply {
+                    extensionReceiver = expression.argument
+                }
+                expressions += objcObjGetter to currentLoop
+            }
+
             if (expression is IrReturnableBlock) {
                 returnableBlockValues.put(expression, mutableListOf())
             }
@@ -432,6 +448,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
     private val executeImplProducerInvoke = executeImplProducerClass.simpleFunctions()
             .single { it.name == OperatorNameConventions.INVOKE }
     private val reinterpret = symbols.reinterpret
+    private val objCObjectRawValueGetter = symbols.interopObjCObjectRawValueGetter
 
     private class Scoped<out T : Any>(val value: T, val scope: DataFlowIR.Node.Scope)
 
