@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.*
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.search.searches.OverridingMethodsSearch
 import com.intellij.psi.search.searches.ReferencesSearch
@@ -20,6 +21,7 @@ import com.intellij.refactoring.rename.UnresolvableCollisionUsageInfo
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.MoveRenameUsageInfo
 import com.intellij.refactoring.util.RefactoringUIUtil
+import com.intellij.refactoring.util.TextOccurrencesUtil
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
@@ -69,12 +71,11 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import java.util.*
 
 class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
     // This is special 'PsiElement' whose purpose is to wrap JetMethodDescriptor so that it can be kept in the usage list
     private class OriginalJavaMethodDescriptorWrapper(element: PsiElement) : UsageInfo(element) {
-        internal var originalJavaMethodDescriptor: KotlinMethodDescriptor? = null
+        var originalJavaMethodDescriptor: KotlinMethodDescriptor? = null
     }
 
     private class DummyKotlinChangeInfo(
@@ -85,7 +86,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         name = "",
         newReturnTypeInfo = KotlinTypeInfo(true),
         newVisibility = Visibilities.DEFAULT_VISIBILITY,
-        parameterInfos = emptyList<KotlinParameterInfo>(),
+        parameterInfos = emptyList(),
         receiver = null,
         context = method
     )
@@ -193,7 +194,8 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                             object : UnresolvableCollisionUsageInfo(callElement, null) {
                                 override fun getDescription(): String {
                                     val signature = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.render(callerDescriptor)
-                                    return KotlinBundle.message("text.there.is.already.a.variable.0.in.1.it.will.conflict.with.the.new.parameter",
+                                    return KotlinBundle.message(
+                                        "text.there.is.already.a.variable.0.in.1.it.will.conflict.with.the.new.parameter",
                                         currentName,
                                         signature
                                     )
@@ -266,10 +268,16 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             }
         }
 
-        val oldName = changeInfo.oldName
-
-        if (oldName != null) {
-            BunchedDeprecation.findNonCodeUsages(functionPsi, oldName, true, true, changeInfo.newName, result)
+        changeInfo.oldName?.let { oldName ->
+            TextOccurrencesUtil.findNonCodeUsages(
+                functionPsi,
+                GlobalSearchScope.projectScope(functionPsi.project),
+                oldName,
+                /* searchInStringsAndComments = */true,
+                /* searchInNonJavaFiles = */true,
+                changeInfo.newName,
+                result
+            )
         }
 
         val oldParameters = (functionPsi as KtNamedDeclaration).getValueParameters()
@@ -557,7 +565,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         val callableScope = oldDescriptor.getContainingScope()
 
         val kind = ktChangeInfo.kind
-        if (!kind.isConstructor && callableScope != null && !info.newName.isEmpty()) {
+        if (!kind.isConstructor && callableScope != null && info.newName.isNotEmpty()) {
             val newName = Name.identifier(info.newName)
             val conflicts = if (oldDescriptor is FunctionDescriptor)
                 callableScope.getAllAccessibleFunctions(newName)
@@ -575,7 +583,8 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                 if (candidateTypes == newTypes) {
                     result.putValue(
                         conflictElement,
-                        KotlinBundle.message("text.function.already.exists",
+                        KotlinBundle.message(
+                            "text.function.already.exists",
                             DescriptorRenderer.SHORT_NAMES_IN_TYPES.render(conflict)
                         )
                     )
@@ -678,7 +687,8 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             if (labelExpr != null && newContext.get(BindingContext.AMBIGUOUS_LABEL_TARGET, labelExpr) != null) {
                 result.putValue(
                     originalExpr,
-                    KotlinBundle.message("text.parameter.reference.can.t.be.safely.replaced.with.0.since.1.is.ambiguous.in.this.context",
+                    KotlinBundle.message(
+                        "text.parameter.reference.can.t.be.safely.replaced.with.0.since.1.is.ambiguous.in.this.context",
                         newExprText,
                         labelExpr.text
                     )
@@ -691,7 +701,8 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             if (thisTargetPsi != null && callable.isAncestor(thisTargetPsi, true)) {
                 result.putValue(
                     originalExpr,
-                    KotlinBundle.message("text.parameter.reference.can.t.be.safely.replaced.with.0.since.target.function.can.t.be.referenced.in.this.context",
+                    KotlinBundle.message(
+                        "text.parameter.reference.can.t.be.safely.replaced.with.0.since.target.function.can.t.be.referenced.in.this.context",
                         newExprText
                     )
                 )
@@ -718,7 +729,8 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                 else -> continue@loop
             }
 
-            val message = KotlinBundle.message("text.explicit.receiver.is.already.present.in.call.element.0",
+            val message = KotlinBundle.message(
+                "text.explicit.receiver.is.already.present.in.call.element.0",
                 CommonRefactoringUtil.htmlEmphasize(elementToReport.text)
             )
             result.putValue(callElement, message)
@@ -741,7 +753,8 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             if (qualifiedExpression is KtSafeQualifiedExpression) {
                 result.putValue(
                     callElement,
-                    KotlinBundle.message("text.receiver.can.t.be.safely.transformed.to.value.argument",
+                    KotlinBundle.message(
+                        "text.receiver.can.t.be.safely.transformed.to.value.argument",
                         CommonRefactoringUtil.htmlEmphasize(qualifiedExpression.text)
                     )
                 )
