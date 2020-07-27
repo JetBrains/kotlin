@@ -14,7 +14,7 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
-class KotlinInlineHandler : InlineHandler {
+class KotlinToJavaInlineHandler : InlineHandler {
     override fun prepareInlineElement(
         element: PsiElement,
         editor: Editor?,
@@ -33,8 +33,8 @@ class KotlinInlineHandler : InlineHandler {
                 psiElement,
                 KotlinBundle.message(
                     "text.cannot.inline.reference.from.0.to.1",
-                    psiElement.language.displayName,
                     KotlinLanguage.INSTANCE.displayName,
+                    psiElement.language.displayName,
                 ),
             )
         }

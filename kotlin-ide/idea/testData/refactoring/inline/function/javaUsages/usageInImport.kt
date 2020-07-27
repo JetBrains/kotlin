@@ -1,4 +1,4 @@
-// ERROR: Cannot inline reference from Java
+// ERROR: Cannot inline reference from Kotlin to Java
 
 package one
 
