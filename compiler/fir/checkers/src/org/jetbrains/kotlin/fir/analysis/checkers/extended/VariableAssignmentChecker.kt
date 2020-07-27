@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirFakeSourceElement
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.analysis.cfa.FirPropertyInitializationChecker
+import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
 import org.jetbrains.kotlin.fir.analysis.cfa.TraverseDirection
 import org.jetbrains.kotlin.fir.analysis.cfa.traverse
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.fir.toFirPsiSourceElement
 import org.jetbrains.kotlin.psi.KtProperty
 
 
-object VariableAssignmentChecker : FirPropertyInitializationChecker() {
+object VariableAssignmentChecker : AbstractFirPropertyInitializationChecker() {
     override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter) {
         val unprocessedProperties = mutableSetOf<FirPropertySymbol>()
-        val propertiesCharacteristics = mutableMapOf<FirPropertySymbol, AssignmentsCount>()
+        val propertiesCharacteristics = mutableMapOf<FirPropertySymbol, EventOccurrencesRange>()
 
         val localProperties = LocalPropertyCollector.collect(graph)
         if (localProperties.isEmpty()) return
@@ -37,7 +37,7 @@ object VariableAssignmentChecker : FirPropertyInitializationChecker() {
         for (property in unprocessedProperties) {
             if (property.fir.source is FirFakeSourceElement<*>) continue
             if (property.callableId.callableName.asString() == "<destruct>") continue
-            propertiesCharacteristics[property] = AssignmentsCount.ZERO
+            propertiesCharacteristics[property] = EventOccurrencesRange.ZERO
         }
 
         var lastDestructuringSource: FirSourceElement? = null
@@ -49,13 +49,13 @@ object VariableAssignmentChecker : FirPropertyInitializationChecker() {
             if (symbol.callableId.callableName.asString() == "<destruct>") {
                 lastDestructuringSource = symbol.getValOrVarSource
                 val childrenCount = symbol.fir.psi?.children?.size ?: continue
-                lastDestructuredVariables = childrenCount - 1 // -1 cuz we don't need all after equals operator
+                lastDestructuredVariables = childrenCount - 1 // -1 cuz we don't need expression node after equals operator
                 destructuringCanBeVal = true
                 continue
             }
 
             if (lastDestructuringSource != null) {
-                // is this is tha last variable in destructuring declaration and destructuringCanBeVal == true and this can be val
+                // if this is the last variable in destructuring declaration and destructuringCanBeVal == true and it can be val
                 if (lastDestructuredVariables == 1 && destructuringCanBeVal && canBeVal(symbol, value)) {
                     reporter.report(lastDestructuringSource, FirErrors.CAN_BE_VAL)
                     lastDestructuringSource = null
@@ -63,43 +63,34 @@ object VariableAssignmentChecker : FirPropertyInitializationChecker() {
                     destructuringCanBeVal = false
                 }
                 lastDestructuredVariables--
-            } else if (canBeVal(symbol, value)) {
+            } else if (canBeVal(symbol, value) && symbol.fir.delegate == null ) {
                 reporter.report(source, FirErrors.CAN_BE_VAL)
             }
         }
     }
 
-    private fun canBeVal(symbol: FirPropertySymbol, value: AssignmentsCount) = value == AssignmentsCount.ONE && symbol.fir.isVar
+    private fun canBeVal(symbol: FirPropertySymbol, value: EventOccurrencesRange) =
+        (value == EventOccurrencesRange.EXACTLY_ONCE
+                || value == EventOccurrencesRange.AT_MOST_ONCE
+                || value == EventOccurrencesRange.ZERO
+                ) && symbol.fir.isVar
 
     private class UninitializedPropertyReporter(
         val data: Map<CFGNode<*>, PropertyInitializationInfo>,
         val localProperties: Set<FirPropertySymbol>,
         val unprocessedProperties: MutableSet<FirPropertySymbol>,
-        val propertiesCharacteristics: MutableMap<FirPropertySymbol, AssignmentsCount>
+        val propertiesCharacteristics: MutableMap<FirPropertySymbol, EventOccurrencesRange>
     ) : ControlFlowGraphVisitorVoid() {
         override fun visitNode(node: CFGNode<*>) {}
 
         override fun visitVariableAssignmentNode(node: VariableAssignmentNode) {
-            val symbol = (node.fir.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirPropertySymbol ?: return
+            val symbol = (node.fir.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirPropertySymbol
+                ?: return
             if (symbol !in localProperties) return
             unprocessedProperties.remove(symbol)
 
-            val currentCharacteristic = propertiesCharacteristics.getOrDefault(symbol, AssignmentsCount.ZERO)
-
-            when (data.getValue(node)[symbol] ?: EventOccurrencesRange.ZERO) {
-                EventOccurrencesRange.AT_MOST_ONCE -> {
-                    propertiesCharacteristics[symbol] = maxOf(currentCharacteristic, AssignmentsCount.ONE)
-                }
-                EventOccurrencesRange.EXACTLY_ONCE -> {
-                    propertiesCharacteristics[symbol] = maxOf(currentCharacteristic, AssignmentsCount.ONE)
-                }
-                EventOccurrencesRange.AT_LEAST_ONCE, EventOccurrencesRange.MORE_THAN_ONCE -> {
-                    propertiesCharacteristics[symbol] = AssignmentsCount.MANY
-                }
-                else -> {
-                    propertiesCharacteristics[symbol] = maxOf(currentCharacteristic, AssignmentsCount.ZERO)
-                }
-            }
+            val currentCharacteristic = propertiesCharacteristics.getOrDefault(symbol, EventOccurrencesRange.ZERO)
+            propertiesCharacteristics[symbol] = currentCharacteristic.or(data.getValue(node)[symbol] ?: EventOccurrencesRange.ZERO)
         }
 
         override fun visitVariableDeclarationNode(node: VariableDeclarationNode) {
@@ -107,7 +98,7 @@ object VariableAssignmentChecker : FirPropertyInitializationChecker() {
             if (node.fir.initializer == null && node.fir.delegate == null) {
                 unprocessedProperties.add(symbol)
             } else {
-                propertiesCharacteristics[symbol] = AssignmentsCount.ONE
+                propertiesCharacteristics[symbol] = EventOccurrencesRange.AT_MOST_ONCE
             }
         }
     }
@@ -116,10 +107,4 @@ object VariableAssignmentChecker : FirPropertyInitializationChecker() {
         get() = (fir.psi as? KtProperty)?.valOrVarKeyword?.toFirPsiSourceElement()
             ?: fir.psi?.firstChild?.toFirPsiSourceElement()
             ?: fir.source
-
-    enum class AssignmentsCount {
-        ZERO,
-        ONE,
-        MANY
-    }
 }

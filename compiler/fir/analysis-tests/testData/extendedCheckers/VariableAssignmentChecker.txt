@@ -1,4 +1,46 @@
 FILE: VariableAssignmentChecker.kt
+    public final fun testDelegator(): R|kotlin/Unit| {
+        lvar x: R|kotlin/Boolean|by R|/LocalFreezableVar.LocalFreezableVar|<R|kotlin/Boolean|>(Boolean(true))
+        lvar y: R|kotlin/String|by R|/LocalFreezableVar.LocalFreezableVar|<R|kotlin/String|>(String())
+    }
+    public final class LocalFreezableVar<T> : R|kotlin/Any| {
+        public constructor<T>(value: R|T|): R|LocalFreezableVar<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final var value: R|T| = R|<local>/value|
+            private get(): R|T|
+            private set(value: R|T|): R|kotlin/Unit|
+
+        public final operator fun getValue(thisRef: R|kotlin/Nothing?|, property: R|kotlin/reflect/KProperty<*>|): R|T| {
+            ^getValue this@R|/LocalFreezableVar|.R|/LocalFreezableVar.value|
+        }
+
+        public final operator fun setValue(thisRef: R|kotlin/Nothing?|, property: R|kotlin/reflect/KProperty<*>|, value: R|T|): R|kotlin/Unit| {
+            this@R|/LocalFreezableVar|.R|/LocalFreezableVar.value| = R|<local>/value|
+        }
+
+    }
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final operator fun R|C|.plus(a: R|kotlin/Any|): R|C| {
+        ^plus this@R|/plus|
+    }
+    public final operator fun R|C|.plusAssign(a: R|kotlin/Any|): R|kotlin/Unit| {
+    }
+    public final fun testOperatorAssignment(): R|kotlin/Unit| {
+        lval c: R|C| = R|/C.C|()
+        R|<local>/c|.R|/plusAssign|(String())
+        lvar c1: R|C| = R|/C.C|()
+        ERROR_EXPR(Operator overload ambiguity. Compatible candidates: [/plus, /plusAssign])
+        lvar a: R|kotlin/Int| = Int(1)
+        R|<local>/a| = R|<local>/a|.R|kotlin/Int.plus|(Int(12))
+        R|<local>/a| = R|<local>/a|.R|kotlin/Int.minus|(Int(10))
+    }
     public final fun destructuringDeclaration(): R|kotlin/Unit| {
         lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/String>| = R|/getPair|()
         lvar v1: R|kotlin/Int| = R|<local>/<destruct>|.R|FakeOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
@@ -111,7 +153,9 @@ FILE: VariableAssignmentChecker.kt
 
         lval b: R|kotlin/Int|
         while(CMP(<, R|<local>/a|.R|kotlin/Int.compareTo|(Int(10)))) {
-            R|<local>/a| = R|<local>/a|.R|kotlin/Int.plus|(Int(1))
+            lval <unary>: R|kotlin/Int| = R|<local>/a|
+            R|<local>/a| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+            R|<local>/<unary>|
             R|<local>/b| = R|<local>/a|
         }
 

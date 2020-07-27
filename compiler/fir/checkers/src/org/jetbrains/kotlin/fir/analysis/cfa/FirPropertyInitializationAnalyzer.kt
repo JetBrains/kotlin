@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraphVisitorVoid
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.QualifiedAccessNode
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
-object FirPropertyInitializationAnalyzer : FirPropertyInitializationChecker() {
+object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChecker() {
     override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter) {
         val localProperties = LocalPropertyCollector.collect(graph)
         // we want to analyze only properties without initializers

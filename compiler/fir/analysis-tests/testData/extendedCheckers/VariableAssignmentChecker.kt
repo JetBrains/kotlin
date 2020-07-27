@@ -1,6 +1,37 @@
 // WITH_RUNTIME
 
+import kotlin.reflect.KProperty
 import kotlin.properties.Delegates
+
+fun testDelegator() {
+    var x: Boolean by LocalFreezableVar(true)
+    var y by LocalFreezableVar("")
+}
+
+class LocalFreezableVar<T>(private var value: T)  {
+    operator fun getValue(thisRef: Nothing?, property: KProperty<*>): T  = value
+
+    operator fun setValue(thisRef: Nothing?, property: KProperty<*>, value: T) {
+        this.value = value
+    }
+}
+
+
+class C
+operator fun C.plus(a: Any): C = this
+operator fun C.plusAssign(a: Any) {}
+
+fun testOperatorAssignment() {
+    val c = C()
+    c += ""
+    <!CAN_BE_VAL!>var<!> c1 = C()
+    <!ASSIGN_OPERATOR_AMBIGUITY!>c1 += ""<!>
+
+    var a = 1
+    a += 12
+    a -= 10
+}
+
 
 fun destructuringDeclaration() {
     <!CAN_BE_VAL!>var<!> (v1, v2) = getPair()
@@ -88,7 +119,7 @@ fun cycles() {
 
     val b: Int
     while (a < 10) {
-        a = a + 1
+        a++
         b = a
     }
 }
