@@ -410,6 +410,7 @@ fun Project.getTemplateParameters(): Map<String, String> {
 
     val gradlePluginVersion = when (releaseType) {
         ReleaseType.RELEASE -> numericVersion // leave only numeric part, ex: "1.3.30"
+        ReleaseType.RC -> kotlinBuildNumber.removeSuffix("-release") // remove "-release" suffix for RC releases, ex: "1.4.0-rc-release"
         else -> kotlinBuildNumber // otherwise use the full build number
     }
 
