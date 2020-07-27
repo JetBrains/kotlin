@@ -30,9 +30,6 @@ import org.jetbrains.kotlin.platform.oldFashionedDescription
 
 class OptionalExpectationInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
-        if (!isOnTheFly) { // This inspection reports only with INFORMATION severity. Such severity is prohibited in batch mode
-            return super.buildVisitor(holder, isOnTheFly, session)
-        }
         return classOrObjectVisitor(fun(classOrObject: KtClassOrObject) {
             if (classOrObject !is KtClass || !classOrObject.isAnnotation()) return
             if (!classOrObject.hasExpectModifier()) return
@@ -67,8 +64,6 @@ class OptionalExpectationInspection : AbstractKotlinInspection() {
                         displayedName,
                         platform.oldFashionedDescription
                     ),
-                    // NB: some highlighting is not suggested for this inspection
-                    ProblemHighlightType.INFORMATION,
                     IntentionWrapper(CreateActualClassFix(classOrObject, actualModule, platform), classOrObject.containingFile)
                 )
             }
