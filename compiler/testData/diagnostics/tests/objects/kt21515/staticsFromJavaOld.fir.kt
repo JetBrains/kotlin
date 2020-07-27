@@ -42,7 +42,7 @@ class Derived : Base() {
         <!UNRESOLVED_REFERENCE!>syntheticProperty<!> = 42
     }
 
-    class JavaStaticInSupertypeList : <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Classifier<!>() {
+    class JavaStaticInSupertypeList : <!OTHER_ERROR!>Classifier<!>() {
 
     }
 }

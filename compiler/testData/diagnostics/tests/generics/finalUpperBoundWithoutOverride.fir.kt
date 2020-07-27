@@ -51,11 +51,11 @@ interface MessageManager9 : Manager<Message3> {
     fun <T : Message3> execute4() {}
 }
 
-object MessageManager10 : <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Message5<Int><!>() {
+object MessageManager10 : <!OTHER_ERROR!>Message5<Int><!>() {
     fun <T : Int> execute() {}
 }
 
-class MessageManager11<A> : <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Message5<Message5<A>><!>() {
+class MessageManager11<A> : <!OTHER_ERROR!>Message5<Message5<A>><!>() {
     fun <T : <!OTHER_ERROR!>Message5<A><!>> execute() {}
 }
 
@@ -63,7 +63,7 @@ data class MessageManager12(val x: Int) : <!OTHER_ERROR, OTHER_ERROR, OTHER_ERRO
     fun <T : Message2> execute() {}
 }
 
-sealed class MessageManager13<A> : <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Message5<A><!>() {
+sealed class MessageManager13<A> : <!OTHER_ERROR!>Message5<A><!>() {
     fun <T : A> execute() {}
 }
 

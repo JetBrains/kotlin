@@ -1,6 +1,6 @@
 // FILE: K1.kt
 class K2: J1() {
-    class Q : <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Nested<!>()
+    class Q : <!OTHER_ERROR!>Nested<!>()
     fun bar() {
         <!UNRESOLVED_REFERENCE!>foo<!>()
         <!UNRESOLVED_REFERENCE!>baz<!>()

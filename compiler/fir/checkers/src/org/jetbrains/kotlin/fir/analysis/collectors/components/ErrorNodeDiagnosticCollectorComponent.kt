@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory0
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.diagnostics.*
@@ -31,9 +32,15 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
     }
 
     override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: CheckerContext) {
-        if (data.containingDeclarations.lastOrNull() is FirDefaultPropertyAccessor) {
-            // It always uses the same type ref as the corresponding property
-            return
+        when (val lastContainingDeclaration = data.containingDeclarations.lastOrNull()) {
+            is FirDefaultPropertyAccessor -> {
+                // It always uses the same type ref as the corresponding property
+                return
+            }
+            is FirConstructor -> if (lastContainingDeclaration.source?.kind is FirFakeSourceElementKind) {
+                // Implicit primary constructor uses the same type ref as the corresponding property
+                return
+            }
         }
         val source = errorTypeRef.source ?: return
         runCheck { reportFirDiagnostic(errorTypeRef.diagnostic, source, it) }
