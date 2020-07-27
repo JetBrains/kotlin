@@ -68,20 +68,25 @@ class FirEffectiveVisibilityResolverImpl(private val session: FirSession) : FirE
         // TODO: fix
         var succeededToGetSymbol = false
 
-        if (parentClassId?.isLocal == false) {
-            parentSymbol = session.firSymbolProvider.getClassLikeSymbolByFqName(parentClassId)
-            parentSymbol?.fir.safeAs<FirMemberDeclaration>()?.let {
-                succeededToGetSymbol = true
-                parentEffectiveVisibility = resolveFor(it, null, scopeSession)
-            }
-        }
-
-        // we suppose we can't ever get a local classId
-        // of some fir from outside of our containing declarations
-        if (!succeededToGetSymbol && parentClassId != null && containingDeclarations != null) {
+        // look for the containing class
+        // in the containingDeclarations or
+        // try using the firSymbolProvider
+        if (parentClassId != null && containingDeclarations != null) {
             parentClassId.findOuterContainerInfo(containingDeclarations, scopeSession)?.let {
                 parentSymbol = it.first
                 parentEffectiveVisibility = it.second
+                succeededToGetSymbol = true
+            }
+        }
+
+        if (!succeededToGetSymbol) {
+            if (parentClassId?.isLocal == false) {
+                parentSymbol = session.firSymbolProvider.getClassLikeSymbolByFqName(parentClassId)
+                parentSymbol?.fir.safeAs<FirMemberDeclaration>()?.let {
+                    parentEffectiveVisibility = resolveFor(it, null, scopeSession)
+                }
+            } else if (parentClassId?.isLocal == true) {
+                parentEffectiveVisibility = FirEffectiveVisibilityImpl.Local
             }
         }
 
