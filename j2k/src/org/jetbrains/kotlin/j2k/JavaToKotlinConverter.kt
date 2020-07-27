@@ -298,6 +298,7 @@ interface WithProgressProcessor {
     ): List<TOutputItem>
 
     fun updateState(fileIndex: Int?, phase: Int, description: String)
+    fun updateState(phase: Int, subPhase: Int, subPhaseCount: Int, fileIndex: Int?, description: String)
     fun <T> process(action: () -> T): T
 }
 
@@ -347,6 +348,16 @@ class OldWithProgressProcessor(private val progress: ProgressIndicator?, private
 
     override fun updateState(fileIndex: Int?, phase: Int, description: String) {
         throw AbstractMethodError("Should not be called for old J2K")
+    }
+
+    override fun updateState(
+        phase: Int,
+        subPhase: Int,
+        subPhaseCount: Int,
+        fileIndex: Int?,
+        description: String
+    ) {
+        error("Should not be called for old J2K")
     }
 }
 
