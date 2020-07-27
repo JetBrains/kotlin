@@ -12,10 +12,10 @@ inline class ULong(private val l: Long)
 
 // FILE: test.kt
 
-annotation class AnnoUB(val ub0: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>UByte<!>, val ub1: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>UByte<!>)
-annotation class AnnoUS(val us0: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>UShort<!>, val us1: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>UShort<!>)
-annotation class AnnoUI(val ui0: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>UInt<!>, val ui1: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>UInt<!>, val ui2: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>UInt<!>, val ui3: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>UInt<!>)
-annotation class AnnoUL(val ul0: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>ULong<!>, val ul1: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>ULong<!>)
+annotation class AnnoUB(val ub0: <!OTHER_ERROR!>UByte<!>, val ub1: <!OTHER_ERROR!>UByte<!>)
+annotation class AnnoUS(val us0: <!OTHER_ERROR!>UShort<!>, val us1: <!OTHER_ERROR!>UShort<!>)
+annotation class AnnoUI(val ui0: <!OTHER_ERROR!>UInt<!>, val ui1: <!OTHER_ERROR!>UInt<!>, val ui2: <!OTHER_ERROR!>UInt<!>, val ui3: <!OTHER_ERROR!>UInt<!>)
+annotation class AnnoUL(val ul0: <!OTHER_ERROR!>ULong<!>, val ul1: <!OTHER_ERROR!>ULong<!>)
 
 const val ub0 = <!UNRESOLVED_REFERENCE!>UByte<!>(1)
 const val us0 = <!UNRESOLVED_REFERENCE!>UShort<!>(2)
@@ -41,4 +41,4 @@ const val explicit: <!OTHER_ERROR!>UInt<!> = <!UNRESOLVED_REFERENCE!>UInt<!>(2)
 
 const val nullable: <!OTHER_ERROR!>UInt?<!> = <!UNRESOLVED_REFERENCE!>UInt<!>(3)
 
-annotation class NullableAnno(val u: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>UInt?<!>)
+annotation class NullableAnno(val u: <!OTHER_ERROR!>UInt?<!>)

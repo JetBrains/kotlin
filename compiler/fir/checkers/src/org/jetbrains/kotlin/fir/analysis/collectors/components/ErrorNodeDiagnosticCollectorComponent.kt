@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory0
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind.*
@@ -39,6 +41,14 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
             }
             is FirConstructor -> if (lastContainingDeclaration.source?.kind is FirFakeSourceElementKind) {
                 // Implicit primary constructor uses the same type ref as the corresponding property
+                return
+            }
+            is FirValueParameter -> if (lastContainingDeclaration.source?.kind is FirFakeSourceElementKind) {
+                // Value parameter of default setter uses the same type ref as the corresponding property
+                return
+            }
+            is FirProperty -> if (lastContainingDeclaration.source?.kind is FirFakeSourceElementKind) {
+                // Properties of implicit primary constructor uses the same type ref as the corresponding value parameter
                 return
             }
         }
