@@ -18,7 +18,7 @@ class ExpectedFileTest {
                 function("f(x: Int): String")
                 function("y(x: Int): String")
             }
-        }.first()
+        }.mppFiles.first()
         val generatedFileText = file.printForModuleSubType(ModuleSubType.common)
         val expectedFileText = """
             expect fun f(x: Int): String
@@ -35,7 +35,7 @@ class ExpectedFileTest {
                 `class`("A")
                 `class`("B")
             }
-        }.first()
+        }.mppFiles.first()
         val generatedFileText = file.printForModuleSubType(ModuleSubType.common)
         val expectedFileText = """
            expected class A expected constructor()
@@ -58,7 +58,7 @@ class ExpectedFileTest {
                     default("TODO()")
                 }
             }
-        }.first()
+        }.mppFiles.first()
         run {
             val generatedFileText = file.printForModuleSubType(ModuleSubType.jvm)
             val expectedFileText = """
@@ -103,7 +103,7 @@ class ExpectedFileTest {
                     default("// nothing here")
                 }
             }
-        }.first()
+        }.mppFiles.first()
         run {
             val generatedFileText = file.printForModuleSubType(ModuleSubType.jvm)
             val expectedFileText = """

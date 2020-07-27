@@ -9,7 +9,10 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.properties.ModuleConfiguratorProperty
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ModuleConfiguratorSetting
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.KotlinBuildSystemPluginIR
+import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectPath
@@ -50,6 +53,13 @@ object MppModuleConfigurator : ModuleConfigurator,
     override fun getConfiguratorProperties(): List<ModuleConfiguratorProperty<*>> =
         listOf(mppSources)
 
+    val generateTests by booleanSetting("Generate Tests", GenerationPhase.PROJECT_GENERATION) {
+        defaultValue = value(false)
+    }
+
+    override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> =
+        super.getConfiguratorSettings() + generateTests
+
     override fun Writer.runArbitraryTask(
         configurationData: ModulesToIrConversionData,
         module: Module,
@@ -84,18 +94,20 @@ object MppModuleConfigurator : ModuleConfigurator,
         modulePath: Path
     ): TaskResult<Unit> = inContextOfModuleConfigurator(module) {
         val mppFiles = mppSources.reference.propertyValue
-        module.subModules.mapSequenceIgnore mapTargets@{ target ->
+        val filesWithPaths = module.subModules.flatMap { target ->
             val moduleSubType = //TODO handle for non-simple target configurator
-                target.configurator.safeAs<SimpleTargetConfigurator>()?.moduleSubType ?: return@mapTargets UNIT_SUCCESS
-            val files = mppFiles.flatMap { it.getFilesFor(moduleSubType) }.distinctBy { it.uniqueIdentifier }
-            val fileTemplates = files.map { file ->
-                FileTemplate(
-                    file.fileDescriptor,
-                    projectPath / pathForFileInTarget(modulePath, module, file.javaPackage, file.filename, target, file.type),
-                    mapOf("package" to file.javaPackage?.asCodePackage())
-                )
-            }
-            TemplatesPlugin.fileTemplatesToRender.addValues(fileTemplates)
+                target.configurator.safeAs<SimpleTargetConfigurator>()?.moduleSubType ?: return@flatMap emptyList()
+            mppFiles
+                .flatMap { it.getFilesFor(moduleSubType) }
+                .distinctBy { it.uniqueIdentifier }
+                .map { file ->
+                    val path = projectPath / pathForFileInTarget(modulePath, module, file.javaPackage, file.filename, target, file.type)
+                    file to path
+                }
+        }.distinctBy { (_, path) -> path }
+        filesWithPaths.mapSequenceIgnore { (file, path) ->
+            val fileTemplate = FileTemplate(file.fileDescriptor, path, mapOf("package" to file.javaPackage?.asCodePackage()))
+            TemplatesPlugin.fileTemplatesToRender.addValues(fileTemplate)
         }
     }
 
@@ -145,8 +157,7 @@ data class MppFile(
     }
 
     @ExpectFileDSL
-    class Builder(private val filename: String) {
-        var `package`: String? = null
+    class Builder(private val filename: String, val javaPackage: JavaPackage? = null) {
         private val declarations = mutableListOf<MppDeclaration>()
 
         fun function(signature: String, init: MppFunction.Builder.() -> Unit = {}) {
@@ -157,7 +168,7 @@ data class MppFile(
             declarations += MppClass.Builder(name).apply(init).build()
         }
 
-        fun build() = MppFile(filename, `package`?.let(::JavaPackage), declarations)
+        fun build() = MppFile(filename, javaPackage, declarations)
     }
 }
 
@@ -173,7 +184,7 @@ class MppSources(val mppFiles: List<MppFile>, val simpleFiles: List<SimpleFiles>
         private val simpleFiles = mutableListOf<SimpleFiles>()
 
         fun mppFile(filename: String, init: MppFile.Builder.() -> Unit) {
-            mppFiles += MppFile.Builder(filename).apply(init).build()
+            mppFiles += MppFile.Builder(filename, javaPackage).apply(init).build()
         }
 
         fun filesFor(vararg moduleSubTypes: ModuleSubType, init: SimpleFiles.Builder.() -> Unit) {
@@ -210,7 +221,7 @@ data class SimpleFile(val fileDescriptor: FileDescriptor, val javaPackage: JavaP
 }
 
 
-fun mppSources(javaPackage: JavaPackage, init: MppSources.Builder.() -> Unit): MppSources =
+fun mppSources(javaPackage: JavaPackage? = null, init: MppSources.Builder.() -> Unit): MppSources =
     MppSources.Builder(javaPackage).apply(init).build()
 
 sealed class MppDeclaration {

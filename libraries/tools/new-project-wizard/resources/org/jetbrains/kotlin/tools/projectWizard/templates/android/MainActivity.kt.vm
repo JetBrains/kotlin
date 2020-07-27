@@ -18,9 +18,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        #if( $sharedPackage )
+#if( $sharedPackage )
         val tv: TextView = findViewById(R.id.text_view)
         tv.text = greet()
-        #end
+#end
     }
 }

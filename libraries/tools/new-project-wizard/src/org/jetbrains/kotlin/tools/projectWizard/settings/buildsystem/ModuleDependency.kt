@@ -201,8 +201,6 @@ private fun Writer.addExpectFilesForMppModuleForAndroidAndIos(mppModule: Module,
 
     val expectFiles = mppSources(javaPackage) {
         mppFile("Platform.kt") {
-            `package` = javaPackage.asCodePackage()
-
             `class`("Platform") {
                 expectBody = "val platform: String"
                 actualFor(
@@ -213,7 +211,7 @@ private fun Writer.addExpectFilesForMppModuleForAndroidAndIos(mppModule: Module,
                 actualFor(
                     ModuleSubType.iosArm64, ModuleSubType.iosX64, ModuleSubType.ios,
                     actualBody =
-                    """actual val platform: String = UIDevice.currentDevice.systemName() + " " +  UIDevice.currentDevice.systemVersion"""
+                    """actual val platform: String = UIDevice.currentDevice.systemName() + " " + UIDevice.currentDevice.systemVersion"""
                 ) {
                     import("platform.UIKit.UIDevice")
                 }
@@ -224,13 +222,18 @@ private fun Writer.addExpectFilesForMppModuleForAndroidAndIos(mppModule: Module,
             file(FileTemplateDescriptor("mppCommon/Greeting.kt.vm", relativePath = null), "Greeting.kt", SourcesetType.main)
         }
 
-        filesFor(ModuleSubType.android) {
-            file(FileTemplateDescriptor("android/androidTest.kt.vm", relativePath = null), "androidTest.kt", SourcesetType.test)
+        inContextOfModuleConfigurator(mppModule) {
+            if (MppModuleConfigurator.generateTests.reference.settingValue) {
+                filesFor(ModuleSubType.android) {
+                    file(FileTemplateDescriptor("android/androidTest.kt.vm", relativePath = null), "androidTest.kt", SourcesetType.test)
+                }
+
+                filesFor(ModuleSubType.iosArm64, ModuleSubType.iosX64, ModuleSubType.ios) {
+                    file(FileTemplateDescriptor("ios/iosTest.kt.vm", relativePath = null), "iosTest.kt", SourcesetType.test)
+                }
+            }
         }
 
-        filesFor(ModuleSubType.iosArm64, ModuleSubType.iosX64, ModuleSubType.ios) {
-            file(FileTemplateDescriptor("ios/iosTest.kt.vm", relativePath = null), "iosTest.kt", SourcesetType.test)
-        }
     }
     return inContextOfModuleConfigurator(mppModule) { MppModuleConfigurator.mppSources.reference.addValues(listOf(expectFiles)) }
 }
