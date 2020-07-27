@@ -1,9 +1,9 @@
 package org.jetbrains.app
 
-import android.os.Bundle
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
 import org.jetbrains.shared.Greeting
+import android.widget.TextView
 
 fun greet(): String {
     return Greeting().greeting()
@@ -18,4 +18,3 @@ class MainActivity : AppCompatActivity() {
         tv.text = greet()
     }
 }
-

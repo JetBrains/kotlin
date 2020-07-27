@@ -19,6 +19,6 @@ pluginManagement {
 rootProject.name = "TestApplication"
 
 
-include(":shared")
 include(":app")
+include(":shared")
 

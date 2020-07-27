@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.AndroidSinglePlatformModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.IOSSinglePlatformModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.MppModuleConfigurator
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.inContextOfModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.AndroidPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
@@ -62,26 +63,32 @@ class KmmWizard(
         onTaskExecuting: (PipelineTask) -> Unit
     ): TaskResult<Unit> = computeM {
         context.writeSettings {
-            StructurePlugin::groupId.reference.setValue(description.groupId)
-            StructurePlugin::artifactId.reference.setValue(description.artifactId)
-            StructurePlugin::name.reference.setValue(description.projectName)
-            StructurePlugin::projectPath.reference.setValue(description.projectDir)
+            StructurePlugin.groupId.reference.setValue(description.groupId)
+            StructurePlugin.artifactId.reference.setValue(description.artifactId)
+            StructurePlugin.name.reference.setValue(description.projectName)
+            StructurePlugin.projectPath.reference.setValue(description.projectDir)
 
-            MppModuleConfigurator.useTests = description.generateTests
+
+            KotlinPlugin.createResourceDirectories.reference.setValue(false)
 
             if (description.androidSdkPath != null) {
-                AndroidPlugin::androidSdkPath.reference.setValue(description.androidSdkPath)
+                AndroidPlugin.androidSdkPath.reference.setValue(description.androidSdkPath)
             }
 
-            BuildSystemPlugin::type.reference.setValue(BuildSystemType.GradleKotlinDsl)
+            BuildSystemPlugin.type.reference.setValue(BuildSystemType.GradleKotlinDsl)
 
             applyProjectTemplate(MultiplatformMobileApplicationProjectTemplate)
 
-            KotlinPlugin::modules.reference.settingValue.forEach { module ->
+            KotlinPlugin.modules.reference.settingValue.forEach { module ->
                 when (module.configurator) {
                     AndroidSinglePlatformModuleConfigurator -> module.name = description.androidModuleName
                     IOSSinglePlatformModuleConfigurator -> module.name = description.iosModuleName
-                    MppModuleConfigurator -> module.name = description.sharedModuleName
+                    MppModuleConfigurator -> {
+                        module.name = description.sharedModuleName
+                        inContextOfModuleConfigurator(module) {
+                            MppModuleConfigurator.generateTests.reference.setValue(description.generateTests)
+                        }
+                    }
                 }
             }
         }
