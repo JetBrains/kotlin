@@ -54,7 +54,7 @@ class NewJ2kPostProcessor : PostProcessor {
     ) {
         if (converterContext !is NewJ2kConverterContext) error("Invalid converter context for new J2K")
         for ((i, group) in processings.withIndex()) {
-            onPhaseChanged?.invoke(i + 1, group.description)
+            onPhaseChanged?.invoke(i, group.description)
             for (processing in group.processings) {
                 try {
                     processing.runProcessingConsideringOptions(target, converterContext)

@@ -85,10 +85,20 @@ object ConversionsRunner {
         AddElementsInfoConversion(context)
     )
 
-    fun doApply(trees: List<JKTreeRoot>, context: NewJ2kConverterContext) {
+
+    fun doApply(
+        trees: List<JKTreeRoot>,
+        context: NewJ2kConverterContext,
+        updateProgress: (conversionIndex: Int, conversionCount: Int, fileIndex: Int, String) -> Unit
+    ) {
+
         val conversions = createConversions(context)
-        for (conversion in conversions) {
-            conversion.runConversion(trees, context)
+        for ((conversionIndex, conversion) in conversions.withIndex()) {
+            val treeSequence = trees.asSequence().onEachIndexed { index, _ ->
+                updateProgress(conversionIndex, conversions.size, index, conversion::class.simpleName ?: "Converting...")
+            }
+
+            conversion.runConversion(treeSequence, context)
         }
     }
 }
