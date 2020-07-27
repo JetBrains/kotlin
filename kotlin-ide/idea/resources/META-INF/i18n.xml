@@ -3,11 +3,10 @@
       <psi.referenceContributor language="kotlin" implementation="org.jetbrains.kotlin.idea.properties.KotlinPropertiesReferenceContributor"/>
 
       <localInspection implementationClass="org.jetbrains.kotlin.idea.i18n.inspections.KotlinInvalidBundleOrPropertyInspection"
-                       displayName="Invalid property key"
                        groupName="Kotlin"
                        enabledByDefault="true"
                        level="ERROR"
                        suppressId="InvalidBundleOrProperty"
-      />
+                       key="inspection.kotlin.invalid.bundle.or.property.display.name" bundle="messages.KotlinBundle"/>
   </extensions>
 </idea-plugin>

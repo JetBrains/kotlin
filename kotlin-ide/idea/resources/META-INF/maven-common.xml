@@ -42,54 +42,48 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <localInspection implementationClass="org.jetbrains.kotlin.idea.maven.inspections.KotlinMavenPluginPhaseInspection"
-                     displayName="Kotlin Maven Plugin misconfigured"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      language="XML"
                      hasStaticDescription="true"
-                     level="WARNING" />
+                     level="WARNING" key="inspection.kotlin.maven.plugin.phase.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.maven.inspections.KotlinTestJUnitInspection"
-                     displayName="kotlin-test-junit could be used"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      language="XML"
                      hasStaticDescription="true"
-                     level="WARNING" />
+                     level="WARNING" key="inspection.kotlin.test.j.unit.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.maven.inspections.DifferentMavenStdlibVersionInspection"
-                     displayName="Library and maven plugin versions are different"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      language="XML"
                      hasStaticDescription="true"
-                     level="WARNING" />
+                     level="WARNING" key="inspection.different.maven.stdlib.version.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.maven.inspections.DifferentKotlinMavenVersionInspection"
-                     displayName="Maven and IDE plugins versions are different"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      language="XML"
                      hasStaticDescription="true"
-                     level="WARNING" />
+                     level="WARNING" key="inspection.different.kotlin.maven.version.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.maven.inspections.DeprecatedMavenDependencyInspection"
-                     displayName="Deprecated library is used in Maven"
                      groupName="Kotlin"
                      enabledByDefault="true"
                      cleanupTool="true"
                      language="XML"
                      hasStaticDescription="true"
-                     level="WARNING" />
+                     level="WARNING" key="inspection.deprecated.maven.dependency.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.maven.inspections.MavenCoroutinesDeprecationInspection"
-                     displayName="Incompatible kotlinx.coroutines dependency is used with Kotlin 1.3+ in Maven"
                      groupPath="Kotlin,Migration"
                      groupName="Maven"
                      enabledByDefault="true"
                      language="XML"
                      hasStaticDescription="true"
-                     level="ERROR" />
+                     level="ERROR" key="inspection.maven.coroutines.deprecation.display.name" bundle="messages.KotlinBundle"/>
 
     <intentionAction>
       <className>org.jetbrains.kotlin.idea.maven.actions.MavenPluginSourcesMoveToBuild</className>
@@ -109,20 +103,18 @@
 
       <action id="KotlinGenerateMavenCompileExecutionAction"
               icon="/org/jetbrains/kotlin/idea/icons/kotlin13.png"
-              class="org.jetbrains.kotlin.idea.maven.actions.GenerateMavenCompileExecutionAction"
-              text="Kotlin compile execution" />
+              class="org.jetbrains.kotlin.idea.maven.actions.GenerateMavenCompileExecutionAction"/>
 
       <action id="KotlinGenerateMavenTestCompileExecutionAction"
               icon="/org/jetbrains/kotlin/idea/icons/kotlin13.png"
-              class="org.jetbrains.kotlin.idea.maven.actions.GenerateMavenTestCompileExecutionAction"
-              text="Kotlin test-compile execution" />
+              class="org.jetbrains.kotlin.idea.maven.actions.GenerateMavenTestCompileExecutionAction"/>
 
       <action id="KotlinGenerateMavenPluginAction"
               icon="/org/jetbrains/kotlin/idea/icons/kotlin13.png"
-              class="org.jetbrains.kotlin.idea.maven.actions.GenerateMavenPluginAction"
-              text="Kotlin plugin" />
+              class="org.jetbrains.kotlin.idea.maven.actions.GenerateMavenPluginAction"/>
 
       <add-to-group group-id="GenerateGroup" anchor="last" />
     </group>
   </actions>
+    <resource-bundle>messages.KotlinBundle</resource-bundle>
 </idea-plugin>

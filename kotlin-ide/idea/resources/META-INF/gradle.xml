@@ -50,12 +50,12 @@
     </extensions>
 
     <actions>
-        <action id="Kotlin.Gradle.ShowDslLogs" class="org.jetbrains.kotlin.idea.actions.ShowKotlinGradleDslLogs"
-                text="Show Kotlin Gradle DSL Logs" description="Show Kotlin Gradle DSL logs">
+        <action id="Kotlin.Gradle.ShowDslLogs" class="org.jetbrains.kotlin.idea.actions.ShowKotlinGradleDslLogs">
         </action>
 
         <action id="LoadConfigurationAction" class="org.jetbrains.kotlin.idea.scripting.gradle.LoadConfigurationAction">
             <add-to-group group-id="ExternalSystem.ProjectRefreshActionGroup" anchor="first"/>
         </action>
     </actions>
+    <resource-bundle>messages.KotlinBundle</resource-bundle>
 </idea-plugin>

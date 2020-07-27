@@ -2,41 +2,37 @@
   <extensions defaultExtensionNs="com.intellij">
 
     <localInspection
-        implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection"
-        displayName="Kotlin Gradle and IDE plugins versions are different"
-        groupName="Kotlin"
-        enabledByDefault="true"
-        language="Groovy"
-        hasStaticDescription="true"
-        level="WARNING"/>
+            implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection"
+            groupName="Kotlin"
+            enabledByDefault="true"
+            language="Groovy"
+            hasStaticDescription="true"
+            level="WARNING" key="inspection.different.kotlin.gradle.version.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection
-        implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.DifferentStdlibGradleVersionInspection"
-        displayName="Kotlin library and Gradle plugin versions are different"
-        groupName="Kotlin"
-        enabledByDefault="true"
-        language="Groovy"
-        hasStaticDescription="true"
-        level="WARNING"/>
+            implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.DifferentStdlibGradleVersionInspection"
+            groupName="Kotlin"
+            enabledByDefault="true"
+            language="Groovy"
+            hasStaticDescription="true"
+            level="WARNING" key="inspection.different.stdlib.gradle.version.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection
-        implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.DeprecatedGradleDependencyInspection"
-        displayName="Deprecated library is used in Gradle"
-        groupName="Kotlin"
-        enabledByDefault="true"
-        cleanupTool="true"
-        language="Groovy"
-        hasStaticDescription="true"
-        level="WARNING"/>
+            implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.DeprecatedGradleDependencyInspection"
+            groupName="Kotlin"
+            enabledByDefault="true"
+            cleanupTool="true"
+            language="Groovy"
+            hasStaticDescription="true"
+            level="WARNING" key="inspection.deprecated.gradle.dependency.display.name" bundle="messages.KotlinBundle"/>
 
     <localInspection
-        implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.GradleKotlinxCoroutinesDeprecationInspection"
-        displayName="Incompatible kotlinx.coroutines dependency is used with Kotlin 1.3+ in Gradle"
-        groupPath="Kotlin,Migration"
-        groupName="Gradle"
-        enabledByDefault="true"
-        language="Groovy"
-        hasStaticDescription="true"
-        level="ERROR"/>
+            implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.GradleKotlinxCoroutinesDeprecationInspection"
+            groupPath="Kotlin,Migration"
+            groupName="Gradle"
+            enabledByDefault="true"
+            language="Groovy"
+            hasStaticDescription="true"
+            level="ERROR" key="inspection.gradle.kotlinx.coroutines.deprecation.display.name" bundle="messages.KotlinBundle"/>
   </extensions>
 </idea-plugin>

@@ -125,12 +125,12 @@
                                   implementationClass="org.jetbrains.kotlin.idea.scratch.actions.ScratchRunLineMarkerContributor"/>
 
         <localInspection
-            groupName="Plugin DevKit"
-            shortName="IncompatibleAPI"
-            enabledByDefault="false"
-            level="ERROR"
-            displayName="Incompatible API usage"
-            implementationClass="org.jetbrains.kotlin.idea.inspections.api.IncompatibleAPIInspection"/>
+                groupName="Plugin DevKit"
+                shortName="IncompatibleAPI"
+                enabledByDefault="false"
+                level="ERROR"
+                implementationClass="org.jetbrains.kotlin.idea.inspections.api.IncompatibleAPIInspection"
+                key="inspection.incompatible.API.display.name" bundle="messages.KotlinBundle"/>
 
         <projectService serviceInterface="org.jetbrains.uast.kotlin.KotlinUastResolveProviderService"
                         serviceImplementation="org.jetbrains.uast.kotlin.internal.IdeaKotlinUastResolveProviderService"/>

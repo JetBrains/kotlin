@@ -11,18 +11,16 @@
         <gotoDeclarationHandler implementation="org.jetbrains.kotlin.android.synthetic.idea.AndroidGotoDeclarationHandler"/>
 
         <localInspection implementationClass="org.jetbrains.kotlin.android.inspection.IllegalIdentifierInspection"
-                         displayName="Illegal Android Identifier"
                          groupName="Kotlin Android"
                          enabledByDefault="true"
-                         level="ERROR"/>
+                         level="ERROR" key="inspection.illegal.identifier.display.name" bundle="messages.KotlinBundle"/>
 
         <localInspection implementationClass="org.jetbrains.kotlin.android.inspection.TypeParameterFindViewByIdInspection"
-                         displayName="Cast can be converted to findViewById with type parameter"
                          groupName="Kotlin Android"
                          enabledByDefault="true"
                          cleanupTool="true"
                          level="WEAK WARNING"
-                         language="kotlin" />
+                         language="kotlin" key="inspection.type.parameter.find.view.by.id.display.name" bundle="messages.KotlinBundle"/>
 
         <codeInsight.lineMarkerProvider language="kotlin" implementationClass="org.jetbrains.kotlin.android.KotlinAndroidLineMarkerProvider"/>
 
