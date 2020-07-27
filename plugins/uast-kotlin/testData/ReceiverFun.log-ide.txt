@@ -11,6 +11,9 @@ UFile (package = )
                         USimpleNameReferenceExpression (identifier = length)
         UMethod (name = getRx)
             UParameter (name = $this$getRx)
+                UAnnotation (fqName = MyReceiverAnnotation)
+                    UNamedExpression (name = name)
+                        ULiteralExpression (value = "RegExp")
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             UBlockExpression
                 UReturnExpression
