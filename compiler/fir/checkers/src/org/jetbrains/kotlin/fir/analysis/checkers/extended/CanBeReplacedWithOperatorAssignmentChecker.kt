@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.toFirPsiSourceElement
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -25,6 +26,8 @@ import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 object CanBeReplacedWithOperatorAssignmentChecker : FirExpressionChecker<FirVariableAssignment>() {
     override fun check(assignment: FirVariableAssignment, context: CheckerContext, reporter: DiagnosticReporter) {
         if (assignment.lValue !is FirResolvedNamedReference) return
+        val operator = assignment.psi?.children?.get(1) ?: return
+        if (operator.text != "=") return
 
         val left = assignment.lValue
         val right = assignment.rValue.psi as? KtBinaryExpression ?: return
@@ -36,7 +39,8 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirExpressionChecker<FirVari
         if (rightResolvedSymbol.callableId.classId !in StandardClassIds.primitiveTypes) return
 
         if (right.matcher(left.psi as KtNameReferenceExpression)) {
-            reporter.report(assignment.source, FirErrors.CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT)
+            val operatorStatement = operator.toFirPsiSourceElement()
+            reporter.report(operatorStatement, FirErrors.CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT)
         }
     }
 

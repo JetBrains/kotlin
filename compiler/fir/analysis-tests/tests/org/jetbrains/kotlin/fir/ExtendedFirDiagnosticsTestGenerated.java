@@ -120,6 +120,11 @@ public class ExtendedFirDiagnosticsTestGenerated extends AbstractExtendedFirDiag
             runTest("compiler/fir/analysis-tests/testData/extendedCheckers/canBeReplacedWithOperatorAssignment/nonRepeatingAssignment.kt");
         }
 
+        @TestMetadata("OperatorAssignment.kt")
+        public void testOperatorAssignment() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/canBeReplacedWithOperatorAssignment/OperatorAssignment.kt");
+        }
+
         @TestMetadata("plusAssignConflict.kt")
         public void testPlusAssignConflict() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/extendedCheckers/canBeReplacedWithOperatorAssignment/plusAssignConflict.kt");

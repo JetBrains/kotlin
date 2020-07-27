@@ -1,5 +1,5 @@
 fun foo() {
     var y = 0
     val x = 0
-    <!CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT!>y = y + x<!>
+    y <!CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT!>=<!> y + x
 }
