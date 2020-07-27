@@ -56,7 +56,9 @@ abstract class JKTreeElement : JKElement, JKFormattingOwner, Cloneable {
 
     override fun detach(from: JKElement) {
         val prevParent = parent
-        require(from == prevParent)
+        require(from == prevParent) {
+            "Incorrect detach: From: $from, Actual: $prevParent"
+        }
         parent = null
     }
 
