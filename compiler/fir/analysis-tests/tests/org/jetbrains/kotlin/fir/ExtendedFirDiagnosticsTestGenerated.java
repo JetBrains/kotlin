@@ -48,6 +48,11 @@ public class ExtendedFirDiagnosticsTestGenerated extends AbstractExtendedFirDiag
         runTest("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantSetterParameterTypeChecker.kt");
     }
 
+    @TestMetadata("RedundantSingleExpressionStringTemplateChecker.kt")
+    public void testRedundantSingleExpressionStringTemplateChecker() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantSingleExpressionStringTemplateChecker.kt");
+    }
+
     @TestMetadata("RedundantVisibilityModifierChecker.kt")
     public void testRedundantVisibilityModifierChecker() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantVisibilityModifierChecker.kt");

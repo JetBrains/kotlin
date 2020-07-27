@@ -88,7 +88,10 @@ object FirErrors {
     val REDUNDANT_RETURN_UNIT_TYPE by warning0<FirSourceElement, PsiTypeElement>()
     val REDUNDANT_EXPLICIT_TYPE by warning0<FirSourceElement, PsiElement>()
     val CAN_BE_VAL by warning0<FirSourceElement, PsiElement>()
+    val REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE by warning0<FirSourceElement, PsiElement>()
     val CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT by warning0<FirSourceElement, PsiElement>()
     val REDUNDANT_CALL_OF_CONVERSION_METHOD by warning0<FirSourceElement, PsiElement>()
     val REDUNDANT_SETTER_PARAMETER_TYPE by warning0<FirSourceElement, PsiElement>()
 }
+
+
