@@ -448,7 +448,7 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
 
     @get:Internal
     @Transient // can't be serialized for Gradle configuration avoidance
-    final override val compilation: Property<KotlinNativeCompilation> = project.newProperty()
+    final override val compilation: Property<KotlinNativeCompilation> = project.newProperty() { binary.compilation }
 
     init {
         dependsOn(project.provider { compilation.get().compileKotlinTask })
@@ -529,8 +529,9 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
     val processTests: Boolean
         @Input get() = binary is TestExecutable
 
+    @get:InputFiles
     val exportLibraries: FileCollection
-    @InputFile get() = binary.let {
+        get() = binary.let {
             if (it is AbstractNativeLibrary) {
                 project.configurations.getByName(it.exportConfigurationName)
             } else {
