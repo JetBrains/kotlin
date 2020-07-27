@@ -35,9 +35,9 @@ class MobileBeforeRunTaskProvider : BeforeRunTaskProvider<MobileBeforeRunTaskPro
             ?: runConfiguration
 
         if (configuration !is MobileRunConfigurationBase) return false
-        val device = environment.executionTarget as? Device ?: return false
+        val devices = configuration.executionTargets
 
-        return MobileBuild.build(configuration, device)
+        return MobileBuild.build(configuration, devices)
     }
 
     class Task : BeforeRunTask<Task>(ID) {

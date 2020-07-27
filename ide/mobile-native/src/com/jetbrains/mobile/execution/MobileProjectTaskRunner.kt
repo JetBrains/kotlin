@@ -23,9 +23,6 @@ class MobileProjectTaskRunner : CidrProjectTaskRunner() {
             }
     }
 
-    class Context(sessionId: Any, runConfiguration: MobileRunConfigurationBase, val device: Device) :
-        ProjectTaskContext(sessionId, runConfiguration)
-
     override fun canRun(task: ProjectTask): Boolean = when (task) {
         is ProjectModelBuildTask<*> -> task.buildableElement is BuildableElement
         else -> false
@@ -45,8 +42,8 @@ object MobileBuildTaskRunner : CidrTaskRunner {
         context: ProjectTaskContext
     ): Promise<ProjectTaskRunner.Result> {
         val success = try {
-            val configuration = (context as MobileProjectTaskRunner.Context).runConfiguration as MobileRunConfigurationBase
-            MobileBuild.build(configuration, context.device)
+            val configuration = context.runConfiguration as MobileRunConfigurationBase
+            MobileBuild.build(configuration, configuration.executionTargets)
         } catch (e: Throwable) {
             log.error(e)
             false

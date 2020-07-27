@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil
 
 object MobileBuild {
-    fun build(configuration: MobileRunConfigurationBase, device: Device): Boolean {
+    fun build(configuration: MobileRunConfigurationBase, devices: List<Device>): Boolean {
         val project = configuration.project
         val projectData = ProjectDataManager.getInstance().getExternalProjectData(project, GRADLE_SYSTEM_ID, project.basePath!!)
         if (projectData == null) {
@@ -29,25 +29,25 @@ object MobileBuild {
         }
         val moduleId = GradleProjectResolverUtil.getGradlePath(configuration.module!!)!!
 
+        val needsAndroid = devices.any { it is AndroidDevice }
+        val needsApple = devices.any { it is AppleDevice }
+
         val settings = ExternalSystemTaskExecutionSettings()
         settings.externalSystemIdString = GRADLE_SYSTEM_ID.id
         settings.externalProjectPath = projectData.externalProjectPath
         settings.executionName = MobileBundle.message("build")
-        settings.taskNames = when (configuration) {
-            is MobileAppRunConfiguration ->
-                when (device) {
-                    is AndroidDevice -> listOf("$moduleId:assembleDebug")
-                    is AppleDevice -> listOf("$moduleId:buildIosAppMain")
-                    else -> throw IllegalStateException()
-                }
-            is MobileTestRunConfiguration ->
-                when (device) {
-                    is AndroidDevice -> listOf("$moduleId:assembleDebug", "$moduleId:assembleDebugAndroidTest")
-                    is AppleDevice -> listOf("$moduleId:buildIosAppTest")
-                    else -> throw IllegalStateException()
-                }
+        when (configuration) {
+            is MobileAppRunConfiguration -> {
+                if (needsAndroid) settings.taskNames.add("$moduleId:assembleDebug")
+                if (needsApple) settings.taskNames.add("$moduleId:buildIosAppMain")
+            }
+            is MobileTestRunConfiguration -> {
+                if (needsAndroid) settings.taskNames.addAll(listOf("$moduleId:assembleDebug", "$moduleId:assembleDebugAndroidTest"))
+                if (needsApple) settings.taskNames.add("$moduleId:buildIosAppTest")
+            }
             else -> throw IllegalStateException()
         }
+        log.assertTrue(settings.taskNames.isNotEmpty())
 
         val success = FutureResult<Boolean>()
         val callback = object : TaskCallback {

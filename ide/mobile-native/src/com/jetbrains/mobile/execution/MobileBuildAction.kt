@@ -1,6 +1,5 @@
 package com.jetbrains.mobile.execution
 
-import com.intellij.execution.ExecutionTargetManager
 import com.intellij.execution.RunManager
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.icons.AllIcons
@@ -19,11 +18,7 @@ class MobileBuildAction : CidrBuildTargetAction(true, MobileBundle.message("buil
         selectedRunConfiguration(project) != null
 
     override fun createContext(project: Project, dataContext: DataContext): ProjectTaskContext =
-        MobileProjectTaskRunner.Context(
-            dataContext,
-            selectedRunConfiguration(project)!!,
-            ExecutionTargetManager.getActiveTarget(project) as Device
-        )
+        ProjectTaskContext(dataContext, selectedRunConfiguration(project)!!)
 
     override fun getBuildableElements(project: Project): List<ProjectModelBuildableElement> {
         if (selectedRunConfiguration(project) == null) return emptyList()
