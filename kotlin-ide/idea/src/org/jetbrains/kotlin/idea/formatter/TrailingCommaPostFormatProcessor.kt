@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.formatter
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
@@ -51,7 +50,6 @@ private class TrailingCommaPostFormatVisitor(private val settings: CodeStyleSett
 
     private fun processCommaOwner(trailingCommaContext: TrailingCommaContext) {
         val ktElement = trailingCommaContext.ktElement
-        if (!postFormatIsEnable(ktElement)) return
 
         val lastElementOrComma = trailingCommaOrLastElement(ktElement) ?: return
         updatePsi(ktElement) {
@@ -78,13 +76,11 @@ private class TrailingCommaPostFormatVisitor(private val settings: CodeStyleSett
     }
 
     private fun updatePsi(element: KtElement, block: () -> Unit) {
-        element.putUserData(IS_INSIDE, true)
         val oldLength = element.parent.textLength
         block()
 
-        val resultElement = CodeStyleManager.getInstance(element.project).reformat(element)
+        val resultElement = CodeStyleManager.getInstance(element.project).reformat(element, true)
         myPostProcessor.updateResultRange(oldLength, resultElement.parent.textLength)
-        element.putUserData(IS_INSIDE, false)
     }
 
     private fun correctCommaPosition(parent: KtElement) {
@@ -112,8 +108,6 @@ private class TrailingCommaPostFormatVisitor(private val settings: CodeStyleSett
 
     companion object {
         private val LOG = Logger.getInstance(TrailingCommaVisitor::class.java)
-        private val IS_INSIDE = Key.create<Boolean>("TrailingCommaPostFormat")
-        private fun postFormatIsEnable(source: PsiElement): Boolean = source.getUserData(IS_INSIDE) != true
     }
 }
 
