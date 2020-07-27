@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.getExpectedTypePredicate
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithReceivers
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
@@ -387,6 +388,7 @@ private fun suggestParameterType(
                 val callElement = resolvedCall!!.call.callElement
                 val dataFlowInfo = bindingContext.getDataFlowInfoAfter(callElement)
 
+                @OptIn(FrontendInternals::class)
                 val dataFlowValueFactory = callElement.getResolutionFacade().frontendService<DataFlowValueFactory>()
                 val possibleTypes = dataFlowInfo.getCollectedTypes(
                     dataFlowValueFactory.createDataFlowValueForStableReceiver(receiverToExtract),

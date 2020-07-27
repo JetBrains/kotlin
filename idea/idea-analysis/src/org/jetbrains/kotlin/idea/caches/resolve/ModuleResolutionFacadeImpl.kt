@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.container.getService
 import org.jetbrains.kotlin.container.tryGetService
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -67,6 +68,7 @@ internal class ModuleResolutionFacadeImpl(
             }
         }
 
+        @OptIn(FrontendInternals::class)
         val resolveElementCache = getFrontendService(elements.first(), ResolveElementCache::class.java)
         return runWithCancellationCheck {
             resolveElementCache.resolveToElements(elements, bodyResolveMode)
@@ -95,16 +97,19 @@ internal class ModuleResolutionFacadeImpl(
             }
         }
 
+    @FrontendInternals
     override fun <T : Any> getFrontendService(serviceClass: Class<T>): T = getFrontendService(moduleInfo, serviceClass)
 
     override fun <T : Any> getIdeService(serviceClass: Class<T>): T {
         return projectFacade.resolverForModuleInfo(moduleInfo).componentProvider.create(serviceClass)
     }
 
+    @FrontendInternals
     override fun <T : Any> getFrontendService(element: PsiElement, serviceClass: Class<T>): T {
         return projectFacade.resolverForElement(element).componentProvider.getService(serviceClass)
     }
 
+    @FrontendInternals
     override fun <T : Any> tryGetFrontendService(element: PsiElement, serviceClass: Class<T>): T? {
         return projectFacade.resolverForElement(element).componentProvider.tryGetService(serviceClass)
     }
@@ -113,6 +118,7 @@ internal class ModuleResolutionFacadeImpl(
         return projectFacade.resolverForModuleInfo(ideaModuleInfo).componentProvider.getService(serviceClass)
     }
 
+    @FrontendInternals
     override fun <T : Any> getFrontendService(moduleDescriptor: ModuleDescriptor, serviceClass: Class<T>): T {
         return projectFacade.resolverForDescriptor(moduleDescriptor).componentProvider.getService(serviceClass)
     }

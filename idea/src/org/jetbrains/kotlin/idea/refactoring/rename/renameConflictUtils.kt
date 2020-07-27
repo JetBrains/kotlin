@@ -11,6 +11,7 @@ import com.intellij.refactoring.util.MoveRenameUsageInfo
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewUtil
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -153,6 +154,8 @@ internal fun checkRedeclarations(
         is PropertyDescriptor,
         is FunctionDescriptor,
         is ClassifierDescriptor -> {
+
+            @OptIn(FrontendInternals::class)
             val typeSpecificityComparator = resolutionFacade.getFrontendService(descriptor.module, TypeSpecificityComparator::class.java)
             OverloadChecker(typeSpecificityComparator)
         }

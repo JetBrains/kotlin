@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.util
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
@@ -96,6 +97,7 @@ class ShadowedDeclarationsFilter(
 
     private fun packageName(descriptor: DeclarationDescriptor) = descriptor.importableFqName?.parent()
 
+    @OptIn(FrontendInternals::class)
     private fun <TDescriptor : DeclarationDescriptor> filterEqualSignatureGroup(
         descriptors: Collection<TDescriptor>,
         descriptorsToImport: Collection<TDescriptor> = emptyList()

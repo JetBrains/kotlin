@@ -23,6 +23,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -201,11 +202,13 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
         }
     }
 
+    @OptIn(FrontendInternals::class)
     private fun KtDotQualifiedExpression.isFloatingPointNumberEquals(): Boolean {
         val resolvedCall = resolveToCall() ?: return false
-        val context = analyze(BodyResolveMode.PARTIAL)
+        val resolutionFacade = getResolutionFacade()
+        val context = analyze(resolutionFacade, BodyResolveMode.PARTIAL)
         val declarationDescriptor = containingDeclarationForPseudocode?.resolveToDescriptorIfAny()
-        val dataFlowValueFactory = getResolutionFacade().getFrontendService(DataFlowValueFactory::class.java)
+        val dataFlowValueFactory = resolutionFacade.getFrontendService(DataFlowValueFactory::class.java)
         val defaultType: (KotlinType, Set<KotlinType>) -> KotlinType = { givenType, stableTypes -> stableTypes.firstOrNull() ?: givenType }
         val receiverType = resolvedCall.getReceiverExpression()?.getKotlinTypeWithPossibleSmartCastToFP(
             context, declarationDescriptor, languageVersionSettings, dataFlowValueFactory, defaultType

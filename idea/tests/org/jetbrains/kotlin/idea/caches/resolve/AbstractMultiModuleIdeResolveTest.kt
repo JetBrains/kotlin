@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.checkers.utils.DiagnosticsRenderingConfiguration
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromTextFile
 import org.jetbrains.kotlin.idea.project.KotlinMultiplatformAnalysisModeComponent
 import org.jetbrains.kotlin.idea.resolve.frontendService
@@ -70,6 +71,7 @@ abstract class AbstractMultiModuleIdeResolveTest : AbstractMultiModuleTest() {
         return testSourcePath.toFile()
     }
 
+    @OptIn(FrontendInternals::class)
     protected open fun checkFile(file: KtFile, expectedFile: File) {
         val resolutionFacade = file.getResolutionFacade()
         val (bindingContext, moduleDescriptor) = resolutionFacade.analyzeWithAllCompilerChecks(listOf(file))

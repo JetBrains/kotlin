@@ -10,6 +10,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -44,7 +45,10 @@ class ExtractableSubstringInfo(
 
         val tempContext = expr.analyzeInContext(scope, template)
         val trace = DelegatingBindingTrace(tempContext, "Evaluate '$literal'")
+
+        @OptIn(FrontendInternals::class)
         val languageVersionSettings = facade.getFrontendService(LanguageVersionSettings::class.java)
+
         val value = ConstantExpressionEvaluator(module, languageVersionSettings, facade.project).evaluateExpression(expr, trace)
         if (value == null || value.isError) return stringType
 
