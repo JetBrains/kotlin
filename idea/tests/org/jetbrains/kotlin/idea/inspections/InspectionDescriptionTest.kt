@@ -53,7 +53,7 @@ class InspectionDescriptionTest : LightPlatformTestCase() {
     private fun loadKotlinInspections(): List<InspectionToolWrapper<InspectionProfileEntry, InspectionEP>> {
         return InspectionToolRegistrar.getInstance().createTools().filter {
             it.extension.pluginDescriptor.pluginId == KotlinPluginUtil.KOTLIN_PLUGIN_ID
-        }
+        } as List<InspectionToolWrapper<InspectionProfileEntry, InspectionEP>>
     }
 
     private fun loadKotlinInspectionExtensions() =
@@ -110,8 +110,10 @@ class InspectionDescriptionTest : LightPlatformTestCase() {
                 checkValue(failMessages, toolName, "suppressId", ep.id, ep.getShortName(), tool.id)
                 checkValue(failMessages, toolName, "alternateId", ep.alternativeId, null, tool.alternativeID)
                 checkValue(failMessages, toolName, "shortName", ep.getShortName(), null, tool.shortName)
+                checkValue(failMessages, toolName, "runForWholeFile", null, "false", tool.runForWholeFile().toString())
             }
         }
+
         UsefulTestCase.assertEmpty(StringUtil.join(failMessages, "\n"), failMessages)
     }
 

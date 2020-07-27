@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.descriptors.accessors
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.highlighter.markers.LineMarkerInfos
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -47,8 +48,8 @@ class KotlinSuspendCallLineMarkerProvider : LineMarkerProvider {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? = null
 
     override fun collectSlowLineMarkers(
-        elements: MutableList<PsiElement>,
-        result: MutableCollection<LineMarkerInfo<*>>
+        elements: MutableList<out PsiElement>,
+        result: LineMarkerInfos
     ) {
         val markedLineNumbers = HashSet<Int>()
 
@@ -80,10 +81,11 @@ class KotlinSuspendCallLineMarkerProvider : LineMarkerProvider {
 }
 
 private fun KtExpression.isValidCandidateExpression(): Boolean {
+    if (this is KtParenthesizedExpression) return false
     if (this is KtOperationReferenceExpression || this is KtForExpression || this is KtProperty || this is KtNameReferenceExpression) return true
     val parent = parent
     if (parent is KtCallExpression && parent.calleeExpression == this) return true
-    if (this is KtCallExpression && this.calleeExpression is KtCallExpression) return true
+    if (this is KtCallExpression && (calleeExpression is KtCallExpression || calleeExpression is KtParenthesizedExpression)) return true
     return false
 }
 
