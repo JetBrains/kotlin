@@ -152,6 +152,8 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val implicitTypeRef = element("ImplicitTypeRef", TypeRef, typeRef)
     val composedSuperTypeRef = element("ComposedSuperTypeRef", TypeRef, typeRef)
 
+    val contractFunction = element("ContractFunction", Declaration, function, callableMemberDeclaration, contractDescriptionOwner, typeParametersOwner)
+
     val effectDeclaration = element("EffectDeclaration", Contracts)
 
     val contractDescription = element("ContractDescription", Contracts)

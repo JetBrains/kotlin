@@ -273,6 +273,14 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             openBuilder()
         }
 
+        builder(contractFunction) {
+            parents += functionBuilder
+            parents += typeParametersOwnerBuilder
+            defaultNull("body")
+            default("contractDescription", "FirEmptyContractDescription")
+            useTypes(emptyContractDescriptionType)
+        }
+
         builder(tryExpression) {
             default("calleeReference", "FirStubReference")
             useTypes(stubReferenceType)
