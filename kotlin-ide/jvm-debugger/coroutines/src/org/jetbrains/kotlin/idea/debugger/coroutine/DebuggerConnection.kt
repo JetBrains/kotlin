@@ -55,12 +55,12 @@ class DebuggerConnection(
     }
 
     private fun determineCoreVersionMode(kotlinxCoroutinesCore: String): CoroutineDebuggerMode {
-        val regex = Regex(""".+\Wkotlinx-coroutines-core-(.+)?\.jar""")
+        val regex = Regex(""".+\Wkotlinx-coroutines-core([\-a-z]+)(\d[\w\.\-]+)?\.jar""")
         val matchResult = regex.matchEntire(kotlinxCoroutinesCore) ?: return CoroutineDebuggerMode.DISABLED
         val versionToCompareTo = DefaultArtifactVersion("1.3.7-255")
 
-        val artifactVersion = DefaultArtifactVersion(matchResult.groupValues[1])
-        return if (artifactVersion >= versionToCompareTo)
+        val artifactVersion = DefaultArtifactVersion(matchResult.groupValues[2])
+        return if (artifactVersion > versionToCompareTo)
             CoroutineDebuggerMode.VERSION_1_3_8_AND_UP
         else
             CoroutineDebuggerMode.DISABLED
