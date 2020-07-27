@@ -171,8 +171,7 @@ open class Kotlin2JsPluginWrapper @Inject constructor(
 }
 
 open class KotlinJsPluginWrapper @Inject constructor(
-    fileResolver: FileResolver,
-    listenerRegistry: BuildEventsListenerRegistry
+    fileResolver: FileResolver
 ) : KotlinBasePluginWrapper(fileResolver) {
     override fun getPlugin(project: Project, kotlinGradleBuildServices: KotlinGradleBuildServices): Plugin<Project> =
         KotlinJsPlugin(kotlinPluginVersion)
