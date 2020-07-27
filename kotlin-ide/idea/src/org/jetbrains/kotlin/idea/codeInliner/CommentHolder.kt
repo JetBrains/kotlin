@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.util.isLineBreak
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.psiUtil.children
 import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
 import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
@@ -130,7 +131,7 @@ private fun PsiElement.addWhiteSpace(factory: KtPsiFactory, whiteSpaceText: Stri
 private fun addComment(factory: KtPsiFactory, commentNode: CommentHolder.CommentNode, target: PsiElement, before: Boolean) {
     val parent = target.parent
     val comment = factory.createComment(commentNode.comment)
-    addSiblingFunction(before)(parent, comment, target).updateWhiteSpaces(factory, commentNode)
+    addSiblingFunction(before && parent !is KtReturnExpression)(parent, comment, target).updateWhiteSpaces(factory, commentNode)
 }
 
 private fun PsiElement.updateWhiteSpaces(factory: KtPsiFactory, commentNode: CommentHolder.CommentNode) {

@@ -29,6 +29,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
+        @TestMetadata("CommentBetweenReturnAndExpression.kt")
+        public void testCommentBetweenReturnAndExpression() throws Exception {
+            runTest("testData/refactoring/inline/function/CommentBetweenReturnAndExpression.kt");
+        }
+
         @TestMetadata("EmptyFunction.kt")
         public void testEmptyFunction() throws Exception {
             runTest("testData/refactoring/inline/function/EmptyFunction.kt");
