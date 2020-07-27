@@ -9,6 +9,7 @@ import com.intellij.codeInspection.IntentionWrapper
 import com.intellij.codeInspection.LocalInspectionToolSession
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
+import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
@@ -28,8 +29,11 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.platform.oldFashionedDescription
 
 class OptionalExpectationInspection : AbstractKotlinInspection() {
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
-        classOrObjectVisitor(fun(classOrObject: KtClassOrObject) {
+    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
+        if (!isOnTheFly) { // This inspection reports only with INFORMATION severity. Such severity is prohibited in batch mode
+            return super.buildVisitor(holder, isOnTheFly, session)
+        }
+        return classOrObjectVisitor(fun(classOrObject: KtClassOrObject) {
             if (classOrObject !is KtClass || !classOrObject.isAnnotation()) return
             if (!classOrObject.hasExpectModifier()) return
 
@@ -69,4 +73,5 @@ class OptionalExpectationInspection : AbstractKotlinInspection() {
                 )
             }
         })
+    }
 }

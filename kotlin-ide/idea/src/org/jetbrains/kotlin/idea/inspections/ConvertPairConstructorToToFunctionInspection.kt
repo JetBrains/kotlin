@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 class ConvertPairConstructorToToFunctionInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
+        if (!isOnTheFly) { // This inspection reports only with INFORMATION severity. Such severity is prohibited in batch mode
+            return super.buildVisitor(holder, isOnTheFly)
+        }
         return callExpressionVisitor { expression ->
             if (expression.isPairConstructorCall()) {
                 holder.registerProblem(

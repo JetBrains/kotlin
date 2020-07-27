@@ -30,6 +30,9 @@ import java.util.*
 class ReplaceStringFormatWithLiteralInspection : AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
+        if (!isOnTheFly) { // This inspection reports only with INFORMATION severity. Such severity is prohibited in batch mode
+            return super.buildVisitor(holder, isOnTheFly)
+        }
         return callExpressionVisitor(fun(callExpression) {
             if (callExpression.calleeExpression?.text != "format") return
             val qualifiedExpression = callExpression.parent as? KtQualifiedExpression
