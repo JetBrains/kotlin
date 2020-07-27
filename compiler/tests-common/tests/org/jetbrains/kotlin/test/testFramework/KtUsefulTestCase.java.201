@@ -63,6 +63,8 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.testFramework.MockComponentManagerCreationTracer;
+import org.jetbrains.kotlin.types.AbstractTypeChecker;
+import org.jetbrains.kotlin.types.FlexibleTypeImpl;
 import org.junit.Assert;
 import org.junit.ComparisonFailure;
 
@@ -124,6 +126,13 @@ public abstract class KtUsefulTestCase extends TestCase {
         catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+        // -- KOTLIN ADDITIONAL START --
+
+        FlexibleTypeImpl.RUN_SLOW_ASSERTIONS = true;
+        AbstractTypeChecker.RUN_SLOW_ASSERTIONS = true;
+
+        // -- KOTLIN ADDITIONAL END --
     }
 
     /**
@@ -1075,8 +1084,7 @@ public abstract class KtUsefulTestCase extends TestCase {
 
             if (shouldOccur) {
                 wasThrown = true;
-                final String errorMessage = exceptionCase.getAssertionErrorMessage();
-                assertEquals(errorMessage, exceptionCase.getExpectedExceptionClass(), cause.getClass());
+                assertInstanceOf(cause, exceptionCase.getExpectedExceptionClass());
                 if (expectedErrorMsgPart != null) {
                     assertTrue(cause.getMessage(), cause.getMessage().contains(expectedErrorMsgPart));
                 }
@@ -1097,7 +1105,7 @@ public abstract class KtUsefulTestCase extends TestCase {
         }
         finally {
             if (shouldOccur && !wasThrown) {
-                fail(exceptionCase.getAssertionErrorMessage());
+                fail(exceptionCase.getExpectedExceptionClass().getName() + " must be thrown.");
             }
         }
     }

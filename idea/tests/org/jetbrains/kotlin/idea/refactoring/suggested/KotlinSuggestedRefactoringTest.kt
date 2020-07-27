@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,16 +10,18 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.command.executeCommand
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.refactoring.suggested.SuggestedRefactoringExecution
 import com.intellij.refactoring.suggested.BaseSuggestedRefactoringTest
+import com.intellij.refactoring.suggested.SuggestedRefactoringExecution
+import com.intellij.refactoring.suggested.SuggestedRefactoringProviderImpl
 import com.intellij.refactoring.suggested._suggestedChangeSignatureNewParameterValuesForTests
-import com.intellij.testFramework.LightProjectDescriptor
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.test.runTest
 
 class KotlinSuggestedRefactoringTest : BaseSuggestedRefactoringTest() {
     override val fileType: LanguageFileType
@@ -1344,7 +1346,7 @@ class KotlinSuggestedRefactoringTest : BaseSuggestedRefactoringTest() {
         )
     }
 
-    fun testAddParameterWithDefaultValue() {
+    fun testAddOptionalParameter() {
         doTestChangeSignature(
             """
                 interface I {
@@ -1374,7 +1376,7 @@ class KotlinSuggestedRefactoringTest : BaseSuggestedRefactoringTest() {
                     i.foo(1)
                 }
             """.trimIndent(),
-            "usages",
+            "implementations",
             {
                 myFixture.type(", p2: Int = 10")
             },
@@ -1413,7 +1415,7 @@ class KotlinSuggestedRefactoringTest : BaseSuggestedRefactoringTest() {
         )
     }
 
-    fun testReorderParameterWithDefaultValue() {
+    fun testReorderOptionalParameter() {
         doTestChangeSignature(
             """
                 interface I {
@@ -1541,6 +1543,40 @@ class KotlinSuggestedRefactoringTest : BaseSuggestedRefactoringTest() {
                   'StringToUnit' (modified)
             """.trimIndent()
         )
+    }
+
+    fun testNewParameterValueReferencesAnotherParameter() {
+        _suggestedChangeSignatureNewParameterValuesForTests = {
+            val declaration = SuggestedRefactoringProviderImpl.getInstance(project).state!!.declaration
+            val codeFragment = KtPsiFactory(project).createExpressionCodeFragment("p1 * p1", declaration)
+            SuggestedRefactoringExecution.NewParameterValue.Expression(codeFragment.getContentElement()!!)
+        }
+        doTestChangeSignature(
+            """
+                fun foo(p1: Int<caret>) {
+                }
+                
+                fun bar() {
+                    foo(1)
+                    foo(2)
+                }
+            """.trimIndent(),
+            """
+                fun foo(p1: Int, p2: Int<caret>) {
+                }
+                
+                fun bar() {
+                    foo(1, 1 * 1)
+                    foo(2, 2 * 2)
+                }
+            """.trimIndent(),
+            "usages",
+            { myFixture.type(", p2: Int") }
+        )
+    }
+
+    override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
+        runTest { super.runTestRunnable(testRunnable) }
     }
 
     private fun addImport(fqName: String) {

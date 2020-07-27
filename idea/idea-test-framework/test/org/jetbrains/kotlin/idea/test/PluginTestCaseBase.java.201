@@ -25,6 +25,7 @@ import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
+import com.intellij.testFramework.IdeaTestUtil;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
@@ -49,7 +50,7 @@ public class PluginTestCaseBase {
     @NotNull
     @TestOnly
     private static Sdk createMockJdk(@NotNull String name, String path) {
-        return ((JavaSdkImpl)JavaSdk.getInstance()).createMockJdk(name, path, false);
+        return IdeaTestUtil.createMockJdk(name, path, false);
     }
 
     @NotNull
@@ -94,6 +95,12 @@ public class PluginTestCaseBase {
     @NotNull
     public static Sdk addJdk(@NotNull Disposable disposable, @NotNull Function0<Sdk> getJdk) {
         Sdk jdk = getJdk.invoke();
+        Sdk[] allJdks = IjPlatformUtil.getProjectJdkTableSafe().getAllJdks();
+        for (Sdk existingJdk : allJdks) {
+            if (existingJdk == jdk) {
+                return existingJdk;
+            }
+        }
         ApplicationManager.getApplication().runWriteAction(() -> IjPlatformUtil.getProjectJdkTableSafe().addJdk(jdk, disposable));
         return jdk;
     }

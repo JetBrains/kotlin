@@ -463,6 +463,29 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         buildAllModules().assertSuccessful()
     }
 
+    fun testPureJavaProject() {
+        initProject(JVM_FULL_RUNTIME)
+
+        fun build() {
+            var someFilesCompiled = false
+
+            buildCustom(CanceledStatus.NULL, TestProjectBuilderLogger(), BuildResult()) {
+                project.setTestingContext(TestingContext(LookupTracker.DO_NOTHING, object : TestingBuildLogger {
+                    override fun compilingFiles(files: Collection<File>, allRemovedFilesFiles: Collection<File>) {
+                        someFilesCompiled = true
+                    }
+                }))
+            }
+
+            assertFalse("Kotlin builder should return early if there are no Kotlin files", someFilesCompiled)
+        }
+
+        build()
+
+        rename("${workDir}/src/Test.java", "Test1.java")
+        build()
+    }
+
     fun testKotlinJavaProject() {
         doTestWithRuntime()
     }
@@ -625,34 +648,6 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         result.assertSuccessful()
     }
 
-    /*
-     * Here we're checking that enabling inference in IDE doesn't affect compilation via JPS
-     *
-     * the following two tests are connected:
-     * - testKotlinProjectWithEnabledNewInferenceInIDE checks that project is compiled when new inference is enabled only in IDE
-     *   - this is done via project component
-     * - testKotlinProjectWithErrorsBecauseOfNewInference checks that project isn't compiled when new inference is enabled in the compiler
-     *
-     * So, if the former will fail => option affects JPS compilation, it's bad. Also, if the latter test fails => test is useless as it's
-     * compiled with new and old inference.
-     *
-     */
-    fun testKotlinProjectWithEnabledNewInferenceInIDE() {
-         doTest()
-    }
-
-    fun testKotlinProjectWithErrorsBecauseOfNewInference() {
-        initProject(JVM_MOCK_RUNTIME)
-        val module = myProject.modules.single()
-        val args = module.kotlinCompilerArguments
-        args.newInference = true
-        myProject.kotlinCommonCompilerArguments = args
-
-        val result = buildAllModules()
-        result.assertFailed()
-        result.checkErrors()
-    }
-
     private fun createKotlinJavaScriptLibraryArchive() {
         val jarFile = File(workDir, KOTLIN_JS_LIBRARY_JAR)
         try {
@@ -721,12 +716,12 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
 
             for (i in 0..classCount) {
                 val code = buildString {
-                    appendln("package foo")
-                    appendln("class Foo$i {")
+                    appendLine("package foo")
+                    appendLine("class Foo$i {")
                     for (j in 0..methodCount) {
-                        appendln("  fun get${j*j}(): Int = square($j)")
+                        appendLine("  fun get${j*j}(): Int = square($j)")
                     }
-                    appendln("}")
+                    appendLine("}")
 
                 }
                 File(srcDir, "Foo$i.kt").writeText(code)
@@ -1014,7 +1009,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         descriptor.setupProject()
 
         try {
-            val builder = IncProjectBuilder(descriptor, BuilderRegistry.getInstance(), this.myBuildParams, canceledStatus, null, true)
+            val builder = IncProjectBuilder(descriptor, BuilderRegistry.getInstance(), this.myBuildParams, canceledStatus, true)
             builder.addMessageHandler(buildResult)
             builder.build(scopeBuilder.build(), false)
         }
