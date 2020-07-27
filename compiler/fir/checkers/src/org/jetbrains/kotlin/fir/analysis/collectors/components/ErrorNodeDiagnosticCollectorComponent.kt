@@ -86,8 +86,9 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
             EnumAsSupertype -> FirErrors.ENUM_AS_SUPERTYPE
             RecursionInSupertypes -> FirErrors.RECURSION_IN_SUPERTYPES
             RecursionInImplicitTypes -> FirErrors.RECURSION_IN_IMPLICIT_TYPES
-            SuperNotAllowed -> FirErrors.SUPER_IS_NOT_AN_EXPRESSION
             Java -> FirErrors.ERROR_FROM_JAVA_RESOLUTION
+            SuperNotAllowed -> FirErrors.SUPER_IS_NOT_AN_EXPRESSION
+            WrongNumberOfTypeArguments -> FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS
             ExpressionRequired -> FirErrors.EXPRESSION_REQUIRED
             JumpOutsideLoop -> FirErrors.BREAK_OR_CONTINUE_OUTSIDE_A_LOOP
             NotLoopLabel -> FirErrors.NOT_A_LOOP_LABEL

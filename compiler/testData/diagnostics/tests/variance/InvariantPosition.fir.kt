@@ -43,5 +43,5 @@ interface Test<in I, out O, P> {
     var neOk32: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Inv<!>
     var neOk33: Inv<<!SYNTAX!><!>>
     var neOk34: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Inv<C><!>
-    var neOk35: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Inv<P, P><!>
+    var neOk35: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS, WRONG_NUMBER_OF_TYPE_ARGUMENTS, WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inv<P, P><!>
 }

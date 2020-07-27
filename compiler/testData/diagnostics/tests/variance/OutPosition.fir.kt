@@ -38,5 +38,5 @@ interface Test<in I, out O, P> {
     fun neOk32(): <!OTHER_ERROR!>Inv<!>
     fun neOk33(): Inv<<!SYNTAX!><!>>
     fun neOk34(): <!OTHER_ERROR!>Inv<C><!>
-    fun neOk35(): <!OTHER_ERROR!>Inv<P, P><!>
+    fun neOk35(): <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inv<P, P><!>
 }

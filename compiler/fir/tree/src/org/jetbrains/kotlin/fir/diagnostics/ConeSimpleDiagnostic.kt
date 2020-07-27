@@ -26,5 +26,6 @@ enum class DiagnosticKind {
     RecursionInImplicitTypes,
     Java,
     SuperNotAllowed,
+    WrongNumberOfTypeArguments,
     Other
 }
