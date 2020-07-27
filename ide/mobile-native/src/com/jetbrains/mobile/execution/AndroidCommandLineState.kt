@@ -28,7 +28,7 @@ abstract class AndroidCommandLineState(
     environment: ExecutionEnvironment
 ) : CommandLineState(environment) {
     protected val project = configuration.project
-    protected val device = environment.executionTarget as AndroidDevice
+    protected val device = configuration.executionTargets.filterIsInstance<AndroidDevice>().single()
     protected val apk = configuration.getProductBundle(device)
 
     override fun execute(executor: Executor, runner: ProgramRunner<*>): ExecutionResult {

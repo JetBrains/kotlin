@@ -59,7 +59,7 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
         MobileTestRunConfigurationEditor(project, ::isSuitable)
 
     override fun createLauncher(environment: ExecutionEnvironment): CidrLauncher =
-        AppleXCTestLauncher(this, environment, environment.executionTarget as AppleDevice)
+        AppleXCTestLauncher(this, environment, executionTargets.filterIsInstance<AppleDevice>().first())
 
     override fun writeExternal(element: Element) {
         super<MobileRunConfigurationBase>.writeExternal(element)
