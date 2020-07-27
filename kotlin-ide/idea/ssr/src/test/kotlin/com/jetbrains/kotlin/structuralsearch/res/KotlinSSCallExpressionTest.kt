@@ -31,6 +31,8 @@ class KotlinSSCallExpressionTest : KotlinSSResourceInspectionTest() {
 
     fun testFunCallDefaultArg() { doTest("a('_)") }
 
+    fun testFunCallDefaultArgValue() { doTest("a(0)") }
+
     fun testFunCallDefaultVararg() { doTest("a('_*)") }
 
     fun testFunCallDefaultArgMixed() { doTest("a('_{5,5})") }
