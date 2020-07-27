@@ -41,77 +41,7 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
     override fun applyTo(element: KtElement, editor: Editor?) {
         if (editor == null) throw IllegalArgumentException("This intention requires an editor")
         val expression = element.getTargetExpression(editor.caretModel.offset) ?: return
-        var isCommentBeneath = false
-        var isCommentInside = false
-        val psiFactory = KtPsiFactory(element)
-
-        val semicolon = element.getNextSiblingIgnoringWhitespaceAndComments()?.takeIf { it.node.elementType == KtTokens.SEMICOLON }
-        if (semicolon != null) {
-            val afterSemicolon = semicolon.getNextSiblingIgnoringWhitespace()
-            if (semicolon.getLineNumber() == afterSemicolon?.getLineNumber())
-                semicolon.replace(psiFactory.createNewLine())
-            else
-                semicolon.delete()
-        }
-
-        if (element is KtIfExpression) {
-            // Check if a comment is actually underneath (\n) the expression
-            val allElements = element.siblings(withItself = false).filterIsInstance<PsiElement>()
-            val sibling = allElements.firstOrNull { it is PsiComment }
-            if (sibling is PsiComment) {
-                // Check if \n before first received comment sibling
-                // if false, the normal procedure of adding braces occurs.
-                isCommentBeneath =
-                    sibling.prevSibling is PsiWhiteSpace &&
-                            sibling.prevSibling.textContains('\n') &&
-                            (sibling.prevSibling.prevSibling is PsiComment || sibling.prevSibling.prevSibling is PsiElement)
-            }
-        }
-
-        // Check for nested if/else
-        if (element is KtIfExpression && expression.isInSingleLine() && element.`else` != null &&
-            element.parent.nextSibling is PsiWhiteSpace &&
-            element.parent.nextSibling.nextSibling is PsiComment
-        ) {
-            isCommentInside = true
-        }
-
-        val nextComment = when {
-            element is KtDoWhileExpression -> null // bound to the closing while
-            element is KtIfExpression && expression === element.then && element.`else` != null -> null // bound to else
-            else -> element.getNextSiblingIgnoringWhitespace().takeIf {
-                it is PsiComment && it.getLineNumber() == element.getLineNumber(start = false)
-            }
-        }
-
-        val saver = when {
-            isCommentInside -> {
-                CommentSaver(element.parent.nextSibling.nextSibling)
-            }
-            else -> if (nextComment == null) CommentSaver(element) else CommentSaver(PsiChildRange(element, nextComment))
-        }
-
-        if (isCommentInside) {
-            element.parent.nextSibling.nextSibling.delete()
-        }
-
-        element.allChildren.filterIsInstance<PsiComment>().toList().forEach {
-            it.delete()
-        }
-        nextComment?.delete()
-
-        val result = expression.replace(psiFactory.createSingleStatementBlock(expression))
-
-        when (element) {
-            is KtDoWhileExpression ->
-                // remove new line between '}' and while
-                (element.body?.parent?.nextSibling as? PsiWhiteSpace)?.delete()
-            is KtIfExpression ->
-                (result?.parent?.nextSibling as? PsiWhiteSpace)?.delete()
-        }
-
-        // Check for single line expression with comment beneath.
-        saver.restore(result, isCommentBeneath, isCommentInside, forceAdjustIndent = false)
+        addBraces(element, expression)
     }
 
     private fun KtElement.getTargetExpression(caretLocation: Int): KtExpression? {
@@ -129,6 +59,82 @@ class AddBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class.ja
             is KtLoopExpression -> body
             is KtWhenEntry -> expression
             else -> null
+        }
+    }
+
+    companion object {
+        fun addBraces(element: KtElement, expression: KtExpression) {
+            var isCommentBeneath = false
+            var isCommentInside = false
+            val psiFactory = KtPsiFactory(element)
+
+            val semicolon = element.getNextSiblingIgnoringWhitespaceAndComments()?.takeIf { it.node.elementType == KtTokens.SEMICOLON }
+            if (semicolon != null) {
+                val afterSemicolon = semicolon.getNextSiblingIgnoringWhitespace()
+                if (semicolon.getLineNumber() == afterSemicolon?.getLineNumber())
+                    semicolon.replace(psiFactory.createNewLine())
+                else
+                    semicolon.delete()
+            }
+
+            if (element is KtIfExpression) {
+                // Check if a comment is actually underneath (\n) the expression
+                val allElements = element.siblings(withItself = false).filterIsInstance<PsiElement>()
+                val sibling = allElements.firstOrNull { it is PsiComment }
+                if (sibling is PsiComment) {
+                    // Check if \n before first received comment sibling
+                    // if false, the normal procedure of adding braces occurs.
+                    isCommentBeneath =
+                        sibling.prevSibling is PsiWhiteSpace &&
+                                sibling.prevSibling.textContains('\n') &&
+                                (sibling.prevSibling.prevSibling is PsiComment || sibling.prevSibling.prevSibling is PsiElement)
+                }
+            }
+
+            // Check for nested if/else
+            if (element is KtIfExpression && expression.isInSingleLine() && element.`else` != null &&
+                element.parent.nextSibling is PsiWhiteSpace &&
+                element.parent.nextSibling.nextSibling is PsiComment
+            ) {
+                isCommentInside = true
+            }
+
+            val nextComment = when {
+                element is KtDoWhileExpression -> null // bound to the closing while
+                element is KtIfExpression && expression === element.then && element.`else` != null -> null // bound to else
+                else -> element.getNextSiblingIgnoringWhitespace().takeIf {
+                    it is PsiComment && it.getLineNumber() == element.getLineNumber(start = false)
+                }
+            }
+
+            val saver = when {
+                isCommentInside -> {
+                    CommentSaver(element.parent.nextSibling.nextSibling)
+                }
+                else -> if (nextComment == null) CommentSaver(element) else CommentSaver(PsiChildRange(element, nextComment))
+            }
+
+            if (isCommentInside) {
+                element.parent.nextSibling.nextSibling.delete()
+            }
+
+            element.allChildren.filterIsInstance<PsiComment>().toList().forEach {
+                it.delete()
+            }
+            nextComment?.delete()
+
+            val result = expression.replace(psiFactory.createSingleStatementBlock(expression))
+
+            when (element) {
+                is KtDoWhileExpression ->
+                    // remove new line between '}' and while
+                    (element.body?.parent?.nextSibling as? PsiWhiteSpace)?.delete()
+                is KtIfExpression ->
+                    (result?.parent?.nextSibling as? PsiWhiteSpace)?.delete()
+            }
+
+            // Check for single line expression with comment beneath.
+            saver.restore(result, isCommentBeneath, isCommentInside, forceAdjustIndent = false)
         }
     }
 }

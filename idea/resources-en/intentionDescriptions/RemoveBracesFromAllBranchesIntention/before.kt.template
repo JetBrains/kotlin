@@ -1,0 +1,5 @@
+if (b) {
+    println(1)
+} else {
+    println(2)
+}
