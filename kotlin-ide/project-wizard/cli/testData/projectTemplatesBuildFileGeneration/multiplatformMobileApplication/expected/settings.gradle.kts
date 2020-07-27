@@ -19,5 +19,5 @@ pluginManagement {
 rootProject.name = "multiplatformMobileApplication"
 
 
-include(":shared")
 include(":androidApp")
+include(":shared")

@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin
 
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
@@ -11,6 +16,7 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildFileIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.RepositoryIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.withIrs
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.ModuleConfigurator
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.inContextOfModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
@@ -129,13 +135,21 @@ class KotlinPlugin(context: Context) : Plugin(context) {
             }
         }
 
+        val createResourceDirectories by booleanSetting("Generate Resource Folders", GenerationPhase.PROJECT_GENERATION) {
+            defaultValue = value(true)
+        }
+
         val createSourcesetDirectories by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
             runAfter(KotlinPlugin.createModules)
             withAction {
                 fun Path.createKotlinAndResourceDirectories(moduleConfigurator: ModuleConfigurator) =
                     with(service<FileSystemWizardService>()) {
                         createDirectory(this@createKotlinAndResourceDirectories / moduleConfigurator.kotlinDirectoryName) andThen
-                                createDirectory(this@createKotlinAndResourceDirectories / moduleConfigurator.resourcesDirectoryName)
+                                if (createResourceDirectories.settingValue) {
+                                    createDirectory(this@createKotlinAndResourceDirectories / moduleConfigurator.resourcesDirectoryName)
+                                } else {
+                                    UNIT_SUCCESS
+                                }
                     }
 
                 forEachModule { moduleIR ->
@@ -165,6 +179,7 @@ class KotlinPlugin(context: Context) : Plugin(context) {
         listOf(
             projectKind,
             modules,
+            createResourceDirectories,
         )
 
     override val pipelineTasks: List<PipelineTask> =

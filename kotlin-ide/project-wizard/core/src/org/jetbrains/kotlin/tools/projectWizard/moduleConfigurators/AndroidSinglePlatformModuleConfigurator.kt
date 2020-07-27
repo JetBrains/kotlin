@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.irsList
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repositories
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.settings.javaPackage
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
@@ -96,7 +93,9 @@ object AndroidSinglePlatformModuleConfigurator :
         module: Module,
         modulePath: Path
     ): TaskResult<Unit> = computeM {
-        val sharedModule = configurationData.allModules.firstOrNull { it.configurator == MppModuleConfigurator }
+        val sharedModule = module.dependencies
+            .map { if (it is ModuleReference.ByModule) it.module else null }
+            .firstOrNull { it?.configurator == MppModuleConfigurator }
 
         val javaPackage = module.javaPackage(configurationData.pomIr)
         val sharedPackage = sharedModule?.javaPackage(configurationData.pomIr)
