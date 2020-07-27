@@ -38,17 +38,21 @@ import org.jetbrains.plugins.gradle.tooling.util.DependencyResolver;
 import org.jetbrains.plugins.gradle.tooling.util.ModuleComponentIdentifierImpl;
 import org.jetbrains.plugins.gradle.tooling.util.SourceSetCachedFinder;
 import org.jetbrains.plugins.gradle.tooling.util.resolve.deprecated.DeprecatedDependencyResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.*;
 
 import static java.util.Collections.*;
-import static org.codehaus.groovy.runtime.StringGroovyMethods.capitalize;
 
 /**
  * @author Vladislav.Soroka
  */
 public class DependencyResolverImpl implements DependencyResolver {
+
+  private static final Logger LOG = LoggerFactory.getLogger(DependencyResolverImpl.class);
+
   private static final boolean IS_NEW_DEPENDENCY_RESOLUTION_APPLICABLE =
     GradleVersion.current().getBaseVersion().compareTo(GradleVersion.version("4.5")) >= 0;
 
@@ -171,15 +175,17 @@ public class DependencyResolverImpl implements DependencyResolver {
   }
 
   private FileCollection getCompileClasspath(SourceSet sourceSet) {
-    final String sourceSetCompileTaskPrefix = sourceSet.getName() == "main" ? "" : sourceSet.getName();
-    final String compileTaskName = "compile" + capitalize((CharSequence)sourceSetCompileTaskPrefix) + "Java";
-
+    final String compileTaskName = sourceSet.getCompileJavaTaskName();
     Task compileTask = myProject.getTasks().findByName(compileTaskName);
     if (compileTask instanceof AbstractCompile) {
       try {
         return ((AbstractCompile)compileTask).getClasspath();
       } catch (Exception e) {
-        // ignore
+        LOG.warn("Error obtaining compile classpath for java compilation task for [" +
+                 sourceSet.getName() +
+                 "] in project [" +
+                 myProject.getPath() +
+                 "]", e);
       }
     }
     return sourceSet.getCompileClasspath();
