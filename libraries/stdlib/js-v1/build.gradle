@@ -324,20 +324,25 @@ artifacts {
     }
 }
 
-signing {
-    sign configurations.publishedArtifacts
-}
+def signingEnabled = !project.hasProperty('prebuiltJar')
+if (signingEnabled) {
+    signing {
+        sign configurations.publishedArtifacts
+    }
 
-signPublishedArtifacts {
-    enabled signing.required
-}
+    signPublishedArtifacts {
+        enabled signing.required
+    }
 
-signPublishedArtifacts.signatures.forEach {
-    artifacts.add(configurations.publishedSignatures.name, it)
+    signPublishedArtifacts.signatures.forEach {
+        artifacts.add(configurations.publishedSignatures.name, it)
+    }
 }
 
 uploadArchives {
-    dependsOn(signPublishedArtifacts)
+    if (signingEnabled) {
+        dependsOn(signPublishedArtifacts)
+    }
     configuration = configurations.publishedArtifacts
 }
 
