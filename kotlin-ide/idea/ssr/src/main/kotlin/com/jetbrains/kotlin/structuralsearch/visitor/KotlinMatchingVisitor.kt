@@ -14,6 +14,8 @@ import com.jetbrains.kotlin.structuralsearch.getCommentText
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.fir.builder.toUnaryName
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.debugger.sequence.psi.resolveType
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.calleeName
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
@@ -31,6 +33,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor) : KtVisitorVoid() {
@@ -468,7 +471,37 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         ))
     }
 
+    private fun MutableList<KtValueArgument>.addDefaultArguments(parameters: List<KtParameter?>) {
+        if (parameters.isEmpty()) return
+        val params = parameters.toTypedArray()
+        var i = 0
+        while (i < size) {
+            val arg = get(i)
+            if (arg.isNamed()) {
+                params[parameters.indexOfFirst { it?.nameAsName == arg.getArgumentName()?.asName }] = null
+                i++
+            } else {
+                val curParam = params[i] ?: throw IllegalStateException(
+                    "Param can't be null at index $i in ${params.map { it?.text }}."
+                )
+                params[i] = null
+                if (curParam.isVarArg) {
+                    val varArgType = arg.getArgumentExpression()?.resolveType()
+                    var curArg: KtValueArgument? = arg
+                    while (varArgType == curArg?.getArgumentExpression()?.resolveType() || curArg?.isSpread == true) {
+                        i++
+                        curArg = getOrNull(i)
+
+                    }
+                } else i++
+            }
+        }
+        val psiFactory = KtPsiFactory(myMatchingVisitor.element)
+        params.filterNotNull().forEach { add(psiFactory.createArgument(it.defaultValue, it.nameAsName, reformat = false)) }
+    }
+
     private fun matchValueArguments(
+        parameters: List<KtParameter>,
         valueArgList: KtValueArgumentList?,
         otherValueArgList: KtValueArgumentList?,
         lambdaArgList: List<KtLambdaArgument>,
@@ -476,17 +509,15 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     ): Boolean {
         if (valueArgList != null) {
             val handler = getHandler(valueArgList)
-            if (otherValueArgList?.children?.isEmpty() != false
-                && handler is SubstitutionHandler
-                && handler.minOccurs == 0
-            ) {
+            val normalizedOtherArgs = otherValueArgList?.arguments?.toMutableList() ?: mutableListOf()
+            normalizedOtherArgs.addAll(otherLambdaArgList)
+            normalizedOtherArgs.addDefaultArguments(parameters)
+            if (normalizedOtherArgs.isEmpty() && handler is SubstitutionHandler && handler.minOccurs == 0) {
                 return myMatchingVisitor.matchSequentially(lambdaArgList, otherLambdaArgList)
             }
-            val args = valueArgList.arguments.toMutableList().apply { lambdaArgList.forEach { add(it) } }
-            val otherArgs = (otherValueArgList?.arguments?.toMutableList() ?: mutableListOf()).apply {
-                otherLambdaArgList.forEach { add(it) }
-            }
-            return matchValueArguments(args, otherArgs)
+            val normalizedArgs = valueArgList.arguments.toMutableList()
+            normalizedArgs.addAll(lambdaArgList)
+            return matchValueArguments(normalizedArgs, normalizedOtherArgs)
         }
         return matchValueArguments(lambdaArgList, otherLambdaArgList)
     }
@@ -544,19 +575,30 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         return true
     }
 
+    private fun resolveParameters(other: KtElement): List<KtParameter> = try {
+        other.resolveToCall()?.candidateDescriptor?.original?.valueParameters?.map {
+            it.source.getPsi() as KtParameter
+        } ?: emptyList()
+    } catch (e: Exception) {
+        emptyList()
+    }
+
     override fun visitCallExpression(expression: KtCallExpression) {
         val other = getTreeElementDepar<KtExpression>() ?: return
+        val parameters = resolveParameters(other)
         myMatchingVisitor.result = when (other) {
             is KtCallExpression -> {
                 myMatchingVisitor.match(expression.calleeExpression, other.calleeExpression)
                         && myMatchingVisitor.match(expression.typeArgumentList, other.typeArgumentList)
                         && matchValueArguments(
-                    expression.valueArgumentList, other.valueArgumentList, expression.lambdaArguments, other.lambdaArguments
+                    parameters, expression.valueArgumentList, other.valueArgumentList,
+                    expression.lambdaArguments, other.lambdaArguments
                 )
             }
             is KtDotQualifiedExpression -> myMatchingVisitor.match(expression.calleeExpression, other.receiverExpression)
                     && other.calleeName == "${OperatorNameConventions.INVOKE}"
                     && matchValueArguments(
+                parameters,
                 expression.valueArgumentList, other.callExpression?.valueArgumentList,
                 expression.lambdaArguments, other.callExpression?.lambdaArguments ?: emptyList()
             )
@@ -620,9 +662,11 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitConstructorDelegationCall(call: KtConstructorDelegationCall) {
         val other = getTreeElementDepar<KtConstructorDelegationCall>() ?: return
+        val parameters = resolveParameters(other)
         myMatchingVisitor.result = myMatchingVisitor.match(call.calleeExpression, other.calleeExpression)
                 && myMatchingVisitor.match(call.typeArgumentList, other.typeArgumentList)
                 && matchValueArguments(
+            parameters,
             call.valueArgumentList, other.valueArgumentList, call.lambdaArguments, other.lambdaArguments
         )
     }
@@ -655,9 +699,11 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitSuperTypeCallEntry(call: KtSuperTypeCallEntry) {
         val other = getTreeElementDepar<KtSuperTypeCallEntry>() ?: return
+        val parameters = resolveParameters(other)
         myMatchingVisitor.result = myMatchingVisitor.match(call.calleeExpression, other.calleeExpression)
                 && myMatchingVisitor.match(call.typeArgumentList, other.typeArgumentList)
                 && matchValueArguments(
+            parameters,
             call.valueArgumentList, other.valueArgumentList, call.lambdaArguments, other.lambdaArguments
         )
     }
@@ -882,9 +928,11 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitAnnotationEntry(annotationEntry: KtAnnotationEntry) {
         val other = getTreeElementDepar<KtAnnotationEntry>() ?: return
+        val parameters = resolveParameters(other)
         myMatchingVisitor.result = myMatchingVisitor.match(annotationEntry.calleeExpression, other.calleeExpression)
                 && myMatchingVisitor.match(annotationEntry.typeArgumentList, other.typeArgumentList)
                 && matchValueArguments(
+            parameters,
             annotationEntry.valueArgumentList, other.valueArgumentList, annotationEntry.lambdaArguments, other.lambdaArguments
         )
                 && matchTextOrVariable(annotationEntry.useSiteTarget, other.useSiteTarget)

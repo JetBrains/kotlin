@@ -29,6 +29,16 @@ class KotlinSSCallExpressionTest : KotlinSSResourceInspectionTest() {
 
     fun testFunCall() { doTest("'_()") }
 
+    fun testFunCallDefaultArg() { doTest("a('_)") }
+
+    fun testFunCallDefaultVararg() { doTest("a('_*)") }
+
+    fun testFunCallDefaultArgMixed() { doTest("a('_{5,5})") }
+
+    fun testFunCallDefaultTrailingLambda() { doTest("a('_)") }
+
+    fun testFunCallNamedDefaultArg() { doTest("a('_, '_)") }
+
     fun testFunExtensionCall() { doTest("0.a()") }
 
     fun testFunLambdaArgCall() { doTest("a { println() }") }
