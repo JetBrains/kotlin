@@ -83,7 +83,7 @@ class KotlinLineMarkerProvider : LineMarkerProviderDescriptor() {
         return info
     }
 
-    override fun collectSlowLineMarkers(elements: List<PsiElement>, result: MutableCollection<LineMarkerInfo<*>>) {
+    override fun collectSlowLineMarkers(elements: List<PsiElement>, result: LineMarkerInfos) {
         if (elements.isEmpty()) return
         if (KotlinLineMarkerOptions.options.none { option -> option.isEnabled }) return
 
@@ -251,7 +251,7 @@ private fun isImplementsAndNotOverrides(
     return descriptor.modality != Modality.ABSTRACT && overriddenMembers.all { it.modality == Modality.ABSTRACT }
 }
 
-private fun collectSuperDeclarationMarkers(declaration: KtDeclaration, result: MutableCollection<LineMarkerInfo<*>>) {
+private fun collectSuperDeclarationMarkers(declaration: KtDeclaration, result: LineMarkerInfos) {
     if (!(KotlinLineMarkerOptions.implementingOption.isEnabled || KotlinLineMarkerOptions.overridingOption.isEnabled)) return
 
     assert(declaration is KtNamedFunction || declaration is KtProperty || declaration is KtParameter)
@@ -287,7 +287,7 @@ private fun collectSuperDeclarationMarkers(declaration: KtDeclaration, result: M
     result.add(lineMarkerInfo)
 }
 
-private fun collectInheritedClassMarker(element: KtClass, result: MutableCollection<LineMarkerInfo<*>>) {
+private fun collectInheritedClassMarker(element: KtClass, result: LineMarkerInfos) {
     if (!(KotlinLineMarkerOptions.implementedOption.isEnabled || KotlinLineMarkerOptions.overriddenOption.isEnabled)) return
 
     if (!element.isInheritable()) {
@@ -321,7 +321,7 @@ private fun collectInheritedClassMarker(element: KtClass, result: MutableCollect
 
 private fun collectOverriddenPropertyAccessors(
     properties: Collection<KtNamedDeclaration>,
-    result: MutableCollection<LineMarkerInfo<*>>
+    result: LineMarkerInfos
 ) {
     if (!(KotlinLineMarkerOptions.implementedOption.isEnabled || KotlinLineMarkerOptions.overriddenOption.isEnabled)) return
 
@@ -368,7 +368,7 @@ private val KtNamedDeclaration.expectOrActualAnchor
 
 private fun collectMultiplatformMarkers(
     declaration: KtNamedDeclaration,
-    result: MutableCollection<LineMarkerInfo<*>>
+    result: LineMarkerInfos
 ) {
     if (KotlinLineMarkerOptions.actualOption.isEnabled) {
         if (declaration.isExpectDeclaration()) {
@@ -460,7 +460,7 @@ internal fun KtDeclaration.findMarkerBoundDeclarations(): Sequence<KtNamedDeclar
 
 private fun collectActualMarkers(
     declaration: KtNamedDeclaration,
-    result: MutableCollection<LineMarkerInfo<*>>
+    result: LineMarkerInfos
 ) {
     if (!KotlinLineMarkerOptions.actualOption.isEnabled) return
     if (declaration.requiresNoMarkers()) return
@@ -491,7 +491,7 @@ private fun collectActualMarkers(
 
 private fun collectExpectedMarkers(
     declaration: KtNamedDeclaration,
-    result: MutableCollection<LineMarkerInfo<*>>
+    result: LineMarkerInfos
 ) {
     if (!KotlinLineMarkerOptions.expectOption.isEnabled) return
 
@@ -520,7 +520,7 @@ private fun collectExpectedMarkers(
     result.add(lineMarkerInfo)
 }
 
-private fun collectOverriddenFunctions(functions: Collection<KtNamedFunction>, result: MutableCollection<LineMarkerInfo<*>>) {
+private fun collectOverriddenFunctions(functions: Collection<KtNamedFunction>, result: LineMarkerInfos) {
     if (!(KotlinLineMarkerOptions.implementedOption.isEnabled || KotlinLineMarkerOptions.overriddenOption.isEnabled)) {
         return
     }
