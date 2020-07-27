@@ -218,7 +218,7 @@ fun cidrUpdatePluginsXml(
                 |           version="$version">
                 |        <idea-version since-build="$sinceBuild" until-build="$untilBuild"/>
                 |        <name>$name</name>
-                |        <description>$description</description>
+                |        <description><![CDATA[$description]]></description>
                 |        ${dependency?.let { "<depends>$it</depends>" } ?: ""}
                 |    </plugin>
                 """.trimMargin()
