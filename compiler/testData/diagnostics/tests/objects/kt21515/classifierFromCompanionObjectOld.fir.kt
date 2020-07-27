@@ -71,28 +71,28 @@ class C : O.B() {
     val n: FromCompanionC? = null
 
     // INVISIBLE: direct superclasses themselves.
-    val a: <!OTHER_ERROR, OTHER_ERROR!>A?<!> = null
-    val b: <!OTHER_ERROR, OTHER_ERROR!>B?<!> = null
+    val a: <!OTHER_ERROR!>A?<!> = null
+    val b: <!OTHER_ERROR!>B?<!> = null
 
     // DEPRECATED: Classifiers from companions of direct superclasses
-    val e: <!OTHER_ERROR, OTHER_ERROR!>FromCompanionA?<!> = null
-    val f: <!OTHER_ERROR, OTHER_ERROR!>FromCompanionB?<!> = null
+    val e: <!OTHER_ERROR!>FromCompanionA?<!> = null
+    val f: <!OTHER_ERROR!>FromCompanionB?<!> = null
 
     // INVISIBLE: "cousin" supertypes themselves
-    val g: <!OTHER_ERROR, OTHER_ERROR!>Alpha?<!> = null
-    val h: <!OTHER_ERROR, OTHER_ERROR!>Beta?<!> = null
-    val i: <!OTHER_ERROR, OTHER_ERROR!>Gamma?<!> = null
+    val g: <!OTHER_ERROR!>Alpha?<!> = null
+    val h: <!OTHER_ERROR!>Beta?<!> = null
+    val i: <!OTHER_ERROR!>Gamma?<!> = null
 
     // DEPRECATED: classifiers from "cousin" superclasses
-    val k: <!OTHER_ERROR, OTHER_ERROR!>FromAlpha?<!> = null
-    val l: <!OTHER_ERROR, OTHER_ERROR!>FromBeta?<!> = null
-    val m: <!OTHER_ERROR, OTHER_ERROR!>FromGamma?<!> = null
+    val k: <!OTHER_ERROR!>FromAlpha?<!> = null
+    val l: <!OTHER_ERROR!>FromBeta?<!> = null
+    val m: <!OTHER_ERROR!>FromGamma?<!> = null
 
     // INVISIBLE: We don't see classifiers from companions of "cousin" superclasses
-    val o: <!OTHER_ERROR, OTHER_ERROR!>FromCompanionAlpha?<!> = null
-    val p: <!OTHER_ERROR, OTHER_ERROR!>FromCompanionBeta?<!> = null
-    val q: <!OTHER_ERROR, OTHER_ERROR!>FromCompanionGamma?<!> = null
+    val o: <!OTHER_ERROR!>FromCompanionAlpha?<!> = null
+    val p: <!OTHER_ERROR!>FromCompanionBeta?<!> = null
+    val q: <!OTHER_ERROR!>FromCompanionGamma?<!> = null
 
     // DEPRECATED: Classifiers from supertypes of our own companion
-    val r: <!OTHER_ERROR, OTHER_ERROR!>FromDelta?<!> = null
+    val r: <!OTHER_ERROR!>FromDelta?<!> = null
 }

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory0
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind.*
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
@@ -30,6 +31,10 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
     }
 
     override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: CheckerContext) {
+        if (data.containingDeclarations.lastOrNull() is FirDefaultPropertyAccessor) {
+            // It always uses the same type ref as the corresponding property
+            return
+        }
         val source = errorTypeRef.source ?: return
         runCheck { reportFirDiagnostic(errorTypeRef.diagnostic, source, it) }
     }

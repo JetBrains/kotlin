@@ -34,7 +34,7 @@ annotation class Ann8(val p1: Array<String>,
                       val p4: Array<Ann1>)
 
 annotation class Ann9(
-        val error: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Unresolved<!> = <!UNRESOLVED_REFERENCE!>Unresolved<!>.<!UNRESOLVED_REFERENCE!>VALUE<!>
+        val error: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Unresolved<!> = <!UNRESOLVED_REFERENCE!>Unresolved<!>.<!UNRESOLVED_REFERENCE!>VALUE<!>
 )
 
 

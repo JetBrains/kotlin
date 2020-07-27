@@ -1,7 +1,7 @@
 package rest
 
 abstract class Foo<T> {
-    abstract val x: <!TYPE_ARGUMENTS_NOT_ALLOWED, TYPE_ARGUMENTS_NOT_ALLOWED!>T<Int><!>
+    abstract val x: <!TYPE_ARGUMENTS_NOT_ALLOWED!>T<Int><!>
 
     abstract fun foo(): <!TYPE_ARGUMENTS_NOT_ALLOWED!>T<String><!>
 }

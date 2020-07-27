@@ -7,9 +7,9 @@ enum class Color {
     }
 }
 
-class MyColor(val x: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Color.RED<!>, y: <!OTHER_ERROR!>Color.RED<!>) : <!OTHER_ERROR!>Color.RED<!> {
+class MyColor(val x: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Color.RED<!>, y: <!OTHER_ERROR!>Color.RED<!>) : <!OTHER_ERROR!>Color.RED<!> {
 
-    var z: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Color.RED<!> = Color.RED
+    var z: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Color.RED<!> = Color.RED
     set(arg: Color.RED) { z = arg }
 
     fun foo(arg: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Color.RED<!>): <!OTHER_ERROR!>Color.RED<!> = arg

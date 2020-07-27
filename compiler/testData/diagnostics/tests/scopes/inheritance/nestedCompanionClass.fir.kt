@@ -7,14 +7,14 @@ open class A {
 }
 
 class C: A() {
-    val b: <!OTHER_ERROR, OTHER_ERROR!>B<!> = null!!
+    val b: <!OTHER_ERROR!>B<!> = null!!
 
     init {
         <!UNRESOLVED_REFERENCE!>B<!>()
     }
 
     object O {
-        val b: <!OTHER_ERROR, OTHER_ERROR!>B<!> = null!!
+        val b: <!OTHER_ERROR!>B<!> = null!!
 
         init {
             <!UNRESOLVED_REFERENCE!>B<!>()
@@ -22,7 +22,7 @@ class C: A() {
     }
 
     class K {
-        val b: <!OTHER_ERROR, OTHER_ERROR!>B<!> = null!!
+        val b: <!OTHER_ERROR!>B<!> = null!!
 
         init {
             <!UNRESOLVED_REFERENCE!>B<!>()
@@ -30,7 +30,7 @@ class C: A() {
     }
 
     inner class I {
-        val b: <!OTHER_ERROR, OTHER_ERROR!>B<!> = null!!
+        val b: <!OTHER_ERROR!>B<!> = null!!
 
         init {
             <!UNRESOLVED_REFERENCE!>B<!>()

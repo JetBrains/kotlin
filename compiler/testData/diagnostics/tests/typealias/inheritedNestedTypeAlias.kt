@@ -16,6 +16,6 @@ class Derived : Base<Int>() {
     val x1: InnerCell = InnerCell(42)
     val x2: Base<Int>.InnerCell = InnerCell(42)
 
-    val test1: <!OTHER_ERROR, OTHER_ERROR!>CT<!> = Cell(42)
+    val test1: <!OTHER_ERROR!>CT<!> = Cell(42)
     val test2: Base<Int>.CT = Cell(42)
 }
