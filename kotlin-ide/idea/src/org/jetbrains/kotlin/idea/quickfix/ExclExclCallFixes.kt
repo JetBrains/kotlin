@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.UNSAFE_CALL
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
@@ -146,6 +147,7 @@ class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boo
                     context[BindingContext.EXPRESSION_TYPE_INFO, targetElement]?.let {
                         val type = it.type
 
+                        @OptIn(FrontendInternals::class)
                         val dataFlowValueFactory = targetElement.getResolutionFacade().frontendService<DataFlowValueFactory>()
 
                         if (type != null) {

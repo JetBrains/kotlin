@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.codeInsight
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
@@ -71,6 +72,7 @@ class KotlinExpressionTypeProviderDescriptorsImpl : KotlinExpressionTypeProvider
 
         val result = expressionType?.let { typeRenderer.renderType(it) } ?: return KotlinBundle.message("type.provider.unknown.type")
 
+        @OptIn(FrontendInternals::class)
         val dataFlowValueFactory = element.getResolutionFacade().frontendService<DataFlowValueFactory>()
         val dataFlowValue =
             dataFlowValueFactory.createDataFlowValue(element, expressionType, bindingContext, element.findModuleDescriptor())

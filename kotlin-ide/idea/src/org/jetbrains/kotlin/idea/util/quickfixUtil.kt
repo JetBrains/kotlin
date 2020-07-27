@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.util
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
@@ -58,6 +59,8 @@ fun getDataFlowAwareTypes(
 ): Collection<KotlinType> {
     if (originalType == null) return emptyList()
     val dataFlowInfo = bindingContext.getDataFlowInfoAfter(expression)
+
+    @OptIn(FrontendInternals::class)
     val dataFlowValueFactory = expression.getResolutionFacade().frontendService<DataFlowValueFactory>()
     val expressionType = bindingContext.getType(expression) ?: return listOf(originalType)
     val dataFlowValue = dataFlowValueFactory.createDataFlowValue(

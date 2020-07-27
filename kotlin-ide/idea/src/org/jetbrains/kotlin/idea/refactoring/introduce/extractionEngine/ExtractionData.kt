@@ -24,6 +24,7 @@ import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -183,6 +184,7 @@ data class ExtractionData(
     }
 
     private fun getPossibleTypes(expression: KtExpression, resolvedCall: ResolvedCall<*>?, context: BindingContext): Set<KotlinType> {
+        @OptIn(FrontendInternals::class)
         val dataFlowValueFactory = expression.getResolutionFacade().frontendService<DataFlowValueFactory>()
         val dataFlowInfo = context.getDataFlowInfoAfter(expression)
 

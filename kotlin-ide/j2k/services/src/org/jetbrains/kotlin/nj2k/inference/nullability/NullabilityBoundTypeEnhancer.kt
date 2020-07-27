@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.nj2k.inference.nullability
 
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
@@ -95,6 +96,7 @@ class NullabilityBoundTypeEnhancer(private val resolutionFacade: ResolutionFacad
         val bindingContext = analyze(resolutionFacade)
         val type = getType(bindingContext) ?: return null
 
+        @OptIn(FrontendInternals::class)
         val dataFlowValue = resolutionFacade.frontendService<DataFlowValueFactory>()
             .createDataFlowValue(this, type, bindingContext, resolutionFacade.moduleDescriptor)
         val dataFlowInfo = bindingContext[BindingContext.EXPRESSION_TYPE_INFO, this]?.dataFlowInfo ?: return null

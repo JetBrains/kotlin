@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.core
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.analysis.computeTypeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -100,6 +101,7 @@ fun KtImportDirective.targetDescriptors(resolutionFacade: ResolutionFacade = thi
     return nameExpression.mainReference.resolveToDescriptors(resolutionFacade.analyze(nameExpression))
 }
 
+@OptIn(FrontendInternals::class)
 fun Call.resolveCandidates(
     bindingContext: BindingContext,
     resolutionFacade: ResolutionFacade,

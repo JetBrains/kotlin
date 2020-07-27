@@ -16,6 +16,7 @@ import com.intellij.ui.EditorTextField
 import org.intellij.lang.regexp.RegExpFileType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -64,7 +65,8 @@ class PlatformExtensionReceiverOfInlineInspection : AbstractKotlinInspection() {
                     return
                 }
 
-                val context = expression.analyze(BodyResolveMode.PARTIAL)
+                val resolutionFacade = expression.getResolutionFacade()
+                val context = expression.analyze(resolutionFacade, BodyResolveMode.PARTIAL)
                 val resolvedCall = expression.getResolvedCall(context) ?: return
                 val extensionReceiverType = resolvedCall.extensionReceiver?.type ?: return
                 if (!extensionReceiverType.isNullabilityFlexible()) return
@@ -72,7 +74,9 @@ class PlatformExtensionReceiverOfInlineInspection : AbstractKotlinInspection() {
                 if (!descriptor.isInline || descriptor.extensionReceiverParameter?.type?.isNullable() == true) return
 
                 val receiverExpression = expression.receiverExpression
-                val dataFlowValueFactory = receiverExpression.getResolutionFacade().getFrontendService(DataFlowValueFactory::class.java)
+
+                @OptIn(FrontendInternals::class)
+                val dataFlowValueFactory = resolutionFacade.getFrontendService(DataFlowValueFactory::class.java)
                 val dataFlow = dataFlowValueFactory.createDataFlowValue(receiverExpression, extensionReceiverType, context, descriptor)
                 val stableNullability = context.getDataFlowInfoBefore(receiverExpression).getStableNullability(dataFlow)
                 if (!stableNullability.canBeNull()) return

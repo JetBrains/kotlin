@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.quickfix.replaceWith
 import com.intellij.openapi.diagnostic.ControlFlowException
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInline
@@ -38,6 +39,7 @@ import java.util.*
 
 data class ReplaceWith(val pattern: String, val imports: List<String>, val replaceInWholeProject: Boolean)
 
+@OptIn(FrontendInternals::class)
 object ReplaceWithAnnotationAnalyzer {
     fun analyzeCallableReplacement(
         annotation: ReplaceWith,

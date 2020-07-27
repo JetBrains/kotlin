@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -249,6 +250,7 @@ fun CallTypeAndReceiver<*, *>.receiverTypesWithIndex(
     stableSmartCastsOnly: Boolean,
     withImplicitReceiversWhenExplicitPresent: Boolean = false
 ): List<ReceiverType>? {
+    @OptIn(FrontendInternals::class)
     val languageVersionSettings = resolutionFacade.frontendService<LanguageVersionSettings>()
 
     val receiverExpression: KtExpression?
@@ -352,6 +354,7 @@ fun CallTypeAndReceiver<*, *>.receiverTypesWithIndex(
     return result
 }
 
+@OptIn(FrontendInternals::class)
 private fun receiverValueTypes(
     receiverValue: ReceiverValue,
     dataFlowInfo: DataFlowInfo,
