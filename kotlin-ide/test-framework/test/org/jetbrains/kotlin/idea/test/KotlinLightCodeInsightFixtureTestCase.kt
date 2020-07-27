@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.test
 
 import com.intellij.application.options.CodeStyle
+import com.intellij.codeInsight.daemon.impl.EditorTracker
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.actionSystem.ActionPlaces
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -94,7 +95,7 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
         VfsRootAccess.allowRootAccess(myFixture.testRootDisposable, KotlinRoot.DIR.path)
 
-        editorTrackerProjectOpened(project)
+        EditorTracker.getInstance(project)
 
         if (!isFirPlugin) {
             invalidateLibraryCache(project)
@@ -127,9 +128,7 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
     protected fun getProjectDescriptorFromAnnotation(): LightProjectDescriptor {
         val testMethod = this::class.java.getDeclaredMethod(name)
-        val platformId = testMethod.getAnnotation(ProjectDescriptorKind::class.java)?.value
-
-        return when (platformId) {
+        return when (testMethod.getAnnotation(ProjectDescriptorKind::class.java)?.value) {
             JDK_AND_MULTIPLATFORM_STDLIB_WITH_SOURCES -> KotlinJdkAndMultiplatformStdlibDescriptor.JDK_AND_MULTIPLATFORM_STDLIB_WITH_SOURCES
 
             KOTLIN_JVM_WITH_STDLIB_SOURCES -> ProjectDescriptorWithStdlibSources.INSTANCE

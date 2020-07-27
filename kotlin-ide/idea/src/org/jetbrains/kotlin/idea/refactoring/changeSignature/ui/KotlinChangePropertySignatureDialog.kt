@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.ui
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.ComboBox
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.ui.RefactoringDialog
@@ -33,6 +34,7 @@ class KotlinChangePropertySignatureDialog(
     private val visibilityCombo = ComboBox(
         arrayOf(Visibilities.INTERNAL, Visibilities.PRIVATE, Visibilities.PROTECTED, Visibilities.PUBLIC)
     )
+
     private val nameField = EditorTextField(methodDescriptor.name)
     private var returnTypeField: EditorTextField by Delegates.notNull()
     private var receiverTypeCheckBox: JCheckBox? = null

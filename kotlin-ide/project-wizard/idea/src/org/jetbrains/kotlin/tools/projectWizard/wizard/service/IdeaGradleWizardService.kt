@@ -19,14 +19,13 @@ import java.nio.file.Path
 // FIX ME WHEN BUNCH 201 REMOVED
 class IdeaGradleWizardService(private val project: Project) : ProjectImportingWizardService,
                                                               IdeaWizardService {
-    override fun isSuitableFor(buildSystemType: BuildSystemType): Boolean =
-            buildSystemType.isGradle
+    override fun isSuitableFor(buildSystemType: BuildSystemType): Boolean = buildSystemType.isGradle
 
     override fun importProject(
-            reader: Reader,
-            path: Path,
-            modulesIrs: List<ModuleIR>,
-            buildSystem: BuildSystemType
+        reader: Reader,
+        path: Path,
+        modulesIrs: List<ModuleIR>,
+        buildSystem: BuildSystemType
     ): TaskResult<Unit> {
         withGradleWrapperEnabled {
             linkAndRefreshGradleProject(path.toString(), project)

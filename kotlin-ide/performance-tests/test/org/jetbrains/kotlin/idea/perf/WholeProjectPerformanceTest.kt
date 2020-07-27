@@ -26,10 +26,10 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.impl.search.IndexPatternBuilder
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
 import com.intellij.psi.xml.XmlFileNSInfoProvider
+import com.intellij.testFramework.TestApplicationManager
 import com.intellij.xml.XmlSchemaProvider
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.perf.util.TeamCity
-import org.jetbrains.kotlin.idea.testFramework.TestApplicationManager
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import java.io.File
 
@@ -42,7 +42,6 @@ abstract class WholeProjectPerformanceTest : DaemonAnalyzerTestCase(), WholeProj
     override fun isStressTest(): Boolean = false
 
     override fun setUp() {
-
         TestApplicationManager.getInstance()
         // to prevent leaked SDKs: 1.8 and Kotlin SDK
         runWriteAction {

@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.idea.slicer
 
-import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
+import com.intellij.slicer.SliceUsage
+import com.intellij.util.Processor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
@@ -34,7 +35,7 @@ data class KotlinSliceAnalysisMode(val behaviourStack: List<Behaviour>, val inli
         get() = behaviourStack.lastOrNull()
 
     interface Behaviour {
-        fun processUsages(element: KtElement, parent: KotlinSliceUsage, uniqueProcessor: SliceUsageProcessor)
+        fun processUsages(element: KtElement, parent: KotlinSliceUsage, uniqueProcessor: Processor<in SliceUsage>)
 
         val slicePresentationPrefix: String
         val testPresentationPrefix: String

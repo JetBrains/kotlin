@@ -44,9 +44,9 @@ import com.intellij.util.ui.table.JBTableRow
 import com.intellij.util.ui.table.JBTableRowEditor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor.Kind
 import org.jetbrains.kotlin.idea.refactoring.validateElement
@@ -332,12 +332,15 @@ class KotlinChangeSignatureDialog(
         if (myMethod.canChangeReturnType() == MethodDescriptor.ReadWriteOption.ReadWrite &&
             myReturnTypeCodeFragment.getTypeInfo(isCovariant = true, forPreview = false, reanalyse = true).type == null
         ) {
-            if (showOkCancelDialog(
+            if (Messages.showOkCancelDialog(
                     myProject,
-                    KotlinBundle.message("message.text.return.type.cannot.be.resolved",
+                    KotlinBundle.message(
+                        "message.text.return.type.cannot.be.resolved",
                         myReturnTypeCodeFragment?.text.toString()
                     ),
                     RefactoringBundle.message("changeSignature.refactoring.name"),
+                    Messages.getOkButton(),
+                    Messages.getCancelButton(),
                     Messages.getWarningIcon()
                 ) != Messages.OK
             ) {
@@ -351,13 +354,16 @@ class KotlinChangeSignatureDialog(
                     KotlinBundle.message("text.parameter.0", item.parameter.name)
                 else
                     KotlinBundle.message("text.receiver")
-                if (showOkCancelDialog(
+                if (Messages.showOkCancelDialog(
                         myProject,
-                        KotlinBundle.message("message.type.for.cannot.be.resolved",
+                        KotlinBundle.message(
+                            "message.type.for.cannot.be.resolved",
                             item.typeCodeFragment.text,
                             paramText
                         ),
                         RefactoringBundle.message("changeSignature.refactoring.name"),
+                        Messages.getOkButton(),
+                        Messages.getCancelButton(),
                         Messages.getWarningIcon()
                     ) != Messages.OK
                 ) {
@@ -384,7 +390,12 @@ class KotlinChangeSignatureDialog(
                 throw ConfigurationException(KotlinBundle.message("parameter.name.is.invalid", parameterName))
             }
 
-            (item.typeCodeFragment as? KtTypeCodeFragment)?.validateElement(KotlinBundle.message("parameter.type.is.invalid", item.typeCodeFragment.text))
+            (item.typeCodeFragment as? KtTypeCodeFragment)?.validateElement(
+                KotlinBundle.message(
+                    "parameter.type.is.invalid",
+                    item.typeCodeFragment.text
+                )
+            )
         }
     }
 

@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.idea.completion.test.handlers
 
 import com.intellij.codeInsight.completion.CompletionType
-import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.codeInsight.lookup.LookupElementPresentation
-import com.intellij.codeInsight.lookup.LookupEvent
-import com.intellij.codeInsight.lookup.LookupManager
+import com.intellij.codeInsight.lookup.*
 import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.openapi.project.Project
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
@@ -68,7 +65,7 @@ abstract class CompletionHandlerTestBase : KotlinLightCodeInsightFixtureTestCase
                 }
                 "\\n" -> "\n"
                 "\\t" -> "\t"
-                else -> char.single().toString() ?: error("Incorrect completion char: \"$char\"")
+                else -> char.single().toString()
             }
         }
 
@@ -136,7 +133,8 @@ abstract class CompletionHandlerTestBase : KotlinLightCodeInsightFixtureTestCase
             if (lookup.currentItem != item) { // do not touch selection if not changed - important for char filter tests
                 lookup.currentItem = item
             }
-            lookup.setFocusedFocusDegree()
+
+            lookup.lookupFocusDegree = LookupFocusDegree.FOCUSED
             if (LookupEvent.isSpecialCompletionChar(completionChar)) {
                 lookup.finishLookup(completionChar)
             } else {

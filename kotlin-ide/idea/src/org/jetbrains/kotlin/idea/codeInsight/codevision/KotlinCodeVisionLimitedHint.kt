@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.codevision
 
+import com.intellij.codeInsight.hints.settings.InlayHintsConfigurable
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction
 import com.intellij.internal.statistic.eventLog.FeatureUsageData
 import com.intellij.openapi.editor.Editor
@@ -126,6 +127,6 @@ class SettingsHint : KotlinCodeVisionHint(SETTINGS_FORMAT) {
     override fun onClick(editor: Editor, element: PsiElement, event: MouseEvent?) {
         val project = element.project
         logUsageStatistics(project, FUS_GROUP_ID, SETTING_CLICKED_EVENT_ID)
-        CodeVisionInlayHintsConfigurable.showSettingsDialogForLanguage(project, element.language)
+        InlayHintsConfigurable.showSettingsDialogForLanguage(project, element.language)
     }
 }

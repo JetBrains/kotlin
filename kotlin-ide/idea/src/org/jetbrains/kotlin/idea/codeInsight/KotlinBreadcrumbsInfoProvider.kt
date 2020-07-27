@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
+import com.intellij.ide.ui.UISettings
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.psi.ElementDescriptionUtil
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.util.RefactoringDescriptionLocation
+import com.intellij.ui.breadcrumbs.BreadcrumbsProvider
 import com.intellij.usageView.UsageViewShortNameLocation
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.idea.KotlinBundle
@@ -23,8 +25,9 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.calls.callUtil.getValueArgumentsInParentheses
 import kotlin.reflect.KClass
 
-// FIX ME WHEN BUNCH 201 REMOVED
-class KotlinBreadcrumbsInfoProvider : BreadcrumbsProviderCompatBase() {
+class KotlinBreadcrumbsInfoProvider : BreadcrumbsProvider {
+    override fun isShownByDefault(): Boolean = !UISettings.instance.showMembersInNavigationBar
+
     private abstract class ElementHandler<TElement : KtElement>(val type: KClass<TElement>) {
         abstract fun elementInfo(element: TElement): String
         abstract fun elementTooltip(element: TElement): String
@@ -57,8 +60,7 @@ class KotlinBreadcrumbsInfoProvider : BreadcrumbsProviderCompatBase() {
             val label = lambdaExpression.labelText()
             val lambdaText = "$label{$ellipsis}"
 
-            val parent = unwrapped.parent
-            when (parent) {
+            when (val parent = unwrapped.parent) {
                 is KtLambdaArgument -> {
                     val callExpression = parent.parent as? KtCallExpression
                     val callName = callExpression?.getCallNameExpression()?.getReferencedName()
@@ -242,7 +244,7 @@ class KotlinBreadcrumbsInfoProvider : BreadcrumbsProviderCompatBase() {
             return (element.parent as KtIfExpression).condition
         }
 
-        override fun labelOwner(element: KtContainerNode) = null
+        override fun labelOwner(element: KtContainerNode): KtExpression? = null
 
         override fun elementInfo(element: KtContainerNode): String {
             return elseIfPrefix(element) + super.elementInfo(element)
@@ -334,7 +336,7 @@ class KotlinBreadcrumbsInfoProvider : BreadcrumbsProviderCompatBase() {
 
     private object WhenHandler : ConstructWithExpressionHandler<KtWhenExpression>("when", KtWhenExpression::class) {
         override fun extractExpression(element: KtWhenExpression) = element.subjectExpression
-        override fun labelOwner(element: KtWhenExpression) = null
+        override fun labelOwner(element: KtWhenExpression): KtExpression? = null
     }
 
     private object WhenEntryHandler : ElementHandler<KtExpression>(KtExpression::class) {

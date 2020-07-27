@@ -38,6 +38,7 @@ import com.intellij.psi.PsiReference
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.MethodReferencesSearch
 import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.usageView.UsageInfo
 import com.intellij.util.*
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.toLightMethods
@@ -117,7 +118,7 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
         factory: KotlinFindUsagesHandlerFactory
     ) : KotlinFindMemberUsagesHandler<KtNamedDeclaration>(propertyDeclaration, elementsToSearch, factory) {
 
-        override fun processElementUsages(element: PsiElement, processor: UsageInfoProcessor, options: FindUsagesOptions): Boolean {
+        override fun processElementUsages(element: PsiElement, processor: Processor<in UsageInfo>, options: FindUsagesOptions): Boolean {
 
             if (ApplicationManager.getApplication().isUnitTestMode ||
                 !isPropertyOfDataClass ||
@@ -215,12 +216,12 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
         }
     }
 
-    override fun createSearcher(element: PsiElement, processor: UsageInfoProcessor, options: FindUsagesOptions): Searcher {
+    override fun createSearcher(element: PsiElement, processor: Processor<in UsageInfo>, options: FindUsagesOptions): Searcher {
         return MySearcher(element, processor, options)
     }
 
     private inner class MySearcher(
-        element: PsiElement, processor: UsageInfoProcessor, options: FindUsagesOptions
+      element: PsiElement, processor: Processor<in UsageInfo>, options: FindUsagesOptions
     ) : Searcher(element, processor, options) {
 
         private val kotlinOptions = options as KotlinCallableFindUsagesOptions

@@ -25,7 +25,7 @@ abstract class KotlinHierarchyViewTestBase : KotlinLightCodeInsightFixtureTestCa
     ) {
         myFixture.configureByFiles(*fileNames)
         val expectedStructure = loadExpectedStructure()
-        doHierarchyTestCompat(hierarchyFixture, treeStructureComputable, expectedStructure)
+        HierarchyViewTestFixture.doHierarchyTest(treeStructureComputable.compute(), expectedStructure)
     }
 
     @Throws(IOException::class)

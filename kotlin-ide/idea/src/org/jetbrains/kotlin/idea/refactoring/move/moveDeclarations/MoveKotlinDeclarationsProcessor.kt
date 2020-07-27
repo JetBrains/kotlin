@@ -22,6 +22,7 @@ import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassHandler
 import com.intellij.refactoring.rename.RenameUtil
 import com.intellij.refactoring.util.NonCodeUsageInfo
 import com.intellij.refactoring.util.RefactoringUIUtil
+import com.intellij.refactoring.util.TextOccurrencesUtil
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewBundle
 import com.intellij.usageView.UsageViewDescriptor
@@ -224,8 +225,9 @@ class MoveKotlinDeclarationsProcessor(
                 val name = lightElement.getKotlinFqName()?.quoteIfNeeded()?.asString()
                 if (name != null) {
                     fun searchForKotlinNameUsages(results: ArrayList<UsageInfo>) {
-                        BunchedDeprecation.findNonCodeUsages(
+                        TextOccurrencesUtil.findNonCodeUsages(
                             lightElement,
+                            searchScope,
                             name,
                             descriptor.searchInCommentsAndStrings,
                             descriptor.searchInNonCode,
@@ -242,8 +244,9 @@ class MoveKotlinDeclarationsProcessor(
                             elementName
                         )
 
-                        BunchedDeprecation.findNonCodeUsages(
+                        TextOccurrencesUtil.findNonCodeUsages(
                             lightElement,
+                            searchScope,
                             oldFqNameWithFacade,
                             descriptor.searchInCommentsAndStrings,
                             descriptor.searchInNonCode,

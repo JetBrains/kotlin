@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.EditorFactory;
@@ -39,17 +38,11 @@ import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
 import org.jetbrains.kotlin.resolve.konan.diagnostics.ErrorsNative;
 
-import static org.jetbrains.kotlin.idea.TestResourceBundleKt.registerAdditionalResourceBundleInTests;
-
 public class PluginStartupActivity implements StartupActivity {
     private static final Logger LOG = Logger.getInstance(PluginStartupActivity.class);
 
     @Override
     public void runActivity(@NotNull Project project) {
-        if (ApplicationManager.getApplication().isUnitTestMode()) {
-            registerAdditionalResourceBundleInTests();
-        }
-
         StartupCompatKt.runActivity(project);
 
         initializeDiagnostics();

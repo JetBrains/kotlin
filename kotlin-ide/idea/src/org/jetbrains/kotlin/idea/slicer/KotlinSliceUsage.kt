@@ -27,7 +27,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.slicer.SliceAnalysisParams
 import com.intellij.slicer.SliceUsage
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
+import com.intellij.util.Processor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -98,7 +98,7 @@ open class KotlinSliceUsage : SliceUsage {
 
     override fun canBeLeaf() = element != null && mode == KotlinSliceAnalysisMode.Default
 
-    public override fun processUsagesFlownDownTo(element: PsiElement, uniqueProcessor: SliceUsageProcessor) {
+    public override fun processUsagesFlownDownTo(element: PsiElement, uniqueProcessor: Processor<in SliceUsage>) {
         val ktElement = element as? KtElement ?: return
         val behaviour = mode.currentBehaviour
         if (behaviour != null) {
@@ -108,7 +108,7 @@ open class KotlinSliceUsage : SliceUsage {
         }
     }
 
-    public override fun processUsagesFlownFromThe(element: PsiElement, uniqueProcessor: SliceUsageProcessor) {
+    public override fun processUsagesFlownFromThe(element: PsiElement, uniqueProcessor: Processor<in SliceUsage>) {
         val ktElement = element as? KtElement ?: return
         val behaviour = mode.currentBehaviour
         if (behaviour != null) {

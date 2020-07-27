@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.framework.detectLibraryKind
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import org.jetbrains.kotlin.idea.platform.tooling
+import org.jetbrains.kotlin.idea.util.application.getServiceSafe
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
@@ -325,7 +326,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         val directories = collectSourceDirectories(mavenProject)
 
         val toBeAdded = directories.map { it.second }.toSet()
-        val state = module.kotlinImporterComponent
+        val state = module.getServiceSafe<KotlinImporterComponent>()
 
         val isNonJvmModule = mavenProject
             .plugins

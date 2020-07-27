@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.slicer
 
 import com.intellij.slicer.SliceUsage
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
+import com.intellij.util.Processor
 
 interface SliceProducer {
     fun produce(usage: UsageInfo, mode: KotlinSliceAnalysisMode, parent: SliceUsage): Collection<SliceUsage>?
@@ -34,7 +34,7 @@ fun SliceProducer.produceAndProcess(
     sliceUsage: SliceUsage,
     mode: KotlinSliceAnalysisMode,
     parentUsage: SliceUsage,
-    processor: SliceUsageProcessor
+    processor: Processor<in SliceUsage>
 ): Boolean {
     val result = produce(sliceUsage.usageInfo, mode, parentUsage) ?: listOf(sliceUsage)
     for (usage in result) {

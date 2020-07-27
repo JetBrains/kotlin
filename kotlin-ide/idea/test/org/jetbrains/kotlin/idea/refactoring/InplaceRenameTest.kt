@@ -9,18 +9,17 @@ import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
-import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.rename.inplace.VariableInplaceRenameHandler
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil
 import junit.framework.TestCase
-import org.jetbrains.kotlin.idea.liveTemplates.setTemplateTestingCompat
 import org.jetbrains.kotlin.idea.refactoring.rename.KotlinMemberInplaceRenameHandler
 import org.jetbrains.kotlin.idea.refactoring.rename.KotlinVariableInplaceRenameHandler
 import org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinImplicitLambdaParameter
 import org.jetbrains.kotlin.idea.refactoring.rename.findElementForRename
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.util.slashedPath
@@ -201,23 +200,18 @@ class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
 
         val project = editor.project!!
 
-        setTemplateTestingCompat(project, testRootDisposable)
-
-        object : WriteCommandAction.Simple<Any>(project) {
-            override fun run() {
-                handler.invoke(project, editor, file, dataContext)
-            }
-        }.execute()
+        TemplateManagerImpl.setTemplateTesting(testRootDisposable)
+        project.executeWriteCommand("rename test") {
+            handler.invoke(project, editor, file, dataContext)
+        }
 
         var state = TemplateManagerImpl.getTemplateState(editor)
         assert(state != null)
         val range = state!!.currentVariableRange
         assert(range != null)
-        object : WriteCommandAction.Simple<Any>(project) {
-            override fun run() {
-                editor.document.replaceString(range!!.startOffset, range.endOffset, newName)
-            }
-        }.execute().throwException()
+        project.executeWriteCommand("replace string") {
+            editor.document.replaceString(range!!.startOffset, range.endOffset, newName)
+        }
 
         state = TemplateManagerImpl.getTemplateState(editor)
         assert(state != null)

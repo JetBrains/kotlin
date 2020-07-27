@@ -11,7 +11,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.util.parentOfType
+import com.intellij.slicer.SliceUsage
 import com.intellij.usageView.UsageInfo
+import com.intellij.util.Processor
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
@@ -24,7 +26,6 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
-import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingElement
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector
 import org.jetbrains.kotlin.idea.util.actualsForExpected
@@ -36,7 +37,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class OutflowSlicer(
     element: KtElement,
-    processor: SliceUsageProcessor,
+    processor: Processor<in SliceUsage>,
     parentUsage: KotlinSliceUsage
 ) : Slicer(element, processor, parentUsage) {
 
@@ -77,7 +78,7 @@ class OutflowSlicer(
                     is KtFunction -> {
                         processExtensionReceiverUsages(declaration, declaration.bodyExpression, mode)
                     }
-                    
+
                     is KtProperty -> {
                         //TODO: process only one of them or both depending on the usage type
                         processExtensionReceiverUsages(declaration, declaration.getter?.bodyExpression, mode)

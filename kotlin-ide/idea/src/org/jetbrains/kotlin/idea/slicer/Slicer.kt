@@ -12,7 +12,9 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.util.parentOfType
 import com.intellij.slicer.JavaSliceUsage
+import com.intellij.slicer.SliceUsage
 import com.intellij.usageView.UsageInfo
+import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
@@ -29,7 +31,6 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.getDeepestSuperDeclarations
 import org.jetbrains.kotlin.idea.findUsages.KotlinFunctionFindUsagesOptions
 import org.jetbrains.kotlin.idea.findUsages.KotlinPropertyFindUsagesOptions
-import org.jetbrains.kotlin.idea.findUsages.handlers.SliceUsageProcessor
 import org.jetbrains.kotlin.idea.findUsages.processAllExactUsages
 import org.jetbrains.kotlin.idea.findUsages.processAllUsages
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
@@ -54,7 +55,7 @@ import java.util.*
 
 abstract class Slicer(
     protected val element: KtElement,
-    protected val processor: SliceUsageProcessor,
+    protected val processor: Processor<in SliceUsage>,
     protected val parentUsage: KotlinSliceUsage
 ) {
     abstract fun processChildren(forcedExpressionMode: Boolean)
@@ -175,7 +176,7 @@ abstract class Slicer(
             val declaration = superDescriptor.toPsi() ?: continue
             when (declaration) {
                 is KtDeclaration -> {
-                    val usageProcessor: (UsageInfo) -> Unit = processor@ { usageInfo ->
+                    val usageProcessor: (UsageInfo) -> Unit = processor@{ usageInfo ->
                         val element = usageInfo.element ?: return@processor
                         if (element.parentOfType<PsiComment>() != null) return@processor
                         val sliceUsage = KotlinSliceUsage(element, parentUsage, mode, false)
