@@ -24849,6 +24849,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/varargs/assigningSingleElementsInNamedFormFunDeprecation_before.kt");
             }
 
+            @TestMetadata("inferredNullableArrayAsVararg.kt")
+            public void testInferredNullableArrayAsVararg() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/varargs/inferredNullableArrayAsVararg.kt");
+            }
+
             @TestMetadata("kt1781.kt")
             public void testKt1781() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/varargs/kt1781.kt");
