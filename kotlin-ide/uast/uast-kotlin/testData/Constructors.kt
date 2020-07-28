@@ -72,3 +72,10 @@ class AWithSecondaryInit {
     }
 
 }
+
+class AWithFieldInit(i: Int) {
+    val a: String
+    init {
+        a = i.toString()
+    }
+}
