@@ -11,7 +11,9 @@
  * DESCRIPTION: attempt to implement abstract members with invalid types
  */
 
+// FILE: TestCase.kt
 // TESTCASE NUMBER: 1
+package testPackCase1
 abstract class Base {
     abstract val a: CharSequence
     abstract var b: CharSequence
@@ -34,9 +36,16 @@ class Case1 : Base() {
 }
 
 
-/*
-* TESTCASE NUMBER: 2
-*/
+
+// FILE: TestCase.kt
+// TESTCASE NUMBER: 2
+package testPackCase2
+abstract class Base {
+    abstract val a: CharSequence
+    abstract var b: CharSequence
+
+    abstract fun foo(): CharSequence
+}
 
 class Case2(override val a: String, override var b: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>String<!>) : Base() {
     override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>CharSequence?<!> {
@@ -44,10 +53,16 @@ class Case2(override val a: String, override var b: <!VAR_TYPE_MISMATCH_ON_OVERR
     }
 }
 
-/*
-* TESTCASE NUMBER: 3
-* NOTE: abstract nested class members are not implemented
-*/
+// FILE: TestCase.kt
+// TESTCASE NUMBER: 3
+package testPackCase3
+abstract class Base {
+    abstract val a: CharSequence
+    abstract var b: CharSequence
+
+    abstract fun foo(): CharSequence
+}
+
 
 class Case3 {
     <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>class ImplBase1<!> : MainClass.Base1() {}

@@ -16,14 +16,16 @@
  */
 
 
-
+// FILE: TestCase1.kt
+// TESTCASE NUMBER: 1
+package testPackCase1
+import checkSubtype
 class NothingWrapper() {
     val data: Nothing = TODO()
 }
 
 class CustomClass() {}
 
-// TESTCASE NUMBER: 1
 fun case1() {
     val wrapper: NothingWrapper = NothingWrapper()
     checkSubtype<Any>(wrapper.data)
@@ -39,7 +41,16 @@ fun case1() {
     checkSubtype<CustomClass>(wrapper.data)
 }
 
+// FILE: TestCase2.kt
 // TESTCASE NUMBER: 2
+package testPackCase2
+import checkSubtype
+class NothingWrapper() {
+    val data: Nothing = TODO()
+}
+
+class CustomClass() {}
+
 fun case2(wrapper: NothingWrapper) {
     checkSubtype<MutableList<out Nothing>>(wrapper.data)
     checkSubtype<MutableList<in String>>(wrapper.data)
@@ -48,5 +59,4 @@ fun case2(wrapper: NothingWrapper) {
     checkSubtype<MutableList<Any?>>(wrapper.data)
 
     checkSubtype<String>(wrapper.data)
-
 }

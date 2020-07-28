@@ -13,6 +13,8 @@
  * HELPERS: checkType
  */
 
+// FILE: TestCases.kt
+
 // TESTCASE NUMBER: 1
 
 fun case1() {
@@ -59,7 +61,12 @@ interface `true`{}
 interface `false`{}
 
 
+// FILE: TestCase7.kt
 // TESTCASE NUMBER: 7
+package testPackCase7c
+
+interface `true`{}
+interface `false`{}
 
 fun case7() {
     class `true` : `false`{}

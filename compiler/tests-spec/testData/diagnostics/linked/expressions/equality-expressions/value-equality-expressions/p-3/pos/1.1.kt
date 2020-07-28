@@ -13,7 +13,6 @@
  * DESCRIPTION: Value equality expressions always have type kotlin.Boolean as does the equals method in kotlin.Any
  * HELPERS: checkType
  */
-data class A(val a: Boolean)
 
 
 // TESTCASE NUMBER: 1
@@ -22,11 +21,15 @@ fun case1() {
     x checkType { check<Boolean>() }
 }
 
+data class A(val a: Boolean)
+
 // TESTCASE NUMBER: 2
 fun case2() {
-    val x = A(false) == A(false)
+    val x = A1(false) == A1(false)
     x checkType { check<Boolean>() }
 }
+
+data class A1(val a: Boolean)
 
 // TESTCASE NUMBER: 3
 fun case3() {

@@ -15,6 +15,12 @@
  */
 
 
+// TESTCASE NUMBER: 1
+fun case1() {
+    var b = B(1)
+    b <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> 1
+}
+
 class B(var a: Int) {
     operator fun plus(value: Int): B {
         a= a + value
@@ -23,10 +29,4 @@ class B(var a: Int) {
     operator fun plusAssign(value: Int): Unit {
         a= a + value
     }
-}
-
-// TESTCASE NUMBER: 1
-fun case1() {
-    var b = B(1)
-    b <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> 1
 }
