@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.intentions.loopToCallChain.previousStatement
+import org.jetbrains.kotlin.idea.util.isUnitLiteral
 import org.jetbrains.kotlin.js.descriptorUtils.nameIfStandardType
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypesAndPredicate
@@ -39,7 +40,7 @@ class RedundantUnitExpressionInspection : AbstractKotlinInspection(), CleanupLoc
 
     companion object {
         fun isRedundantUnit(referenceExpression: KtReferenceExpression): Boolean {
-            if (!referenceExpression.isUnitLiteral()) return false
+            if (!referenceExpression.isUnitLiteral) return false
             val parent = referenceExpression.parent ?: return false
             if (parent is KtReturnExpression) {
                 val expectedReturnType = parent.expectedReturnType() ?: return false
@@ -49,7 +50,7 @@ class RedundantUnitExpressionInspection : AbstractKotlinInspection(), CleanupLoc
             if (parent is KtBlockExpression) {
                 if (referenceExpression == parent.lastBlockStatementOrThis()) {
                     val prev = referenceExpression.previousStatement() ?: return true
-                    if (prev.isUnitLiteral()) return true
+                    if (prev.isUnitLiteral) return true
                     val prevType = prev.analyze(BodyResolveMode.PARTIAL).getType(prev)
                     if (prevType != null) {
                         return prevType.isUnit()
@@ -71,9 +72,6 @@ class RedundantUnitExpressionInspection : AbstractKotlinInspection(), CleanupLoc
         }
     }
 }
-
-private fun KtExpression.isUnitLiteral(): Boolean =
-    KotlinBuiltIns.FQ_NAMES.unit.shortName() == (this as? KtNameReferenceExpression)?.getReferencedNameAsName()
 
 private fun KtReturnExpression.expectedReturnType(): KotlinType? {
     val functionDescriptor = getTargetFunctionDescriptor(analyze()) ?: return null
