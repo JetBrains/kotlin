@@ -442,9 +442,19 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 runTest("testData/refactoring/inline/function/javaUsages/removeOverrideInChild.kt");
             }
 
+            @TestMetadata("removeOverrideInChildFromJava.kt")
+            public void testRemoveOverrideInChildFromJava() throws Exception {
+                runTest("testData/refactoring/inline/function/javaUsages/removeOverrideInChildFromJava.kt");
+            }
+
             @TestMetadata("usage.kt")
             public void testUsage() throws Exception {
                 runTest("testData/refactoring/inline/function/javaUsages/usage.kt");
+            }
+
+            @TestMetadata("usageFromJava.kt")
+            public void testUsageFromJava() throws Exception {
+                runTest("testData/refactoring/inline/function/javaUsages/usageFromJava.kt");
             }
 
             @TestMetadata("usageInImport.kt")

@@ -1,0 +1,41 @@
+open class B: A() {
+    open fun a() = Unit
+}
+
+open class B2: A() {
+    fun a() = Unit
+}
+
+class C : B() {
+    override fun a() = Unit
+}
+
+class C2 : B() {
+    override fun a() = Unit
+}
+
+interface KotlinInterface {
+    fun a()
+}
+
+open class B3: A(), KotlinInterface {
+    override fun a() = Unit
+}
+
+interface NextKotlinInterface : KotlinInterface
+
+open class B4: A(), NextKotlinInterface {
+    override fun a() = Unit
+}
+
+abstract class B5 : A() {
+    abstract fun a()
+}
+
+class C3 : B5() {
+    override fun a() = Unit
+}
+
+class B6 : A() {
+    final fun a() = Unit
+}
