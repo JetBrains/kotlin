@@ -94,11 +94,24 @@ object ConversionsRunner {
 
         val conversions = createConversions(context)
         for ((conversionIndex, conversion) in conversions.withIndex()) {
+
             val treeSequence = trees.asSequence().onEachIndexed { index, _ ->
-                updateProgress(conversionIndex, conversions.size, index, conversion::class.simpleName ?: "Converting...")
+                updateProgress(conversionIndex, conversions.size, index, conversion.description())
             }
 
             conversion.runConversion(treeSequence, context)
         }
     }
+
+    private fun Conversion.description(): String {
+        val conversionName = this::class.simpleName
+        val words = conversionName?.let { wordRegex.findAll(conversionName).map { it.value.decapitalize() }.toList() }
+        return when {
+            conversionName == null -> "Converting..."
+            conversionName.endsWith("Conversion") -> "Converting ${words!!.dropLast(1).joinToString(" ")}"
+            else -> words!!.joinToString(" ")
+        }
+    }
+
+    private val wordRegex = "[A-Z][a-z0-9]+".toRegex()
 }
