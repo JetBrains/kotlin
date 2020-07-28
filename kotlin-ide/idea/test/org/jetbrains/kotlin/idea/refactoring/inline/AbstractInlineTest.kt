@@ -13,7 +13,6 @@ import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.util.CommonRefactoringUtil
-import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -29,17 +28,18 @@ abstract class AbstractInlineTest : KotlinLightCodeInsightFixtureTestCase() {
         get() = myFixture
 
     protected fun doTest(unused: String) {
-        val mainFile = testDataFile()
+        val testDataFile = testDataFile()
         val afterFile = File(testDataPath, "${fileName()}.after")
 
-        val mainFileName = mainFile.name
+        val mainFileName = testDataFile.name
         val mainFileBaseName = FileUtil.getNameWithoutExtension(mainFileName)
-        val extraFiles = mainFile.parentFile.listFiles { _, name ->
+        val extraFiles = testDataFile.parentFile.listFiles { _, name ->
             name != mainFileName && name.startsWith("$mainFileBaseName.") && (name.endsWith(".kt") || name.endsWith(".java"))
         } ?: emptyArray()
 
-        val extraFilesToPsi = extraFiles.associateBy { fixture.configureByFile(it.name) }
-        val file = myFixture.configureByFile(fileName())
+        val allFiles = (extraFiles + testDataFile).associateBy { fixture.configureByFile(it.name) }
+        val fileWithCaret = allFiles.values.singleOrNull { "<caret>" in it.readText() } ?: error("Must have one <caret>")
+        val file = myFixture.configureByFile(fileWithCaret.name)
 
         withCustomCompilerOptions(file.text, project, module) {
             val afterFileExists = afterFile.exists()
@@ -58,10 +58,7 @@ abstract class AbstractInlineTest : KotlinLightCodeInsightFixtureTestCase() {
             if (handler != null) {
                 try {
                     runWriteAction { handler.inlineElement(myFixture.project, myFixture.editor, targetElement) }
-
-                    UsefulTestCase.assertEmpty(expectedErrors)
-                    KotlinTestUtils.assertEqualsToFile(afterFile, file.text)
-                    for ((extraPsiFile, extraFile) in extraFilesToPsi) {
+                    for ((extraPsiFile, extraFile) in allFiles) {
                         KotlinTestUtils.assertEqualsToFile(File("${extraFile.path}.after"), extraPsiFile.text)
                     }
                 } catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {
