@@ -5,9 +5,13 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.ArrayEqualityCanBeReplacedWithEquals
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.CanBeReplacedWithOperatorAssignmentChecker
 
 object ExtendedExpressionCheckers : ExpressionCheckers() {
+    override val expressionCheckers: List<FirBasicExpresionChecker> = listOf(
+        ArrayEqualityCanBeReplacedWithEquals
+    )
     override val variableAssignmentCheckers: List<FirVariableAssignmentChecker> = listOf(
         CanBeReplacedWithOperatorAssignmentChecker
     )
