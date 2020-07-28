@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nls
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.jvm.jvmName
 
-class ExternalSystemGroupConfigurable(private val project: Project) : BoundConfigurable(message("settings.build.tools.display.name")) {
+class ExternalSystemGroupConfigurable(private val project: Project) : BoundConfigurable(message("settings.build.tools.display.name"), "Settings_Build_Tools") {
 
   override fun createPanel() = panel {
     val settings = ExternalSystemProjectTrackerSettings.getInstance(project)
