@@ -306,7 +306,9 @@ class Fir2IrDeclarationStorage(
                         )
                     }
                 }
-                if (function !is FirAnonymousFunction && containingClass != null && !isStatic) {
+                // See [LocalDeclarationsLowering]: "local function must not have dispatch receiver."
+                val isLocal = function is FirSimpleFunction && function.isLocal
+                if (function !is FirAnonymousFunction && containingClass != null && !isStatic && !isLocal) {
                     dispatchReceiverParameter = declareThisReceiverParameter(
                         symbolTable,
                         thisType = containingClass.thisReceiver?.type ?: error("No this receiver"),
