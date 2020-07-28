@@ -1,11 +1,11 @@
 package androidx.compose.compiler.plugins.kotlin.analysis
 
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
 import androidx.compose.compiler.plugins.kotlin.newConfiguration
 import com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 
 class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
     override fun setUp() {
@@ -879,13 +879,13 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             @Composable fun Foo() {}
 
             val <!COMPOSABLE_EXPECTED!>y<!>: Any get() =
-            <!COMPOSABLE_INVOCATION!>state<!> { 1 }
+            <!COMPOSABLE_INVOCATION!>remember<!> { mutableStateOf(1) }
 
             fun App() {
                 val x = object {
                   val <!COMPOSABLE_EXPECTED!>a<!> get() =
-                  <!COMPOSABLE_INVOCATION!>state<!> { 2 }
-                  @Composable val c get() = state { 4 }
+                  <!COMPOSABLE_INVOCATION!>remember<!> { mutableStateOf(2) }
+                  @Composable val c get() = remember { mutableStateOf(4) }
                   @Composable fun bar() { Foo() }
                   fun <!COMPOSABLE_EXPECTED!>foo<!>() {
                     <!COMPOSABLE_INVOCATION!>Foo<!>()
@@ -893,8 +893,8 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
                 }
                 class Bar {
                   val <!COMPOSABLE_EXPECTED!>b<!> get() =
-                  <!COMPOSABLE_INVOCATION!>state<!> { 6 }
-                  @Composable val c get() = state { 7 }
+                  <!COMPOSABLE_INVOCATION!>remember<!> { mutableStateOf(6) }
+                  @Composable val c get() = remember { mutableStateOf(7) }
                 }
                 fun <!COMPOSABLE_EXPECTED!>Bam<!>() {
                     <!COMPOSABLE_INVOCATION!>Foo<!>()
@@ -915,16 +915,16 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
 
             @Composable fun App() {
                 val x = object {
-                  val <!COMPOSABLE_EXPECTED!>a<!> get() = <!COMPOSABLE_INVOCATION!>state<!> { 2 }
-                  @Composable val c get() = state { 4 }
+                  val <!COMPOSABLE_EXPECTED!>a<!> get() = <!COMPOSABLE_INVOCATION!>remember<!> { mutableStateOf(2) }
+                  @Composable val c get() = remember { mutableStateOf(4) }
                   fun <!COMPOSABLE_EXPECTED!>foo<!>() {
                     <!COMPOSABLE_INVOCATION!>Foo<!>()
                   }
                   @Composable fun bar() { Foo() }
                 }
                 class Bar {
-                  val <!COMPOSABLE_EXPECTED!>b<!> get() = <!COMPOSABLE_INVOCATION!>state<!> { 6 }
-                  @Composable val c get() = state { 7 }
+                  val <!COMPOSABLE_EXPECTED!>b<!> get() = <!COMPOSABLE_INVOCATION!>remember<!> { mutableStateOf(6) }
+                  @Composable val c get() = remember { mutableStateOf(7) }
                 }
                 fun <!COMPOSABLE_EXPECTED!>Bam<!>() {
                     <!COMPOSABLE_INVOCATION!>Foo<!>()
@@ -943,10 +943,10 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
 
             @Composable fun App() {
                 val x = object {
-                  val b = state { 3 }
+                  val b = remember { mutableStateOf(3) }
                 }
                 class Bar {
-                  val a = <!COMPOSABLE_INVOCATION!>state<!> { 5 }
+                  val a = <!COMPOSABLE_INVOCATION!>remember<!> { mutableStateOf(5) }
                 }
                 print(x)
             }

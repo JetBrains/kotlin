@@ -40,7 +40,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
 
             @Composable
             fun App() {
-                val cond = state { true }
+                val cond = remember { mutableStateOf(true) }
                 val text = if (cond.value) remember { "abc" } else remember { "def" }
                 Button(id=1, text=text, onClick={ cond.value = !cond.value })
             }
@@ -568,7 +568,7 @@ fun <T> B(foo: T, bar: String) { }
                     children()
                 }
             """,
-            "SimpleComposable(state=state { 0 })"
+            "SimpleComposable(state=remember { mutableStateOf(0) })"
         ).then { activity ->
             val button = activity.findViewById(42) as Button
             button.performClick()
@@ -592,7 +592,7 @@ fun <T> B(foo: T, bar: String) { }
                 )
             }
         """,
-            "SimpleComposable(state=state { 0 }, value=\"Value\")"
+            "SimpleComposable(state=remember { mutableStateOf(0) }, value=\"Value\")"
         ).then { activity ->
             val button = activity.findViewById(42) as Button
             button.performClick()
@@ -1062,7 +1062,7 @@ fun <T> B(foo: T, bar: String) { }
             @Composable
             fun SimpleComposable() {
                 a++
-                val c = state { 0 }
+                val c = remember { mutableStateOf(0) }
                 val d = remember(c.value) { b++; b }
                 val recompose = invalidate
                 Button(
@@ -1315,7 +1315,7 @@ fun <T> B(foo: T, bar: String) { }
 
             @Composable
             fun Main() {
-                var text = state { "$initialText" }
+                var text = remember { mutableStateOf("$initialText") }
                 Providers(TextAmbient provides text.value) {
                     LinearLayout {
                         ConsumesAmbientFromDefaultParameter()
@@ -1787,7 +1787,7 @@ fun <T> B(foo: T, bar: String) { }
 
                 @Composable
                 fun Counter() {
-                    var count = state { 0 }
+                    var count = remember { mutableStateOf(0) }
                     TextView(
                         text=("Count: " + count.value),
                         onClick={
@@ -1819,7 +1819,7 @@ fun <T> B(foo: T, bar: String) { }
 
                 @Composable
                 fun Counter() {
-                    var count = state { 0 }
+                    var count = remember { mutableStateOf(0) }
                     TextView(
                         text=("Count: " + count.value),
                         onClick={
@@ -1852,7 +1852,7 @@ fun <T> B(foo: T, bar: String) { }
 
                 @Composable
                 fun Counter(log: StringBuilder) {
-                    var count = state { 0 }
+                    var count = remember { mutableStateOf(0) }
                     onCommit {
                         log.append("a")
                     }
@@ -1902,7 +1902,7 @@ fun <T> B(foo: T, bar: String) { }
 
                 @Composable
                 fun Counter(log: StringBuilder) {
-                    var count = state { 0 }
+                    var count = remember { mutableStateOf(0) }
                     printer(log, "" + count.value)
                     TextView(
                         text=("Count: " + count.value),
@@ -2060,7 +2060,7 @@ fun <T> B(foo: T, bar: String) { }
 
             @Composable
             fun Reordering() {
-                val items = state { listOf(1, 2, 3, 4, 5) }
+                val items = remember { mutableStateOf(listOf(1, 2, 3, 4, 5)) }
 
                 LinearLayout(orientation=LinearLayout.VERTICAL) {
                     items.value.forEachIndexed { index, id ->
@@ -2081,7 +2081,7 @@ fun <T> B(foo: T, bar: String) { }
 
             @Composable
             private fun Item(id: Int, onMove: (Int) -> Unit) {
-                val count = state { 0 }
+                val count = remember { mutableStateOf(0) }
                 LinearLayout(orientation=LinearLayout.HORIZONTAL) {
                     TextView(id=(id+$tvId), text="id: ${'$'}id amt: ${'$'}{count.value}")
                     Button(id=(id+$btnIdAdd), text="+", onClick={ count.value++ })
@@ -2129,7 +2129,7 @@ fun <T> B(foo: T, bar: String) { }
             """
                 @Composable
                 fun SimpleComposable() {
-                    val count = state { 1 }
+                    val count = remember { mutableStateOf(1) }
                     Box {
                         repeat(count.value) {
                             Button(text="Increment", onClick={ count.value += 1 }, id=(41+it))
@@ -2185,7 +2185,7 @@ fun <T> B(foo: T, bar: String) { }
 
             @Composable
             private fun StatefulButton() {
-                val count = state { 0 }
+                val count = remember { mutableStateOf(0) }
                 Button(text="Clicked ${'$'}{count.value} times!", onClick={ count.value++ })
             }
             """,
