@@ -79,6 +79,10 @@ class ExpressionCheckersDiagnosticComponent(collector: AbstractDiagnosticCollect
         runCheck { checkers.expressionCheckers.check(getClassCall, data, it) }
     }
 
+    override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: CheckerContext) {
+        runCheck { checkers.expressionCheckers.check(equalityOperatorCall, data, it) }
+    }
+
     override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: CheckerContext) {
         runCheck { checkers.variableAssignmentCheckers.check(variableAssignment, data, it) }
     }
