@@ -20,6 +20,14 @@ class KotlinSSTypeFilterTest : KotlinSSResourceInspectionTest() {
     
     fun testNull() { doTest("'_('_:[exprtype(null)])") }
 
+    fun testArgs() { doTest("val '_:[exprtype(List<Int>)]") }
+
+    fun testFunctionType() { doTest("val '_:[exprtype( (String) -> Int )]") }
+
+    fun testFunctionType2() { doTest("val '_:[exprtype( (String, Int) -> Boolean )]") }
+
+    fun testFunctionType3() { doTest("val '_:[exprtype( () -> Unit )]") }
+
     // Elements where type filter is enabled
 
     fun testTypeValueArgument() { doTest("'_('_:[exprtype(String)])") }
