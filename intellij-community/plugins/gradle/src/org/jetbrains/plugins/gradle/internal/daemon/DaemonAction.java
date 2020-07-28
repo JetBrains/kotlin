@@ -55,7 +55,7 @@ public abstract class DaemonAction {
   protected static DaemonParameters getDaemonParameters(BuildLayoutParameters layout) {
     // Constructors have changed for different versions of Gradle, need to use the correct version by reflection
     GradleVersion gradleBaseVersion = GradleVersion.current().getBaseVersion();
-     if (gradleBaseVersion.compareTo(GradleVersion.version("6.6-milestone-1")) >= 0) {
+     if (gradleBaseVersion.compareTo(GradleVersion.version("6.6")) >= 0) {
       // DaemonParameters(BuildLayoutResult, FileCollectionFactory) with DefaultFileCollectionFactory using
       // DefaultFileCollectionFactory(PathToFileResolver, TaskDependencyFactory, DirectoryFileTreeFactory, Factory<PatternSet>,
       //   PropertyHost, FileSystem) using IdentityFileResolver()
