@@ -14,8 +14,9 @@ import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.idea.projectWizard.WizardStatsService.*
+import org.jetbrains.kotlin.idea.projectWizard.WizardStatsService.Companion.logDataOnProjectGenerated
 import org.jetbrains.kotlin.idea.roots.migrateNonJvmSourceFolders
-import org.jetbrains.kotlin.idea.statistics.KotlinCreateActionsFUSCollector
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import javax.swing.Icon
@@ -51,7 +52,8 @@ class KotlinModuleBuilder(
     }
 
     override fun setupRootModel(rootModel: ModifiableRootModel) {
-        KotlinCreateActionsFUSCollector.logProjectTemplate("Kotlin", this.builderName)
+        val projectCreationStats = ProjectCreationStats("Kotlin", this.builderName, "jps")
+        logDataOnProjectGenerated(projectCreationStats)
         super.setupRootModel(rootModel)
         if (!targetPlatform.isJvm()) {
             migrateNonJvmSourceFolders(rootModel)

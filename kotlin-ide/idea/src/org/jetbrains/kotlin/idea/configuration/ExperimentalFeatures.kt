@@ -11,8 +11,6 @@ import com.intellij.ui.components.JBCheckBox
 import org.jdesktop.swingx.VerticalLayout
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.PlatformVersion
-import org.jetbrains.kotlin.idea.projectWizard.WizardStatsService
 import org.jetbrains.kotlin.idea.util.isDev
 import org.jetbrains.kotlin.idea.util.isEap
 import org.jetbrains.kotlin.idea.util.isSnapshot

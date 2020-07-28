@@ -3,7 +3,6 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard
 import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.actions.NewProjectAction
 import com.intellij.ide.impl.NewProjectUtil
-import com.intellij.ide.projectWizard.NewProjectWizard
 import com.intellij.ide.util.projectWizard.*
 import com.intellij.ide.wizard.AbstractWizard
 import com.intellij.openapi.Disposable
@@ -14,15 +13,13 @@ import com.intellij.openapi.module.ModuleType
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import com.intellij.openapi.ui.Messages
 import com.intellij.util.SystemProperties
-import org.jetbrains.kotlin.idea.configuration.ExperimentalFeatures
 import org.jetbrains.kotlin.idea.framework.KotlinTemplatesFactory
-import org.jetbrains.kotlin.idea.projectWizard.ProjectCreationStats
-import org.jetbrains.kotlin.idea.projectWizard.UiEditorUsageStats
 import org.jetbrains.kotlin.idea.projectWizard.WizardStatsService
+import org.jetbrains.kotlin.idea.projectWizard.WizardStatsService.UiEditorUsageStats
+import org.jetbrains.kotlin.idea.projectWizard.WizardStatsService.ProjectCreationStats
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.core.div
@@ -106,6 +103,7 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
         }.isSuccess
         if (success) {
             val projectCreationStats = ProjectCreationStats(
+                KotlinTemplatesFactory.KOTLIN_GROUP_NAME,
                 wizard.projectTemplate!!.id,
                 wizard.buildSystemType!!.id
             )
