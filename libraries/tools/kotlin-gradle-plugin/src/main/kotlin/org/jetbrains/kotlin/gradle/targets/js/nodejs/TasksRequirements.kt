@@ -26,7 +26,7 @@ class TasksRequirements {
 
         _byTask[task] = requirements
 
-        val requiredNpmDependencies = task.requiredNpmDependencies
+        val requiredNpmDependencies = requirements
             .asSequence()
             .map { it.createDependency(task.compilation.target.project) }
             .filterIsInstance<NpmDependency>()
