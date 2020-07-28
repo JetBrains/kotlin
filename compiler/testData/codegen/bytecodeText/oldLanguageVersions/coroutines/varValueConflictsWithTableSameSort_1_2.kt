@@ -22,6 +22,7 @@ fun box(): String {
         try {
             var i: String = "abc"
             i = "123"
+            println(i)
         } finally { }
 
         // This variable should take the same slot as 'i' had
@@ -46,4 +47,5 @@ fun box(): String {
 // 0 PUTFIELD VarValueConflictsWithTableSameSort_1_2Kt\$box\$1.L\$0 : Ljava/lang/Object;
 /* 1 load in try/finally */
 /* 1 load in result = s */
-// 2 ALOAD 3
+/* 1 load in println */
+// 3 ALOAD 3

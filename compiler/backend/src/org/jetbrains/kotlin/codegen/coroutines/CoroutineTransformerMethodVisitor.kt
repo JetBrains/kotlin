@@ -132,7 +132,7 @@ class CoroutineTransformerMethodVisitor(
 
         UninitializedStoresProcessor(methodNode, shouldPreserveClassInitialization).run()
 
-        updateLvtAccordingToLiveness(methodNode)
+        updateLvtAccordingToLiveness(methodNode, isForNamedFunction)
 
         val spilledToVariableMapping = spillVariables(suspensionPoints, methodNode)
 
@@ -998,5 +998,75 @@ internal fun replaceFakeContinuationsWithRealOnes(methodNode: MethodNode, contin
     for (fakeContinuation in fakeContinuations) {
         methodNode.instructions.removeAll(listOf(fakeContinuation.previous.previous, fakeContinuation.previous))
         methodNode.instructions.set(fakeContinuation, VarInsnNode(Opcodes.ALOAD, continuationIndex))
+    }
+}
+
+/* We do not want to spill dead variables, thus, we shrink its LVT record to region, where the variable is alive,
+ * so, the variable will not be visible in debugger. User can still prolong life span of the variable by using it.
+ *
+ * This means, that function parameters do not longer span the whole function, including `this`.
+ * This might and will break some bytecode processors, including old versions of R8. See KT-24510.
+ */
+private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction: Boolean) {
+    val liveness = analyzeLiveness(method)
+
+    fun List<LocalVariableNode>.findRecord(insnIndex: Int, variableIndex: Int): LocalVariableNode? {
+        for (variable in this) {
+            if (variable.index == variableIndex &&
+                method.instructions.indexOf(variable.start) <= insnIndex &&
+                insnIndex < method.instructions.indexOf(variable.end)
+            ) return variable
+        }
+        return null
+    }
+
+    fun isAlive(insnIndex: Int, variableIndex: Int): Boolean =
+        liveness[insnIndex].isAlive(variableIndex)
+
+    val oldLvt = arrayListOf<LocalVariableNode>()
+    for (record in method.localVariables) {
+        oldLvt += record
+    }
+    method.localVariables.clear()
+    // Skip `this` for suspend lamdba
+    val start = if (isForNamedFunction) 0 else 1
+    for (variableIndex in start until method.maxLocals) {
+        if (oldLvt.none { it.index == variableIndex }) continue
+        var startLabel: LabelNode? = null
+        for (insnIndex in 0 until (method.instructions.size() - 1)) {
+            val insn = method.instructions[insnIndex]
+            if (!isAlive(insnIndex, variableIndex) && isAlive(insnIndex + 1, variableIndex)) {
+                startLabel = insn as? LabelNode ?: insn.findNextOrNull { it is LabelNode } as? LabelNode
+            }
+            if (isAlive(insnIndex, variableIndex) && !isAlive(insnIndex + 1, variableIndex)) {
+                // No variable in LVT -> do not add one
+                val lvtRecord = oldLvt.findRecord(insnIndex, variableIndex) ?: continue
+                if (lvtRecord.name == CONTINUATION_VARIABLE_NAME) continue
+                val endLabel = insn as? LabelNode ?: insn.findNextOrNull { it is LabelNode } as? LabelNode ?: continue
+                // startLabel can be null in case of parameters
+                @Suppress("NAME_SHADOWING") val startLabel = startLabel ?: lvtRecord.start
+                // No LINENUMBER in range -> no way to put a breakpoint -> do not bother adding a record
+                if (InsnSequence(startLabel, endLabel).none { it is LineNumberNode }) continue
+                method.localVariables.add(
+                    LocalVariableNode(lvtRecord.name, lvtRecord.desc, lvtRecord.signature, startLabel, endLabel, lvtRecord.index)
+                )
+            }
+        }
+    }
+
+    for (variable in oldLvt) {
+        // $completion, $continuation and $result are dead, but they are used by debugger, as well as fake inliner variables
+        // For example, $continuation is used to create async stack trace
+        if (variable.name == SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME ||
+            variable.name == CONTINUATION_VARIABLE_NAME ||
+            variable.name == SUSPEND_CALL_RESULT_NAME ||
+            isFakeLocalVariableForInline(variable.name)
+        ) {
+            method.localVariables.add(variable)
+        }
+        // this acts like $continuation for lambdas. For example, it is used by debugger to create async stack trace. Keep it.
+        if (variable.name == "this" && !isForNamedFunction) {
+            method.localVariables.add(variable)
+        }
     }
 }

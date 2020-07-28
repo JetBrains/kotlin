@@ -4,12 +4,12 @@ Connected to the target VM
 suspendFunWithInner.kt:40
 Thread stack trace:
 	CoroutinePreflightFrame c:!LINE_NUMBER!, TestSuspendA$InClassB$InClassC (continuation)
-		($completion, $continuation, $result, inClassCMethodVal, this)
+		($completion, $continuation, $result, inClassCMethodVal)
 CoroutineInfo: 1 coroutine RUNNING
 	CoroutineStackFrame b:!LINE_NUMBER!, TestSuspendA$InClassB (continuation)
-		(inClassBMethodVal, this)
+		(inClassBMethodVal)
 	CoroutineStackFrame a:!LINE_NUMBER!, TestSuspendA (continuation)
-		(methodVal, this)
+		(methodVal)
 	CoroutineStackFrame invokeSuspend:!LINE_NUMBER!, SuspendFunWithInnerKt$main$1 (continuation)
 		(rootCoroutineVal)
 	CoroutineStackFrame resumeWith:!LINE_NUMBER!, BaseContinuationImpl (kotlin.coroutines.jvm.internal)
