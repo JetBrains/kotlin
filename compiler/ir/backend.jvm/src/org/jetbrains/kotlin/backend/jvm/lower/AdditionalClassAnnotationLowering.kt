@@ -192,7 +192,7 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
             ?: throw AssertionError("No annotation target map for JVM target $jvmTarget")
 
         val targets = irClass.applicableTargetSet() ?: return
-        val javaTargets = targets.mapNotNull { annotationTargetMap[it] }
+        val javaTargets = targets.mapNotNull { annotationTargetMap[it] }.toSet()
 
         val vararg = IrVarargImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,

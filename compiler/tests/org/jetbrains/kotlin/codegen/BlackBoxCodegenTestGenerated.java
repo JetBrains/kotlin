@@ -61,6 +61,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/annotations/annotationProperty.kt");
         }
 
+        @TestMetadata("annotationTargets.kt")
+        public void testAnnotationTargets() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/annotationTargets.kt");
+        }
+
         @TestMetadata("annotationWithKotlinProperty.kt")
         public void testAnnotationWithKotlinProperty() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/annotationWithKotlinProperty.kt");
