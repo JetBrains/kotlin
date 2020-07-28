@@ -26,12 +26,9 @@ import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
 import com.intellij.psi.util.PsiTypesUtil
-import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
-import org.jetbrains.kotlin.asJava.findFacadeClass
-import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.asJava.toLightElements
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.*
@@ -334,7 +331,7 @@ internal fun resolveToDeclaration(sourcePsi: KtExpression): PsiElement? =
     }
 
 internal fun resolveToDeclaration(sourcePsi: KtExpression, declarationDescriptor: DeclarationDescriptor): PsiElement? {
-    declarationDescriptor.toSource()?.getMaybeLightElement()?.let { return it }
+    declarationDescriptor.toSource()?.getMaybeLightElement(sourcePsi)?.let { return it }
 
     var declarationDescriptor = declarationDescriptor
     if (declarationDescriptor is ImportedFromObjectCallableDescriptor<*>) {
@@ -446,8 +443,8 @@ private fun resolveDeserialized(
             if (propertySignature != null) {
                 with(propertySignature) {
                     when {
+                        hasSetter() && accessHint?.isWrite == true -> setter // treat += etc. as write as was done elsewhere
                         hasGetter() && accessHint?.isRead != false -> getter
-                        hasSetter() && accessHint?.isWrite != false -> setter
                         else -> null // it should have been handled by the previous case
                     }
                 }?.let { methodSignature ->
@@ -513,7 +510,12 @@ private fun KotlinType.containsLocalTypes(): Boolean {
     return arguments.any { !it.isStarProjection && it.type.containsLocalTypes() }
 }
 
-private fun PsiElement.getMaybeLightElement(): PsiElement? {
+private fun PsiElement.getMaybeLightElement(sourcePsi: KtExpression? = null): PsiElement? {
+    if (this is KtProperty && sourcePsi?.readWriteAccess()?.isWrite == true) {
+        with(getAccessorLightMethods()) {
+            (setter ?: backingField)?.let { return it } // backingField is for val property assignments in init blocks
+        }
+    }
     return when (this) {
         is KtDeclaration -> {
             val lightElement = toLightElements().firstOrNull()

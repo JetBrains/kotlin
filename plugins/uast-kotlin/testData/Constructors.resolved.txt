@@ -24,28 +24,28 @@ UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolve
 UTypeReferenceExpression (name = java.lang.String) -> USimpleNameReferenceExpression (identifier = String) -> PsiClass:String: String
 UTypeReferenceExpression (name = int) -> USimpleNameReferenceExpression (identifier = Int) -> PsiClass:Integer: Integer
 UBlockExpression -> UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) -> PsiMethod:Object:
-    UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = a) -> KtLightMethodImpl:getA: getA
+    UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = a) -> KtLightMethodImpl:setA: setA
     UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = =) -> null: null
     UBinaryExpression (operator = =) -> UQualifiedReferenceExpression -> null: null
     UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = i) -> Light Parameter: i
     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to null) -> USimpleNameReferenceExpression (identifier = toString) -> null: null
 UTypeReferenceExpression (name = java.lang.String) -> USimpleNameReferenceExpression (identifier = String) -> PsiClass:String: String
 UBlockExpression -> UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) -> PsiMethod:Object:
-    UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = a) -> KtLightMethodImpl:getA: getA
+    UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = a) -> KtLightMethodImpl:setA: setA
     UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = =) -> null: null
     UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = s) -> Light Parameter: s
 UTypeReferenceExpression (name = java.lang.String) -> USimpleNameReferenceExpression (identifier = String) -> PsiClass:String: String
     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to PsiMethod:println) -> USimpleNameReferenceExpression (identifier = println) -> PsiMethod:println: println
 UTypeReferenceExpression (name = int) -> USimpleNameReferenceExpression (identifier = Int) -> PsiClass:Integer: Integer
 UBlockExpression -> UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) -> PsiMethod:Object:
-    UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = a) -> KtLightMethodImpl:getA: getA
+    UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = a) -> KtLightMethodImpl:setA: setA
     UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = =) -> null: null
     UBinaryExpression (operator = =) -> UQualifiedReferenceExpression -> null: null
     UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = i) -> Light Parameter: i
     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to null) -> USimpleNameReferenceExpression (identifier = toString) -> null: null
 UTypeReferenceExpression (name = java.lang.String) -> USimpleNameReferenceExpression (identifier = String) -> PsiClass:String: String
 UBlockExpression -> UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) -> PsiMethod:Object:
-    UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = a) -> KtLightMethodImpl:getA: getA
+    UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = a) -> KtLightMethodImpl:setA: setA
     UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = =) -> null: null
     UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = s) -> Light Parameter: s
     UTypeReferenceExpression (name = java.lang.String) -> USimpleNameReferenceExpression (identifier = String) -> PsiClass:String: String
@@ -53,3 +53,10 @@ UBlockExpression -> UCallExpression (kind = UastCallKind(name='constructor_call'
     UBlockExpression -> UQualifiedReferenceExpression -> PsiMethod:toString: toString
     UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = local) -> LightVariableBuilder:local: local
     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to PsiMethod:toString) -> USimpleNameReferenceExpression (identifier = toString) -> PsiMethod:toString: toString
+UTypeReferenceExpression (name = int) -> USimpleNameReferenceExpression (identifier = Int) -> PsiClass:Integer: Integer
+UTypeReferenceExpression (name = java.lang.String) -> USimpleNameReferenceExpression (identifier = String) -> PsiClass:String: String
+    UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = a) -> KtLightFieldForSourceDeclaration:a: a
+    UBinaryExpression (operator = =) -> USimpleNameReferenceExpression (identifier = =) -> null: null
+    UBinaryExpression (operator = =) -> UQualifiedReferenceExpression -> null: null
+    UQualifiedReferenceExpression -> USimpleNameReferenceExpression (identifier = i) -> Light Parameter: i
+    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))(resolves to null) -> USimpleNameReferenceExpression (identifier = toString) -> null: null
