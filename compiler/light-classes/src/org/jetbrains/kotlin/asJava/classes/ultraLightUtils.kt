@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.UltraLightClassModifierExtension
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.elements.KotlinLightTypeParameterListBuilder
+import org.jetbrains.kotlin.asJava.elements.KtLightAnnotationForSourceEntry
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.psiType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
@@ -518,3 +520,18 @@ internal fun KtUltraLightSupport.findAnnotation(owner: KtAnnotated, fqName: FqNa
 
     return null
 }
+
+internal fun List<KtAnnotationEntry>.toLightAnnotations(
+    parent: PsiElement,
+    site: AnnotationUseSiteTarget
+): List<KtLightAnnotationForSourceEntry> =
+    filter {
+        it.useSiteTarget?.getAnnotationUseSiteTarget() == site
+    }.map { entry ->
+        KtLightAnnotationForSourceEntry(
+            lazyQualifiedName = { entry.analyzeAnnotation()?.fqName?.asString() },
+            kotlinOrigin = entry,
+            parent = parent,
+            lazyClsDelegate = null
+        )
+    }

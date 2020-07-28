@@ -190,16 +190,7 @@ internal class KtUltraLightParameterForSetterParameter(
     override fun tryGetKotlinType(): KotlinType? = property.getKotlinType()
 
     override val givenAnnotations: List<KtLightAbstractAnnotation>?
-        get() = property.annotationEntries.filter {
-            it.useSiteTarget?.getAnnotationUseSiteTarget() == AnnotationUseSiteTarget.SETTER_PARAMETER
-        }.map { entry ->
-            KtLightAnnotationForSourceEntry(
-                lazyQualifiedName = { entry.analyzeAnnotation()?.fqName?.asString() },
-                kotlinOrigin = entry,
-                parent = this,
-                lazyClsDelegate = null
-            )
-        }
+        get() = property.annotationEntries.toLightAnnotations(this, AnnotationUseSiteTarget.SETTER_PARAMETER)
 
     override fun isVarArgs(): Boolean = false
 }
@@ -216,6 +207,14 @@ internal class KtUltraLightReceiverParameter(
     method = method,
     containingDeclaration = containingDeclaration
 ) {
+
+    override val givenAnnotations: List<KtLightAbstractAnnotation>? =
+        containingDeclaration
+            .receiverTypeReference
+            ?.modifierList
+            ?.annotationEntries
+            ?.toLightAnnotations(this, AnnotationUseSiteTarget.RECEIVER)
+            ?: emptyList()
 
     override fun isVarArgs(): Boolean = false
 
