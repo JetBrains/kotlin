@@ -5684,6 +5684,96 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                 }
             }
 
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Type_contexts_and_scopes extends AbstractDiagnosticsTestSpec {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInType_contexts_and_scopes() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Inner_and_nested_type_contexts extends AbstractDiagnosticsTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInInner_and_nested_type_contexts() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class P_1 extends AbstractDiagnosticsTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInP_1() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/neg")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Neg extends AbstractDiagnosticsTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("1.1.kt")
+                            public void test1_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/neg/1.1.kt");
+                            }
+
+                            @TestMetadata("1.2.kt")
+                            public void test1_2() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/neg/1.2.kt");
+                            }
+
+                            @TestMetadata("2.1.kt")
+                            public void test2_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/neg/2.1.kt");
+                            }
+
+                            public void testAllFilesPresentInNeg() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                            }
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/pos")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Pos extends AbstractDiagnosticsTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("1.1.kt")
+                            public void test1_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/pos/1.1.kt");
+                            }
+
+                            @TestMetadata("1.2.kt")
+                            public void test1_2() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/pos/1.2.kt");
+                            }
+
+                            public void testAllFilesPresentInPos() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                            }
+                        }
+                    }
+                }
+            }
+
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -5812,9 +5902,9 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                                     runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos/1.1.kt");
                                 }
 
-                                @TestMetadata("2.1.kt")
-                                public void test2_1() throws Exception {
-                                    runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos/2.1.kt");
+                                @TestMetadata("1.2.kt")
+                                public void test1_2() throws Exception {
+                                    runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos/1.2.kt");
                                 }
 
                                 public void testAllFilesPresentInPos() throws Exception {
