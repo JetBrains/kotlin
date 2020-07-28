@@ -113,7 +113,7 @@ fun case_9(value_1: Any?, value_2: Number?) {
         println(value_2?.toByte())
     }
     if (funWithReturnsNotNull(value_1 is Float? && value_1 != null && value_2 != null) == null) {
-        println(value_1.dec())
+        <!AMBIGUITY!>println<!>(value_1.<!AMBIGUITY!>dec<!>())
         println(value_2?.toByte())
     }
     if (funWithReturnsNull(value_1 is Float? && value_1 != null && value_2 != null) != null) {

@@ -165,8 +165,8 @@ digraph propertiesAndInitBlocks_kt {
             66 [label="Exit class GetterLocalClass" style="filled" fillcolor=red];
         }
         59 -> {60};
-        60 -> {61};
-        60 -> {67 70} [color=red];
+        60 -> {67 61};
+        60 -> {70} [color=red];
         61 -> {62};
         61 -> {67 64} [color=green];
         61 -> {67 64} [style=dashed];
@@ -244,8 +244,8 @@ digraph propertiesAndInitBlocks_kt {
             79 -> {80};
             80 -> {81};
             26 -> {33 27};
-            27 -> {28};
-            27 -> {37 48 51} [color=red];
+            27 -> {37 48 28};
+            27 -> {51} [color=red];
             28 -> {29};
             28 -> {48 34} [color=green];
             28 -> {48 34} [style=dashed];

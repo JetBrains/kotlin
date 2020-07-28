@@ -83,7 +83,7 @@ object FirErrors {
 
     // Control flow diagnostics
     val UNINITIALIZED_VARIABLE by error1<FirSourceElement, PsiElement, FirPropertySymbol>()
-    val WRING_IMPLIES_CONDITION by error0<FirSourceElement, PsiElement>()
+    val WRONG_IMPLIES_CONDITION by error0<FirSourceElement, PsiElement>()
     val WRONG_INVOCATION_KIND by error2<FirSourceElement, PsiElement, FirBasedSymbol<*>, EventOccurrencesRange>()
     val CAPTURED_IN_PLACE_LAMBDA by error1<FirSourceElement, PsiElement, FirBasedSymbol<*>>()
 

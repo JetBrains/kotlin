@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_AS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_VARIABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_LABEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_REFERENCE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRING_IMPLIES_CONDITION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_IMPLIES_CONDITION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_INVOCATION_KIND
 
 @Suppress("unused")
@@ -81,7 +81,7 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
 
             // Control flow diagnostics
             map.put(UNINITIALIZED_VARIABLE, "{2} must be initialized before access", PROPERTY_NAME)
-            map.put(WRING_IMPLIES_CONDITION, "Wrong implies condition")
+            map.put(WRONG_IMPLIES_CONDITION, "Wrong implies condition")
             map.put(WRONG_INVOCATION_KIND, "{2} wrong invocation kind. Found possible {3} case.", TO_STRING, TO_STRING)
             map.put(CAPTURED_IN_PLACE_LAMBDA, "Captured in-place lambda: {2}", TO_STRING)
         }

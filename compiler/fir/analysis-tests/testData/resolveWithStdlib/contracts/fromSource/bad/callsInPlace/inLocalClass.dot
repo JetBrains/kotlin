@@ -29,8 +29,8 @@ digraph inLocalClass_kt {
                 11 [label="Exit class LocalClass" style="filled" fillcolor=red];
             }
             0 -> {1};
-            1 -> {2};
-            1 -> {14 12 17 19 25 31} [color=red];
+            1 -> {12 17 19 31 2};
+            1 -> {14 25} [color=red];
             2 -> {3};
             2 -> {19 31 8} [color=green];
             2 -> {19 31 8} [style=dashed];

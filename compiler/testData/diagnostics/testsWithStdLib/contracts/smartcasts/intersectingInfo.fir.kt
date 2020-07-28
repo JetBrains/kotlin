@@ -21,9 +21,9 @@ fun notIsString(x: Any?): Boolean {
 }
 
 fun notIsInt(x: Any?): Boolean {
-    contract {
+    <!WRONG_IMPLIES_CONDITION!>contract {
         returns(false) implies (x !is Int)
-    }
+    }<!>
     return x !is Int
 }
 

@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.fir.analysis.cfa
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
-import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
-import org.jetbrains.kotlin.fir.expressions.LogicOperationKind
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.dfa.*
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.JumpNode
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeIntersector
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isNullable
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class FirReturnsImpliesAnalyzer {
@@ -67,124 +69,169 @@ class FirReturnsImpliesAnalyzer {
         fun DataFlowVariable.name(): String {
             return when (this) {
                 is RealVariable -> identifier.symbol.name()
-                is SyntheticVariable -> "synthetic"
+                is SyntheticVariable -> "syn${variableStorage.syntheticVariables.values.indexOf(this)}"
             }
         }
 
+        fun debug(message: Any?) {
+            println(message)
+        }
+
+        val builtinTypes = function.session.builtinTypes
+        val typeContext = function.session.typeContext
+        fun KotlinTypeMarker.isSupertypeOf(type: KotlinTypeMarker?) =
+            type != null && AbstractTypeChecker.isSubtypeOf(typeContext, type, this)
+
         effects.forEach { effectDeclaration ->
             val returnsEffect = effectDeclaration.effect as ConeReturnsEffectDeclaration
-            val returnsOperation = returnsEffect.getOperation()
             val condition = effectDeclaration.condition
 
-//            println("returns ${returnsEffect.value.name} -> ${condition.show()}")
+            debug("returns ${returnsEffect.value.name} -> ${condition.show()}")
 
-            var wrongCondition = false
-
-            exitNodes@ for (node in graph.exitNode.previousCfgNodes) {
+            fun checkNode(node: CFGNode<*>): Boolean {
                 val flow = cfgRef.flowOnNodes.getValue(node) as PersistentFlow
-                val implications = flow.logicStatements.flatMap { it.value }
-                val conditionTypeStatements = condition.buildTypeStatements(function, logicSystem, variableStorage, flow)
 
-//                println("  $node")
-//
-//                variableStorage.realVariables.forEach {
-//                    println("    val ${it.key.symbol.name()} = ${it.value}")
-//                }
-//
-//                conditionTypeStatements.forEach { (it, types) ->
-//                    println("    -> $it(${it.name()}) : [${types.exactType.joinToString()}] ![${types.exactNotType.joinToString()}]")
-//                }
-//
-//                flow.logicStatements.forEach { (_, list) ->
-//                    list.forEach {
-//                        println("      $it")
-//                    }
-//                }
+                val resultExpr = if (node is JumpNode && node.fir is FirReturnExpression) {
+                    (node.fir as FirReturnExpression).result
+                } else node.fir
+
+                val exprType = (resultExpr as? FirExpression)?.typeRef?.coneType
+                if (exprType == builtinTypes.nothingType.type) return false
+
+                if (resultExpr is FirWhenExpression) {
+                    debug("    # when branch") // When exit -> When branch exit -> Block exit -> Last expression
+                    return node.previousNodes(4).any { checkNode(it) }
+                }
 
                 var typeStatements: TypeStatements = flow.approvedTypeStatements
+                var operationStatements: ApprovedOperations = flow.approvedOperations
 
-                if (returnsOperation != null && node is JumpNode && node.fir is FirReturnExpression) {
-                    val result = (node.fir as FirReturnExpression).result
+                val implications = flow.logicStatements.flatMap { it.value }
 
-                    if (result is FirConstExpression<*>) {
-                        val value = result.value
-                        val possibleResult = when {
-                            value == null -> returnsOperation == Operation.EqNull
-                            value is Boolean && returnsOperation == Operation.EqTrue -> value
-                            value is Boolean && returnsOperation == Operation.EqFalse -> !value
-                            else -> returnsOperation == Operation.NotEqNull
+                debug("  on exit: $node")
+                debug("    expr: $resultExpr ($exprType)")
+                debug("    vars:")
+                variableStorage.realVariables.forEach {
+                    debug("      val ${it.key.symbol.name()} = ${it.value}")
+                }
+                variableStorage.syntheticVariables.forEach { _, syntVar ->
+                    debug("      synt $syntVar")
+                }
+                debug("    implications:")
+                implications.forEach {
+                    debug("      $it")
+                }
+                debug("    type statements:")
+                typeStatements.forEach { (it, types) ->
+                    debug("      <- $it(${it.name()}) : [${types.exactType.joinToString()}] ![${types.exactNotType.joinToString()}]")
+                }
+
+                if (returnsEffect.value != ConeConstantReference.WILDCARD) {
+                    val operation = returnsEffect.value.toOperation()
+
+                    if (exprType != null && exprType.isInapplicableWith(operation, function.session)) return false
+
+                    if (resultExpr is FirConstExpression<*>) {
+                        val applicableResult = when {
+                            resultExpr.kind == FirConstKind.Null -> operation == Operation.EqNull
+                            resultExpr.kind == FirConstKind.Boolean && operation == Operation.EqTrue -> (resultExpr.value as Boolean)
+                            resultExpr.kind == FirConstKind.Boolean && operation == Operation.EqFalse -> !(resultExpr.value as Boolean)
+                            else -> true
                         }
 
-//                        println("    return const '${result.value}'")
-
-                        if (!possibleResult) {
-//                            println("    (impossible case)")
-                            continue
+                        debug("    return const '${resultExpr.value}'")
+                        if (!applicableResult) {
+                            debug("    (inapplicable case)")
+                            return false
                         }
                     } else {
-                        val resultVar = variableStorage.getVariable(result, flow)
+                        val resultVar = variableStorage.getOrCreateVariable(flow, resultExpr)
+                        val newTypeStatements: MutableTypeStatements = mutableMapOf()
+                        val newApprovedOperations: MutableApprovedOperations = mutableMapOf()
 
-                        if (resultVar != null) {
-                            val newTypeStatements: MutableTypeStatements = mutableMapOf()
+                        logicSystem.approveStatementsTo(
+                            newTypeStatements,
+                            newApprovedOperations,
+                            flow,
+                            OperationStatement(resultVar, operation),
+                            implications
+                        )
+                        newTypeStatements.mergeTypeStatements(flow.approvedTypeStatements)
+                        newApprovedOperations.mergeApprovedOperations(flow.approvedOperations)
 
-                            logicSystem.approveStatementsTo(
-                                newTypeStatements,
-                                flow,
-                                OperationStatement(resultVar, returnsOperation),
-                                implications
-                            )
-                            newTypeStatements.mergeTypeStatements(flow.approvedTypeStatements)
-
-//                            println("    return $resultVar")
-                            typeStatements = newTypeStatements
-                        } else {
-//                            println("    return unknown")
+                        if (resultVar.isReal()) {
+                            if (operation == Operation.NotEqNull) {
+                                newTypeStatements.addStatement(resultVar, simpleTypeStatement(resultVar, true, builtinTypes.anyType.type))
+                            } else if (operation == Operation.EqNull) {
+                                newTypeStatements.addStatement(resultVar, simpleTypeStatement(resultVar, false, builtinTypes.anyType.type))
+                            }
                         }
+
+                        debug("    return $resultVar $operation")
+                        typeStatements = newTypeStatements
+                        operationStatements = newApprovedOperations
                     }
                 }
 
-                val typeContext = function.session.typeContext
+                val conditionStatements = condition.buildTypeStatements(function, logicSystem, variableStorage, flow) ?: return false
 
-                for ((realVar, requiredTypeStatement) in conditionTypeStatements) {
+                debug("    conditions:")
+                conditionStatements.forEach { (it, types) ->
+                    debug("      -> $it(${it.name()}) : [${types.exactType.joinToString()}] ![${types.exactNotType.joinToString()}]")
+                }
+                debug("    result statements:")
+                typeStatements.forEach { (it, types) ->
+                    debug("      <- $it(${it.name()}) : [${types.exactType.joinToString()}] ![${types.exactNotType.joinToString()}]")
+                }
+                debug("    operation statements:")
+                operationStatements.forEach { v, info ->
+                    debug("    # $v(${v.name()}) : ${info.operations.joinToString(", ", "[", "]")}")
+                }
 
-                    val resultTypeStatement = typeStatements[realVar]
+                for ((realVar, requiredTypeStatement) in conditionStatements) {
+                    val fixedRealVar = typeStatements.keys.find { it.identifier == realVar.identifier } ?: realVar
+
+                    println("    $realVar : ${flow.getTypeStatement(realVar)}")
+
+                    val resultTypeStatement = typeStatements[fixedRealVar]
                     val resultType = if (resultTypeStatement != null) {
                         val resultTypes = mutableListOf<ConeKotlinType>()
                         resultTypes += resultTypeStatement.exactType
-                        resultTypes.addIfNotNull(function.getParameterType(realVar.identifier.symbol))
+                        resultTypes.addIfNotNull(function.getParameterType(fixedRealVar.identifier.symbol))
                         if (resultTypes.isNotEmpty()) ConeTypeIntersector.intersectTypes(typeContext, resultTypes) else null
-                    } else null
+                    } else function.getParameterType(fixedRealVar.identifier.symbol)
 
                     if (requiredTypeStatement.exactType.isNotEmpty()) {
                         val requiredType = ConeTypeIntersector.intersectTypes(typeContext, requiredTypeStatement.exactType.toList())
-                        if (resultType == null || !AbstractTypeChecker.isSubtypeOf(typeContext, resultType, requiredType)) {
-                            wrongCondition = true
-//                            println("    result FALSE (required by '${(realVar.identifier.symbol as? FirCallableSymbol<*>)?.callableId?.callableName ?: "this"}')")
-                            break@exitNodes
+                        if (!requiredType.isSupertypeOf(resultType)) {
+                            debug("    result FALSE (required by '${fixedRealVar.identifier.symbol.name()}')")
+                            return true
                         }
                     }
 
                     if (requiredTypeStatement.exactNotType.isNotEmpty()) {
                         val forbiddenType = ConeTypeIntersector.intersectTypes(typeContext, requiredTypeStatement.exactNotType.toList())
-                        if (resultType != null && AbstractTypeChecker.isSubtypeOf(typeContext, resultType, forbiddenType)) {
-                            wrongCondition = true
-//                            println("    result FALSE (forbidden by '${(realVar.identifier.symbol as? FirCallableSymbol<*>)?.callableId?.callableName ?: "this"}')")
-                            break@exitNodes
+                        if (forbiddenType.isSupertypeOf(resultType)) {
+                            debug("    result FALSE (forbidden by '${fixedRealVar.identifier.symbol.name()}')")
+                            return true
                         }
                     }
                 }
-//                typeStatements.forEach { (it, types) ->
-//                    println("    <- $it(${it.name()}) : [${types.exactType.joinToString()}] ![${types.exactNotType.joinToString()}]")
-//                }
+                return false
             }
 
+            val wrongCondition = graph.exitNode.previousCfgNodes.any { checkNode(it) }
             if (wrongCondition) {
-                println("WRONG")
                 function.contractDescription.source?.let {
-                    reporter.report(FirErrors.WRING_IMPLIES_CONDITION.on(it))
+                    reporter.report(FirErrors.WRONG_IMPLIES_CONDITION.on(it))
                 }
             }
         }
+    }
+
+    private fun CFGNode<*>.previousNodes(depth: Int, nodes: MutableList<CFGNode<*>> = mutableListOf()): List<CFGNode<*>> {
+        if (depth == 0) nodes.add(this) else previousCfgNodes.forEach { it.previousNodes(depth - 1, nodes) }
+        return nodes
     }
 
     private fun FirFunction<*>.getParameterType(symbol: AbstractFirBasedSymbol<*>): ConeKotlinType? {
@@ -195,62 +242,53 @@ class FirReturnsImpliesAnalyzer {
         return if (index == -1) this.symbol else this.valueParameters[index].symbol
     }
 
-    private fun ConeReturnsEffectDeclaration.getOperation(): Operation? {
-        return when {
-            value === ConeConstantReference.NULL -> Operation.EqNull
-            value === ConeConstantReference.NOT_NULL -> Operation.NotEqNull
-            value === ConeBooleanConstantReference.TRUE -> Operation.EqTrue
-            value === ConeBooleanConstantReference.FALSE -> Operation.EqFalse
-            else -> null
-        }
+    private fun ConeKotlinType.isInapplicableWith(operation: Operation, session: FirSession): Boolean {
+        return (operation == Operation.EqFalse || operation == Operation.EqTrue)
+                && !AbstractTypeChecker.isSubtypeOf(session.typeContext, session.builtinTypes.booleanType.type, this)
+                || operation == Operation.EqNull && !isNullable
     }
 
-    fun ConeBooleanExpression.buildTypeStatements(
+    private fun ConeBooleanExpression.buildTypeStatements(
         function: FirFunction<*>,
         logicSystem: LogicSystem<*>,
         variableStorage: VariableStorage,
         flow: Flow
-    ): MutableTypeStatements = when (this) {
+    ): MutableTypeStatements? = when (this) {
         is ConeBinaryLogicExpression -> {
             val left = left.buildTypeStatements(function, logicSystem, variableStorage, flow)
             val right = right.buildTypeStatements(function, logicSystem, variableStorage, flow)
-            if (kind == LogicOperationKind.AND) {
-                left.apply { mergeTypeStatements(right) }
-            } else logicSystem.orForTypeStatements(left, right)
+            if (left != null && right != null) {
+                if (kind == LogicOperationKind.AND) {
+                    left.apply { mergeTypeStatements(right) }
+                } else logicSystem.orForTypeStatements(left, right)
+            } else (left ?: right)
         }
-
         is ConeIsInstancePredicate -> {
             val fir = function.getParameterSymbol(arg.parameterIndex).fir
             mutableMapOf<RealVariable, MutableTypeStatement>().also {
-                variableStorage.getRealVariable(fir.symbol, fir, flow)?.let { realVar ->
-                    it[realVar] = MutableTypeStatement(
-                        realVar,
-                        if (isNegated) linkedSetOf() else linkedSetOf(type),
-                        if (isNegated) linkedSetOf(type) else linkedSetOf()
-                    )
-                }
+                val realVar = variableStorage.getOrCreateRealVariable(flow, fir.symbol, fir)
+                if (realVar != null) it[realVar] = simpleTypeStatement(realVar, !isNegated, type)
             }
         }
-
         is ConeIsNullPredicate -> {
             val fir = function.getParameterSymbol(arg.parameterIndex).fir
             val session = function.session
             mutableMapOf<RealVariable, MutableTypeStatement>().also {
-                variableStorage.getRealVariable(fir.symbol, fir, flow)?.let { realVar ->
-                    it[realVar] = MutableTypeStatement(
-                        realVar,
-                        linkedSetOf((if (isNegated) session.builtinTypes.anyType else session.builtinTypes.nullableAnyType).coneType),
-                    )
-                }
+                val realVar = variableStorage.getOrCreateRealVariable(flow, fir.symbol, fir)
+                if (realVar != null) it[realVar] = simpleTypeStatement(realVar, isNegated, session.builtinTypes.anyType.type)
             }
         }
-
         is ConeLogicalNot -> arg.buildTypeStatements(function, logicSystem, variableStorage, flow)
-            .mapValuesTo(mutableMapOf()) { (_, value) -> value.invert() }
+            ?.mapValuesTo(mutableMapOf()) { (_, value) -> value.invert() }
 
-        //is ConeBooleanConstantReference -> name
-        // is ConeBooleanValueParameterReference -> "$name($parameterIndex)"
-        else -> throw IllegalArgumentException("")
+        else -> null
     }
 
+    private fun simpleTypeStatement(realVar: RealVariable, condition: Boolean, type: ConeKotlinType): MutableTypeStatement {
+        return MutableTypeStatement(
+            realVar,
+            if (condition) linkedSetOf(type) else linkedSetOf(),
+            if (!condition) linkedSetOf(type) else linkedSetOf()
+        )
+    }
 }

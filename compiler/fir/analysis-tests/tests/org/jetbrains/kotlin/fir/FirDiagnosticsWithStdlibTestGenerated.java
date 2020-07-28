@@ -590,6 +590,29 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
                         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/callsInPlace/toLocalVariables.kt");
                     }
                 }
+
+                @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class ReturnsImplies extends AbstractFirDiagnosticsWithStdlibTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInReturnsImplies() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                    }
+
+                    @TestMetadata("notNull.kt")
+                    public void testNotNull() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies/notNull.kt");
+                    }
+
+                    @TestMetadata("propertyGetter.kt")
+                    public void testPropertyGetter() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies/propertyGetter.kt");
+                    }
+                }
             }
 
             @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good")
@@ -682,6 +705,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
                     @TestMetadata("namedArguments.kt")
                     public void testNamedArguments() throws Exception {
                         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies/namedArguments.kt");
+                    }
+
+                    @TestMetadata("notNull.kt")
+                    public void testNotNull() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies/notNull.kt");
                     }
 
                     @TestMetadata("propertyAccessors.kt")

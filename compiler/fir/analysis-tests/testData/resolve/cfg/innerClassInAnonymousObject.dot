@@ -60,8 +60,7 @@ digraph innerClassInAnonymousObject_kt {
         12 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
         13 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
     }
-    16 -> {17};
-    16 -> {0 5 8} [color=red];
+    16 -> {0 5 8 17};
     17 -> {18};
     17 -> {0 12} [color=green];
     17 -> {0 12} [style=dashed];

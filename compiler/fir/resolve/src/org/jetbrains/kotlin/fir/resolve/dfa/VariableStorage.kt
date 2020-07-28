@@ -29,7 +29,7 @@ import kotlin.contracts.contract
 class VariableStorage(val session: FirSession) {
     private var counter = 1
     val realVariables: MutableMap<Identifier, RealVariable> = HashMap()
-    private val syntheticVariables: MutableMap<FirElement, SyntheticVariable> = HashMap()
+    val syntheticVariables: MutableMap<FirElement, SyntheticVariable> = HashMap()
 
     fun getOrCreateRealVariableWithoutUnwrappingAlias(flow: Flow, symbol: AbstractFirBasedSymbol<*>, fir: FirElement): RealVariable {
         val realFir = fir.unwrapElement()

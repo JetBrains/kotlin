@@ -71,8 +71,7 @@ digraph annotatedLocalClass_kt {
     15 -> {16} [style=dotted];
     16 -> {17} [style=dotted];
     17 -> {18} [style=dotted];
-    18 -> {19};
-    18 -> {25} [color=red];
+    18 -> {25 19};
     19 -> {20};
     19 -> {25 23} [color=green];
     19 -> {25 23} [style=dashed];

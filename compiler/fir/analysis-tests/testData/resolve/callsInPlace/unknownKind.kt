@@ -9,11 +9,11 @@ fun bar(x: () -> Unit) {
 
 @ExperimentalContracts
 fun foo(x: () -> Unit, y: () -> Unit, z: () -> Unit) {
-    contract {
+    <!CAPTURED_IN_PLACE_LAMBDA, CAPTURED_IN_PLACE_LAMBDA, CAPTURED_IN_PLACE_LAMBDA!>contract {
         callsInPlace(x, InvocationKind.UNKNOWN)
         callsInPlace(y, InvocationKind.UNKNOWN)
         callsInPlace(z, InvocationKind.UNKNOWN)
-    }
+    }<!>
 
     if (true) {
         bar(x)

@@ -30,8 +30,8 @@ digraph inAnonymousObject_kt {
                 12 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
             }
             0 -> {1};
-            1 -> {2};
-            1 -> {13 18 16 21 23 29} [color=red];
+            1 -> {13 16 21 29 2};
+            1 -> {18 23} [color=red];
             2 -> {3};
             2 -> {13 29 9} [color=green];
             2 -> {13 29 9} [style=dashed];

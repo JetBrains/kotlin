@@ -65,7 +65,7 @@ fun case_11(value_1: Any?): Boolean? {
 
 // TESTCASE NUMBER: 12
 fun Char.case_12() {
-    contract { returns() implies (this@case_12 == null) }
+    <!WRONG_IMPLIES_CONDITION!>contract { returns() implies (this@case_12 == null) }<!>
     if (this@case_12 != null) throw Exception()
 }
 
