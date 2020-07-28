@@ -75,8 +75,9 @@ class UnindexedFilesFinder implements VirtualFileFilter {
 
         boolean isDirectory = file.isDirectory();
         int inputId = Math.abs(FileBasedIndexImpl.getIdMaskingNonIdBasedFile(file));
+        FileIndexingState fileTypeIndexState = null;
         if (!isDirectory && !myFileBasedIndex.isTooLarge(file)) {
-          if (myFileTypeIndex.getIndexingStateForFile(inputId, fileContent) == FileIndexingState.OUT_DATED) {
+          if ((fileTypeIndexState = myFileTypeIndex.getIndexingStateForFile(inputId, fileContent)) == FileIndexingState.OUT_DATED) {
             myFileBasedIndex.dropNontrivialIndexedStates(inputId);
             shouldIndexFile.set(true);
 
@@ -125,6 +126,9 @@ class UnindexedFilesFinder implements VirtualFileFilter {
         }
 
         for (ID<?, ?> indexId : myFileBasedIndex.getContentLessIndexes(isDirectory)) {
+          if (FileTypeIndex.NAME.equals(indexId) && fileTypeIndexState != null && !fileTypeIndexState.updateRequired()) {
+            continue;
+          }
           if (myFileBasedIndex.shouldIndexFile(fileContent, indexId).updateRequired()) {
             myFileBasedIndex.updateSingleIndex(indexId, file, inputId, new IndexedFileWrapper(fileContent));
           }
