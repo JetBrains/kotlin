@@ -24,7 +24,6 @@ class DwarfTests {
      * TODO: to enable this test it's required to fix issue with poisonig call site with wrong file owner ship of lambda
      * passed as parameter to inline function.
      */
-    @Ignore
     @Test
     fun `address of VolatileLambda lookup`() = dwarfDumpComplexTest {
         val callbackLibrary = """
