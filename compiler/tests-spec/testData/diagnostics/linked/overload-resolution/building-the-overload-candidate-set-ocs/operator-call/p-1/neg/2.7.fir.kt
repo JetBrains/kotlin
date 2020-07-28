@@ -15,9 +15,9 @@ import LibPackCase1.b.plusAssign
 
 fun case1 (){
     var b: B? = B()
-    b += { C() }
+    <!AMBIGUITY!>b += { C() }<!>
 
-    b += {1}
+    <!AMBIGUITY!>b += {1}<!>
 }
 
 class B {

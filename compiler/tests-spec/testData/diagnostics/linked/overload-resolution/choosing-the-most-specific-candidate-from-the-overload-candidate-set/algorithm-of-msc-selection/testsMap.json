@@ -1009,6 +1009,14 @@
           "linkType": "main"
         },
         {
+          "specVersion": "0.1-464",
+          "casesNumber": 1,
+          "description": "receiver of intersection type ambuguity",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/neg/2.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
           "specVersion": "0.1-448",
           "casesNumber": 2,
           "description": "explicit receiver ambuguity",

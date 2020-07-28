@@ -14,7 +14,7 @@ import LibPackCase1.a.plusAssign
 
 fun case1 (){
     var b: B = B()
-    <!INAPPLICABLE_CANDIDATE!>b +={ C() }<!>
+    b +={ C() }
     b +={ 1 }
 }
 
