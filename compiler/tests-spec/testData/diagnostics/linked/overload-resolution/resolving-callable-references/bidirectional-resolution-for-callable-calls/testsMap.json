@@ -7,7 +7,7 @@
           "casesNumber": 1,
           "description": "SAM-type against similar functional type",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-1/pos/1.1.kt",
-          "unexpectedBehaviour": true,
+          "unexpectedBehaviour": false,
           "linkType": "main"
         }
       ]
@@ -21,7 +21,7 @@
           "casesNumber": 1,
           "description": "SAM-type against similar functional type",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-1/pos/1.1.kt",
-          "unexpectedBehaviour": true,
+          "unexpectedBehaviour": false,
           "linkType": "primary"
         },
         {
@@ -63,7 +63,7 @@
           "casesNumber": 1,
           "description": "SAM-type against similar functional type",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-1/pos/1.1.kt",
-          "unexpectedBehaviour": true,
+          "unexpectedBehaviour": false,
           "linkType": "primary"
         },
         {
@@ -105,7 +105,7 @@
           "casesNumber": 1,
           "description": "SAM-type against similar functional type",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-1/pos/1.1.kt",
-          "unexpectedBehaviour": true,
+          "unexpectedBehaviour": false,
           "linkType": "primary"
         },
         {

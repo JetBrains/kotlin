@@ -17,7 +17,6 @@
 // FILE: TestCase1.kt
 /*
  * TESTCASE NUMBER: 1
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-39220
  */
 package testPackCase1
@@ -32,7 +31,7 @@ interface Foo {
 fun <T> bar(f: KFunction2<T, String, String>) {}
 
 fun <T : Foo> main() {
-    bar<T>(<!TYPE_MISMATCH, TYPE_MISMATCH!>Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>resolve<!><!>) // OK in OI, Ambiguity in NI
+    bar<T>(Foo::resolve) // OK
     bar<Foo>(Foo::resolve) // OK
     bar(Foo::resolve) // OK
 }
