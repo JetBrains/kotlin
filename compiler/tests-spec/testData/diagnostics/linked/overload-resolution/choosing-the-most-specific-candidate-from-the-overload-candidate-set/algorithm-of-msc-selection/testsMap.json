@@ -114,6 +114,16 @@
           "unexpectedBehaviour": false,
           "linkType": "primary"
         }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 3,
+          "description": "a callable reference is itself an argument to an overloaded function call",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        }
       ]
     },
     "pos": {
@@ -177,6 +187,38 @@
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 2,
+          "description": "a callable reference is itself an argument to an overloaded function call",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 4,
+          "description": "a callable reference is itself an argument to an overloaded function call",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 4,
+          "description": "a callable reference is itself an argument to an overloaded function call",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 6,
+          "description": "a callable reference is itself an argument to an overloaded function call",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
         }
       ]
     }
@@ -601,6 +643,38 @@
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 2,
+          "description": "a callable reference is itself an argument to an overloaded function call",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 4,
+          "description": "a callable reference is itself an argument to an overloaded function call",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 4,
+          "description": "a callable reference is itself an argument to an overloaded function call",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 6,
+          "description": "a callable reference is itself an argument to an overloaded function call",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
         }
       ],
       "3": [
@@ -733,6 +807,60 @@
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 2,
+          "description": "a callable reference is itself an argument to an overloaded function call",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 4,
+          "description": "a callable reference is itself an argument to an overloaded function call",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 4,
+          "description": "a callable reference is itself an argument to an overloaded function call",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 6,
+          "description": "a callable reference is itself an argument to an overloaded function call",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        }
+      ]
+    },
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 3,
+          "description": "a callable reference is itself an argument to an overloaded function call",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        }
+      ],
+      "4": [
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 3,
+          "description": "a callable reference is itself an argument to an overloaded function call",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
         }
       ]
     }
@@ -849,6 +977,50 @@
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 2,
+          "description": "a callable reference is itself an argument to an overloaded function call",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 4,
+          "description": "a callable reference is itself an argument to an overloaded function call",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 4,
+          "description": "a callable reference is itself an argument to an overloaded function call",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 6,
+          "description": "a callable reference is itself an argument to an overloaded function call",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        }
+      ]
+    },
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 3,
+          "description": "a callable reference is itself an argument to an overloaded function call",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/bidirectional-resolution-for-callable-calls/p-3/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
         }
       ]
     }
