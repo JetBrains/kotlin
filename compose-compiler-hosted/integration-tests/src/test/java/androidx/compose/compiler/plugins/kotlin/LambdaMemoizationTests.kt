@@ -699,7 +699,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
 
         @Composable
         fun Example(model: String) {
-          val s = state { model }
+          val s = remember { mutableStateOf(model) }
           s.value = model
           Test1({ s.value })
         }
