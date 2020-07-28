@@ -185,7 +185,7 @@
           "casesNumber": 3,
           "description": "The type of the try-expression is the least upper bound of the types of the last expressions of the try body and the last expressions of all the catch blocks",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/neg/1.1.kt",
-          "unexpectedBehaviour": true,
+          "unexpectedBehaviour": false,
           "linkType": "main"
         }
       ]
@@ -212,7 +212,7 @@
           "casesNumber": 3,
           "description": "The type of the try-expression is the least upper bound of the types of the last expressions of the try body and the last expressions of all the catch blocks",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/try-expression/p-8/neg/1.1.kt",
-          "unexpectedBehaviour": true,
+          "unexpectedBehaviour": false,
           "linkType": "primary"
         }
       ]
