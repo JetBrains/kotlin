@@ -147,7 +147,9 @@ internal object State {
         executable = element.getChild(XML.BinaryRunConfiguration.executable)?.readBinaryExecutableFromXml(projectDir)
         variant = element.getChild(XML.BinaryRunConfiguration.variant)?.readVariantFromXml(projectDir)
         workingDirectory = element.getAttributeValue(XML.BinaryRunConfiguration.directory)
-        envs = element.getChild(XML.BinaryRunConfiguration.environmentVariables).attributes.associate { it.name to it.value }
+        envs = element.getChild(XML.BinaryRunConfiguration.environmentVariables)
+            ?.attributes?.associate { it.name to it.value }
+            ?: emptyMap()
         isPassParentEnvs = element.getAttributeValue(XML.BinaryRunConfiguration.passPaternalEnvs).toBoolean()
         programParameters = element.getAttributeValue(XML.BinaryRunConfiguration.parameters)
     }
