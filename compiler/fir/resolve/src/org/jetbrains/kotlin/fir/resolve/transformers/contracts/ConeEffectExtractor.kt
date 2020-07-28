@@ -58,7 +58,7 @@ class ConeEffectExtractor(
             }
 
             FirContractsDslNames.RETURNS_NOT_NULL -> {
-                ConeReturnsEffectDeclaration(ConeConstantReference.NULL)
+                ConeReturnsEffectDeclaration(ConeConstantReference.NOT_NULL)
             }
 
             FirContractsDslNames.CALLS_IN_PLACE -> {
