@@ -16865,6 +16865,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/jvm8/defaults/compatibility/defaultArgsViaAnonymousObject.kt");
                 }
 
+                @TestMetadata("deprecatedAnnotation.kt")
+                public void testDeprecatedAnnotation() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/compatibility/deprecatedAnnotation.kt");
+                }
+
                 @TestMetadata("inheritedFunctionWithDefaultParameters.kt")
                 public void testInheritedFunctionWithDefaultParameters() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/compatibility/inheritedFunctionWithDefaultParameters.kt");
