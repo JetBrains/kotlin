@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtStringTemplateEntry
 import org.jetbrains.kotlin.psi.psiUtil.isNull
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlinx.serialization.compiler.resolve.toSimpleType
 
@@ -72,6 +73,7 @@ class KotlinExprTypePredicate(
         var className: String = ""
         var arguments: MutableList<Type> = mutableListOf()
         var nullable: Boolean = false
+        var variance: KtToken? = null
         var functionType: Boolean = false
 
         fun compareWith(type: KotlinType, project: Project, scope: GlobalSearchScope, withinHierarchy: Boolean): Boolean {
@@ -92,7 +94,8 @@ class KotlinExprTypePredicate(
                         if (arguments.any()) {
                             if (arguments.size != type.arguments.size) return@compareWith false
                             return@compareWith (0..arguments.lastIndex).all { i ->
-                                arguments[i].compareWith(type.arguments[i].type, project, scope, false)
+                                compareVariance(arguments[i].variance, type.arguments[i].projectionKind)
+                                        && arguments[i].compareWith(type.arguments[i].type, project, scope, false)
                             }
                         }
                         return@compareWith true
@@ -101,11 +104,17 @@ class KotlinExprTypePredicate(
             return false
         }
 
+        private fun compareVariance(variance: KtToken?, projectionKind: Variance) = when (projectionKind) {
+            Variance.INVARIANT -> variance == null
+            Variance.IN_VARIANCE -> variance == KtTokens.IN_KEYWORD
+            Variance.OUT_VARIANCE -> variance == KtTokens.OUT_KEYWORD
+        }
+
         companion object {
             fun fromString(string: String): Type? {
                 val lex = KotlinLexer()
-                val buf = "val x : $string = TODO()"
-                lex.start(buf, 8, buf.length - 9)
+                val buf = "var x : $string"
+                lex.start(buf, 8, buf.length)
                 return getType(lex)
             }
 
@@ -133,10 +142,18 @@ class KotlinExprTypePredicate(
             }
 
             private fun getRegularType(lexer: KotlinLexer): Type? {
-                var className = ""
-                while (lexer.tokenType == KtTokens.IDENTIFIER || lexer.tokenType == KtTokens.DOT) {
-                    className += lexer.tokenText
-                    lexer.advance()
+                var variance: KtToken? = null
+
+                // out is not recognised as OUT_KEYWORD so we need to use lexer.tokenText
+                while (lexer.tokenType == KtTokens.WHITE_SPACE) lexer.advance()
+                val text = lexer.tokenText
+                lexer.advance()
+                val identifier: String
+                if ((text == "in" || text == "out") && lexer.tokenType == KtTokens.WHITE_SPACE) {
+                    variance = if (text == "in") KtTokens.IN_KEYWORD else KtTokens.OUT_KEYWORD
+                    identifier = getIdentifier(lexer)
+                } else {
+                    identifier = text + getIdentifier(lexer)
                 }
 
                 val arguments = getTypeList(lexer, KtTokens.LT to KtTokens.GT) ?: return null
@@ -148,9 +165,10 @@ class KotlinExprTypePredicate(
                 }
 
                 return Type().apply {
-                    this.className = className
+                    className = identifier
                     this.arguments.addAll(arguments)
                     this.nullable = nullable
+                    this.variance = variance
                 }
             }
 
@@ -165,6 +183,16 @@ class KotlinExprTypePredicate(
                     lexer.advance()
                 }
                 return arguments
+            }
+
+            private fun getIdentifier(lexer: KotlinLexer): String {
+                var identifier = ""
+                while (lexer.tokenType == KtTokens.WHITE_SPACE) lexer.advance()
+                while (lexer.tokenType == KtTokens.IDENTIFIER || lexer.tokenType == KtTokens.DOT) {
+                    identifier += lexer.tokenText
+                    lexer.advance()
+                }
+                return identifier
             }
 
             private val KotlinLexer.nextUseful: IElementType?

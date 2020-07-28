@@ -28,6 +28,10 @@ class KotlinSSTypeFilterTest : KotlinSSResourceInspectionTest() {
 
     fun testFunctionType3() { doTest("val '_:[exprtype( () -> Unit )]") }
 
+    fun testInVariance() { doTest("fun '_('_:[exprtype(Array<in String>)])") }
+
+    fun testOutVariance() { doTest("fun '_('_:[exprtype(Array<out Any>)])") }
+
     // Elements where type filter is enabled
 
     fun testTypeValueArgument() { doTest("'_('_:[exprtype(String)])") }
