@@ -26,12 +26,14 @@ import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.isTypeRefinementEnabled
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.isError
+import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
 
 class DelegationResolver<T : CallableMemberDescriptor> private constructor(
@@ -163,14 +165,17 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
                 .asIterable()
                 .sortedWith(MemberComparator.INSTANCE)
 
+            // If delegate type is Nothing interface declarations could be missed so
+            // to make it work propagate nothing type into delegating interface type
+            val scopeType = delegateExpressionType?.takeUnless { it.isNothing() } ?: toInterface.defaultType
+            val scope = scopeType.memberScope
+
             return delegatedMembers
                 .keysToMapExceptNulls { delegatingMember ->
                     val actualDelegates = DescriptorUtils.getAllOverriddenDescriptors(delegatingMember)
                         .filter { it.containingDeclaration == toInterface }
                         .map { overriddenDescriptor ->
-                            val scope = (delegateExpressionType ?: toInterface.defaultType).memberScope
                             val name = overriddenDescriptor.name
-
                             // this is the actual member of delegateExpressionType that we are delegating to
                             (scope.getContributedFunctions(name, NoLookupLocation.WHEN_CHECK_OVERRIDES) +
                                     scope.getContributedVariables(name, NoLookupLocation.WHEN_CHECK_OVERRIDES))

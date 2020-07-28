@@ -1211,6 +1211,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/delegation/delegationByArg.kt");
         }
 
+        @TestMetadata("delegationByCompanionToNothing.kt")
+        public void testDelegationByCompanionToNothing() throws Exception {
+            runTest("js/js.translator/testData/box/delegation/delegationByCompanionToNothing.kt");
+        }
+
         @TestMetadata("delegationByExprWithArgs.kt")
         public void testDelegationByExprWithArgs() throws Exception {
             runTest("js/js.translator/testData/box/delegation/delegationByExprWithArgs.kt");
