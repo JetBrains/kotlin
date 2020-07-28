@@ -28,12 +28,11 @@ class KotlinInlineHandler : InlineHandler {
         settings: InlineHandler.Settings,
     ): InlineHandler.Inliner = object : InlineHandler.Inliner {
         override fun getConflicts(reference: PsiReference, referenced: PsiElement) = MultiMap<PsiElement, String>(1).apply {
-            val psiElement = reference.element
             putValue(
-                psiElement,
+                reference.element,
                 KotlinBundle.message(
                     "text.cannot.inline.reference.from.0.to.1",
-                    psiElement.language.displayName,
+                    referenced.language.displayName,
                     KotlinLanguage.INSTANCE.displayName,
                 ),
             )
