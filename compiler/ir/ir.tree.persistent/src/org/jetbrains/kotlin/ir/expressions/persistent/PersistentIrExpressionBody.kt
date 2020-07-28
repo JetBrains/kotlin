@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 
-class PersistentIrExpressionBody private constructor(
+internal class PersistentIrExpressionBody private constructor(
     startOffset: Int,
     endOffset: Int,
     private var expressionField: IrExpression? = null,

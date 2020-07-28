@@ -11,8 +11,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.IrType
 
-interface ConstructorCarrier : FunctionBaseCarrier {
-
+internal interface ConstructorCarrier : FunctionBaseCarrier {
     override fun clone(): ConstructorCarrier {
         return ConstructorCarrierImpl(
             lastModified,
@@ -31,7 +30,7 @@ interface ConstructorCarrier : FunctionBaseCarrier {
     }
 }
 
-class ConstructorCarrierImpl(
+internal class ConstructorCarrierImpl(
     override val lastModified: Int,
     override var parentField: IrDeclarationParent?,
     override var originField: IrDeclarationOrigin,

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.SmartList
 
-class PersistentIrTypeParameter(
+internal class PersistentIrTypeParameter(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
 // TODO make not persistent
-class PersistentIrLocalDelegatedProperty(
+internal class PersistentIrLocalDelegatedProperty(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,

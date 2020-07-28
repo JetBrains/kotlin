@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
-interface FunctionCarrier : FunctionBaseCarrier {
+internal interface FunctionCarrier : FunctionBaseCarrier {
     var correspondingPropertySymbolField: IrPropertySymbol?
     var overriddenSymbolsField: List<IrSimpleFunctionSymbol>
     var attributeOwnerIdField: IrAttributeContainer
@@ -39,7 +39,7 @@ interface FunctionCarrier : FunctionBaseCarrier {
     }
 }
 
-class FunctionCarrierImpl(
+internal class FunctionCarrierImpl(
     override val lastModified: Int,
     override var parentField: IrDeclarationParent?,
     override var originField: IrDeclarationOrigin,

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.IrErrorDeclaration
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.ErrorCarrier
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-class PersistentIrErrorDeclaration(
+internal class PersistentIrErrorDeclaration(
     startOffset: Int,
     endOffset: Int,
     override val descriptor: DeclarationDescriptor

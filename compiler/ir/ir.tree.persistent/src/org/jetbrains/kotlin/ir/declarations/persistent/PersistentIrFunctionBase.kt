@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
-abstract class PersistentIrFunctionBase<T : FunctionBaseCarrier>(
+internal abstract class PersistentIrFunctionBase<T : FunctionBaseCarrier>(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,

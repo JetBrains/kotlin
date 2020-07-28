@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.declarations.persistent.carriers
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 
-interface PropertyCarrier : DeclarationCarrier {
+internal interface PropertyCarrier : DeclarationCarrier {
     var backingFieldField: IrField?
     var getterField: IrSimpleFunction?
     var setterField: IrSimpleFunction?
@@ -28,7 +28,7 @@ interface PropertyCarrier : DeclarationCarrier {
     }
 }
 
-class PropertyCarrierImpl(
+internal class PropertyCarrierImpl(
     override val lastModified: Int,
     override var parentField: IrDeclarationParent?,
     override var originField: IrDeclarationOrigin,

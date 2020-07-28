@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.declarations.persistent.carriers
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 
 interface BodyCarrier : Carrier {
-
     var containerField: IrDeclaration?
 
     override fun clone(): BodyCarrier {
@@ -16,7 +15,7 @@ interface BodyCarrier : Carrier {
     }
 }
 
-class BodyCarrierImpl(
+internal class BodyCarrierImpl(
     override val lastModified: Int,
     override var containerField: IrDeclaration?
 ) : BodyCarrier

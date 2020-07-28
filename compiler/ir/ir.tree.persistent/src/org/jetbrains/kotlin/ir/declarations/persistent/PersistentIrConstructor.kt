@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
-class PersistentIrConstructor(
+internal class PersistentIrConstructor(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
-abstract class PersistentIrFunctionCommon(
+internal abstract class PersistentIrFunctionCommon(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
@@ -71,7 +71,7 @@ abstract class PersistentIrFunctionCommon(
         }
 }
 
-class PersistentIrFunction(
+internal class PersistentIrFunction(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
@@ -101,7 +101,7 @@ class PersistentIrFunction(
     }
 }
 
-class PersistentIrFakeOverrideFunction(
+internal class PersistentIrFakeOverrideFunction(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,

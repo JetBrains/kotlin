@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 import java.util.*
 
-class PersistentIrClass(
+internal class PersistentIrClass(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,

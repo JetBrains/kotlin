@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.persistent.carriers.AnonymousInitial
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.symbols.IrAnonymousInitializerSymbol
 
-class PersistentIrAnonymousInitializer(
+internal class PersistentIrAnonymousInitializer(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.name.Name
 
-class PersistentIrEnumEntry(
+internal class PersistentIrEnumEntry(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,

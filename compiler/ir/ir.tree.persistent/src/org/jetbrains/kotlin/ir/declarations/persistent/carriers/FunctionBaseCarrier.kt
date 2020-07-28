@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.types.IrType
 
-interface FunctionBaseCarrier : DeclarationCarrier {
+internal interface FunctionBaseCarrier : DeclarationCarrier {
     var returnTypeFieldField: IrType
     var dispatchReceiverParameterField: IrValueParameter?
     var extensionReceiverParameterField: IrValueParameter?

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 
-interface FieldCarrier : DeclarationCarrier {
+internal interface FieldCarrier : DeclarationCarrier {
     var initializerField: IrExpressionBody?
     var correspondingPropertySymbolField: IrPropertySymbol?
     var metadataField: MetadataSource?
@@ -30,7 +30,7 @@ interface FieldCarrier : DeclarationCarrier {
     }
 }
 
-class FieldCarrierImpl(
+internal class FieldCarrierImpl(
     override val lastModified: Int,
     override var parentField: IrDeclarationParent?,
     override var originField: IrDeclarationOrigin,

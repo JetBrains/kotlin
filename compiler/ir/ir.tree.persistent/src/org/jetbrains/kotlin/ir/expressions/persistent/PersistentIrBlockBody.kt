@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrBodyBase
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 
-class PersistentIrBlockBody(
+internal class PersistentIrBlockBody(
     startOffset: Int,
     endOffset: Int,
     initializer: (IrBlockBody.() -> Unit)? = null

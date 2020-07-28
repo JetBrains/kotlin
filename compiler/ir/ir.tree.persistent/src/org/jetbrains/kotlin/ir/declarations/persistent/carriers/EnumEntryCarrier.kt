@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 
-interface EnumEntryCarrier : DeclarationCarrier {
+internal interface EnumEntryCarrier : DeclarationCarrier {
     var correspondingClassField: IrClass?
     var initializerExpressionField: IrExpressionBody?
     
@@ -27,7 +27,7 @@ interface EnumEntryCarrier : DeclarationCarrier {
     }
 }
 
-class EnumEntryCarrierImpl(
+internal class EnumEntryCarrierImpl(
     override val lastModified: Int,
     override var parentField: IrDeclarationParent?,
     override var originField: IrDeclarationOrigin,

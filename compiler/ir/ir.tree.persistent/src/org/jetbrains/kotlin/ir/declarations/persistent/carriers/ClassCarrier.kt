@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.IrType
 
-interface ClassCarrier : DeclarationCarrier {
+internal interface ClassCarrier : DeclarationCarrier {
     var thisReceiverField: IrValueParameter?
     var metadataField: MetadataSource?
     var visibilityField: Visibility
@@ -37,7 +37,7 @@ interface ClassCarrier : DeclarationCarrier {
     }
 }
 
-class ClassCarrierImpl(
+internal class ClassCarrierImpl(
     override val lastModified: Int,
     override var parentField: IrDeclarationParent?,
     override var originField: IrDeclarationOrigin,

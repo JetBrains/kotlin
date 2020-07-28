@@ -9,14 +9,13 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 
-interface ErrorCarrier : DeclarationCarrier {
-
+internal interface ErrorCarrier : DeclarationCarrier {
     override fun clone(): ErrorCarrier {
         return ErrorCarrierImpl(lastModified, parentField, originField, annotationsField)
     }
 }
 
-class ErrorCarrierImpl(
+internal class ErrorCarrierImpl(
     override val lastModified: Int,
     override var parentField: IrDeclarationParent?,
     override var originField: IrDeclarationOrigin,

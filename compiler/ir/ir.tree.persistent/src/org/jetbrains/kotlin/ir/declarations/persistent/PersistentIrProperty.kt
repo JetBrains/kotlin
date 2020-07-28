@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.name.Name
 
-abstract class PersistentIrPropertyCommon(
+internal abstract class PersistentIrPropertyCommon(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
@@ -83,7 +83,7 @@ abstract class PersistentIrPropertyCommon(
         }
 }
 
-class PersistentIrProperty(
+internal class PersistentIrProperty(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
@@ -110,7 +110,7 @@ class PersistentIrProperty(
         get() = symbol.descriptor
 }
 
-class PersistentIrFakeOverrideProperty(
+internal class PersistentIrFakeOverrideProperty(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,

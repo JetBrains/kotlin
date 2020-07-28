@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
-class PersistentIrValueParameter(
+internal class PersistentIrValueParameter(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,

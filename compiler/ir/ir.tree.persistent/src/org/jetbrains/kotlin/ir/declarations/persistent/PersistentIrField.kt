@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
-class PersistentIrField(
+internal class PersistentIrField(
     startOffset: Int,
     endOffset: Int,
     origin: IrDeclarationOrigin,
