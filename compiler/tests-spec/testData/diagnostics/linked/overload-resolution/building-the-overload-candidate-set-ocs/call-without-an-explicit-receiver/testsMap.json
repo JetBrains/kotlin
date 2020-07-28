@@ -27,7 +27,33 @@
           "linkType": "main"
         }
       ],
+      "4": [
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 1,
+          "description": "Top-level non-extension functions named f: callables implicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/4.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 1,
+          "description": "Top-level non-extension functions named f: callables implicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/4.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ],
       "6": [
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 1,
+          "description": "Top-level non-extension functions named f: callables implicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/4.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
         {
           "specVersion": "0.1-401",
           "casesNumber": 5,
@@ -43,6 +69,14 @@
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/6.4.kt",
           "unexpectedBehaviour": true,
           "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 1,
+          "description": "Top-level non-extension functions named f: callables implicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/neg/4.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ]
     },
@@ -131,6 +165,22 @@
           "linkType": "main"
         },
         {
+          "specVersion": "0.1-464",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions named f: callables implicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions named f: callables implicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
           "specVersion": "0.1-278",
           "casesNumber": 3,
           "description": "Top-level non-extension functions: Callables star-imported into the current file;",
@@ -141,15 +191,63 @@
       ],
       "4": [
         {
+          "specVersion": "0.1-464",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions named f: callables explicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
           "specVersion": "0.1-278",
           "casesNumber": 3,
           "description": "Top-level non-extension functions: Callables explicitly imported into the current file",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions named f: callables implicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions named f: callables implicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions named f: callables explicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.6.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions named f: callables explicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ],
       "5": [
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions named f: callables explicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
         {
           "specVersion": "0.1-278",
           "casesNumber": 3,
@@ -157,6 +255,22 @@
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/5.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions named f: callables explicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.6.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 3,
+          "description": "Top-level non-extension functions named f: callables explicitly imported into the current file;",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
         }
       ],
       "7": [
