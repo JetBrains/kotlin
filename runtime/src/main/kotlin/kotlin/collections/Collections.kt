@@ -19,7 +19,7 @@ internal actual fun <T> Array<out T>.copyToArrayOfAny(isVarargs: Boolean): Array
 /**
  * Classes that inherit from this interface can be represented as a sequence of elements that can
  * be iterated over.
- * @param T the type of element being iterated over. The iterator is covariant on its element type.
+ * @param T the type of element being iterated over. The iterator is covariant in its element type.
  */
 public interface Iterable<out T> {
     /**
@@ -31,7 +31,7 @@ public interface Iterable<out T> {
 /**
  * Classes that inherit from this interface can be represented as a sequence of elements that can
  * be iterated over and that supports removing elements during iteration.
- * @param T the type of element being iterated over. The mutable iterator is invariant on its element type.
+ * @param T the type of element being iterated over. The mutable iterator is invariant in its element type.
  */
 public interface MutableIterable<out T> : Iterable<T> {
     /**

@@ -5,8 +5,8 @@ package kotlin.collections
  *
  * The implementor is required to implement [entries] property, which should return mutable set of map entries, and [put] function.
  *
- * @param K the type of map keys. The map is invariant on its key type.
- * @param V the type of map values. The map is invariant on its value type.
+ * @param K the type of map keys. The map is invariant in its key type.
+ * @param V the type of map values. The map is invariant in its value type.
  */
 @SinceKotlin("1.1")
 public actual abstract class AbstractMutableMap<K, V> protected actual constructor() : AbstractMap<K, V>(), MutableMap<K, V> {

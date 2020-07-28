@@ -8,7 +8,7 @@ package kotlin.collections
 /**
  * A generic ordered collection of elements. Methods in this interface support only read-only access to the list;
  * read/write access is supported through the [MutableList] interface.
- * @param E the type of elements contained in the list. The list is covariant on its element type.
+ * @param E the type of elements contained in the list. The list is covariant in its element type.
  */
 public interface List<out E> : Collection<E> {
     // Query Operations
@@ -62,7 +62,7 @@ public interface List<out E> : Collection<E> {
 
 /**
  * A generic ordered collection of elements that supports adding and removing elements.
- * @param E the type of elements contained in the list. The mutable list is invariant on its element type.
+ * @param E the type of elements contained in the list. The mutable list is invariant in its element type.
  */
 public interface MutableList<E> : List<E>, MutableCollection<E> {
     // Modification Operations

@@ -10,9 +10,9 @@ package kotlin.collections
  * the value corresponding to each key. Map keys are unique; the map holds only one value for each key.
  * Methods in this interface support only read-only access to the map; read-write access is supported through
  * the [MutableMap] interface.
- * @param K the type of map keys. The map is invariant on its key type, as it
+ * @param K the type of map keys. The map is invariant in its key type, as it
  *          can accept key as a parameter (of [containsKey] for example) and return it in [keys] set.
- * @param V the type of map values. The map is covariant on its value type.
+ * @param V the type of map values. The map is covariant in its value type.
  */
 public interface Map<K, out V> {
     // Query Operations
@@ -76,8 +76,8 @@ public interface Map<K, out V> {
 /**
  * A modifiable collection that holds pairs of objects (keys and values) and supports efficiently retrieving
  * the value corresponding to each key. Map keys are unique; the map holds only one value for each key.
- * @param K the type of map keys. The map is invariant on its key type.
- * @param V the type of map values. The mutable map is invariant on its value type.
+ * @param K the type of map keys. The map is invariant in its key type.
+ * @param V the type of map values. The mutable map is invariant in its value type.
  */
 public interface MutableMap<K, V> : Map<K, V> {
     // Modification Operations
