@@ -2307,6 +2307,16 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
                 runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/localVariablesAndFunctionsFromNestedScope.kt");
             }
 
+            @TestMetadata("noCompletionAfterNumberLiteral1.kt")
+            public void testNoCompletionAfterNumberLiteral1() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/noCompletionAfterNumberLiteral1.kt");
+            }
+
+            @TestMetadata("noCompletionAfterNumberLiteral2.kt")
+            public void testNoCompletionAfterNumberLiteral2() throws Exception {
+                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/noCompletionAfterNumberLiteral2.kt");
+            }
+
             @TestMetadata("nullableCompletion.kt")
             public void testNullableCompletion() throws Exception {
                 runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/nullableCompletion.kt");
