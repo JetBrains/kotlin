@@ -1,33 +1,44 @@
 package org.jetbrains.kotlin.test
 
 import java.io.File
-import java.nio.file.Path
 
 object KotlinRoot {
     @JvmField
-    val DIR: File = run {
-        var current = File(".").canonicalFile
-        while (!current.isRepositoryRootDirectory()) {
-            current = current.parentFile
-        }
-        checkNotNull(current) { "Can't find kotlin-ide root" }
-        return@run current.resolve("kotlin")
-    }
+    val REPO: File
 
     @JvmField
-    val PATH: Path = DIR.toPath()
+    val DIR: File
+
+    init {
+        var current = File(".").canonicalFile
+
+        var kind = current.getKotlinRootKind()
+        while (kind == null) {
+            current = current.parentFile
+            kind = current.getKotlinRootKind()
+        }
+
+        REPO = current
+
+        DIR = when (kind) {
+            KotlinRootKind.ULTIMATE -> current.resolve("kotlin")
+            KotlinRootKind.COMMUNITY -> current
+        }
+    }
 }
 
-private fun File.isRepositoryRootDirectory(): Boolean {
+private enum class KotlinRootKind {
+    ULTIMATE, COMMUNITY
+}
+
+private fun File.getKotlinRootKind(): KotlinRootKind? {
     if (resolve("kotlin.kotlin-ide.iml").isFile && resolve("intellij").isDirectory && resolve("kotlin/idea/kotlin.idea.iml").isFile) {
-        // Ultimate repository
-        return true
+        return KotlinRootKind.ULTIMATE
     }
 
     if (resolve("kotlin.intellij-kotlin.iml").isFile && resolve("intellij").isDirectory && resolve("idea/kotlin.idea.iml").isFile) {
-        // Community (intellij-kotlin) repository
-        return true
+        return KotlinRootKind.COMMUNITY
     }
 
-    return false
+    return null
 }

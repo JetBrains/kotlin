@@ -48,7 +48,7 @@ class Stats(
 
     private fun plainname() = suggestOsNeutralFileName(name)
 
-    private fun pathToResource(resource: String) = KotlinRoot.DIR.resolve("../out/$resource").canonicalFile
+    private fun pathToResource(resource: String) = KotlinRoot.REPO.resolve("out/$resource").canonicalFile
 
     private fun append(id: String, statInfosArray: Array<StatInfos>) {
         val timingsMs = toTimingsMs(statInfosArray)

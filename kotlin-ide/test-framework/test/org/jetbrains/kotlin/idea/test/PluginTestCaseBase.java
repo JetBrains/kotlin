@@ -52,24 +52,24 @@ public class PluginTestCaseBase {
 
     @NotNull
     public static Sdk mockJdk() {
-        return getSdk(PathManager.getHomePath() + "/community/java/mockJDK-1.8/jre", "Mock JDK");
+        return getSdk(new File(PathManager.getCommunityHomePath(), "java/mockJDK-1.8/jre").getPath(), "Mock JDK");
     }
 
     @NotNull
     public static Sdk mockJdk6() {
-        return getSdk(PathManager.getHomePath() + "/community/java/mockJDK-1.8/jre", "1.6");
+        return getSdk(new File(PathManager.getCommunityHomePath(), "java/mockJDK-1.8/jre").getPath(), "1.6");
     }
 
     @NotNull
     public static Sdk mockJdk8() {
         // Using JDK 6, but with version 1.8
-        return getSdk(PathManager.getHomePath() + "/community/java/mockJDK-1.8/jre", "1.8");
+        return getSdk(new File(PathManager.getCommunityHomePath(), "java/mockJDK-1.8/jre").getPath(), "1.8");
     }
 
     @TestOnly
     @NotNull
     public static Sdk mockJdk9() {
-        return getSdk(PathManager.getHomePath() + "/community/java/mockJDK-1.9/jre", "9");
+        return getSdk(new File(PathManager.getCommunityHomePath(), "java/mockJDK-1.9/jre").getPath(), "9");
     }
 
     @NotNull

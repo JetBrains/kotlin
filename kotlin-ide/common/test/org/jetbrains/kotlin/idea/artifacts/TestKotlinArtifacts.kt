@@ -52,7 +52,7 @@ private fun findLibrary(
         artifactId: String,
         kind: LibraryFileKind = LibraryFileKind.CLASSES
 ): File {
-    val librariesDir = File(KotlinRoot.DIR, "../.idea/libraries")
+    val librariesDir = File(KotlinRoot.REPO, ".idea/libraries")
     if (!librariesDir.exists()) {
         throw IllegalStateException("Can't find $librariesDir")
     }
@@ -117,7 +117,7 @@ private enum class LibraryFileKind(val classifierSuffix: String, val artifactKin
 }
 
 private val remoteMavenRepositories: List<RemoteRepository> by lazy {
-    val jarRepositoriesFile = File(KotlinRoot.DIR, "../.idea/jarRepositories.xml")
+    val jarRepositoriesFile = File(KotlinRoot.REPO, ".idea/jarRepositories.xml")
     val document = jarRepositoriesFile.inputStream().use { stream -> SAXBuilder().build(stream) }
 
     val repositories = mutableListOf<RemoteRepository>()
@@ -140,8 +140,8 @@ private val remoteMavenRepositories: List<RemoteRepository> by lazy {
 
 private fun substitutePathVariables(path: String): String {
     if (path.startsWith("${RepoLocation.PROJECT_DIR}/")) {
-        val projectDir = KotlinRoot.DIR.parentFile
-        return projectDir.absolutePath + path.drop(RepoLocation.PROJECT_DIR.toString().length)
+        val projectDir = KotlinRoot.REPO
+        return projectDir.resolve(path.drop(RepoLocation.PROJECT_DIR.toString().length)).absolutePath
     }
     else if (path.startsWith("${RepoLocation.MAVEN_REPOSITORY}/")) {
         val m2 = System.getenv("M2_HOME")?.let { File(it) }
