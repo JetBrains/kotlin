@@ -706,27 +706,36 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 || declaration.isExternal
                 || body == null)
             return
-
-        generateFunction(codegen, declaration,
-                declaration.location(start = true),
-                declaration.location(start = false)) {
-            using(FunctionScope(declaration, it)) {
-                val parameterScope = ParameterScope(declaration, functionGenerationContext)
-                using(parameterScope) usingParameterScope@{
-                    using(VariableScope()) usingVariableScope@{
-                        recordCoverage(body)
-                        if (declaration.isReifiedInline) {
-                            callDirect(context.ir.symbols.throwIllegalStateExceptionWithMessage.owner,
-                                    listOf(context.llvm.staticData.kotlinStringLiteral(
-                                            "unsupported call of reified inlined function `${declaration.fqNameForIrSerialization}`").llvm),
-                                    Lifetime.IRRELEVANT)
-                            return@usingVariableScope
-                        }
-                        when (body) {
-                            is IrBlockBody -> body.statements.forEach { generateStatement(it) }
-                            is IrExpressionBody -> generateStatement(body.expression)
-                            is IrSyntheticBody -> throw AssertionError("Synthetic body ${body.kind} has not been lowered")
-                            else -> TODO(ir2string(body))
+        val isNotInlinedLambda = declaration.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+        val file = ((declaration as? IrSimpleFunction)?.attributeOwnerId as? IrSimpleFunction)?.file.takeIf {
+            it ?: return@takeIf false
+            (currentCodeContext.fileScope() as FileScope).file != it && isNotInlinedLambda
+        }
+        val scope = file?.let {
+            FileScope(it)
+        }
+        using(scope) {
+            generateFunction(codegen, declaration,
+                    declaration.location(start = true),
+                    declaration.location(start = false)) {
+                using(FunctionScope(declaration, it)) {
+                    val parameterScope = ParameterScope(declaration, functionGenerationContext)
+                    using(parameterScope) usingParameterScope@{
+                        using(VariableScope()) usingVariableScope@{
+                            recordCoverage(body)
+                            if (declaration.isReifiedInline) {
+                                callDirect(context.ir.symbols.throwIllegalStateExceptionWithMessage.owner,
+                                        listOf(context.llvm.staticData.kotlinStringLiteral(
+                                                "unsupported call of reified inlined function `${declaration.fqNameForIrSerialization}`").llvm),
+                                        Lifetime.IRRELEVANT)
+                                return@usingVariableScope
+                            }
+                            when (body) {
+                                is IrBlockBody -> body.statements.forEach { generateStatement(it) }
+                                is IrExpressionBody -> generateStatement(body.expression)
+                                is IrSyntheticBody -> throw AssertionError("Synthetic body ${body.kind} has not been lowered")
+                                else -> TODO(ir2string(body))
+                            }
                         }
                     }
                 }
