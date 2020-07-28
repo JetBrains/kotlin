@@ -25,7 +25,7 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
     }
 
     public void testAllFilesPresentInDiagnostics() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "helpers", "linked/annotations", "linked/built-in-types-and-their-semantics", "linked/control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions", "linked/control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph", "linked/declarations/classifier-declaration/classifier-initialization", "linked/declarations/function-declaration", "linked/declarations/property-declaration/property-initialization", "linked/expressions/call-and-property-access-expressions", "linked/expressions/function-literals", "linked/inheritance", "linked/overload-resolution/c-level-partition", "linked/overload-resolution/determining-function-applicability-for-a-specific-call", "linked/overloadable-operators", "linked/statements/assignments/simple-assignments", "linked/type-inference/local-type-inference", "linked/type-inference/smart-casts/smart-cast-types", "linked/type-system/subtyping", "linked/type-system/type-kinds/type-parameters");
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "helpers", "linked/annotations", "linked/built-in-types-and-their-semantics", "linked/control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions", "linked/control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph", "linked/declarations/classifier-declaration/classifier-initialization", "linked/declarations/function-declaration", "linked/declarations/property-declaration/property-initialization", "linked/expressions/call-and-property-access-expressions", "linked/expressions/function-literals", "linked/inheritance", "linked/overload-resolution/c-level-partition", "linked/overload-resolution/determining-function-applicability-for-a-specific-call/rationale", "linked/overloadable-operators", "linked/statements/assignments/simple-assignments", "linked/type-inference/local-type-inference", "linked/type-inference/smart-casts/smart-cast-types", "linked/type-system/subtyping", "linked/type-system/type-kinds/type-parameters");
     }
 
     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked")
@@ -37,7 +37,7 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
         }
 
         public void testAllFilesPresentInLinked() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "annotations", "built-in-types-and-their-semantics", "control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions", "control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph", "declarations/classifier-declaration/classifier-initialization", "declarations/function-declaration", "declarations/property-declaration/property-initialization", "expressions/call-and-property-access-expressions", "expressions/function-literals", "inheritance", "overload-resolution/c-level-partition", "overload-resolution/determining-function-applicability-for-a-specific-call", "overloadable-operators", "statements/assignments/simple-assignments", "type-inference/local-type-inference", "type-inference/smart-casts/smart-cast-types", "type-system/subtyping", "type-system/type-kinds/type-parameters");
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "annotations", "built-in-types-and-their-semantics", "control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions", "control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph", "declarations/classifier-declaration/classifier-initialization", "declarations/function-declaration", "declarations/property-declaration/property-initialization", "expressions/call-and-property-access-expressions", "expressions/function-literals", "inheritance", "overload-resolution/c-level-partition", "overload-resolution/determining-function-applicability-for-a-specific-call/rationale", "overloadable-operators", "statements/assignments/simple-assignments", "type-inference/local-type-inference", "type-inference/smart-casts/smart-cast-types", "type-system/subtyping", "type-system/type-kinds/type-parameters");
         }
 
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis")
@@ -3388,7 +3388,7 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
             }
 
             public void testAllFilesPresentInOverload_resolution() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "c-level-partition", "determining-function-applicability-for-a-specific-call");
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "c-level-partition", "determining-function-applicability-for-a-specific-call/rationale");
             }
 
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs")
@@ -4145,6 +4145,95 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                     }
 
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class P_1 extends AbstractDiagnosticsTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInP_1() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Neg extends AbstractDiagnosticsTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("2.1.kt")
+                            public void test2_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.1.kt");
+                            }
+
+                            @TestMetadata("2.2.kt")
+                            public void test2_2() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.2.kt");
+                            }
+
+                            @TestMetadata("2.4.kt")
+                            public void test2_4() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.4.kt");
+                            }
+
+                            @TestMetadata("2.5.kt")
+                            public void test2_5() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.5.kt");
+                            }
+
+                            @TestMetadata("2.6.kt")
+                            public void test2_6() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.6.kt");
+                            }
+
+                            @TestMetadata("2.7.kt")
+                            public void test2_7() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.7.kt");
+                            }
+
+                            @TestMetadata("2.8.kt")
+                            public void test2_8() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.8.kt");
+                            }
+
+                            @TestMetadata("2.9.kt")
+                            public void test2_9() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.9.kt");
+                            }
+
+                            public void testAllFilesPresentInNeg() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                            }
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Pos extends AbstractDiagnosticsTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("2.1.kt")
+                            public void test2_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.1.kt");
+                            }
+
+                            @TestMetadata("2.2.kt")
+                            public void test2_2() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.2.kt");
+                            }
+
+                            public void testAllFilesPresentInPos() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                            }
+                        }
+                    }
+
                     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2")
                     @TestDataPath("$PROJECT_ROOT")
                     @RunWith(JUnit3RunnerWithInners.class)
@@ -4625,6 +4714,11 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/neg/2.1.kt");
                             }
 
+                            @TestMetadata("2.2.kt")
+                            public void test2_2() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/neg/2.2.kt");
+                            }
+
                             public void testAllFilesPresentInNeg() throws Exception {
                                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                             }
@@ -4720,6 +4814,63 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
 
                             public void testAllFilesPresentInNeg() throws Exception {
                                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-3/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                            }
+                        }
+                    }
+                }
+            }
+
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Determining_function_applicability_for_a_specific_call extends AbstractDiagnosticsTestSpec {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInDetermining_function_applicability_for_a_specific_call() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "rationale");
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Description extends AbstractDiagnosticsTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInDescription() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description/p-2")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class P_2 extends AbstractDiagnosticsTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInP_2() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description/p-2/neg")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Neg extends AbstractDiagnosticsTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("2.1.kt")
+                            public void test2_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description/p-2/neg/2.1.kt");
+                            }
+
+                            public void testAllFilesPresentInNeg() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description/p-2/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                             }
                         }
                     }

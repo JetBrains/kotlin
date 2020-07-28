@@ -7,6 +7,8 @@
  *
  * SPEC VERSION: 0.1-413
  * MAIN LINK: overload-resolution, resolving-callable-references, resolving-callable-references-not-used-as-arguments-to-a-call -> paragraph 1 -> sentence 1
+ * PRIMARY LINKS: overload-resolution, determining-function-applicability-for-a-specific-call, description -> paragraph 5 -> sentence 1
+ * SECONDARY LINKS: overload-resolution, determining-function-applicability-for-a-specific-call, description -> paragraph 3 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: the case of a call with a callable reference as a not parameter
  */

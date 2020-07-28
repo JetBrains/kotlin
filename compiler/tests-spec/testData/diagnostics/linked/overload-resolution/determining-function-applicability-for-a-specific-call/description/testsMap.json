@@ -1,6 +1,74 @@
 {
+  "2": {
+    "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-448",
+          "casesNumber": 1,
+          "description": "without inline plusAssign functions",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.9.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-448",
+          "casesNumber": 1,
+          "description": "explicit receiver with lambda",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description/p-2/neg/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    }
+  },
+  "4": {
+    "neg": {
+      "3": [
+        {
+          "specVersion": "0.1-448",
+          "casesNumber": 1,
+          "description": "explicit receiver with lambda",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description/p-2/neg/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  },
+  "5": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-448",
+          "casesNumber": 1,
+          "description": "explicit receiver with lambda",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/determining-function-applicability-for-a-specific-call/description/p-2/neg/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 1,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  },
   "3": {
     "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-413",
+          "casesNumber": 1,
+          "description": "the case of a call with a callable reference as a not parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/resolving-callable-references/resolving-callable-references-not-used-as-arguments-to-a-call/p-1/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        }
+      ],
       "3": [
         {
           "specVersion": "0.1-152",

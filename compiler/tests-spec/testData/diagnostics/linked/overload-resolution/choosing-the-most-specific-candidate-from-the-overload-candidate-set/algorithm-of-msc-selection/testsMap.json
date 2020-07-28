@@ -645,6 +645,14 @@
           "linkType": "main"
         },
         {
+          "specVersion": "0.1-448",
+          "casesNumber": 1,
+          "description": "plusAssign as inline function",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
           "specVersion": "0.1-413",
           "casesNumber": 2,
           "description": "a callable reference is itself an argument to an overloaded function call",
@@ -845,6 +853,70 @@
     "neg": {
       "1": [
         {
+          "specVersion": "0.1-448",
+          "casesNumber": 2,
+          "description": "call with lambda as argument",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-448",
+          "casesNumber": 1,
+          "description": "inline plusAssign functions",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.5.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-448",
+          "casesNumber": 2,
+          "description": "without inline plusAssign functions",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.4.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-448",
+          "casesNumber": 1,
+          "description": "without inline plusAssign functions",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.9.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-448",
+          "casesNumber": 1,
+          "description": "without inline plusAssign functions",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.8.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-448",
+          "casesNumber": 1,
+          "description": "without inline plusAssign functions",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.7.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-448",
+          "casesNumber": 1,
+          "description": "plusAssign as inline function",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-448",
+          "casesNumber": 1,
+          "description": "without inline plusAssign functions",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.6.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary"
+        },
+        {
           "specVersion": "0.1-413",
           "casesNumber": 3,
           "description": "a callable reference is itself an argument to an overloaded function call",
@@ -933,6 +1005,14 @@
           "casesNumber": 1,
           "description": "Neither of the two candidates is more applicable than the other and both are non-parameterized",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/neg/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-448",
+          "casesNumber": 2,
+          "description": "explicit receiver ambuguity",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/neg/2.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }

@@ -25,7 +25,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
     }
 
     public void testAllFilesPresentInBox() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, true, "helpers", "templates", "linked/exceptions", "linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver", "linked/overloadable-operators");
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, true, "helpers", "templates", "linked/exceptions", "linked/operator-call", "linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver", "linked/overloadable-operators");
     }
 
     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked")
@@ -37,7 +37,7 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
         }
 
         public void testAllFilesPresentInLinked() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked"), Pattern.compile("^(.+)\\.kt$"), null, true, "exceptions", "overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver", "overloadable-operators");
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked"), Pattern.compile("^(.+)\\.kt$"), null, true, "exceptions", "operator-call", "overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver", "overloadable-operators");
         }
 
         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions")
@@ -3371,6 +3371,125 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
                     public void testAllFilesPresentInOperator_call() throws Exception {
                         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class P_1 extends AbstractBlackBoxCodegenTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInP_1() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Neg extends AbstractBlackBoxCodegenTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("2.1.kt")
+                            public void test2_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.1.kt");
+                            }
+
+                            @TestMetadata("2.2.kt")
+                            public void test2_2() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.2.kt");
+                            }
+
+                            @TestMetadata("2.3.kt")
+                            public void test2_3() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.3.kt");
+                            }
+
+                            @TestMetadata("2.4.kt")
+                            public void test2_4() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.4.kt");
+                            }
+
+                            @TestMetadata("2.5.kt")
+                            public void test2_5() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.5.kt");
+                            }
+
+                            @TestMetadata("2.6.kt")
+                            public void test2_6() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.6.kt");
+                            }
+
+                            public void testAllFilesPresentInNeg() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            }
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Pos extends AbstractBlackBoxCodegenTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("2.1.kt")
+                            public void test2_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.1.kt");
+                            }
+
+                            @TestMetadata("2.10.kt")
+                            public void test2_10() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.10.kt");
+                            }
+
+                            @TestMetadata("2.2.kt")
+                            public void test2_2() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.2.kt");
+                            }
+
+                            @TestMetadata("2.3.kt")
+                            public void test2_3() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.3.kt");
+                            }
+
+                            @TestMetadata("2.4.kt")
+                            public void test2_4() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.4.kt");
+                            }
+
+                            @TestMetadata("2.5.kt")
+                            public void test2_5() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.5.kt");
+                            }
+
+                            @TestMetadata("2.6.kt")
+                            public void test2_6() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.6.kt");
+                            }
+
+                            @TestMetadata("2.7.kt")
+                            public void test2_7() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.7.kt");
+                            }
+
+                            @TestMetadata("2.8.kt")
+                            public void test2_8() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.8.kt");
+                            }
+
+                            @TestMetadata("2.9.kt")
+                            public void test2_9() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.9.kt");
+                            }
+
+                            public void testAllFilesPresentInPos() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            }
+                        }
                     }
 
                     @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-2")
