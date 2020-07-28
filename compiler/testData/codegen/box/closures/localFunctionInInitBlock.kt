@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-
 lateinit var result1: String
 lateinit var result2: String
 

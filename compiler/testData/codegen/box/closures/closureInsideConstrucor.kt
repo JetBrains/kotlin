@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 //adopted snippet from kdoc
 open class KModel {
     val sourcesInfo: String
