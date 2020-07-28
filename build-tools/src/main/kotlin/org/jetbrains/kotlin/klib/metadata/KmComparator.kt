@@ -32,7 +32,8 @@ internal class KmComparator(private val configuration: ComparisonConfig) {
     fun compare(function1: KmFunction, function2: KmFunction): MetadataCompareResult = serialComparator(
             compare(KmFunction::name, ::compare) to "Different names",
             compare(KmFunction::returnType, ::compareTypes) to "Return type mismatch",
-            compare(KmFunction::valueParameters, compareLists(::compare)) to "Value parameters mismatch"
+            compare(KmFunction::valueParameters, compareLists(::compare)) to "Value parameters mismatch",
+            ::compareFunctionFlags to "Flags mismatch"
     )(function1, function2)
 
     fun compare(property1: KmProperty, property2: KmProperty): MetadataCompareResult = serialComparator(
@@ -67,6 +68,14 @@ internal class KmComparator(private val configuration: ComparisonConfig) {
         string1 == string2 -> Ok
         else -> Fail("$string1 != $string2")
     }
+
+    private fun compareFunctionFlags(function1: KmFunction, function2: KmFunction): MetadataCompareResult =
+            serialComparator(
+                    checkFlag(Flag.Function.IS_EXTERNAL, "IS_EXTERNAL"),
+                    checkFlag(Flag.Function.IS_DECLARATION, "IS_DECLARATION"),
+                    ::compareVisibilityFlags,
+                    ::compareModalityFlags
+            )(function1.flags, function2.flags)
 
     private fun comparePropertyFlags(property1: KmProperty, property2: KmProperty): MetadataCompareResult =
             serialComparator(
