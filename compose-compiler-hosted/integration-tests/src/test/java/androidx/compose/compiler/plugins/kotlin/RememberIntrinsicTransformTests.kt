@@ -156,7 +156,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun Test(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C(Test)<rememb...>,<CInt()...>:Test.kt")
+              %composer.startRestartGroup(<> xor %key, "C(Test)<CInt()...>,<rememb...>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
                 val foo = remember(CInt(%composer, <>, 0), {
                   val tmp0_return = Foo()

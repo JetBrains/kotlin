@@ -3020,4 +3020,42 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             }
         """
     )
+
+    @Test
+    fun testSourceOffsetOrderForParameterExpressions(): Unit = verifyComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.Composable
+
+            @Composable
+            fun Test() {
+                A(b(), c(), d())
+                B()
+            }
+        """,
+        extra = """
+            import androidx.compose.runtime.Composable
+
+            @Composable fun A(a: Int, b: Int, c: Int) { }
+            @Composable fun B() { }
+            @Composable fun b(): Int = 1
+            @Composable fun c(): Int = 1
+            @Composable fun d(): Int = 1
+        """,
+        expectedTransformed = """
+            @Composable
+            fun Test(%composer: Composer<*>?, %key: Int, %changed: Int) {
+              %composer.startRestartGroup(<> xor %key, "C(Test)<b()>,<c()>,<d()>,<A(b(),>,<B()>:Test.kt")
+              if (%changed !== 0 || !%composer.skipping) {
+                A(b(%composer, <>, 0), c(%composer, <>, 0), d(%composer, <>, 0), %composer, <>, 0)
+                B(%composer, <>, 0)
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
+                Test(%composer, %key, %changed or 0b0001)
+              }
+            }
+
+        """
+    )
 }
