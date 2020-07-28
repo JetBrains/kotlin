@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -236,7 +235,7 @@ interface IrBuilderExtension {
 
         if (declare) {
             with(propertyDescriptor) {
-                IrPropertyImpl(
+                propertyParent.factory.createProperty(
                     propertyParent.startOffset, propertyParent.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, irPropertySymbol,
                     name, visibility, modality, isVar, isConst, isLateInit, isDelegated, isExternal
                 ).also {
@@ -252,9 +251,9 @@ interface IrBuilderExtension {
             correspondingPropertySymbol = irPropertySymbol
         }
         val fieldSymbol = irProperty.backingField!!.symbol
-        irProperty.getter = propertyDescriptor.getter?.let { generatePropertyAccessor(it, fieldSymbol, declare) }
+        irProperty.getter = propertyDescriptor.getter?.let { generatePropertyAccessor(irProperty, it, fieldSymbol, declare) }
             ?.apply { parent = propertyParent }
-        irProperty.setter = propertyDescriptor.setter?.let { generatePropertyAccessor(it, fieldSymbol, declare) }
+        irProperty.setter = propertyDescriptor.setter?.let { generatePropertyAccessor(irProperty, it, fieldSymbol, declare) }
             ?.apply { parent = propertyParent }
         return irProperty
     }
@@ -268,7 +267,7 @@ interface IrBuilderExtension {
 
         return with(descriptor) {
             // TODO: type parameters
-            IrFieldImpl(
+            originProperty.factory.createField(
                 originProperty.startOffset, originProperty.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, fieldSymbol, name, type.toIrType(),
                 visibility, !isVar, isEffectivelyExternal(), dispatchReceiverParameter == null
             )
@@ -276,6 +275,7 @@ interface IrBuilderExtension {
     }
 
     fun generatePropertyAccessor(
+        property: IrProperty,
         descriptor: PropertyAccessorDescriptor,
         fieldSymbol: IrFieldSymbol,
         declare: Boolean
@@ -285,7 +285,7 @@ interface IrBuilderExtension {
 
         if (declare) {
             with(descriptor) {
-                IrFunctionImpl(
+                property.factory.createFunction(
                     fieldSymbol.owner.startOffset, fieldSymbol.owner.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, symbol,
                     name, visibility, modality, returnType!!.toIrType(),
                     isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect
@@ -317,7 +317,7 @@ interface IrBuilderExtension {
 
         val startOffset = irAccessor.startOffset
         val endOffset = irAccessor.endOffset
-        val irBody = IrBlockBodyImpl(startOffset, endOffset)
+        val irBody = irAccessor.factory.createBlockBody(startOffset, endOffset)
 
         val receiver = generateReceiverExpressionForFieldAccess(irAccessor.dispatchReceiverParameter!!.symbol, property)
 
@@ -344,7 +344,7 @@ interface IrBuilderExtension {
         val irProperty = irAccessor.correspondingPropertySymbol?.owner ?: error("Expected corresponding property for accessor $setter")
         val startOffset = irAccessor.startOffset
         val endOffset = irAccessor.endOffset
-        val irBody = IrBlockBodyImpl(startOffset, endOffset)
+        val irBody = irAccessor.factory.createBlockBody(startOffset, endOffset)
 
         val receiver = generateReceiverExpressionForFieldAccess(irAccessor.dispatchReceiverParameter!!.symbol, property)
 
@@ -383,7 +383,7 @@ interface IrBuilderExtension {
     ) {
         val function = this
         fun irValueParameter(descriptor: ParameterDescriptor): IrValueParameter = with(descriptor) {
-            IrValueParameterImpl(
+            factory.createValueParameter(
                 function.startOffset, function.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, IrValueParameterSymbolImpl(this),
                 name, indexOrMinusOne, type.toIrType(), varargElementType?.toIrType(), isCrossinline, isNoinline
             ).also {
@@ -407,7 +407,7 @@ interface IrBuilderExtension {
 
     fun IrFunction.copyTypeParamsFromDescriptor() {
         val newTypeParameters = descriptor.typeParameters.map {
-            IrTypeParameterImpl(
+            factory.createTypeParameter(
                 startOffset, endOffset,
                 SERIALIZABLE_PLUGIN_ORIGIN,
                 IrTypeParameterSymbolImpl(it),
