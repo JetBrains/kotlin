@@ -14,6 +14,7 @@ import org.gradle.api.component.Artifact;
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.internal.file.UnionFileCollection;
+import org.gradle.api.logging.Logging;
 import org.gradle.api.plugins.WarPlugin;
 import org.gradle.api.specs.Spec;
 import org.gradle.api.tasks.SourceSet;
@@ -39,7 +40,6 @@ import org.jetbrains.plugins.gradle.tooling.util.ModuleComponentIdentifierImpl;
 import org.jetbrains.plugins.gradle.tooling.util.SourceSetCachedFinder;
 import org.jetbrains.plugins.gradle.tooling.util.resolve.deprecated.DeprecatedDependencyResolver;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.*;
@@ -51,7 +51,7 @@ import static java.util.Collections.*;
  */
 public class DependencyResolverImpl implements DependencyResolver {
 
-  private static final Logger LOG = LoggerFactory.getLogger(DependencyResolverImpl.class);
+  private static final Logger LOG = Logging.getLogger(DependencyResolverImpl.class);
 
   private static final boolean IS_NEW_DEPENDENCY_RESOLUTION_APPLICABLE =
     GradleVersion.current().getBaseVersion().compareTo(GradleVersion.version("4.5")) >= 0;
