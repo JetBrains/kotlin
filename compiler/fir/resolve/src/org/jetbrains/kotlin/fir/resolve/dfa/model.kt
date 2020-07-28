@@ -147,6 +147,13 @@ data class OperationStatement(val variable: DataFlowVariable, val operation: Ope
     }
 }
 
+class ApprovedOperationStatement(val variable: DataFlowVariable, val operations: Set<Operation>) {
+
+    operator fun plus(other: ApprovedOperationStatement): ApprovedOperationStatement =
+        ApprovedOperationStatement(variable, operations + other.operations)
+
+}
+
 abstract class TypeStatement : Statement<TypeStatement>() {
     abstract val variable: RealVariable
     abstract val exactType: Set<ConeKotlinType>
@@ -208,14 +215,26 @@ fun Implication.invertCondition(): Implication = Implication(condition.invert(),
 
 typealias TypeStatements = Map<RealVariable, TypeStatement>
 typealias MutableTypeStatements = MutableMap<RealVariable, MutableTypeStatement>
+typealias ApprovedOperations = Map<DataFlowVariable, ApprovedOperationStatement>
+typealias MutableApprovedOperations = MutableMap<DataFlowVariable, ApprovedOperationStatement>
 
 fun MutableTypeStatements.addStatement(variable: RealVariable, statement: TypeStatement) {
     put(variable, statement.asMutableStatement()) { it.apply { this += statement } }
 }
 
+fun MutableApprovedOperations.addOperations(operations: ApprovedOperationStatement) {
+    put(operations.variable, operations) { it + operations }
+}
+
 fun MutableTypeStatements.mergeTypeStatements(other: TypeStatements) {
     other.forEach { (variable, info) ->
         addStatement(variable, info)
+    }
+}
+
+fun MutableApprovedOperations.mergeApprovedOperations(other: ApprovedOperations) {
+    other.forEach { (_, info) ->
+        addOperations(info)
     }
 }
 

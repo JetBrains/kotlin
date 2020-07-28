@@ -33,6 +33,8 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
 
     abstract fun addTypeStatement(flow: FLOW, statement: TypeStatement)
 
+    abstract fun addOperationStatement(flow: FLOW, statement: ApprovedOperationStatement)
+
     abstract fun addImplication(flow: FLOW, implication: Implication)
 
     abstract fun removeAllAboutVariable(flow: FLOW, variable: RealVariable)
@@ -80,6 +82,7 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
 
     abstract fun approveStatementsTo(
         destination: MutableTypeStatements,
+        operationsDestination: MutableApprovedOperations,
         flow: FLOW,
         approvedStatement: OperationStatement,
         statements: Collection<Implication>,
@@ -92,7 +95,7 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
      */
     fun approveOperationStatement(flow: FLOW, approvedStatement: OperationStatement): Collection<TypeStatement> {
         val statements = getImplicationsWithVariable(flow, approvedStatement.variable)
-        return approveOperationStatement(flow, approvedStatement, statements).values
+        return approveOperationStatement(flow, approvedStatement, statements).first.values
     }
 
     fun orForTypeStatements(
@@ -163,10 +166,11 @@ fun <FLOW : Flow> LogicSystem<FLOW>.approveOperationStatement(
     flow: FLOW,
     approvedStatement: OperationStatement,
     statements: Collection<Implication>,
-): MutableTypeStatements {
-    return mutableMapOf<RealVariable, MutableTypeStatement>().apply {
-        approveStatementsTo(this, flow, approvedStatement, statements)
-    }
+): Pair<MutableTypeStatements, MutableApprovedOperations> {
+    val approvedTypeStatements: MutableTypeStatements = mutableMapOf()
+    val approvedOperations: MutableApprovedOperations = mutableMapOf()
+    approveStatementsTo(approvedTypeStatements, approvedOperations, flow, approvedStatement, statements)
+    return approvedTypeStatements to approvedOperations
 }
 
 /*

@@ -35,12 +35,14 @@ data class PersistentTypeStatement(
 }
 
 typealias PersistentApprovedTypeStatements = PersistentMap<RealVariable, PersistentTypeStatement>
+typealias PersistentApprovedOperations = PersistentMap<DataFlowVariable, ApprovedOperationStatement>
 typealias PersistentImplications = PersistentMap<DataFlowVariable, PersistentList<Implication>>
 
 class PersistentFlow : Flow {
     val previousFlow: PersistentFlow?
     var approvedTypeStatements: PersistentApprovedTypeStatements
     var logicStatements: PersistentImplications
+    var approvedOperations: PersistentApprovedOperations
     val level: Int
     var approvedTypeStatementsDiff: PersistentApprovedTypeStatements = persistentHashMapOf()
     var updatedAliasDiff: PersistentSet<RealVariable> = persistentSetOf()
@@ -59,6 +61,7 @@ class PersistentFlow : Flow {
         this.previousFlow = previousFlow
         approvedTypeStatements = previousFlow.approvedTypeStatements
         logicStatements = previousFlow.logicStatements
+        approvedOperations = previousFlow.approvedOperations
         level = previousFlow.level + 1
 
         directAliasMap = previousFlow.directAliasMap
@@ -69,6 +72,7 @@ class PersistentFlow : Flow {
         previousFlow = null
         approvedTypeStatements = persistentHashMapOf()
         logicStatements = persistentHashMapOf()
+        approvedOperations = persistentHashMapOf()
         level = 1
 
         directAliasMap = persistentMapOf()
@@ -275,6 +279,10 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         }
     }
 
+    override fun addOperationStatement(flow: PersistentFlow, statement: ApprovedOperationStatement) {
+        flow.approvedOperations = flow.approvedOperations.addOperationStatement(statement)
+    }
+
     override fun addTypeStatement(flow: PersistentFlow, statement: TypeStatement) {
         if (statement.isEmpty) return
         with(flow) {
@@ -336,7 +344,7 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         shouldForkFlow: Boolean,
         shouldRemoveSynthetics: Boolean
     ): PersistentFlow {
-        val approvedFacts = approveOperationStatementsInternal(
+        val (approvedFacts, approvedOperations) = approveOperationStatementsInternal(
             flow,
             approvedStatement,
             initialStatements = null,
@@ -344,6 +352,8 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         )
 
         val resultFlow = if (shouldForkFlow) forkFlow(flow) else flow
+        approvedOperations.forEach { addOperationStatement(resultFlow, it.asApprovedStatement()) }
+
         if (approvedFacts.isEmpty) return resultFlow
 
         val updatedReceivers = mutableSetOf<RealVariable>()
@@ -370,11 +380,12 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         approvedStatement: OperationStatement,
         initialStatements: Collection<Implication>?,
         shouldRemoveSynthetics: Boolean
-    ): ArrayListMultimap<RealVariable, TypeStatement> {
+    ): Pair<ArrayListMultimap<RealVariable, TypeStatement>, Set<OperationStatement>> {
         val approvedFacts: ArrayListMultimap<RealVariable, TypeStatement> = ArrayListMultimap.create()
         val approvedStatements = LinkedList<OperationStatement>().apply { this += approvedStatement }
-        approveOperationStatementsInternal(flow, approvedStatements, initialStatements, shouldRemoveSynthetics, approvedFacts)
-        return approvedFacts
+        val approvedOperations =
+            approveOperationStatementsInternal(flow, approvedStatements, initialStatements, shouldRemoveSynthetics, approvedFacts)
+        return approvedFacts to approvedOperations
     }
 
     private fun approveOperationStatementsInternal(
@@ -383,8 +394,8 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         initialStatements: Collection<Implication>?,
         shouldRemoveSynthetics: Boolean,
         approvedTypeStatements: ArrayListMultimap<RealVariable, TypeStatement>
-    ) {
-        if (approvedStatements.isEmpty()) return
+    ): Set<OperationStatement> {
+        if (approvedStatements.isEmpty()) return emptySet()
         val approvedOperationStatements = mutableSetOf<OperationStatement>()
         var firstIteration = true
         while (approvedStatements.isNotEmpty()) {
@@ -410,17 +421,24 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
             }
             firstIteration = false
         }
+        return approvedOperationStatements
     }
 
     override fun approveStatementsTo(
         destination: MutableTypeStatements,
+        operationsDestination: MutableApprovedOperations,
         flow: PersistentFlow,
         approvedStatement: OperationStatement,
         statements: Collection<Implication>
     ) {
-        val approveOperationStatements =
+        val (approvedTypeStatements, approvedOperations) =
             approveOperationStatementsInternal(flow, approvedStatement, statements, shouldRemoveSynthetics = false)
-        approveOperationStatements.asMap().forEach { (variable, infos) ->
+
+        approvedOperations.forEach {
+            operationsDestination.addOperations(it.asApprovedStatement())
+        }
+
+        approvedTypeStatements.asMap().forEach { (variable, infos) ->
             for (info in infos) {
                 val mutableInfo = info.asMutableStatement()
                 destination.put(variable, mutableInfo) {
@@ -482,6 +500,16 @@ private fun PersistentApprovedTypeStatements.addTypeStatement(info: TypeStatemen
     }
 }
 
+private fun PersistentApprovedOperations.addOperationStatement(info: ApprovedOperationStatement): PersistentApprovedOperations {
+    val variable = info.variable
+    val operations = this[variable]
+    return if (operations == null) {
+        put(variable, info)
+    } else {
+        put(variable, operations + info)
+    }
+}
+
 private fun TypeStatement.toPersistent(): PersistentTypeStatement = PersistentTypeStatement(
     variable,
     exactType.toPersistentSet(),
@@ -493,3 +521,5 @@ fun TypeStatement.asMutableStatement(): MutableTypeStatement = when (this) {
     is PersistentTypeStatement -> MutableTypeStatement(variable, exactType.toMutableSet(), exactNotType.toMutableSet())
     else -> throw IllegalArgumentException("Unknown TypeStatement type: ${this::class}")
 }
+
+fun OperationStatement.asApprovedStatement(): ApprovedOperationStatement = ApprovedOperationStatement(variable, setOf(this.operation))

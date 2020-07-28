@@ -993,8 +993,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             // left && right == True
             // left || right == False
             val approvedIfTrue: MutableTypeStatements = mutableMapOf()
-            logicSystem.approveStatementsTo(approvedIfTrue, flowFromRight, leftVariable eq bothEvaluated, conditionalFromLeft)
-            logicSystem.approveStatementsTo(approvedIfTrue, flowFromRight, rightVariable eq bothEvaluated, conditionalFromRight)
+            val operations: MutableApprovedOperations = mutableMapOf()
+            logicSystem.approveStatementsTo(approvedIfTrue, operations, flowFromRight, leftVariable eq bothEvaluated, conditionalFromLeft)
+            logicSystem.approveStatementsTo(approvedIfTrue, operations, flowFromRight, rightVariable eq bothEvaluated, conditionalFromRight)
             approvedFromRight.forEach { (variable, info) ->
                 approvedIfTrue.addStatement(variable, info)
             }
@@ -1005,9 +1006,10 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             // left && right == False
             // left || right == True
             val approvedIfFalse: MutableTypeStatements = mutableMapOf()
-            val leftIsFalse = logicSystem.approveOperationStatement(flowFromLeft, leftVariable eq onlyLeftEvaluated, conditionalFromLeft)
+            val leftIsFalse =
+                logicSystem.approveOperationStatement(flowFromLeft, leftVariable eq onlyLeftEvaluated, conditionalFromLeft).first
             val rightIsFalse =
-                logicSystem.approveOperationStatement(flowFromRight, rightVariable eq onlyLeftEvaluated, conditionalFromRight)
+                logicSystem.approveOperationStatement(flowFromRight, rightVariable eq onlyLeftEvaluated, conditionalFromRight).first
             approvedIfFalse.mergeTypeStatements(logicSystem.orForTypeStatements(leftIsFalse, rightIsFalse))
             approvedIfFalse.values.forEach { info ->
                 flow.addImplication((operatorVariable eq onlyLeftEvaluated) implies info)
@@ -1135,6 +1137,10 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     private fun FLOW.addTypeStatement(info: TypeStatement) {
         logicSystem.addTypeStatement(this, info)
+    }
+
+    private fun FLOW.addOperationStatement(info: ApprovedOperationStatement) {
+        logicSystem.addOperationStatement(this, info)
     }
 
     private fun FLOW.removeAllAboutVariable(variable: RealVariable?) {
