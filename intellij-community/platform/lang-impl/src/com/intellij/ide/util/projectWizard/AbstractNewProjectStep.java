@@ -197,9 +197,12 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
     VfsUtil.markDirtyAndRefresh(false, true, true, baseDir);
 
     if (baseDir.getChildren().length > 0) {
-      String message = ActionsBundle.message("action.NewDirectoryProject.not.empty", location.toString());
-      int result = Messages.showYesNoDialog(projectToClose, message, ActionsBundle.message("action.NewDirectoryProject.title"), Messages.getQuestionIcon());
-      if (result == Messages.YES) {
+      String title = ActionsBundle.message("action.NewDirectoryProject.not.empty.dialog.title");
+      String message = ActionsBundle.message("action.NewDirectoryProject.not.empty.dialog.text", location.toString());
+      String yesText = ActionsBundle.message("action.NewDirectoryProject.not.empty.dialog.create.new");
+      String noText = ActionsBundle.message("action.NewDirectoryProject.not.empty.dialog.open.existing");
+      int result = Messages.showYesNoDialog(projectToClose, message, title, yesText, noText, Messages.getQuestionIcon());
+      if (result == Messages.NO) {
         return PlatformProjectOpenProcessor.doOpenProject(location, new OpenProjectTask());
       }
     }
