@@ -1,1 +1,1 @@
-val <T : <!OTHER_ERROR!>KClass<T>.something<!>> abc
+val <T : <!UNRESOLVED_REFERENCE!>KClass<T>.something<!>> abc

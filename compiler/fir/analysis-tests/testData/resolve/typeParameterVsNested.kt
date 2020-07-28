@@ -9,9 +9,9 @@ abstract class My<T : Some> {
 
     abstract fun foo(arg: T)
 
-    abstract val y: <!OTHER_ERROR!>My.T<!>
+    abstract val y: My.T
 
-    abstract val z: <!OTHER_ERROR!>test.My.T<!>
+    abstract val z: test.My.T
 
     class Some : <!UNRESOLVED_REFERENCE!>T<!>()
 }

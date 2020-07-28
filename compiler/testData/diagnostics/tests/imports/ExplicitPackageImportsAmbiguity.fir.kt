@@ -14,4 +14,4 @@ package c
 import a.x
 import b.x
 
-class Y : <!OTHER_ERROR!>x.X<!>
+class Y : <!UNRESOLVED_REFERENCE!>x.X<!>

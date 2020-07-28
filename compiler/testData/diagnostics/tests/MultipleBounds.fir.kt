@@ -45,7 +45,7 @@ class Foo() {}
 
 class Bar<T : Foo>
 
-class Buzz<T> where T : Bar<Int>, T : <!OTHER_ERROR!>nioho<!>
+class Buzz<T> where T : Bar<Int>, T : <!UNRESOLVED_REFERENCE!>nioho<!>
 
 class X<T : Foo>
 class Y<T> where T : Foo, T : Bar<Foo>

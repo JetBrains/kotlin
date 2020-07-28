@@ -56,7 +56,7 @@ class CG : G<Int> {
 }
 
 // The case when no supertype is resolved
-class ERROR<E>() : <!OTHER_ERROR!>UR<!> {
+class ERROR<E>() : <!UNRESOLVED_REFERENCE!>UR<!> {
 
     fun test() {
         super.<!UNRESOLVED_REFERENCE!>foo<!>()

@@ -75,7 +75,7 @@ internal fun FirTypeRef.toConeKotlinTypeProbablyFlexible(
             type.toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack)
         }
         else -> ConeKotlinErrorType(
-            ConeSimpleDiagnostic("Unexpected type reference in JavaClassUseSiteMemberScope: ${this::class.java}")
+            ConeSimpleDiagnostic("Unexpected type reference in JavaClassUseSiteMemberScope: ${this::class.java}", DiagnosticKind.Java)
         )
     }
 
@@ -321,7 +321,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
             val symbol = javaTypeParameterStack[classifier]
             ConeTypeParameterTypeImpl(symbol.toLookupTag(), isNullable = !isLowerBound)
         }
-        else -> ConeKotlinErrorType(ConeSimpleDiagnostic("Unexpected classifier: $classifier"))
+        else -> ConeKotlinErrorType(ConeSimpleDiagnostic("Unexpected classifier: $classifier", DiagnosticKind.Java))
     }
 }
 
@@ -396,7 +396,7 @@ private fun JavaType?.toConeProjectionWithoutEnhancement(
         }
         is JavaClassifierType -> toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack)
         is JavaArrayType -> toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack)
-        else -> ConeClassErrorType(ConeSimpleDiagnostic("Unexpected type argument: $this"))
+        else -> ConeClassErrorType(ConeSimpleDiagnostic("Unexpected type argument: $this", DiagnosticKind.Java))
     }
 }
 
@@ -501,7 +501,7 @@ private fun JavaType.toFirResolvedTypeRef(
         forTypeParameterBounds = false
     )
     return buildResolvedTypeRef {
-        type = ConeClassErrorType(ConeSimpleDiagnostic("Unexpected JavaType: $this"))
+        type = ConeClassErrorType(ConeSimpleDiagnostic("Unexpected JavaType: $this", DiagnosticKind.Java))
     }
 }
 

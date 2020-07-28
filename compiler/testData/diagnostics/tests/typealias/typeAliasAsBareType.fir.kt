@@ -31,5 +31,5 @@ fun <T> testLocal(x: Any) {
     class C
     typealias CA = C
     if (x is C) {}
-    if (x is <!OTHER_ERROR!>CA<!>) {}
+    if (x is <!UNRESOLVED_REFERENCE!>CA<!>) {}
 }

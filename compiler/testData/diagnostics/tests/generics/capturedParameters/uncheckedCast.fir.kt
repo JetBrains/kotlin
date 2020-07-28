@@ -18,11 +18,11 @@ fun <E> foo(x: Any, y: Any) : Any {
     }
 
     // bare type
-    if (y is <!OTHER_ERROR!>Outer.Inner<!>) {
+    if (y is <!UNRESOLVED_REFERENCE!>Outer.Inner<!>) {
         return y
     }
 
-    y as <!OTHER_ERROR, OTHER_ERROR!>Outer<*>.Inner<!>
+    y as <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>Outer<*>.Inner<!>
 
     return C()
 }

@@ -5,7 +5,7 @@ enum class MyEnum {
 fun foo(x: MyEnum): Int {
     return when (x) {
         MyEnum.A -> 1
-        is <!OTHER_ERROR!>MyEnum.B<!> -> 2
-        is <!OTHER_ERROR!>MyEnum.C<!> -> 3
+        is <!UNRESOLVED_REFERENCE!>MyEnum.B<!> -> 2
+        is <!UNRESOLVED_REFERENCE!>MyEnum.C<!> -> 3
     }
 }

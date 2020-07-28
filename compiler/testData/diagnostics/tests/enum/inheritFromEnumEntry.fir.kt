@@ -2,4 +2,4 @@ enum class E {
     ENTRY
 }
 
-class A : <!OTHER_ERROR!>E.ENTRY<!>
+class A : <!UNRESOLVED_REFERENCE!>E.ENTRY<!>

@@ -27,5 +27,10 @@ enum class DiagnosticKind {
     Java,
     SuperNotAllowed,
     WrongNumberOfTypeArguments,
+    NoTypeForTypeParameter,
+    UnknownCallableKind,
+    SymbolNotFound,
+    IllegalProjectionUsage,
+    MissingStdlibClass,
     Other
 }

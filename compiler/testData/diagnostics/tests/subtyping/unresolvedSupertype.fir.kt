@@ -1,7 +1,7 @@
-interface A1 : <!OTHER_ERROR!>B<!>
+interface A1 : <!UNRESOLVED_REFERENCE!>B<!>
 
-interface A2 : <!OTHER_ERROR!>B<!>()
+interface A2 : <!UNRESOLVED_REFERENCE!>B<!>()
 
-class A3 : <!OTHER_ERROR!>B<!>, <!OTHER_ERROR!>B<!>
+class A3 : <!UNRESOLVED_REFERENCE!>B<!>, <!UNRESOLVED_REFERENCE!>B<!>
 
-enum class A4 : <!OTHER_ERROR!>B<!>
+enum class A4 : <!UNRESOLVED_REFERENCE!>B<!>

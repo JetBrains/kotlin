@@ -10,7 +10,7 @@ import d
 import d.Test
 import b.d
 
-class Some: <!OTHER_ERROR!>Test<!>()
+class Some: <!UNRESOLVED_REFERENCE!>Test<!>()
 
 //FILE:b.kt
 

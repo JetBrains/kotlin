@@ -1,4 +1,4 @@
-@<!OTHER_ERROR!><!SYNTAX!><!>myAnnotation<!> public
+@<!UNRESOLVED_REFERENCE!><!SYNTAX!><!>myAnnotation<!> public
 package illegal_modifiers
 
 abstract class A() {

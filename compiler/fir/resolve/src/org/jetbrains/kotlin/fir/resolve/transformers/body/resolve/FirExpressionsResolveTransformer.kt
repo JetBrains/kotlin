@@ -78,7 +78,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     callee.replaceBoundSymbol(it)
                 }
                 qualifiedAccessExpression.resultType = buildResolvedTypeRef {
-                    type = implicitReceiver?.type ?: ConeKotlinErrorType(ConeSimpleDiagnostic("Unresolved this@$labelName"))
+                    type = implicitReceiver?.type ?: ConeKotlinErrorType(ConeSimpleDiagnostic("Unresolved this@$labelName", DiagnosticKind.UnresolvedLabel))
                 }
                 qualifiedAccessExpression
             }
@@ -660,7 +660,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     private fun FirConstKind<*>.expectedConeType(): ConeKotlinType {
         fun constructLiteralType(classId: ClassId, isNullable: Boolean = false): ConeKotlinType {
             val symbol = symbolProvider.getClassLikeSymbolByFqName(classId)
-                ?: return ConeClassErrorType(ConeSimpleDiagnostic("Missing stdlib class: $classId"))
+                ?: return ConeClassErrorType(ConeSimpleDiagnostic("Missing stdlib class: $classId", DiagnosticKind.MissingStdlibClass))
             return symbol.toLookupTag().constructClassType(emptyArray(), isNullable)
         }
         return when (this) {

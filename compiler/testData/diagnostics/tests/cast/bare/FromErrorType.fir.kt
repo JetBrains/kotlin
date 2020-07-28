@@ -2,7 +2,7 @@
 
 class G<T>
 
-fun foo(p: <!OTHER_ERROR, OTHER_ERROR!>P<!>) {
+fun foo(p: <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>P<!>) {
     val v = p as G?
     checkSubtype<G<*>>(v!!)
 }

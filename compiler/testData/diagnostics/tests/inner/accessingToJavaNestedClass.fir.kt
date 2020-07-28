@@ -47,18 +47,18 @@ fun test() {
     val ic: I.NC = I.NC()
     val ii: I.NI? = null
 
-    val bc: <!OTHER_ERROR!>B.NC<!> = B.<!UNRESOLVED_REFERENCE!>NC<!>()
-    val bic: <!OTHER_ERROR!>B.IC<!> = B().IC()
-    val bi: <!OTHER_ERROR!>B.NI?<!> = null
+    val bc: <!UNRESOLVED_REFERENCE!>B.NC<!> = B.<!UNRESOLVED_REFERENCE!>NC<!>()
+    val bic: <!UNRESOLVED_REFERENCE!>B.IC<!> = B().IC()
+    val bi: <!UNRESOLVED_REFERENCE!>B.NI?<!> = null
 
-    val cc: <!OTHER_ERROR!>C.NC<!> = C.<!UNRESOLVED_REFERENCE!>NC<!>()
-    val ci: <!OTHER_ERROR!>C.NI?<!> = null
+    val cc: <!UNRESOLVED_REFERENCE!>C.NC<!> = C.<!UNRESOLVED_REFERENCE!>NC<!>()
+    val ci: <!UNRESOLVED_REFERENCE!>C.NI?<!> = null
 
-    val dc: <!OTHER_ERROR!>D.NC<!> = D.<!UNRESOLVED_REFERENCE!>NC<!>()
-    val dic: <!OTHER_ERROR!>D.IC<!> = D().IC()
-    val di: <!OTHER_ERROR!>D.NI?<!> = null
+    val dc: <!UNRESOLVED_REFERENCE!>D.NC<!> = D.<!UNRESOLVED_REFERENCE!>NC<!>()
+    val dic: <!UNRESOLVED_REFERENCE!>D.IC<!> = D().IC()
+    val di: <!UNRESOLVED_REFERENCE!>D.NI?<!> = null
 
-    val kc: <!OTHER_ERROR!>K.NC<!> = K.<!UNRESOLVED_REFERENCE!>NC<!>()
-    val kic: <!OTHER_ERROR!>K.IC<!> = K().IC()
-    val ki: <!OTHER_ERROR!>K.NI?<!> = null
+    val kc: <!UNRESOLVED_REFERENCE!>K.NC<!> = K.<!UNRESOLVED_REFERENCE!>NC<!>()
+    val kic: <!UNRESOLVED_REFERENCE!>K.IC<!> = K().IC()
+    val ki: <!UNRESOLVED_REFERENCE!>K.NI?<!> = null
 }

@@ -3,53 +3,53 @@
 
 enum class Color {
     RED {
-        fun <T : <!OTHER_ERROR!>RED<!>> simpleName(): <!OTHER_ERROR!>RED<!> = null!!
+        fun <T : <!UNRESOLVED_REFERENCE!>RED<!>> simpleName(): <!UNRESOLVED_REFERENCE!>RED<!> = null!!
     }
 }
 
-class MyColor(val x: <!OTHER_ERROR!>Color.RED<!>, y: <!OTHER_ERROR!>Color.RED<!>) : <!OTHER_ERROR!>Color.RED<!> {
+class MyColor(val x: <!UNRESOLVED_REFERENCE!>Color.RED<!>, y: <!UNRESOLVED_REFERENCE!>Color.RED<!>) : <!UNRESOLVED_REFERENCE!>Color.RED<!> {
 
-    var z: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Color.RED<!> = Color.RED
+    var z: <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>Color.RED<!> = Color.RED
     set(arg: Color.RED) { z = arg }
 
-    fun foo(arg: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Color.RED<!>): <!OTHER_ERROR!>Color.RED<!> = arg
+    fun foo(arg: <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>Color.RED<!>): <!UNRESOLVED_REFERENCE!>Color.RED<!> = arg
 
-    fun bar(): <!OTHER_ERROR!>Color.RED<!> {
-        class Local : <!OTHER_ERROR!>Color.RED<!>
-        fun local(arg: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Color.RED<!>): <!OTHER_ERROR!>Color.RED<!> = arg
-        val temp: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Color.RED<!> = Color.RED
-        temp as? <!OTHER_ERROR!>Color.RED<!>
-        if (temp is <!OTHER_ERROR!>Color.RED<!>) {
-        return temp as <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>Color.RED<!>
+    fun bar(): <!UNRESOLVED_REFERENCE!>Color.RED<!> {
+        class Local : <!UNRESOLVED_REFERENCE!>Color.RED<!>
+        fun local(arg: <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>Color.RED<!>): <!UNRESOLVED_REFERENCE!>Color.RED<!> = arg
+        val temp: <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>Color.RED<!> = Color.RED
+        temp as? <!UNRESOLVED_REFERENCE!>Color.RED<!>
+        if (temp is <!UNRESOLVED_REFERENCE!>Color.RED<!>) {
+        return temp as <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>Color.RED<!>
     }
-        val obj = object : <!OTHER_ERROR!>Color.RED<!> {}
-        if (obj is <!OTHER_ERROR!>Color.RED<!>) {
+        val obj = object : <!UNRESOLVED_REFERENCE!>Color.RED<!> {}
+        if (obj is <!UNRESOLVED_REFERENCE!>Color.RED<!>) {
         return obj
     }
         return Color.RED
     }
 }
 
-fun create(): <!OTHER_ERROR!>Array<Color.RED>?<!> = null
+fun create(): <!UNRESOLVED_REFERENCE!>Array<Color.RED>?<!> = null
 
-interface Your<T : <!OTHER_ERROR!>Color.RED<!>>
+interface Your<T : <!UNRESOLVED_REFERENCE!>Color.RED<!>>
 
-class His : <!OTHER_ERROR!>Your<Color.RED><!>
+class His : <!UNRESOLVED_REFERENCE!>Your<Color.RED><!>
 
-fun <T : <!OTHER_ERROR!>Color.RED<!>> otherCreate(): Array<T>? = null
+fun <T : <!UNRESOLVED_REFERENCE!>Color.RED<!>> otherCreate(): Array<T>? = null
 
-typealias RedAlias = <!OTHER_ERROR!>Color.RED<!>
+typealias RedAlias = <!UNRESOLVED_REFERENCE!>Color.RED<!>
 
-typealias ArrayOfEnumEntry = <!OTHER_ERROR!>Array<Color.RED><!>
+typealias ArrayOfEnumEntry = <!UNRESOLVED_REFERENCE!>Array<Color.RED><!>
 
 typealias ArrayOfEnumEntryAlias = Array<RedAlias>
 
 fun <T> bar(a: Any): T = a as T
 
 fun <T> foo() {
-    foo<<!OTHER_ERROR, UPPER_BOUND_VIOLATED!>Color.RED<!>>()
+    foo<<!UNRESOLVED_REFERENCE!>Color.RED<!>>()
     foo<RedAlias>()
     <!INAPPLICABLE_CANDIDATE!>bar<!><Color.RED>(Color.RED)
 }
 
-fun <!OTHER_ERROR!>Array<Color.RED><!>.foo(entries: <!OTHER_ERROR!>Array<Color.RED><!>): <!OTHER_ERROR!>Array<Color.RED><!> = null!!
+fun <!UNRESOLVED_REFERENCE!>Array<Color.RED><!>.foo(entries: <!UNRESOLVED_REFERENCE!>Array<Color.RED><!>): <!UNRESOLVED_REFERENCE!>Array<Color.RED><!> = null!!

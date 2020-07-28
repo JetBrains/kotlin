@@ -89,6 +89,8 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
             is ConeUnexpectedTypeArgumentsError -> FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.on(diagnostic.source.safeAs() ?: source)
             is ConeSimpleDiagnostic -> if (source.kind is FirFakeSourceElementKind) {
                 null
+            } else if (diagnostic.kind == SymbolNotFound) {
+                FirErrors.UNRESOLVED_REFERENCE.on(source, "<No name>")
             } else {
                 diagnostic.getFactory().on(source)
             }
@@ -120,6 +122,10 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
             JumpOutsideLoop -> FirErrors.BREAK_OR_CONTINUE_OUTSIDE_A_LOOP
             NotLoopLabel -> FirErrors.NOT_A_LOOP_LABEL
             VariableExpected -> FirErrors.VARIABLE_EXPECTED
+            NoTypeForTypeParameter -> FirErrors.NO_TYPE_FOR_TYPE_PARAMETER
+            UnknownCallableKind -> FirErrors.UNKNOWN_CALLABLE_KIND
+            IllegalProjectionUsage -> FirErrors.ILLEGAL_PROJECTION_USAGE
+            MissingStdlibClass -> FirErrors.MISSING_STDLIB_CLASS
             Other -> FirErrors.OTHER_ERROR
             else -> throw IllegalArgumentException("Unsupported diagnostic kind: $kind at $javaClass")
         }

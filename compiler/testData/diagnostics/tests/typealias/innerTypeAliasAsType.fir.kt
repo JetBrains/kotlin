@@ -11,12 +11,12 @@ class Outer<T> {
     typealias InnerAlias = Inner
     typealias GenericInnerAlias<TT> = GenericInner<TT>
 
-    fun test1(x: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>NestedAlias<!>) = x
-    fun test2(x: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>GenericNestedAlias<Int><!>) = x
-    fun <T> test3(x: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>GenericNestedAlias<T><!>) = x
-    fun test4(x: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>InnerAlias<!>) = x
-    fun test5(x: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>GenericInnerAlias<Int><!>) = x
-    fun <T> test6(x: <!OTHER_ERROR, OTHER_ERROR, OTHER_ERROR, OTHER_ERROR!>GenericInnerAlias<T><!>) = x
+    fun test1(x: <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>NestedAlias<!>) = x
+    fun test2(x: <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>GenericNestedAlias<Int><!>) = x
+    fun <T> test3(x: <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>GenericNestedAlias<T><!>) = x
+    fun test4(x: <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>InnerAlias<!>) = x
+    fun test5(x: <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>GenericInnerAlias<Int><!>) = x
+    fun <T> test6(x: <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>GenericInnerAlias<T><!>) = x
 }
 fun test1(x: Outer<Int>.NestedAlias) = x
 fun <T> test2(x: Outer<T>.NestedAlias) = x

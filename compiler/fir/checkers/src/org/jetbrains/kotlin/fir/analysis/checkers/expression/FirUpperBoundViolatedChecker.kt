@@ -47,7 +47,11 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
             functionCall.typeArguments[it].safeAs<FirTypeProjectionWithVariance>()
                 ?.typeRef.safeAs<FirResolvedTypeRef>()
                 ?.let { that ->
-                    parameterPairs[calleeFir.typeParameters[it].symbol] = that
+                    if (that !is FirErrorTypeRef) {
+                        parameterPairs[calleeFir.typeParameters[it].symbol] = that
+                    } else {
+                        return
+                    }
                 }
         }
 
@@ -124,7 +128,11 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
         for (it in 0 until count) {
             actualConstructor.typeArguments[it].safeAs<ConeSimpleKotlinType>()
                 ?.let { that ->
-                    constructorsParameterPairs[protoConstructor.typeParameters[it].symbol] = that
+                    if (that !is ConeClassErrorType) {
+                        constructorsParameterPairs[protoConstructor.typeParameters[it].symbol] = that
+                    } else {
+                        return
+                    }
                 }
         }
 
@@ -180,7 +188,11 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
         for (it in 0 until count) {
             type.typeArguments[it].safeAs<ConeClassLikeType>()
                 ?.let { that ->
-                    parameterPairs[prototypeClass.typeParameters[it].symbol] = that
+                    if (that !is ConeClassErrorType) {
+                        parameterPairs[prototypeClass.typeParameters[it].symbol] = that
+                    } else {
+                        return true
+                    }
                 }
         }
 

@@ -15,18 +15,18 @@ fun test1(a: A.B.<!SYNTAX!><!>): A.B.<!SYNTAX!><!> {
     val aa: A.B. <!SYNTAX!>=<!><!SYNTAX!><!> null!!
 }
 
-fun test2(a: <!OTHER_ERROR!>A.e.C<!>): <!OTHER_ERROR!>A.e.C<!> {
-    val aa: <!OTHER_ERROR!>A.e.C<!> = null!!
+fun test2(a: <!UNRESOLVED_REFERENCE!>A.e.C<!>): <!UNRESOLVED_REFERENCE!>A.e.C<!> {
+    val aa: <!UNRESOLVED_REFERENCE!>A.e.C<!> = null!!
 }
 
-fun test3(a: <!OTHER_ERROR!>a.A.C<!>): <!OTHER_ERROR!>a.A.C<!> {
-    val aa: <!OTHER_ERROR!>a.A.C<!> = null!!
+fun test3(a: <!UNRESOLVED_REFERENCE!>a.A.C<!>): <!UNRESOLVED_REFERENCE!>a.A.C<!> {
+    val aa: <!UNRESOLVED_REFERENCE!>a.A.C<!> = null!!
 }
 
-fun test4(a: <!OTHER_ERROR!>A.B.ee<!>): <!OTHER_ERROR!>A.B.ee<!> {
-    val aa: <!OTHER_ERROR!>A.B.ee<!> = null!!
+fun test4(a: <!UNRESOLVED_REFERENCE!>A.B.ee<!>): <!UNRESOLVED_REFERENCE!>A.B.ee<!> {
+    val aa: <!UNRESOLVED_REFERENCE!>A.B.ee<!> = null!!
 }
 
-fun test5(a: <!OTHER_ERROR!>A.ee<!>): <!OTHER_ERROR!>A.ee<!> {
-    val aa: <!OTHER_ERROR!>A.ee<!> = null!!
+fun test5(a: <!UNRESOLVED_REFERENCE!>A.ee<!>): <!UNRESOLVED_REFERENCE!>A.ee<!> {
+    val aa: <!UNRESOLVED_REFERENCE!>A.ee<!> = null!!
 }

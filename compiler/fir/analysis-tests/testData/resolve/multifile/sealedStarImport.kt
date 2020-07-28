@@ -15,7 +15,7 @@ package other
 import test.Test.*
 
 abstract class Factory {
-    abstract fun createTest(): <!OTHER_ERROR!>Test<!>
+    abstract fun createTest(): <!UNRESOLVED_REFERENCE!>Test<!>
 
     abstract fun createObj(): O
 

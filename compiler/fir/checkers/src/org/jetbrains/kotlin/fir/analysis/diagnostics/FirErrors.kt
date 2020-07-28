@@ -88,6 +88,11 @@ object FirErrors {
     val LOCAL_INTERFACE_NOT_ALLOWED by error0<FirSourceElement, PsiElement>()
     val TYPE_PARAMETERS_IN_OBJECT by error0<FirSourceElement, PsiElement>()
 
+    val NO_TYPE_FOR_TYPE_PARAMETER by error0<FirSourceElement, PsiElement>()
+    val UNKNOWN_CALLABLE_KIND by error0<FirSourceElement, PsiElement>()
+    val ILLEGAL_PROJECTION_USAGE by error0<FirSourceElement, PsiElement>()
+    val MISSING_STDLIB_CLASS by error0<FirSourceElement, PsiElement>()
+
     // Control flow diagnostics
     val UNINITIALIZED_VARIABLE by error1<FirSourceElement, PsiElement, FirPropertySymbol>()
 

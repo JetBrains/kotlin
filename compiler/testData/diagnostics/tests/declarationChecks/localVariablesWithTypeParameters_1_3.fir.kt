@@ -11,7 +11,7 @@ fun test() {
     const val <T> a3 = 0
     lateinit val <T> a4 = 0
     val <T> a5 by Delegate<Int>()
-    val <T> a6 by <!INAPPLICABLE_CANDIDATE!>Delegate<<!OTHER_ERROR, UPPER_BOUND_VIOLATED!>T<!>>()<!>
+    val <T> a6 by <!INAPPLICABLE_CANDIDATE!>Delegate<<!UNRESOLVED_REFERENCE!>T<!>>()<!>
 }
 
 class Delegate<F> {
