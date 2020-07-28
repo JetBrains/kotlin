@@ -3535,6 +3535,68 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                 }
             }
 
+            @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Choosing_the_most_specific_candidate_from_the_overload_candidate_set extends AbstractBlackBoxCodegenTestSpec {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInChoosing_the_most_specific_candidate_from_the_overload_candidate_set() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Algorithm_of_msc_selection extends AbstractBlackBoxCodegenTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInAlgorithm_of_msc_selection() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class P_3 extends AbstractBlackBoxCodegenTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInP_3() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Pos extends AbstractBlackBoxCodegenTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("1.1.kt")
+                            public void test1_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.1.kt");
+                            }
+
+                            @TestMetadata("1.2.kt")
+                            public void test1_2() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.2.kt");
+                            }
+
+                            public void testAllFilesPresentInPos() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            }
+                        }
+                    }
+                }
+            }
+
             @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

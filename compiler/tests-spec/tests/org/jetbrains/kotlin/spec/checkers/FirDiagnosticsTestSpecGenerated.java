@@ -25,7 +25,7 @@ public class FirDiagnosticsTestSpecGenerated extends AbstractFirDiagnosticsTestS
     }
 
     public void testAllFilesPresentInDiagnostics() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "helpers", "linked/annotations", "linked/control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions", "linked/control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph", "linked/declarations/classifier-declaration/classifier-initialization", "linked/declarations/function-declaration", "linked/declarations/property-declaration/property-initialization", "linked/expressions/call-and-property-access-expressions", "linked/expressions/function-literals", "linked/inheritance", "linked/overload-resolution/c-level-partition", "linked/overload-resolution/determining-function-applicability-for-a-specific-call", "linked/overloadable-operators", "linked/statements/assignments/simple-assignments", "linked/type-inference/local-type-inference", "linked/type-inference/smart-casts/smart-cast-types", "linked/type-system/subtyping", "linked/type-system/type-kinds/type-parameters");
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "helpers", "linked/annotations", "linked/built-in-types-and-their-semantics", "linked/control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions", "linked/control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph", "linked/declarations/classifier-declaration/classifier-initialization", "linked/declarations/function-declaration", "linked/declarations/property-declaration/property-initialization", "linked/expressions/call-and-property-access-expressions", "linked/expressions/function-literals", "linked/inheritance", "linked/overload-resolution/c-level-partition", "linked/overload-resolution/determining-function-applicability-for-a-specific-call", "linked/overloadable-operators", "linked/statements/assignments/simple-assignments", "linked/type-inference/local-type-inference", "linked/type-inference/smart-casts/smart-cast-types", "linked/type-system/subtyping", "linked/type-system/type-kinds/type-parameters");
     }
 
     @TestMetadata("compiler/tests-spec/testData/diagnostics/linked")
@@ -37,7 +37,7 @@ public class FirDiagnosticsTestSpecGenerated extends AbstractFirDiagnosticsTestS
         }
 
         public void testAllFilesPresentInLinked() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "annotations", "control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions", "control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph", "declarations/classifier-declaration/classifier-initialization", "declarations/function-declaration", "declarations/property-declaration/property-initialization", "expressions/call-and-property-access-expressions", "expressions/function-literals", "inheritance", "overload-resolution/c-level-partition", "overload-resolution/determining-function-applicability-for-a-specific-call", "overloadable-operators", "statements/assignments/simple-assignments", "type-inference/local-type-inference", "type-inference/smart-casts/smart-cast-types", "type-system/subtyping", "type-system/type-kinds/type-parameters");
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true, "annotations", "built-in-types-and-their-semantics", "control--and-data-flow-analysis.control-flow-graph.expressions-1.conditional-expressions", "control--and-data-flow-analysis/performing-analysis-on-the-control-flow-graph", "declarations/classifier-declaration/classifier-initialization", "declarations/function-declaration", "declarations/property-declaration/property-initialization", "expressions/call-and-property-access-expressions", "expressions/function-literals", "inheritance", "overload-resolution/c-level-partition", "overload-resolution/determining-function-applicability-for-a-specific-call", "overloadable-operators", "statements/assignments/simple-assignments", "type-inference/local-type-inference", "type-inference/smart-casts/smart-cast-types", "type-system/subtyping", "type-system/type-kinds/type-parameters");
         }
 
         @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/control--and-data-flow-analysis")
@@ -4206,6 +4206,426 @@ public class FirDiagnosticsTestSpecGenerated extends AbstractFirDiagnosticsTestS
 
                         public void testAllFilesPresentInPos() throws Exception {
                             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                        }
+                    }
+                }
+            }
+
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Choosing_the_most_specific_candidate_from_the_overload_candidate_set extends AbstractFirDiagnosticsTestSpec {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInChoosing_the_most_specific_candidate_from_the_overload_candidate_set() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Algorithm_of_msc_selection extends AbstractFirDiagnosticsTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInAlgorithm_of_msc_selection() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class P_11 extends AbstractFirDiagnosticsTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInP_11() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Pos extends AbstractFirDiagnosticsTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("1.1.kt")
+                            public void test1_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/1.1.kt");
+                            }
+
+                            @TestMetadata("1.2.kt")
+                            public void test1_2() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/1.2.kt");
+                            }
+
+                            @TestMetadata("4.1.kt")
+                            public void test4_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/4.1.kt");
+                            }
+
+                            @TestMetadata("4.2.kt")
+                            public void test4_2() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/4.2.kt");
+                            }
+
+                            @TestMetadata("4.3.kt")
+                            public void test4_3() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/4.3.kt");
+                            }
+
+                            @TestMetadata("4.4.kt")
+                            public void test4_4() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/4.4.kt");
+                            }
+
+                            @TestMetadata("4.5.kt")
+                            public void test4_5() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/4.5.kt");
+                            }
+
+                            @TestMetadata("5.1.kt")
+                            public void test5_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos/5.1.kt");
+                            }
+
+                            public void testAllFilesPresentInPos() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-11/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                            }
+                        }
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class P_12 extends AbstractFirDiagnosticsTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInP_12() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Pos extends AbstractFirDiagnosticsTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("2.1.kt")
+                            public void test2_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.1.kt");
+                            }
+
+                            @TestMetadata("2.2.kt")
+                            public void test2_2() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.2.kt");
+                            }
+
+                            @TestMetadata("2.3.kt")
+                            public void test2_3() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.3.kt");
+                            }
+
+                            @TestMetadata("2.4.kt")
+                            public void test2_4() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.4.kt");
+                            }
+
+                            @TestMetadata("2.5.kt")
+                            public void test2_5() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.5.kt");
+                            }
+
+                            @TestMetadata("2.6.kt")
+                            public void test2_6() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.6.kt");
+                            }
+
+                            @TestMetadata("2.7.kt")
+                            public void test2_7() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos/2.7.kt");
+                            }
+
+                            public void testAllFilesPresentInPos() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-12/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                            }
+                        }
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class P_14 extends AbstractFirDiagnosticsTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInP_14() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Neg extends AbstractFirDiagnosticsTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("1.1.kt")
+                            public void test1_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.1.kt");
+                            }
+
+                            @TestMetadata("1.2.kt")
+                            public void test1_2() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.2.kt");
+                            }
+
+                            @TestMetadata("1.3.kt")
+                            public void test1_3() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.3.kt");
+                            }
+
+                            @TestMetadata("1.4.kt")
+                            public void test1_4() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.4.kt");
+                            }
+
+                            @TestMetadata("1.5.kt")
+                            public void test1_5() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.5.kt");
+                            }
+
+                            @TestMetadata("1.6.kt")
+                            public void test1_6() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.6.kt");
+                            }
+
+                            @TestMetadata("1.7.kt")
+                            public void test1_7() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg/1.7.kt");
+                            }
+
+                            public void testAllFilesPresentInNeg() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-14/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                            }
+                        }
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-17")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class P_17 extends AbstractFirDiagnosticsTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInP_17() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-17"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-17/neg")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Neg extends AbstractFirDiagnosticsTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("2.1.kt")
+                            public void test2_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-17/neg/2.1.kt");
+                            }
+
+                            @TestMetadata("2.2.kt")
+                            public void test2_2() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-17/neg/2.2.kt");
+                            }
+
+                            public void testAllFilesPresentInNeg() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-17/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                            }
+                        }
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class P_3 extends AbstractFirDiagnosticsTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInP_3() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Pos extends AbstractFirDiagnosticsTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("1.1.kt")
+                            public void test1_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.1.kt");
+                            }
+
+                            @TestMetadata("1.2.kt")
+                            public void test1_2() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.2.kt");
+                            }
+
+                            @TestMetadata("1.3.kt")
+                            public void test1_3() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.3.kt");
+                            }
+
+                            @TestMetadata("1.4.kt")
+                            public void test1_4() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.4.kt");
+                            }
+
+                            public void testAllFilesPresentInPos() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                            }
+                        }
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class P_9 extends AbstractFirDiagnosticsTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInP_9() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/neg")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Neg extends AbstractFirDiagnosticsTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("2.1.kt")
+                            public void test2_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/neg/2.1.kt");
+                            }
+
+                            public void testAllFilesPresentInNeg() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                            }
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/pos")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Pos extends AbstractFirDiagnosticsTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("1.1.kt")
+                            public void test1_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/pos/1.1.kt");
+                            }
+
+                            public void testAllFilesPresentInPos() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                            }
+                        }
+                    }
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Rationale_1 extends AbstractFirDiagnosticsTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInRationale_1() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-2")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class P_2 extends AbstractFirDiagnosticsTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInP_2() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-2"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-2/pos")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Pos extends AbstractFirDiagnosticsTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("1.1.kt")
+                            public void test1_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-2/pos/1.1.kt");
+                            }
+
+                            public void testAllFilesPresentInPos() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                            }
+                        }
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-3")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class P_3 extends AbstractFirDiagnosticsTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInP_3() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-3"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-3/neg")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Neg extends AbstractFirDiagnosticsTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("1.1.kt")
+                            public void test1_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-3/neg/1.1.kt");
+                            }
+
+                            public void testAllFilesPresentInNeg() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/rationale-1/p-3/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                            }
                         }
                     }
                 }
