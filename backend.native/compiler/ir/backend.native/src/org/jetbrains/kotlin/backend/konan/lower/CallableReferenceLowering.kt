@@ -284,8 +284,7 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
                     }
                     +irDelegatingConstructorCall(superConstructor).apply applyIrDelegationConstructorCall@ {
                         if (!isKFunction && !isKSuspendFunction) return@applyIrDelegationConstructorCall
-                        // TODO: Remove as soon as IR declarations have their originalDescriptor.
-                        val name = (referencedFunction.descriptor as? WrappedSimpleFunctionDescriptor)?.originalDescriptor?.name
+                        val name = ((referencedFunction as? IrSimpleFunction)?.attributeOwnerId as? IrSimpleFunction)?.name
                                 ?: referencedFunction.name
                         putValueArgument(0, irString(name.asString()))
                         putValueArgument(1, irString((functionReference.symbol.owner).fullName))
