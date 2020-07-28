@@ -34,7 +34,7 @@ interface JSConfigurator : ModuleConfiguratorWithModuleType, ModuleConfiguratorW
         module: Module,
         modulePath: Path
     ): TaskResult<Unit> =
-        GradlePlugin::gradleProperties
+        GradlePlugin.gradleProperties
             .addValues("kotlin.js.generate.executable.default" to "false")
 
     override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> =
