@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.codeInsight.completion.*
-import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PsiJavaPatterns
 import com.intellij.util.ProcessingContext
@@ -27,6 +26,8 @@ class KotlinFirCompletionContributor : CompletionContributor() {
 }
 
 private object KotlinHighLevelApiContributor : CompletionProvider<CompletionParameters>() {
+    private val lookupElementFactory = HighLevelApiLookupElementFactory()
+
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
         if (shouldSuppressCompletion(parameters, result.prefixMatcher)) return
 
@@ -48,7 +49,7 @@ private object KotlinHighLevelApiContributor : CompletionProvider<CompletionPara
 
         fun addToCompletion(symbol: KtSymbol) {
             if (symbol !is KtNamedSymbol) return
-            result.addElement(LookupElementBuilder.create(symbol.name.asString()))
+            result.addElement(lookupElementFactory.createLookupElement(symbol))
         }
 
         if (possibleReceiverScope != null) {
