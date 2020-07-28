@@ -1,16 +1,6 @@
 {
   "6": {
     "neg": {
-      "12": [
-        {
-          "specVersion": "0.1-201",
-          "casesNumber": 0,
-          "description": "\u0027When\u0027 with invalid else condition.",
-          "path": "compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/12.1.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "main"
-        }
-      ],
       "1": [
         {
           "specVersion": "0.1-296",
@@ -39,12 +29,22 @@
           "linkType": "main"
         }
       ],
-      "9": [
+      "5": [
         {
-          "specVersion": "0.1-201",
+          "specVersion": "0.1-435",
           "casesNumber": 0,
           "description": "\u0027When\u0027 with bound value and not allowed spread operator in \u0027when condition\u0027.",
-          "path": "compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/9.1.kt",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/5.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ],
+      "7": [
+        {
+          "specVersion": "0.1-435",
+          "casesNumber": 0,
+          "description": "\u0027When\u0027 with invalid else condition.",
+          "path": "compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/7.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }

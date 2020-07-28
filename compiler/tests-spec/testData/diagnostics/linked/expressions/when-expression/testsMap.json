@@ -1,16 +1,6 @@
 {
   "6": {
     "neg": {
-      "12": [
-        {
-          "specVersion": "0.1-201",
-          "casesNumber": 3,
-          "description": "\u0027When\u0027 without bound value and with \u0027else\u0027 branch not in the last position.",
-          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/12.1.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "main"
-        }
-      ],
       "1": [
         {
           "specVersion": "0.1-296",
@@ -117,38 +107,20 @@
       ],
       "7": [
         {
+          "specVersion": "0.1-435",
+          "casesNumber": 3,
+          "description": "\u0027When\u0027 without bound value and with \u0027else\u0027 branch not in the last position.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/7.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
           "specVersion": "0.1-313",
           "casesNumber": 3,
           "description": "\u0027When\u0027 with bound value and with else branch not in the last position.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/7.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
-        }
-      ],
-      "11": [
-        {
-          "specVersion": "0.1-201",
-          "casesNumber": 2,
-          "description": "\u0027When\u0027 with bound value and non-expressions in \u0027when condition\u0027.",
-          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/neg/11.1.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "main"
-        },
-        {
-          "specVersion": "0.1-152",
-          "casesNumber": 0,
-          "description": "When",
-          "path": "compiler/testData/diagnostics/tests/when/When.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        },
-        {
-          "specVersion": "0.1-152",
-          "casesNumber": 0,
-          "description": "Redundant else",
-          "path": "compiler/testData/diagnostics/tests/when/RedundantElse.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
         }
       ],
       "5": [
@@ -212,19 +184,27 @@
           "unexpectedBehaviour": false,
           "linkType": "primary"
         }
+      ],
+      "11": [
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "When",
+          "path": "compiler/testData/diagnostics/tests/when/When.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Redundant else",
+          "path": "compiler/testData/diagnostics/tests/when/RedundantElse.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
       ]
     },
     "pos": {
-      "12": [
-        {
-          "specVersion": "0.1-201",
-          "casesNumber": 2,
-          "description": "\u0027When\u0027 without bound value and with else branch in the last position.",
-          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/12.1.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "main"
-        }
-      ],
       "1": [
         {
           "specVersion": "0.1-296",
@@ -287,26 +267,6 @@
           "linkType": "primary"
         }
       ],
-      "10": [
-        {
-          "specVersion": "0.1-201",
-          "casesNumber": 26,
-          "description": "\u0027When\u0027 with different variants of the arithmetic expressions (additive expression and multiplicative expression) in \u0027when condition\u0027.",
-          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/10.2.kt",
-          "unexpectedBehaviour": true,
-          "linkType": "main",
-          "helpers": "typesProvider, classes, functions"
-        },
-        {
-          "specVersion": "0.1-201",
-          "casesNumber": 23,
-          "description": "\u0027When\u0027 with enumeration of the different variants of expressions in \u0027when condition\u0027.",
-          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/10.1.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "main",
-          "helpers": "typesProvider, classes, functions"
-        }
-      ],
       "3": [
         {
           "specVersion": "0.1-296",
@@ -329,6 +289,14 @@
       ],
       "7": [
         {
+          "specVersion": "0.1-435",
+          "casesNumber": 2,
+          "description": "\u0027When\u0027 without bound value and with else branch in the last position.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/7.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
           "specVersion": "0.1-313",
           "casesNumber": 3,
           "description": "\u0027When\u0027 with bound value and else branch.",
@@ -337,17 +305,25 @@
           "linkType": "main"
         }
       ],
-      "11": [
-        {
-          "specVersion": "0.1-201",
-          "casesNumber": 2,
-          "description": "\u0027When\u0027 with bound value and not allowed break and continue expression (without labels) in \u0027when condition\u0027.",
-          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/11.1.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "main"
-        }
-      ],
       "5": [
+        {
+          "specVersion": "0.1-435",
+          "casesNumber": 23,
+          "description": "\u0027When\u0027 with enumeration of the different variants of expressions in \u0027when condition\u0027.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/5.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "typesProvider, classes, functions"
+        },
+        {
+          "specVersion": "0.1-435",
+          "casesNumber": 26,
+          "description": "\u0027When\u0027 with different variants of the arithmetic expressions (additive expression and multiplicative expression) in \u0027when condition\u0027.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/5.2.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "main",
+          "helpers": "typesProvider, classes, functions"
+        },
         {
           "specVersion": "0.1-313",
           "casesNumber": 0,
@@ -371,6 +347,16 @@
           "path": "compiler/testData/diagnostics/tests/when/ExhaustiveInitialization.kt",
           "unexpectedBehaviour": false,
           "linkType": "primary"
+        }
+      ],
+      "6": [
+        {
+          "specVersion": "0.1-435",
+          "casesNumber": 2,
+          "description": "\u0027When\u0027 with bound value and not allowed break and continue expression (without labels) in \u0027when condition\u0027.",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-6/pos/6.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }

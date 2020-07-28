@@ -3,7 +3,7 @@
     "pos": {
       "1": [
         {
-          "specVersion": "0.1-366",
+          "specVersion": "0.1-435",
           "casesNumber": 0,
           "description": "If both X_k and Y_k are built-in integer types, a type constraint Widen(X_k) \u003c:Widen(Y_k) is built",
           "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.2.kt",
@@ -11,7 +11,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "0.1-366",
+          "specVersion": "0.1-435",
           "casesNumber": 0,
           "description": "If both X_k and Y_k are built-in integer types, a type constraint Widen(X_k) \u003c:Widen(Y_k) is built",
           "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.1.kt",

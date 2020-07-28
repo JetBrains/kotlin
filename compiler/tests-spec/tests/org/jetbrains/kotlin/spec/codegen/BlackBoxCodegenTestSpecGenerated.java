@@ -3609,19 +3609,19 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers"), Pattern.compile("^(.+)\\.kt$"), null, true);
                 }
 
-                @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5")
+                @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6")
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)
-                public static class P_5 extends AbstractBlackBoxCodegenTestSpec {
+                public static class P_6 extends AbstractBlackBoxCodegenTestSpec {
                     private void runTest(String testDataFilePath) throws Exception {
                         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
                     }
 
-                    public void testAllFilesPresentInP_5() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    public void testAllFilesPresentInP_6() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6"), Pattern.compile("^(.+)\\.kt$"), null, true);
                     }
 
-                    @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5/pos")
+                    @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos")
                     @TestDataPath("$PROJECT_ROOT")
                     @RunWith(JUnit3RunnerWithInners.class)
                     public static class Pos extends AbstractBlackBoxCodegenTestSpec {
@@ -3631,31 +3631,31 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
                         @TestMetadata("2.1.kt")
                         public void test2_1() throws Exception {
-                            runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5/pos/2.1.kt");
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos/2.1.kt");
                         }
 
                         @TestMetadata("2.2.kt")
                         public void test2_2() throws Exception {
-                            runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5/pos/2.2.kt");
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos/2.2.kt");
                         }
 
                         @TestMetadata("3.1.kt")
                         public void test3_1() throws Exception {
-                            runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5/pos/3.1.kt");
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos/3.1.kt");
                         }
 
                         @TestMetadata("4.2.kt")
                         public void test4_2() throws Exception {
-                            runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5/pos/4.2.kt");
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos/4.2.kt");
                         }
 
                         @TestMetadata("5.1.kt")
                         public void test5_1() throws Exception {
-                            runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5/pos/5.1.kt");
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos/5.1.kt");
                         }
 
                         public void testAllFilesPresentInPos() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
                         }
                     }
                 }

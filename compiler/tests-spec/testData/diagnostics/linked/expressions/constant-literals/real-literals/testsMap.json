@@ -259,7 +259,7 @@
     "neg": {
       "1": [
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-435",
           "casesNumber": 13,
           "description": "Real literals with a not allowed exponent mark at the beginning.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/neg/1.2.kt",
@@ -267,7 +267,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-435",
           "casesNumber": 13,
           "description": "Real literals suffixed by f/F (float suffix) with a not allowed exponent mark at the beginning.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/neg/1.3.kt",
@@ -275,7 +275,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-435",
           "casesNumber": 17,
           "description": "Real literals suffixed by f/F (float suffix) with an exponent mark without digits after it.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/neg/1.4.kt",
@@ -283,7 +283,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-435",
           "casesNumber": 17,
           "description": "Real literals without digits after an exponent mark.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/neg/1.1.kt",
@@ -295,7 +295,7 @@
     "pos": {
       "1": [
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-435",
           "casesNumber": 26,
           "description": "Real literals suffixed by f/F (float suffix) with an exponent mark.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/pos/1.2.kt",
@@ -303,7 +303,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-435",
           "casesNumber": 39,
           "description": "Simple real literals with an exponent mark.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals/real-literals/p-2/pos/1.1.kt",
