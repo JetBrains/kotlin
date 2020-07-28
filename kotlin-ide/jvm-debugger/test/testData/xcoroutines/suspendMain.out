@@ -4,7 +4,7 @@ Connected to the target VM
 suspendMain.kt:15
 Thread stack trace:
 	CoroutinePreflightFrame invokeSuspend:!LINE_NUMBER!, SuspendMainKt$main$2 (continuation)
-		($result, $this$coroutineScope, this)
+		($result, this)
 CoroutineInfo: -1 coroutine UNKNOWN
 	CoroutineStackFrame startUndispatchedOrReturn:!LINE_NUMBER!, UndispatchedKt (kotlinx.coroutines.intrinsics)
 		($i$a$-undispatchedResult-UndispatchedKt$startUndispatchedOrReturn$2, $i$f$undispatchedResult, $this$startUndispatchedOrReturn, $this$undispatchedResult$iv, block, receiver)
