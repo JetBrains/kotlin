@@ -1,8 +1,3 @@
-/*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
-
 package org.jetbrains.kotlin.idea.refactoring.inline
 
 import com.intellij.lang.refactoring.InlineHandler
@@ -12,9 +7,8 @@ import com.intellij.psi.PsiReference
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.KotlinLanguage
 
-class KotlinToJavaInlineHandler : InlineHandler {
+abstract class AbstractCrossLanguageInlineHandler : InlineHandler {
     override fun prepareInlineElement(
         element: PsiElement,
         editor: Editor?,
@@ -33,7 +27,7 @@ class KotlinToJavaInlineHandler : InlineHandler {
                 psiElement,
                 KotlinBundle.message(
                     "text.cannot.inline.reference.from.0.to.1",
-                    KotlinLanguage.INSTANCE.displayName,
+                    referenced.language.displayName,
                     psiElement.language.displayName,
                 ),
             )

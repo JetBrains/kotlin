@@ -348,7 +348,7 @@
     <refactoring.introduceParameterMethodUsagesProcessor
         implementation="org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter.KotlinIntroduceParameterMethodUsageProcessor"/>
     <refactoring.inlineHandler language="kotlin" implementationClass="org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineHandler"/>
-    <refactoring.inlineHandler language="JAVA" implementationClass="org.jetbrains.kotlin.idea.refactoring.inline.KotlinToJavaInlineHandler"/>
+    <refactoring.inlineHandler language="JAVA" implementationClass="org.jetbrains.kotlin.idea.refactoring.inline.JavaInlineHandler"/>
     <refactoring.overrideMethodProcessor implementation="org.jetbrains.kotlin.idea.refactoring.inline.KotlinOverrideMethodsProcessor"/>
     <inlineActionHandler implementation="org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler"/>
     <inlineActionHandler implementation="org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineFunctionHandler"/>
