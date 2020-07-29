@@ -7005,6 +7005,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/recursiveSuspend.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("restrictedSuspendLambda.kt")
+        public void testRestrictedSuspendLambda() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/restrictedSuspendLambda.kt");
+        }
+
         @TestMetadata("returnByLabel.kt")
         public void testReturnByLabel_1_2() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/returnByLabel.kt", "kotlin.coroutines.experimental");

@@ -270,25 +270,34 @@ class JvmSymbols(
 
     val suspendLambdaClass: IrClassSymbol =
         createClass(FqName("kotlin.coroutines.jvm.internal.SuspendLambda"), classModality = Modality.ABSTRACT) { klass ->
-            klass.superTypes += suspendFunctionInterface.defaultType
-            klass.addConstructor().apply {
-                addValueParameter("arity", irBuiltIns.intType)
-                addValueParameter(
-                    SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME,
-                    continuationClass.typeWith(irBuiltIns.anyNType).makeNullable()
-                )
-            }
-            klass.addFunction(INVOKE_SUSPEND_METHOD_NAME, irBuiltIns.anyNType, Modality.ABSTRACT, Visibilities.PROTECTED).apply {
-                addValueParameter(SUSPEND_CALL_RESULT_NAME, resultClassStub.typeWith(irBuiltIns.anyNType))
-            }
-            klass.addFunction(SUSPEND_FUNCTION_CREATE_METHOD_NAME, continuationClass.typeWith(irBuiltIns.unitType), Modality.OPEN).apply {
-                addValueParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationClass.typeWith(irBuiltIns.nothingType))
-            }
-            klass.addFunction(SUSPEND_FUNCTION_CREATE_METHOD_NAME, continuationClass.typeWith(irBuiltIns.unitType), Modality.OPEN).apply {
-                addValueParameter("value", irBuiltIns.anyNType)
-                addValueParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationClass.typeWith(irBuiltIns.nothingType))
-            }
+            addSuspendLambdaInterfaceFunctions(klass)
         }
+
+    val restrictedSuspendLambdaClass: IrClassSymbol =
+        createClass(FqName("kotlin.coroutines.jvm.internal.RestrictedSuspendLambda"), classModality = Modality.ABSTRACT) { klass ->
+            addSuspendLambdaInterfaceFunctions(klass)
+        }
+
+    private fun addSuspendLambdaInterfaceFunctions(klass: IrClass) {
+        klass.superTypes += suspendFunctionInterface.defaultType
+        klass.addConstructor().apply {
+            addValueParameter("arity", irBuiltIns.intType)
+            addValueParameter(
+                SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME,
+                continuationClass.typeWith(irBuiltIns.anyNType).makeNullable()
+            )
+        }
+        klass.addFunction(INVOKE_SUSPEND_METHOD_NAME, irBuiltIns.anyNType, Modality.ABSTRACT, Visibilities.PROTECTED).apply {
+            addValueParameter(SUSPEND_CALL_RESULT_NAME, resultClassStub.typeWith(irBuiltIns.anyNType))
+        }
+        klass.addFunction(SUSPEND_FUNCTION_CREATE_METHOD_NAME, continuationClass.typeWith(irBuiltIns.unitType), Modality.OPEN).apply {
+            addValueParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationClass.typeWith(irBuiltIns.nothingType))
+        }
+        klass.addFunction(SUSPEND_FUNCTION_CREATE_METHOD_NAME, continuationClass.typeWith(irBuiltIns.unitType), Modality.OPEN).apply {
+            addValueParameter("value", irBuiltIns.anyNType)
+            addValueParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, continuationClass.typeWith(irBuiltIns.nothingType))
+        }
+    }
 
     private fun generateCallableReferenceMethods(klass: IrClass) {
         klass.addFunction("getSignature", irBuiltIns.stringType, Modality.OPEN)
