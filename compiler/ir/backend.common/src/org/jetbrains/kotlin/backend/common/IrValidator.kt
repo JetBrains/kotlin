@@ -55,6 +55,7 @@ data class IrValidatorConfig(
     val checkTypes: Boolean = true,
     val checkDescriptors: Boolean = true,
     val checkProperties: Boolean = false,
+    val checkScopes: Boolean = false,
 )
 
 class IrValidator(val context: CommonBackendContext, val config: IrValidatorConfig) : IrElementVisitorVoid {
@@ -65,6 +66,9 @@ class IrValidator(val context: CommonBackendContext, val config: IrValidatorConf
     override fun visitFile(declaration: IrFile) {
         currentFile = declaration
         super.visitFile(declaration)
+        if (config.checkScopes) {
+            ScopeValidator(this::error).visitFile(declaration)
+        }
     }
 
     private fun error(element: IrElement, message: String) {
