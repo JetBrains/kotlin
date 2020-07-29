@@ -131,18 +131,16 @@ class KotlinInlineCallableProcessor(
 
         replacementStrategy.replaceUsages(
             kotlinReferenceUsages.mapNotNull { it.element as? KtReferenceExpression },
-            declaration,
             myProject,
-            commandName,
-            postAction = {
-                if (deleteAfter) {
-                    declaration.deleteWithCompanion()
-                    statementToDelete?.delete()
-                }
-
-                postAction(declaration)
+            commandName
+        ) {
+            if (deleteAfter) {
+                declaration.deleteWithCompanion()
+                statementToDelete?.delete()
             }
-        )
+
+            postAction(declaration)
+        }
     }
 
     override fun getCommandName(): String = commandName

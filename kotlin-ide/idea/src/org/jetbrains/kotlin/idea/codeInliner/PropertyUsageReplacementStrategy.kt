@@ -25,13 +25,13 @@ class PropertyUsageReplacementStrategy(readReplacement: CodeToInline?, writeRepl
     private val readReplacementStrategy = readReplacement?.let {
         CallableUsageReplacementStrategy(it, inlineSetter = false)
     }
+
     private val writeReplacementStrategy = writeReplacement?.let {
         CallableUsageReplacementStrategy(it, inlineSetter = true)
     }
 
     override fun createReplacer(usage: KtReferenceExpression): (() -> KtElement?)? {
-        val access = usage.readWriteAccess(useResolveForReadWrite = true)
-        return when (access) {
+        return when (usage.readWriteAccess(useResolveForReadWrite = true)) {
             ReferenceAccess.READ -> readReplacementStrategy?.createReplacer(usage)
             ReferenceAccess.WRITE -> writeReplacementStrategy?.createReplacer(usage)
             ReferenceAccess.READ_WRITE -> null
