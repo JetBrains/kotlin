@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.contracts.description.ConeConstantReference
 import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.PersistentImplicitReceiverStack
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -33,15 +34,21 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class DataFlowAnalyzerContext<FLOW : Flow>(
     val graphBuilder: ControlFlowGraphBuilder,
-    val variableStorage: VariableStorage,
-    val flowOnNodes: MutableMap<CFGNode<*>, FLOW>,
+    variableStorage: VariableStorage,
+    flowOnNodes: MutableMap<CFGNode<*>, FLOW>,
     val variablesForWhenConditions: MutableMap<WhenBranchConditionExitNode, DataFlowVariable>
 ) {
+    var flowOnNodes = flowOnNodes
+        private set
+    var variableStorage = variableStorage
+        private set
+
     fun reset() {
         graphBuilder.reset()
-        variableStorage.reset()
-        flowOnNodes.clear()
         variablesForWhenConditions.clear()
+
+        variableStorage = variableStorage.clear()
+        flowOnNodes = mutableMapOf()
     }
 
     companion object {
@@ -160,7 +167,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         functionEnterNode.mergeIncomingFlow(shouldForkFlow = previousNode != null)
     }
 
-    fun exitFunction(function: FirFunction<*>): ControlFlowGraph {
+    fun exitFunction(function: FirFunction<*>): FirControlFlowGraphReference {
         if (function is FirAnonymousFunction) {
             return exitAnonymousFunction(function)
         }
@@ -171,12 +178,13 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 variableStorage.removeRealVariable(valueParameter.symbol)
             }
         }
+        val variableStorage = variableStorage
+        val flowOnNodes = context.flowOnNodes
+
         if (graphBuilder.isTopLevel()) {
-            context.flowOnNodes.clear()
-            variableStorage.reset()
-            graphBuilder.reset()
+            context.reset()
         }
-        return graph
+        return FirControlFlowGraphReferenceImpl(graph, DataFlowInfo(variableStorage, flowOnNodes))
     }
 
     // ----------------------------------- Anonymous function -----------------------------------
@@ -188,12 +196,12 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         functionEnterNode.mergeIncomingFlow()
     }
 
-    private fun exitAnonymousFunction(anonymousFunction: FirAnonymousFunction): ControlFlowGraph {
+    private fun exitAnonymousFunction(anonymousFunction: FirAnonymousFunction): FirControlFlowGraphReference {
         val (functionExitNode, postponedLambdaExitNode, graph) = graphBuilder.exitAnonymousFunction(anonymousFunction)
         // TODO: questionable
         postponedLambdaExitNode?.mergeIncomingFlow()
         functionExitNode.mergeIncomingFlow()
-        return graph
+        return FirControlFlowGraphReferenceImpl(graph)
     }
 
     fun visitPostponedAnonymousFunction(anonymousFunction: FirAnonymousFunction) {

@@ -521,8 +521,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             transformDeclarationContent(function, data).also {
                 if (functionIsNotAnalyzed) {
                     val result = it.single as FirFunction<*>
-                    val controlFlowGraph = dataFlowAnalyzer.exitFunction(result)
-                    result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
+                    val controlFlowGraphReference = dataFlowAnalyzer.exitFunction(result)
+                    result.replaceControlFlowGraphReference(controlFlowGraphReference)
                 }
             } as CompositeTransformResult<FirStatement>
         }
@@ -593,8 +593,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 }
             }
 
-            val graph = dataFlowAnalyzer.exitFunction(constructor)
-            constructor.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(graph))
+            val controlFlowGraphReference = dataFlowAnalyzer.exitFunction(constructor)
+            constructor.replaceControlFlowGraphReference(controlFlowGraphReference)
             constructor.compose()
         }
     }
