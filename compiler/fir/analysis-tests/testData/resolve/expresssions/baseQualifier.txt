@@ -29,7 +29,7 @@ FILE: Test.kt
         lval bbd: R|BB.D| = Q|BB.D|
         lval aac: R|AA.C| = Q|AA.C|
         Q|JavaClass|.R|/JavaClass.bar|()
-        lval errC: <ERROR TYPE REF: Unresolved name: C> = Q|BB|.<Unresolved name: C>#
-        lval errBarViaBB: <ERROR TYPE REF: Unresolved name: bar> = Q|BB|.<Unresolved name: bar>#()
-        lval errBarViaAA: <ERROR TYPE REF: Unresolved name: bar> = Q|AA|.<Unresolved name: bar>#()
+        lval errC: R|ERROR CLASS: Unresolved name: C| = Q|BB|.<Unresolved name: C>#
+        lval errBarViaBB: R|ERROR CLASS: Unresolved name: bar| = Q|BB|.<Unresolved name: bar>#()
+        lval errBarViaAA: R|ERROR CLASS: Unresolved name: bar| = Q|AA|.<Unresolved name: bar>#()
     }

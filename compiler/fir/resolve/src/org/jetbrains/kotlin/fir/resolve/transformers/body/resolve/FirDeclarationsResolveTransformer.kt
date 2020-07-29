@@ -867,7 +867,15 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                         is FirImplicitTypeRef -> buildErrorTypeRef {
                             diagnostic = ConeSimpleDiagnostic("No result type for initializer", DiagnosticKind.InferenceError)
                         }
-                        else -> resultType
+                        else -> {
+                            buildResolvedTypeRef {
+                                type = resultType.coneType
+                                annotations.addAll(resultType.annotations)
+                                resultType.source.psi?.let {
+                                    source = FirFakeSourceElement(it, FirFakeSourceElementKind.PropertyFromParameter)
+                                }
+                            }
+                        }
                     }
                     variable.transformReturnTypeRef(
                         transformer,
@@ -879,7 +887,17 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                         is FirImplicitTypeRef -> buildErrorTypeRef {
                             diagnostic = ConeSimpleDiagnostic("No result type for getter", DiagnosticKind.InferenceError)
                         }
-                        else -> resultType
+                        else -> {
+                            resultType?.let {
+                                buildResolvedTypeRef {
+                                    type = resultType.coneType
+                                    annotations.addAll(resultType.annotations)
+                                    resultType.source.psi?.let {
+                                        source = FirFakeSourceElement(it, FirFakeSourceElementKind.PropertyFromParameter)
+                                    }
+                                }
+                            }
+                        }
                     }
                     variable.transformReturnTypeRef(
                         transformer,

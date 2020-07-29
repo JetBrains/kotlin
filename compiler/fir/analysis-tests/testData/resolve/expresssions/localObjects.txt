@@ -40,5 +40,5 @@ FILE: localObjects.kt
 
         Q|B|.R|/B.foo|()
     }
-    public final val bb: <ERROR TYPE REF: Unresolved name: foo> = <Unresolved name: B>#.<Unresolved name: foo>#()
-        public get(): <ERROR TYPE REF: Unresolved name: foo>
+    public final val bb: R|ERROR CLASS: Unresolved name: foo| = <Unresolved name: B>#.<Unresolved name: foo>#()
+        public get(): R|ERROR CLASS: Unresolved name: foo|

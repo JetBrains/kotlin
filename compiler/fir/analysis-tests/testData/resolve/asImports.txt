@@ -10,7 +10,7 @@ FILE: A.kt
     }
 FILE: main.kt
     public final fun test_1(): R|kotlin/Unit| {
-        lval a: <ERROR TYPE REF: Unresolved name: A> = <Unresolved name: A>#()
+        lval a: R|ERROR CLASS: Unresolved name: A| = <Unresolved name: A>#()
         lval b: R|foo/A| = R|foo/A.A|()
         lval c: R|foo/A| = <Unresolved name: A>#()
     }

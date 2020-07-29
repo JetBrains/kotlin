@@ -22,10 +22,10 @@ FILE: typeArgumentsNotAllowed.kt
         }
 
     }
-    public final val a: <ERROR TYPE REF: Unresolved name: MyClass> = Q|rest|.<Unresolved name: MyClass>#
-        public get(): <ERROR TYPE REF: Unresolved name: MyClass>
-    public final val b: <ERROR TYPE REF: Unresolved name: MyClass> = Q|rest/Best|.<Unresolved name: MyClass>#
-        public get(): <ERROR TYPE REF: Unresolved name: MyClass>
+    public final val a: R|ERROR CLASS: Unresolved name: MyClass| = Q|rest|.<Unresolved name: MyClass>#
+        public get(): R|ERROR CLASS: Unresolved name: MyClass|
+    public final val b: R|ERROR CLASS: Unresolved name: MyClass| = Q|rest/Best|.<Unresolved name: MyClass>#
+        public get(): R|ERROR CLASS: Unresolved name: MyClass|
     public final class B<E> : R|kotlin/Any| {
         public constructor<E>(): R|rest/B<E>| {
             super<R|kotlin/Any|>()
