@@ -5,6 +5,15 @@
 
 package sample.torch
 
+/**
+ * NOTE: resource management in this sample suffers from resource leaks
+ * and double-free bugs (see workaround in [FloatTensor.dispose]).
+ *
+ * This might mean that the entire approach for resource management in the sample is faulty.
+ * Please take this into account when considering reusing the same approach in your project.
+ *
+ * TODO: rework resource management.
+*/
 interface Disposable {
     fun dispose()
 }
