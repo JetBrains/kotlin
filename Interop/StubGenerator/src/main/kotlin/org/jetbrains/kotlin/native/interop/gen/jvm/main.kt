@@ -378,7 +378,7 @@ private fun processCLib(flavorName: String, cinteropArguments: CInteropArguments
                     dependencies = stdlibDependency + imports.requiredLibraries.toList(),
                     nopack = cinteropArguments.nopack,
                     shortName = cinteropArguments.shortModuleName,
-                    staticLibraries = staticLibraries
+                    staticLibraries = resolveLibraries(staticLibraries, libraryPaths)
             )
             return null
         }

@@ -3576,8 +3576,8 @@ createInterop("embedStaticLibraries") {
         }
     }
 
-    it.extraOpts '-staticLibrary', "$libDir/1.a"
-    it.extraOpts '-staticLibrary', "$libDir/2.a"
+    it.extraOpts '-staticLibrary', "1.a"
+    it.extraOpts '-staticLibrary', "2.a"
 }
 
 if (PlatformInfo.isAppleTarget(project)) {

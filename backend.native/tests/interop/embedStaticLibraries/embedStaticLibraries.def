@@ -1,3 +1,2 @@
-staticLibraries = \
-    backend.native/tests/build/embedStaticLibraries/3.a \
-    backend.native/tests/build/embedStaticLibraries/4.a
+libraryPaths = backend.native/tests/build/embedStaticLibraries
+staticLibraries = 3.a 4.a
