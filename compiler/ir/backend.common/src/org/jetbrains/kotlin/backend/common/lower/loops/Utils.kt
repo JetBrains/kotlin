@@ -89,10 +89,10 @@ internal val IrExpression.constLongValue: Long?
  */
 internal fun DeclarationIrBuilder.createTemporaryVariableIfNecessary(
     expression: IrExpression, nameHint: String? = null,
-    irType: IrType? = null
+    irType: IrType? = null, isMutable: Boolean = false
 ): Pair<IrVariable?, IrExpression> =
     if (expression.canHaveSideEffects) {
-        scope.createTmpVariable(expression, nameHint = nameHint, irType = irType).let { Pair(it, irGet(it)) }
+        scope.createTmpVariable(expression, nameHint = nameHint, irType = irType, isMutable = isMutable).let { Pair(it, irGet(it)) }
     } else {
         Pair(null, expression)
     }

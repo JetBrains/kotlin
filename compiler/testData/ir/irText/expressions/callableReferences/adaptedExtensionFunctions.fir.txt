@@ -43,13 +43,13 @@ FILE fqName:<root> fileName:/adaptedExtensionFunctions.kt
     BLOCK_BODY
   FUN name:testExtensionVararg visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use]>#' type=IrErrorType
-        FUNCTION_REFERENCE 'public final fun extensionVararg (i: kotlin.Int, vararg s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction3<<root>.C, kotlin.Int, kotlin.Array<out kotlin.String>, kotlin.Unit> origin=null reflectionTarget=<same>
+      CALL 'public final fun use (f: kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        f: FUNCTION_REFERENCE 'public final fun extensionVararg (i: kotlin.Int, vararg s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction2<<root>.C, kotlin.Int, kotlin.Unit> origin=null reflectionTarget=<same>
   FUN name:testExtensionDefault visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun use (f: kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         f: FUNCTION_REFERENCE 'public final fun extensionDefault (i: kotlin.Int, s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction2<<root>.C, kotlin.Int, kotlin.Unit> origin=null reflectionTarget=<same>
   FUN name:testExtensionBoth visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/use]>#' type=IrErrorType
-        FUNCTION_REFERENCE 'public final fun extensionBoth (i: kotlin.Int, s: kotlin.String, vararg t: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction4<<root>.C, kotlin.Int, kotlin.String, kotlin.Array<out kotlin.String>, kotlin.Unit> origin=null reflectionTarget=<same>
+      CALL 'public final fun use (f: kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        f: FUNCTION_REFERENCE 'public final fun extensionBoth (i: kotlin.Int, s: kotlin.String, vararg t: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction2<<root>.C, kotlin.Int, kotlin.Unit> origin=null reflectionTarget=<same>

@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -31,9 +29,6 @@ interface IrTry : IrExpression {
 }
 
 interface IrCatch : IrElement {
-    @ObsoleteDescriptorBasedAPI
-    val parameter: VariableDescriptor
-
     var catchParameter: IrVariable
     var result: IrExpression
 

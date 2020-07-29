@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public final class A {
+    // source: 'lateInitNotNull.kt'
     public field x: A
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getX(): A

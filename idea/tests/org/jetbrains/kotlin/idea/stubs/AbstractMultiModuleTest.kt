@@ -155,21 +155,25 @@ fun Module.createFacet(
 fun Module.createMultiplatformFacetM1(
     platformKind: TargetPlatform? = null,
     useProjectSettings: Boolean = true,
-    implementedModuleNames: List<String>
+    implementedModuleNames: List<String>,
+    pureKotlinSourceFolders: List<String>
 ) {
     createFacetWithAdditionalSetup(platformKind, useProjectSettings) {
         this.implementedModuleNames = implementedModuleNames
+        this.pureKotlinSourceFolders = pureKotlinSourceFolders
     }
 }
 
 fun Module.createMultiplatformFacetM3(
     platformKind: TargetPlatform? = null,
     useProjectSettings: Boolean = true,
-    dependsOnModuleNames: List<String>
+    dependsOnModuleNames: List<String>,
+    pureKotlinSourceFolders: List<String>
 ) {
     createFacetWithAdditionalSetup(platformKind, useProjectSettings) {
         this.dependsOnModuleNames = dependsOnModuleNames
         this.isHmppEnabled = true
+        this.pureKotlinSourceFolders = pureKotlinSourceFolders
     }
 }
 

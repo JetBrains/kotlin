@@ -8,6 +8,6 @@ class Scope<InterfaceT, ImplementationT : InterfaceT>(private val implClass: j.C
         val hm = c.asSequence()
             .<!INAPPLICABLE_CANDIDATE!>filter<!>(<!UNRESOLVED_REFERENCE!>implClass::isInstance<!>)
             .<!INAPPLICABLE_CANDIDATE!>map<!>(<!UNRESOLVED_REFERENCE!>implClass::cast<!>)
-            .<!AMBIGUITY!>toSet<!>()
+            .toSet()
     }
 }

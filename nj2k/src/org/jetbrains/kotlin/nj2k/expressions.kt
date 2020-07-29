@@ -90,17 +90,16 @@ fun blockStatement(statements: List<JKStatement>) =
 
 fun useExpression(
     receiver: JKExpression,
-    variableIdentifier: JKNameIdentifier,
+    variableIdentifier: JKNameIdentifier?,
     body: JKStatement,
     symbolProvider: JKSymbolProvider
 ): JKExpression {
     val useSymbol = symbolProvider.provideMethodSymbol("kotlin.io.use")
-    val lambdaParameter =
-        JKParameter(JKTypeElement(JKNoType), variableIdentifier)
+    val lambdaParameter = if (variableIdentifier != null) JKParameter(JKTypeElement(JKNoType), variableIdentifier) else null
 
     val lambda = JKLambdaExpression(
         body,
-        listOf(lambdaParameter)
+        listOfNotNull(lambdaParameter)
     )
     val methodCall =
         JKCallExpressionImpl(

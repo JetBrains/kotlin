@@ -153,7 +153,9 @@ abstract class ClassCodegen protected constructor(
         if (withinInline || !smap.isTrivial) {
             visitor.visitSMAP(smap, !context.state.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax))
         } else {
-            visitor.visitSource(smap.sourceInfo!!.source, null)
+            smap.sourceInfo!!.sourceFileName?.let {
+                visitor.visitSource(it, null)
+            }
         }
 
         visitor.done()
@@ -178,7 +180,7 @@ abstract class ClassCodegen protected constructor(
             field.initializer!!.expression, context.irBuiltIns.unitType
         )
         if (classInitializer == null) {
-            classInitializer = buildFun {
+            classInitializer = context.irFactory.buildFun {
                 name = Name.special("<clinit>")
                 returnType = context.irBuiltIns.unitType
             }.apply {
@@ -245,7 +247,7 @@ abstract class ClassCodegen protected constructor(
 
         if (field.origin != JvmLoweredDeclarationOrigin.CONTINUATION_CLASS_RESULT_FIELD) {
             val skipNullabilityAnnotations =
-                flags and (Opcodes.ACC_SYNTHETIC or Opcodes.ACC_PRIVATE or Opcodes.ACC_ENUM) != 0 ||
+                flags and (Opcodes.ACC_SYNTHETIC or Opcodes.ACC_ENUM) != 0 ||
                         field.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_STATIC_LAMBDA_INSTANCE
             object : AnnotationCodegen(this@ClassCodegen, context, skipNullabilityAnnotations) {
                 override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
@@ -366,6 +368,7 @@ private val IrClass.flags: Int
 private val IrField.flags: Int
     get() = origin.flags or visibility.flags or
             this.specialDeprecationFlag or (correspondingPropertySymbol?.owner?.deprecationFlags ?: 0) or
+            (if (annotations.hasAnnotation(KOTLIN_DEPRECATED)) Opcodes.ACC_DEPRECATED else 0) or
             (if (isFinal) Opcodes.ACC_FINAL else 0) or
             (if (isStatic) Opcodes.ACC_STATIC else 0) or
             (if (hasAnnotation(VOLATILE_ANNOTATION_FQ_NAME)) Opcodes.ACC_VOLATILE else 0) or
@@ -375,9 +378,12 @@ private val IrField.flags: Int
 private val IrField.specialDeprecationFlag: Int
     get() = if (shouldHaveSpecialDeprecationFlag()) Opcodes.ACC_DEPRECATED else 0
 
-private fun IrField.shouldHaveSpecialDeprecationFlag(): Boolean {
+private val JAVA_LANG_DEPRECATED = FqName("java.lang.Deprecated")
+private val KOTLIN_DEPRECATED = FqName("kotlin.Deprecated")
+
+fun IrField.shouldHaveSpecialDeprecationFlag(): Boolean {
     return origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE &&
-            annotations.hasAnnotation(FqName("java.lang.Deprecated"))
+            annotations.hasAnnotation(JAVA_LANG_DEPRECATED)
 }
 
 private val IrDeclarationOrigin.flags: Int

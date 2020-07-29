@@ -70,6 +70,8 @@ fun IrType.isSubtypeOf(superType: IrType, irBuiltIns: IrBuiltIns): Boolean {
     return AbstractTypeChecker.isSubtypeOf(IrTypeCheckerContext(irBuiltIns) as AbstractTypeCheckerContext, this, superType)
 }
 
+// no searchable usages
+// delete or FIXME: implement TypeConstructorMarker.isError and TypeConstructorMarker.toErrorType in IrTypeSystemContext
 fun Collection<IrType>.commonSupertype(irBuiltIns: IrBuiltIns): IrType {
     return NewCommonSuperTypeCalculator.run {
         IrTypeCheckerContext(irBuiltIns).commonSuperType(map { it }) as IrType

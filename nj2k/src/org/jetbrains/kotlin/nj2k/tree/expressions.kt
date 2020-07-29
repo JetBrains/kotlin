@@ -201,6 +201,11 @@ class JKMethodAccessExpression(val identifier: JKMethodSymbol) : JKExpression() 
     override fun accept(visitor: JKVisitor) = visitor.visitMethodAccessExpression(this)
 }
 
+class JKTypeQualifierExpression(val type: JKType) : JKExpression() {
+    override fun calculateType(typeFactory: JKTypeFactory): JKType? = null
+    override fun accept(visitor: JKVisitor) = visitor.visitTypeQualifierExpression(this)
+}
+
 class JKMethodReferenceExpression(
     qualifier: JKExpression,
     val identifier: JKSymbol,

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
@@ -26,11 +25,13 @@ abstract class IrLazyDeclarationBase(
     private val stubGenerator: DeclarationStubGenerator,
     protected val typeTranslator: TypeTranslator
 ) : IrElementBase(startOffset, endOffset), IrDeclaration {
+    override val factory: IrFactory
+        get() = stubGenerator.symbolTable.irFactory
 
     protected fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
     protected fun ReceiverParameterDescriptor.generateReceiverParameterStub(): IrValueParameter =
-        IrValueParameterImpl(
+        factory.createValueParameter(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, IrValueParameterSymbolImpl(this),
             name, -1, type.toIrType(), null, isCrossinline = false, isNoinline = false
         )

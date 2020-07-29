@@ -6,7 +6,7 @@ fun test(foo: Foo?) {
         // Error, foo?.bar is nullable
         it.<!INAPPLICABLE_CANDIDATE!>length<!>
         // Error, foo is nullable
-        foo.<!INAPPLICABLE_CANDIDATE!>bar<!>.<!UNRESOLVED_REFERENCE!>length<!>
+        foo.<!INAPPLICABLE_CANDIDATE!>bar<!>.length
         // Correct
         foo?.bar?.length
     }

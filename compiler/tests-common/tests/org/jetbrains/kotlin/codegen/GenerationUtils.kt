@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
@@ -144,10 +145,11 @@ object GenerationUtils {
             Fir2IrConverter.createModuleFragment(
                 session, resolveTransformer.scopeSession, firFiles,
                 configuration.languageVersionSettings,
-                signaturer = IdSignatureDescriptor(JvmManglerDesc()),
+                IdSignatureDescriptor(JvmManglerDesc()),
                 // TODO: differentiate JVM resolve from other targets, such as JS resolve.
-                generatorExtensions = JvmGeneratorExtensions(),
-                mangler = FirJvmKotlinMangler(session)
+                JvmGeneratorExtensions(),
+                FirJvmKotlinMangler(session),
+                IrFactoryImpl,
             )
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 

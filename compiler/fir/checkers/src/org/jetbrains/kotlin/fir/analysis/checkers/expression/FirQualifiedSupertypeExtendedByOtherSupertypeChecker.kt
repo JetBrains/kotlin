@@ -23,6 +23,7 @@ object FirQualifiedSupertypeExtendedByOtherSupertypeChecker : FirQualifiedAccess
     override fun check(functionCall: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         // require to be called over a super reference
         val superReference = functionCall.calleeReference.safeAs<FirSuperReference>()
+            ?.takeIf { it.hadExplicitTypeInSource() }
             ?: return
 
         val explicitType = superReference.superTypeRef.safeAs<FirResolvedTypeRef>()

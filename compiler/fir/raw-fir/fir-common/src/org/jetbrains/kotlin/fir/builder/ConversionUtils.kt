@@ -170,9 +170,9 @@ fun FirExpression.generateContainsOperation(
     if (!inverted) return containsCall
 
     return buildFunctionCall {
-        source = baseSource?.withKind(FirFakeSourceElementKind.DesugaredInvertedContains)
+        source = baseSource?.fakeElement(FirFakeSourceElementKind.DesugaredInvertedContains)
         calleeReference = buildSimpleNamedReference {
-            source = operationReferenceSource?.withKind(FirFakeSourceElementKind.DesugaredInvertedContains)
+            source = operationReferenceSource?.fakeElement(FirFakeSourceElementKind.DesugaredInvertedContains)
             name = OperatorNameConventions.NOT
         }
         explicitReceiver = containsCall
@@ -191,7 +191,7 @@ fun FirExpression.generateComparisonExpression(
 
     val compareToCall = createConventionCall(
         operationReferenceSource,
-        baseSource?.withKind(FirFakeSourceElementKind.GeneratedCompararisonExpression),
+        baseSource?.fakeElement(FirFakeSourceElementKind.GeneratedCompararisonExpression),
         argument,
         OperatorNameConventions.COMPARE_TO
     )
@@ -483,6 +483,6 @@ fun FirModifiableQualifiedAccess.wrapWithSafeCall(receiver: FirExpression): FirS
             bind(checkedSafeCallSubject)
         }
         this.regularQualifiedAccess = this@wrapWithSafeCall
-        this.source = this@wrapWithSafeCall.source?.withKind(FirFakeSourceElementKind.DesugaredSafeCallExpression)
+        this.source = this@wrapWithSafeCall.source?.fakeElement(FirFakeSourceElementKind.DesugaredSafeCallExpression)
     }
 }

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.scripting.definitions.SCRIPT_DEFINITION_MARKERS_EXTE
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.getEnvironment
 import java.io.File
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -68,12 +69,8 @@ class ScriptTemplatesFromDependenciesProvider(private val project: Project) : Sc
             if (!forceStartUpdate && _definitions != null) return
         }
 
-        inProgressLock.withLock {
-            if (!inProgress) {
-                inProgress = true
-
-                loadScriptDefinitions()
-            }
+        if (inProgress.compareAndSet(false, true)) {
+            loadScriptDefinitions()
         }
     }
 
@@ -88,8 +85,7 @@ class ScriptTemplatesFromDependenciesProvider(private val project: Project) : Sc
         val classpath: List<File>,
     )
 
-    private var inProgress = false
-    private val inProgressLock = ReentrantLock()
+    private val inProgress = AtomicBoolean(false)
 
     @Volatile
     private var forceStartUpdate = false
@@ -121,10 +117,7 @@ class ScriptTemplatesFromDependenciesProvider(private val project: Project) : Sc
 
                 val newTemplates = TemplatesWithCp(templates.toList(), classpath.toList())
                 if (newTemplates == oldTemplates) {
-                    inProgressLock.withLock {
-                        inProgress = false
-                    }
-
+                    inProgress.set(false)
                     return@onSuccess
                 }
 
@@ -164,9 +157,7 @@ class ScriptTemplatesFromDependenciesProvider(private val project: Project) : Sc
                     ScriptDefinitionsManager.getInstance(project).reloadDefinitionsBy(this@ScriptTemplatesFromDependenciesProvider)
                 }
 
-                inProgressLock.withLock {
-                    inProgress = false
-                }
+                inProgress.set(false)
             }
     }
 
@@ -174,9 +165,7 @@ class ScriptTemplatesFromDependenciesProvider(private val project: Project) : Sc
         definitionsLock.withLock {
             _definitions = emptyList()
         }
-        inProgressLock.withLock {
-            inProgress = false
-        }
+        inProgress.set(false)
     }
 
     // public for tests

@@ -14,6 +14,7 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class Product2 implements Named {
+    @org.jetbrains.annotations.Nullable()
     private java.lang.String name;
 
     @org.jetbrains.annotations.Nullable()

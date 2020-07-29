@@ -131,7 +131,7 @@ digraph casts_kt {
                         55 [label="Access variable R|<local>/x|"];
                         56 [label="Type operator: (R|<local>/x| as R|kotlin/Boolean|)"];
                         57 [label="Const: Boolean(true)"];
-                        58 [label="Operator =="];
+                        58 [label="Equality operator =="];
                         59 [label="Exit &&"];
                     }
                     60 [label="Exit when branch condition"];
@@ -267,7 +267,7 @@ digraph casts_kt {
                     97 [label="Access variable R|<local>/b|"];
                     98 [label="Type operator: (R|<local>/b| as? R|kotlin/Boolean|)"];
                     99 [label="Const: Null(null)"];
-                    100 [label="Operator !="];
+                    100 [label="Equality operator !="];
                     101 [label="Exit when branch condition"];
                 }
                 subgraph cluster_25 {
@@ -306,7 +306,7 @@ digraph casts_kt {
                     121 [label="Access variable R|<local>/b|"];
                     122 [label="Type operator: (R|<local>/b| as? R|kotlin/Boolean|)"];
                     123 [label="Const: Null(null)"];
-                    124 [label="Operator =="];
+                    124 [label="Equality operator =="];
                     125 [label="Exit when branch condition"];
                 }
                 subgraph cluster_30 {

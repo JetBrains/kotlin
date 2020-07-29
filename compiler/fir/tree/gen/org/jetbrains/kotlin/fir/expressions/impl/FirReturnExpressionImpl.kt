@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
+import org.jetbrains.kotlin.fir.fakeElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNothingTypeRef
-import org.jetbrains.kotlin.fir.withKind
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -28,7 +28,7 @@ internal class FirReturnExpressionImpl(
     override val target: FirTarget<FirFunction<*>>,
     override var result: FirExpression,
 ) : FirReturnExpression() {
-    override var typeRef: FirTypeRef = FirImplicitNothingTypeRef(source?.withKind(FirFakeSourceElementKind.ImplicitTypeRef))
+    override var typeRef: FirTypeRef = FirImplicitNothingTypeRef(source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef))
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)

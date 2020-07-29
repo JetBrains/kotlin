@@ -5,7 +5,7 @@ fun foo(block: () -> (() -> Int)) {}
 
 fun test() {
     val x = <!EXPRESSION_REQUIRED!>fun named1(x: Int): Int { return 1 }<!>
-    x <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Function1<Int, Int>>() }
+    x <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Function1<Int, Int>>() }
 
     foo { fun named2(): Int {return 1} }
     foo({ fun named3() = 1 })

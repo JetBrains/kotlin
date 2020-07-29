@@ -8,7 +8,7 @@ class It {
 }
 
 fun test(c: Coll?) {
-  <!INAPPLICABLE_CANDIDATE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>for (x in c) {}<!>
+  <!INAPPLICABLE_CANDIDATE!>for (x in c) {}<!>
 
   if (c != null) {
     for(x in c) {}

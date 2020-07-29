@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -29,7 +27,6 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
 /**
  * This phase moves interface members with default implementations to the
@@ -54,7 +51,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
             it is IrFunction && removedFunctions.containsKey(it.symbol)
         }
 
-        val defaultImplsIrClass = context.declarationFactory.getDefaultImplsClass(irClass)
+        val defaultImplsIrClass = context.cachedDeclarations.getDefaultImplsClass(irClass)
         if (defaultImplsIrClass.declarations.isNotEmpty()) {
             irClass.declarations.add(defaultImplsIrClass)
         }
@@ -112,7 +109,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                         !function.isDefinitelyNotDefaultImplsMethod(jvmDefaultMode, implementation) -> {
                             val defaultImpl = createDefaultImpl(function)
                             val superImpl = firstSuperMethodFromKotlin(function, implementation)
-                            context.declarationFactory.getDefaultImplsFunction(superImpl.owner).also {
+                            context.cachedDeclarations.getDefaultImplsFunction(superImpl.owner).also {
                                 defaultImpl.bridgeToStatic(it)
                             }
                         }
@@ -156,7 +153,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
             }
         }
 
-        val defaultImplsIrClass = context.declarationFactory.getDefaultImplsClass(irClass)
+        val defaultImplsIrClass = context.cachedDeclarations.getDefaultImplsClass(irClass)
 
         // Move metadata for local delegated properties from the interface to DefaultImpls, since this is where kotlin-reflect looks for it.
         val localDelegatedProperties = context.localDelegatedProperties[irClass.attributeOwnerId as IrClass]
@@ -196,7 +193,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
     }
 
     private fun createDefaultImpl(function: IrSimpleFunction, forCompatibility: Boolean = false): IrSimpleFunction =
-        context.declarationFactory.getDefaultImplsFunction(function, forCompatibility).also { newFunction ->
+        context.cachedDeclarations.getDefaultImplsFunction(function, forCompatibility).also { newFunction ->
             newFunction.parentAsClass.declarations.add(newFunction)
         }
 

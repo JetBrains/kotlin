@@ -4,9 +4,9 @@ package k
 import JavaClass
 
 fun foo(javaClass: JavaClass) {
-    val v = javaClass.<!INAPPLICABLE_CANDIDATE!>something<!>
-    javaClass.<!INAPPLICABLE_CANDIDATE!>something<!> = 1
-    javaClass.<!INAPPLICABLE_CANDIDATE, INAPPLICABLE_CANDIDATE!>something<!><!UNRESOLVED_REFERENCE!>++<!>
+    val v = javaClass.<!HIDDEN!>something<!>
+    javaClass.<!HIDDEN!>something<!> = 1
+    javaClass.<!HIDDEN, HIDDEN!>something<!>++
 }
 
 // FILE: JavaClass.java

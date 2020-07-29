@@ -1,59 +1,71 @@
 @kotlin.Metadata
-public interface A
+public interface A {
+    // source: 'defaultImpls.kt'
+}
 
 @kotlin.annotation.Retention
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class Anno
+public annotation class Anno {
+    // source: 'defaultImpls.kt'
+}
 
 @kotlin.Metadata
 public interface B {
+    // source: 'defaultImpls.kt'
     public abstract method foo(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
 }
 
 @kotlin.Metadata
 public interface C {
+    // source: 'defaultImpls.kt'
     public abstract method getBar(): int
 }
 
 @kotlin.Metadata
 public final class D$DefaultImpls {
-    inner class D$DefaultImpls
+    // source: 'defaultImpls.kt'
     public static method baz(@org.jetbrains.annotations.NotNull p0: D, @org.jetbrains.annotations.NotNull p1: java.lang.String): int
     private static method test(p0: D, p1: java.lang.String): java.lang.String
+    public final inner class D$DefaultImpls
 }
 
 @kotlin.Metadata
 @Anno
 public interface D {
-    inner class D$DefaultImpls
+    // source: 'defaultImpls.kt'
     public abstract method baz(@org.jetbrains.annotations.NotNull p0: java.lang.String): int
+    public final inner class D$DefaultImpls
 }
 
 @kotlin.Metadata
 public final class E$InsideE {
-    inner class E$InsideE
+    // source: 'defaultImpls.kt'
     public method <init>(): void
+    public final inner class E$InsideE
 }
 
 @kotlin.Metadata
 public interface E {
-    inner class E$InsideE
+    // source: 'defaultImpls.kt'
+    public final inner class E$InsideE
 }
 
 @kotlin.Metadata
 public final class F$DefaultImpls {
-    inner class F$DefaultImpls
+    // source: 'defaultImpls.kt'
     public static @org.jetbrains.annotations.NotNull method getBar(@org.jetbrains.annotations.NotNull p0: F): java.lang.String
     private static method getBaz(p0: F): java.lang.String
     public static method setBar(@org.jetbrains.annotations.NotNull p0: F, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
     private static method setBaz(p0: F, p1: java.lang.String): void
+    public final inner class F$DefaultImpls
 }
 
 @kotlin.Metadata
 @Anno
 public interface F {
-    inner class F$DefaultImpls
+    // source: 'defaultImpls.kt'
     public abstract @org.jetbrains.annotations.NotNull method getBar(): java.lang.String
     public abstract method setBar(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public final inner class F$DefaultImpls
 }

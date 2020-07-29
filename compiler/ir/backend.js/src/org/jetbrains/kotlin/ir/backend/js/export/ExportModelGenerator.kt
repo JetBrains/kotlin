@@ -112,7 +112,8 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
             isMember = parentClass != null,
             isStatic = false,
             isAbstract = parentClass?.isInterface == false && property.modality == Modality.ABSTRACT,
-            ir = property
+            irGetter = property.getter,
+            irSetter = property.setter
         )
     }
 
@@ -120,10 +121,10 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
         when (klass.kind) {
             ClassKind.ANNOTATION_CLASS,
             ClassKind.ENUM_CLASS,
-            ClassKind.ENUM_ENTRY,
-            ClassKind.OBJECT ->
+            ClassKind.ENUM_ENTRY ->
                 return Exportability.Prohibited("Class ${klass.fqNameWhenAvailable} with kind: ${klass.kind}")
 
+            ClassKind.OBJECT,
             ClassKind.CLASS,
             ClassKind.INTERFACE -> {
             }
@@ -137,7 +138,7 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
 
     private fun exportClass(
         klass: IrClass
-    ): ExportedClass? {
+    ): ExportedDeclaration? {
         when (val exportability = classExportability(klass)) {
             is Exportability.Prohibited -> return error(exportability.reason)
             is Exportability.NotNeeded -> return null
@@ -160,8 +161,14 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
                 is IrProperty ->
                     members.addIfNotNull(exportProperty(candidate))
 
-                is IrClass ->
-                    nestedClasses.addIfNotNull(exportClass(candidate))
+                is IrClass -> {
+                    val ec = exportClass(candidate)
+                    if (ec is ExportedClass) {
+                        nestedClasses.add(ec)
+                    } else {
+                        members.addIfNotNull(ec)
+                    }
+                }
 
                 is IrField -> {
                     assert(candidate.correspondingPropertySymbol != null) {
@@ -187,6 +194,27 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
             .filter { it !is ExportedType.ErrorType }
 
         val name = klass.getExportedIdentifier()
+
+        if (klass.kind == ClassKind.OBJECT) {
+            var t: ExportedType = ExportedType.InlineInterfaceType(members + nestedClasses)
+            if (superType != null)
+                t = ExportedType.IntersectionType(t, superType)
+
+            for (superInterface in superInterfaces) {
+                t = ExportedType.IntersectionType(t, superInterface)
+            }
+
+            return ExportedProperty(
+                name = name,
+                type = t,
+                mutable = false,
+                isMember = klass.parent is IrClass,
+                isStatic = true,
+                isAbstract = false,
+                irGetter = context.mapping.objectToGetInstanceFunction[klass]!!,
+                irSetter = null
+            )
+        }
 
         return ExportedClass(
             name = name,
@@ -254,11 +282,20 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
 
             classifier is IrClassSymbol -> {
                 val klass = classifier.owner
-                when (val exportability = classExportability(klass)) {
-                    is Exportability.Prohibited -> ExportedType.ErrorType(exportability.reason)
-                    is Exportability.NotNeeded -> error("Not needed classes types cannot be used")
-                    else -> ExportedType.ClassType(
-                        klass.fqNameWhenAvailable!!.asString(),
+                val name = klass.fqNameWhenAvailable!!.asString()
+
+                when (klass.kind) {
+                    ClassKind.ANNOTATION_CLASS,
+                    ClassKind.ENUM_CLASS,
+                    ClassKind.ENUM_ENTRY ->
+                        ExportedType.ErrorType("Class $name with kind: ${klass.kind}")
+
+                    ClassKind.OBJECT ->
+                        ExportedType.TypeOf(name)
+
+                    ClassKind.CLASS,
+                    ClassKind.INTERFACE -> ExportedType.ClassType(
+                        name,
                         type.arguments.map { exportTypeArgument(it) }
                     )
                 }
@@ -286,7 +323,8 @@ class ExportModelGenerator(val context: JsIrBackendContext) {
             return Exportability.NotNeeded
         if (function.origin == IrDeclarationOrigin.BRIDGE ||
             function.origin == JsLoweredDeclarationOrigin.BRIDGE_TO_EXTERNAL_FUNCTION ||
-            function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
+            function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ||
+            function.origin == JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION
         ) {
             return Exportability.NotNeeded
         }

@@ -12,18 +12,17 @@ fun box(): String {
 //
 // Expected lowered form of loop (before bytecode optimization):
 //
-//   // Additional variables:
-//   val newStep = throw IllegalArgumentException("Step must be positive, was: 0.")
+//   // Additional statements:
+//   throw IllegalArgumentException("Step must be positive, was: 0.")
 //
 //   // Standard form of loop over progression
 //   var inductionVar = 1u
-//   val last = getProgressionLastElement(1u, 6u, newStep)
-//   val step = newStep
+//   val last = getProgressionLastElement(1u, 6u, 0)
 //   if (inductionVar <= last) {
 //     // Loop is not empty
 //     do {
 //       val i = inductionVar
-//       inductionVar += step
+//       inductionVar += 0
 //       // Loop body
 //     } while (i != last)
 //   }

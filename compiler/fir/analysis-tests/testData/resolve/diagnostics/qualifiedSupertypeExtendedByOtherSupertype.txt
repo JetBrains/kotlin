@@ -23,11 +23,11 @@ FILE: qualifiedSupertypeExtendedByOtherSupertype.kt
         }
 
         public final fun test(): R|kotlin/Unit| {
-            this@R|/Test|.super<R|IBase|>.R|/IBase.foo|()
-            this@R|/Test|.super<R|IBase|>.R|/IBase.bar|()
-            this@R|/Test|.super<R|IDerived|>.R|/IDerived.foo|()
-            this@R|/Test|.super<R|IDerived|>.R|/IBase.bar|()
-            this@R|/Test|.super<R|IDerived|>.R|/IDerived.qux|()
+            this@R|/Test|.super<R|IBase<kotlin/String>|>.R|/IBase.foo|()
+            this@R|/Test|.super<R|IBase<kotlin/String>|>.R|/IBase.bar|()
+            this@R|/Test|.super<R|IDerived<kotlin/String>|>.R|/IDerived.foo|()
+            this@R|/Test|.super<R|IDerived<kotlin/String>|>.R|/IBase.bar|()
+            this@R|/Test|.super<R|IDerived<kotlin/String>|>.R|/IDerived.qux|()
         }
 
     }
@@ -37,13 +37,13 @@ FILE: qualifiedSupertypeExtendedByOtherSupertype.kt
         }
 
         public final fun test(): R|kotlin/Unit| {
-            this@R|/Test2|.super<R|IBase|>.R|/IBase.foo|()
-            this@R|/Test2|.super<R|IBase|>.R|/IBase.bar|()
-            this@R|/Test2|.super<R|AliasedIBase|>.R|/IBase.foo|()
-            this@R|/Test2|.super<R|AliasedIBase|>.R|/IBase.bar|()
-            this@R|/Test2|.super<R|IDerived|>.R|/IDerived.foo|()
-            this@R|/Test2|.super<R|IDerived|>.R|/IBase.bar|()
-            this@R|/Test2|.super<R|IDerived|>.R|/IDerived.qux|()
+            this@R|/Test2|.super<R|IBase<kotlin/String>|>.R|/IBase.foo|()
+            this@R|/Test2|.super<R|IBase<kotlin/String>|>.R|/IBase.bar|()
+            this@R|/Test2|.super<R|IBase<kotlin/String>|>.R|/IBase.foo|()
+            this@R|/Test2|.super<R|IBase<kotlin/String>|>.R|/IBase.bar|()
+            this@R|/Test2|.super<R|IDerived<kotlin/String>|>.R|/IDerived.foo|()
+            this@R|/Test2|.super<R|IDerived<kotlin/String>|>.R|/IBase.bar|()
+            this@R|/Test2|.super<R|IDerived<kotlin/String>|>.R|/IDerived.qux|()
         }
 
     }

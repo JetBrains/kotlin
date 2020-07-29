@@ -114,7 +114,7 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
             annotations = target.annotations.map { it.deepCopyWithSymbols() }
 
             val proxy = this
-            val companionInstanceField = context.declarationFactory.getFieldForObjectInstance(companion)
+            val companionInstanceField = context.cachedDeclarations.getFieldForObjectInstance(companion)
             body = context.createIrBuilder(symbol).run {
                 irExprBody(irCall(target).apply {
                     passTypeArgumentsFrom(proxy)
@@ -142,7 +142,7 @@ private class SingletonObjectJvmStaticLowering(
             jvmStaticFunction.dispatchReceiverParameter?.let { oldDispatchReceiverParameter ->
                 jvmStaticFunction.dispatchReceiverParameter = null
                 jvmStaticFunction.body = jvmStaticFunction.body?.replaceThisByStaticReference(
-                    context.declarationFactory,
+                    context.cachedDeclarations,
                     irClass,
                     oldDispatchReceiverParameter
                 )
@@ -192,7 +192,7 @@ private class MakeCallsStatic(
     }
 
     private fun IrSimpleFunction.copyRemovingDispatchReceiver(): IrSimpleFunction =
-        buildFun(descriptor) {
+        factory.buildFun(descriptor) {
             updateFrom(this@copyRemovingDispatchReceiver)
             name = this@copyRemovingDispatchReceiver.name
             returnType = this@copyRemovingDispatchReceiver.returnType

@@ -1,5 +1,57 @@
 {
   "2": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 2,
+          "description": "Check of Nothing as a subtype of any type",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType, functions"
+        },
+        {
+          "specVersion": "0.1-213",
+          "casesNumber": 2,
+          "description": "Check of Nothing type is a subtype of any types",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary",
+          "helpers": "checkType, functions"
+        },
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 4,
+          "description": "type T is subtype of Any and Noting is subtype of T",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType"
+        }
+      ],
+      "2": [
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 4,
+          "description": "type T is subtype of Any and Noting is subtype of T",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        }
+      ],
+      "3": [
+        {
+          "specVersion": "0.1-152",
+          "casesNumber": 0,
+          "description": "Kt10811",
+          "path": "compiler/testData/diagnostics/tests/when/kt10811.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    },
     "neg": {
       "1": [
         {
@@ -7,18 +59,6 @@
           "casesNumber": 0,
           "description": "When and lambda with expected type",
           "path": "compiler/testData/diagnostics/tests/when/whenAndLambdaWithExpectedType.kt",
-          "unexpectedBehaviour": false,
-          "linkType": "primary"
-        }
-      ]
-    },
-    "pos": {
-      "3": [
-        {
-          "specVersion": "0.1-152",
-          "casesNumber": 0,
-          "description": "Kt10811",
-          "path": "compiler/testData/diagnostics/tests/when/kt10811.kt",
           "unexpectedBehaviour": false,
           "linkType": "primary"
         }

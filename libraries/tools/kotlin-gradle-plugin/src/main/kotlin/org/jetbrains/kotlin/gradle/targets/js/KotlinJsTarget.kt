@@ -132,9 +132,15 @@ constructor(
             it.description = "Run js on all configured platforms"
         }
 
+    private val propertiesProvider = PropertiesProvider(project)
+
     private val browserLazyDelegate = lazy {
         project.objects.newInstance(KotlinBrowserJs::class.java, this).also {
             it.configure()
+
+            if (propertiesProvider.jsGenerateExecutableDefault && irTarget == null) {
+                binaries.executable()
+            }
 
             browserConfiguredHandlers.forEach { handler ->
                 handler(it)
@@ -158,6 +164,11 @@ constructor(
     private val nodejsLazyDelegate = lazy {
         project.objects.newInstance(KotlinNodeJs::class.java, this).also {
             it.configure()
+
+            if (propertiesProvider.jsGenerateExecutableDefault && irTarget == null) {
+                binaries.executable()
+            }
+
             nodejsConfiguredHandlers.forEach { handler ->
                 handler(it)
             }

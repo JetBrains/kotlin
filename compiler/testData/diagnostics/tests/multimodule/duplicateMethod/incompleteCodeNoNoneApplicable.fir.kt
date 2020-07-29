@@ -16,5 +16,5 @@ import p.f
 
 fun test() {
     // There should be no "none applicable" error here
-    <!INAPPLICABLE_CANDIDATE!>f<!>(
+    <!NONE_APPLICABLE!>f<!>(
 <!SYNTAX!><!>}

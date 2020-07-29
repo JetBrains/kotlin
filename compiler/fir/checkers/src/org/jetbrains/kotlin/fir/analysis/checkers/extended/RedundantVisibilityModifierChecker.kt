@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.toFirPsiSourceElement
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 
 object RedundantVisibilityModifierChecker : FirBasicDeclarationChecker() {
@@ -25,8 +26,7 @@ object RedundantVisibilityModifierChecker : FirBasicDeclarationChecker() {
         if (declaration.source is FirFakeSourceElement<*>) return
         if (
             declaration !is FirMemberDeclaration
-            && !(declaration is FirPropertyAccessor
-                    && declaration.visibility == (context.containingDeclarations.last() as FirProperty).visibility)
+            && !(declaration is FirPropertyAccessor && declaration.visibility == context.containingPropertyVisibility)
         ) return
 
         val modifierList = (declaration.source.getModifierList() as? FirPsiModifierList)?.modifierList ?: return
@@ -36,15 +36,21 @@ object RedundantVisibilityModifierChecker : FirBasicDeclarationChecker() {
 
         val redundantVisibility = when {
             visibilityModifier == implicitVisibility -> implicitVisibility
-            visibilityModifier == Visibilities.INTERNAL
-                    && containingMemberDeclaration?.visibility == Visibilities.PRIVATE
-                    || declaration.visibilityForDeclarationAndPropertyAccessor == Visibilities.INTERNAL -> Visibilities.INTERNAL
+
+            modifierList.hasModifier(KtTokens.INTERNAL_KEYWORD) &&
+                    containingMemberDeclaration.let {
+                        it != null && (it.isLocalMember || modifierList.hasModifier(KtTokens.PRIVATE_KEYWORD))
+                    } -> Visibilities.INTERNAL
+
             else -> null
         } ?: return
 
-        if (redundantVisibility == Visibilities.PUBLIC
-            && declaration is FirPropertyAccessor
-            && declaration.source is FirFakeSourceElement<*>
+        if (
+            redundantVisibility == Visibilities.PUBLIC
+            && declaration is FirProperty
+            && modifierList.hasModifier(KtTokens.OVERRIDE_KEYWORD)
+            && declaration.isVar
+            && declaration.setter?.visibility == Visibilities.PUBLIC
         ) return
 
         val source = modifierList.visibilityModifier()?.toFirPsiSourceElement()
@@ -100,16 +106,22 @@ object RedundantVisibilityModifierChecker : FirBasicDeclarationChecker() {
         (symbol.fir as? FirMemberDeclaration)?.visibility?.let {
             return it
         }
+
         (symbol.fir as? FirPropertyAccessor)?.visibility?.let {
             return it
         }
+
         return null
     }
 
-    private val FirDeclaration.visibilityForDeclarationAndPropertyAccessor
+    private val FirMemberDeclaration.isLocalMember: Boolean
         get() = when (this) {
-            is FirMemberDeclaration -> status.visibility
-            is FirPropertyAccessor -> status.visibility
-            else -> null
+            is FirProperty -> this.isLocal
+            is FirRegularClass -> this.isLocal
+            is FirSimpleFunction -> this.isLocal
+            else -> false
         }
+
+    private val CheckerContext.containingPropertyVisibility
+        get() = (this.containingDeclarations.last() as? FirProperty)?.visibility
 }

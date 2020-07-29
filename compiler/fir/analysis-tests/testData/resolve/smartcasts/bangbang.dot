@@ -202,7 +202,7 @@ digraph bangbang_kt {
                 78 [label="Exit when"];
             }
             79 [label="Access variable R|<local>/a|"];
-            80 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
+            80 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()"];
             81 [label="Exit block"];
         }
         82 [label="Exit function test_3" style="filled" fillcolor=red];
@@ -331,14 +331,14 @@ digraph bangbang_kt {
                     color=blue
                     123 [label="Enter block"];
                     124 [label="Access variable R|<local>/a|"];
-                    125 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
+                    125 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()"];
                     126 [label="Exit block"];
                 }
                 127 [label="Exit when branch result"];
                 128 [label="Exit when"];
             }
             129 [label="Access variable R|<local>/a|"];
-            130 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
+            130 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()"];
             131 [label="Exit block"];
         }
         132 [label="Exit function test_5" style="filled" fillcolor=red];

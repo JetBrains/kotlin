@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.context
 
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.noReceiverExpressionType
 import org.jetbrains.kotlin.fir.tree.generator.printer.call
@@ -123,9 +122,9 @@ abstract class AbstractFirTreeImplementationConfigurator {
         }
 
         fun defaultTypeRefWithSource(typeRefClass: String) {
-            default("typeRef", "$typeRefClass(source?.withKind(FirFakeSourceElementKind.ImplicitTypeRef))")
+            default("typeRef", "$typeRefClass(source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef))")
             implementation.arbitraryImportables += ArbitraryImportable("org.jetbrains.kotlin.fir", "FirFakeSourceElementKind")
-            implementation.arbitraryImportables += ArbitraryImportable("org.jetbrains.kotlin.fir", "withKind")
+            implementation.arbitraryImportables += ArbitraryImportable("org.jetbrains.kotlin.fir", "fakeElement")
         }
 
         fun defaultTrue(field: String, withGetter: Boolean = false) {

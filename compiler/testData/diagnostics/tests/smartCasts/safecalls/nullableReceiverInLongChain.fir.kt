@@ -13,13 +13,13 @@ fun test(foo: Foo?) {
         // Error, foo?.bar?.gav is nullable
         it.<!INAPPLICABLE_CANDIDATE!>length<!>
         // Error, foo is nullable
-        foo.<!INAPPLICABLE_CANDIDATE!>bar<!>.<!UNRESOLVED_REFERENCE!>gav<!>.<!UNRESOLVED_REFERENCE!>length<!>
+        foo.<!INAPPLICABLE_CANDIDATE!>bar<!>.gav.length
         // Correct
         foo?.bar?.gav?.length
     }
     foo?.bar?.gav.call { it }?.notNullLet {
         foo.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
-        foo.<!INAPPLICABLE_CANDIDATE!>bar<!>.<!UNRESOLVED_REFERENCE!>hashCode<!>()
+        foo.<!INAPPLICABLE_CANDIDATE!>bar<!>.hashCode()
     }
 }
 

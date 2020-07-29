@@ -138,6 +138,10 @@ sealed class FirFakeSourceElementKind : FirSourceElementKind() {
     // a ?: b --> when(val $subj = a) { .... }
     // where `val $subj = a` has a fake source
     object WhenGeneratedSubject : FirFakeSourceElementKind()
+
+    // super.foo() --> super<Supertype>.foo()
+    // where `Supertype` has a fake source
+    object SuperCallImplicitType : FirFakeSourceElementKind()
 }
 
 sealed class FirSourceElement {
@@ -165,15 +169,10 @@ class FirRealPsiSourceElement<out P : PsiElement>(psi: P) : FirPsiSourceElement<
 
 class FirFakeSourceElement<out P : PsiElement>(psi: P, override val kind: FirFakeSourceElementKind) : FirPsiSourceElement<P>(psi)
 
-fun FirSourceElement.withKind(newKind: FirSourceElementKind?): FirSourceElement {
-    if (newKind == null) return this
+fun FirSourceElement.fakeElement(newKind: FirFakeSourceElementKind): FirSourceElement {
     return when (this) {
-        is FirLightSourceElement -> this
-        is FirPsiSourceElement<*> -> when (newKind) {
-            kind -> this
-            FirRealSourceElementKind -> FirRealPsiSourceElement(psi)
-            is FirFakeSourceElementKind -> FirFakeSourceElement(psi, newKind)
-        }
+        is FirLightSourceElement -> FirLightSourceElement(element, startOffset, endOffset, tree, newKind)
+        is FirPsiSourceElement<*> -> FirFakeSourceElement(psi, newKind)
     }
 }
 
@@ -181,12 +180,11 @@ class FirLightSourceElement(
     val element: LighterASTNode,
     override val startOffset: Int,
     override val endOffset: Int,
-    val tree: FlyweightCapableTreeStructure<LighterASTNode>
+    val tree: FlyweightCapableTreeStructure<LighterASTNode>,
+    override val kind: FirSourceElementKind = FirRealSourceElementKind,
 ) : FirSourceElement() {
     override val elementType: IElementType
         get() = element.tokenType
-
-    override val kind: FirSourceElementKind get() = FirRealSourceElementKind
 }
 
 val FirSourceElement?.psi: PsiElement? get() = (this as? FirPsiSourceElement<*>)?.psi

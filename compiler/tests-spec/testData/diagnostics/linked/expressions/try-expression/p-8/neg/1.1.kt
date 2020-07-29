@@ -11,7 +11,15 @@
  * NUMBER: 1
  * DESCRIPTION: The type of the try-expression is the least upper bound of the types of the last expressions of the try body and the last expressions of all the catch blocks
  */
+
+// FILE: TestCase.kt
+// TESTCASE NUMBER: 1
+package testPackCase1
+
 fun throwExceptionA(b: Boolean) = run { if (b) throw ExcA() }
+
+class ExcA() : Exception()
+class ExcB() : Exception()
 
 open class A<T>(var data: T) {
     fun foo(d: A<T>) {}
@@ -19,7 +27,6 @@ open class A<T>(var data: T) {
 
 class B<T>(data: T) : A<T>(data)
 
-// TESTCASE NUMBER: 1
 
 fun case1() {
     val tryVal: B<String> =
@@ -29,11 +36,24 @@ fun case1() {
     }<!> catch (e: Exception) {
         B("")
     }
-
-
 }
 
+// FILE: TestCase.kt
 // TESTCASE NUMBER: 2
+package testPackCase2
+
+fun throwExceptionA(b: Boolean) = run { if (b) throw ExcA() }
+
+class ExcA() : Exception()
+class ExcB() : Exception()
+
+open class A<T>(var data: T) {
+    fun foo(d: A<T>) {}
+}
+
+class B<T>(data: T) : A<T>(data)
+
+
 
 fun case2() {
     val tryVal: A<String> =
@@ -45,10 +65,20 @@ fun case2() {
     }<!>
 }
 
-/*
- * TESTCASE NUMBER: 3
- * ISSUES: KT-35494
- */
+
+// FILE: TestCase.kt
+// TESTCASE NUMBER: 3
+// ISSUES: KT-35494
+package testPackCase3
+
+fun throwExceptionA(b: Boolean) = run { if (b) throw ExcA() }
+
+open class A<T>(var data: T) {
+    fun foo(d: A<T>) {}
+}
+
+class B<T>(data: T) : A<T>(data)
+
 fun case3() {
     val tryVal: A<Int> =
     try {

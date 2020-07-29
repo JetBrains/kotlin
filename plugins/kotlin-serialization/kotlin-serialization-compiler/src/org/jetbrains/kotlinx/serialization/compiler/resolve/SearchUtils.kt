@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 internal fun ClassConstructorDescriptor.isSerializationCtor(): Boolean {
     /*kind == CallableMemberDescriptor.Kind.SYNTHESIZED does not work because DeserializedClassConstructorDescriptor loses its kind*/
@@ -72,32 +73,28 @@ internal fun getInternalPackageFqn(classSimpleName: String): FqName =
     SerializationPackages.internalPackageFqName.child(Name.identifier(classSimpleName))
 
 internal fun ModuleDescriptor.getClassFromInternalSerializationPackage(classSimpleName: String) =
-    getFromPackage(SerializationPackages.internalPackageFqName, classSimpleName)
+    requireNotNull(
+        findClassAcrossModuleDependencies(
+            ClassId(
+                SerializationPackages.internalPackageFqName,
+                Name.identifier(classSimpleName)
+            )
+        )
+    ) { "Can't locate class $classSimpleName from package ${SerializationPackages.internalPackageFqName}" }
 
 internal fun getSerializationPackageFqn(classSimpleName: String): FqName =
     SerializationPackages.packageFqName.child(Name.identifier(classSimpleName))
 
 internal fun ModuleDescriptor.getClassFromSerializationPackage(classSimpleName: String) =
-    getFromPackage(SerializationPackages.packageFqName, classSimpleName)
-
-private fun ModuleDescriptor.getFromPackage(packageFqName: FqName, classSimpleName: String) = requireNotNull(
-    findClassAcrossModuleDependencies(
-        ClassId(
-            packageFqName,
+    SerializationPackages.allPublicPackages.firstNotNullResult { pkg ->
+        module.findClassAcrossModuleDependencies(ClassId(
+            pkg,
             Name.identifier(classSimpleName)
-        )
-    )
-) { "Can't locate class $classSimpleName from package $packageFqName" }
+        ))
+    } ?: throw IllegalArgumentException("Can't locate class $classSimpleName")
 
 internal fun ClassDescriptor.getClassFromSerializationPackage(classSimpleName: String) =
-    requireNotNull(
-        module.findClassAcrossModuleDependencies(
-            ClassId(
-                SerializationPackages.packageFqName,
-                Name.identifier(classSimpleName)
-            )
-        )
-    ) { "Can't locate class $classSimpleName" }
+    module.getClassFromSerializationPackage(classSimpleName)
 
 internal fun ClassDescriptor.getClassFromInternalSerializationPackage(classSimpleName: String) =
     module.getClassFromInternalSerializationPackage(classSimpleName)

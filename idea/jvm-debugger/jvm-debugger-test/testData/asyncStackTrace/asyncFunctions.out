@@ -1,11 +1,11 @@
-LineBreakpoint created at asyncFunctions.kt:21
+LineBreakpoint created at asyncFunctions.kt:24
 Run Java
 Connected to the target VM
-asyncFunctions.kt:21
+asyncFunctions.kt:24
 Async stack trace:
-    asyncFunctions.AsyncFunctionsKt:18
+    asyncFunctions.AsyncFunctionsKt:21
         y = "zoo"
-    asyncFunctions.AsyncFunctionsKt:13
+    asyncFunctions.AsyncFunctionsKt:15
         x = "foo"
     asyncFunctions.AsyncFunctionsKt:7
         a = 5

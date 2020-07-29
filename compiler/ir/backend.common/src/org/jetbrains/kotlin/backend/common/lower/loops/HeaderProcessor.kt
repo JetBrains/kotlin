@@ -260,7 +260,7 @@ internal class ProgressionLoopHeader(
     //
     // In the case of a reversed range, the `inductionVariable` and `last` variables are swapped, therefore the declaration order must be
     // swapped to preserve the correct evaluation order.
-    override val loopInitStatements = headerInfo.additionalVariables + (
+    override val loopInitStatements = headerInfo.additionalStatements + (
             if (headerInfo.isReversed)
                 listOfNotNull(lastVariableIfCanCacheLast, inductionVariable)
             else

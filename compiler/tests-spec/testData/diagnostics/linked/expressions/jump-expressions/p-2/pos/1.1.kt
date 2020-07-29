@@ -12,6 +12,8 @@
  * DESCRIPTION: check he type of jump expressions is the kotlin.Nothing
  */
 
+
+
 // TESTCASE NUMBER: 1
 
 fun case1() {
@@ -27,14 +29,13 @@ fun case1() {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>s<!>
     }
 }
-
 class Person(var name: String? = null) {}
 
 // TESTCASE NUMBER: 2
 
 fun case2() {
     var name: Any? = null
-    val men = arrayListOf(Person("Phill"), Person(), Person("Bob"))
+    val men = arrayListOf(Person2("Phill"), Person2(), Person2("Bob"))
     for (k in men) {
         loop@ for (i in men) {
             val val1 = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>continue@loop<!>
@@ -44,6 +45,8 @@ fun case2() {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>s<!>
     }
 }
+
+class Person2(var name: String? = null) {}
 
 // TESTCASE NUMBER: 3
 

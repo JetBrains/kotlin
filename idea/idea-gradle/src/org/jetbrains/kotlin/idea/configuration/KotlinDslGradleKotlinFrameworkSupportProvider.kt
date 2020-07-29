@@ -188,12 +188,19 @@ abstract class AbstractKotlinDslGradleKotlinJSFrameworkSupportProvider(
                     (
                             additionalSubTargetSettings()
                                 ?.lines()
-                                ?.joinToString("\n", "\n", "\n") {
-                                    "            $it"
-                                } ?: ""
+                                ?.joinToString("\n", "\n", "\n") { line: String ->
+                                    if (line.isBlank()) {
+                                        line
+                                    } else {
+                                        line
+                                            .prependIndent()
+                                            .prependIndent()
+                                            .prependIndent()
+                                    }
+                                } ?: "\n"
                             ) +
                     """
-                           }
+                        }
                         binaries.executable()
                     }
                 }

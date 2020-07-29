@@ -1,3 +1,32 @@
+fun f() {
+
+    class LocalClass {
+        <!REDUNDANT_VISIBILITY_MODIFIER!>internal<!> var foo = 0
+    }
+    LocalClass().foo = 1
+    <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> <!CAN_BE_VAL!>var<!> baz = 0
+}
+
+internal inline fun internal() {
+    f()
+}
+
+class C {
+    internal val z = object {
+        fun foo() = 13
+    }
+}
+
+class Foo2<
+        T1,
+        T2: T1,
+        > {
+    fun <T1,
+            T2, > foo2() {}
+
+    internal inner class B<T,T2,>
+}
+
 <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> class C {
     <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> val foo: Int = 0
 
@@ -33,20 +62,6 @@ sealed class G constructor(val y: Int) {
 
 interface I {
     fun bar()
-}
-
-fun f() {
-    val i = object : I {
-        <!REDUNDANT_VISIBILITY_MODIFIER!>internal<!> var foo = 0
-        override fun bar() {}
-    }
-    i.foo = 1
-
-    class LocalClass {
-        <!REDUNDANT_VISIBILITY_MODIFIER!>internal<!> var foo = 0
-    }
-    LocalClass().foo = 1
-    <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> var baz = 0
 }
 
 <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> var baz = 0

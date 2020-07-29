@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.allParameters
-import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -24,13 +24,12 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.copyAttributes
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.isFileClass
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
@@ -138,7 +137,7 @@ private class MainMethodGenerationLowering(private val context: JvmBackendContex
     private fun IrBuilderWithScope.irRunSuspend(target: IrSimpleFunction, args: IrValueParameter?): IrExpression {
         val backendContext = this@MainMethodGenerationLowering.context
         return irBlock {
-            val wrapperConstructor = buildClass {
+            val wrapperConstructor = backendContext.irFactory.buildClass {
                 name = Name.special("<main-wrapper>")
                 visibility = JavaVisibilities.PACKAGE_VISIBILITY
                 modality = Modality.FINAL
@@ -156,7 +155,14 @@ private class MainMethodGenerationLowering(private val context: JvmBackendContex
                 wrapper.parent = target.parent
 
                 val stringArrayType = backendContext.irBuiltIns.arrayClass.typeWith(backendContext.irBuiltIns.stringType)
-                val argsField = args?.let { wrapper.addField("args", stringArrayType) }
+                val argsField = args?.let {
+                    wrapper.addField {
+                        name = Name.identifier("args")
+                        type = stringArrayType
+                        visibility = Visibilities.PRIVATE
+                        origin = LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE
+                    }
+                }
 
                 wrapper.addFunction("invoke", backendContext.irBuiltIns.anyNType, isSuspend = true).also { invoke ->
                     val invokeToOverride = functionClass.functions.single()

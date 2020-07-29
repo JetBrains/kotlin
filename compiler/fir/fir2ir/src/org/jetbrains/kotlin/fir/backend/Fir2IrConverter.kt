@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.backend.evaluate.evaluateConstants
 import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
 import org.jetbrains.kotlin.fir.backend.generators.CallAndReferenceGenerator
 import org.jetbrains.kotlin.fir.backend.generators.FakeOverrideGenerator
-import org.jetbrains.kotlin.fir.backend.evaluate.evaluateConstants
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.psi
@@ -85,7 +85,9 @@ class Fir2IrConverter(
         irClass: IrClass = classifierStorage.getCachedIrClass(anonymousObject)!!
     ): IrClass {
         anonymousObject.getPrimaryConstructorIfAny()?.let {
-            irClass.declarations += declarationStorage.createIrConstructor(it, irClass)
+            irClass.declarations += declarationStorage.createIrConstructor(
+                it, irClass, isLocal = true
+            )
         }
         for (declaration in sortBySynthetic(anonymousObject.declarations)) {
             if (declaration is FirRegularClass) {
@@ -110,7 +112,9 @@ class Fir2IrConverter(
         irClass: IrClass = classifierStorage.getCachedIrClass(regularClass)!!
     ): IrClass {
         regularClass.getPrimaryConstructorIfAny()?.let {
-            irClass.declarations += declarationStorage.createIrConstructor(it, irClass)
+            irClass.declarations += declarationStorage.createIrConstructor(
+                it, irClass, isLocal = regularClass.isLocal
+            )
         }
         for (declaration in sortBySynthetic(regularClass.declarations)) {
             val irDeclaration = processMemberDeclaration(declaration, regularClass, irClass) ?: continue
@@ -143,15 +147,21 @@ class Fir2IrConverter(
         containingClass: FirClass<*>?,
         parent: IrDeclarationParent
     ): IrDeclaration? {
+        val isLocal = containingClass != null &&
+                (containingClass !is FirRegularClass || containingClass.isLocal)
         return when (declaration) {
             is FirRegularClass -> {
                 processClassMembers(declaration)
             }
             is FirSimpleFunction -> {
-                declarationStorage.createIrFunction(declaration, parent)
+                declarationStorage.createIrFunction(
+                    declaration, parent, isLocal = isLocal
+                )
             }
             is FirProperty -> {
-                declarationStorage.createIrProperty(declaration, parent)
+                declarationStorage.createIrProperty(
+                    declaration, parent, isLocal = isLocal
+                )
             }
             is FirField -> {
                 if (declaration.isSynthetic) {
@@ -161,7 +171,9 @@ class Fir2IrConverter(
                 }
             }
             is FirConstructor -> if (!declaration.isPrimary) {
-                declarationStorage.createIrConstructor(declaration, parent as IrClass)
+                declarationStorage.createIrConstructor(
+                    declaration, parent as IrClass, isLocal = isLocal
+                )
             } else {
                 null
             }
@@ -187,13 +199,13 @@ class Fir2IrConverter(
             scopeSession: ScopeSession,
             firFiles: List<FirFile>,
             languageVersionSettings: LanguageVersionSettings,
-            fakeOverrideMode: FakeOverrideMode = FakeOverrideMode.NORMAL,
             signaturer: IdSignatureComposer,
             generatorExtensions: GeneratorExtensions,
-            mangler: FirMangler
+            mangler: FirMangler,
+            irFactory: IrFactory,
         ): Fir2IrResult {
             val moduleDescriptor = FirModuleDescriptor(session)
-            val symbolTable = SymbolTable(signaturer)
+            val symbolTable = SymbolTable(signaturer, irFactory)
             val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
             val typeTranslator = TypeTranslator(
                 symbolTable,
@@ -206,7 +218,7 @@ class Fir2IrConverter(
             val builtIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
             FirBuiltinSymbols(builtIns, moduleDescriptor.builtIns, symbolTable)
             val sourceManager = PsiSourceManager()
-            val components = Fir2IrComponentsStorage(session, scopeSession, symbolTable, builtIns, mangler)
+            val components = Fir2IrComponentsStorage(session, scopeSession, symbolTable, builtIns, irFactory, mangler)
             val conversionScope = Fir2IrConversionScope()
             val classifierStorage = Fir2IrClassifierStorage(components)
             val declarationStorage = Fir2IrDeclarationStorage(components, moduleDescriptor)
@@ -235,17 +247,17 @@ class Fir2IrConverter(
                 converter.processClassHeaders(firFile)
             }
             val fakeOverrideGenerator = FakeOverrideGenerator(
-                session, scopeSession, classifierStorage, declarationStorage, conversionScope, fakeOverrideMode
+                session, scopeSession, classifierStorage, declarationStorage, conversionScope, FakeOverrideMode.NORMAL
             )
             components.fakeOverrideGenerator = fakeOverrideGenerator
-            for (firFile in firFiles) {
-                converter.processFileAndClassMembers(firFile)
-            }
-
             val fir2irVisitor = Fir2IrVisitor(converter, components, conversionScope)
             val callGenerator = CallAndReferenceGenerator(components, fir2irVisitor, conversionScope)
             components.callGenerator = callGenerator
             declarationStorage.annotationGenerator = AnnotationGenerator(components)
+            for (firFile in firFiles) {
+                converter.processFileAndClassMembers(firFile)
+            }
+
             for (firFile in firFiles) {
                 val irFile = firFile.accept(fir2irVisitor, null) as IrFile
                 val fileEntry = sourceManager.getOrCreateFileEntry(firFile.psi as KtFile)

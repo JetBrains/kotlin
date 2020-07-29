@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.tower.FirTowerResolver
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerResolveManager
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedCallableReferenceAtom
@@ -66,7 +67,7 @@ class FirCallResolver(
         qualifiedResolver.reset()
         @Suppress("NAME_SHADOWING")
         val functionCall = if (needTransformArguments) {
-            functionCall.transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent)
+            functionCall.transformExplicitReceiver()
                 .also {
                     dataFlowAnalyzer.enterQualifiedAccessExpression()
                     functionCall.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
@@ -106,6 +107,20 @@ class FirCallResolver(
             resultFunctionCall.resultType = typeRef
         }
         return resultFunctionCall
+    }
+
+    private inline fun <reified Q : FirQualifiedAccess> Q.transformExplicitReceiver(): Q {
+        val explicitReceiver =
+            explicitReceiver as? FirQualifiedAccessExpression
+                ?: return transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent) as Q
+
+        val callee =
+            explicitReceiver.calleeReference as? FirSuperReference
+                ?: return transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent) as Q
+
+        transformer.transformSuperReceiver(callee, explicitReceiver, this)
+
+        return this
     }
 
     private data class ResolutionResult(
@@ -161,7 +176,7 @@ class FirCallResolver(
         qualifiedResolver.initProcessingQualifiedAccess(callee)
 
         @Suppress("NAME_SHADOWING")
-        val qualifiedAccess = qualifiedAccess.transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent)
+        val qualifiedAccess = qualifiedAccess.transformExplicitReceiver<FirQualifiedAccess>()
         qualifiedResolver.replacedQualifier(qualifiedAccess)?.let { resolvedQualifierPart ->
             return resolvedQualifierPart
         }
@@ -383,20 +398,24 @@ class FirCallResolver(
                 source,
                 name
             )
-            applicability < CandidateApplicability.SYNTHETIC_RESOLVED -> {
-                val diagnostic = ConeInapplicableCandidateError(
-                    applicability,
-                    candidates.map {
-                        ConeInapplicableCandidateError.CandidateInfo(
-                            it.symbol,
-                            if (it.systemInitialized) it.system.diagnostics else emptyList(),
-                        )
-                    }
-                )
 
-                buildErrorReference(callInfo, diagnostic, source, name)
+            candidates.size > 1 -> buildErrorReference(
+                callInfo,
+                ConeAmbiguityError(name, applicability, candidates.map { it.symbol }),
+                source,
+                name
+            )
+
+            applicability < CandidateApplicability.SYNTHETIC_RESOLVED -> {
+                val candidate = candidates.single()
+                val diagnostic = when (applicability) {
+                    CandidateApplicability.HIDDEN -> ConeHiddenCandidateError(candidate.symbol)
+                    else -> ConeInapplicableCandidateError(applicability, candidate)
+                }
+                buildErrorReference(source, candidate, diagnostic)
             }
-            candidates.size == 1 -> {
+
+            else -> {
                 val candidate = candidates.single()
                 val coneSymbol = candidate.symbol
                 if (coneSymbol is FirBackingFieldSymbol) {
@@ -420,12 +439,6 @@ class FirCallResolver(
                 }
                 FirNamedReferenceWithCandidate(source, name, candidate)
             }
-            else -> buildErrorReference(
-                callInfo,
-                ConeAmbiguityError(name, candidates.map { it.symbol }),
-                source,
-                name
-            )
         }
     }
 
@@ -438,5 +451,16 @@ class FirCallResolver(
         val candidate = CandidateFactory(components, callInfo).createErrorCandidate(diagnostic)
         resolutionStageRunner.processCandidate(candidate, stopOnFirstError = false)
         return FirErrorReferenceWithCandidate(source, name, candidate, diagnostic)
+    }
+
+    private fun buildErrorReference(
+        source: FirSourceElement?,
+        candidate: Candidate,
+        diagnostic: ConeDiagnostic
+    ): FirErrorReferenceWithCandidate {
+        if (!candidate.fullyAnalyzed) {
+            resolutionStageRunner.processCandidate(candidate, stopOnFirstError = false)
+        }
+        return FirErrorReferenceWithCandidate(source, candidate.callInfo.name, candidate, diagnostic)
     }
 }

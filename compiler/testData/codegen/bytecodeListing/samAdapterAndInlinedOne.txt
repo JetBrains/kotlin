@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public final class test/SamAdapterAndInlinedOneKt$sam$i$java_lang_Runnable$0 {
+    // source: 'samAdapterAndInlinedOne.kt'
     private synthetic final field function: kotlin.jvm.functions.Function0
     public method <init>(p0: kotlin.jvm.functions.Function0): void
     public synthetic final method run(): void
@@ -7,6 +8,7 @@ public final class test/SamAdapterAndInlinedOneKt$sam$i$java_lang_Runnable$0 {
 
 @kotlin.Metadata
 final class test/SamAdapterAndInlinedOneKt$sam$java_lang_Runnable$0 {
+    // source: 'samAdapterAndInlinedOne.kt'
     private synthetic final field function: kotlin.jvm.functions.Function0
     method <init>(p0: kotlin.jvm.functions.Function0): void
     public synthetic final method run(): void
@@ -14,6 +16,7 @@ final class test/SamAdapterAndInlinedOneKt$sam$java_lang_Runnable$0 {
 
 @kotlin.Metadata
 public final class test/SamAdapterAndInlinedOneKt {
+    // source: 'samAdapterAndInlinedOne.kt'
     public synthetic final static method makeRunnable(p0: kotlin.jvm.functions.Function0): java.lang.Runnable
     public final static @org.jetbrains.annotations.NotNull method makeRunnable2(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Runnable
     public final static @org.jetbrains.annotations.NotNull method noInline(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Runnable

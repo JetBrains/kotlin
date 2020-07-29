@@ -11,6 +11,12 @@
  * NUMBER: 1
  * DESCRIPTION: check unsafe prefix increment expression call for an assignable expression
  */
+
+
+// FILE: TestCase.kt
+// TESTCASE NUMBER: 1
+package testPackCase1
+
 class A() {
     var i = 0
 
@@ -19,8 +25,6 @@ class A() {
         return this
     }
 }
-
-// TESTCASE NUMBER: 1
 
 fun case1() {
     var b: Case1? = Case1()
@@ -32,7 +36,18 @@ class Case1() {
     var a: A = A()
 }
 
+// FILE: TestCase.kt
 // TESTCASE NUMBER: 2
+package testPackCase2
+
+class A() {
+    var i = 0
+
+    operator fun inc(): A {
+        this.i++
+        return this
+    }
+}
 
 fun case2() {
     var b= Case2()

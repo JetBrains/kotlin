@@ -271,7 +271,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         private val unboundFunctionParameters = boundFunctionParameters?.let { functionParameters - it }
 
         private val coroutineClass: IrClass =
-            buildClass {
+            context.irFactory.buildClass {
                 startOffset = irFunction.startOffset
                 endOffset = irFunction.endOffset
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
@@ -366,7 +366,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         }
 
         fun buildConstructor(): IrConstructor =
-            buildConstructor {
+            context.irFactory.buildConstructor {
                 startOffset = irFunction.startOffset
                 endOffset = irFunction.endOffset
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
@@ -406,7 +406,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             }
 
         private fun buildFactoryConstructor(boundParams: List<IrValueParameter>): IrConstructor =
-            buildConstructor {
+            context.irFactory.buildConstructor {
                 startOffset = irFunction.startOffset
                 endOffset = irFunction.endOffset
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
@@ -444,7 +444,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             unboundArgs: List<IrValueParameter>,
             superFunctionSymbol: IrSimpleFunctionSymbol?,
             coroutineConstructor: IrConstructor
-        ): IrSimpleFunction = buildFun {
+        ): IrSimpleFunction = context.irFactory.buildFun {
             startOffset = irFunction.startOffset
             endOffset = irFunction.endOffset
             origin = DECLARATION_ORIGIN_COROUTINE_IMPL
@@ -500,7 +500,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             functionInvokeFunctionSymbol: IrSimpleFunctionSymbol,
             createFunction: IrFunction,
             stateMachineFunction: IrFunction
-        ): IrSimpleFunction = buildFun {
+        ): IrSimpleFunction = context.irFactory.buildFun {
             startOffset = irFunction.startOffset
             endOffset = irFunction.endOffset
             origin = DECLARATION_ORIGIN_COROUTINE_IMPL
@@ -550,7 +550,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             stateMachineFunction: IrSimpleFunction,
             coroutineClass: IrClass
         ): IrSimpleFunction {
-            val function = buildFun {
+            val function = context.irFactory.buildFun {
                 startOffset = irFunction.startOffset
                 endOffset = irFunction.endOffset
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
@@ -617,7 +617,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
     fun IrClass.addField(name: Name, type: IrType, isMutable: Boolean): IrField {
         val klass = this
-        return buildField {
+        return factory.buildField {
             this.startOffset = klass.startOffset
             this.endOffset = klass.endOffset
             this.origin = DECLARATION_ORIGIN_COROUTINE_IMPL

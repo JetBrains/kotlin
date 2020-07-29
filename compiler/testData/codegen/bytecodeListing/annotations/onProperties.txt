@@ -1,8 +1,9 @@
 @kotlin.Metadata
 public final class A {
+    // source: 'onProperties.kt'
     synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
     private @AnnField field p: int
-    private final @AnnDelegate field s$delegate: CustomDelegate
+    private final @AnnDelegate @org.jetbrains.annotations.NotNull field s$delegate: CustomDelegate
     private final @AnnField field x: int
     private field y: int
     static method <clinit>(): void
@@ -20,34 +21,49 @@ public final class A {
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class AnnDelegate
+public annotation class AnnDelegate {
+    // source: 'onProperties.kt'
+}
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class AnnField
+public annotation class AnnField {
+    // source: 'onProperties.kt'
+}
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class AnnGetter
+public annotation class AnnGetter {
+    // source: 'onProperties.kt'
+}
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class AnnParam
+public annotation class AnnParam {
+    // source: 'onProperties.kt'
+}
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class AnnProp
+public annotation class AnnProp {
+    // source: 'onProperties.kt'
+}
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class AnnProp2
+public annotation class AnnProp2 {
+    // source: 'onProperties.kt'
+}
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class AnnSetter
+public annotation class AnnSetter {
+    // source: 'onProperties.kt'
+}
 
 @kotlin.Metadata
 public final class CustomDelegate {
+    // source: 'onProperties.kt'
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getValue(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.reflect.KProperty): java.lang.String
 }

@@ -22,7 +22,7 @@ class ScriptClassRootsBuilder(
 
     fun build(): ScriptClassRootsCache =
         ScriptClassRootsCache(
-            project, scripts, classes, sources,
+            scripts, classes, sources,
             customDefinitionsUsed, sdks.build()
         )
 

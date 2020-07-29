@@ -450,11 +450,18 @@ class JavaToJKTreeBuilder constructor(
             }
 
             return JKMethodReferenceExpression(
-                qualifierExpression?.toJK() ?: JKStubExpression(),
+                methodReferenceQualifier(),
                 symbol,
                 functionalType(),
                 isConstructor
             )
+        }
+
+        fun PsiMethodReferenceExpression.methodReferenceQualifier(): JKExpression {
+            val qualifierType = qualifierType
+            if (qualifierType != null) return JKTypeQualifierExpression(typeFactory.fromPsiType(qualifierType.type))
+
+            return qualifierExpression?.toJK() ?: JKStubExpression()
         }
 
         fun PsiReferenceExpression.toJK(): JKExpression {
@@ -476,6 +483,7 @@ class JavaToJKTreeBuilder constructor(
                 is JKFieldSymbol -> JKFieldAccessExpression(symbol)
                 is JKPackageSymbol -> JKPackageAccessExpression(symbol)
                 is JKMethodSymbol -> JKMethodAccessExpression(symbol)
+                is JKTypeParameterSymbol -> JKTypeQualifierExpression(JKTypeParameterType(symbol))
                 else -> throwCanNotConvertError("unexpected symbol ${symbol::class}")
             }.qualified(qualifierExpression?.toJK()).also {
                 it.withFormattingFrom(this)
@@ -982,7 +990,7 @@ class JavaToJKTreeBuilder constructor(
                     JKJavaThrowStatement(with(expressionTreeMapper) { exception.toJK() })
                 is PsiTryStatement ->
                     JKJavaTryStatement(
-                        resourceList?.toList()?.map { (it as PsiLocalVariable).toJK() }.orEmpty(),
+                        resourceList?.toList()?.map { (it as PsiResourceListElement).toJK() }.orEmpty(),
                         tryBlock?.toJK() ?: JKBodyStub,
                         finallyBlock?.toJK() ?: JKBodyStub,
                         catchSections.map { it.toJK() }
@@ -1000,6 +1008,13 @@ class JavaToJKTreeBuilder constructor(
                 }
             }
         }
+
+        fun PsiResourceListElement.toJK(): JKJavaResourceElement =
+            when (this) {
+                is PsiResourceVariable -> JKJavaResourceDeclaration((this as PsiLocalVariable).toJK())
+                is PsiResourceExpression -> JKJavaResourceExpression(with(expressionTreeMapper) { this@toJK.expression.toJK() })
+                else -> throwCanNotConvertError()
+            }
 
         fun PsiCatchSection.toJK(): JKJavaTryCatchSection =
             JKJavaTryCatchSection(

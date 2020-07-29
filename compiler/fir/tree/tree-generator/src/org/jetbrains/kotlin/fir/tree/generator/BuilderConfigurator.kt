@@ -174,10 +174,6 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             default("resolvePhase", "FirResolvePhase.RAW_FIR")
         }
 
-        builder(operatorCall) {
-            parents += callBuilder
-        }
-
         builder(typeOperatorCall) {
             parents += callBuilder
             default("argumentList") {

@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.ExtendedDeclarationCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExtendedExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 
 abstract class AbstractExtendedFirDiagnosticsTest : AbstractFirDiagnosticsTest() {
     override fun configureSession(session: FirSession) {
         session.checkersComponent.register(ExtendedDeclarationCheckers)
+        session.checkersComponent.register(ExtendedExpressionCheckers)
     }
 }

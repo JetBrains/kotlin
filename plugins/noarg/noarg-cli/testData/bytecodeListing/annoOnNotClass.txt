@@ -1,6 +1,7 @@
 @NoArg
 @kotlin.Metadata
 public final enum class Colors {
+    // source: 'annoOnNotClass.kt'
     private synthetic final static field $VALUES: Colors[]
     public final enum static field RED: Colors
     public final enum static field WHITE: Colors
@@ -12,11 +13,14 @@ public final enum class Colors {
 
 @NoArg
 @kotlin.Metadata
-public interface Intf
+public interface Intf {
+    // source: 'annoOnNotClass.kt'
+}
 
 @kotlin.Metadata
 public final class MyClass {
-    private @NoArg field abc: java.lang.String
+    // source: 'annoOnNotClass.kt'
+    private @NoArg @org.jetbrains.annotations.NotNull field abc: java.lang.String
     public method <init>(p0: int): void
     public final @NoArg @org.jetbrains.annotations.NotNull method getAbc(): java.lang.String
     public final @NoArg method setAbc(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
@@ -26,11 +30,14 @@ public final class MyClass {
 @NoArg
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class NoArg
+public annotation class NoArg {
+    // source: 'annoOnNotClass.kt'
+}
 
 @NoArg
 @kotlin.Metadata
 public final class Obj {
+    // source: 'annoOnNotClass.kt'
     public final static @org.jetbrains.annotations.NotNull field INSTANCE: Obj
     static method <clinit>(): void
     private method <init>(): void

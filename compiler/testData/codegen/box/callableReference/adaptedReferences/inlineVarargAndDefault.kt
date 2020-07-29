@@ -1,5 +1,4 @@
 // !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType
-// IGNORE_BACKEND_FIR: JVM_IR
 
 fun foo(vararg l: Long, s: String = "OK"): String =
         if (l.size == 0) s else "Fail"

@@ -82,6 +82,10 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC, "Using non-JVM static members protected in the superclass companion is unsupported yet");
 
         MAP.put(NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS, "Type mismatch: inferred type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE);
+        MAP.put(NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER,
+                "Type mismatch: type parameter with nullable bounds is used {1} is used where {0} was expected. This warning will become an error soon",
+                RENDER_TYPE, RENDER_TYPE
+        );
         MAP.put(RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
                 "Unsafe use of a nullable receiver of type {0}", RENDER_TYPE);
 
@@ -165,6 +169,12 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
                 "or annotate the class with @JvmDefaultWithoutCompatibility. " +
                 "Please refer to KT-39603 for details",
                 COMPACT, SHORT_NAMES_IN_TYPES);
+
+        MAP.put(EXPLICIT_OVERRIDE_REQUIRED_IN_MIXED_MODE,
+                "Explicit override is required for ''{0}'' in the ''-Xjvm-default={2}'' mode. " +
+                "Otherwise, implicit class override ''{1}'' (compiled in the old -Xjvm-default mode) " +
+                "is not fully overridden and might be incorrectly called at runtime",
+                SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES, TO_STRING);
 
         MAP.put(DANGEROUS_CHARACTERS, "Name contains characters which can cause problems on Windows: {0}", STRING);
     }

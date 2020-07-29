@@ -28,6 +28,8 @@ abstract class AbstractTypeCheckerContext : TypeSystemContext {
         return type
     }
 
+    open fun customIsSubtypeOf(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean = true
+
     abstract val isErrorTypeEqualsToAnything: Boolean
 
     abstract val isStubTypeEqualsToAnything: Boolean
@@ -174,6 +176,8 @@ object AbstractTypeChecker {
         isFromNullabilityConstraint: Boolean = false
     ): Boolean {
         if (subType === superType) return true
+
+        if (!context.customIsSubtypeOf(subType, superType)) return false
 
         return with(context) {
             completeIsSubTypeOf(prepareType(refineType(subType)), prepareType(refineType(superType)), isFromNullabilityConstraint)

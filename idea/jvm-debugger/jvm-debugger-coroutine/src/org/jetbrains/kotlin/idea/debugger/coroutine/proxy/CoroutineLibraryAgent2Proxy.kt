@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.idea.debugger.coroutine.data.CreationCoroutineStackF
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.SuspendCoroutineStackFrameItem
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror.DebugMetadata
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror.DebugProbesImpl
+import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror.MirrorOfBaseContinuationImpl
 import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror.MirrorOfCoroutineInfo
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.isCreationSeparatorFrame
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
@@ -33,7 +34,8 @@ class CoroutineLibraryAgent2Proxy(private val executionContext: DefaultExecution
     private fun mapToCoroutineInfoData(mirror: MirrorOfCoroutineInfo): CoroutineInfoData? {
         val coroutineNameIdState = CoroutineNameIdState.instance(mirror)
         val stackTrace = mirror.enhancedStackTrace?.mapNotNull { it.stackTraceElement() } ?: emptyList()
-        val stackFrames = findStackFrames(stackTrace, mirror.lastObservedFrame)
+        val baseContinuationImpls = getAllBaseContinuationImpls(mirror.lastObservedFrame)
+        val stackFrames = findStackFrames(stackTrace, baseContinuationImpls)
         return CoroutineInfoData(
             coroutineNameIdState,
             stackFrames.restoredStackFrames,
@@ -41,6 +43,24 @@ class CoroutineLibraryAgent2Proxy(private val executionContext: DefaultExecution
             mirror.lastObservedThread,
             mirror.lastObservedFrame
         )
+    }
+
+    /**
+     * Restores array of BaseContinuationImpl's for each restored frame based on the CoroutineInfo's last frame.
+     * Start from 'lastObservedFrame' and following 'completion' property until the end of the chain (completion = null).
+     */
+    private fun getAllBaseContinuationImpls(lastObservedFrame: ObjectReference?): List<MirrorOfBaseContinuationImpl> {
+        val restoredBaseContinuationImpl = mutableListOf<MirrorOfBaseContinuationImpl>()
+        var observedFrame = lastObservedFrame
+        while (observedFrame != null) {
+            val baseContinuationImpl = debugMetadata?.baseContinuationImpl?.mirror(observedFrame, executionContext)
+            if (baseContinuationImpl != null) {
+                restoredBaseContinuationImpl.add(baseContinuationImpl)
+                observedFrame = baseContinuationImpl.nextContinuation
+            } else
+                break
+        }
+        return restoredBaseContinuationImpl
     }
 
     fun isInstalled(): Boolean {
@@ -54,7 +74,7 @@ class CoroutineLibraryAgent2Proxy(private val executionContext: DefaultExecution
 
     private fun findStackFrames(
         frames: List<StackTraceElement>,
-        lastObservedFrame: ObjectReference?
+        baseContinuationList: List<MirrorOfBaseContinuationImpl>
     ): CoroutineStackFrames {
         val index = frames.indexOfFirst { it.isCreationSeparatorFrame() }
         val restoredStackTraceElements = if (index >= 0)
@@ -62,16 +82,8 @@ class CoroutineLibraryAgent2Proxy(private val executionContext: DefaultExecution
         else
             frames
 
-        var observedFrame = lastObservedFrame
-        val restoredStackFrames = restoredStackTraceElements.map {
-            val variables: List<XNamedValue> = observedFrame?.let {
-                val spilledVariables = debugMetadata?.baseContinuationImpl?.mirror(it, executionContext)
-                if (spilledVariables != null) {
-                    observedFrame = spilledVariables.nextContinuation
-                    spilledVariables.spilledValues(executionContext)
-                } else
-                    null
-            } ?: emptyList()
+        val restoredStackFrames = restoredStackTraceElements.mapIndexed { index, it ->
+            val variables = baseContinuationList.getOrNull(index)?.spilledValues(executionContext) ?: emptyList()
             SuspendCoroutineStackFrameItem(it, locationCache.createLocation(it), variables)
         }
         val creationStackFrames = frames.subList(index + 1, frames.size).mapIndexed { ix, it ->

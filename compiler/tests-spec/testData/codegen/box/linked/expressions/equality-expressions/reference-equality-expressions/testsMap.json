@@ -53,7 +53,7 @@
       ],
       "3": [
         {
-          "specVersion": "0.1-213",
+          "specVersion": "0.1-435",
           "casesNumber": 0,
           "description": "check equallity by refference via constructor",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/equality-expressions/reference-equality-expressions/p-1/pos/3.1.kt",

@@ -14,6 +14,7 @@ dependencies {
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:backend.js"))
     compileOnly(project(":core:descriptors.runtime"))
+    compileOnly(project(":compiler:ir.tree.impl"))
     compile(project(":kotlin-scripting-common"))
     compile(project(":kotlin-scripting-js"))
     compile(project(":kotlin-util-klib"))

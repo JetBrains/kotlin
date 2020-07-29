@@ -33,8 +33,6 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSystemCommonBackendContext {
-    override val isErrorTypeAllowed: Boolean get() = true
-
     override fun TypeConstructorMarker.isDenotable(): Boolean {
         require(this is TypeConstructor, this::errorMessage)
         return this.isDenotable
@@ -62,7 +60,8 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     }
 
     override fun TypeConstructorMarker.toErrorType(): SimpleTypeMarker {
-        throw IllegalStateException("Should not be called")
+        require(this is TypeConstructor && ErrorUtils.isError(declarationDescriptor), this::errorMessage)
+        return ErrorUtils.createErrorType("from type constructor(${toString()})")
     }
 
     override fun KotlinTypeMarker.isUninferredParameter(): Boolean {
@@ -529,7 +528,8 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     }
 
     override fun TypeConstructorMarker.isError(): Boolean {
-        throw IllegalStateException("Should not be called")
+        require(this is TypeConstructor, this::errorMessage)
+        return ErrorUtils.isError(declarationDescriptor)
     }
 
     override fun TypeConstructorMarker.getApproximatedIntegerLiteralType(): KotlinTypeMarker {

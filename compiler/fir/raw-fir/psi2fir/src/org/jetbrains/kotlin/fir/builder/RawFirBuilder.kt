@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -311,7 +312,7 @@ class RawFirBuilder(
                 extractValueParametersTo(this, propertyTypeRef)
                 if (!isGetter && valueParameters.isEmpty()) {
                     valueParameters += buildDefaultSetterValueParameter {
-                        this.source = source.withKind(FirFakeSourceElementKind.DefaultAccessor)
+                        this.source = source.fakeElement(FirFakeSourceElementKind.DefaultAccessor)
                         session = baseSession
                         origin = FirDeclarationOrigin.Source
                         returnTypeRef = propertyTypeRef
@@ -384,7 +385,7 @@ class RawFirBuilder(
                 symbol = FirPropertySymbol(callableIdForName(propertyName))
                 isLocal = false
                 this.status = status
-                val defaultAccessorSource = propertySource.withKind(FirFakeSourceElementKind.DefaultAccessor)
+                val defaultAccessorSource = propertySource.fakeElement(FirFakeSourceElementKind.DefaultAccessor)
                 getter = FirDefaultPropertyGetter(defaultAccessorSource, baseSession, FirDeclarationOrigin.Source, type, visibility)
                 setter = if (isMutable) FirDefaultPropertySetter(
                     defaultAccessorSource,
@@ -455,7 +456,8 @@ class RawFirBuilder(
             delegatedSelfTypeRef: FirTypeRef?,
             delegatedEnumSuperTypeRef: FirTypeRef?,
             classKind: ClassKind,
-            containerTypeParameters: List<FirTypeParameterRef>
+            containerTypeParameters: List<FirTypeParameterRef>,
+            containerSymbol: AbstractFirBasedSymbol<*>
         ): FirTypeRef {
             var superTypeCallEntry: KtSuperTypeCallEntry? = null
             var delegatedSuperTypeRef: FirTypeRef? = null
@@ -475,7 +477,7 @@ class RawFirBuilder(
                         val type = superTypeListEntry.typeReference.toFirOrErrorType()
                         val delegateExpression = { superTypeListEntry.delegateExpression }.toFirExpression("Should have delegate")
                         container.superTypeRefs += type
-                        val delegateName = Name.identifier("\$\$delegate_$delegateNumber")
+                        val delegateName = Name.special("<\$\$delegate_$delegateNumber>")
                         val delegateSource = superTypeListEntry.delegateExpression?.toFirSourceElement()
                         val delegateField = buildField {
                             source = delegateSource
@@ -491,10 +493,17 @@ class RawFirBuilder(
                             buildVariableAssignment {
                                 source = delegateSource
                                 calleeReference =
-                                    buildSimpleNamedReference {
+                                    buildResolvedNamedReference {
                                         name = delegateName
+                                        resolvedSymbol = delegateField.symbol
                                     }
                                 rValue = delegateExpression
+                                dispatchReceiver = buildThisReceiverExpression {
+                                    calleeReference = buildImplicitThisReference {
+                                        boundSymbol = containerSymbol
+                                    }
+                                    delegatedSelfTypeRef?.let { typeRef = it }
+                                }
                             }
                         )
                         container.declarations.add(delegateField)
@@ -574,7 +583,7 @@ class RawFirBuilder(
             val constructorSource = this?.toFirSourceElement()
                 ?: owner.toFirPsiSourceElement(FirFakeSourceElementKind.ImplicitConstructor)
             val firDelegatedCall = buildDelegatedConstructorCall {
-                source = constructorCallee ?: constructorSource.withKind(FirFakeSourceElementKind.DelegatingConstructorCall)
+                source = constructorCallee ?: constructorSource.fakeElement(FirFakeSourceElementKind.DelegatingConstructorCall)
                 constructedTypeRef = delegatedSuperTypeRef
                 isThis = false
                 if (!stubMode) {
@@ -747,8 +756,14 @@ class RawFirBuilder(
                         addCapturedTypeParameters(typeParameters.take(classOrObject.typeParameters.size))
 
                         val delegatedSelfType = classOrObject.toDelegatedSelfType(this)
-                        val delegatedSuperType =
-                            classOrObject.extractSuperTypeListEntriesTo(this, delegatedSelfType, null, classKind, typeParameters)
+                        val delegatedSuperType = classOrObject.extractSuperTypeListEntriesTo(
+                            this,
+                            delegatedSelfType,
+                            null,
+                            classKind,
+                            typeParameters,
+                            symbol
+                        )
 
                         val primaryConstructor = classOrObject.primaryConstructor
                         val firPrimaryConstructor = declarations.firstOrNull {it is FirConstructor} as? FirConstructor
@@ -827,7 +842,8 @@ class RawFirBuilder(
                         delegatedSelfType,
                         null,
                         ClassKind.CLASS,
-                        containerTypeParameters = emptyList()
+                        containerTypeParameters = emptyList(),
+                        symbol
                     )
                     typeRef = delegatedSelfType
 
@@ -995,7 +1011,7 @@ class RawFirBuilder(
                 val expressionSource = expression.toFirSourceElement()
                 label = context.firLabels.pop() ?: context.calleeNamesForLambda.lastOrNull()?.let {
                     buildLabel {
-                        source = expressionSource.withKind(FirFakeSourceElementKind.GeneratedLambdaLabel)
+                        source = expressionSource.fakeElement(FirFakeSourceElementKind.GeneratedLambdaLabel)
                         name = it.asString()
                     }
                 }
@@ -1011,10 +1027,10 @@ class RawFirBuilder(
                         if (statements.isEmpty()) {
                             statements.add(
                                 buildReturnExpression {
-                                    source = expressionSource.withKind(FirFakeSourceElementKind.ImplicitReturn)
+                                    source = expressionSource.fakeElement(FirFakeSourceElementKind.ImplicitReturn)
                                     this.target = target
                                     result = buildUnitExpression {
-                                        source = expressionSource.withKind(FirFakeSourceElementKind.ImplicitUnit)
+                                        source = expressionSource.fakeElement(FirFakeSourceElementKind.ImplicitUnit)
                                     }
                                 }
                             )
@@ -1616,7 +1632,7 @@ class RawFirBuilder(
                         (this as KtExpression).toFirExpression("Incorrect expression in assignment: ${expression.text}")
                     }
                 } else {
-                    buildOperatorCall {
+                    buildEqualityOperatorCall {
                         this.source = source
                         operation = firOperation
                         argumentList = buildBinaryArgumentList(leftArgument, rightArgument)
@@ -1671,13 +1687,7 @@ class RawFirBuilder(
                         explicitReceiver = argument.toFirExpression("No operand")
                     }
                 }
-                else -> {
-                    buildOperatorCall {
-                        source = expression.toFirSourceElement()
-                        operation = operationToken.toFirOperation()
-                        argumentList = buildUnaryArgumentList(argument.toFirExpression("No operand"))
-                    }
-                }
+                else -> throw IllegalStateException("Unexpected expression: ${expression.text}")
             }
         }
 
@@ -1706,7 +1716,7 @@ class RawFirBuilder(
 
                 else -> {
                     buildSimpleNamedReference {
-                        source = defaultSource.withKind(FirFakeSourceElementKind.ImplicitInvokeCall)
+                        source = defaultSource.fakeElement(FirFakeSourceElementKind.ImplicitInvokeCall)
                         name = OperatorNameConventions.INVOKE
                     } to calleeExpression.toFirExpression("Incorrect invoke receiver")
                 }
@@ -1793,7 +1803,7 @@ class RawFirBuilder(
                 val sourceElement = expression.toFirSourceElement()
                 source = sourceElement
                 calleeReference = buildExplicitThisReference {
-                    source = sourceElement.withKind(FirFakeSourceElementKind.ExplicitThisOrSuperReference)
+                    source = sourceElement.fakeElement(FirFakeSourceElementKind.ExplicitThisOrSuperReference)
                     labelName = expression.getLabelName()
                 }
             }
@@ -1805,7 +1815,7 @@ class RawFirBuilder(
             return buildQualifiedAccessExpression {
                 this.source = source
                 calleeReference = buildExplicitSuperReference {
-                    source.withKind(FirFakeSourceElementKind.ExplicitThisOrSuperReference)
+                    source.fakeElement(FirFakeSourceElementKind.ExplicitThisOrSuperReference)
                     labelName = expression.getLabelName()
                     superTypeRef = superType.toFirOrImplicitType()
                 }

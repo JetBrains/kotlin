@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrEnumEntrySymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -61,7 +60,7 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
     private fun buildAnnotationClass(
         className: String,
         classKind: ClassKind = ClassKind.ANNOTATION_CLASS
-    ): IrClass = buildClass {
+    ): IrClass = context.irFactory.buildClass {
         name = Name.identifier(className)
         kind = classKind
     }.apply {
@@ -74,7 +73,7 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
         }
     }
 
-    private fun buildAnnotationConstructor(annotationClass: IrClass): IrConstructor = buildConstructor {
+    private fun buildAnnotationConstructor(annotationClass: IrClass): IrConstructor = context.irFactory.buildConstructor {
         isPrimary = true
     }.apply {
         parent = annotationClass
@@ -193,7 +192,7 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
             ?: throw AssertionError("No annotation target map for JVM target $jvmTarget")
 
         val targets = irClass.applicableTargetSet() ?: return
-        val javaTargets = targets.mapNotNull { annotationTargetMap[it] }
+        val javaTargets = targets.mapNotNull { annotationTargetMap[it] }.toSet()
 
         val vararg = IrVarargImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,

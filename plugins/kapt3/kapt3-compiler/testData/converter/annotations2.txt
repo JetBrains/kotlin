@@ -75,6 +75,7 @@ import java.lang.System;
 @kotlin.Metadata()
 @Anno(value = "clazz")
 public abstract class Test {
+    @org.jetbrains.annotations.NotNull()
     private java.lang.String v;
 
     @org.jetbrains.annotations.NotNull()

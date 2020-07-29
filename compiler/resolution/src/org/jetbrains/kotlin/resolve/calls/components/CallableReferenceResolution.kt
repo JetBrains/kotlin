@@ -228,6 +228,12 @@ class CallableReferencesCandidateFactory(
             markCandidateForCompatibilityResolve(diagnostics)
         }
 
+        if (callableReferenceAdaptation != null && expectedType != null && hasNonTrivialAdaptation(callableReferenceAdaptation)) {
+            if (!expectedType.isFunctionType && !expectedType.isSuspendFunctionType) { // expectedType has some reflection type
+                diagnostics.add(AdaptedCallableReferenceIsUsedWithReflection(argument))
+            }
+        }
+
         if (callableReferenceAdaptation != null &&
             callableReferenceAdaptation.defaults != 0 &&
             !callComponents.languageVersionSettings.supportsFeature(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType)
@@ -278,11 +284,14 @@ class CallableReferencesCandidateFactory(
 
         if (callableReferenceAdaptation == null) return false
 
-        return callableReferenceAdaptation.defaults != 0 ||
+        return hasNonTrivialAdaptation(callableReferenceAdaptation)
+    }
+
+    private fun hasNonTrivialAdaptation(callableReferenceAdaptation: CallableReferenceAdaptation) =
+        callableReferenceAdaptation.defaults != 0 ||
                 callableReferenceAdaptation.suspendConversionStrategy != SuspendConversionStrategy.NO_CONVERSION ||
                 callableReferenceAdaptation.coercionStrategy != CoercionStrategy.NO_COERCION ||
                 callableReferenceAdaptation.mappedArguments.values.any { it is ResolvedCallArgument.VarargArgument }
-    }
 
     private enum class VarargMappingState {
         UNMAPPED, MAPPED_WITH_PLAIN_ARGS, MAPPED_WITH_ARRAY
@@ -295,6 +304,11 @@ class CallableReferencesCandidateFactory(
         builtins: KotlinBuiltIns
     ): CallableReferenceAdaptation? {
         if (callComponents.languageVersionSettings.apiVersion < ApiVersion.KOTLIN_1_4) return null
+
+        if (expectedType == null) return null
+
+        // Do not adapt references against KCallable type as it's impossible to map defaults/vararg to absent parameters of KCallable
+        if (ReflectionTypes.hasKCallableTypeFqName(expectedType)) return null
 
         val inputOutputTypes = extractInputOutputTypesFromCallableReferenceExpectedType(expectedType) ?: return null
 

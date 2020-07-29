@@ -97,19 +97,19 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
     BLOCK_BODY
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/takeUByte]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /takeUByte>#' type=kotlin.Unit
         CONST Int type=kotlin.Int value=255
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/takeUByte]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /takeUByte>#' type=kotlin.Unit
         CONST Int type=kotlin.Int value=255
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/takeUShort]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /takeUShort>#' type=kotlin.Unit
         CONST Int type=kotlin.Int value=255
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/takeUShort]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /takeUShort>#' type=kotlin.Unit
         CONST Int type=kotlin.Int value=256
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/takeUInt]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /takeUInt>#' type=kotlin.Unit
         CONST Int type=kotlin.Int value=255
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/takeULong]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /takeULong>#' type=kotlin.Unit
         CONST Int type=kotlin.Int value=255
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/takeUBytes]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /takeUBytes>#' type=kotlin.Unit
         CONST Int type=kotlin.Int value=255
         CONST Int type=kotlin.Int value=255
         CONST Int type=kotlin.UInt value=42

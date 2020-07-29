@@ -1,4 +1,57 @@
 FILE: RedundantVisibilityModifierChecker.kt
+    public final fun f(): R|kotlin/Unit| {
+        local final class LocalClass : R|kotlin/Any| {
+            public[local] constructor(): R|LocalClass| {
+                super<R|kotlin/Any|>()
+            }
+
+            internal[local] final var foo: R|kotlin/Int| = Int(0)
+                internal get(): R|kotlin/Int|
+                internal set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        }
+
+        R|/LocalClass.LocalClass|().R|/LocalClass.foo| = Int(1)
+        lvar baz: R|kotlin/Int| = Int(0)
+    }
+    internal final inline fun internal(): R|kotlin/Unit| {
+        R|/f|()
+    }
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        internal final val z: R|<anonymous>| = object : R|kotlin/Any| {
+            private[local] constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public[local] final fun foo(): R|kotlin/Int| {
+                ^foo Int(13)
+            }
+
+        }
+
+            internal get(): R|<anonymous>|
+
+    }
+    public final class Foo2<T1, T2 : R|T1|> : R|kotlin/Any| {
+        public constructor<T1, T2 : R|T1|>(): R|Foo2<T1, T2>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun <T1, T2> foo2(): R|kotlin/Unit| {
+        }
+
+        internal final inner class B<T, T2, T1, T2 : R|T1|> : R|kotlin/Any| {
+            public[internal] constructor<T, T2>(): R|Foo2.B<T, T2, T1, T2>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
     public final class C : R|kotlin/Any| {
         public constructor(): R|C| {
             super<R|kotlin/Any|>()
@@ -80,36 +133,6 @@ FILE: RedundantVisibilityModifierChecker.kt
     public abstract interface I : R|kotlin/Any| {
         public abstract fun bar(): R|kotlin/Unit|
 
-    }
-    public final fun f(): R|kotlin/Unit| {
-        lval i: R|<anonymous>| = object : R|I| {
-            private[local] constructor(): R|<anonymous>| {
-                super<R|kotlin/Any|>()
-            }
-
-            internal[local] final var foo: R|kotlin/Int| = Int(0)
-                internal get(): R|kotlin/Int|
-                internal set(value: R|kotlin/Int|): R|kotlin/Unit|
-
-            public[local] final override fun bar(): R|kotlin/Unit| {
-            }
-
-        }
-
-        R|<local>/i|.R|/<anonymous>.foo| = Int(1)
-        local final class LocalClass : R|kotlin/Any| {
-            public[local] constructor(): R|LocalClass| {
-                super<R|kotlin/Any|>()
-            }
-
-            internal[local] final var foo: R|kotlin/Int| = Int(0)
-                internal get(): R|kotlin/Int|
-                internal set(value: R|kotlin/Int|): R|kotlin/Unit|
-
-        }
-
-        R|/LocalClass.LocalClass|().R|/LocalClass.foo| = Int(1)
-        lvar baz: R|kotlin/Int| = Int(0)
     }
     public final var baz: R|kotlin/Int| = Int(0)
         public get(): R|kotlin/Int|

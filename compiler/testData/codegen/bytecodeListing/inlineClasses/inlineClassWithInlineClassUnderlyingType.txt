@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public final class Z1 {
+    // source: 'inlineClassWithInlineClassUnderlyingType.kt'
     private final field x: int
     private synthetic method <init>(p0: int): void
     public synthetic final static method box-impl(p0: int): Z1
@@ -17,6 +18,7 @@ public final class Z1 {
 
 @kotlin.Metadata
 public final class Z2 {
+    // source: 'inlineClassWithInlineClassUnderlyingType.kt'
     private final field z: int
     private synthetic method <init>(p0: int): void
     public final static method bar-E2ud15U(p0: int, p1: int): void

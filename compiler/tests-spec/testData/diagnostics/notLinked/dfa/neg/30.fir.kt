@@ -32,6 +32,6 @@ class Case5(val y: Any?): ClassWithCostructorParam(y as Interface1), Interface1 
 fun case_6(a: Int?) = object : ClassWithCostructorParam(a!!) {
     fun run() = a.<!INAPPLICABLE_CANDIDATE!>toShort<!>()
     init {
-        <!AMBIGUITY!>println<!>(a.<!INAPPLICABLE_CANDIDATE!>toShort<!>())
+        println(a.<!INAPPLICABLE_CANDIDATE!>toShort<!>())
     }
 }

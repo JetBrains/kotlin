@@ -17,7 +17,7 @@ class A : B {
         <!INAPPLICABLE_CANDIDATE!>foo<!>(x, y, myProp)
         x + y + myProp + parentProp + super.parentProp
     }
-    constructor(x: B, y: Int = <!UNRESOLVED_REFERENCE!>global2<!>): <!INAPPLICABLE_CANDIDATE!>this<!>("", x) {
+    constructor(x: B, y: Int = <!UNRESOLVED_REFERENCE!>global2<!>): <!NONE_APPLICABLE!>this<!>("", x) {
         x.parentProp + y + myProp + parentProp + super.parentProp
     }
 

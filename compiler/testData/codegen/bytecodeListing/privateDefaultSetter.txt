@@ -1,8 +1,9 @@
 @kotlin.Metadata
 public class Test {
-    private field internalProperty: java.lang.String
-    private field protectedProperty: java.lang.String
-    private field publicProperty: java.lang.String
+    // source: 'privateDefaultSetter.kt'
+    private @org.jetbrains.annotations.NotNull field internalProperty: java.lang.String
+    private @org.jetbrains.annotations.NotNull field protectedProperty: java.lang.String
+    private @org.jetbrains.annotations.NotNull field publicProperty: java.lang.String
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getInternalProperty$test_module(): java.lang.String
     protected final @org.jetbrains.annotations.NotNull method getProtectedProperty(): java.lang.String

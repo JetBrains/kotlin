@@ -11,13 +11,13 @@ fun <E> myBuildList(@BuilderInference builderAction: MutableList<E>.() -> Unit) 
 @OptIn(ExperimentalStdlibApi::class)
 fun main() {
     val newList1 = myBuildList {
-        <!INAPPLICABLE_CANDIDATE!>addAll<!>(
+        addAll(
             listOf(1).map { <!INAPPLICABLE_CANDIDATE!>Foo<!>(null) }
         )
     }
 
     val newList2 = buildList {
-        <!INAPPLICABLE_CANDIDATE!>addAll<!>(listOf(1,2,3).map{ <!INAPPLICABLE_CANDIDATE!>Foo<!>(null) })
+        addAll(listOf(1,2,3).map{ <!INAPPLICABLE_CANDIDATE!>Foo<!>(null) })
     }
 }
 

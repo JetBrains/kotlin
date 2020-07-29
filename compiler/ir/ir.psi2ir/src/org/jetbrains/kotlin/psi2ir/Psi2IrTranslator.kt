@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -37,8 +38,7 @@ typealias Psi2IrPostprocessingStep = (IrModuleFragment) -> Unit
 
 class Psi2IrTranslator(
     val languageVersionSettings: LanguageVersionSettings,
-    val configuration: Psi2IrConfiguration = Psi2IrConfiguration(),
-    val signaturer: IdSignatureComposer
+    val configuration: Psi2IrConfiguration,
 ) {
     private val postprocessingSteps = SmartList<Psi2IrPostprocessingStep>()
 
@@ -46,31 +46,28 @@ class Psi2IrTranslator(
         postprocessingSteps.add(step)
     }
 
-    // NOTE: used only for test purpose
-    fun generateModule(
-        moduleDescriptor: ModuleDescriptor,
-        ktFiles: Collection<KtFile>,
-        bindingContext: BindingContext,
-        generatorExtensions: GeneratorExtensions,
-        nameProvider: NameProvider = NameProvider.DEFAULT
-    ): IrModuleFragment {
-        val context = createGeneratorContext(moduleDescriptor, bindingContext, nameProvider, extensions = generatorExtensions)
-        val irProviders = generateTypicalIrProviderList(
-            moduleDescriptor, context.irBuiltIns, context.symbolTable, extensions = generatorExtensions
-        )
-        return generateModuleFragment(context, ktFiles, irProviders, emptyList())
-    }
-
     fun createGeneratorContext(
         moduleDescriptor: ModuleDescriptor,
         bindingContext: BindingContext,
-        nameProvider: NameProvider = NameProvider.DEFAULT,
-        symbolTable: SymbolTable = SymbolTable(signaturer, nameProvider),
+        symbolTable: SymbolTable,
         extensions: GeneratorExtensions = GeneratorExtensions()
-    ): GeneratorContext =
-        createGeneratorContext(
-            configuration, moduleDescriptor, bindingContext, languageVersionSettings, symbolTable, extensions
+    ): GeneratorContext {
+        val typeTranslator = TypeTranslator(symbolTable, languageVersionSettings, moduleDescriptor.builtIns, extensions = extensions)
+        val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
+        typeTranslator.constantValueGenerator = constantValueGenerator
+        constantValueGenerator.typeTranslator = typeTranslator
+        return GeneratorContext(
+            configuration,
+            moduleDescriptor,
+            bindingContext,
+            languageVersionSettings,
+            symbolTable,
+            extensions,
+            typeTranslator,
+            constantValueGenerator,
+            IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable),
         )
+    }
 
     fun generateModuleFragment(
         context: GeneratorContext,

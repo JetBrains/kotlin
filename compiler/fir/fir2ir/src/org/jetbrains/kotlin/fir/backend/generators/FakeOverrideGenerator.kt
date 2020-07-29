@@ -67,6 +67,7 @@ class FakeOverrideGenerator(
         for (name in superTypesCallableNames) {
             if (name in processedCallableNames) continue
             processedCallableNames += name
+            val isLocal = klass !is FirRegularClass || klass.isLocal
             useSiteMemberScope.processFunctionsByName(name) { functionSymbol ->
                 if (functionSymbol is FirNamedFunctionSymbol) {
                     val originalFunction = functionSymbol.fir
@@ -91,7 +92,8 @@ class FakeOverrideGenerator(
                                 originalFunction,
                                 irParent = this,
                                 thisReceiverOwner = declarationStorage.findIrParent(baseSymbol.fir) as? IrClass,
-                                origin = origin
+                                origin = origin,
+                                isLocal = isLocal
                             )
                         // In fake overrides, parent logic is a bit specific, because
                         // parent of *original* function (base class) is used for dispatch receiver,
@@ -115,7 +117,8 @@ class FakeOverrideGenerator(
                             fakeOverrideFunction,
                             irParent = this,
                             thisReceiverOwner = declarationStorage.findIrParent(originalFunction) as? IrClass,
-                            origin = origin
+                            origin = origin,
+                            isLocal = isLocal
                         )
                         if (irFunction.returnType.containsErrorType() || irFunction.valueParameters.any { it.type.containsErrorType() }) {
                             return@processFunctionsByName
@@ -142,7 +145,8 @@ class FakeOverrideGenerator(
                             ?: declarationStorage.createIrProperty(
                                 originalProperty, irParent = this,
                                 thisReceiverOwner = declarationStorage.findIrParent(baseSymbol.fir) as? IrClass,
-                                origin = origin
+                                origin = origin,
+                                isLocal = isLocal
                             )
                         irProperty.parent = this
                         result += irProperty.withProperty {
@@ -162,7 +166,8 @@ class FakeOverrideGenerator(
                         val irProperty = declarationStorage.createIrProperty(
                             fakeOverrideProperty, irParent = this,
                             thisReceiverOwner = declarationStorage.findIrParent(originalProperty) as? IrClass,
-                            origin = origin
+                            origin = origin,
+                            isLocal = isLocal
                         )
                         if (irProperty.backingField?.type?.containsErrorType() == true ||
                             irProperty.getter?.returnType?.containsErrorType() == true

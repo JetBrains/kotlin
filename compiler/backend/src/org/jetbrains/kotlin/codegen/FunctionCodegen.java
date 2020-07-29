@@ -83,6 +83,8 @@ import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class FunctionCodegen {
+    private static final String JAVA_LANG_DEPRECATED = Type.getType(Deprecated.class).getDescriptor();
+
     public final GenerationState state;
     private final KotlinTypeMapper typeMapper;
     private final BindingContext bindingContext;
@@ -221,7 +223,7 @@ public class FunctionCodegen {
                 InlineClassDescriptorResolver.isSpecializedEqualsMethod(functionDescriptor);
         generateMethodAnnotationsIfRequired(
                 functionDescriptor, asmMethod, jvmSignature, mv,
-                isCompatibilityStubInDefaultImpls ? Collections.singletonList(Deprecated.class) : Collections.emptyList(),
+                isCompatibilityStubInDefaultImpls ? Collections.singletonList(JAVA_LANG_DEPRECATED) : Collections.emptyList(),
                 skipNullabilityAnnotations
         );
         GenerateJava8ParameterNamesKt.generateParameterNames(functionDescriptor, mv, jvmSignature, state, (flags & ACC_SYNTHETIC) != 0);
@@ -285,7 +287,7 @@ public class FunctionCodegen {
             @NotNull Method asmMethod,
             @NotNull JvmMethodGenericSignature jvmSignature,
             @NotNull MethodVisitor mv,
-            @NotNull List<Class<?>> additionalNoArgAnnotations,
+            @NotNull List<String> additionalVisibleAnnotations,
             boolean skipNullabilityAnnotations
     ) {
         FunctionDescriptor annotationsOwner;
@@ -302,7 +304,7 @@ public class FunctionCodegen {
         }
 
         AnnotationCodegen.forMethod(mv, memberCodegen, state, skipNullabilityAnnotations)
-                .genAnnotations(annotationsOwner, asmMethod.getReturnType(), functionDescriptor.getReturnType(), null, additionalNoArgAnnotations);
+                .genAnnotations(annotationsOwner, asmMethod.getReturnType(), functionDescriptor.getReturnType(), null, additionalVisibleAnnotations);
 
         generateParameterAnnotations(
                 annotationsOwner, mv, jvmSignature,

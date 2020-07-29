@@ -71,6 +71,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.modules.Module
@@ -378,9 +379,8 @@ object KotlinToJVMBytecodeCompiler {
             val (moduleFragment, symbolTable, sourceManager, components) =
                 Fir2IrConverter.createModuleFragment(
                     session, resolveTransformer.scopeSession, firFiles,
-                    moduleConfiguration.languageVersionSettings, signaturer = signaturer,
-                    generatorExtensions = JvmGeneratorExtensions(),
-                    mangler = FirJvmKotlinMangler(session)
+                    moduleConfiguration.languageVersionSettings, signaturer,
+                    JvmGeneratorExtensions(), FirJvmKotlinMangler(session), IrFactoryImpl
                 )
 
             performanceManager?.notifyIRTranslationFinished(ktFiles.size, codeLines, debugTargetDescription)

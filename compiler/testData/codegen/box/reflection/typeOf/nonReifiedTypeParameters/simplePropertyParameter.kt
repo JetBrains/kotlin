@@ -14,13 +14,13 @@ val <X1> X1.notNull get() = typeOf<Container<X1>>()
 val <X2> X2.nullable get() = typeOf<Container<X2?>>()
 
 fun box(): String {
-    val fqn = className("test", "Container")
+    val fqn = className("test.Container")
     assertEquals("$fqn<X1>", "".notNull.toString())
     assertEquals("$fqn<X2?>", "".nullable.toString())
     return "OK"
 }
 
-fun className(qualifier: String, name: String): String {
+fun className(fqName: String): String {
     val isJS = 1 as Any is Double
-    return if (isJS) name else "$qualifier.$name"
+    return if (isJS) fqName.substringAfterLast('.') else fqName
 }

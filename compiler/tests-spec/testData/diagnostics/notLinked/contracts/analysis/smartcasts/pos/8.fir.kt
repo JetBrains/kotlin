@@ -111,7 +111,7 @@ fun case_5(value_1: Number?, value_2: String?) {
             println(value_1.toByte())
         }
         false -> {
-            <!AMBIGUITY!>println<!>(value_2.<!INAPPLICABLE_CANDIDATE!>length<!>)
+            println(value_2.<!INAPPLICABLE_CANDIDATE!>length<!>)
             println(value_1.inv())
         }
     }
@@ -130,7 +130,7 @@ fun case_6(value_1: Number, value_2: String?, value_3: Any?) {
         }
         false -> {
             println(value_3.length)
-            <!AMBIGUITY!>println<!>(value_2.<!INAPPLICABLE_CANDIDATE!>length<!>)
+            println(value_2.<!INAPPLICABLE_CANDIDATE!>length<!>)
         }
         null -> {
             <!AMBIGUITY!>println<!>(value_1.inv())

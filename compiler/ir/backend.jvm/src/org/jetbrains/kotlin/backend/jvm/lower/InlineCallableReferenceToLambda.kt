@@ -56,7 +56,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
         expression.transformChildrenVoid(this)
         if (expression !in inlinableReferences || expression.origin.isLambda) return expression
-        return expandInlineFunctionReferenceToLambda(expression, expression.symbol.owner)
+        return context.expandInlineFunctionReferenceToLambda(expression, expression.symbol.owner)
     }
 
     override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
@@ -65,17 +65,19 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
 
         return if (expression.field?.owner == null) {
             // Use getter if field is absent ...
-            expandInlineFunctionReferenceToLambda(expression, expression.getter!!.owner)
+            context.expandInlineFunctionReferenceToLambda(expression, expression.getter!!.owner)
         } else {
             // ... else use field itself
-            expandInlineFieldReferenceToLambda(expression, expression.field!!.owner)
+            context.expandInlineFieldReferenceToLambda(expression, expression.field!!.owner)
         }
     }
 
-    private fun expandInlineFieldReferenceToLambda(expression: IrPropertyReference, field: IrField): IrExpression {
-        val irBuilder = context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
+    private fun JvmBackendContext.expandInlineFieldReferenceToLambda(
+        expression: IrPropertyReference, field: IrField
+    ): IrExpression {
+        val irBuilder = createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
         return irBuilder.irBlock(expression, IrStatementOrigin.LAMBDA) {
-            val function = buildFun {
+            val function = irFactory.buildFun {
                 setSourceRange(expression)
                 origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
                 name = Name.identifier("stub_for_inline")
@@ -93,7 +95,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
                         else -> irGet(addValueParameter("receiver", field.parentAsClass.defaultType))
                     }
 
-                body = this@InlineCallableReferenceToLambdaPhase.context.createIrBuilder(symbol).run {
+                body = createIrBuilder(symbol).run {
                     irExprBody(irGetField(receiver, field))
                 }
             }
@@ -113,8 +115,11 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
         }
     }
 
-    private fun expandInlineFunctionReferenceToLambda(expression: IrCallableReference<*>, referencedFunction: IrFunction): IrExpression {
-        val irBuilder = context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
+    private fun JvmBackendContext.expandInlineFunctionReferenceToLambda(
+        expression: IrCallableReference<*>, referencedFunction: IrFunction
+    ): IrExpression {
+        val irBuilder =
+            createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
         return irBuilder.irBlock(expression, IrStatementOrigin.LAMBDA) {
 
             // We find the number of parameters for constructed lambda from the type of the function reference,
@@ -132,7 +137,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
                 )
             }
 
-            val function = buildFun {
+            val function = irFactory.buildFun {
                 setSourceRange(expression)
                 origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
                 name = Name.identifier("stub_for_inlining")

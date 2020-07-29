@@ -105,27 +105,28 @@ class DefaultArgumentsConversion(context: NewJ2kConverterContext) : RecursiveApp
                         && declarations.any { it == this.target }
             }
 
-            for ((defaultValue, parameter) in defaults) {
-                fun remapParameterSymbol(on: JKTreeElement): JKTreeElement {
-                    if (on is JKQualifiedExpression && on.receiver is JKThisExpression) {
-                        return on
-                    }
-                    if (on is JKFieldAccessExpression) {
-                        val target = on.identifier.target
-                        if (target is JKParameter) {
-                            val newSymbol =
-                                symbolProvider.provideUniverseSymbol(calledMethod.parameters[method.parameters.indexOf(target)])
-                            return JKFieldAccessExpression(newSymbol)
-                        }
-                        if (on.identifier.isNeedThisReceiver()) {
-                            return JKQualifiedExpression(JKThisExpression(JKLabelEmpty(), JKNoType), JKFieldAccessExpression(on.identifier))
-                        }
-                    }
-                    if (on is JKCallExpression && on.identifier.isNeedThisReceiver()) {
-                        return JKQualifiedExpression(JKThisExpression(JKLabelEmpty(), JKNoType), applyRecursive(on, ::remapParameterSymbol))
-                    }
-                    return applyRecursive(on, ::remapParameterSymbol)
+            fun remapParameterSymbol(on: JKTreeElement): JKTreeElement {
+                if (on is JKQualifiedExpression && on.receiver is JKThisExpression) {
+                    return on
                 }
+                if (on is JKFieldAccessExpression) {
+                    val target = on.identifier.target
+                    if (target is JKParameter && target.parent == method) {
+                        val newSymbol =
+                            symbolProvider.provideUniverseSymbol(calledMethod.parameters[method.parameters.indexOf(target)])
+                        return JKFieldAccessExpression(newSymbol)
+                    }
+                    if (on.identifier.isNeedThisReceiver()) {
+                        return JKQualifiedExpression(JKThisExpression(JKLabelEmpty(), JKNoType), JKFieldAccessExpression(on.identifier))
+                    }
+                }
+                if (on is JKCallExpression && on.identifier.isNeedThisReceiver()) {
+                    return JKQualifiedExpression(JKThisExpression(JKLabelEmpty(), JKNoType), applyRecursive(on, ::remapParameterSymbol))
+                }
+                return applyRecursive(on, ::remapParameterSymbol)
+            }
+
+            for ((defaultValue, parameter) in defaults) {
                 parameter.initializer = remapParameterSymbol(defaultValue) as JKExpression
             }
             element.declarations -= method

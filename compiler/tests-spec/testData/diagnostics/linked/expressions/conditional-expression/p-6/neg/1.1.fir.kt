@@ -27,7 +27,7 @@ import checkSubtype
 fun case1() {
     val a: Any = true
     if (a) { "true" } else "false"
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Boolean>(a)
+    <!NONE_APPLICABLE!>checkSubtype<!><Boolean>(a)
 }
 
 /*
@@ -38,7 +38,7 @@ fun case1() {
 fun case2() {
     val a = JavaContainer.aO
     if (a) { "true" } else "false"
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Boolean>(a)
+    <!NONE_APPLICABLE!>checkSubtype<!><Boolean>(a)
 }
 
 // TESTCASE NUMBER: 3

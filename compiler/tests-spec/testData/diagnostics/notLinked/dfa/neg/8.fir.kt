@@ -8,8 +8,8 @@ fun case_1(x: Class?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.fun_4()
         <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.fun_4().<!INAPPLICABLE_CANDIDATE!>fun_4<!>()
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.fun_4().<!INAPPLICABLE_CANDIDATE!>fun_4<!>().<!UNRESOLVED_REFERENCE!>fun_4<!>()
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.fun_4().<!INAPPLICABLE_CANDIDATE!>fun_4<!>().<!UNRESOLVED_REFERENCE!>fun_4<!>().<!UNRESOLVED_REFERENCE!>fun_4<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.fun_4().<!INAPPLICABLE_CANDIDATE!>fun_4<!>().<!INAPPLICABLE_CANDIDATE!>fun_4<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.fun_4().<!INAPPLICABLE_CANDIDATE!>fun_4<!>().<!INAPPLICABLE_CANDIDATE!>fun_4<!>().<!INAPPLICABLE_CANDIDATE!>fun_4<!>()
     }
 }
 
@@ -36,6 +36,6 @@ fun case_4(x: Class?) {
     if (x?.prop_8.also { } != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>prop_8<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!UNRESOLVED_REFERENCE!>fun_4<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>prop_8<!>.<!INAPPLICABLE_CANDIDATE!>fun_4<!>()
     }
 }

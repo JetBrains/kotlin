@@ -14,15 +14,15 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.name.ClassId
 
 object RedundantExplicitTypeChecker : FirMemberDeclarationChecker() {
     override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -37,32 +37,33 @@ object RedundantExplicitTypeChecker : FirMemberDeclarationChecker() {
         val type = declaration.returnTypeRef.coneType
 
         if (typeReference is FirTypeAlias) return
+        if (typeReference.annotations.isNotEmpty()) return
 
         when (initializer) {
             is FirConstExpression<*> -> {
                 when (initializer.source?.elementType) {
                     KtNodeTypes.BOOLEAN_CONSTANT -> {
-                        if (type.classId != StandardClassIds.Boolean) return
+                        if (!type.isSame(StandardClassIds.Boolean)) return
                     }
                     KtNodeTypes.INTEGER_CONSTANT -> {
                         if (initializer.text?.endsWith("L") == true) {
-                            if (type.classId != StandardClassIds.Long) return
+                            if (!type.isSame(StandardClassIds.Long)) return
                         } else {
-                            if (type.classId != StandardClassIds.Int) return
+                            if (!type.isSame(StandardClassIds.Int)) return
                         }
                     }
                     KtNodeTypes.FLOAT_CONSTANT -> {
                         if (initializer.text?.endsWith("f", ignoreCase = true) == true) {
-                            if (type.classId != StandardClassIds.Float) return
+                            if (!type.isSame(StandardClassIds.Float)) return
                         } else {
-                            if (type.classId != StandardClassIds.Double) return
+                            if (!type.isSame(StandardClassIds.Double)) return
                         }
                     }
                     KtNodeTypes.CHARACTER_CONSTANT -> {
-                        if (type.classId != StandardClassIds.Char) return
+                        if (!type.isSame(StandardClassIds.Char)) return
                     }
                     KtNodeTypes.STRING_TEMPLATE -> {
-                        if (type.classId != StandardClassIds.String) return
+                        if (!type.isSame(StandardClassIds.String)) return
                     }
                     else -> return
                 }
@@ -71,8 +72,18 @@ object RedundantExplicitTypeChecker : FirMemberDeclarationChecker() {
                 if (typeReference.text != initializer.name.identifier) return
             }
             is FirFunctionCall -> {
-                if (typeReference.text != initializer.calleeReference.name.identifier) return
+                if (typeReference.text != initializer.calleeReference.name.asString()) return
             }
+            is FirGetClassCall -> {
+                return
+            }
+            is FirResolvedQualifier -> {
+                if (!type.isSame(initializer.classId)) return
+            }
+            is FirStringConcatenationCall -> {
+                if (!type.isSame(StandardClassIds.String)) return
+            }
+            else -> return
         }
 
         reporter.report(declaration.returnTypeRef.source, FirErrors.REDUNDANT_EXPLICIT_TYPE)
@@ -83,5 +94,11 @@ object RedundantExplicitTypeChecker : FirMemberDeclarationChecker() {
 
     private val FirTypeRef.text
         get() = this.psi?.text
+
+    private fun ConeKotlinType.isSame(other: ClassId?): Boolean {
+        if (this.nullability.isNullable) return false
+        if (this.type.classId == other) return true
+        return false
+    }
 
 }

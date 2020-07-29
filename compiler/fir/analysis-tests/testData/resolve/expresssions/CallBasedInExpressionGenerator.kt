@@ -8,7 +8,7 @@ class CallBasedInExpressionGenerator(
     private val isInverted = operatorReference.<!UNRESOLVED_REFERENCE!>getReferencedNameElementType<!>() == <!UNRESOLVED_REFERENCE!>KtTokens<!>.<!UNRESOLVED_REFERENCE!>NOT_IN<!>
 
     override fun generate(argument: StackValue): BranchedValue =
-        gen(argument).<!INAPPLICABLE_CANDIDATE!>let<!> { if (isInverted) <!UNRESOLVED_REFERENCE!>Invert<!>(<!UNRESOLVED_REFERENCE!>it<!>) else <!UNRESOLVED_REFERENCE!>it<!> }
+        gen(argument).<!INAPPLICABLE_CANDIDATE!>let<!> { if (isInverted) <!UNRESOLVED_REFERENCE!>Invert<!>(it) else it }
 
     private fun gen(argument: StackValue): BranchedValue =
         object : BranchedValue(argument, null, argument.<!UNRESOLVED_REFERENCE!>type<!>, <!UNRESOLVED_REFERENCE!>Opcodes<!>.<!UNRESOLVED_REFERENCE!>IFEQ<!>) {

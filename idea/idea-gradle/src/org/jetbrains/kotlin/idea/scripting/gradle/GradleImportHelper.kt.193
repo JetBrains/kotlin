@@ -49,9 +49,10 @@ fun runPartialGradleImport(project: Project, root: GradleBuildRoot) {
     )
 }
 
-fun getMissingConfigurationsDescription() = KotlinIdeaGradleBundle.message("notification.wasNotImportedAfterCreation.193.text")
-fun getMissingConfigurationActionText() = KotlinIdeaGradleBundle.message("action.label.import.project")
-fun getMissingConfigurationsHelp(): String? = null
+fun configurationsAreMissingRequestNeeded() = KotlinIdeaGradleBundle.message("notification.wasNotImportedAfterCreation.193.text")
+fun getConfigurationsActionText() = KotlinIdeaGradleBundle.message("action.label.import.project")
+fun configurationsAreMissingRequestNeededHelp(): String? = null
+fun configurationsAreMissingAfterRequest(): String = KotlinIdeaGradleBundle.message("notification.notEvaluatedInLastImport.193.text")
 
 fun autoReloadScriptConfigurations(project: Project, root: GradleBuildRoot): Boolean {
     return ExternalSystemApiUtil

@@ -6,16 +6,19 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import com.intellij.psi.impl.source.tree.LeafPsiElement
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirFakeSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirMemberDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.implicitModality
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_MODALITY_MODIFIER
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.toFirPsiSourceElement
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.modalityModifier
 
@@ -25,6 +28,11 @@ object RedundantModalityModifierChecker : FirMemberDeclarationChecker() {
 
         val modalityModifier = (declaration.psi as? KtDeclaration)?.modalityModifier() ?: return
         val modality = (modalityModifier as? LeafPsiElement)?.elementType as? KtModifierKeywordToken ?: return
+        if (
+            modality == KtTokens.FINAL_KEYWORD
+            && (context.containingDeclarations.last() as? FirClass<*>)?.classKind == ClassKind.INTERFACE
+        ) return
+
         val implicitModality = declaration.implicitModality(context)
 
         if (modality != implicitModality) return

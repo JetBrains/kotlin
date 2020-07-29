@@ -45,13 +45,13 @@ class Derived : Base(), Interface {
             super.prop
 
     fun getAmbiguousSuperProp(): Int =
-            super.<!AMBIGUITY!>ambiguousProp<!>
+            super.<!UNRESOLVED_REFERENCE!>ambiguousProp<!>
 
     fun callsFunFromSuperInterface() {
         super.bar()
     }
 
     fun callsAmbiguousSuperFun() {
-        super.<!AMBIGUITY!>ambiguous<!>()
+        super.<!UNRESOLVED_REFERENCE!>ambiguous<!>()
     }
 }

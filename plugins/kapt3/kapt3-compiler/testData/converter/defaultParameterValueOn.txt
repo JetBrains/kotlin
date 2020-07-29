@@ -25,14 +25,23 @@ public final class Foo {
     private final long l = -10L;
     private final float f = 1.0F;
     private final double d = -1.0;
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.String s = "foo";
+    @org.jetbrains.annotations.NotNull()
     private final int[] iarr = {1, 2, 3};
+    @org.jetbrains.annotations.NotNull()
     private final long[] larr = {-1L, 0L, 1L};
+    @org.jetbrains.annotations.NotNull()
     private final double[] darr = {7.3};
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.String[] sarr = {"a", "bc"};
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.Class<?> cl = null;
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.Class<?>[] clarr = null;
+    @org.jetbrains.annotations.NotNull()
     private final Em em = Em.BAR;
+    @org.jetbrains.annotations.NotNull()
     private final Em[] emarr = {Em.FOO, Em.BAR};
 
     public final void foo(int a) {

@@ -12,6 +12,7 @@ dependencies {
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:tests-mutes"))
     testCompile(project(":compiler:backend"))
+    testCompile(project(":compiler:ir.tree.impl"))
     testCompile(project(":compiler:fir:tree"))
     testCompile(project(":compiler:fir:raw-fir:psi2fir"))
     testCompile(project(":compiler:fir:raw-fir:light-tree2fir"))

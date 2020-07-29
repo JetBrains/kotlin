@@ -44,6 +44,6 @@ fun foo() {
 
     strInt.instance().Inner<Double>().checkType { _<Outer<String>.Inner<Double>>() }
 
-    Outer<String>().<!INAPPLICABLE_CANDIDATE!>setInner<!>(strInt)
+    Outer<String>().setInner(strInt)
     Outer<CharSequence>().<!INAPPLICABLE_CANDIDATE!>setInner<!>(strInt)
 }

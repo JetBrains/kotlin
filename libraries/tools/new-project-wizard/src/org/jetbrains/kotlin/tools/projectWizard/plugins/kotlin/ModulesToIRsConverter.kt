@@ -28,6 +28,11 @@ data class ModulesToIrConversionData(
     val isSingleRootModuleMode = rootModules.size == 1
 
     val moduleByPath = rootModules.withAllSubModules(includeSourcesets = true).associateBy(Module::path)
+
+    fun getDependentModules(from: Module): TaskResult<List<Module>> =
+        from.dependencies.mapSequence { to ->
+            moduleByPath[to.path].toResult { InvalidModuleDependencyError(from.name, to.path.toString()) }
+        }
 }
 
 private data class ModulesToIrsState(
@@ -75,7 +80,13 @@ class ModulesToIRsConverter(
             module.configurator == AndroidSinglePlatformModuleConfigurator
         }
 
-        rootModules.mapSequence { module ->
+        allModules.mapSequenceIgnore { module ->
+            forModuleEachDependency(module) { from, to, dependencyType ->
+                with(dependencyType) {
+                    runArbitraryTaskBeforeIRsCreated(from, to)
+                }
+            }
+        } andThen rootModules.mapSequence { module ->
             createBuildFileForModule(
                 module,
                 initialState.copy(parentModuleHasTransitivelySpecifiedKotlinVersion = parentModuleHasKotlinVersion)
@@ -112,17 +123,25 @@ class ModulesToIRsConverter(
         else -> Success(emptyList())
     }
 
+    private fun <T : Any> forModuleEachDependency(
+        from: Module,
+        action: suspend ComputeContext<NoState>.(from: Module, to: Module, dependencyType: ModuleDependencyType) -> TaskResult<T>
+    ): TaskResult<List<T>> {
+        return from.dependencies.mapComputeM { dependency ->
+            val to = data.moduleByPath.getValue(dependency.path)
+            val (dependencyType) = ModuleDependencyType.getPossibleDependencyType(from, to)
+                .toResult { InvalidModuleDependencyError(from, to) }
+            action(from, to, dependencyType)
+        }.sequence()
+    }
+
     private fun Writer.createSinglePlatformModule(
         module: Module,
         configurator: SinglePlatformModuleConfigurator,
         state: ModulesToIrsState
     ): TaskResult<List<BuildFileIR>> = computeM {
         val modulePath = calculatePathForModule(module, state.parentPath)
-        val (moduleDependencies) = module.dependencies.mapCompute { dependency ->
-            val to = data.moduleByPath.getValue(dependency.path)
-            val (dependencyType) = ModuleDependencyType.getPossibleDependencyType(module, to)
-                .toResult { InvalidModuleDependencyError(module, to) }
-
+        val (moduleDependencies) = forModuleEachDependency(module) { from, to, dependencyType ->
             with(dependencyType) {
                 @Suppress("DEPRECATION")
                 with(unsafeSettingWriter) {
@@ -134,9 +153,9 @@ class ModulesToIRsConverter(
                     ).ensure()
                 }
                 irsToAddToModules.getOrPut(to) { mutableListOf() } += createToIRs(module, to, data).get()
-                createDependencyIrs(module, to, data)
+                createDependencyIrs(module, to, data).asSuccess()
             }
-        }.sequence().map { it.flatten() }
+        }.map { it.flatten() }
         mutateProjectStructureByModuleConfigurator(module, modulePath)
         val buildFileIR = run {
             if (!configurator.needCreateBuildFile) return@run null
@@ -253,9 +272,9 @@ class ModulesToIRsConverter(
         compute {
             rootBuildFileIrs += createRootBuildFileIrs(data)
             runArbitraryTask(data, module, modulePath).ensure()
-            TemplatesPlugin::addFileTemplates.execute(createTemplates(data, module, modulePath)).ensure()
+            TemplatesPlugin.addFileTemplates.execute(createTemplates(data, module, modulePath)).ensure()
             if (this@with is GradleModuleConfigurator) {
-                GradlePlugin::settingsGradleFileIRs.addValues(createSettingsGradleIRs(module)).ensure()
+                GradlePlugin.settingsGradleFileIRs.addValues(createSettingsGradleIRs(module)).ensure()
             }
         }
     }

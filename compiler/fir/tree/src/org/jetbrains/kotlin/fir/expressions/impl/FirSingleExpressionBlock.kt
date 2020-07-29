@@ -17,13 +17,13 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.fir.withKind
+import org.jetbrains.kotlin.fir.fakeElement
 
 class FirSingleExpressionBlock(
     var statement: FirStatement
 ) : FirBlock(), FirAnnotationContainer {
     override val source: FirSourceElement?
-        get() = statement.source?.withKind(FirFakeSourceElementKind.SingleExpressionBlock)
+        get() = statement.source?.fakeElement(FirFakeSourceElementKind.SingleExpressionBlock)
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override val statements: List<FirStatement> get() = listOf(statement)
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)

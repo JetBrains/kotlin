@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public final class Foo {
+    // source: 'shapeOfInlineClassWithPrimitive.kt'
     private final field l: long
     private synthetic method <init>(p0: long): void
     public synthetic final static method box-impl(p0: long): Foo

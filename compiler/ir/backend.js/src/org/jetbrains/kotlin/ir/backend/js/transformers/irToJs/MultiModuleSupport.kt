@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.name.Name
 
 interface CrossModuleReferenceInfo {
@@ -127,11 +127,11 @@ fun breakCrossModuleFieldAccess(
     fun IrField.getter(): IrSimpleFunction {
         return fieldToGetter.getOrPut(this) {
             val fieldName = name
-            val getter = buildFun {
+            val getter = context.irFactory.buildFun {
                 name = Name.identifier("get-$fieldName")
                 returnType = type
             }
-            getter.body = IrBlockBodyImpl(
+            getter.body = factory.createBlockBody(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
                     IrReturnImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, getter.symbol,
@@ -151,14 +151,14 @@ fun breakCrossModuleFieldAccess(
     fun IrField.setter(): IrSimpleFunction {
         return fieldToSetter.getOrPut(this) {
             val fieldName = name
-            val setter = buildFun {
+            val setter = context.irFactory.buildFun {
                 name = Name.identifier("set-$fieldName")
                 returnType = context.irBuiltIns.unitType
             }
 
             val param = setter.addValueParameter("value", type)
 
-            setter.body = IrBlockBodyImpl(
+            setter.body = factory.createBlockBody(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
                     IrSetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol, type).apply {
                         value = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, param.symbol)

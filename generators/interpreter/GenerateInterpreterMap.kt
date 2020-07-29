@@ -15,12 +15,13 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
 val DESTINATION = File("compiler/ir/ir.interpreter/src/org/jetbrains/kotlin/ir/interpreter/builtins/IrBuiltInsMapGenerated.kt")
@@ -201,7 +202,7 @@ private fun getIrBuiltIns(): IrBuiltIns {
 
         override fun composeEnumEntrySignature(descriptor: ClassDescriptor): IdSignature? = null
     }
-    val symbolTable = SymbolTable(signaturer)
+    val symbolTable = SymbolTable(signaturer, IrFactoryImpl)
     val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
     val typeTranslator = TypeTranslator(symbolTable, languageSettings, builtIns)
     constantValueGenerator.typeTranslator = typeTranslator

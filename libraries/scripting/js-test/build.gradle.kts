@@ -1,4 +1,3 @@
-
 plugins {
     kotlin("jvm")
 }
@@ -13,6 +12,7 @@ dependencies {
     testCompile(project(":kotlin-scripting-compiler"))
     testCompile(project(":compiler:cli"))
     testCompile(project(":compiler:backend.js"))
+    testCompile(project(":compiler:ir.tree.impl"))
     testCompile(project(":js:js.engines"))
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }

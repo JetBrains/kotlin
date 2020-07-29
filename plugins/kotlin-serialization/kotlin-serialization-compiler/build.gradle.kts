@@ -22,7 +22,7 @@ dependencies {
 
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
-    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-jvm:0.20.0-1.4.0-rc-95") { isTransitive = false }
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-jvm:1.0-M1-1.4.0-rc") { isTransitive = false }
 
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
 

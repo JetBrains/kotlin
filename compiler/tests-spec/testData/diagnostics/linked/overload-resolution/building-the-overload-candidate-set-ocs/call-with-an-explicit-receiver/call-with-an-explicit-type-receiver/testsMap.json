@@ -1,0 +1,16 @@
+{
+  "3": {
+    "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-401",
+          "casesNumber": 3,
+          "description": "",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver/call-with-an-explicit-type-receiver/p-3/pos/2.1.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "main"
+        }
+      ]
+    }
+  }
+}

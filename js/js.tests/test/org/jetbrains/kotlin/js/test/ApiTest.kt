@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
 import org.jetbrains.kotlin.ir.backend.js.loadIr
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.jvm.compiler.ExpectedLoadErrorsUtil
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.renderer.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import java.io.File
@@ -83,7 +83,8 @@ class ApiTest : KotlinTestWithEnvironment() {
                 AnalyzerWithCompilerReport(configuration),
                 configuration,
                 resolvedLibraries,
-                listOf()
+                listOf(),
+                IrFactoryImpl,
             ).module.descriptor.packagesSerialized()
         }
 

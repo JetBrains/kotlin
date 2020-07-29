@@ -25,7 +25,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.kotlin.idea.core.script.KotlinScriptDependenciesClassFinder
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker
 import org.jetbrains.kotlin.idea.core.script.configuration.CompositeScriptConfigurationManager
-import org.jetbrains.kotlin.idea.core.script.debug
+import org.jetbrains.kotlin.idea.core.script.scriptingDebugLog
 import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -68,11 +68,10 @@ abstract class ScriptClassRootsUpdater(
     /**
      * Wee need CAS due to concurrent unblocking sync update in [checkInvalidSdks]
      */
-    private val cache: AtomicReference<ScriptClassRootsCache> = AtomicReference(recreateRootsCache())
+    private val cache: AtomicReference<ScriptClassRootsCache> = AtomicReference(ScriptClassRootsCache.EMPTY)
 
     init {
-        @Suppress("LeakingThis")
-        afterUpdate()
+        ensureUpdateScheduled()
     }
 
     val classpathRoots: ScriptClassRootsCache
@@ -213,7 +212,7 @@ abstract class ScriptClassRootsUpdater(
         // sdks should be updated synchronously to avoid disposed roots usage
         do {
             val old = cache.get()
-            val actualSdks = old.sdks.rebuild(remove = remove)
+            val actualSdks = old.sdks.rebuild(project, remove = remove)
             if (actualSdks == old.sdks) return
             val new = old.withUpdatedSdks(actualSdks)
         } while (!cache.compareAndSet(old, new))
@@ -226,7 +225,7 @@ abstract class ScriptClassRootsUpdater(
             runWriteAction {
                 if (project.isDisposed) return@runWriteAction
 
-                debug { "roots change event" }
+                scriptingDebugLog { "roots change event" }
 
                 ProjectRootManagerEx.getInstanceEx(project)?.makeRootsChange(EmptyRunnable.getInstance(), false, true)
                 ScriptDependenciesModificationTracker.getInstance(project).incModificationCount()

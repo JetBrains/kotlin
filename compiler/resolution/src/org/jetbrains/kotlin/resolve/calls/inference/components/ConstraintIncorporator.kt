@@ -33,7 +33,8 @@ class ConstraintIncorporator(
             lowerType: KotlinTypeMarker,
             upperType: KotlinTypeMarker,
             shouldTryUseDifferentFlexibilityForUpperType: Boolean,
-            isFromNullabilityConstraint: Boolean = false
+            isFromNullabilityConstraint: Boolean = false,
+            isFromDeclaredUpperBound: Boolean = false
         )
 
         fun addNewIncorporatedConstraint(typeVariable: TypeVariableMarker, type: KotlinTypeMarker, constraintContext: ConstraintContext)
@@ -80,7 +81,15 @@ class ConstraintIncorporator(
         if (constraint.kind != ConstraintKind.UPPER) {
             getConstraintsForVariable(typeVariable).forEach {
                 if (it.kind != ConstraintKind.LOWER) {
-                    addNewIncorporatedConstraint(constraint.type, it.type, shouldBeTypeVariableFlexible)
+                    val isFromDeclaredUpperBound =
+                        it.position.from is DeclaredUpperBoundConstraintPosition && it.type.typeConstructor() !is TypeVariableTypeConstructor
+
+                    addNewIncorporatedConstraint(
+                        constraint.type,
+                        it.type,
+                        shouldBeTypeVariableFlexible,
+                        isFromDeclaredUpperBound = isFromDeclaredUpperBound
+                    )
                 }
             }
         }
@@ -250,7 +259,7 @@ class ConstraintIncorporator(
         addNewIncorporatedConstraint(targetVariable, newConstraint, constraintContext)
     }
 
-    fun Context.containsConstrainingTypeWithoutProjection(
+    private fun Context.containsConstrainingTypeWithoutProjection(
         newConstraint: KotlinTypeMarker,
         otherConstraint: Constraint
     ): Boolean {
@@ -274,7 +283,7 @@ class ConstraintIncorporator(
         return otherConstraintCanAddNullabilityToNewOne || newConstraintCanAddNullabilityToOtherOne
     }
 
-    fun Context.getNestedTypeVariables(type: KotlinTypeMarker): List<TypeVariableMarker> =
+    private fun Context.getNestedTypeVariables(type: KotlinTypeMarker): List<TypeVariableMarker> =
         getNestedArguments(type).mapNotNullTo(SmartList()) { getTypeVariable(it.getType().typeConstructor()) }
 
 

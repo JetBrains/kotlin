@@ -1,5 +1,5 @@
 package continuation
-// ATTACH_LIBRARY: maven(org.jetbrains.kotlinx:kotlinx-coroutines-debug:1.3.4)-javaagent
+// ATTACH_LIBRARY: maven(org.jetbrains.kotlinx:kotlinx-coroutines-debug:1.3.8)-javaagent
 
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.yield
@@ -9,7 +9,7 @@ fun main() {
     runBlocking {
         val rootCoroutineVal = mainTestVal
         TestSuspendA().a()
-        print("")
+        print(rootCoroutineVal)
     }
 }
 
@@ -18,7 +18,7 @@ class TestSuspendA {
     suspend fun a() {
         val methodVal = ""
         InClassB().b()
-        print("")
+        print(methodVal)
     }
 
     class InClassB {
@@ -27,7 +27,7 @@ class TestSuspendA {
         suspend fun b() {
             val inClassBMethodVal = ""
             InClassC().c()
-            print("")
+            print(inClassBMethodVal)
         }
 
         inner class InClassC {
@@ -37,7 +37,7 @@ class TestSuspendA {
                 yield()
                 val inClassCMethodVal = ""
                 //Breakpoint!
-                print("")
+                print(inClassCMethodVal)
             }
         }
     }

@@ -117,7 +117,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         private val isKReference = superFunctionInterface.name.identifier[0] == 'K'
 
         private fun buildReferenceClass(): IrClass {
-            return buildClass {
+            return context.irFactory.buildClass {
                 setSourceRange(reference)
                 visibility = Visibilities.LOCAL
                 // A callable reference results in a synthetic class, while a lambda is not synthetic.
@@ -293,7 +293,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 }
             }
 
-            body = IrBlockBodyImpl(reference.startOffset, reference.endOffset, listOf(reference.run {
+            body = factory.createBlockBody(reference.startOffset, reference.endOffset, listOf(reference.run {
                 IrReturnImpl(
                     startOffset,
                     endOffset, nothingType,
@@ -324,7 +324,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 type = clazz.defaultType
             }
 
-            getter.body = IrBlockBodyImpl(
+            getter.body = context.irFactory.createBlockBody(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
                     IrReturnImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET, nothingType, getter.symbol, IrConstImpl.string(

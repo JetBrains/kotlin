@@ -27,77 +27,77 @@ FILE fqName:<root> fileName:/suspendConversionOnArbitraryExpression.kt
   FUN name:testSimple visibility:public modality:FINAL <> (fn:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function0<kotlin.Unit>
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/useSuspend]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /useSuspend>#' type=kotlin.Unit
         GET_VAR 'fn: kotlin.Function0<kotlin.Unit> declared in <root>.testSimple' type=kotlin.Function0<kotlin.Unit> origin=null
   FUN name:testSimpleNonVal visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/useSuspend]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /useSuspend>#' type=kotlin.Unit
         CALL 'public final fun produceFun (): kotlin.Function0<kotlin.Unit> declared in <root>' type=kotlin.Function0<kotlin.Unit> origin=null
   FUN name:testExtAsExt visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/useSuspendExt]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /useSuspendExt>#' type=kotlin.Unit
         GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testExtAsExt' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
   FUN name:testExtAsSimple visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/useSuspendArg]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /useSuspendArg>#' type=kotlin.Unit
         GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testExtAsSimple' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
   FUN name:testSimpleAsExt visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/useSuspendExt]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /useSuspendExt>#' type=kotlin.Unit
         GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testSimpleAsExt' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
   FUN name:testSimpleAsSimpleT visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/useSuspendArgT]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /useSuspendArgT>#' type=kotlin.Unit
         GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testSimpleAsSimpleT' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
   FUN name:testSimpleAsExtT visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/useSuspendExtT]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /useSuspendExtT>#' type=kotlin.Unit
         GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testSimpleAsExtT' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
   FUN name:testExtAsSimpleT visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/useSuspendArgT]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /useSuspendArgT>#' type=kotlin.Unit
         GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testExtAsSimpleT' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
   FUN name:testExtAsExtT visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.Unit>
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/useSuspendExtT]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /useSuspendExtT>#' type=kotlin.Unit
         GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Unit> declared in <root>.testExtAsExtT' type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=null
   FUN name:testSimpleSAsSimpleT visibility:public modality:FINAL <S> (fn:kotlin.Function1<S of <root>.testSimpleSAsSimpleT, kotlin.Unit>) returnType:kotlin.Unit
     TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?]
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<S of <root>.testSimpleSAsSimpleT, kotlin.Unit>
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/useSuspendArgT]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /useSuspendArgT>#' type=kotlin.Unit
         GET_VAR 'fn: kotlin.Function1<S of <root>.testSimpleSAsSimpleT, kotlin.Unit> declared in <root>.testSimpleSAsSimpleT' type=kotlin.Function1<S of <root>.testSimpleSAsSimpleT, kotlin.Unit> origin=null
   FUN name:testSimpleSAsExtT visibility:public modality:FINAL <S> (fn:kotlin.Function1<S of <root>.testSimpleSAsExtT, kotlin.Unit>) returnType:kotlin.Unit
     TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?]
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<S of <root>.testSimpleSAsExtT, kotlin.Unit>
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/useSuspendExtT]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /useSuspendExtT>#' type=kotlin.Unit
         GET_VAR 'fn: kotlin.Function1<S of <root>.testSimpleSAsExtT, kotlin.Unit> declared in <root>.testSimpleSAsExtT' type=kotlin.Function1<S of <root>.testSimpleSAsExtT, kotlin.Unit> origin=null
   FUN name:testExtSAsSimpleT visibility:public modality:FINAL <S> (fn:kotlin.Function1<S of <root>.testExtSAsSimpleT, kotlin.Unit>) returnType:kotlin.Unit
     TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?]
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<S of <root>.testExtSAsSimpleT, kotlin.Unit>
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/useSuspendArgT]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /useSuspendArgT>#' type=kotlin.Unit
         GET_VAR 'fn: kotlin.Function1<S of <root>.testExtSAsSimpleT, kotlin.Unit> declared in <root>.testExtSAsSimpleT' type=kotlin.Function1<S of <root>.testExtSAsSimpleT, kotlin.Unit> origin=null
   FUN name:testExtSAsExtT visibility:public modality:FINAL <S> (fn:kotlin.Function1<S of <root>.testExtSAsExtT, kotlin.Unit>) returnType:kotlin.Unit
     TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?]
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<S of <root>.testExtSAsExtT, kotlin.Unit>
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/useSuspendExtT]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /useSuspendExtT>#' type=kotlin.Unit
         GET_VAR 'fn: kotlin.Function1<S of <root>.testExtSAsExtT, kotlin.Unit> declared in <root>.testExtSAsExtT' type=kotlin.Function1<S of <root>.testExtSAsExtT, kotlin.Unit> origin=null
   FUN name:testSmartCastWithSuspendConversion visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
       TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=CAST typeOperand=kotlin.Function0<kotlin.Unit>
         GET_VAR 'a: kotlin.Any declared in <root>.testSmartCastWithSuspendConversion' type=kotlin.Any origin=null
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/useSuspend]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /useSuspend>#' type=kotlin.Unit
         TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function0<kotlin.Unit>
           GET_VAR 'a: kotlin.Any declared in <root>.testSmartCastWithSuspendConversion' type=kotlin.Any origin=null
   FUN name:testSmartCastOnVarWithSuspendConversion visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
@@ -107,7 +107,7 @@ FILE fqName:<root> fileName:/suspendConversionOnArbitraryExpression.kt
         GET_VAR 'a: kotlin.Any declared in <root>.testSmartCastOnVarWithSuspendConversion' type=kotlin.Any origin=null
       TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=CAST typeOperand=kotlin.Function0<kotlin.Unit>
         GET_VAR 'var b: kotlin.Any [var] declared in <root>.testSmartCastOnVarWithSuspendConversion' type=kotlin.Any origin=null
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/useSuspend]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /useSuspend>#' type=kotlin.Unit
         TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function0<kotlin.Unit>
           GET_VAR 'var b: kotlin.Any [var] declared in <root>.testSmartCastOnVarWithSuspendConversion' type=kotlin.Any origin=null
   FUN name:testSmartCastVsSuspendConversion visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit

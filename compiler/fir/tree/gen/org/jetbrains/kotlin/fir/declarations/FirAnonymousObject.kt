@@ -45,6 +45,8 @@ abstract class FirAnonymousObject : FirClass<FirAnonymousObject>, FirControlFlow
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirAnonymousObject
+
     abstract override fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirAnonymousObject
 
     abstract override fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirAnonymousObject

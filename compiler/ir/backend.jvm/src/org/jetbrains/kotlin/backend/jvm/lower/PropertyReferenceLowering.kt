@@ -193,7 +193,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
 
     override fun lower(irClass: IrClass) {
         val kProperties = mutableMapOf<IrSymbol, PropertyInstance>()
-        val kPropertiesField = buildField {
+        val kPropertiesField = context.irFactory.buildField {
             name = Name.identifier(JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME)
             type = kPropertiesFieldType
             origin = JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
@@ -279,7 +279,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
             private fun createKPropertySubclass(expression: IrCallableReference<*>): IrClass {
                 val kind = propertyReferenceKindFor(expression)
                 val superClass = if (useOptimizedSuperClass) kind.implSymbol.owner else kind.interfaceSymbol.owner
-                val referenceClass = buildClass {
+                val referenceClass = context.irFactory.buildClass {
                     setSourceRange(expression)
                     name = SpecialNames.NO_NAME_PROVIDED
                     origin = JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE

@@ -11,7 +11,7 @@ FILE: nullableIntegerLiteralType.kt
             }
         }
 
-        <Inapplicable(INAPPLICABLE): [/takeInt]>#(R|<local>/x|)
+        <Inapplicable(INAPPLICABLE): /takeInt>#(R|<local>/x|)
     }
     public final fun test_2(b: R|kotlin/Boolean|, y: R|kotlin/Int|): R|kotlin/Unit| {
         lval x: R|kotlin/Int?| = when () {
@@ -23,5 +23,5 @@ FILE: nullableIntegerLiteralType.kt
             }
         }
 
-        <Inapplicable(INAPPLICABLE): [/takeInt]>#(R|<local>/x|)
+        <Inapplicable(INAPPLICABLE): /takeInt>#(R|<local>/x|)
     }

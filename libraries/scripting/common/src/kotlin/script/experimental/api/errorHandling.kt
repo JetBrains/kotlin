@@ -31,7 +31,7 @@ data class ScriptDiagnostic(
     /**
      * The diagnostic severity
      */
-    enum class Severity { FATAL, ERROR, WARNING, INFO, DEBUG }
+    enum class Severity { DEBUG, INFO, WARNING, ERROR, FATAL }
 
     constructor(
         code: Int,

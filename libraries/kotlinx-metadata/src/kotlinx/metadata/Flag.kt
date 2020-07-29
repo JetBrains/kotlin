@@ -224,6 +224,12 @@ class Flag(private val offset: Int, private val bitWidth: Int, private val value
          */
         @JvmField
         val IS_PRIMARY = Flag(F.IS_SECONDARY, 0)
+
+        /**
+         * Signifies that the corresponding constructor has non-stable parameter names, i.e. cannot be called with named arguments.
+         */
+        @JvmField
+        val HAS_NON_STABLE_PARAMETER_NAMES = Flag(F.IS_CONSTRUCTOR_WITH_NON_STABLE_PARAMETER_NAMES)
     }
 
     /**
@@ -302,6 +308,12 @@ class Flag(private val offset: Int, private val bitWidth: Int, private val value
          */
         @JvmField
         val IS_EXPECT = Flag(F.IS_EXPECT_FUNCTION)
+
+        /**
+         * Signifies that the corresponding function has non-stable parameter names, i.e. cannot be called with named arguments.
+         */
+        @JvmField
+        val HAS_NON_STABLE_PARAMETER_NAMES = Flag(F.IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES)
     }
 
     /**

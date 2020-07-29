@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.DefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
-import org.jetbrains.kotlin.tools.projectWizard.library.NpmArtifact
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.Versions
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
-import org.jetbrains.kotlin.tools.projectWizard.templates.withSettingsOf
 
 class SimpleJsClientTemplate : Template() {
     override val title: String = KotlinNewProjectWizardBundle.message("module.template.js.simple.title")
@@ -45,9 +43,9 @@ class SimpleJsClientTemplate : Template() {
         module: Module
     ): Boolean = when (module.configurator) {
         JsBrowserTargetConfigurator -> true
-        JsSingleplatformModuleConfigurator -> {
+        BrowserJsSinglePlatformModuleConfigurator -> {
             with(reader) {
-                withSettingsOf(module, module.configurator) {
+                inContextOfModuleConfigurator(module, module.configurator) {
                     JSConfigurator.kind.reference.notRequiredSettingValue == JsTargetKind.APPLICATION
                 }
             }
@@ -65,7 +63,7 @@ class SimpleJsClientTemplate : Template() {
     override val settings: List<TemplateSetting<*, *>> = listOf(renderEngine)
 
     override fun Reader.createRunConfigurations(module: ModuleIR): List<WizardRunConfiguration> = buildList {
-        if (module.originalModule.kind == ModuleKind.singleplatformJs) {
+        if (module.originalModule.kind == ModuleKind.singleplatformJsBrowser) {
             +WizardGradleRunConfiguration(
                 KotlinNewProjectWizardBundle.message("module.template.js.simple.run.configuration.dev"),
                 "browserDevelopmentRun",
@@ -83,11 +81,11 @@ class SimpleJsClientTemplate : Template() {
         buildList {
             +ArtifactBasedLibraryDependencyIR(
                 MavenArtifact(Repositories.KOTLINX, "org.jetbrains.kotlinx", "kotlinx-html-js"),
-                Versions.KOTLINX.KOTLINX_HTML(KotlinPlugin::version.propertyValue.version),
+                Versions.KOTLINX.KOTLINX_HTML(KotlinPlugin.version.propertyValue.version),
                 DependencyType.MAIN
             )
 
-            val kotlinVersion = KotlinPlugin::version.propertyValue
+            val kotlinVersion = KotlinPlugin.version.propertyValue
             if (renderEngine.reference.settingValue != RenderEngine.KOTLINX_HTML) {
                 +Dependencies.KOTLIN_REACT(kotlinVersion.version)
                 +Dependencies.KOTLIN_REACT_DOM(kotlinVersion.version)

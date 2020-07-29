@@ -1,0 +1,5 @@
+FILE: rightSideRepeat.kt
+    public final fun foo(): R|kotlin/Unit| {
+        lvar x: R|kotlin/Int| = Int(0)
+        R|<local>/x| = Int(1).R|kotlin/Int.plus|(R|<local>/x|)
+    }

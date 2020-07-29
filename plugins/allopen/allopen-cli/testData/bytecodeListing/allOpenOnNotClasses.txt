@@ -1,11 +1,14 @@
 @AllOpen
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class AllOpen
+public annotation class AllOpen {
+    // source: 'allOpenOnNotClasses.kt'
+}
 
 @AllOpen
 @kotlin.Metadata
 public enum class Enum {
+    // source: 'allOpenOnNotClasses.kt'
     private synthetic final static field $VALUES: Enum[]
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int): void
@@ -15,11 +18,14 @@ public enum class Enum {
 
 @AllOpen
 @kotlin.Metadata
-public interface Intf
+public interface Intf {
+    // source: 'allOpenOnNotClasses.kt'
+}
 
 @kotlin.Metadata
 public final class MyClass {
-    private @AllOpen field prop: java.lang.String
+    // source: 'allOpenOnNotClasses.kt'
+    private @AllOpen @org.jetbrains.annotations.NotNull field prop: java.lang.String
     public method <init>(): void
     public final @AllOpen @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
     public final @AllOpen method method(): void
@@ -29,6 +35,7 @@ public final class MyClass {
 @AllOpen
 @kotlin.Metadata
 public final class Obj {
+    // source: 'allOpenOnNotClasses.kt'
     public final static @org.jetbrains.annotations.NotNull field INSTANCE: Obj
     static method <clinit>(): void
     private method <init>(): void

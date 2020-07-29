@@ -13,7 +13,7 @@ FILE: first.kt
             this@R|/Private|.R|/Private.bar|()
             R|/Private.Nested.Nested|()
             this@R|/Private.Companion|.R|/Private.Companion.fromCompanion|()
-            Q|Private.NotCompanion|.<Inapplicable(HIDDEN): [/Private.NotCompanion.foo]>#()
+            Q|Private.NotCompanion|.<HIDDEN: /Private.NotCompanion.foo is invisible>#()
         }
 
         public[private] final inner class Inner : R|kotlin/Any| {
@@ -24,7 +24,7 @@ FILE: first.kt
             public[private] final fun foo(): R|kotlin/Unit| {
                 this@R|/Private|.R|/Private.bar|()
                 this@R|/Private.Companion|.R|/Private.Companion.fromCompanion|()
-                Q|Private.NotCompanion|.<Inapplicable(HIDDEN): [/Private.NotCompanion.foo]>#()
+                Q|Private.NotCompanion|.<HIDDEN: /Private.NotCompanion.foo is invisible>#()
             }
 
         }
@@ -36,7 +36,7 @@ FILE: first.kt
 
             public[private] final fun foo(): R|kotlin/Unit| {
                 this@R|/Private.Companion|.R|/Private.Companion.fromCompanion|()
-                Q|Private.NotCompanion|.<Inapplicable(HIDDEN): [/Private.NotCompanion.foo]>#()
+                Q|Private.NotCompanion|.<HIDDEN: /Private.NotCompanion.foo is invisible>#()
             }
 
         }
@@ -89,18 +89,18 @@ FILE: first.kt
         }
 
         R|/Local.Local|().R|/Local.baz|()
-        R|/Local.Local|().<Inapplicable(HIDDEN): [/Local.bar]>#()
+        R|/Local.Local|().<HIDDEN: /Local.bar is invisible>#()
     }
     public final fun test(): R|kotlin/Unit| {
         R|/foo|()
         R|/Private.Private|().R|/Private.baz|()
         R|/Private.Private|().R|/Private.Inner.Inner|()
-        R|/Private.Private|().<Inapplicable(HIDDEN): [/Private.bar]>#()
-        Q|Private|.<Inapplicable(HIDDEN): [/Private.Nested.Nested]>#()
-        Q|Private|.<Inapplicable(HIDDEN): [/Private.Companion.fromCompanion]>#()
+        R|/Private.Private|().<HIDDEN: /Private.bar is invisible>#()
+        Q|Private|.<HIDDEN: /Private.Nested.Nested is invisible>#()
+        Q|Private|.<HIDDEN: /Private.Companion.fromCompanion is invisible>#()
     }
 FILE: second.kt
     public final fun secondTest(): R|kotlin/Unit| {
-        <Inapplicable(HIDDEN): [/foo]>#()
-        <Inapplicable(HIDDEN): [/Private.Private]>#()
+        <HIDDEN: /foo is invisible>#()
+        <HIDDEN: /Private.Private is invisible>#()
     }

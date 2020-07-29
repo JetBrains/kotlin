@@ -207,7 +207,7 @@ fun case_7(value_1: String?) {
         else println(value_1)
     when (value_1.case_7_6() == null) {
         true -> println(value_1)
-        false -> <!AMBIGUITY!>println<!>(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
+        false -> println(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
     }
     if (value_1.case_7_7() != null) println(value_1)
         else println(value_1.length)

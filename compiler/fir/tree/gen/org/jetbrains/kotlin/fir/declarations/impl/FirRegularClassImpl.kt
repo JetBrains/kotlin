@@ -64,7 +64,7 @@ internal class FirRegularClassImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
         transformAnnotations(transformer, data)
-        typeParameters.transformInplace(transformer, data)
+        transformTypeParameters(transformer, data)
         transformStatus(transformer, data)
         transformControlFlowGraphReference(transformer, data)
         transformDeclarations(transformer, data)
@@ -75,6 +75,11 @@ internal class FirRegularClassImpl(
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
         annotations.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
+        typeParameters.transformInplace(transformer, data)
         return this
     }
 

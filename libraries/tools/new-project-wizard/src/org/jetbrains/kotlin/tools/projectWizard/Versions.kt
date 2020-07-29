@@ -12,6 +12,7 @@ object Versions {
     val KOTLIN = version("1.4-M1") // used as fallback version
     val GRADLE = version("6.3")
     val KTOR: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("1.3.2-$kotlinVersion") }
+    val JUNIT = version("4.12")
 
     object ANDROID {
         val ANDROIDX_CORE_KTX = version("1.2.0")
@@ -21,6 +22,7 @@ object Versions {
 
     object KOTLINX {
         val KOTLINX_HTML: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("0.7.1-$kotlinVersion") }
+        val KOTLINX_NODEJS: Version = version("0.0.3")
     }
 
     object JS_WRAPPERS {

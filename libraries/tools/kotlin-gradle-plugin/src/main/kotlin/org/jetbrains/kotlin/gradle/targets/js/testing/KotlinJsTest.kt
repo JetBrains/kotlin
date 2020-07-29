@@ -37,6 +37,24 @@ constructor(
 
     @get:Internal
     var testFramework: KotlinJsTestFramework? = null
+        set(value) {
+            field = value
+            onTestFrameworkCallbacks.forEach { callback ->
+                callback(value)
+            }
+        }
+
+    private var onTestFrameworkCallbacks: MutableList<(KotlinJsTestFramework?) -> Unit> =
+        mutableListOf()
+
+    fun onTestFrameworkSet(action: (KotlinJsTestFramework?) -> Unit) {
+        onTestFrameworkCallbacks.add(action)
+        testFramework?.let { testFramework: KotlinJsTestFramework ->
+            onTestFrameworkCallbacks.forEach { callback ->
+                callback(testFramework)
+            }
+        }
+    }
 
     @Suppress("unused")
     val testFrameworkSettings: String

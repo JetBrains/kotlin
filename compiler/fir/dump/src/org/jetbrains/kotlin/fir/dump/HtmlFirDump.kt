@@ -1229,29 +1229,27 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     private fun FlowContent.generate(diagnostic: ConeDiagnostic) {
         when (diagnostic) {
             is ConeInapplicableCandidateError -> {
-                for (candidate in diagnostic.candidates) {
-                    describeVerbose(candidate.symbol)
-                    br
-                    candidate.diagnostics.forEach { callDiagnostic ->
-                        when (callDiagnostic) {
-                            is NewConstraintError -> {
-                                ident()
+                describeVerbose(diagnostic.candidateSymbol)
+                br
+                diagnostic.diagnostics.forEach { callDiagnostic ->
+                    when (callDiagnostic) {
+                        is NewConstraintError -> {
+                            ident()
 
-                                generate(callDiagnostic.lowerType as ConeKotlinType)
+                            generate(callDiagnostic.lowerType as ConeKotlinType)
 
-                                ws
-                                span(classes = "subtype-error") { +"<:" }
-                                ws
-                                generate(callDiagnostic.upperType as ConeKotlinType)
-                            }
-                            else -> {
-                                ident()
-                                callDiagnostic::class.qualifiedName?.let { +it }
-                                Unit
-                            }
+                            ws
+                            span(classes = "subtype-error") { +"<:" }
+                            ws
+                            generate(callDiagnostic.upperType as ConeKotlinType)
                         }
-                        br
+                        else -> {
+                            ident()
+                            callDiagnostic::class.qualifiedName?.let { +it }
+                            Unit
+                        }
                     }
+                    br
                 }
             }
             is ConeAmbiguityError -> {
@@ -1323,27 +1321,12 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         +")"
     }
 
-    private fun FlowContent.generateBinary(expression: FirOperatorCall) {
-        val (first, second) = expression.arguments
+    private fun FlowContent.generateBinary(first: FirExpression, second: FirExpression, operation: FirOperation) {
         generate(first)
         ws
-        unresolved { +expression.operation.operator }
+        unresolved { +operation.operator }
         ws
         generate(second)
-    }
-
-    private fun FlowContent.generateUnary(expression: FirOperatorCall) {
-        unresolved { +expression.operation.operator }
-        ws
-        generate(expression.argument)
-    }
-
-    private fun FlowContent.generate(expression: FirOperatorCall) {
-        when (expression.arguments.size) {
-            1 -> generateUnary(expression)
-            2 -> generateBinary(expression)
-            else -> inlineUnsupported(expression)
-        }
     }
 
     private fun FlowContent.generate(typeOperatorCall: FirTypeOperatorCall) {
@@ -1352,6 +1335,10 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         keyword(typeOperatorCall.operation.operator)
         ws
         generate(typeOperatorCall.conversionTypeRef)
+    }
+
+    private fun FlowContent.generate(equalityOperatorCall: FirEqualityOperatorCall) {
+        generateBinary(equalityOperatorCall.arguments[0], equalityOperatorCall.arguments[1], equalityOperatorCall.operation)
     }
 
     private fun FlowContent.generate(checkNotNullCall: FirCheckNotNullCall) {
@@ -1566,7 +1553,8 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                     generate(expression.expression)
                 }
                 is FirTypeOperatorCall -> generate(expression)
-                is FirOperatorCall -> generate(expression)
+                is FirAssignmentOperatorStatement -> generateBinary(expression.leftArgument, expression.rightArgument, expression.operation)
+                is FirEqualityOperatorCall -> generate(expression)
                 is FirBinaryLogicExpression -> generate(expression)
                 is FirCheckNotNullCall -> generate(expression)
                 is FirElvisExpression -> generate(expression)

@@ -51,10 +51,6 @@ abstract class IrModuleDeserializer(val moduleDescriptor: ModuleDescriptor) {
 
     open fun deserializeReachableDeclarations() { error("Unsupported Operation") }
 
-    open fun postProcess(postProcessor: (IrModuleFragment) -> Unit) {
-        postProcessor(moduleFragment)
-    }
-
     abstract val moduleFragment: IrModuleFragment
 
     abstract val moduleDependencies: Collection<IrModuleDeserializer>
@@ -174,10 +170,6 @@ class IrModuleDeserializerWithBuiltIns(
         else delegate.declareIrSymbol(symbol)
     }
 
-    override fun postProcess(postProcessor: (IrModuleFragment) -> Unit) {
-        delegate.postProcess(postProcessor)
-    }
-
     override fun init() {
         delegate.init(this)
     }
@@ -208,8 +200,6 @@ open class CurrentModuleDeserializer(
     }
 
     override fun declareIrSymbol(symbol: IrSymbol) {}
-
-    override fun postProcess(postProcessor: (IrModuleFragment) -> Unit) {}
 
     override val isCurrent = true
 }

@@ -10,5 +10,5 @@ open class C {
 }
 
 class Subject : C(), A {
-    val c = <!INAPPLICABLE_CANDIDATE!>a<!>
+    val c = <!HIDDEN!>a<!>
 }

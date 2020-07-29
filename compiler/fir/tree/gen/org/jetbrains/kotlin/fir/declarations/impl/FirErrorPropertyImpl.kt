@@ -63,6 +63,7 @@ internal class FirErrorPropertyImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
         transformReturnTypeRef(transformer, data)
+        transformTypeParameters(transformer, data)
         transformOtherChildren(transformer, data)
         return this
     }
@@ -97,9 +98,13 @@ internal class FirErrorPropertyImpl(
         return this
     }
 
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
+        typeParameters.transformInplace(transformer, data)
+        return this
+    }
+
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
         transformAnnotations(transformer, data)
-        typeParameters.transformInplace(transformer, data)
         return this
     }
 

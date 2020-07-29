@@ -256,7 +256,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     ): IrConstructor {
         val source = this
 
-        return buildConstructor {
+        return factory.buildConstructor {
             origin = originForConstructorAccessor
             name = source.name
             visibility = Visibilities.PUBLIC
@@ -292,7 +292,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     private fun IrSimpleFunction.makeSimpleFunctionAccessor(expression: IrCall, parent: IrDeclarationParent): IrSimpleFunction {
         val source = this
 
-        return buildFun {
+        return factory.buildFun {
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = source.accessorName(expression.superQualifierSymbol)
             visibility = Visibilities.PUBLIC
@@ -324,7 +324,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         }
 
     private fun makeGetterAccessorSymbol(fieldSymbol: IrFieldSymbol, parent: IrClass): IrSimpleFunctionSymbol =
-        buildFun {
+        context.irFactory.buildFun {
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = fieldSymbol.owner.accessorNameForGetter()
             visibility = Visibilities.PUBLIC
@@ -360,7 +360,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     }
 
     private fun makeSetterAccessorSymbol(fieldSymbol: IrFieldSymbol, parent: IrClass): IrSimpleFunctionSymbol =
-        buildFun {
+        context.irFactory.buildFun {
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
             name = fieldSymbol.owner.accessorNameForSetter()
             visibility = Visibilities.PUBLIC
@@ -582,12 +582,16 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         // `internal` maps to public and requires no accessor.
         if (!withSuper && !declaration.visibility.isPrivate && !declaration.visibility.isProtected) return true
 
-        //`toArray` is always accessible cause mapped to public functions
+        // `toArray` is always accessible cause mapped to public functions
         if (symbolOwner is IrSimpleFunction && (symbolOwner.isNonGenericToArray(context) || symbolOwner.isGenericToArray(context))) {
             if (symbolOwner.parentAsClass.isCollectionSubClass) {
                 return true
             }
         }
+
+        // EnumEntry constructors are always accessible (they are only called from the enclosing Enum class)
+        if (symbolOwner is IrConstructor && symbolOwner.parentClassOrNull?.isEnumEntry == true)
+            return true
 
         // If local variables are accessible by Kotlin rules, they also are by Java rules.
         val ownerClass = declaration.parent as? IrClass ?: return true

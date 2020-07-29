@@ -50,7 +50,7 @@ fun ExportedDeclaration.toTypeScript(indent: String, prefix: String = ""): Strin
             else -> "function "
         }
 
-        val renderedParameters = parameters.joinToString(", ") { it.toTypeScript() }
+        val renderedParameters = parameters.joinToString(", ") { it.toTypeScript(indent) }
 
         val renderedTypeParameters =
             if (typeParameters.isNotEmpty())
@@ -58,28 +58,28 @@ fun ExportedDeclaration.toTypeScript(indent: String, prefix: String = ""): Strin
             else
                 ""
 
-        val renderedReturnType = returnType.toTypeScript()
+        val renderedReturnType = returnType.toTypeScript(indent)
 
         "${prefix}$keyword$name$renderedTypeParameters($renderedParameters): $renderedReturnType;"
     }
     is ExportedConstructor ->
-        "constructor(${parameters.joinToString(", ") { it.toTypeScript() }});"
+        "constructor(${parameters.joinToString(", ") { it.toTypeScript(indent) }});"
 
     is ExportedProperty -> {
         val keyword = when {
             isMember -> (if (isAbstract) "abstract " else "") + (if (!mutable) "readonly " else "")
             else -> if (mutable) "let " else "const "
         }
-        prefix + keyword + name + ": " + type.toTypeScript() + ";"
+        prefix + keyword + name + ": " + type.toTypeScript(indent) + ";"
     }
 
     is ExportedClass -> {
         val keyword = if (isInterface) "interface" else "class"
         val superInterfacesKeyword = if (isInterface) "extends" else "implements"
 
-        val superClassClause = superClass?.let { " extends ${it.toTypeScript()}" } ?: ""
+        val superClassClause = superClass?.let { " extends ${it.toTypeScript(indent)}" } ?: ""
         val superInterfacesClause = if (superInterfaces.isNotEmpty()) {
-            " $superInterfacesKeyword " + superInterfaces.joinToString(", ") { it.toTypeScript() }
+            " $superInterfacesKeyword " + superInterfaces.joinToString(", ") { it.toTypeScript(indent) }
         } else ""
 
         val membersString = members.joinToString("") { it.toTypeScript("$indent    ") + "\n" }
@@ -107,22 +107,30 @@ fun ExportedDeclaration.toTypeScript(indent: String, prefix: String = ""): Strin
     }
 }
 
-fun ExportedParameter.toTypeScript(): String =
-    "$name: ${type.toTypeScript()}"
+fun ExportedParameter.toTypeScript(indent: String): String =
+    "$name: ${type.toTypeScript(indent)}"
 
-fun ExportedType.toTypeScript(): String = when (this) {
+fun ExportedType.toTypeScript(indent: String): String = when (this) {
     is ExportedType.Primitive -> typescript
-    is ExportedType.Array -> "Array<${elementType.toTypeScript()}>"
+    is ExportedType.Array -> "Array<${elementType.toTypeScript(indent)}>"
     is ExportedType.Function -> "(" + parameterTypes
         .withIndex()
         .joinToString(", ") { (index, type) ->
-            "p$index: ${type.toTypeScript()}"
-        } + ") => " + returnType.toTypeScript()
+            "p$index: ${type.toTypeScript(indent)}"
+        } + ") => " + returnType.toTypeScript(indent)
 
     is ExportedType.ClassType ->
-        name + if (arguments.isNotEmpty()) "<${arguments.joinToString(", ") { it.toTypeScript() }}>" else ""
+        name + if (arguments.isNotEmpty()) "<${arguments.joinToString(", ") { it.toTypeScript(indent) }}>" else ""
+    is ExportedType.TypeOf ->
+        "typeof $name"
 
     is ExportedType.ErrorType -> "any /*$comment*/"
     is ExportedType.TypeParameter -> name
-    is ExportedType.Nullable -> "Nullable<" + baseType.toTypeScript() + ">"
+    is ExportedType.Nullable -> "Nullable<" + baseType.toTypeScript(indent) + ">"
+    is ExportedType.InlineInterfaceType -> {
+        members.joinToString(prefix = "{\n", postfix = "$indent}", separator = "") { it.toTypeScript("$indent    ") + "\n" }
+    }
+    is ExportedType.IntersectionType -> {
+        lhs.toTypeScript(indent) + " & " + rhs.toTypeScript(indent)
+    }
 }

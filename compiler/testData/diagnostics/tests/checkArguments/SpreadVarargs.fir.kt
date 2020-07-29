@@ -58,7 +58,7 @@ fun main() {
     val x1 = joinT(1, "2")
     checkSubtype<String?>(x1)
     val x2 = <!INAPPLICABLE_CANDIDATE!>joinT<!>(*1, "2")
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><String?>(x2)
+    checkSubtype<String?>(x2)
     val x6 = joinT(1, *a)
     checkSubtype<String?>(x6)
     val x7 = joinT(1, *a, "3")

@@ -1,11 +1,13 @@
 @kotlin.Metadata
 public final class test/Foo {
+    // source: 'InlineReifiedMultifile.kt'
     public final static method foo(): void
     public synthetic final static method inlineReified(): void
 }
 
 @kotlin.Metadata
 synthetic final class test/Foo__InlineReifiedMultifileKt {
+    // source: 'InlineReifiedMultifile.kt'
     public final static method foo(): void
     public synthetic final static method inlineReified(): void
 }

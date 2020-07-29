@@ -63,7 +63,7 @@ class PolymorphicSignatureLowering(val context: JvmBackendContext) : IrElementTr
                 else -> throw AssertionError("unknown IrVarargElement: $it")
             }
         } ?: listOf()
-        val fakeFunction = buildFun {
+        val fakeFunction = context.irFactory.buildFun {
             updateFrom(function)
             name = function.name
             origin = JvmLoweredDeclarationOrigin.POLYMORPHIC_SIGNATURE_INSTANTIATION

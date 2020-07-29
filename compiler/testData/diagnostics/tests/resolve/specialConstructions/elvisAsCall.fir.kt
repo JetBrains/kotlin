@@ -23,13 +23,13 @@ fun testDataFlowInfo1(a: Int?, b: Int?) {
     val c: Int = a ?: b!!
     doInt(c)
     // b is nullable if a != null
-    b <!INAPPLICABLE_CANDIDATE!>+<!> 1
+    b <!NONE_APPLICABLE!>+<!> 1
 }
 
 fun testDataFlowInfo2(a: Int?, b: Int?) {
     doInt(a ?: b!!)
     // b is nullable if a != null
-    b <!INAPPLICABLE_CANDIDATE!>+<!> 1
+    b <!NONE_APPLICABLE!>+<!> 1
 }
 
 fun testTypeMismatch(a: String?, b: Any) {

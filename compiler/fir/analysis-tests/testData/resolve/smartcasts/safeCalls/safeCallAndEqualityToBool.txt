@@ -8,7 +8,7 @@ FILE: safeCallAndEqualityToBool.kt
                 R|<local>/s|.R|kotlin/String.length|
             }
             else ->  {
-                R|<local>/s|.<Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#
+                R|<local>/s|.<Inapplicable(WRONG_RECEIVER): kotlin/String.length>#
             }
         }
 
@@ -19,7 +19,7 @@ FILE: safeCallAndEqualityToBool.kt
                 R|<local>/s|.R|kotlin/String.length|
             }
             else ->  {
-                R|<local>/s|.<Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#
+                R|<local>/s|.<Inapplicable(WRONG_RECEIVER): kotlin/String.length>#
             }
         }
 
@@ -27,7 +27,7 @@ FILE: safeCallAndEqualityToBool.kt
     public final fun test_3(s: R|kotlin/String?|): R|kotlin/Unit| {
         when () {
             !=(R|<local>/s|?.{ $subj$.R|/check|() }, Boolean(true)) ->  {
-                R|<local>/s|.<Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#
+                R|<local>/s|.<Inapplicable(WRONG_RECEIVER): kotlin/String.length>#
             }
             else ->  {
                 R|<local>/s|.R|kotlin/String.length|
@@ -38,7 +38,7 @@ FILE: safeCallAndEqualityToBool.kt
     public final fun test_4(s: R|kotlin/String?|): R|kotlin/Unit| {
         when () {
             !=(R|<local>/s|?.{ $subj$.R|/check|() }, Boolean(false)) ->  {
-                R|<local>/s|.<Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#
+                R|<local>/s|.<Inapplicable(WRONG_RECEIVER): kotlin/String.length>#
             }
             else ->  {
                 R|<local>/s|.R|kotlin/String.length|

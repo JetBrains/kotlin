@@ -1,17 +1,20 @@
 @kotlin.Metadata
 public final class A$DefaultImpls {
-    inner class A$DefaultImpls
+    // source: 'interfaceImpls.kt'
     public static method a(@org.jetbrains.annotations.NotNull p0: A): void
+    public final inner class A$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface A {
-    inner class A$DefaultImpls
+    // source: 'interfaceImpls.kt'
     public abstract method a(): void
     public abstract method b(): void
+    public final inner class A$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface B {
+    // source: 'interfaceImpls.kt'
     public abstract method b(): void
 }

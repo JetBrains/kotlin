@@ -288,6 +288,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/declarations/delegatedProperties.kt");
         }
 
+        @TestMetadata("deprecatedProperty.kt")
+        public void testDeprecatedProperty() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/deprecatedProperty.kt");
+        }
+
         @TestMetadata("extensionProperties.kt")
         public void testExtensionProperties() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/extensionProperties.kt");
@@ -1681,6 +1686,24 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             public void testSamOperators() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/sam/samOperators.kt");
             }
+        }
+    }
+
+    @TestMetadata("compiler/testData/ir/irText/firProblems")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FirProblems extends AbstractIrTextTestCase {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInFirProblems() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/firProblems"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("deprecated.kt")
+        public void testDeprecated() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/deprecated.kt");
         }
     }
 

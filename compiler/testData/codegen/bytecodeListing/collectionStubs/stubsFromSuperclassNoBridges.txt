@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public class A {
+    // source: 'stubsFromSuperclassNoBridges.kt'
     public method <init>(): void
     public method add(p0: java.lang.Object): boolean
     public method addAll(p0: java.util.Collection): boolean
@@ -19,6 +20,7 @@ public class A {
 
 @kotlin.Metadata
 public class B {
+    // source: 'stubsFromSuperclassNoBridges.kt'
     public method <init>(): void
     public bridge method contains(p0: java.lang.CharSequence): boolean
     public bridge final method contains(p0: java.lang.Object): boolean
@@ -26,6 +28,7 @@ public class B {
 
 @kotlin.Metadata
 public final class C {
+    // source: 'stubsFromSuperclassNoBridges.kt'
     public method <init>(): void
     public method add(p0: int, p1: java.lang.CharSequence): void
     public synthetic method add(p0: int, p1: java.lang.Object): void

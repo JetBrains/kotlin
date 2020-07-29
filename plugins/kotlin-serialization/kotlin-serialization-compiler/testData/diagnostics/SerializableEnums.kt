@@ -2,6 +2,7 @@
 
 // FILE: test.kt
 import kotlinx.serialization.*
+import kotlinx.serialization.encoding.*
 
 enum class SimpleEnum { A, B }
 

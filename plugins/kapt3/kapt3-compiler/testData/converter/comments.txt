@@ -62,6 +62,7 @@ public final class Test {
     /**
      * prop2.
      */
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.String prop2 = "";
 
     /**
@@ -128,6 +129,7 @@ import java.lang.System;
  */
 @kotlin.Metadata()
 public final class Test2 {
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = null;
 
     @org.jetbrains.annotations.NotNull()
@@ -151,6 +153,7 @@ import java.lang.System;
  */
 @kotlin.Metadata()
 public final class Test3 {
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = null;
 
     @org.jetbrains.annotations.NotNull()

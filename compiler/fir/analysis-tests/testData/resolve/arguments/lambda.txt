@@ -18,11 +18,11 @@ FILE: lambda.kt
             ^@foo Unit
         }
         )
-        <Inapplicable(PARAMETER_MAPPING_ERROR): [/foo]>#(Int(1), <L> = foo@fun <anonymous>(): R|kotlin/Unit| {
+        <Inapplicable(PARAMETER_MAPPING_ERROR): /foo>#(Int(1), <L> = foo@fun <anonymous>(): R|kotlin/Unit| {
             ^@foo Unit
         }
         )
-        <Inapplicable(PARAMETER_MAPPING_ERROR): [/foo]>#(f = foo@fun <anonymous>(): R|kotlin/Unit| {
+        <Inapplicable(PARAMETER_MAPPING_ERROR): /foo>#(f = foo@fun <anonymous>(): R|kotlin/Unit| {
             ^@foo Unit
         }
         , <L> = foo@fun <anonymous>(): R|kotlin/Unit| {
@@ -45,11 +45,11 @@ FILE: lambda.kt
             ^@bar Unit
         }
         )
-        <Inapplicable(PARAMETER_MAPPING_ERROR): [/bar]>#(<L> = bar@fun <anonymous>(): R|kotlin/Unit| {
+        <Inapplicable(PARAMETER_MAPPING_ERROR): /bar>#(<L> = bar@fun <anonymous>(): R|kotlin/Unit| {
             ^@bar Unit
         }
         )
-        <Inapplicable(PARAMETER_MAPPING_ERROR): [/bar]>#(bar@fun <anonymous>(): R|kotlin/Unit| {
+        <Inapplicable(PARAMETER_MAPPING_ERROR): /bar>#(bar@fun <anonymous>(): R|kotlin/Unit| {
             ^@bar Unit
         }
         )
@@ -61,15 +61,15 @@ FILE: lambda.kt
             ^@baz Unit
         }
         , Boolean(false))
-        <Inapplicable(PARAMETER_MAPPING_ERROR): [/baz]>#(<L> = baz@fun <anonymous>(): R|kotlin/Unit| {
+        <Inapplicable(PARAMETER_MAPPING_ERROR): /baz>#(<L> = baz@fun <anonymous>(): R|kotlin/Unit| {
             ^@baz Unit
         }
         )
-        <Inapplicable(PARAMETER_MAPPING_ERROR): [/baz]>#(<L> = baz@fun <anonymous>(): R|kotlin/Unit| {
+        <Inapplicable(PARAMETER_MAPPING_ERROR): /baz>#(<L> = baz@fun <anonymous>(): R|kotlin/Unit| {
             ^@baz Unit
         }
         )
-        <Inapplicable(PARAMETER_MAPPING_ERROR): [/baz]>#(other = Boolean(false), <L> = baz@fun <anonymous>(): R|kotlin/Unit| {
+        <Inapplicable(PARAMETER_MAPPING_ERROR): /baz>#(other = Boolean(false), <L> = baz@fun <anonymous>(): R|kotlin/Unit| {
             ^@baz Unit
         }
         )

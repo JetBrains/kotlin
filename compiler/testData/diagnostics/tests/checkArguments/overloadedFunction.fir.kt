@@ -9,9 +9,9 @@ fun bar(a: Any) {}
 fun bar(a: Int) {}
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(1, 2)
+    <!NONE_APPLICABLE!>foo<!>(1, 2)
     <!INAPPLICABLE_CANDIDATE!>foo<!>("")
 
-    <!INAPPLICABLE_CANDIDATE!>bar<!>(1, 2)
-    <!INAPPLICABLE_CANDIDATE!>bar<!>()
+    <!NONE_APPLICABLE!>bar<!>(1, 2)
+    <!NONE_APPLICABLE!>bar<!>()
 }

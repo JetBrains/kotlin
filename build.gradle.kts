@@ -178,7 +178,7 @@ extra["versions.jflex"] = "1.7.0"
 extra["versions.markdown"] = "0.1.25"
 extra["versions.trove4j"] = "1.0.20181211"
 extra["versions.completion-ranking-kotlin"] = "0.1.2"
-extra["versions.r8"] = "1.5.70"
+extra["versions.r8"] = "2.0.88"
 val immutablesVersion = "0.3.1"
 extra["versions.kotlinx-collections-immutable"] = immutablesVersion
 extra["versions.kotlinx-collections-immutable-jvm"] = immutablesVersion
@@ -229,6 +229,8 @@ extra["compilerModules"] = arrayOf(
     ":compiler:frontend.java",
     ":compiler:cli-common",
     ":compiler:ir.tree",
+    ":compiler:ir.tree.impl",
+    ":compiler:ir.tree.persistent",
     ":compiler:ir.psi2ir",
     ":compiler:ir.backend.common",
     ":compiler:backend.jvm",
@@ -517,9 +519,12 @@ gradle.taskGraph.whenReady {
     fun Boolean.toOnOff(): String = if (this) "on" else "off"
     val profile = if (isTeamcityBuild) "CI" else "Local"
 
-    logger.warn("$profile build profile is active (proguard is ${kotlinBuildProperties.proguard.toOnOff()}" +
-                            ", jar compression is ${kotlinBuildProperties.jarCompression.toOnOff()})." +
-                            " Use -Pteamcity=<true|false> to reproduce CI/local build")
+    val proguardMessage = "proguard is ${kotlinBuildProperties.proguard.toOnOff()}"
+    val jarCompressionMessage = "jar compression is ${kotlinBuildProperties.jarCompression.toOnOff()}"
+                val profileMessage = "$profile build profile is active ($proguardMessage, $jarCompressionMessage). " +
+            "Use -Pteamcity=<true|false> to reproduce CI/local build"
+
+    logger.warn("\n\n$profileMessage")
 
     allTasks.filterIsInstance<org.gradle.jvm.tasks.Jar>().forEach { task ->
         task.entryCompression = if (kotlinBuildProperties.jarCompression)
@@ -718,16 +723,9 @@ tasks {
         dependsOn(":jps-plugin:test")
     }
 
-    register("idea-plugin-main-tests") {
-        dependsOn("dist")
-        dependsOn(":idea:test")
-    }
-
     register("idea-plugin-additional-tests") {
         dependsOn("dist")
         dependsOn(
-            ":idea:idea-gradle:test",
-            ":idea:idea-gradle-native:test",
             ":idea:idea-maven:test",
             ":j2k:test",
             ":nj2k:test",
@@ -750,17 +748,6 @@ tasks {
         }
     }
 
-    register("idea-plugin-tests") {
-        dependsOn("dist")
-        dependsOn(
-            "idea-plugin-main-tests",
-            "idea-plugin-additional-tests"
-        )
-        if (Ide.IJ()) {
-            dependsOn("idea-new-project-wizard-tests")
-        }
-    }
-
     register("idea-plugin-performance-tests") {
         dependsOn("dist")
         dependsOn(
@@ -777,10 +764,21 @@ tasks {
         )
     }
 
-    register("plugins-tests") {
-        dependsOn("dist")
+    register("ideaPluginTest") {
         dependsOn(
-            ":kotlin-annotation-processing:test",
+            "mainIdeTests",
+            "gradleIdeTest",
+            "kaptIdeTest",
+            "miscIdeTests"
+        )
+    }
+
+    register("mainIdeTests") {
+        dependsOn(":idea:test")
+    }
+
+    register("miscIdeTests") {
+        dependsOn(
             ":kotlin-allopen-compiler-plugin:test",
             ":kotlin-noarg-compiler-plugin:test",
             ":kotlin-sam-with-receiver-compiler-plugin:test",
@@ -788,19 +786,58 @@ tasks {
             ":kotlin-annotation-processing-gradle:test",
             ":kotlinx-serialization-compiler-plugin:test",
             ":kotlinx-serialization-ide-plugin:test",
-            ":idea:jvm-debugger:jvm-debugger-test:test"
+            ":idea:jvm-debugger:jvm-debugger-test:test",
+            "idea-plugin-additional-tests",
+            "jps-tests",
+            ":generators:test"
+        )
+        if (Ide.IJ()) {
+            dependsOn("idea-new-project-wizard-tests")
+        }
+    }
+
+    register("kaptIdeTest") {
+        dependsOn(":kotlin-annotation-processing:test")
+    }
+
+    register("gradleIdeTest") {
+        dependsOn(
+            ":idea:idea-gradle:test",
+            ":idea:idea-gradle-native:test"
         )
     }
 
-
-    register("ideaPluginTest") {
+    register("kmmTest", AggregateTest::class) {
         dependsOn(
-            "idea-plugin-tests",
-            "jps-tests",
-            "plugins-tests",
-            "android-ide-tests",
-            ":generators:test"
+            ":idea:idea-gradle:test",
+            ":idea:test",
+            ":compiler:test",
+            ":js:js.tests:test"
         )
+        if (Ide.IJ193.orHigher())
+            dependsOn(":kotlin-gradle-plugin-integration-tests:test")
+        if (Ide.AS40.orHigher())
+            dependsOn(":kotlin-ultimate:ide:android-studio-native:test")
+
+        testPatternFile = file("tests/mpp/kmm-patterns.csv")
+    }
+
+    register("test") {
+        doLast {
+            throw GradleException("Don't use directly, use aggregate tasks *-check instead")
+        }
+    }
+
+    named("check") {
+        dependsOn("test")
+    }
+
+    named("checkBuild") {
+        if (kotlinBuildProperties.isTeamcityBuild) {
+            doFirst {
+                println("##teamcity[setParameter name='bootstrap.kotlin.version' value='$bootstrapKotlinVersion']")
+            }
+        }
     }
 
     register("publishIdeArtifacts") {
@@ -834,39 +871,6 @@ tasks {
                 ":kotlin-stdlib-js:publish",
                 ":kotlin-test:kotlin-test-js:publish"
             )
-        }
-    }
-
-    register("kmmTest", AggregateTest::class) {
-        dependsOn(
-            ":idea:idea-gradle:test",
-            ":idea:test",
-            ":compiler:test",
-            ":js:js.tests:test"
-        )
-        if (Ide.IJ193.orHigher())
-            dependsOn(":kotlin-gradle-plugin-integration-tests:test")
-        if (Ide.AS40.orHigher())
-            dependsOn(":kotlin-ultimate:ide:android-studio-native:test")
-
-        testPatternFile = file("tests/mpp/kmm-patterns.csv")
-    }
-
-    register("test") {
-        doLast {
-            throw GradleException("Don't use directly, use aggregate tasks *-check instead")
-        }
-    }
-
-    named("check") {
-        dependsOn("test")
-    }
-
-    named("checkBuild") {
-        if (kotlinBuildProperties.isTeamcityBuild) {
-            doFirst {
-                println("##teamcity[setParameter name='bootstrap.kotlin.version' value='$bootstrapKotlinVersion']")
-            }
         }
     }
 }

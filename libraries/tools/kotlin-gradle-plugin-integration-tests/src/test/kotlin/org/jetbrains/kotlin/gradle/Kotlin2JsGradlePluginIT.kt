@@ -213,6 +213,37 @@ class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
             assertTrue(fileInWorkingDir("$pathPrefix/kotlin.js").length() < 500 * 1000, "Looks like kotlin.js file was not minified by DCE")
         }
     }
+
+    @Test
+    fun testKotlinJsDependencyWithJsFiles() = with(Project("kotlin-js-dependency-with-js-files")) {
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        build(
+            "packageJson"
+        ) {
+            assertSuccessful()
+
+            val dependency = "2p-parser-core"
+            val version = "0.11.1"
+
+            assertFileExists("build/js/packages_imported/$dependency/$version")
+
+            fun getPackageJson(dependency: String, version: String) =
+                fileInWorkingDir("build/js/packages_imported/$dependency/$version")
+                    .resolve(NpmProject.PACKAGE_JSON)
+                    .let {
+                        Gson().fromJson(it.readText(), PackageJson::class.java)
+                    }
+
+
+            val packageJson = getPackageJson(dependency, version)
+
+            assertEquals(dependency, packageJson.name)
+            assertEquals(version, packageJson.version)
+            assertEquals("$dependency.js", packageJson.main)
+        }
+    }
 }
 
 abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) : BaseGradleIT() {

@@ -180,7 +180,9 @@ class FirCallCompleter(
                 FirBuilderInferenceSession(components, stubsForPostponedVariables as Map<ConeTypeVariable, ConeStubType>)
             }
 
-            val localContext = towerDataContextForAnonymousFunctions.getValue(lambdaArgument.symbol)
+            val localContext = towerDataContextForAnonymousFunctions.get(lambdaArgument.symbol) ?: error(
+                ""
+            )
             transformer.context.withTowerDataContext(localContext) {
                 if (builderInferenceSession != null) {
                     components.inferenceComponents.withInferenceSession(builderInferenceSession) {

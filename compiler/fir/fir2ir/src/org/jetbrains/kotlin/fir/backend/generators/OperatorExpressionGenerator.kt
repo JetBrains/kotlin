@@ -34,9 +34,9 @@ internal class OperatorExpressionGenerator(
         }
     }
 
-    fun convertOperatorCall(operatorCall: FirOperatorCall): IrExpression {
-        return operatorCall.convertWithOffsets { startOffset, endOffset ->
-            generateOperatorCall(startOffset, endOffset, operatorCall.operation, operatorCall.arguments)
+    fun convertEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall): IrExpression {
+        return equalityOperatorCall.convertWithOffsets { startOffset, endOffset ->
+            generateEqualityOperatorCall(startOffset, endOffset, equalityOperatorCall.operation, equalityOperatorCall.arguments)
         }
     }
 
@@ -84,16 +84,15 @@ internal class OperatorExpressionGenerator(
         }
     }
 
-    private fun generateOperatorCall(
+    private fun generateEqualityOperatorCall(
         startOffset: Int, endOffset: Int, operation: FirOperation, arguments: List<FirExpression>
     ): IrExpression = when (operation) {
-        FirOperation.EQ, FirOperation.NOT_EQ -> generateEqualityOperatorCall(startOffset, endOffset, operation, arguments)
-        FirOperation.IDENTITY, FirOperation.NOT_IDENTITY -> generateIdentityOperatorCall(startOffset, endOffset, operation, arguments)
-        FirOperation.EXCL -> visitor.convertToIrExpression(arguments[0]).negate(IrStatementOrigin.EXCL)
+        FirOperation.EQ, FirOperation.NOT_EQ -> transformEqualityOperatorCall(startOffset, endOffset, operation, arguments)
+        FirOperation.IDENTITY, FirOperation.NOT_IDENTITY -> transformIdentityOperatorCall(startOffset, endOffset, operation, arguments)
         else -> error("Unexpected operation: $operation")
     }
 
-    private fun generateEqualityOperatorCall(
+    private fun transformEqualityOperatorCall(
         startOffset: Int, endOffset: Int, operation: FirOperation, arguments: List<FirExpression>
     ): IrExpression {
         val origin = when (operation) {
@@ -117,7 +116,7 @@ internal class OperatorExpressionGenerator(
         }
     }
 
-    private fun generateIdentityOperatorCall(
+    private fun transformIdentityOperatorCall(
         startOffset: Int, endOffset: Int, operation: FirOperation, arguments: List<FirExpression>
     ): IrExpression {
         val origin = when (operation) {

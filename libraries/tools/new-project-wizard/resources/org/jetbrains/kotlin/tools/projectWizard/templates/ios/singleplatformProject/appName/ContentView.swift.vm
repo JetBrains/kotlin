@@ -1,0 +1,26 @@
+import SwiftUI
+#if (${sharedModuleName})
+import ${sharedModuleName}
+#end
+
+#if (${sharedModuleName})
+func greet() -> String {
+    return Greeting().greeting()
+}
+#end
+
+struct ContentView: View {
+    var body: some View {
+#if (${sharedModuleName})
+        Text(greet())
+#else
+        Text("Hello, World!")
+#end
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}

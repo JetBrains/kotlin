@@ -28,7 +28,7 @@ fun <T, R> Iterable<T>.fooMap(t: (T) -> Sequence<R>): List<R> {
 }
 
 fun test() {
-    val list = ubyteArrayOf(0u).<!AMBIGUITY!>fooMap<!> { <!INAPPLICABLE_CANDIDATE!>listOf<!>(<!UNRESOLVED_REFERENCE!>it<!>) }
+    val list = ubyteArrayOf(0u).<!AMBIGUITY!>fooMap<!> { <!NONE_APPLICABLE!>listOf<!>(<!UNRESOLVED_REFERENCE!>it<!>) }
     takeUByteList(list)
 }
 

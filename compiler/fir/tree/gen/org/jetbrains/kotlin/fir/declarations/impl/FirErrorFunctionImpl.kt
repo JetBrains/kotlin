@@ -62,7 +62,7 @@ internal class FirErrorFunctionImpl(
         transformReturnTypeRef(transformer, data)
         transformControlFlowGraphReference(transformer, data)
         transformValueParameters(transformer, data)
-        typeParameters.transformInplace(transformer, data)
+        transformTypeParameters(transformer, data)
         return this
     }
 
@@ -91,6 +91,11 @@ internal class FirErrorFunctionImpl(
     }
 
     override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
+        return this
+    }
+
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
+        typeParameters.transformInplace(transformer, data)
         return this
     }
 

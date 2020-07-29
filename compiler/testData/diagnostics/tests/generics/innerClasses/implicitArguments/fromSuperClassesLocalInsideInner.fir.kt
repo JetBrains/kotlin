@@ -52,7 +52,7 @@ class Outer<T> {
             var y = noParameters()
             y = noParameters()
 
-            y().foo().a() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><A<T, F, Any, Double, Short, Long>>() }
+            y().foo().a() checkType { _<A<T, F, Any, Double, Short, Long>>() }
             y().bar() <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><A<T, F, Any, Double, Short, Char>>() }
         }
     }

@@ -9,10 +9,12 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.lower.PrimaryConstructorLowering.*
+import org.jetbrains.kotlin.ir.backend.js.lower.PrimaryConstructorLowering.SYNTHETIC_PRIMARY_CONSTRUCTOR
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
@@ -23,6 +25,7 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.name.Name
 
 /**
  * Add ES6_INIT_BOX_PARAMETER for each constructor (except constructors
@@ -103,19 +106,19 @@ class ES6AddInternalParametersToConstructorPhase(val context: JsIrBackendContext
     private fun buildInitFunction(constructor: IrConstructor, irClass: IrClass): IrSimpleFunction {
         val functionName = "${irClass.name}_init"
 
-        return JsIrBuilder.buildFunction(
-            functionName,
-            context.irBuiltIns.unitType,
-            irClass,
-            Visibilities.PROTECTED,
-            Modality.FINAL,
-            constructor.isInline,
-            constructor.isExternal,
+        return context.irFactory.buildFun {
+            name = Name.identifier(functionName)
+            returnType = context.irBuiltIns.unitType
+            visibility = Visibilities.PROTECTED
+            modality = Modality.FINAL
+            isInline = constructor.isInline
+            isExternal = constructor.isExternal
             origin = ES6_SYNTHETIC_PRIMARY_INIT_FUNCTION
-        ).apply {
+        }.apply {
+            parent = irClass
             addValueParameter("\$this\$", context.dynamicType)
 
-            body = JsIrBuilder.buildBlockBody(constructor.body?.statements ?: emptyList())
+            body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, constructor.body?.statements.orEmpty())
 
             transformChildren(object : IrElementTransformerVoid() {
                 override fun visitGetValue(expression: IrGetValue): IrExpression {

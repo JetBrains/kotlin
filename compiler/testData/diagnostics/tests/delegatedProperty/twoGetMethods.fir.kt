@@ -3,7 +3,7 @@
 import kotlin.reflect.KProperty
 
 class A {
-    val c: Int by <!INAPPLICABLE_CANDIDATE!>Delegate()<!>
+    val c: Int by <!NONE_APPLICABLE!>Delegate()<!>
 }
 
 class Delegate {

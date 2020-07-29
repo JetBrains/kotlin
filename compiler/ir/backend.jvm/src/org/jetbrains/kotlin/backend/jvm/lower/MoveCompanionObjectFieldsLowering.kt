@@ -51,7 +51,7 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCon
     private fun IrClass.handle() {
         val newDeclarations = declarations.map {
             when (it) {
-                is IrProperty -> context.declarationFactory.getStaticBackingField(it)?.also { newField ->
+                is IrProperty -> context.cachedDeclarations.getStaticBackingField(it)?.also { newField ->
                     it.backingField = newField
                     newField.correspondingPropertySymbol = it.symbol
                 }
@@ -101,7 +101,7 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCon
             IrAnonymousInitializerImpl(startOffset, endOffset, origin, newSymbol, isStatic = true).apply {
                 parent = newParent
                 body = this@with.body
-                    .replaceThisByStaticReference(context.declarationFactory, oldParent, oldParent.thisReceiver!!)
+                    .replaceThisByStaticReference(context.cachedDeclarations, oldParent, oldParent.thisReceiver!!)
                     .patchDeclarationParents(newParent) as IrBlockBody
             }
         }
@@ -113,7 +113,7 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCon
             isConst = true
         }.also { property ->
             val oldField = oldProperty.backingField!!
-            property.backingField = buildField {
+            property.backingField = context.irFactory.buildField {
                 updateFrom(oldField)
                 name = oldField.name
                 isStatic = true
@@ -132,7 +132,7 @@ private class RemapObjectFieldAccesses(val context: JvmBackendContext) : FileLow
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 
     private fun IrField.remap(): IrField? =
-        correspondingPropertySymbol?.owner?.let(context.declarationFactory::getStaticBackingField)
+        correspondingPropertySymbol?.owner?.let(context.cachedDeclarations::getStaticBackingField)
 
     override fun visitGetField(expression: IrGetField): IrExpression =
         expression.symbol.owner.remap()?.let {

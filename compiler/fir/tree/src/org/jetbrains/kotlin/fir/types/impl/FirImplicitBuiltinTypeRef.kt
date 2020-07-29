@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.fir.withKind
+import org.jetbrains.kotlin.fir.fakeElement
 import org.jetbrains.kotlin.name.ClassId
 
 sealed class FirImplicitBuiltinTypeRef(
@@ -138,7 +138,7 @@ class FirImplicitKMutableProperty2TypeRef(
 fun FirImplicitBuiltinTypeRef.withFakeSource(kind: FirFakeSourceElementKind): FirImplicitBuiltinTypeRef {
     val source = source ?: return this
     if (source.kind == kind) return this
-    val newSource = source.withKind(kind)
+    val newSource = source.fakeElement(kind)
     return when (this) {
         is FirImplicitUnitTypeRef -> FirImplicitUnitTypeRef(newSource)
         is FirImplicitAnyTypeRef -> FirImplicitAnyTypeRef(newSource)

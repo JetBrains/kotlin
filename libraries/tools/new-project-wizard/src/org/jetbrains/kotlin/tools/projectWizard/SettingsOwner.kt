@@ -84,6 +84,5 @@ inline fun <reified E> SettingsOwner.enumSettingImpl(
     crossinline init: DropDownSettingType.Builder<E>.() -> Unit = {}
 ) where E : Enum<E>, E : DisplayableSettingItem = dropDownSetting<E>(title, neededAtPhase, enumParser()) {
     values = enumValues<E>().asList()
-    //
     init()
 }

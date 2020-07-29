@@ -36,7 +36,7 @@ FILE: test.kt
         lval bar: R|kotlin/CharSequence?| = R|<local>/x|?.{ $subj$.R|/SomeClass.bar| }
         when () {
             !=(R|<local>/bar|, Null(null)) ->  {
-                R|<local>/x|.R|/SomeClass.bar|.<Inapplicable(WRONG_RECEIVER): [kotlin/CharSequence.length]>#
+                R|<local>/x|.R|/SomeClass.bar|.<Inapplicable(WRONG_RECEIVER): kotlin/CharSequence.length>#
             }
         }
 

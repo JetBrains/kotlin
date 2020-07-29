@@ -1,6 +1,7 @@
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class DestructuredKt$test$1 {
+    // source: 'destructured.kt'
     field label: int
     inner (anonymous) class DestructuredKt$test$1
     method <init>(p0: kotlin.coroutines.Continuation): void
@@ -12,8 +13,9 @@ final class DestructuredKt$test$1 {
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class DestructuredKt$test$2 {
+    // source: 'destructured.kt'
     field label: int
-    private field p$0: kotlin.Pair
+    private synthetic field p$0: kotlin.Pair
     inner (anonymous) class DestructuredKt$test$2
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
@@ -24,8 +26,9 @@ final class DestructuredKt$test$2 {
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class DestructuredKt$test$3 {
+    // source: 'destructured.kt'
     field label: int
-    private field p$0: kotlin.Pair
+    private synthetic field p$0: kotlin.Pair
     inner (anonymous) class DestructuredKt$test$3
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
@@ -36,8 +39,9 @@ final class DestructuredKt$test$3 {
 @kotlin.coroutines.jvm.internal.DebugMetadata
 @kotlin.Metadata
 final class DestructuredKt$test$4 {
+    // source: 'destructured.kt'
     field label: int
-    private field p$0: kotlin.Pair
+    private synthetic field p$0: kotlin.Pair
     inner (anonymous) class DestructuredKt$test$4
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
@@ -47,6 +51,7 @@ final class DestructuredKt$test$4 {
 
 @kotlin.Metadata
 public final class DestructuredKt {
+    // source: 'destructured.kt'
     inner (anonymous) class DestructuredKt$test$1
     inner (anonymous) class DestructuredKt$test$2
     inner (anonymous) class DestructuredKt$test$3

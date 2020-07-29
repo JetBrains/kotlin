@@ -87,7 +87,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             invokeExpression.putValueArgument(i, getValue(vp))
         }
 
-        return IrBlockBodyImpl(
+        return context.irFactory.createBlockBody(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             listOf(
@@ -109,7 +109,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         val superInvokeFun = invokeFun.overriddenSymbols.single { it.owner.isSuspend == invokeFun.isSuspend }.owner
         val lambdaName = Name.identifier("${lambdaClass.name.asString()}\$lambda")
 
-        val lambdaDeclaration = buildFun {
+        val lambdaDeclaration = context.irFactory.buildFun {
             startOffset = invokeFun.startOffset
             endOffset = invokeFun.endOffset
             // Since box/unbox is done on declaration side in case of suspend function use the specified type
@@ -188,9 +188,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             statements.add(JsIrBuilder.buildReturn(factoryFunction.symbol, functionExpression, context.irBuiltIns.nothingType))
         }
 
-        return expression.run {
-            IrBlockBodyImpl(startOffset, endOffset, statements)
-        }
+        return context.irFactory.createBlockBody(expression.startOffset, expression.endOffset, statements)
     }
 
     private fun buildFactoryFunction(expression: IrConstructorCall): IrSimpleFunction {
@@ -200,7 +198,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
 
         val factoryName = Name.identifier("${lambdaClass.name.asString()}\$factory")
 
-        val factoryDeclaration = buildFun {
+        val factoryDeclaration = context.irFactory.buildFun {
             startOffset = expression.startOffset
             endOffset = expression.endOffset
             visibility = lambdaClass.visibility

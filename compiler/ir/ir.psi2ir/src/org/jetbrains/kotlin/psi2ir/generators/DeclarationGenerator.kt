@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrErrorDeclarationImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrTypeAliasImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.withScope
@@ -54,7 +52,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
             is KtScript ->
                 ScriptGenerator(this).generateScriptDeclaration(ktDeclaration)
             else ->
-                IrErrorDeclarationImpl(
+                context.irFactory.createErrorDeclaration(
                     ktDeclaration.startOffsetSkippingComments, ktDeclaration.endOffset,
                     getOrFail(BindingContext.DECLARATION_TO_DESCRIPTOR, ktDeclaration)
                 )
@@ -85,7 +83,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
     private fun generateTypeAliasDeclaration(ktTypeAlias: KtTypeAlias): IrTypeAlias =
         with(getOrFail(BindingContext.TYPE_ALIAS, ktTypeAlias)) {
             context.symbolTable.declareTypeAlias(this) { symbol ->
-                IrTypeAliasImpl(
+                context.irFactory.createTypeAlias(
                     ktTypeAlias.startOffsetSkippingComments, ktTypeAlias.endOffset, symbol,
                     name, visibility, expandedType.toIrType(), isActual, IrDeclarationOrigin.DEFINED
                 )

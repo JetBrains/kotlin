@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import groovy.lang.Closure
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.attributes.AttributeContainer
@@ -53,7 +54,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
 
     @Suppress("UNCHECKED_CAST")
     override val compileKotlinTaskProvider: TaskProvider<out KotlinCompile<T>>
-        get() = target.project.locateTask(compileKotlinTaskName)!!
+        get() = target.project.locateTask(compileKotlinTaskName) ?: throw GradleException("Couldn't locate  task $compileKotlinTaskName")
 
     // Don't declare this property in the constructor to avoid NPE
     // when an overriding property of a subclass is accessed instead.

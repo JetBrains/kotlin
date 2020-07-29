@@ -33,6 +33,7 @@ dependencies {
     builtinsApi("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion") { isTransitive = false }
     evaluateApi(project(":core:deserialization"))
     interpreterApi(project(":compiler:ir.tree"))
+    interpreterApi(project(":compiler:ir.tree.impl"))
 
     testCompile(builtinsSourceSet.output)
     testCompile(evaluateSourceSet.output)

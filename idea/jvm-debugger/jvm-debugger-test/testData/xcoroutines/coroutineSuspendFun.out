@@ -1,7 +1,7 @@
-LineBreakpoint created at coroutineSuspendFun.kt:29
+LineBreakpoint created at coroutineSuspendFun.kt:30
 Run Java
 Connected to the target VM
-coroutineSuspendFun.kt:29
+coroutineSuspendFun.kt:30
 Thread stack trace:
 	KotlinStackFrame c:!LINE_NUMBER!, CoroutineSuspendFunKt (continuation)
 		($completion, c, paramB)
@@ -17,7 +17,7 @@ CoroutineInfo: 1 coroutine RUNNING
 	CoroutineStackFrame run:!LINE_NUMBER!, DispatchedTask (kotlinx.coroutines)
 		($i$a$-withCoroutineContext-DispatchedTask$run$1, $i$f$withCoroutineContext, context, continuation, countOrElement$iv, delegate, exception, fatalException, job, oldValue$iv, state, taskContext, this)
 	CoroutineStackFrame processNextEvent:!LINE_NUMBER!, EventLoopImplBase (kotlinx.coroutines)
-		(delayed, this)
+		(delayed, task, this)
 	CoroutineStackFrame joinBlocking:!LINE_NUMBER!, BlockingCoroutine (kotlinx.coroutines)
 		(this)
 	CoroutineStackFrame runBlocking:!LINE_NUMBER!, BuildersKt__BuildersKt (kotlinx.coroutines)

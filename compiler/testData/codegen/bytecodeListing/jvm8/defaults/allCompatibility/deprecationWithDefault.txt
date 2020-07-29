@@ -1,15 +1,16 @@
 @kotlin.Metadata
 public final class Deprecated$DefaultImpls {
-    inner class Deprecated$DefaultImpls
+    // source: 'deprecationWithDefault.kt'
     public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method getProp(@org.jetbrains.annotations.NotNull p0: Deprecated): java.lang.String
     public deprecated static @java.lang.Deprecated method test(@org.jetbrains.annotations.NotNull p0: Deprecated): void
     public synthetic static method withDefault$default(p0: Deprecated, p1: java.lang.String, p2: int, p3: java.lang.Object): void
     public deprecated static @java.lang.Deprecated method withDefault(@org.jetbrains.annotations.NotNull p0: Deprecated, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
+    public final inner class Deprecated$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface Deprecated {
-    inner class Deprecated$DefaultImpls
+    // source: 'deprecationWithDefault.kt'
     public synthetic static method access$getProp$jd(p0: Deprecated): java.lang.String
     public synthetic static method access$test$jd(p0: Deprecated): void
     public synthetic static method access$withDefault$jd(p0: Deprecated, p1: java.lang.String): void
@@ -17,4 +18,5 @@ public interface Deprecated {
     public @java.lang.Deprecated method test(): void
     public synthetic static method withDefault$default(p0: Deprecated, p1: java.lang.String, p2: int, p3: java.lang.Object): void
     public @java.lang.Deprecated method withDefault(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public final inner class Deprecated$DefaultImpls
 }

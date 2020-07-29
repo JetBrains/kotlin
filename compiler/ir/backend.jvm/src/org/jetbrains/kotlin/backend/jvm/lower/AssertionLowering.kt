@@ -138,7 +138,7 @@ private fun IrBuilderWithScope.getJavaClass(backendContext: JvmBackendContext, i
     }
 
 fun IrClass.buildAssertionsDisabledField(backendContext: JvmBackendContext, topLevelClass: IrClass) =
-    buildField {
+    factory.buildField {
         name = Name.identifier(ASSERTIONS_DISABLED_FIELD_NAME)
         origin = JvmLoweredDeclarationOrigin.GENERATED_ASSERTION_ENABLED_FIELD
         visibility = JavaVisibilities.PACKAGE_VISIBILITY

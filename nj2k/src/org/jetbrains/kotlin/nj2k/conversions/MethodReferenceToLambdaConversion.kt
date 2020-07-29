@@ -32,19 +32,25 @@ class MethodReferenceToLambdaConversion(context: NewJ2kConverterContext) : Recur
             .safeAs<JKClassType>()
             ?.singleFunctionParameterTypes()
 
-        val receiverParameter = element.qualifier
+        val qualifierExpression = element.qualifier
             .nullIfStubExpression()
-            ?.safeAs<JKClassAccessExpression>()
-            ?.takeIf { symbol.safeAs<JKMethodSymbol>()?.isStatic == false && !element.isConstructorCall }
-            ?.let { classAccessExpression ->
+
+        val receiverParameter = if (symbol.safeAs<JKMethodSymbol>()?.isStatic == false && !element.isConstructorCall) {
+            val type = when (qualifierExpression) {
+                is JKTypeQualifierExpression -> qualifierExpression.type
+                is JKClassAccessExpression -> JKClassType(qualifierExpression.identifier)
+                else -> null
+            }
+            if (type != null) {
                 JKParameter(
                     JKTypeElement(
-                        parametersTypesByFunctionalInterface?.firstOrNull() ?: JKClassType(classAccessExpression.identifier)
+                        parametersTypesByFunctionalInterface?.firstOrNull() ?: type
                     ),
                     JKNameIdentifier(RECEIVER_NAME),
                     isVarArgs = false
                 )
-            }
+            } else null
+        } else null
 
         val explicitParameterTypesByFunctionalInterface =
             if (receiverParameter != null) parametersTypesByFunctionalInterface?.drop(1)

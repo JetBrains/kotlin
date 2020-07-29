@@ -24,7 +24,10 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetVariableImpl
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
@@ -84,7 +87,7 @@ class NullableFieldsDeclarationLowering(val backendContext: CommonBackendContext
         assert(!type.isPrimitiveType()) { "'lateinit' modifier is not allowed on primitive types" }
         val startOffset = getter.startOffset
         val endOffset = getter.endOffset
-        getter.body = IrBlockBodyImpl(startOffset, endOffset) {
+        getter.body = backendContext.irFactory.createBlockBody(startOffset, endOffset) {
             val irBuilder = backendContext.createIrBuilder(getter.symbol, startOffset, endOffset)
             irBuilder.run {
                 val resultVar = scope.createTmpVariable(
@@ -201,7 +204,7 @@ class LateinitUsageLowering(val backendContext: CommonBackendContext) : BodyLowe
 private fun CommonBackendContext.buildOrGetNullableField(originalField: IrField): IrField {
     if (originalField.type.isMarkedNullable()) return originalField
     return mapping.lateInitFieldToNullableField.getOrPut(originalField) {
-        buildField {
+        irFactory.buildField {
             updateFrom(originalField)
             type = originalField.type.makeNullable()
             name = originalField.name

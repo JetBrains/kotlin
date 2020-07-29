@@ -207,11 +207,11 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitNode(node)
     }
 
-    open fun visitOperatorCallNode(node: OperatorCallNode) {
+    open fun visitComparisonExpressionNode(node: ComparisonExpressionNode) {
         visitNode(node)
     }
 
-    open fun visitComparisonExpressionNode(node: ComparisonExpressionNode) {
+    open fun visitEqualityOperatorCallNode(node: EqualityOperatorCallNode) {
         visitNode(node)
     }
 
@@ -496,8 +496,8 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
         visitTypeOperatorCallNode(node)
     }
 
-    final override fun visitOperatorCallNode(node: OperatorCallNode, data: Nothing?) {
-        visitOperatorCallNode(node)
+    final override fun visitEqualityOperatorCallNode(node: EqualityOperatorCallNode, data: Nothing?) {
+        visitEqualityOperatorCallNode(node)
     }
 
     final override fun visitComparisonExpressionNode(node: ComparisonExpressionNode, data: Nothing?) {

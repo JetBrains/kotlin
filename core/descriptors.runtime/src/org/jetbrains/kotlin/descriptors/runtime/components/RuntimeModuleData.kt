@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.load.java.components.JavaPropertyInitializerEvaluato
 import org.jetbrains.kotlin.load.java.components.JavaResolverCache
 import org.jetbrains.kotlin.load.java.components.SignaturePropagator
 import org.jetbrains.kotlin.load.java.lazy.*
+import org.jetbrains.kotlin.load.java.typeEnhancement.JavaTypeEnhancement
 import org.jetbrains.kotlin.load.java.typeEnhancement.SignatureEnhancement
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.name.Name
@@ -116,7 +117,7 @@ fun makeLazyJavaPackageFragmentFromClassLoaderProvider(
         JavaPropertyInitializerEvaluator.DoNothing, SamConversionResolverImpl(storageManager, emptyList()), RuntimeSourceElementFactory,
         singleModuleClassResolver, packagePartProvider, SupertypeLoopChecker.EMPTY, LookupTracker.DO_NOTHING, module,
         ReflectionTypes(module, notFoundClasses), annotationTypeQualifierResolver,
-        SignatureEnhancement(annotationTypeQualifierResolver, Jsr305State.DISABLED),
+        SignatureEnhancement(annotationTypeQualifierResolver, Jsr305State.DISABLED, JavaTypeEnhancement(JavaResolverSettings.Default)),
         JavaClassesTracker.Default, JavaResolverSettings.Default, NewKotlinTypeChecker.Default
     )
 

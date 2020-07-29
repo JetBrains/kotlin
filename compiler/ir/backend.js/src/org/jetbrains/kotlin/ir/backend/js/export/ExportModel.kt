@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.export
 
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
@@ -45,7 +45,8 @@ class ExportedProperty(
     val isMember: Boolean = false,
     val isStatic: Boolean = false,
     val isAbstract: Boolean,
-    val ir: IrProperty
+    val irGetter: IrFunction?,
+    val irSetter: IrFunction?,
 ) : ExportedDeclaration()
 
 
@@ -95,6 +96,13 @@ sealed class ExportedType {
     class TypeParameter(val name: String) : ExportedType()
     class Nullable(val baseType: ExportedType) : ExportedType()
     class ErrorType(val comment: String) : ExportedType()
+    class TypeOf(val name: String) : ExportedType()
+
+    class InlineInterfaceType(
+        val members: List<ExportedDeclaration>
+    ) : ExportedType()
+
+    class IntersectionType(val lhs: ExportedType, val rhs: ExportedType) : ExportedType()
 
     fun withNullability(nullable: Boolean) =
         if (nullable) Nullable(this) else this

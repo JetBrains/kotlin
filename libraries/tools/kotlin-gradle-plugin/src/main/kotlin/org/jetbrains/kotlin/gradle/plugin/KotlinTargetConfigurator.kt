@@ -52,6 +52,7 @@ interface KotlinTargetConfigurator<KotlinTargetType : KotlinTarget> {
         configureCompilations(target)
         defineConfigurationsForTarget(target)
         configureArchivesAndComponent(target)
+        configureSourceSet(target)
         configureBuild(target)
         configurePlatformSpecificModel(target)
     }
@@ -61,6 +62,7 @@ interface KotlinTargetConfigurator<KotlinTargetType : KotlinTarget> {
     fun defineConfigurationsForTarget(target: KotlinTargetType)
     fun configureArchivesAndComponent(target: KotlinTargetType)
     fun configureBuild(target: KotlinTargetType)
+    fun configureSourceSet(target: KotlinTarget)
 
     fun configurePlatformSpecificModel(target: KotlinTargetType) = Unit
 }
@@ -106,17 +108,23 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         }
     }
 
-    override fun configureCompilationDefaults(target: KotlinTargetType) {
+    override fun configureSourceSet(target: KotlinTarget) {
         val project = target.project
 
         target.compilations.all { compilation ->
-            defineConfigurationsForCompilation(compilation)
-
             if (createDefaultSourceSets) {
                 project.kotlinExtension.sourceSets.maybeCreate(compilation.defaultSourceSetName).also { sourceSet ->
                     compilation.source(sourceSet) // also adds dependencies, requires the configurations for target and source set to exist at this point
                 }
             }
+        }
+    }
+
+    override fun configureCompilationDefaults(target: KotlinTargetType) {
+        val project = target.project
+
+        target.compilations.all { compilation ->
+            defineConfigurationsForCompilation(compilation)
 
             if (compilation is KotlinCompilationWithResources) {
                 configureResourceProcessing(compilation, project.files(Callable { compilation.allKotlinSourceSets.map { it.resources } }))

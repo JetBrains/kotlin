@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public final class Test {
+    // source: 'constructorsWithDefaultParameterValues.kt'
     private final field x: int
     private synthetic method <init>(p0: int): void
     public synthetic final static method box-impl(p0: int): Test

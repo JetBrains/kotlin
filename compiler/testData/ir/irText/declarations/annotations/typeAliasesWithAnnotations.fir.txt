@@ -1,5 +1,7 @@
 FILE fqName:<root> fileName:/typeAliasesWithAnnotations.kt
   TYPEALIAS name:TestTypeAlias visibility:public expandedType:kotlin.String
+    annotations:
+      TestAnn(x = 'TestTypeAlias')
   CLASS ANNOTATION_CLASS name:TestAnn modality:FINAL visibility:public superTypes:[kotlin.Annotation]
     annotations:
       Target(allowedTargets = [GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:TYPEALIAS' type=kotlin.annotation.AnnotationTarget])

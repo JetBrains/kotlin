@@ -644,6 +644,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/invokeAmbiguity.kt");
         }
 
+        @TestMetadata("invokeWithReceiverAndArgument.kt")
+        public void testInvokeWithReceiverAndArgument() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/invokeWithReceiverAndArgument.kt");
+        }
+
         @TestMetadata("objectInvoke.kt")
         public void testObjectInvoke() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/objectInvoke.kt");
@@ -652,6 +657,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         @TestMetadata("safeCallOnTypeAlias.kt")
         public void testSafeCallOnTypeAlias() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/safeCallOnTypeAlias.kt");
+        }
+
+        @TestMetadata("superAny.kt")
+        public void testSuperAny() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/superAny.kt");
         }
 
         @TestMetadata("syntheticPropertiesWrongImplicitReceiver.kt")
@@ -884,6 +894,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         @TestMetadata("annotationClassMember.kt")
         public void testAnnotationClassMember() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/annotationClassMember.kt");
+        }
+
+        @TestMetadata("anonymousObjectByDelegate.kt")
+        public void testAnonymousObjectByDelegate() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/anonymousObjectByDelegate.kt");
         }
 
         @TestMetadata("incompatibleModifiers.kt")
@@ -2346,6 +2361,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         @TestMetadata("bareWithSubjectTypeAlias.kt")
         public void testBareWithSubjectTypeAlias() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/types/bareWithSubjectTypeAlias.kt");
+        }
+
+        @TestMetadata("capturedParametersOfInnerClasses.kt")
+        public void testCapturedParametersOfInnerClasses() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/types/capturedParametersOfInnerClasses.kt");
         }
     }
 

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
-
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrScriptImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazySymbolTable
 import org.jetbrains.kotlin.ir.descriptors.WrappedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedFunctionDescriptorWithContainerSource
@@ -74,8 +74,9 @@ interface ReferenceSymbolTable {
     fun leaveScope(owner: IrDeclaration)
 }
 
-open class SymbolTable(
+class SymbolTable(
     val signaturer: IdSignatureComposer,
+    val irFactory: IrFactory,
     val nameProvider: NameProvider = NameProvider.DEFAULT
 ) : ReferenceSymbolTable {
 
@@ -374,7 +375,7 @@ open class SymbolTable(
         origin: IrDeclarationOrigin,
         descriptor: ClassDescriptor
     ): IrAnonymousInitializer =
-        IrAnonymousInitializerImpl(
+        irFactory.createAnonymousInitializer(
             startOffset, endOffset, origin,
             IrAnonymousInitializerSymbolImpl(descriptor)
         )
@@ -524,7 +525,7 @@ open class SymbolTable(
     fun declareEnumEntry(
         startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor,
         factory: (IrEnumEntrySymbol) -> IrEnumEntry = {
-            IrEnumEntryImpl(startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor))
+            irFactory.createEnumEntry(startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor))
         }
     ): IrEnumEntry =
         enumEntrySymbolTable.declare(
@@ -581,7 +582,7 @@ open class SymbolTable(
         type: IrType,
         visibility: Visibility? = null,
         fieldFactory: (IrFieldSymbol) -> IrField = {
-            IrFieldImpl(
+            irFactory.createField(
                 startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor), type,
                 visibility ?: it.descriptor.visibility, !it.descriptor.isVar, it.descriptor.isEffectivelyExternal(),
                 it.descriptor.dispatchReceiverParameter == null
@@ -630,6 +631,7 @@ open class SymbolTable(
     val propertyTable = HashMap<PropertyDescriptor, IrProperty>()
 
     override fun referenceProperty(descriptor: PropertyDescriptor, generate: () -> IrProperty): IrProperty =
+        @Suppress("DEPRECATION")
         propertyTable.getOrPut(descriptor, generate)
 
     private fun createPropertySymbol(descriptor: PropertyDescriptor): IrPropertySymbol {
@@ -647,7 +649,7 @@ open class SymbolTable(
         descriptor: PropertyDescriptor,
         isDelegated: Boolean = descriptor.isDelegated,
         propertyFactory: (IrPropertySymbol) -> IrProperty = { symbol ->
-            IrPropertyImpl(
+            irFactory.createProperty(
                 startOffset, endOffset, origin, symbol, isDelegated = isDelegated,
                 name = nameProvider.nameForDeclaration(descriptor),
                 visibility = descriptor.visibility,
@@ -830,7 +832,7 @@ open class SymbolTable(
         origin: IrDeclarationOrigin,
         descriptor: TypeParameterDescriptor,
         typeParameterFactory: (IrTypeParameterSymbol) -> IrTypeParameter = {
-            IrTypeParameterImpl(
+            irFactory.createTypeParameter(
                 startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor),
                 it.descriptor.index, it.descriptor.isReified, it.descriptor.variance
             )
@@ -858,7 +860,7 @@ open class SymbolTable(
         origin: IrDeclarationOrigin,
         descriptor: TypeParameterDescriptor,
         typeParameterFactory: (IrTypeParameterSymbol) -> IrTypeParameter = {
-            IrTypeParameterImpl(
+            irFactory.createTypeParameter(
                 startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor),
                 it.descriptor.index, it.descriptor.isReified, it.descriptor.variance
             )
@@ -890,7 +892,7 @@ open class SymbolTable(
         type: IrType,
         varargElementType: IrType? = null,
         valueParameterFactory: (IrValueParameterSymbol) -> IrValueParameter = {
-            IrValueParameterImpl(
+            irFactory.createValueParameter(
                 startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor),
                 descriptor.indexOrMinusOne, type, varargElementType, descriptor.isCrossinline, descriptor.isNoinline
             )
@@ -968,7 +970,7 @@ open class SymbolTable(
             descriptor,
             { IrLocalDelegatedPropertySymbolImpl(descriptor) },
         ) {
-            IrLocalDelegatedPropertyImpl(
+            irFactory.createLocalDelegatedProperty(
                 startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor), type, descriptor.isVar
             ).apply {
                 metadata = MetadataSource.LocalDelegatedProperty(descriptor)

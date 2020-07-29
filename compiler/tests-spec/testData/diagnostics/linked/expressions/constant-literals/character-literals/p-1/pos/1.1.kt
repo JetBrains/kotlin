@@ -6,7 +6,7 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SPEC VERSION: 0.1-218
+ * SPEC VERSION: 0.1-435
  * MAIN LINK: expressions, constant-literals, character-literals -> paragraph 1 -> sentence 1
  * PRIMARY LINKS: expressions, constant-literals, character-literals -> paragraph 1 -> sentence 2
  * expressions, constant-literals, character-literals -> paragraph 2 -> sentence 1

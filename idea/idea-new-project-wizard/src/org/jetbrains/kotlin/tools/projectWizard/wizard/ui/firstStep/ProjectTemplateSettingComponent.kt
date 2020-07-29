@@ -23,7 +23,7 @@ import javax.swing.JComponent
 class ProjectTemplateSettingComponent(
     context: Context
 ) : SettingComponent<ProjectTemplate, DropDownSettingType<ProjectTemplate>>(
-    ProjectTemplatesPlugin::template.reference,
+    ProjectTemplatesPlugin.template.reference,
     context
 ) {
     override val validationIndicator: ValidationIndicator? get() = null
@@ -58,7 +58,7 @@ class ProjectTemplateSettingComponent(
 
     override fun onValueUpdated(reference: SettingReference<*, *>?) {
         super.onValueUpdated(reference)
-        if (reference == ProjectTemplatesPlugin::template.reference) {
+        if (reference == ProjectTemplatesPlugin.template.reference) {
             applySelectedTemplate()
             value?.let { template ->
                 list.setSelectedValue(template, true)
@@ -87,6 +87,7 @@ private val ProjectTemplate.icon: Icon
         FrontendApplicationProjectTemplate -> KotlinIcons.Wizard.JS
         MultiplatformMobileApplicationProjectTemplate -> KotlinIcons.Wizard.MULTIPLATFORM_MOBILE
         MultiplatformMobileLibraryProjectTemplate -> KotlinIcons.Wizard.MULTIPLATFORM_MOBILE_LIBRARY
+        NodeJsApplicationProjectTemplate -> KotlinIcons.Wizard.NODE_JS
     }
 
 class TemplateDescriptionComponent : Component() {

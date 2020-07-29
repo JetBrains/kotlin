@@ -41,7 +41,7 @@ digraph safeCallAndEqualityToBool_kt {
                     13 [label="Function call: $subj$.R|/check|()"];
                     14 [label="Exit safe call"];
                     15 [label="Const: Boolean(true)"];
-                    16 [label="Operator =="];
+                    16 [label="Equality operator =="];
                     17 [label="Exit when branch condition"];
                 }
                 subgraph cluster_6 {
@@ -54,7 +54,7 @@ digraph safeCallAndEqualityToBool_kt {
                     color=blue
                     21 [label="Enter block"];
                     22 [label="Access variable R|<local>/s|"];
-                    23 [label="Access variable <Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#"];
+                    23 [label="Access variable <Inapplicable(WRONG_RECEIVER): kotlin/String.length>#"];
                     24 [label="Exit block"];
                 }
                 25 [label="Exit when branch result"];
@@ -118,7 +118,7 @@ digraph safeCallAndEqualityToBool_kt {
                     41 [label="Function call: $subj$.R|/check|()"];
                     42 [label="Exit safe call"];
                     43 [label="Const: Boolean(false)"];
-                    44 [label="Operator =="];
+                    44 [label="Equality operator =="];
                     45 [label="Exit when branch condition"];
                 }
                 subgraph cluster_13 {
@@ -131,7 +131,7 @@ digraph safeCallAndEqualityToBool_kt {
                     color=blue
                     49 [label="Enter block"];
                     50 [label="Access variable R|<local>/s|"];
-                    51 [label="Access variable <Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#"];
+                    51 [label="Access variable <Inapplicable(WRONG_RECEIVER): kotlin/String.length>#"];
                     52 [label="Exit block"];
                 }
                 53 [label="Exit when branch result"];
@@ -195,7 +195,7 @@ digraph safeCallAndEqualityToBool_kt {
                     69 [label="Function call: $subj$.R|/check|()"];
                     70 [label="Exit safe call"];
                     71 [label="Const: Boolean(true)"];
-                    72 [label="Operator !="];
+                    72 [label="Equality operator !="];
                     73 [label="Exit when branch condition"];
                 }
                 subgraph cluster_20 {
@@ -217,7 +217,7 @@ digraph safeCallAndEqualityToBool_kt {
                     color=blue
                     83 [label="Enter block"];
                     84 [label="Access variable R|<local>/s|"];
-                    85 [label="Access variable <Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#"];
+                    85 [label="Access variable <Inapplicable(WRONG_RECEIVER): kotlin/String.length>#"];
                     86 [label="Exit block"];
                 }
                 87 [label="Exit when branch result"];
@@ -272,7 +272,7 @@ digraph safeCallAndEqualityToBool_kt {
                     97 [label="Function call: $subj$.R|/check|()"];
                     98 [label="Exit safe call"];
                     99 [label="Const: Boolean(false)"];
-                    100 [label="Operator !="];
+                    100 [label="Equality operator !="];
                     101 [label="Exit when branch condition"];
                 }
                 subgraph cluster_27 {
@@ -294,7 +294,7 @@ digraph safeCallAndEqualityToBool_kt {
                     color=blue
                     111 [label="Enter block"];
                     112 [label="Access variable R|<local>/s|"];
-                    113 [label="Access variable <Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#"];
+                    113 [label="Access variable <Inapplicable(WRONG_RECEIVER): kotlin/String.length>#"];
                     114 [label="Exit block"];
                 }
                 115 [label="Exit when branch result"];

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -88,9 +87,9 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
     private object EnumExhaustivenessVisitor : FirVisitor<Unit, EnumExhaustivenessData>() {
         override fun visitElement(element: FirElement, data: EnumExhaustivenessData) {}
 
-        override fun visitOperatorCall(operatorCall: FirOperatorCall, data: EnumExhaustivenessData) {
-            if (operatorCall.operation == FirOperation.EQ) {
-                when (val argument = operatorCall.arguments[1]) {
+        override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: EnumExhaustivenessData) {
+            if (equalityOperatorCall.operation.let { it == FirOperation.EQ || it == FirOperation.IDENTITY }) {
+                when (val argument = equalityOperatorCall.arguments[1]) {
                     is FirConstExpression<*> -> {
                         if (argument.value == null) {
                             data.containsNull = true
@@ -173,9 +172,9 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             }
         }
 
-        override fun visitOperatorCall(operatorCall: FirOperatorCall, data: SealedExhaustivenessData) {
-            if (operatorCall.operation == FirOperation.EQ) {
-                when (val argument = operatorCall.arguments[1]) {
+        override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: SealedExhaustivenessData) {
+            if (equalityOperatorCall.operation.let { it == FirOperation.EQ || it == FirOperation.IDENTITY }) {
+                when (val argument = equalityOperatorCall.arguments[1]) {
                     is FirConstExpression<*> -> {
                         if (argument.value == null) {
                             data.containsNull = true
@@ -220,9 +219,9 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
     private object BooleanExhaustivenessVisitor : FirVisitor<Unit, BooleanExhaustivenessFlags>() {
         override fun visitElement(element: FirElement, data: BooleanExhaustivenessFlags) {}
 
-        override fun visitOperatorCall(operatorCall: FirOperatorCall, data: BooleanExhaustivenessFlags) {
-            if (operatorCall.operation == FirOperation.EQ) {
-                val argument = operatorCall.arguments[1]
+        override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: BooleanExhaustivenessFlags) {
+            if (equalityOperatorCall.operation.let { it == FirOperation.EQ || it == FirOperation.IDENTITY }) {
+                val argument = equalityOperatorCall.arguments[1]
                 if (argument is FirConstExpression<*>) {
                     when (argument.value) {
                         true -> data.containsTrue = true

@@ -119,8 +119,8 @@ fun main() {
      * K <: (A) -> Unit -> TypeVariable(_RP1) >: A
      * K >: (C) -> TypeVariable(_R) -> TypeVariable(_RP1) <: C
      */
-    val x12 = <!INAPPLICABLE_CANDIDATE!>selectC<!>(id { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: it"), UNRESOLVED_REFERENCE!>it<!> }, id { x: B -> })
-    val x13 = <!INAPPLICABLE_CANDIDATE!>selectA<!>(id { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: it"), UNRESOLVED_REFERENCE!>it<!> }, id { x: C -> })
+    val x12 = <!INAPPLICABLE_CANDIDATE!>selectC<!>(id { <!DEBUG_INFO_EXPRESSION_TYPE("C")!>it<!> }, id { x: B -> })
+    val x13 = <!INAPPLICABLE_CANDIDATE!>selectA<!>(id { <!DEBUG_INFO_EXPRESSION_TYPE("A")!>it<!> }, id { x: C -> })
     val x14 = selectC(id { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: it"), UNRESOLVED_REFERENCE!>it<!> }, id { x: A -> }, { x -> x })
     val x15 = selectC(id { <!DEBUG_INFO_EXPRESSION_TYPE("C")!>it<!> }, { x: A -> }, id { x -> x })
     /*
@@ -152,7 +152,7 @@ fun main() {
     select(id(fun String.(x: String) {}), id(fun(x: String, y: String) { }), { x: String, y: String -> x })
     // Convert to extension lambda is impossible because the lambda parameter types aren't specified explicitly
     select(id(fun String.(x: String) {}), id(fun(x: String, y: String) { }), { x, y -> x })
-    <!INAPPLICABLE_CANDIDATE!>select<!>(<!INAPPLICABLE_CANDIDATE!>id<!>(id(fun(x: String, y: String) { }), fun String.(x: String) {}), { x, y -> x })
+    select(<!INAPPLICABLE_CANDIDATE!>id<!>(id(fun(x: String, y: String) { }), fun String.(x: String) {}), { x, y -> x })
     val x26: Int.(String) -> Int = fun (x: String) = 10 // it must be error, see KT-38439
     // Receiver must be specified in anonymous function declaration
     val x27: Int.(String) -> Int = id(fun (x: String) = 10)

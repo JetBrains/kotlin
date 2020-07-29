@@ -1,59 +1,67 @@
 @kotlin.Metadata
 public final class TestInternalCompanionInClass$Companion {
-    inner class TestInternalCompanionInClass$Companion
+    // source: 'companionObjectVisibility_after.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final inner class TestInternalCompanionInClass$Companion
 }
 
 @kotlin.Metadata
 public final class TestInternalCompanionInClass {
+    // source: 'companionObjectVisibility_after.kt'
     public final static @org.jetbrains.annotations.NotNull field Companion: TestInternalCompanionInClass$Companion
-    inner class TestInternalCompanionInClass$Companion
     static method <clinit>(): void
     public method <init>(): void
+    public final inner class TestInternalCompanionInClass$Companion
 }
 
 @kotlin.Metadata
 final class TestPrivateCompanionInClass$Companion {
-    inner class TestPrivateCompanionInClass$Companion
+    // source: 'companionObjectVisibility_after.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    private final inner class TestPrivateCompanionInClass$Companion
 }
 
 @kotlin.Metadata
 public final class TestPrivateCompanionInClass {
+    // source: 'companionObjectVisibility_after.kt'
     private final static @org.jetbrains.annotations.NotNull field Companion: TestPrivateCompanionInClass$Companion
-    inner class TestPrivateCompanionInClass$Companion
     static method <clinit>(): void
     public method <init>(): void
+    private final inner class TestPrivateCompanionInClass$Companion
 }
 
 @kotlin.Metadata
 final class TestPrivateCompanionInInterface$Companion {
+    // source: 'companionObjectVisibility_after.kt'
     synthetic final static field $$INSTANCE: TestPrivateCompanionInInterface$Companion
-    inner class TestPrivateCompanionInInterface$Companion
     static method <clinit>(): void
     private method <init>(): void
+    public final inner class TestPrivateCompanionInInterface$Companion
 }
 
 @kotlin.Metadata
 public interface TestPrivateCompanionInInterface {
+    // source: 'companionObjectVisibility_after.kt'
     public synthetic final static @org.jetbrains.annotations.NotNull field Companion: TestPrivateCompanionInInterface$Companion
-    inner class TestPrivateCompanionInInterface$Companion
     static method <clinit>(): void
+    public final inner class TestPrivateCompanionInInterface$Companion
 }
 
 @kotlin.Metadata
 public final class TestProtectedCompanionInClass$Companion {
-    inner class TestProtectedCompanionInClass$Companion
+    // source: 'companionObjectVisibility_after.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    protected final inner class TestProtectedCompanionInClass$Companion
 }
 
 @kotlin.Metadata
 public class TestProtectedCompanionInClass {
+    // source: 'companionObjectVisibility_after.kt'
     protected final static @org.jetbrains.annotations.NotNull field Companion: TestProtectedCompanionInClass$Companion
-    inner class TestProtectedCompanionInClass$Companion
     static method <clinit>(): void
     public method <init>(): void
+    protected final inner class TestProtectedCompanionInClass$Companion
 }

@@ -236,7 +236,7 @@ class CoroutineCodegenForLambda private constructor(
             val fieldInfo = parameter.getFieldInfoForCoroutineLambdaParameter()
             v.newField(
                 OtherOrigin(parameter),
-                Opcodes.ACC_PRIVATE,
+                Opcodes.ACC_PRIVATE + Opcodes.ACC_SYNTHETIC,
                 fieldInfo.fieldName,
                 fieldInfo.fieldType.descriptor, null, null
             )

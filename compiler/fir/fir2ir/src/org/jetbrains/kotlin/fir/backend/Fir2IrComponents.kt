@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.generators.CallAndReferenceGenerator
 import org.jetbrains.kotlin.fir.backend.generators.FakeOverrideGenerator
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
@@ -17,6 +18,7 @@ interface Fir2IrComponents {
     val scopeSession: ScopeSession
     val symbolTable: SymbolTable
     val irBuiltIns: IrBuiltIns
+    val irFactory: IrFactory
     val classifierStorage: Fir2IrClassifierStorage
     val declarationStorage: Fir2IrDeclarationStorage
     val typeConverter: Fir2IrTypeConverter

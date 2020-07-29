@@ -11,14 +11,7 @@
  * NUMBER: 1
  * DESCRIPTION: check unsafe prefix decrement expression call for an assignable expression
  */
-class A() {
-    var i = 0
 
-    operator fun dec(): A {
-        this.i--
-        return this
-    }
-}
 
 // TESTCASE NUMBER: 1
 
@@ -32,6 +25,15 @@ class Case1() {
     var a: A = A()
 }
 
+class A() {
+    var i = 0
+
+    operator fun dec(): A {
+        this.i--
+        return this
+    }
+}
+
 // TESTCASE NUMBER: 2
 
 fun case2() {
@@ -40,5 +42,14 @@ fun case2() {
 }
 
 class Case2() {
-    val a = A()
+    val a = A2()
+}
+
+class A2() {
+    var i = 0
+
+    operator fun dec(): A2 {
+        this.i--
+        return this
+    }
 }

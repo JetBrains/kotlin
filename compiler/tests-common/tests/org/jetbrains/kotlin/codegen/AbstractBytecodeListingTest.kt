@@ -146,6 +146,9 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
         }
     }
 
+    private fun getModifiers(target: ModifierTarget, access: Int) =
+        MODIFIERS.filter { it.hasModifier(access, target) }.joinToString(separator = " ") { it.text }
+
     private fun classOrInterface(access: Int): String {
         return when {
             access and ACC_ANNOTATION != 0 -> "annotation class"
@@ -175,6 +178,14 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
                 append("}")
             }
         }.toString()
+
+    override fun visitSource(source: String?, debug: String?) {
+        if (source != null) {
+            declarationsInsideClass.add(Declaration("// source: '$source'"))
+        } else {
+            declarationsInsideClass.add(Declaration("// source: null"))
+        }
+    }
 
     override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
         if (!filter.shouldWriteMethod(access, name, desc)) {
@@ -266,15 +277,21 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
         if (!filter.shouldWriteInnerClass(name)) {
             return
         }
-        if (innerName == null) {
-            assertNull(outerName, "Anonymous classes should have neither innerName nor outerName. Name=$name, outerName=$outerName")
-            declarationsInsideClass.add(Declaration("inner (anonymous) class $name"))
-        } else if (outerName == null) {
-            declarationsInsideClass.add(Declaration("inner (local) class $name $innerName"))
-        } else if (name == "$outerName$$innerName") {
-            declarationsInsideClass.add(Declaration("inner class $name"))
-        } else {
-            declarationsInsideClass.add(Declaration("inner (unrecognized) class $name $outerName $innerName"))
+
+        when {
+            innerName == null -> {
+                assertNull(outerName, "Anonymous classes should have neither innerName nor outerName. Name=$name, outerName=$outerName")
+                declarationsInsideClass.add(Declaration("inner (anonymous) class $name"))
+            }
+            outerName == null -> {
+                declarationsInsideClass.add(Declaration("inner (local) class $name $innerName"))
+            }
+            name == "$outerName$$innerName" -> {
+                declarationsInsideClass.add(Declaration("${getModifiers(ModifierTarget.CLASS, access)} inner class $name"))
+            }
+            else -> {
+                declarationsInsideClass.add(Declaration("inner (unrecognized) class $name $outerName $innerName"))
+            }
         }
     }
 }

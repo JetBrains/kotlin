@@ -74,7 +74,7 @@ private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendCo
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         declaration.overriddenSymbols = declaration.overriddenSymbols.map { symbol ->
             if (symbol.owner.findInterfaceImplementation(context.state.jvmDefaultMode) != null)
-                context.declarationFactory.getDefaultImplsRedirection(symbol.owner).symbol
+                context.cachedDeclarations.getDefaultImplsRedirection(symbol.owner).symbol
             else symbol
         }
         super.visitSimpleFunction(declaration)
@@ -84,10 +84,10 @@ private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendCo
         interfaceImplementation: IrSimpleFunction,
         classOverride: IrSimpleFunction
     ): IrSimpleFunction {
-        val irFunction = context.declarationFactory.getDefaultImplsRedirection(classOverride)
+        val irFunction = context.cachedDeclarations.getDefaultImplsRedirection(classOverride)
 
         val superMethod = firstSuperMethodFromKotlin(irFunction, interfaceImplementation).owner
-        val defaultImplFun = context.declarationFactory.getDefaultImplsFunction(superMethod)
+        val defaultImplFun = context.cachedDeclarations.getDefaultImplsFunction(superMethod)
         context.createIrBuilder(irFunction.symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET).apply {
             irFunction.body = irBlockBody {
                 +irReturn(
@@ -130,7 +130,7 @@ private class InterfaceSuperCallsLowering(val context: JvmBackendContext) : IrEl
         val superCallee = expression.symbol.owner as IrSimpleFunction
         if (superCallee.isDefinitelyNotDefaultImplsMethod(context.state.jvmDefaultMode)) return super.visitCall(expression)
 
-        val redirectTarget = context.declarationFactory.getDefaultImplsFunction(superCallee)
+        val redirectTarget = context.cachedDeclarations.getDefaultImplsFunction(superCallee)
         val newCall = createDelegatingCallWithPlaceholderTypeArguments(expression, redirectTarget, context.irBuiltIns)
         return super.visitCall(newCall)
     }
@@ -158,7 +158,7 @@ private class InterfaceDefaultCallsLowering(val context: JvmBackendContext) : Ir
             return super.visitCall(expression)
         }
 
-        val redirectTarget = context.declarationFactory.getDefaultImplsFunction(callee as IrSimpleFunction)
+        val redirectTarget = context.cachedDeclarations.getDefaultImplsFunction(callee as IrSimpleFunction)
 
         // InterfaceLowering bridges from DefaultImpls in compatibility mode -- if that's the case,
         // this phase will inadvertently cause a recursive loop as the bridge on the DefaultImpls

@@ -404,7 +404,7 @@ digraph flowFromInplaceLambda_kt {
             142 [label="Function call: R|/select|<R|kotlin/Int|>(...)"];
             143 [label="Variable declaration: lval a: R|kotlin/Int|"];
             144 [label="Access variable R|<local>/x|"];
-            145 [label="Function call: <Inapplicable(INAPPLICABLE): [/takeInt]>#(...)"];
+            145 [label="Function call: <Inapplicable(INAPPLICABLE): /takeInt>#(...)"];
             146 [label="Access variable R|<local>/y|"];
             147 [label="Function call: R|/takeInt|(...)"];
             148 [label="Access variable R|<local>/a|"];

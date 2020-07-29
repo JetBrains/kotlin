@@ -3,7 +3,6 @@
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 // WITH_COROUTINES
-// TODO: Merge the test with debuggerMetadata when KT-28016 is fixed, particulary, do not spill 0, since it is constant.
 
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "CANNOT_OVERRIDE_INVISIBLE_MEMBER")
 
@@ -45,6 +44,7 @@ suspend fun named(): String {
     val s8 = ""
     val s9 = ""
     val map = getSpilledToVariable().toMap()
+    println(s1 + s2 + s3 + s4 + s5 + s6 + s7 + s8 + s9)
     return map["L$0"] + map["L$1"] + map["L$2"] + map["L$3"] + map["L$4"] + map["L$5"] + map["L$6"] + map["L$7"] + map["L$8"]
 }
 
@@ -52,14 +52,17 @@ suspend fun suspended() {
     dummy()
     val ss = ""
     suspendHere()
+    println(ss)
 }
 
 suspend fun multipleLocalsInOneSlot() {
     for (first in 0 until 1) {
         suspendHere()
+        println(first)
     }
     for (second in 0 until 1) {
         suspendHere()
+        println(second)
     }
 }
 
@@ -79,6 +82,7 @@ fun box(): String {
         dummy()
         val a = ""
         res = getSpilledToVariable().toMap()["L$0"] ?: "lambda fail"
+        println(a)
     }
     if (res != "a") {
         return "" + res

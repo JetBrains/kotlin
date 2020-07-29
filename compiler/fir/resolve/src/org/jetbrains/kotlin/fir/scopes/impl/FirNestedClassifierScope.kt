@@ -7,10 +7,15 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.Name
 
 class FirNestedClassifierScope(val klass: FirClass<*>) : FirScope() {
@@ -31,6 +36,13 @@ class FirNestedClassifierScope(val klass: FirClass<*>) : FirScope() {
         processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
     ) {
         val matchedClass = classIndex[name] ?: return
-        processor(matchedClass, ConeSubstitutor.Empty)
+        val substitution = klass.typeParameters.associate {
+            it.symbol to it.toConeType()
+        }
+        processor(matchedClass, ConeSubstitutorByMap(substitution))
     }
+
+    fun getClassifierByName(name: Name): FirRegularClassSymbol? = classIndex[name]
 }
+
+fun FirTypeParameterRef.toConeType(): ConeKotlinType = ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(symbol), isNullable = false)

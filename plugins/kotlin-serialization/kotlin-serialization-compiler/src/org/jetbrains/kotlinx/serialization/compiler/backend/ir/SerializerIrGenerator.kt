@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrAnonymousInitializerImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
@@ -75,15 +74,15 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
             }
         }
 
-        val annonimousInit = irClass.run {
+        val anonymousInit = irClass.run {
             val symbol = IrAnonymousInitializerSymbolImpl(descriptor)
-            IrAnonymousInitializerImpl(startOffset, endOffset, SERIALIZABLE_PLUGIN_ORIGIN, symbol).also {
+            irClass.factory.createAnonymousInitializer(startOffset, endOffset, SERIALIZABLE_PLUGIN_ORIGIN, symbol).also {
                 it.parent = this
                 declarations.add(it)
             }
         }
 
-        annonimousInit.buildWithScope { initIrBody ->
+        anonymousInit.buildWithScope { initIrBody ->
             compilerContext.symbolTable.withReferenceScope(initIrBody.descriptor) {
                 initIrBody.body =
                     DeclarationIrBuilder(compilerContext, initIrBody.symbol, initIrBody.startOffset, initIrBody.endOffset).irBlockBody {

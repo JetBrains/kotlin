@@ -163,7 +163,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
     // but unfortunately this is a special case in the old backend. The bridge method is not marked as such and does not follow the normal
     // visibility rules for bridge methods.
     private fun createBridgeDeclaration(source: IrSimpleFunction, mangledName: Name) =
-        buildFun {
+        context.irFactory.buildFun {
             updateFrom(source)
             name = mangledName
             returnType = source.returnType
@@ -455,10 +455,10 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         valueMap[expression.symbol]?.let {
             return IrSetVariableImpl(
                 expression.startOffset, expression.endOffset,
-                it.type, it.symbol as IrVariableSymbol, expression.origin
-            ).apply {
-                value = expression.value.transform(this@JvmInlineClassLowering, null)
-            }
+                it.type, it.symbol as IrVariableSymbol,
+                expression.value.transform(this@JvmInlineClassLowering, null),
+                expression.origin
+            )
         }
         return super.visitSetVariable(expression)
     }

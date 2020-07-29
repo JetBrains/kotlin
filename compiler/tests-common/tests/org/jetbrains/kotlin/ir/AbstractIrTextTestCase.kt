@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
@@ -68,7 +69,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
 
         val stubGenerator = DeclarationStubGenerator(
             irModule.descriptor,
-            SymbolTable(signaturer), // TODO
+            SymbolTable(signaturer, IrFactoryImpl), // TODO
             myEnvironment.configuration.languageVersionSettings
         )
 

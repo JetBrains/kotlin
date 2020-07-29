@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
 import org.jetbrains.kotlin.load.java.components.JavaPropertyInitializerEvaluator
 import org.jetbrains.kotlin.load.java.components.JavaResolverCache
-import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
 import org.jetbrains.kotlin.load.java.components.SignaturePropagator
 import org.jetbrains.kotlin.load.java.lazy.types.JavaTypeResolver
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElementFactory
@@ -40,6 +39,7 @@ import org.jetbrains.kotlin.load.java.typeEnhancement.SignatureEnhancement
 import org.jetbrains.kotlin.load.kotlin.DeserializedDescriptorResolver
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
+import org.jetbrains.kotlin.resolve.sam.SamConversionResolver
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
@@ -82,16 +82,24 @@ class JavaResolverComponents(
 
 interface JavaResolverSettings {
     val isReleaseCoroutines: Boolean
+    val correctNullabilityForNotNullTypeParameter: Boolean
 
     object Default : JavaResolverSettings {
         override val isReleaseCoroutines: Boolean
             get() = false
+
+        override val correctNullabilityForNotNullTypeParameter: Boolean
+            get() = false
     }
 
     companion object {
-        fun create(isReleaseCoroutines: Boolean): JavaResolverSettings =
+        fun create(
+            isReleaseCoroutines: Boolean,
+            correctNullabilityForNotNullTypeParameter: Boolean
+        ): JavaResolverSettings =
             object : JavaResolverSettings {
                 override val isReleaseCoroutines get() = isReleaseCoroutines
+                override val correctNullabilityForNotNullTypeParameter get() = correctNullabilityForNotNullTypeParameter
             }
     }
 }

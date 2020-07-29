@@ -222,7 +222,6 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             expression.operationReference.let {
                 expression.allOfTypeWithLocalReplace<FirFunctionCall>(it) { this.calleeReference.name.asString() }
                     ?: expression.firstOfTypeWithLocalReplace<FirVariableAssignment>(it) { this.lValue.toString() }
-                    ?: expression.firstOfTypeWithRender<FirOperatorCall>(it)
             }
             super.visitBinaryExpression(expression)
         }
@@ -392,10 +391,6 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             }
         }
 
-        override fun visitOperatorCall(operatorCall: FirOperatorCall, data: StringBuilder) {
-            data.append("operator call ${operatorCall.operation}")
-        }
-
         override fun visitComparisonExpression(comparisonExpression: FirComparisonExpression, data: StringBuilder) {
             data.append("CMP(${comparisonExpression.operation.operator}, ")
             comparisonExpression.compareToCall.accept(this, data)
@@ -404,6 +399,14 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
         override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: StringBuilder) {
             //skip rendering for as/as?/is/!is
+        }
+
+        override fun visitAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement, data: StringBuilder) {
+            data.append("assignment operator statement ${assignmentOperatorStatement.operation}")
+        }
+
+        override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: StringBuilder) {
+            data.append("equality operator call ${equalityOperatorCall.operation}")
         }
 
         override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression, data: StringBuilder) {

@@ -96,7 +96,7 @@ digraph exhaustiveWhenAndDNNType_kt {
                     30 [label="Enter when branch condition "];
                     31 [label="Access qualifier /SomeEnum"];
                     32 [label="Access variable R|/SomeEnum.A1|"];
-                    33 [label="Operator =="];
+                    33 [label="Equality operator =="];
                     34 [label="Exit when branch condition"];
                 }
                 subgraph cluster_14 {
@@ -104,7 +104,7 @@ digraph exhaustiveWhenAndDNNType_kt {
                     35 [label="Enter when branch condition "];
                     36 [label="Access qualifier /SomeEnum"];
                     37 [label="Access variable R|/SomeEnum.A2|"];
-                    38 [label="Operator =="];
+                    38 [label="Equality operator =="];
                     39 [label="Exit when branch condition"];
                 }
                 40 [label="Enter when branch result"];
@@ -185,7 +185,7 @@ digraph exhaustiveWhenAndDNNType_kt {
                     64 [label="Enter when branch condition "];
                     65 [label="Access qualifier /SomeEnum"];
                     66 [label="Access variable R|/SomeEnum.A1|"];
-                    67 [label="Operator =="];
+                    67 [label="Equality operator =="];
                     68 [label="Exit when branch condition"];
                 }
                 subgraph cluster_21 {
@@ -193,7 +193,7 @@ digraph exhaustiveWhenAndDNNType_kt {
                     69 [label="Enter when branch condition "];
                     70 [label="Access qualifier /SomeEnum"];
                     71 [label="Access variable R|/SomeEnum.A2|"];
-                    72 [label="Operator =="];
+                    72 [label="Equality operator =="];
                     73 [label="Exit when branch condition"];
                 }
                 74 [label="Enter when branch result"];
@@ -273,7 +273,7 @@ digraph exhaustiveWhenAndDNNType_kt {
                     97 [label="Enter when branch condition "];
                     98 [label="Access qualifier /SomeEnum"];
                     99 [label="Access variable R|/SomeEnum.A1|"];
-                    100 [label="Operator =="];
+                    100 [label="Equality operator =="];
                     101 [label="Exit when branch condition"];
                 }
                 subgraph cluster_28 {
@@ -281,7 +281,7 @@ digraph exhaustiveWhenAndDNNType_kt {
                     102 [label="Enter when branch condition "];
                     103 [label="Access qualifier /SomeEnum"];
                     104 [label="Access variable R|/SomeEnum.A2|"];
-                    105 [label="Operator =="];
+                    105 [label="Equality operator =="];
                     106 [label="Exit when branch condition"];
                 }
                 107 [label="Enter when branch result"];

@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/kt28456a.kt
   FUN name:testSimpleAssignment visibility:public modality:FINAL <> (a:<root>.A) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(PARAMETER_MAPPING_ERROR): [/set]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(PARAMETER_MAPPING_ERROR): /set>#' type=kotlin.Unit
         CONST Int type=kotlin.Int value=1
         CONST Int type=kotlin.Int value=2
         CONST Int type=kotlin.Int value=3

@@ -15,6 +15,11 @@
  * DESCRIPTION: An operator assignment A+=B
  */
 
+// TESTCASE NUMBER: 1
+fun case1() {
+    val b = B(1)
+    b += 1
+}
 
 class B(var a: Int) {
     operator fun plus(value: Int): B {
@@ -24,10 +29,4 @@ class B(var a: Int) {
     operator fun plusAssign(value: Int): Unit {
         a= a + value
     }
-}
-
-// TESTCASE NUMBER: 1
-fun case1() {
-    val b = B(1)
-    b += 1
 }

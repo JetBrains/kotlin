@@ -62,6 +62,7 @@ val projectsToShadow by extra(listOf(
         ":idea:idea-gradle-native",
         ":compiler:ir.psi2ir",
         ":compiler:ir.tree",
+        ":compiler:ir.tree.impl",
         ":js:js.ast",
         ":js:js.frontend",
         ":js:js.parser",
@@ -161,7 +162,7 @@ dependencies {
         embedded(project(it)) { isTransitive = false }
     }
     embedded(protobufFull())
-    embedded(kotlinBuiltins())
+    embedded(kotlinBuiltins(forJvm = true))
 
     libraries(commonDep("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:${property("versions.kotlinx-collections-immutable")}"))
     libraries(commonDep("javax.inject"))

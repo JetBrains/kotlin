@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
@@ -84,7 +83,7 @@ val ModuleSubType.icon: Icon
         ModuleSubType.jvm -> KotlinIcons.Wizard.JVM
         ModuleSubType.js -> KotlinIcons.Wizard.JS
         ModuleSubType.android, ModuleSubType.androidNativeArm32, ModuleSubType.androidNativeArm64 -> KotlinIcons.Wizard.ANDROID
-        ModuleSubType.iosArm32, ModuleSubType.iosArm64, ModuleSubType.iosX64 -> KotlinIcons.Wizard.IOS
+        ModuleSubType.iosArm32, ModuleSubType.iosArm64, ModuleSubType.iosX64, ModuleSubType.ios -> KotlinIcons.Wizard.IOS
         ModuleSubType.linuxArm32Hfp, ModuleSubType.linuxMips32, ModuleSubType.linuxMipsel32, ModuleSubType.linuxX64 ->
             KotlinIcons.Wizard.LINUX
         ModuleSubType.macosX64 -> KotlinIcons.Wizard.MAC_OS
@@ -95,7 +94,8 @@ val ModuleSubType.icon: Icon
 val ModuleKind.icon: Icon
     get() = when (this) {
         ModuleKind.multiplatform -> KotlinIcons.MPP
-        ModuleKind.singleplatformJs -> KotlinIcons.Wizard.JS
+        ModuleKind.singleplatformJsBrowser -> KotlinIcons.Wizard.JS
+        ModuleKind.singleplatformJsNode -> KotlinIcons.Wizard.NODE_JS
         ModuleKind.singleplatformJvm -> KotlinIcons.Wizard.JVM
         ModuleKind.target -> AllIcons.Nodes.Module
         ModuleKind.singleplatformAndroid -> KotlinIcons.Wizard.ANDROID

@@ -42,3 +42,9 @@ s -> USimpleNameReferenceExpression (identifier = s) from KtNameReferenceExpress
 toString -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtDotQualifiedExpression
 local -> USimpleNameReferenceExpression (identifier = local) from KtNameReferenceExpression
 toString -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtNameReferenceExpression
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
+a -> USimpleNameReferenceExpression (identifier = a) from KtNameReferenceExpression
+toString -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtDotQualifiedExpression
+i -> USimpleNameReferenceExpression (identifier = i) from KtNameReferenceExpression
+toString -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtNameReferenceExpression

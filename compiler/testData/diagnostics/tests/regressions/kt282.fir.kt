@@ -12,7 +12,7 @@ operator fun Int?.contains(x : Int) : Boolean = false
 fun f(): Unit {
     var set : Set? = null
     val i : Int? = null
-    i <!INAPPLICABLE_CANDIDATE!>+<!> 1
+    i <!NONE_APPLICABLE!>+<!> 1
     set + 1
     1 <!INAPPLICABLE_CANDIDATE!>in<!> set
     1 in 2

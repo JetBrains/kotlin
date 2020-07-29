@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.irsList
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repositories
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.settings.javaPackage
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
@@ -30,6 +27,8 @@ object AndroidSinglePlatformModuleConfigurator :
     SinglePlatformModuleConfigurator,
     AndroidModuleConfigurator {
     override val moduleKind: ModuleKind get() = ModuleKind.singleplatformAndroid
+
+    override fun getNewAndroidManifestPath(module: Module): Path? = null
 
     @NonNls
     override val id = "android"
@@ -94,12 +93,21 @@ object AndroidSinglePlatformModuleConfigurator :
         module: Module,
         modulePath: Path
     ): TaskResult<Unit> = computeM {
+        val sharedModule = module.dependencies
+            .map { if (it is ModuleReference.ByModule) it.module else null }
+            .firstOrNull { it?.configurator == MppModuleConfigurator }
+
         val javaPackage = module.javaPackage(configurationData.pomIr)
-        val settings = mapOf("package" to javaPackage.asCodePackage())
-        TemplatesPlugin::addFileTemplates.execute(
+        val sharedPackage = sharedModule?.javaPackage(configurationData.pomIr)
+
+        val settings = mapOf(
+            "package" to javaPackage.asCodePackage(),
+            "sharedPackage" to sharedPackage?.asCodePackage()
+        )
+        TemplatesPlugin.addFileTemplates.execute(
             listOf(
                 FileTemplate(AndroidModuleConfigurator.FileTemplateDescriptors.activityMainXml, modulePath, settings),
-                FileTemplate(AndroidModuleConfigurator.FileTemplateDescriptors.androidManifestXml, modulePath, settings),
+                FileTemplate(getAndroidManifestXml(module), modulePath, settings),
                 FileTemplate(AndroidModuleConfigurator.FileTemplateDescriptors.colorsXml, modulePath, settings),
                 FileTemplate(AndroidModuleConfigurator.FileTemplateDescriptors.stylesXml, modulePath, settings),
                 FileTemplate(AndroidModuleConfigurator.FileTemplateDescriptors.mainActivityKt(javaPackage), modulePath, settings)

@@ -384,14 +384,15 @@ class PSICallResolver(
 
 
     private inner class ASTScopeTower(
-        val context: BasicCallResolutionContext
+        val context: BasicCallResolutionContext,
+        ktExpression: KtExpression? = null
     ) : ImplicitScopeTower {
         // todo may be for invoke for case variable + invoke we should create separate dynamicScope(by newCall for invoke)
         override val dynamicScope: MemberScope =
             dynamicCallableDescriptors.createDynamicDescriptorScope(context.call, context.scope.ownerDescriptor)
 
         // same for location
-        override val location: LookupLocation = context.call.createLookupLocation()
+        override val location: LookupLocation = ktExpression?.createLookupLocation() ?: context.call.createLookupLocation()
 
         override val syntheticScopes: SyntheticScopes get() = this@PSICallResolver.syntheticScopes
         override val isDebuggerContext: Boolean get() = context.isDebuggerContext
@@ -815,7 +816,7 @@ class PSICallResolver(
         }
 
         return CallableReferenceKotlinCallArgumentImpl(
-            ASTScopeTower(context), valueArgument, startDataFlowInfo, newDataFlowInfo,
+            ASTScopeTower(context, ktExpression.callableReference), valueArgument, startDataFlowInfo, newDataFlowInfo,
             ktExpression, argumentName, lhsNewResult, name
         )
     }

@@ -413,7 +413,7 @@
     "neg": {
       "1": [
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-435",
           "casesNumber": 0,
           "description": "Real literals suffixed by f/F (the float suffix) with not allowed several exponent marks.",
           "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/neg/1.2.kt",
@@ -421,7 +421,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-435",
           "casesNumber": 0,
           "description": "Real literals with a not allowed exponent mark with digits followed by a float suffix.",
           "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/neg/1.3.kt",
@@ -429,7 +429,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-435",
           "casesNumber": 0,
           "description": "Real literals with a not allowed digits and exponent mark followed by a float suffix.",
           "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/neg/1.4.kt",
@@ -437,7 +437,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-435",
           "casesNumber": 0,
           "description": "Real literals with not allowed several exponent marks.",
           "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/neg/1.1.kt",
@@ -449,7 +449,7 @@
     "pos": {
       "1": [
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-435",
           "casesNumber": 0,
           "description": "Real literals suffixed by f/F (float suffix) with an exponent mark without digits after it.",
           "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos/1.6.kt",
@@ -457,7 +457,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-435",
           "casesNumber": 0,
           "description": "Real literals with a not allowed exponent mark at the beginning.",
           "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos/1.2.kt",
@@ -465,7 +465,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-435",
           "casesNumber": 0,
           "description": "Real literals without digits after an exponent mark.",
           "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos/1.3.kt",
@@ -473,7 +473,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-435",
           "casesNumber": 0,
           "description": "Simple real literals suffixed by f/F (float suffix) with an exponent mark.",
           "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos/1.4.kt",
@@ -481,7 +481,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-435",
           "casesNumber": 0,
           "description": "Real literals suffixed by f/F (float suffix) with a not allowed exponent mark at the beginning.",
           "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos/1.5.kt",
@@ -489,7 +489,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-435",
           "casesNumber": 0,
           "description": "Simple real literals with an exponent mark.",
           "path": "compiler/tests-spec/testData/psi/linked/expressions/constant-literals/real-literals/p-2/pos/1.1.kt",

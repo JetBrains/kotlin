@@ -19,14 +19,12 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
@@ -38,9 +36,11 @@ import org.jetbrains.kotlin.types.Variance
 
 class JvmSymbols(
     context: JvmBackendContext,
-    private val symbolTable: SymbolTable
+    symbolTable: SymbolTable
 ) : Symbols<JvmBackendContext>(context, context.irBuiltIns, symbolTable) {
     private val storageManager = LockBasedStorageManager(this::class.java.simpleName)
+    private val irFactory = context.irFactory
+
     private val kotlinPackage: IrPackageFragment = createPackage(FqName("kotlin"))
     private val kotlinCoroutinesPackage: IrPackageFragment = createPackage(FqName("kotlin.coroutines"))
     private val kotlinCoroutinesJvmInternalPackage: IrPackageFragment = createPackage(FqName("kotlin.coroutines.jvm.internal"))
@@ -96,7 +96,7 @@ class JvmSymbols(
         classIsInline: Boolean = false,
         block: (IrClass) -> Unit = {}
     ): IrClassSymbol =
-        buildClass {
+        irFactory.buildClass {
             name = fqName.shortName()
             kind = classKind
             modality = classModality
@@ -139,7 +139,7 @@ class JvmSymbols(
         }
         klass.addFunction("throwNpe", irBuiltIns.unitType, isStatic = true)
 
-        klass.declarations.add(buildClass {
+        klass.declarations.add(irFactory.buildClass {
             name = Name.identifier("Kotlin")
         }.apply {
             parent = klass
@@ -438,7 +438,7 @@ class JvmSymbols(
                 klass.addProperty {
                     name = receiverFieldName
                 }.apply {
-                    backingField = buildField {
+                    backingField = irFactory.buildField {
                         name = receiverFieldName
                         type = irBuiltIns.anyNType
                         visibility = Visibilities.PROTECTED
@@ -515,7 +515,7 @@ class JvmSymbols(
     }
 
     override val unsafeCoerceIntrinsic: IrSimpleFunctionSymbol =
-        buildFun {
+        irFactory.buildFun {
             name = Name.special("<unsafe-coerce>")
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
         }.apply {
@@ -527,7 +527,7 @@ class JvmSymbols(
         }.symbol
 
     val reassignParameterIntrinsic: IrSimpleFunctionSymbol =
-        buildFun {
+        irFactory.buildFun {
             name = Name.special("<set-parameter>")
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
         }.apply {
@@ -561,7 +561,7 @@ class JvmSymbols(
         collectionToArrayClass.functions.single { it.owner.name.asString() == "toArray" && it.owner.valueParameters.size == 2 }
 
     val kClassJava: IrPropertySymbol =
-        buildProperty {
+        irFactory.buildProperty {
             name = Name.identifier("java")
         }.apply {
             parent = kotlinJvmPackage
@@ -672,7 +672,7 @@ class JvmSymbols(
     val systemArraycopy: IrSimpleFunctionSymbol = systemClass.functionByName("arraycopy")
 
     val signatureStringIntrinsic: IrSimpleFunctionSymbol =
-        buildFun {
+        irFactory.buildFun {
             name = Name.special("<signature-string>")
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
         }.apply {
@@ -737,7 +737,7 @@ class JvmSymbols(
         kotlinCoroutinesJvmInternalRunSuspendKt.functionByName("runSuspend")
 
     override val ThrowKotlinNothingValueException: IrSimpleFunctionSymbol =
-        buildFun {
+        irFactory.buildFun {
             name = Name.identifier("ThrowKotlinNothingValueException")
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
             returnType = irBuiltIns.nothingType

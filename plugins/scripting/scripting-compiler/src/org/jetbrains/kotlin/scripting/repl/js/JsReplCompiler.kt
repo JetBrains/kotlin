@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -23,7 +24,7 @@ class JsReplCompiler(private val environment: KotlinCoreEnvironment) : ReplCompi
             NameTables(emptyList()),
             readLibrariesFromConfiguration(environment.configuration),
             ReplCodeAnalyzerBase.ResettableAnalyzerState(),
-            SymbolTable(IdSignatureDescriptor(JsManglerDesc))
+            SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImpl)
         )
     }
 

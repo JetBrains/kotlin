@@ -165,7 +165,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 else -> context.ir.symbols.functionReference
             }.defaultType
 
-        private val functionReferenceClass = buildClass {
+        private val functionReferenceClass = context.irFactory.buildClass {
             setSourceRange(irFunctionReference)
             visibility = Visibilities.LOCAL
             // A callable reference results in a synthetic class, while a lambda is not synthetic.

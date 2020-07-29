@@ -11,6 +11,6 @@ class C() {
 
 fun box(): String {
     val c = C()
-    if (c.<!INAPPLICABLE_CANDIDATE!>f<!> != 610) return "fail"
+    if (c.<!HIDDEN!>f<!> != 610) return "fail"
     return "OK"
 }

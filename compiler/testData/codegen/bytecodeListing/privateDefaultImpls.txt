@@ -1,11 +1,13 @@
 @kotlin.Metadata
 public final class A$DefaultImpls {
-    inner class A$DefaultImpls
+    // source: 'privateDefaultImpls.kt'
     private static method foo(p0: A): void
     private static method getX(p0: A): int
+    public final inner class A$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface A {
-    inner class A$DefaultImpls
+    // source: 'privateDefaultImpls.kt'
+    public final inner class A$DefaultImpls
 }

@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.declarations.IrReturnTarget
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
-import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
@@ -46,8 +45,3 @@ interface IrReturnableBlock : IrBlock, IrSymbolOwner, IrReturnTarget {
 
 val IrReturnableBlock.sourceFileSymbol: IrFileSymbol?
     get() = inlineFunctionSymbol?.owner?.file?.symbol
-
-@Deprecated("Please avoid using it")
-val IrReturnableBlock.sourceFileName: String
-    get() = sourceFileSymbol?.owner?.name ?: "no source file"
-

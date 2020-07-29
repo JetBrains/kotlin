@@ -16,8 +16,9 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -43,7 +44,7 @@ class IrBlockImpl(
         origin: IrStatementOrigin?,
         statements: List<IrStatement>
     ) :
-            this(startOffset, endOffset, type, origin) {
+        this(startOffset, endOffset, type, origin) {
         this.statements.addAll(statements)
     }
 
@@ -64,18 +65,19 @@ fun IrBlockImpl.inlineStatement(statement: IrStatement) {
 }
 
 class IrReturnableBlockImpl(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        override val symbol: IrReturnableBlockSymbol,
-        origin: IrStatementOrigin? = null,
-        override val inlineFunctionSymbol: IrFunctionSymbol? = null
+    startOffset: Int,
+    endOffset: Int,
+    type: IrType,
+    override val symbol: IrReturnableBlockSymbol,
+    origin: IrStatementOrigin? = null,
+    override val inlineFunctionSymbol: IrFunctionSymbol? = null
 ) :
     IrContainerExpressionBase(startOffset, endOffset, type, origin),
     IrReturnableBlock {
 
     @ObsoleteDescriptorBasedAPI
-    override val descriptor = symbol.descriptor
+    override val descriptor: FunctionDescriptor
+        get() = symbol.descriptor
 
     constructor(
         startOffset: Int,

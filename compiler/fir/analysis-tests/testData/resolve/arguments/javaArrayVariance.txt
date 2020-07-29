@@ -5,6 +5,6 @@ FILE: main.kt
     }
     public final fun test(array: R|kotlin/Array<B>|): R|kotlin/Unit| {
         Q|A|.R|/A.take|(R|<local>/array|)
-        <Inapplicable(INAPPLICABLE): [/takeA]>#(R|<local>/array|)
+        <Inapplicable(INAPPLICABLE): /takeA>#(R|<local>/array|)
         R|/takeOutA|(R|<local>/array|)
     }

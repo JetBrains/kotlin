@@ -23,11 +23,10 @@ import org.jetbrains.kotlin.ir.backend.js.utils.toJsArrayLiteral
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNullable
@@ -61,7 +60,7 @@ class EnumUsageLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     }
 
     private fun createFieldForEntry(entry: IrEnumEntry, irClass: IrClass): IrField =
-        buildField {
+        context.irFactory.buildField {
             startOffset = entry.startOffset
             endOffset = entry.endOffset
             origin = entry.origin
@@ -116,7 +115,7 @@ class EnumClassConstructorLowering(val context: JsCommonBackendContext) : Declar
     }
 
     private fun transformEnumConstructor(enumConstructor: IrConstructor, enumClass: IrClass): IrConstructor {
-        return buildConstructor {
+        return context.irFactory.buildConstructor {
             updateFrom(enumConstructor)
             returnType = enumConstructor.returnType
         }.apply {
@@ -129,7 +128,7 @@ class EnumClassConstructorLowering(val context: JsCommonBackendContext) : Declar
             enumConstructor.newConstructor = this
 
             enumConstructor.body?.let { oldBody ->
-                body = IrBlockBodyImpl(oldBody.startOffset, oldBody.endOffset) {
+                body = context.irFactory.createBlockBody(oldBody.startOffset, oldBody.endOffset) {
                     statements += (oldBody as IrBlockBody).statements
 
                     context.fixReferencesToConstructorParameters(enumClass, this)
@@ -149,7 +148,7 @@ class EnumClassConstructorLowering(val context: JsCommonBackendContext) : Declar
                 old.valueParameter = new
 
                 old.defaultValue?.let { default ->
-                    new.defaultValue = IrExpressionBodyImpl(default.startOffset, default.endOffset) {
+                    new.defaultValue = context.irFactory.createExpressionBody(default.startOffset, default.endOffset) {
                         expression = default.expression
                         expression.patchDeclarationParents(newConstructor)
                         context.fixReferencesToConstructorParameters(enumClass, this)
@@ -320,7 +319,7 @@ class EnumEntryInstancesLowering(val context: JsIrBackendContext) : DeclarationT
     private fun createEnumEntryInstanceVariable(irClass: IrClass, enumEntry: IrEnumEntry): IrField {
         val enumName = irClass.name.identifier
 
-        val result = buildField {
+        val result = context.irFactory.buildField {
             name = Name.identifier("${enumName}_${enumEntry.name.identifier}_instance")
             type = enumEntry.getType(irClass).makeNullable()
             isStatic = true
@@ -388,7 +387,7 @@ class EnumClassCreateInitializerLowering(val context: JsIrBackendContext) : Decl
         return null
     }
 
-    private fun createEntryInstancesInitializedVar(irClass: IrClass): IrField = buildField {
+    private fun createEntryInstancesInitializedVar(irClass: IrClass): IrField = context.irFactory.buildField {
         val enumName = irClass.name.identifier
         name = Name.identifier("${enumName}_entriesInitialized")
         type = context.irBuiltIns.booleanType
@@ -399,30 +398,26 @@ class EnumClassCreateInitializerLowering(val context: JsIrBackendContext) : Decl
     }
 
     private fun createInitEntryInstancesFun(irClass: IrClass, entryInstancesInitializedField: IrField): IrSimpleFunction =
-        buildFunction(irClass, "${irClass.name.identifier}_initEntries", context.irBuiltIns.unitType).also {
-            it.body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+        context.irFactory.buildFun {
+            name = Name.identifier("${irClass.name.identifier}_initEntries")
+            returnType = context.irBuiltIns.unitType
+            origin = JsIrBuilder.SYNTHESIZED_DECLARATION
+        }.also {
+            it.parent = irClass
+            it.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                 statements += context.createIrBuilder(it.symbol).irBlockBody(it) {
                     +irIfThen(irGetField(null, entryInstancesInitializedField), irReturnUnit())
                     +irSetField(null, entryInstancesInitializedField, irBoolean(true))
 
                     irClass.enumEntries.forEach { entry ->
                         entry.correspondingField?.let { instanceField ->
-                            +irSetField(null, instanceField, entry.initializerExpression!!.expression)
+                            +irSetField(null, instanceField, entry.initializerExpression!!.expression.deepCopyWithSymbols(it))
                         }
                     }
-                }.also {
-                    // entry.initializerExpression can have local declarations
-                    it.acceptVoid(PatchDeclarationParentsVisitor(irClass))
                 }.statements
             }
         }
 }
-
-private fun buildFunction(
-    irClass: IrClass,
-    name: String,
-    returnType: IrType
-) = JsIrBuilder.buildFunction(name, returnType, irClass)
 
 class EnumEntryCreateGetInstancesFunsLowering(val context: JsIrBackendContext): DeclarationTransformer {
 
@@ -449,18 +444,25 @@ class EnumEntryCreateGetInstancesFunsLowering(val context: JsIrBackendContext): 
         return null
     }
 
-    private fun createGetEntryInstanceFun(irClass: IrClass, enumEntry: IrEnumEntry, initEntryInstancesFun: IrSimpleFunction): IrSimpleFunction {
-
-        return context.mapping.enumEntryToGetInstanceFun.getOrPut(enumEntry) { buildFunction(irClass, createEntryAccessorName(irClass.name.identifier, enumEntry), enumEntry.getType(irClass)) }
-            .also {
-                it.body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
-                    statements += context.createIrBuilder(it.symbol).irBlockBody(it) {
-                        +irCall(initEntryInstancesFun)
-                        +irReturn(irGetField(null, enumEntry.correspondingField!!))
-                    }.statements
-                }
+    private fun createGetEntryInstanceFun(
+        irClass: IrClass, enumEntry: IrEnumEntry, initEntryInstancesFun: IrSimpleFunction
+    ): IrSimpleFunction =
+        context.mapping.enumEntryToGetInstanceFun.getOrPut(enumEntry) {
+            context.irFactory.buildFun {
+                name = Name.identifier(createEntryAccessorName(irClass.name.identifier, enumEntry))
+                returnType = enumEntry.getType(irClass)
+                origin = JsIrBuilder.SYNTHESIZED_DECLARATION
+            }.apply {
+                parent = irClass
             }
-    }
+        }.also {
+            it.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+                statements += context.createIrBuilder(it.symbol).irBlockBody(it) {
+                    +irCall(initEntryInstancesFun)
+                    +irReturn(irGetField(null, enumEntry.correspondingField!!))
+                }.statements
+            }
+        }
 }
 
 class EnumSyntheticFunctionsLowering(val context: JsIrBackendContext): DeclarationTransformer {
@@ -473,7 +475,7 @@ class EnumSyntheticFunctionsLowering(val context: JsIrBackendContext): Declarati
                 val kind = body.kind
 
                 declaration.parents.filterIsInstance<IrClass>().firstOrNull { it.goodEnum }?.let { irClass ->
-                    declaration.body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+                    declaration.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                         statements += when (kind) {
                             IrSyntheticBodyKind.ENUM_VALUES -> createEnumValuesBody(declaration, irClass)
                             IrSyntheticBodyKind.ENUM_VALUEOF -> createEnumValueOfBody(declaration, irClass)

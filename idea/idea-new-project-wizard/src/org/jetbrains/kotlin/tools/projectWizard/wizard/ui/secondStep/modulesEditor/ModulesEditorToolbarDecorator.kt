@@ -5,10 +5,7 @@ import com.intellij.openapi.actionSystem.ActionToolbarPosition
 import com.intellij.openapi.ui.Messages
 import com.intellij.ui.ToolbarDecorator
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.AndroidSinglePlatformModuleConfigurator
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.IOSSinglePlatformModuleConfigurator
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsSingleplatformModuleConfigurator
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.MppModuleConfigurator
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.withAllSubModules
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
@@ -36,9 +33,16 @@ class ModulesEditorToolbarDecorator(
                 allowMultiplatform = isMultiplatformProject()
                         && isRootModule
                         && allModules.none { it.configurator == MppModuleConfigurator },
-                allowSinglepaltformJs = isMultiplatformProject()
-                        && isRootModule
-                        && allModules.none { it.configurator == JsSingleplatformModuleConfigurator },
+                allowSinglePlatformJsBrowser = allowSinglePlatformJs(
+                    configurator = BrowserJsSinglePlatformModuleConfigurator,
+                    allModules = allModules,
+                    isRootModule = isRootModule
+                ),
+                allowSinglePlatformJsNode = allowSinglePlatformJs(
+                    configurator = NodeJsSinglePlatformModuleConfigurator,
+                    allModules = allModules,
+                    isRootModule = isRootModule
+                ),
                 allowAndroid = isRootModule
                         && isMultiplatformProject()
                         && allModules.none { it.configurator == AndroidSinglePlatformModuleConfigurator },
@@ -61,7 +65,8 @@ class ModulesEditorToolbarDecorator(
                 val moduleKindTextToAdd = when (tree.selectedSettingItem?.safeAs<Module>()?.kind) {
                     ModuleKind.multiplatform -> KotlinNewProjectWizardBundle.message("module.kind.target")
                     ModuleKind.singleplatformJvm -> KotlinNewProjectWizardBundle.message("module.kind.module")
-                    ModuleKind.singleplatformJs -> KotlinNewProjectWizardBundle.message("module.kind.js.module")
+                    ModuleKind.singleplatformJsBrowser -> KotlinNewProjectWizardBundle.message("module.kind.js.browser.module")
+                    ModuleKind.singleplatformJsNode -> KotlinNewProjectWizardBundle.message("module.kind.js.node.module")
                     ModuleKind.singleplatformAndroid -> KotlinNewProjectWizardBundle.message("module.kind.android.module")
                     ModuleKind.target -> ""
                     null -> ""
@@ -108,6 +113,15 @@ class ModulesEditorToolbarDecorator(
         setMoveUpAction(null)
     }
 
+    private fun allowSinglePlatformJs(
+        configurator: JsSinglePlatformModuleConfigurator,
+        allModules: List<Module>,
+        isRootModule: Boolean
+    ) =
+        isMultiplatformProject()
+                && isRootModule
+                && allModules.none { it.configurator == configurator }
+
     private val selectedModule
         get() = tree.selectedSettingItem.safeAs<Module>()
 
@@ -125,7 +139,8 @@ private val Module.kindText
     get() = when (kind) {
         ModuleKind.multiplatform -> KotlinNewProjectWizardBundle.message("module.kind.module")
         ModuleKind.singleplatformJvm -> KotlinNewProjectWizardBundle.message("module.kind.module")
-        ModuleKind.singleplatformJs -> KotlinNewProjectWizardBundle.message("module.kind.module")
+        ModuleKind.singleplatformJsBrowser -> KotlinNewProjectWizardBundle.message("module.kind.module")
+        ModuleKind.singleplatformJsNode -> KotlinNewProjectWizardBundle.message("module.kind.module")
         ModuleKind.singleplatformAndroid -> KotlinNewProjectWizardBundle.message("module.kind.android.module")
         ModuleKind.target -> KotlinNewProjectWizardBundle.message("module.kind.target")
     }

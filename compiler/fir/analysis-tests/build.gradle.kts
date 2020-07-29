@@ -36,6 +36,7 @@ sourceSets {
 }
 
 projectTest(parallel = true) {
+    dependsOn(":dist")
     workingDir = rootDir
     jvmArgs!!.removeIf { it.contains("-Xmx") }
     maxHeapSize = "3g"

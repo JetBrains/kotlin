@@ -53,7 +53,7 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
     }
 
     private fun generateWrapper(target: IrFunction, numDefaultParametersToExpect: Int): IrFunction {
-        val wrapperIrFunction = generateWrapperHeader(target, numDefaultParametersToExpect)
+        val wrapperIrFunction = context.irFactory.generateWrapperHeader(target, numDefaultParametersToExpect)
 
         val call = if (target is IrConstructor)
             IrDelegatingConstructorCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.unitType, target.symbol)
@@ -114,7 +114,7 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
         return wrapperIrFunction
     }
 
-    private fun generateWrapperHeader(oldFunction: IrFunction, numDefaultParametersToExpect: Int): IrFunction {
+    private fun IrFactory.generateWrapperHeader(oldFunction: IrFunction, numDefaultParametersToExpect: Int): IrFunction {
         val res = when (oldFunction) {
             is IrConstructor -> {
                 buildConstructor(oldFunction.descriptor) {

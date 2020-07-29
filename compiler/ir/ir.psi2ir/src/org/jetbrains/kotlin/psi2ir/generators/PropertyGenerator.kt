@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -54,7 +53,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         ).also { irProperty ->
             irProperty.backingField =
                 generatePropertyBackingField(ktParameter, propertyDescriptor) {
-                    IrExpressionBodyImpl(
+                    context.irFactory.createExpressionBody(
                         IrGetValueImpl(
                             ktParameter.startOffsetSkippingComments, ktParameter.endOffset,
                             irPropertyType,
@@ -119,7 +118,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                         ktProperty.initializer?.let { ktInitializer ->
                             val compileTimeConst = propertyDescriptor.compileTimeInitializer
                             if (propertyDescriptor.isConst && compileTimeConst != null)
-                                IrExpressionBodyImpl(
+                                context.irFactory.createExpressionBody(
                                     context.constantValueGenerator.generateConstantValueAsExpression(
                                         ktInitializer.startOffsetSkippingComments, ktInitializer.endOffset,
                                         compileTimeConst

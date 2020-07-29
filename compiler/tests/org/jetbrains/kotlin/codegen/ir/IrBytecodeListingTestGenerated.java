@@ -49,6 +49,21 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         runTest("compiler/testData/codegen/bytecodeListing/defaultImpls.kt");
     }
 
+    @TestMetadata("deprecatedEnumEntryFields.kt")
+    public void testDeprecatedEnumEntryFields() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/deprecatedEnumEntryFields.kt");
+    }
+
+    @TestMetadata("deprecatedLateinitVar.kt")
+    public void testDeprecatedLateinitVar() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/deprecatedLateinitVar.kt");
+    }
+
+    @TestMetadata("deprecatedProperty.kt")
+    public void testDeprecatedProperty() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/deprecatedProperty.kt");
+    }
+
     @TestMetadata("emptyMultifileFacade.kt")
     public void testEmptyMultifileFacade() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/emptyMultifileFacade.kt");
@@ -82,6 +97,21 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
     @TestMetadata("lateInitNotNull.kt")
     public void testLateInitNotNull() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/lateInitNotNull.kt");
+    }
+
+    @TestMetadata("localFunctionInInitBlock.kt")
+    public void testLocalFunctionInInitBlock() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/localFunctionInInitBlock.kt");
+    }
+
+    @TestMetadata("multiClassPartSourceMultipleParts.kt")
+    public void testMultiClassPartSourceMultipleParts() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/multiClassPartSourceMultipleParts.kt");
+    }
+
+    @TestMetadata("multiClassPartSourceSinglePart.kt")
+    public void testMultiClassPartSourceSinglePart() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/multiClassPartSourceSinglePart.kt");
     }
 
     @TestMetadata("noCollectionStubMethodsInInterface.kt")
@@ -122,6 +152,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
     @TestMetadata("privateDefaultSetter.kt")
     public void testPrivateDefaultSetter() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/privateDefaultSetter.kt");
+    }
+
+    @TestMetadata("privateNestedClassInInterface.kt")
+    public void testPrivateNestedClassInInterface() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/privateNestedClassInInterface.kt");
     }
 
     @TestMetadata("samAdapterAndInlinedOne.kt")

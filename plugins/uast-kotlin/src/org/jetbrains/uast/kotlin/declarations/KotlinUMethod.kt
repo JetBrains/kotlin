@@ -60,7 +60,13 @@ open class KotlinUMethod(
             .map { KotlinUAnnotation(it, this) }
     }
 
-    private val receiver by lz { (sourcePsi as? KtCallableDeclaration)?.receiverTypeReference }
+    private val receiver by lz {
+        when (sourcePsi) {
+            is KtCallableDeclaration -> sourcePsi
+            is KtPropertyAccessor -> sourcePsi.property
+            else -> null
+        }?.receiverTypeReference
+    }
 
     override val uastParameters by lz {
 

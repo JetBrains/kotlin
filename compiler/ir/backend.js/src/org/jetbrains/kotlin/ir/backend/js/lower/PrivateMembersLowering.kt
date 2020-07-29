@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrPropertyReferenceImpl
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
@@ -46,7 +49,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
 
         if (function.visibility != Visibilities.PRIVATE || function.dispatchReceiverParameter == null) return null
 
-        val staticFunction = buildFun {
+        val staticFunction = context.irFactory.buildFun {
             updateFrom(function)
             name = function.name
             returnType = function.returnType
@@ -96,7 +99,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
 
             parameterMapping[it]?.apply {
                 it.defaultValue?.let { originalDefault ->
-                    defaultValue = IrExpressionBodyImpl(it.startOffset, it.endOffset) {
+                    defaultValue = context.irFactory.createExpressionBody(it.startOffset, it.endOffset) {
                         expression = (originalDefault.copyWithParameters() as IrExpressionBody).expression
                     }
                 }
@@ -105,10 +108,10 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
 
         function.body?.let {
             staticFunction.body = when (it) {
-                is IrBlockBody -> IrBlockBodyImpl(it.startOffset, it.endOffset) {
+                is IrBlockBody -> context.irFactory.createBlockBody(it.startOffset, it.endOffset) {
                     statements += (it.copyWithParameters() as IrBlockBody).statements
                 }
-                is IrExpressionBody -> IrExpressionBodyImpl(it.startOffset, it.endOffset) {
+                is IrExpressionBody -> context.irFactory.createExpressionBody(it.startOffset, it.endOffset) {
                     expression = (it.copyWithParameters() as IrExpressionBody).expression
                 }
                 is IrSyntheticBody -> it

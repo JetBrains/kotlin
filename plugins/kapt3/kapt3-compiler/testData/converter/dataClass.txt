@@ -2,7 +2,9 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class User {
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.String firstName = null;
+    @org.jetbrains.annotations.NotNull()
     private final java.lang.String secondName = null;
     private final int age = 0;
 

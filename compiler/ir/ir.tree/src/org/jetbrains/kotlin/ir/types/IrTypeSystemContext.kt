@@ -35,8 +35,6 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     val irBuiltIns: IrBuiltIns
 
-    override val isErrorTypeAllowed: Boolean get() = true
-
     override fun KotlinTypeMarker.asSimpleType() = this as? SimpleTypeMarker
 
     override fun KotlinTypeMarker.asFlexibleType() = this as? IrDynamicType

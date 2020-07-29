@@ -197,6 +197,8 @@ public class DefaultErrorMessages {
             switch (target) {
                 case NON_KOTLIN_FUNCTION:
                     return "non-Kotlin functions";
+                case INTEROP_FUNCTION:
+                    return "interop functions with ambiguous parameter names";
                 case INVOKE_ON_FUNCTION_TYPE:
                     return "function types";
                 case EXPECTED_CLASS_MEMBER:
@@ -989,6 +991,8 @@ public class DefaultErrorMessages {
         MAP.put(EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS, "Expression in a class literal has a nullable type ''{0}'', use !! to make the type non-nullable", RENDER_TYPE);
 
         MAP.put(CALLABLE_REFERENCE_TO_JAVA_SYNTHETIC_PROPERTY, "References to the synthetic extension properties for a Java get/set methods aren't supported fully, please use reference to a method");
+
+        MAP.put(ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE, "Adapted callable reference cannot be resolved against reflective types");
 
         //Inline
         MAP.put(NON_PUBLIC_CALL_FROM_PUBLIC_INLINE, "Public-API inline function cannot access non-public-API ''{0}''", SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);

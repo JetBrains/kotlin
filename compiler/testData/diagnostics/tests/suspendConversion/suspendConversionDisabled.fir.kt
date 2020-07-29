@@ -20,7 +20,7 @@ fun test(
     <!INAPPLICABLE_CANDIDATE!>foo2<!>(f2)
     <!INAPPLICABLE_CANDIDATE!>foo3<!>(f3)
 
-    <!INAPPLICABLE_CANDIDATE!>foo1<!>(::bar)
+    foo1(::bar)
 
     <!INAPPLICABLE_CANDIDATE!>foo1<!>(f2)
     <!INAPPLICABLE_CANDIDATE!>foo1<!>(f3)

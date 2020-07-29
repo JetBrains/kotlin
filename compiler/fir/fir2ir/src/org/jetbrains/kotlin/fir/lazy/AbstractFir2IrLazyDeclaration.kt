@@ -25,6 +25,9 @@ abstract class AbstractFir2IrLazyDeclaration<F : FirMemberDeclaration, D : IrSym
     val fir: F,
     open val symbol: Fir2IrBindableSymbol<*, D>
 ) : IrElementBase(startOffset, endOffset), IrDeclaration, IrDeclarationParent, Fir2IrComponents by components {
+    override val factory: IrFactory
+        get() = components.irFactory
+
     internal fun prepareTypeParameters() {
         typeParameters = fir.typeParameters.mapIndexedNotNull { index, typeParameter ->
             if (typeParameter !is FirTypeParameter) return@mapIndexedNotNull null

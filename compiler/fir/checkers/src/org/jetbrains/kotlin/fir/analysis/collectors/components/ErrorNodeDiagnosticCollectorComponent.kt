@@ -12,11 +12,14 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory0
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
-import org.jetbrains.kotlin.fir.diagnostics.*
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind.*
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.resolve.calls.CandidateApplicability
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 
@@ -48,11 +51,16 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
 
     private fun reportFirDiagnostic(diagnostic: ConeDiagnostic, source: FirSourceElement, reporter: DiagnosticReporter) {
         val coneDiagnostic = when (diagnostic) {
-            is ConeUnresolvedReferenceError -> FirErrors.UNRESOLVED_REFERENCE.on(source, diagnostic.name?.asString())
+            is ConeUnresolvedReferenceError -> FirErrors.UNRESOLVED_REFERENCE.on(source, diagnostic.name?.asString() ?: "<No name>")
             is ConeUnresolvedSymbolError -> FirErrors.UNRESOLVED_REFERENCE.on(source, diagnostic.classId.asString())
             is ConeUnresolvedNameError -> FirErrors.UNRESOLVED_REFERENCE.on(source, diagnostic.name.asString())
-            is ConeInapplicableCandidateError -> FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidates.map { it.symbol })
-            is ConeAmbiguityError -> FirErrors.AMBIGUITY.on(source, diagnostic.candidates)
+            is ConeHiddenCandidateError -> FirErrors.HIDDEN.on(source, diagnostic.candidateSymbol)
+            is ConeInapplicableCandidateError -> FirErrors.INAPPLICABLE_CANDIDATE.on(source, diagnostic.candidateSymbol)
+            is ConeAmbiguityError -> if (diagnostic.applicability < CandidateApplicability.SYNTHETIC_RESOLVED) {
+                FirErrors.NONE_APPLICABLE.on(source, diagnostic.candidates)
+            } else {
+                FirErrors.AMBIGUITY.on(source, diagnostic.candidates)
+            }
             is ConeOperatorAmbiguityError -> FirErrors.ASSIGN_OPERATOR_AMBIGUITY.on(source, diagnostic.candidates)
             is ConeVariableExpectedError -> FirErrors.VARIABLE_EXPECTED.on(source)
             is ConeTypeMismatchError -> FirErrors.TYPE_MISMATCH.on(source, diagnostic.expectedType, diagnostic.actualType)

@@ -87,7 +87,7 @@ internal class InsertImplicitCasts(
         element.acceptChildrenVoid(object : IrElementVisitorVoid {
             override fun visitReturn(expression: IrReturn) {
                 super.visitReturn(expression)
-                val expectedReturnType = expectedFunctionExpressionReturnType[expression.returnTarget] ?: return
+                val expectedReturnType = expectedFunctionExpressionReturnType[expression.returnTargetSymbol.descriptor] ?: return
                 expression.value = expression.value.cast(expectedReturnType)
             }
 
@@ -200,7 +200,7 @@ internal class InsertImplicitCasts(
             value = if (expression.returnTargetSymbol is IrConstructorSymbol) {
                 value.coerceToUnit(irBuiltIns)
             } else {
-                val returnTargetDescriptor = expression.returnTarget
+                val returnTargetDescriptor = expression.returnTargetSymbol.descriptor
                 val isLambdaReturnValue = returnTargetDescriptor is AnonymousFunctionDescriptor
                 value.cast(returnTargetDescriptor.returnType, isLambdaReturnValue = isLambdaReturnValue)
             }

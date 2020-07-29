@@ -114,13 +114,23 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
             myModule = createTestModuleFromDir(it)
         }
 
-        File(path).listFiles { file -> file.name.startsWith("module") }.filter { it.exists() }.forEach {
-            val newModule = createTestModuleFromDir(it)
-            assert(myModule != null) { "Main module should exists" }
-            ModuleRootModificationUtil.addDependency(myModule, newModule)
+        File(path)
+            .listFiles { file -> file.name.startsWith("module") }
+            ?.filter { it.exists() }
+            ?.forEach {
+                val newModule = createTestModuleFromDir(it)
+                assert(myModule != null) { "Main module should exists" }
+                ModuleRootModificationUtil.addDependency(myModule, newModule)
+            }
+
+        File(path).listFiles { file ->
+            file.name.startsWith("script") && file.name != SCRIPT_NAME
+        }?.forEach {
+            createFileAndSyncDependencies(it)
         }
 
-        if (module != null) {
+        // If script is inside module
+        if (module != null && mainScriptFile.parentFile.name.toLowerCase().contains("module")) {
             module.addDependency(
                 projectLibrary(
                     "script-runtime",
@@ -337,18 +347,18 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
         //TODO: tmpDir would be enough, but there is tricky fail under AS otherwise
         val outDir = KotlinTestUtils.tmpDirForReusableFolder("${getTestName(false)}${srcDir.name}Out")
 
-        val kotlinSourceFiles = FileUtil.findFilesByMask(Pattern.compile(".+\\.kt$"), srcDir)
-        if (kotlinSourceFiles.isNotEmpty()) {
-            MockLibraryUtil.compileKotlin(srcDir.path, outDir, extraClasspath = *classpath)
-        }
-
         val javaSourceFiles = FileUtil.findFilesByMask(Pattern.compile(".+\\.java$"), srcDir)
         if (javaSourceFiles.isNotEmpty()) {
             KotlinTestUtils.compileJavaFiles(
                 javaSourceFiles,
-                listOf("-cp", StringUtil.join(listOf(*classpath, outDir), File.pathSeparator), "-d", outDir.path)
+                listOf("-cp", StringUtil.join(listOf(*classpath), File.pathSeparator), "-d", outDir.path)
             )
         }
+        val kotlinSourceFiles = FileUtil.findFilesByMask(Pattern.compile(".+\\.kt$"), srcDir)
+        if (kotlinSourceFiles.isNotEmpty()) {
+            MockLibraryUtil.compileKotlin(srcDir.path, outDir, extraClasspath = *arrayOf(*classpath, outDir.path))
+        }
+
         return outDir
     }
 

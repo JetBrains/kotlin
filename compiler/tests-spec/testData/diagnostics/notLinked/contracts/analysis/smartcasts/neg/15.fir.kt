@@ -30,14 +30,14 @@ import contracts.*
 // TESTCASE NUMBER: 1
 fun case_1(value: Any) {
     if (contracts.case_1_2(contracts.case_1_1(value is Char))) {
-        <!AMBIGUITY!>println<!>(value.<!INAPPLICABLE_CANDIDATE!>category<!>)
+        println(value.<!INAPPLICABLE_CANDIDATE!>category<!>)
     }
 }
 
 // TESTCASE NUMBER: 2
 fun case_2(value: Any) {
     if (contracts.case_2(value is Char) is Boolean) {
-        <!AMBIGUITY!>println<!>(value.<!INAPPLICABLE_CANDIDATE!>category<!>)
+        println(value.<!INAPPLICABLE_CANDIDATE!>category<!>)
     }
 }
 

@@ -1,4 +1,54 @@
 FILE: RedundantModalityModifierChecker.kt
+    public final object O : R|kotlin/Any| {
+        private constructor(): R|O| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public abstract interface Interface : R|kotlin/Any| {
+        public open val gav: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ Int(42)
+            }
+
+        public abstract fun foo(): R|kotlin/Unit|
+
+        private final fun bar(): R|kotlin/Unit| {
+        }
+
+        public open fun goo(): R|kotlin/Unit| {
+        }
+
+        public abstract fun tar(): R|kotlin/Unit|
+
+        public abstract fun too(): R|kotlin/Unit| {
+        }
+
+    }
+    public abstract interface B : R|kotlin/Any| {
+        public abstract var bar: R|kotlin/Unit|
+            public get(): R|kotlin/Unit|
+            public set(value: R|kotlin/Unit|): R|kotlin/Unit|
+
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    public abstract expect class AbstractClass : R|ERROR CLASS: Symbol not found, for `Foo`| {
+        public expect constructor(): R|AbstractClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract expect override fun foo(): R|kotlin/Unit|
+
+        public abstract expect fun bar(): R|kotlin/Unit|
+
+        public abstract expect val baz: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+    }
     public abstract class Base : R|kotlin/Any| {
         public constructor(): R|Base| {
             super<R|kotlin/Any|>()
@@ -41,18 +91,6 @@ FILE: RedundantModalityModifierChecker.kt
         public constructor(): R|Final| {
             super<R|kotlin/Any|>()
         }
-
-    }
-    public abstract interface Interface : R|kotlin/Any| {
-        public abstract fun foo(): R|kotlin/Unit|
-
-        private final fun bar(): R|kotlin/Unit| {
-        }
-
-        public open val gav: R|kotlin/Int|
-            public get(): R|kotlin/Int| {
-                ^ Int(42)
-            }
 
     }
     public abstract interface Derived : R|Interface| {

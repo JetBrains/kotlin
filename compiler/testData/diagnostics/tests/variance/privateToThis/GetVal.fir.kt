@@ -33,5 +33,5 @@ class Test<in I, out O> {
 }
 
 fun <I, O> test(t: Test<I, O>) {
-    t.apply(t.<!INAPPLICABLE_CANDIDATE!>i<!>)
+    t.apply(t.<!HIDDEN!>i<!>)
 }

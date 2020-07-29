@@ -1,0 +1,149 @@
+FILE fqName:<root> fileName:/deprecatedProperty.kt
+  PROPERTY name:testVal visibility:public modality:FINAL [val]
+    annotations:
+      Deprecated(message = '', replaceWith = <null>, level = <null>)
+    FIELD PROPERTY_BACKING_FIELD name:testVal type:kotlin.Int visibility:private [final,static]
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value=1
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testVal> visibility:public modality:FINAL <> () returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:testVal visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-testVal> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testVal type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
+  PROPERTY name:testVar visibility:public modality:FINAL [var]
+    annotations:
+      Deprecated(message = '', replaceWith = <null>, level = <null>)
+    FIELD PROPERTY_BACKING_FIELD name:testVar type:kotlin.Int visibility:private [static]
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value=1
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testVar> visibility:public modality:FINAL <> () returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:testVar visibility:public modality:FINAL [var]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-testVar> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testVar type:kotlin.Int visibility:private [static]' type=kotlin.Int origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-testVar> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:kotlin.Unit
+      correspondingProperty: PROPERTY name:testVar visibility:public modality:FINAL [var]
+      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+      BLOCK_BODY
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testVar type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
+          value: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-testVar>' type=kotlin.Int origin=null
+  PROPERTY name:testValWithExplicitDefaultGet visibility:public modality:FINAL [val]
+    annotations:
+      Deprecated(message = '', replaceWith = <null>, level = <null>)
+    FIELD PROPERTY_BACKING_FIELD name:testValWithExplicitDefaultGet type:kotlin.Int visibility:private [final,static]
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value=1
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testValWithExplicitDefaultGet> visibility:public modality:FINAL <> () returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:testValWithExplicitDefaultGet visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-testValWithExplicitDefaultGet> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testValWithExplicitDefaultGet type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
+  PROPERTY name:testValWithExplicitGet visibility:public modality:FINAL [val]
+    annotations:
+      Deprecated(message = '', replaceWith = <null>, level = <null>)
+    FUN name:<get-testValWithExplicitGet> visibility:public modality:FINAL <> () returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:testValWithExplicitGet visibility:public modality:FINAL [val]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-testValWithExplicitGet> (): kotlin.Int declared in <root>'
+          CONST Int type=kotlin.Int value=1
+  PROPERTY name:testVarWithExplicitDefaultGet visibility:public modality:FINAL [var]
+    annotations:
+      Deprecated(message = '', replaceWith = <null>, level = <null>)
+    FIELD PROPERTY_BACKING_FIELD name:testVarWithExplicitDefaultGet type:kotlin.Int visibility:private [static]
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value=1
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testVarWithExplicitDefaultGet> visibility:public modality:FINAL <> () returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:testVarWithExplicitDefaultGet visibility:public modality:FINAL [var]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-testVarWithExplicitDefaultGet> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testVarWithExplicitDefaultGet type:kotlin.Int visibility:private [static]' type=kotlin.Int origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-testVarWithExplicitDefaultGet> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:kotlin.Unit
+      correspondingProperty: PROPERTY name:testVarWithExplicitDefaultGet visibility:public modality:FINAL [var]
+      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+      BLOCK_BODY
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testVarWithExplicitDefaultGet type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
+          value: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-testVarWithExplicitDefaultGet>' type=kotlin.Int origin=null
+  PROPERTY name:testVarWithExplicitDefaultSet visibility:public modality:FINAL [var]
+    annotations:
+      Deprecated(message = '', replaceWith = <null>, level = <null>)
+    FIELD PROPERTY_BACKING_FIELD name:testVarWithExplicitDefaultSet type:kotlin.Int visibility:private [static]
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value=1
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testVarWithExplicitDefaultSet> visibility:public modality:FINAL <> () returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:testVarWithExplicitDefaultSet visibility:public modality:FINAL [var]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-testVarWithExplicitDefaultSet> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testVarWithExplicitDefaultSet type:kotlin.Int visibility:private [static]' type=kotlin.Int origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-testVarWithExplicitDefaultSet> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:kotlin.Unit
+      correspondingProperty: PROPERTY name:testVarWithExplicitDefaultSet visibility:public modality:FINAL [var]
+      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+      BLOCK_BODY
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testVarWithExplicitDefaultSet type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
+          value: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-testVarWithExplicitDefaultSet>' type=kotlin.Int origin=null
+  PROPERTY name:testVarWithExplicitDefaultGetSet visibility:public modality:FINAL [var]
+    annotations:
+      Deprecated(message = '', replaceWith = <null>, level = <null>)
+    FIELD PROPERTY_BACKING_FIELD name:testVarWithExplicitDefaultGetSet type:kotlin.Int visibility:private [static]
+      EXPRESSION_BODY
+        CONST Int type=kotlin.Int value=1
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testVarWithExplicitDefaultGetSet> visibility:public modality:FINAL <> () returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:testVarWithExplicitDefaultGetSet visibility:public modality:FINAL [var]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-testVarWithExplicitDefaultGetSet> (): kotlin.Int declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testVarWithExplicitDefaultGetSet type:kotlin.Int visibility:private [static]' type=kotlin.Int origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-testVarWithExplicitDefaultGetSet> visibility:public modality:FINAL <> (<set-?>:kotlin.Int) returnType:kotlin.Unit
+      correspondingProperty: PROPERTY name:testVarWithExplicitDefaultGetSet visibility:public modality:FINAL [var]
+      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+      BLOCK_BODY
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testVarWithExplicitDefaultGetSet type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
+          value: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-testVarWithExplicitDefaultGetSet>' type=kotlin.Int origin=null
+  PROPERTY name:testVarWithExplicitGetSet visibility:public modality:FINAL [var]
+    annotations:
+      Deprecated(message = '', replaceWith = <null>, level = <null>)
+    FUN name:<get-testVarWithExplicitGetSet> visibility:public modality:FINAL <> () returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:testVarWithExplicitGetSet visibility:public modality:FINAL [var]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-testVarWithExplicitGetSet> (): kotlin.Int declared in <root>'
+          CONST Int type=kotlin.Int value=1
+    FUN name:<set-testVarWithExplicitGetSet> visibility:public modality:FINAL <> (v:kotlin.Int) returnType:kotlin.Unit
+      correspondingProperty: PROPERTY name:testVarWithExplicitGetSet visibility:public modality:FINAL [var]
+      VALUE_PARAMETER name:v index:0 type:kotlin.Int
+      BLOCK_BODY
+  PROPERTY name:testLateinitVar visibility:public modality:FINAL [lateinit,var]
+    annotations:
+      Deprecated(message = '', replaceWith = <null>, level = <null>)
+    FIELD PROPERTY_BACKING_FIELD name:testLateinitVar type:kotlin.Any visibility:public [static]
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testLateinitVar> visibility:public modality:FINAL <> () returnType:kotlin.Any
+      correspondingProperty: PROPERTY name:testLateinitVar visibility:public modality:FINAL [lateinit,var]
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-testLateinitVar> (): kotlin.Any declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testLateinitVar type:kotlin.Any visibility:public [static]' type=kotlin.Any origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<set-testLateinitVar> visibility:public modality:FINAL <> (<set-?>:kotlin.Any) returnType:kotlin.Unit
+      correspondingProperty: PROPERTY name:testLateinitVar visibility:public modality:FINAL [lateinit,var]
+      VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Any
+      BLOCK_BODY
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testLateinitVar type:kotlin.Any visibility:public [static]' type=kotlin.Unit origin=null
+          value: GET_VAR '<set-?>: kotlin.Any declared in <root>.<set-testLateinitVar>' type=kotlin.Any origin=null
+  PROPERTY name:testExtVal visibility:public modality:FINAL [val]
+    annotations:
+      Deprecated(message = '', replaceWith = <null>, level = <null>)
+    FUN name:<get-testExtVal> visibility:public modality:FINAL <> ($receiver:kotlin.Any) returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:testExtVal visibility:public modality:FINAL [val]
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-testExtVal> (): kotlin.Int declared in <root>'
+          CONST Int type=kotlin.Int value=1
+  PROPERTY name:textExtVar visibility:public modality:FINAL [var]
+    annotations:
+      Deprecated(message = '', replaceWith = <null>, level = <null>)
+    FUN name:<get-textExtVar> visibility:public modality:FINAL <> ($receiver:kotlin.Any) returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:textExtVar visibility:public modality:FINAL [var]
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-textExtVar> (): kotlin.Int declared in <root>'
+          CONST Int type=kotlin.Int value=1
+    FUN name:<set-textExtVar> visibility:public modality:FINAL <> ($receiver:kotlin.Any, v:kotlin.Int) returnType:kotlin.Unit
+      correspondingProperty: PROPERTY name:textExtVar visibility:public modality:FINAL [var]
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:v index:0 type:kotlin.Int
+      BLOCK_BODY

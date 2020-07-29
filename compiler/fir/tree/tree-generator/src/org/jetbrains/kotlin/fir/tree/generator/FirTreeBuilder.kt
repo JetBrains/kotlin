@@ -36,7 +36,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val typeParameter = element("TypeParameter", Declaration, typeParameterRef, annotatedDeclaration, symbolOwner)
     val typeParameterRefsOwner = element("TypeParameterRefsOwner", Declaration)
     val typeParametersOwner = element("TypeParametersOwner", Declaration, typeParameterRefsOwner)
-    val memberDeclaration = element("MemberDeclaration", Declaration, annotatedDeclaration)
+    val memberDeclaration = element("MemberDeclaration", Declaration, annotatedDeclaration, typeParameterRefsOwner)
     val callableMemberDeclaration = element("CallableMemberDeclaration", Declaration, callableDeclaration, memberDeclaration)
 
     val variable = element("Variable", Declaration, callableDeclaration, annotatedDeclaration, statement)
@@ -83,9 +83,10 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val argumentList = element("ArgumentList", Expression)
     val call = element("Call", Expression, statement) // TODO: may smth like `CallWithArguments` or `ElementWithArguments`?
     val annotationCall = element("AnnotationCall", Expression, expression, call)
-    val operatorCall = element("OperatorCall", Expression, expression, call)
     val comparisonExpression = element("ComparisonExpression", Expression, expression)
     val typeOperatorCall = element("TypeOperatorCall", Expression, expression, call)
+    val assignmentOperatorStatement = element("AssignmentOperatorStatement", Expression, statement)
+    val equalityOperatorCall = element("EqualityOperatorCall", Expression, expression, call)
     val whenExpression = element("WhenExpression", Expression, expression, resolvable)
     val whenBranch = element("WhenBranch", Expression)
     val qualifiedAccessWithoutCallee = element("QualifiedAccessWithoutCallee", Expression, statement)

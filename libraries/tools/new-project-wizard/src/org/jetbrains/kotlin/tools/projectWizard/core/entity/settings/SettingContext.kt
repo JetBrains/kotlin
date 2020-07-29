@@ -6,9 +6,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.core.entity.settings
 
 import org.jetbrains.kotlin.tools.projectWizard.core.EventManager
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.path
-import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KProperty
 
 class SettingContext {
     private val values = mutableMapOf<String, Any>()
@@ -32,27 +29,10 @@ class SettingContext {
     fun <V : Any, T : SettingType<V>> getPluginSetting(pluginSettingReference: PluginSettingReference<V, T>) =
         pluginSettings[pluginSettingReference.path] as PluginSetting<V, T>
 
-    @Suppress("UNCHECKED_CAST")
-    private fun <V : Any, T : SettingType<V>> getPluginSetting(pluginSettingReference: PluginSettingPropertyReference<V, T>) =
-        pluginSettings[pluginSettingReference.path] as? PluginSetting<V, T>
-
-    private fun <V : Any, T : SettingType<V>> setPluginSetting(
-        pluginSettingReference: PluginSettingPropertyReference<V, T>,
+    fun <V : Any, T : SettingType<V>> setPluginSetting(
+        pluginSettingReference: PluginSettingReference<V, T>,
         setting: PluginSetting<V, T>
     ) {
         pluginSettings[pluginSettingReference.path] = setting
-    }
-
-    fun <V : Any, T : SettingType<V>> settingDelegate(
-        create: (path: String) -> SettingBuilder<V, T>
-    ): ReadOnlyProperty<Any, PluginSetting<V, T>> = object : ReadOnlyProperty<Any, PluginSetting<V, T>> {
-        override fun getValue(thisRef: Any, property: KProperty<*>): PluginSetting<V, T> {
-            @Suppress("UNCHECKED_CAST")
-            val reference = property as PluginSettingPropertyReference<V, T>
-            getPluginSetting(reference)?.let { return it }
-            val setting = PluginSetting(create(reference.path).buildInternal())
-            setPluginSetting(reference, setting)
-            return setting
-        }
     }
 }

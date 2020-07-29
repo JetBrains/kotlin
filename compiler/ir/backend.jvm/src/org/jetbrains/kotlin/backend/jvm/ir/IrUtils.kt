@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.backend.jvm.ir
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.lower.IrLoweringContext
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmCachedDeclarations
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineOnly
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
-import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.config.JvmDefaultMode
@@ -228,14 +228,14 @@ fun IrExpression.isSmartcastFromHigherThanNullable(context: JvmBackendContext): 
 }
 
 fun IrBody.replaceThisByStaticReference(
-    declarationFactory: JvmDeclarationFactory,
+    cachedDeclarations: JvmCachedDeclarations,
     irClass: IrClass,
     oldThisReceiverParameter: IrValueParameter
 ): IrBody =
     transform(object : IrElementTransformerVoid() {
         override fun visitGetValue(expression: IrGetValue): IrExpression {
             if (expression.symbol == oldThisReceiverParameter.symbol) {
-                val instanceField = declarationFactory.getPrivateFieldForObjectInstance(irClass)
+                val instanceField = cachedDeclarations.getPrivateFieldForObjectInstance(irClass)
                 return IrGetFieldImpl(
                     expression.startOffset,
                     expression.endOffset,
@@ -320,7 +320,7 @@ fun IrSimpleFunction.copyCorrespondingPropertyFrom(source: IrSimpleFunction) {
     val property = source.correspondingPropertySymbol?.owner ?: return
     val target = this
 
-    correspondingPropertySymbol = buildProperty(property.symbol.descriptor) {
+    correspondingPropertySymbol = factory.buildProperty(property.symbol.descriptor) {
         name = property.name
         updateFrom(property)
     }.apply {

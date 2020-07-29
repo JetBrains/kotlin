@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public final class ASimpleClass {
+    // source: 'jvmOverloadsAndParametersAnnotations.kt'
     public method <init>(): void
     public synthetic static method showSnackbar$default(p0: ASimpleClass, p1: java.lang.String, p2: int, p3: int, p4: int, p5: java.lang.Object): void
     public final @kotlin.jvm.JvmOverloads method showSnackbar(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int): void
@@ -19,6 +20,7 @@ public final class ASimpleClass {
 
 @kotlin.Metadata
 public final class BSimpleObject {
+    // source: 'jvmOverloadsAndParametersAnnotations.kt'
     public final static @org.jetbrains.annotations.NotNull field INSTANCE: BSimpleObject
     static method <clinit>(): void
     private method <init>(): void
@@ -40,7 +42,7 @@ public final class BSimpleObject {
 
 @kotlin.Metadata
 public final class CClassWithCompanion$Companion {
-    inner class CClassWithCompanion$Companion
+    // source: 'jvmOverloadsAndParametersAnnotations.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic static method showSnackbar$default(p0: CClassWithCompanion$Companion, p1: java.lang.String, p2: int, p3: int, p4: int, p5: java.lang.Object): void
@@ -57,12 +59,13 @@ public final class CClassWithCompanion$Companion {
     public synthetic static method showSnackbarNoExtension$default(p0: CClassWithCompanion$Companion, p1: int, p2: int, p3: int, p4: java.lang.Object): void
     public final @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarNoExtension(@StringRes p0: int): void
     public final @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarNoExtension(@StringRes p0: int, p1: int): void
+    public final inner class CClassWithCompanion$Companion
 }
 
 @kotlin.Metadata
 public final class CClassWithCompanion {
+    // source: 'jvmOverloadsAndParametersAnnotations.kt'
     public final static @org.jetbrains.annotations.NotNull field Companion: CClassWithCompanion$Companion
-    inner class CClassWithCompanion$Companion
     static method <clinit>(): void
     public method <init>(): void
     public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbar(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int): void
@@ -75,12 +78,13 @@ public final class CClassWithCompanion {
     public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarLongNoExtension(@StringRes p0: int, @LongRes p1: long): void
     public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarNoExtension(@StringRes p0: int): void
     public final static @kotlin.jvm.JvmStatic @kotlin.jvm.JvmOverloads method showSnackbarNoExtension(@StringRes p0: int, p1: int): void
+    public final inner class CClassWithCompanion$Companion
 }
 
 @kotlin.Metadata
 public final class DClassConstuctors$InnerClass {
+    // source: 'jvmOverloadsAndParametersAnnotations.kt'
     synthetic final field this$0: DClassConstuctors
-    inner class DClassConstuctors$InnerClass
     public @kotlin.jvm.JvmOverloads method <init>(p0: DClassConstuctors, @StringRes p1: int): void
     public @kotlin.jvm.JvmOverloads method <init>(p0: DClassConstuctors, @StringRes p1: int, @DefRes p2: int, @LongRes p3: long): void
     public @kotlin.jvm.JvmOverloads method <init>(p0: DClassConstuctors, @StringRes p1: int, @DefRes p2: int, @LongRes p3: long, @org.jetbrains.annotations.NotNull p4: java.lang.String): void
@@ -88,11 +92,12 @@ public final class DClassConstuctors$InnerClass {
     public @kotlin.jvm.JvmOverloads method <init>(p0: DClassConstuctors, @StringRes p1: int, p2: int): void
     public synthetic method <init>(p0: DClassConstuctors, p1: int, p2: int, p3: int, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic method <init>(p0: DClassConstuctors, p1: int, p2: int, p3: long, p4: java.lang.String, p5: int, p6: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final inner class DClassConstuctors$InnerClass
 }
 
 @kotlin.Metadata
 public final class DClassConstuctors {
-    inner class DClassConstuctors$InnerClass
+    // source: 'jvmOverloadsAndParametersAnnotations.kt'
     public @kotlin.jvm.JvmOverloads method <init>(@StringRes p0: int): void
     public @kotlin.jvm.JvmOverloads method <init>(@StringRes p0: int, @DefRes p1: int, @LongRes p2: long): void
     public @kotlin.jvm.JvmOverloads method <init>(@StringRes p0: int, @DefRes p1: int, @LongRes p2: long, @org.jetbrains.annotations.NotNull p3: java.lang.String): void
@@ -100,14 +105,18 @@ public final class DClassConstuctors {
     public @kotlin.jvm.JvmOverloads method <init>(@StringRes p0: int, p1: int): void
     public synthetic method <init>(p0: int, p1: int, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic method <init>(p0: int, p1: int, p2: long, p3: java.lang.String, p4: int, p5: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final inner class DClassConstuctors$InnerClass
 }
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class DefRes
+public annotation class DefRes {
+    // source: 'jvmOverloadsAndParametersAnnotations.kt'
+}
 
 @kotlin.Metadata
 public final class JvmOverloadsAndParametersAnnotationsKt {
+    // source: 'jvmOverloadsAndParametersAnnotations.kt'
     public synthetic static method showSnackbar$default(p0: java.lang.String, p1: int, p2: int, p3: int, p4: java.lang.Object): void
     public final static @kotlin.jvm.JvmOverloads method showSnackbar(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int): void
     public final static @kotlin.jvm.JvmOverloads method showSnackbar(@org.jetbrains.annotations.NotNull p0: java.lang.String, @StringRes p1: int, p2: int): void
@@ -126,8 +135,12 @@ public final class JvmOverloadsAndParametersAnnotationsKt {
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class LongRes
+public annotation class LongRes {
+    // source: 'jvmOverloadsAndParametersAnnotations.kt'
+}
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class StringRes
+public annotation class StringRes {
+    // source: 'jvmOverloadsAndParametersAnnotations.kt'
+}

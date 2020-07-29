@@ -29,7 +29,7 @@ FILE: eqNotEq.kt
                 R|<local>/x|.R|kotlin/String.length|
             }
             else ->  {
-                R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [kotlin/String.length]>#
+                R|<local>/x|.<Inapplicable(WRONG_RECEIVER): kotlin/String.length>#
             }
         }
 

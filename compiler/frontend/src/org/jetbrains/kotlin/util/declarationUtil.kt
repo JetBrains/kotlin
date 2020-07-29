@@ -98,13 +98,19 @@ fun getNonPrivateTraitMembersForDelegation(
     val result = linkedMapOf<CallableMemberDescriptor, CallableMemberDescriptor>()
     for (declaration in DescriptorUtils.getAllDescriptors(descriptor.defaultType.memberScope)) {
         if (declaration !is CallableMemberDescriptor) continue
-
-        val traitMember = findInterfaceImplementation(declaration, returnImplNotDelegate)
-        if (traitMember == null ||
-            Visibilities.isPrivate(traitMember.visibility) ||
-            traitMember.visibility == Visibilities.INVISIBLE_FAKE
-        ) continue
-        result[declaration] = traitMember
+        result[declaration] = getNonPrivateTraitMembersForDelegation(declaration, returnImplNotDelegate) ?: continue
     }
     return result
+}
+
+fun getNonPrivateTraitMembersForDelegation(
+    descriptor: CallableMemberDescriptor,
+    returnImplNotDelegate: Boolean = false,
+): CallableMemberDescriptor? {
+    val traitMember = findInterfaceImplementation(descriptor, returnImplNotDelegate)
+    if (traitMember == null ||
+        Visibilities.isPrivate(traitMember.visibility) ||
+        traitMember.visibility == Visibilities.INVISIBLE_FAKE
+    ) return null
+    return traitMember
 }

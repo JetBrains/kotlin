@@ -3,38 +3,49 @@
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public annotation class A
+public annotation class A {
+    // source: 'inlineClassWithManyKindsOfMembers.kt'
+}
 
 @kotlin.annotation.Target
 @kotlin.annotation.Retention
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public annotation class AGet
+public annotation class AGet {
+    // source: 'inlineClassWithManyKindsOfMembers.kt'
+}
 
 @kotlin.annotation.Target
 @kotlin.annotation.Retention
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public annotation class AReceiver
+public annotation class AReceiver {
+    // source: 'inlineClassWithManyKindsOfMembers.kt'
+}
 
 @kotlin.annotation.Target
 @kotlin.annotation.Retention
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public annotation class ASet
+public annotation class ASet {
+    // source: 'inlineClassWithManyKindsOfMembers.kt'
+}
 
 @kotlin.annotation.Target
 @kotlin.annotation.Retention
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public annotation class ASetParam
+public annotation class ASetParam {
+    // source: 'inlineClassWithManyKindsOfMembers.kt'
+}
 
 @kotlin.Metadata
 public interface IFoo {
+    // source: 'inlineClassWithManyKindsOfMembers.kt'
     public abstract method getOverridingExtVal(@org.jetbrains.annotations.NotNull p0: java.lang.String): int
     public abstract method getOverridingExtVar(@org.jetbrains.annotations.NotNull p0: java.lang.String): int
     public abstract method getOverridingVal(): int
@@ -47,6 +58,7 @@ public interface IFoo {
 
 @kotlin.Metadata
 public final class Z {
+    // source: 'inlineClassWithManyKindsOfMembers.kt'
     private final field x: int
     private synthetic method <init>(p0: int): void
     public synthetic final static method box-impl(p0: int): Z

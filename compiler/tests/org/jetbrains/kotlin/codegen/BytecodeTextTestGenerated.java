@@ -1478,6 +1478,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
                 runTest("compiler/testData/codegen/bytecodeText/coroutines/debug/probeCoroutineSuspended.kt");
             }
 
+            @TestMetadata("shrinkLvtTopLevel.kt")
+            public void testShrinkLvtTopLevel() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/debug/shrinkLvtTopLevel.kt");
+            }
+
             @TestMetadata("thisAndResultInLvt.kt")
             public void testThisAndResultInLvt() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeText/coroutines/debug/thisAndResultInLvt.kt");
@@ -1868,6 +1873,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
 
         public void testAllFilesPresentInEnum() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+
+        @TestMetadata("constructorAccessors.kt")
+        public void testConstructorAccessors() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/enum/constructorAccessors.kt");
         }
 
         @TestMetadata("enumCheckcasts.kt")

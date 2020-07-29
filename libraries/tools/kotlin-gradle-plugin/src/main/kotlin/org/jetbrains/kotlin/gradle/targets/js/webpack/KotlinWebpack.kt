@@ -172,14 +172,12 @@ constructor(
     @Internal
     var generateConfigOnly: Boolean = false
 
-    private fun createRunner() = KotlinWebpackRunner(
-        compilation.npmProject,
-        configFile,
-        execHandleFactory,
-        bin,
-        args,
-        nodeArgs,
-        KotlinWebpackConfig(
+    @Input
+    val webpackConfigAppliers: MutableList<(KotlinWebpackConfig) -> Unit> =
+        mutableListOf()
+
+    private fun createRunner(): KotlinWebpackRunner {
+        val config = KotlinWebpackConfig(
             mode = mode,
             entry = entry,
             reportEvaluatedConfigFile = if (saveEvaluatedConfigFile) evaluatedConfigFile else null,
@@ -194,7 +192,20 @@ constructor(
             sourceMaps = sourceMaps,
             resolveFromModulesFirst = resolveFromModulesFirst
         )
-    )
+
+        webpackConfigAppliers
+            .forEach { it(config) }
+
+        return KotlinWebpackRunner(
+            compilation.npmProject,
+            configFile,
+            execHandleFactory,
+            bin,
+            args,
+            nodeArgs,
+            config
+        )
+    }
 
     override val nodeModulesRequired: Boolean
         @Internal get() = true

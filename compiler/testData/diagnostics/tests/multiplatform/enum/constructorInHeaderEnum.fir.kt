@@ -3,11 +3,11 @@
 // FILE: common.kt
 
 expect enum class En(x: Int) {
-    <!INAPPLICABLE_CANDIDATE!>E1,<!>
+    <!NONE_APPLICABLE!>E1,<!>
     E2(42),
     ;
 
-    <!INAPPLICABLE_CANDIDATE!>constructor(s: String)<!>
+    <!NONE_APPLICABLE!>constructor(s: String)<!>
 }
 
 expect enum class En2 {

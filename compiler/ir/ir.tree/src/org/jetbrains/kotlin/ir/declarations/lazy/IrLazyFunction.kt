@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.withScope
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 
@@ -36,6 +35,7 @@ class IrLazyFunction(
     isExpect: Boolean,
     override val isFakeOverride: Boolean,
     override val isOperator: Boolean,
+    override val isInfix: Boolean,
     stubGenerator: DeclarationStubGenerator,
     typeTranslator: TypeTranslator
 ) :
@@ -72,7 +72,4 @@ class IrLazyFunction(
     init {
         symbol.bind(this)
     }
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-        visitor.visitSimpleFunction(this, data)
 }

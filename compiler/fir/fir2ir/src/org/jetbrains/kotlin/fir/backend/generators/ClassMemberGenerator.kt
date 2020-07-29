@@ -27,7 +27,10 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.constructedClassType
+import org.jetbrains.kotlin.ir.util.isAnnotationClass
+import org.jetbrains.kotlin.ir.util.isSetter
+import org.jetbrains.kotlin.ir.util.parentAsClass
 
 internal class ClassMemberGenerator(
     private val components: Fir2IrComponents,
@@ -124,7 +127,7 @@ internal class ClassMemberGenerator(
                 annotationGenerator.generate(irFunction, firFunction)
             }
             if (firFunction is FirConstructor && irFunction is IrConstructor && !parentAsClass.isAnnotationClass && !firFunction.isExpect) {
-                val body = IrBlockBodyImpl(startOffset, endOffset)
+                val body = factory.createBlockBody(startOffset, endOffset)
                 val delegatedConstructor = firFunction.delegatedConstructor
                 if (delegatedConstructor != null) {
                     val irDelegatingConstructorCall = delegatedConstructor.toIrDelegatingConstructorCall()
@@ -221,7 +224,7 @@ internal class ClassMemberGenerator(
             declarationStorage.enterScope(this@initializeBackingField)
             // NB: initializer can be already converted
             if (initializer == null && initializerExpression != null) {
-                initializer = IrExpressionBodyImpl(visitor.convertToIrExpression(initializerExpression))
+                initializer = irFactory.createExpressionBody(visitor.convertToIrExpression(initializerExpression))
             }
             declarationStorage.leaveScope(this@initializeBackingField)
         }
@@ -247,7 +250,7 @@ internal class ClassMemberGenerator(
                     val fieldSymbol = backingField?.symbol
                     val declaration = this
                     if (fieldSymbol != null) {
-                        body = IrBlockBodyImpl(
+                        body = factory.createBlockBody(
                             startOffset, endOffset,
                             listOf(
                                 if (isSetter) {
@@ -347,7 +350,7 @@ internal class ClassMemberGenerator(
                     it.dispatchReceiver = visitor.convertToIrExpression(firDispatchReceiver)
                 }
                 with(callGenerator) {
-                    it.applyCallArguments(this@toIrDelegatingConstructorCall)
+                    it.applyCallArguments(this@toIrDelegatingConstructorCall, annotationMode = false)
                 }
             }
         }
@@ -356,7 +359,7 @@ internal class ClassMemberGenerator(
     private fun IrValueParameter.setDefaultValue(firValueParameter: FirValueParameter) {
         val firDefaultValue = firValueParameter.defaultValue
         if (firDefaultValue != null) {
-            this.defaultValue = IrExpressionBodyImpl(visitor.convertToIrExpression(firDefaultValue))
+            this.defaultValue = factory.createExpressionBody(visitor.convertToIrExpression(firDefaultValue))
         }
     }
 }

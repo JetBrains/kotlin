@@ -220,12 +220,13 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
                 endOffset = endOffset,
                 type = context.irBuiltIns.unitType
             ).apply {
-                this.catches += irCatch(catchParameter).apply {
-                    result = irComposite {
+                this.catches += irCatch(
+                    catchParameter,
+                    irComposite {
                         +finallyExpression.copy()
                         +irThrow(irGet(catchParameter))
                     }
-                }
+                )
 
                 this.finallyExpression = null
             }

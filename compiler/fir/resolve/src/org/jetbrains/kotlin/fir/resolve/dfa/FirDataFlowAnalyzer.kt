@@ -344,30 +344,29 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         graphBuilder.exitComparisonExpression(comparisonExpression).mergeIncomingFlow()
     }
 
-    fun exitOperatorCall(operatorCall: FirOperatorCall) {
-        val node = graphBuilder.exitOperatorCall(operatorCall).mergeIncomingFlow()
-        when (val operation = operatorCall.operation) {
-            FirOperation.EQ, FirOperation.NOT_EQ, FirOperation.IDENTITY, FirOperation.NOT_IDENTITY -> {
-                val leftOperand = operatorCall.arguments[0]
-                val rightOperand = operatorCall.arguments[1]
+    fun exitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall) {
+        val node = graphBuilder.exitEqualityOperatorCall(equalityOperatorCall).mergeIncomingFlow()
+        val operation = equalityOperatorCall.operation
+        val leftOperand = equalityOperatorCall.arguments[0]
+        val rightOperand = equalityOperatorCall.arguments[1]
 
-                val leftConst = leftOperand as? FirConstExpression<*>
-                val rightConst = rightOperand as? FirConstExpression<*>
+        val leftConst = leftOperand as? FirConstExpression<*>
+        val rightConst = rightOperand as? FirConstExpression<*>
 
-                when {
-                    leftConst != null && rightConst != null -> return
-                    leftConst?.kind == FirConstKind.Null -> processEqNull(node, rightOperand, operation)
-                    rightConst?.kind == FirConstKind.Null -> processEqNull(node, leftOperand, operation)
-                    leftConst != null -> processEqWithConst(node, rightOperand, leftConst, operation)
-                    rightConst != null -> processEqWithConst(node, leftOperand, rightConst, operation)
-                    else -> processEq(node, leftOperand, rightOperand, operation)
-                }
-            }
+        when {
+            leftConst != null && rightConst != null -> return
+            leftConst?.kind == FirConstKind.Null -> processEqNull(node, rightOperand, operation)
+            rightConst?.kind == FirConstKind.Null -> processEqNull(node, leftOperand, operation)
+            leftConst != null -> processEqWithConst(node, rightOperand, leftConst, operation)
+            rightConst != null -> processEqWithConst(node, leftOperand, rightConst, operation)
+            else -> processEq(node, leftOperand, rightOperand, operation)
         }
     }
 
     // const != null
-    private fun processEqWithConst(node: OperatorCallNode, operand: FirExpression, const: FirConstExpression<*>, operation: FirOperation) {
+    private fun processEqWithConst(
+        node: EqualityOperatorCallNode, operand: FirExpression, const: FirConstExpression<*>, operation: FirOperation
+    ) {
         val isEq = operation.isEq()
         val expressionVariable = variableStorage.createSyntheticVariable(node.fir)
         val flow = node.flow
@@ -402,7 +401,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
     }
 
-    private fun processEq(node: OperatorCallNode, leftOperand: FirExpression, rightOperand: FirExpression, operation: FirOperation) {
+    private fun processEq(
+        node: EqualityOperatorCallNode, leftOperand: FirExpression, rightOperand: FirExpression, operation: FirOperation
+    ) {
         val leftIsNullable = leftOperand.coneType.isMarkedNullable
         val rightIsNullable = rightOperand.coneType.isMarkedNullable
         // left == right && right not null -> left != null
@@ -417,7 +418,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
     }
 
-    private fun processEqNull(node: OperatorCallNode, operand: FirExpression, operation: FirOperation) {
+    private fun processEqNull(node: EqualityOperatorCallNode, operand: FirExpression, operation: FirOperation) {
         val flow = node.flow
         val expressionVariable = variableStorage.createSyntheticVariable(node.fir)
         val operandVariable = variableStorage.getOrCreateVariable(node.previousFlow, operand)
@@ -448,7 +449,9 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         node.flow = flow
     }
 
-    private fun processIdentity(node: OperatorCallNode, leftOperand: FirExpression, rightOperand: FirExpression, operation: FirOperation) {
+    private fun processIdentity(
+        node: EqualityOperatorCallNode, leftOperand: FirExpression, rightOperand: FirExpression, operation: FirOperation
+    ) {
         val flow = node.flow
         val expressionVariable = variableStorage.getOrCreateVariable(node.previousFlow, node.fir)
         val leftOperandVariable = variableStorage.getOrCreateVariable(node.previousFlow, leftOperand)

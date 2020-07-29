@@ -28,7 +28,7 @@ digraph jumpFromRhsOfOperator_kt {
                 6 [label="Enter ||"];
                 7 [label="Access variable R|<local>/a|"];
                 8 [label="Const: Null(null)"];
-                9 [label="Operator !="];
+                9 [label="Equality operator !="];
                 10 [label="Exit left part of ||"];
                 11 [label="Enter right part of ||"];
                 12 [label="Function call: R|java/lang/Exception.Exception|()"];
@@ -70,7 +70,7 @@ digraph jumpFromRhsOfOperator_kt {
                 22 [label="Enter &&"];
                 23 [label="Access variable R|<local>/a|"];
                 24 [label="Const: Null(null)"];
-                25 [label="Operator =="];
+                25 [label="Equality operator =="];
                 26 [label="Exit left part of &&"];
                 27 [label="Enter right part of &&"];
                 28 [label="Function call: R|java/lang/Exception.Exception|()"];
@@ -118,7 +118,7 @@ digraph jumpFromRhsOfOperator_kt {
                         40 [label="Enter ||"];
                         41 [label="Access variable R|<local>/a|"];
                         42 [label="Const: Null(null)"];
-                        43 [label="Operator !="];
+                        43 [label="Equality operator !="];
                         44 [label="Exit left part of ||"];
                         45 [label="Enter right part of ||"];
                         46 [label="Function call: R|java/lang/Exception.Exception|()"];
@@ -191,7 +191,7 @@ digraph jumpFromRhsOfOperator_kt {
                         67 [label="Enter &&"];
                         68 [label="Access variable R|<local>/a|"];
                         69 [label="Const: Null(null)"];
-                        70 [label="Operator =="];
+                        70 [label="Equality operator =="];
                         71 [label="Exit left part of &&"];
                         72 [label="Enter right part of &&"];
                         73 [label="Function call: R|java/lang/Exception.Exception|()"];
@@ -258,7 +258,7 @@ digraph jumpFromRhsOfOperator_kt {
                 92 [label="Enter ||"];
                 93 [label="Access variable R|<local>/a|"];
                 94 [label="Const: Null(null)"];
-                95 [label="Operator =="];
+                95 [label="Equality operator =="];
                 96 [label="Exit left part of ||"];
                 97 [label="Enter right part of ||"];
                 98 [label="Function call: R|java/lang/Exception.Exception|()"];
@@ -267,7 +267,7 @@ digraph jumpFromRhsOfOperator_kt {
                 101 [label="Exit ||"];
             }
             102 [label="Access variable R|<local>/a|"];
-            103 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
+            103 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()"];
             104 [label="Exit block"];
         }
         105 [label="Exit function test_5" style="filled" fillcolor=red];
@@ -300,7 +300,7 @@ digraph jumpFromRhsOfOperator_kt {
                 108 [label="Enter &&"];
                 109 [label="Access variable R|<local>/a|"];
                 110 [label="Const: Null(null)"];
-                111 [label="Operator !="];
+                111 [label="Equality operator !="];
                 112 [label="Exit left part of &&"];
                 113 [label="Enter right part of &&"];
                 114 [label="Function call: R|java/lang/Exception.Exception|()"];
@@ -309,7 +309,7 @@ digraph jumpFromRhsOfOperator_kt {
                 117 [label="Exit &&"];
             }
             118 [label="Access variable R|<local>/a|"];
-            119 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
+            119 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()"];
             120 [label="Exit block"];
         }
         121 [label="Exit function teat_6" style="filled" fillcolor=red];
@@ -348,7 +348,7 @@ digraph jumpFromRhsOfOperator_kt {
                         126 [label="Enter ||"];
                         127 [label="Access variable R|<local>/a|"];
                         128 [label="Const: Null(null)"];
-                        129 [label="Operator =="];
+                        129 [label="Equality operator =="];
                         130 [label="Exit left part of ||"];
                         131 [label="Enter right part of ||"];
                         132 [label="Function call: R|java/lang/Exception.Exception|()"];
@@ -364,14 +364,14 @@ digraph jumpFromRhsOfOperator_kt {
                     color=blue
                     139 [label="Enter block"];
                     140 [label="Access variable R|<local>/a|"];
-                    141 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
+                    141 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()"];
                     142 [label="Exit block"];
                 }
                 143 [label="Exit when branch result"];
                 144 [label="Exit when"];
             }
             145 [label="Access variable R|<local>/a|"];
-            146 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
+            146 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()"];
             147 [label="Exit block"];
         }
         148 [label="Exit function test_7" style="filled" fillcolor=red];
@@ -421,7 +421,7 @@ digraph jumpFromRhsOfOperator_kt {
                         153 [label="Enter &&"];
                         154 [label="Access variable R|<local>/a|"];
                         155 [label="Const: Null(null)"];
-                        156 [label="Operator !="];
+                        156 [label="Equality operator !="];
                         157 [label="Exit left part of &&"];
                         158 [label="Enter right part of &&"];
                         159 [label="Function call: R|java/lang/Exception.Exception|()"];
@@ -437,14 +437,14 @@ digraph jumpFromRhsOfOperator_kt {
                     color=blue
                     166 [label="Enter block"];
                     167 [label="Access variable R|<local>/a|"];
-                    168 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
+                    168 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()"];
                     169 [label="Exit block"];
                 }
                 170 [label="Exit when branch result"];
                 171 [label="Exit when"];
             }
             172 [label="Access variable R|<local>/a|"];
-            173 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()"];
+            173 [label="Function call: R|<local>/a|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()"];
             174 [label="Exit block"];
         }
         175 [label="Exit function test_8" style="filled" fillcolor=red];

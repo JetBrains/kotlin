@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public class A0 {
+    // source: 'removeAtTwoSpecialBridges.kt'
     public method <init>(): void
     public method add(p0: int, p1: java.lang.Object): void
     public method add(p0: java.lang.Object): boolean
@@ -30,6 +31,7 @@ public class A0 {
 
 @kotlin.Metadata
 public final class A1 {
+    // source: 'removeAtTwoSpecialBridges.kt'
     public method <init>(): void
     public bridge final method contains(p0: java.lang.Object): boolean
     public bridge method contains(p0: java.lang.String): boolean
@@ -46,6 +48,7 @@ public final class A1 {
 
 @kotlin.Metadata
 public final class A2 {
+    // source: 'removeAtTwoSpecialBridges.kt'
     public method <init>(): void
     public bridge final method contains(p0: java.lang.Object): boolean
     public bridge method contains(p0: java.lang.String): boolean

@@ -59,7 +59,7 @@ FILE: protectedVisibility.kt
         public final fun foo(): R|kotlin/Unit| {
             this@R|/Derived|.R|/Protected.bar|()
             R|/Protected.Nested.Nested|().R|/Protected.Nested.foo|()
-            R|/Protected.Nested.Nested|().<Inapplicable(HIDDEN): [/Protected.Nested.bar]>#()
+            R|/Protected.Nested.Nested|().<HIDDEN: /Protected.Nested.bar is invisible>#()
             this@R|/Protected.Companion|.R|/Protected.Companion.fromCompanion|()
             this@R|/Protected.Companion|.R|/Protected.Companion.protectedFromCompanion|()
         }
@@ -79,8 +79,8 @@ FILE: protectedVisibility.kt
     public final fun test(): R|kotlin/Unit| {
         R|/Protected.Protected|().R|/Protected.baz|()
         R|/Protected.Protected|().R|/Protected.Inner.Inner|()
-        R|/Protected.Protected|().<Inapplicable(HIDDEN): [/Protected.bar]>#()
-        Q|Protected|.<Inapplicable(HIDDEN): [/Protected.Nested.Nested]>#()
+        R|/Protected.Protected|().<HIDDEN: /Protected.bar is invisible>#()
+        Q|Protected|.<HIDDEN: /Protected.Nested.Nested is invisible>#()
     }
     public open class Generic<T> : R|kotlin/Any| {
         public constructor<T>(x: R|T|): R|Generic<T>| {

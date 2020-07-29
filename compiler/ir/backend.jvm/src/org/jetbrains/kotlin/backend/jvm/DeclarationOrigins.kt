@@ -51,4 +51,5 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object CONTINUATION_CLASS_RESULT_FIELD: IrDeclarationOriginImpl("CONTINUATION_CLASS_RESULT_FIELD", isSynthetic = true)
     object COMPANION_PROPERTY_BACKING_FIELD : IrDeclarationOriginImpl("COMPANION_MOVED_PROPERTY_BACKING_FIELD")
     object FIELD_FOR_STATIC_LAMBDA_INSTANCE : IrDeclarationOriginImpl("FIELD_FOR_STATIC_LAMBDA_INSTANCE")
+    object ABSTRACT_BRIDGE_STUB : IrDeclarationOriginImpl("ABSTRACT_BRIDGE_STUB")
 }

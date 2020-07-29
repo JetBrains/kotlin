@@ -45,7 +45,7 @@ digraph complex_kt {
                     11 [label="Enter when branch condition "];
                     12 [label="Access variable this@R|/closeFinally|"];
                     13 [label="Const: Null(null)"];
-                    14 [label="Operator =="];
+                    14 [label="Equality operator =="];
                     15 [label="Exit when branch condition"];
                 }
                 subgraph cluster_8 {
@@ -53,7 +53,7 @@ digraph complex_kt {
                     16 [label="Enter when branch condition "];
                     17 [label="Access variable R|<local>/cause|"];
                     18 [label="Const: Null(null)"];
-                    19 [label="Operator =="];
+                    19 [label="Equality operator =="];
                     20 [label="Exit when branch condition"];
                 }
                 subgraph cluster_9 {

@@ -5,7 +5,7 @@ import kotlin.reflect.KProperty
 val Int.a by Delegate(this)
 
 class A {
-  val Int.a by <!UNRESOLVED_REFERENCE!><!INAPPLICABLE_CANDIDATE!>Delegate<!>(this)<!>
+  val Int.a by <!INAPPLICABLE_CANDIDATE!>Delegate<!>(this)
 }
 
 class Delegate(i: Int) {

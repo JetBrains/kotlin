@@ -3,7 +3,7 @@
 import B.foo
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>foo<!>
+    <!HIDDEN!>foo<!>
 }
 
 // FILE: B.kt

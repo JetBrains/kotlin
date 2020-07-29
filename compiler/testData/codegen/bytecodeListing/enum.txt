@@ -1,9 +1,12 @@
 @java.lang.annotation.Retention
 @kotlin.Metadata
-public annotation class Ann
+public annotation class Ann {
+    // source: 'enum.kt'
+}
 
 @kotlin.Metadata
 public final enum class SimpleEnum {
+    // source: 'enum.kt'
     private synthetic final static field $VALUES: SimpleEnum[]
     public final enum static field A: SimpleEnum
     public final enum static field B: SimpleEnum
@@ -16,6 +19,7 @@ public final enum class SimpleEnum {
 
 @kotlin.Metadata
 public final enum class WithAnnotations {
+    // source: 'enum.kt'
     private synthetic final static field $VALUES: WithAnnotations[]
     public final enum static @Ann field A: WithAnnotations
     public final enum static @Ann field B: WithAnnotations
@@ -27,11 +31,12 @@ public final enum class WithAnnotations {
 
 @kotlin.Metadata
 public final enum class WithConstructor {
+    // source: 'enum.kt'
     private synthetic final static field $VALUES: WithConstructor[]
     public final enum static field A: WithConstructor
     public final enum static field B: WithConstructor
     public final enum static field C: WithConstructor
-    private final field x: java.lang.String
+    private final @org.jetbrains.annotations.NotNull field x: java.lang.String
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int, p2: java.lang.String): void
     public final @org.jetbrains.annotations.NotNull method getX(): java.lang.String
@@ -41,16 +46,18 @@ public final enum class WithConstructor {
 
 @kotlin.Metadata
 final class WithEntryClass$A {
-    inner class WithEntryClass$A
+    // source: 'enum.kt'
+    final inner class WithEntryClass$A
     method <init>(p0: java.lang.String, p1: int): void
     public method foo(): void
 }
 
 @kotlin.Metadata
 public abstract enum class WithEntryClass {
+    // source: 'enum.kt'
     private synthetic final static field $VALUES: WithEntryClass[]
     public final enum static field A: WithEntryClass
-    inner class WithEntryClass$A
+    final inner class WithEntryClass$A
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int): void
     public synthetic method <init>(p0: java.lang.String, p1: int, p2: kotlin.jvm.internal.DefaultConstructorMarker): void

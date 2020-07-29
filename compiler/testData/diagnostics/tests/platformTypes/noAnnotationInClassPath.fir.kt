@@ -13,5 +13,5 @@ public class B {
 
 // FILE: main.kt
 fun test() {
-    B.bar() { it.<!INAPPLICABLE_CANDIDATE!>hashCode<!>() <!UNRESOLVED_REFERENCE!>><!> 0 }
+    B.bar() { it.<!INAPPLICABLE_CANDIDATE!>hashCode<!>() > 0 }
 }

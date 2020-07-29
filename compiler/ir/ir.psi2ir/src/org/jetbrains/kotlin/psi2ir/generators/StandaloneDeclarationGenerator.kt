@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
@@ -27,6 +26,7 @@ import org.jetbrains.kotlin.types.KotlinType
 class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
     private val typeTranslator = context.typeTranslator
     private val symbolTable = context.symbolTable
+    private val irFactory = context.irFactory
 
     // TODO: use this generator in psi2ir too
 
@@ -76,7 +76,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
     }
 
     fun generateClass(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor, symbol: IrClassSymbol): IrClass {
-        val irClass = createIrClassFromDescriptor(startOffset, endOffset, origin, symbol, descriptor)
+        val irClass = irFactory.createIrClassFromDescriptor(startOffset, endOffset, origin, symbol, descriptor)
 
         symbolTable.withScope(irClass) {
             irClass.metadata = MetadataSource.Class(descriptor)
@@ -97,9 +97,11 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
         return irClass
     }
 
-    fun generateEnumEntry(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor, symbol: IrEnumEntrySymbol): IrEnumEntry {
+    fun generateEnumEntry(
+        startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: ClassDescriptor, symbol: IrEnumEntrySymbol
+    ): IrEnumEntry {
         // TODO: corresponging class?
-        val irEntry = IrEnumEntryImpl(startOffset, endOffset, origin, symbol, descriptor.name)
+        val irEntry = irFactory.createEnumEntry(startOffset, endOffset, origin, symbol, descriptor.name)
 
         return irEntry
     }
@@ -111,7 +113,9 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
         descriptor: TypeAliasDescriptor,
         symbol: IrTypeAliasSymbol
     ): IrTypeAlias = with(descriptor) {
-        IrTypeAliasImpl(startOffset, endOffset, symbol, name, visibility, expandedType.toIrType(), isActual, origin).also {
+        irFactory.createTypeAlias(
+            startOffset, endOffset, symbol, name, visibility, expandedType.toIrType(), isActual, origin
+        ).also {
             generateGlobalTypeParametersDeclarations(it, declaredTypeParameters)
         }
     }
@@ -156,7 +160,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
         defaultArgumentFactory: IrFunction.(IrValueParameter) -> IrExpressionBody? = { null }
     ): IrConstructor {
         val irConstructor = with(descriptor) {
-            IrConstructorImpl(
+            irFactory.createConstructor(
                 startOffset, endOffset, origin, symbol, name, visibility, IrUninitializedType, isInline,
                 isEffectivelyExternal(), isPrimary, isExpect
             )
@@ -182,9 +186,9 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
         defaultArgumentFactory: IrFunction.(IrValueParameter) -> IrExpressionBody? = { null }
     ): IrSimpleFunction {
         val irFunction = with(descriptor) {
-            IrFunctionImpl(
+            irFactory.createFunction(
                 startOffset, endOffset, origin, symbol, name, visibility, modality, IrUninitializedType,
-                isInline, isExternal, isTailrec, isSuspend, isOperator, isExpect
+                isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect
             )
         }
         irFunction.metadata = MetadataSource.Function(descriptor)
@@ -199,8 +203,10 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
         return irFunction
     }
 
-    fun generateProperty(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: PropertyDescriptor, symbol: IrPropertySymbol): IrProperty {
-        val irProperty = IrPropertyImpl(
+    fun generateProperty(
+        startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, descriptor: PropertyDescriptor, symbol: IrPropertySymbol
+    ): IrProperty {
+        val irProperty = irFactory.createProperty(
             startOffset, endOffset, origin, symbol,
             name = descriptor.name,
             visibility = descriptor.visibility,

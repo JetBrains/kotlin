@@ -17,13 +17,13 @@ fun useMixedStringArgs3(fn: (String, Array<String>, String) -> Unit) = fn("foo",
 fun useTwoStringArrays(fn: (Array<String>, Array<String>) -> Unit) = fn(arrayOf("foo", "bar"), arrayOf("baz", "boo"))
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>useStrings<!>(::stringVararg)
+    <!INAPPLICABLE_CANDIDATE!>useStrings<!>(<!UNRESOLVED_REFERENCE!>::stringVararg<!>)
     useStringArray(::stringVararg)
     useIntArray(::numberVararg)
     usePrimitiveIntArray(::intVararg)
-    <!INAPPLICABLE_CANDIDATE!>useIntArray<!>(::intVararg)
-    <!INAPPLICABLE_CANDIDATE!>useMixedStringArgs1<!>(::stringVararg)
-    <!INAPPLICABLE_CANDIDATE!>useMixedStringArgs2<!>(::stringVararg)
-    <!INAPPLICABLE_CANDIDATE!>useMixedStringArgs3<!>(::stringVararg)
-    <!INAPPLICABLE_CANDIDATE!>useTwoStringArrays<!>(::stringVararg)
+    <!INAPPLICABLE_CANDIDATE!>useIntArray<!>(<!UNRESOLVED_REFERENCE!>::intVararg<!>)
+    <!INAPPLICABLE_CANDIDATE!>useMixedStringArgs1<!>(<!UNRESOLVED_REFERENCE!>::stringVararg<!>)
+    <!INAPPLICABLE_CANDIDATE!>useMixedStringArgs2<!>(<!UNRESOLVED_REFERENCE!>::stringVararg<!>)
+    <!INAPPLICABLE_CANDIDATE!>useMixedStringArgs3<!>(<!UNRESOLVED_REFERENCE!>::stringVararg<!>)
+    <!INAPPLICABLE_CANDIDATE!>useTwoStringArrays<!>(<!UNRESOLVED_REFERENCE!>::stringVararg<!>)
 }

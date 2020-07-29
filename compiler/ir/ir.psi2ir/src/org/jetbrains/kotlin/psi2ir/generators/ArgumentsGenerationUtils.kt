@@ -29,8 +29,6 @@ import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
@@ -169,14 +167,7 @@ private fun StatementGenerator.generateThisOrSuperReceiver(receiver: ReceiverVal
 fun IrExpression.implicitCastTo(expectedType: IrType?): IrExpression {
     if (expectedType == null) return this
 
-    return IrTypeOperatorCallImpl(
-        startOffset, endOffset,
-        expectedType,
-        IrTypeOperator.IMPLICIT_CAST,
-        expectedType
-    ).also {
-        it.argument = this
-    }
+    return IrTypeOperatorCallImpl(startOffset, endOffset, expectedType, IrTypeOperator.IMPLICIT_CAST, expectedType, this)
 }
 
 fun StatementGenerator.generateBackingFieldReceiver(
@@ -392,7 +383,7 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
     val irAdapterFun = context.symbolTable.declareSimpleFunction(
         adapterFunctionDescriptor
     ) { irAdapterSymbol ->
-        IrFunctionImpl(
+        context.irFactory.createFunction(
             startOffset, endOffset,
             IrDeclarationOrigin.ADAPTER_FOR_SUSPEND_CONVERSION,
             irAdapterSymbol,
@@ -401,7 +392,7 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
             irSuspendFunReturnType,
             isInline = false, isExternal = false, isTailrec = false,
             isSuspend = true,
-            isOperator = false, isExpect = false, isFakeOverride = false
+            isOperator = false, isInfix = false, isExpect = false, isFakeOverride = false
         )
     }
     adapterFunctionDescriptor.bind(irAdapterFun)
@@ -418,7 +409,7 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
                 adaptedParameterDescriptor,
                 irParameterType,
             ) { irValueParameterSymbol ->
-                IrValueParameterImpl(
+                context.irFactory.createValueParameter(
                     startOffset, endOffset, IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION,
                     irValueParameterSymbol,
                     Name.identifier("p$index"),

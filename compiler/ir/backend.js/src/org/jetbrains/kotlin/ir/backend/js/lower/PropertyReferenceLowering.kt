@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
@@ -35,11 +36,9 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
 
     private val throwISE = context.throwISEsymbol
 
-    private val newDeclarations = mutableListOf<IrDeclaration>()
-
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        newDeclarations.clear()
-        irBody.transformChildrenVoid(PropertyReferenceTransformer())
+        val currentParent = container as? IrDeclarationParent ?: container.parent
+        val newDeclarations = PropertyReferenceTransformer(currentParent).process(irBody)
         if (!newDeclarations.isEmpty()) {
             val file = container.file
             newDeclarations.forEach { it.parent = file }
@@ -47,12 +46,19 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
         }
     }
 
-    private inner class PropertyReferenceTransformer : IrElementTransformerVoid() {
+    private inner class PropertyReferenceTransformer(var currentParent: IrDeclarationParent) : IrElementTransformerVoid() {
+
+        val newDeclarations = mutableListOf<IrDeclaration>()
+
+        fun process(irBody: IrBody): List<IrDeclaration> {
+            irBody.transformChildrenVoid(this)
+            return newDeclarations
+        }
 
         private fun buildFactoryFunction(reference: IrPropertyReference): IrSimpleFunction {
             val property = reference.symbol.owner
 
-            val factoryDeclaration = buildFun {
+            val factoryDeclaration = context.irFactory.buildFun {
                 startOffset = reference.startOffset
                 endOffset = reference.endOffset
                 returnType = reference.type
@@ -120,7 +126,7 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
             val supperAccessor =
                 classifier.owner.declarations.filterIsInstance<IrSimpleFunction>().single { it.name.asString() == superName }
 
-            val function = buildFun {
+            val function = context.irFactory.buildFun {
                 startOffset = reference.startOffset
                 endOffset = reference.endOffset
                 returnType = supperAccessor.returnType
@@ -233,14 +239,14 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
 
         private fun buildLocalDelegateLambda(expression: IrLocalDelegatedPropertyReference): IrExpression {
             val delegatedVar = expression.delegate.owner
-            val function = buildFun {
+            val function = context.irFactory.buildFun {
                 startOffset = expression.startOffset
                 endOffset = expression.endOffset
                 returnType = context.irBuiltIns.nothingType
                 name = Name.identifier("${delegatedVar.name}\$stub")
             }
 
-            function.parent = delegatedVar.parent
+            function.parent = currentParent
 
             function.body = with(context.createIrBuilder(function.symbol)) {
                 irBlockBody {

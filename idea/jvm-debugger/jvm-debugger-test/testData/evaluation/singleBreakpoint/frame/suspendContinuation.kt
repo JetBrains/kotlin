@@ -4,7 +4,7 @@ suspend fun main() {
     val a = 5
     foo()
     //Breakpoint!
-    val b = 4
+    val b = a
 }
 
 suspend fun foo() {}

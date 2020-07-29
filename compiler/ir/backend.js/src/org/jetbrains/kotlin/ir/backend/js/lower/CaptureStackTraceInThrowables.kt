@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrRawFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.util.isSubclassOf
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -30,7 +30,7 @@ class CaptureStackTraceInThrowables(val context: JsIrBackendContext) : BodyLower
         if (!klass.isSubclassOf(context.irBuiltIns.throwableClass.owner))
             return
 
-        (irBody as IrBlockBodyImpl).statements += JsIrBuilder.buildCall(context.intrinsics.captureStack).also { call ->
+        (irBody as IrBlockBody).statements += JsIrBuilder.buildCall(context.intrinsics.captureStack).also { call ->
             call.putValueArgument(0, JsIrBuilder.buildGetValue(klass.thisReceiver!!.symbol))
             call.putValueArgument(
                 1,

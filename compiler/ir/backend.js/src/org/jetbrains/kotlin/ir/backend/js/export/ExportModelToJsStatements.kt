@@ -68,8 +68,8 @@ class ExportModelToJsStatements(
             is ExportedConstructor -> emptyList()
 
             is ExportedProperty -> {
-                val getter = declaration.ir.getter?.let { JsNameRef(nameTables.getNameForStaticDeclaration(it)) }
-                val setter = declaration.ir.setter?.let { JsNameRef(nameTables.getNameForStaticDeclaration(it)) }
+                val getter = declaration.irGetter?.let { JsNameRef(nameTables.getNameForStaticDeclaration(it)) }
+                val setter = declaration.irSetter?.let { JsNameRef(nameTables.getNameForStaticDeclaration(it)) }
                 listOf(defineProperty(namespace, declaration.name, getter, setter).makeStmt())
             }
 

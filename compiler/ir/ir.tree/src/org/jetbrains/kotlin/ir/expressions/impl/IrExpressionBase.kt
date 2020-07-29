@@ -26,5 +26,6 @@ abstract class IrExpressionBase(
     endOffset: Int,
     override val type: IrType
 ) : IrElementBase(startOffset, endOffset), IrExpression {
+    @Suppress("LeakingThis")
     override var attributeOwnerId: IrAttributeContainer = this
 }

@@ -220,7 +220,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         }
 
         private fun buildNewCoroutineClass(function: IrSimpleFunction): IrClass =
-            buildClass {
+            context.irFactory.buildClass {
                 startOffset = function.startOffset
                 endOffset = function.endOffset
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
@@ -242,7 +242,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 }
             }
 
-            return buildConstructor {
+            return context.irFactory.buildConstructor {
                 startOffset = function.startOffset
                 endOffset = function.endOffset
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
@@ -285,7 +285,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         }
 
         private fun buildInvokeSuspendMethod(stateMachineFunction: IrSimpleFunction): IrSimpleFunction {
-            val smFunction = buildFun {
+            val smFunction = context.irFactory.buildFun {
                 startOffset = function.startOffset
                 endOffset = function.endOffset
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
@@ -328,7 +328,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         // i.sn = pn
         // return i
         private fun buildCreateMethod(superCreateFunction: IrSimpleFunction?, constructor: IrConstructor): IrSimpleFunction =
-            buildFun {
+            context.irFactory.buildFun {
                 startOffset = function.startOffset
                 endOffset = function.endOffset
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
@@ -515,7 +515,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
     fun IrClass.addField(name: Name, type: IrType, isMutable: Boolean): IrField {
         val klass = this
-        return buildField {
+        return factory.buildField {
             this.startOffset = klass.startOffset
             this.endOffset = klass.endOffset
             this.origin = DECLARATION_ORIGIN_COROUTINE_IMPL

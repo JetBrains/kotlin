@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.addTypeParameter
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -326,9 +327,11 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     private fun getInternalClassWithoutPackage(fqName: String) =
         context.symbolTable.referenceClass(context.getClass(FqName(fqName)))
 
+    private val irFactory: IrFactory get() = context.irFactory
+
     // TODO: unify how we create intrinsic symbols
     private fun defineObjectCreateIntrinsic(): IrSimpleFunction {
-        return externalPackageFragment.addFunction {
+        return irFactory.addFunction(externalPackageFragment) {
             name = Name.identifier("Object\$create")
             origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
         }.apply {
@@ -337,7 +340,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     }
 
     private fun defineCreateSharedBox(): IrSimpleFunction {
-        return externalPackageFragment.addFunction {
+        return irFactory.addFunction(externalPackageFragment) {
             name = Name.identifier("\$sharedBox\$create")
             origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
             returnType = context.dynamicType
@@ -356,7 +359,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     }
 
     private fun defineReadSharedBox(): IrSimpleFunction {
-        return externalPackageFragment.addFunction {
+        return irFactory.addFunction(externalPackageFragment) {
             name = Name.identifier("\$sharedBox\$read")
             origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
         }.apply {
@@ -375,7 +378,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     }
 
     private fun defineWriteSharedBox(): IrSimpleFunction {
-        return externalPackageFragment.addFunction {
+        return irFactory.addFunction(externalPackageFragment) {
             name = Name.identifier("\$sharedBox\$write")
             origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
             returnType = irBuiltIns.unitType
@@ -399,7 +402,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     }
 
     private fun defineEs6DefaultTypeIntrinsic(): IrSimpleFunction {
-        return externalPackageFragment.addFunction {
+        return irFactory.addFunction(externalPackageFragment) {
             name = Name.identifier("DefaultType")
         }.apply {
             returnType = addTypeParameter("T", irBuiltIns.anyType).defaultType
@@ -407,7 +410,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     }
 
     private fun defineJsBindIntrinsic(): IrSimpleFunction {
-        return externalPackageFragment.addFunction {
+        return irFactory.addFunction(externalPackageFragment) {
             name = Name.identifier("\$jsBind\$")
             origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
             returnType = irBuiltIns.anyNType
@@ -417,7 +420,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     }
 
     private fun defineJsSliceIntrinsic(): IrSimpleFunction {
-        return externalPackageFragment.addFunction {
+        return irFactory.addFunction(externalPackageFragment) {
             name = Name.identifier("slice")
             origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
         }.apply {
@@ -428,7 +431,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     }
 
     private fun defineUnreachableIntrinsic(): IrSimpleFunction {
-        return externalPackageFragment.addFunction {
+        return irFactory.addFunction(externalPackageFragment) {
             name = Name.identifier(Namer.UNREACHABLE_NAME)
             origin = JsLoweredDeclarationOrigin.JS_INTRINSICS_STUB
             returnType = irBuiltIns.nothingType

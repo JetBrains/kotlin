@@ -11,17 +11,22 @@ import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.isPure
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class JsBlockDecomposerLowering(val context: JsIrBackendContext) : AbstractBlockDecomposerLowering(context) {
@@ -30,7 +35,7 @@ class JsBlockDecomposerLowering(val context: JsIrBackendContext) : AbstractBlock
 }
 
 abstract class AbstractBlockDecomposerLowering(
-    context: CommonBackendContext
+    private val context: JsCommonBackendContext
 ) : BodyLoweringPass {
 
     private val nothingType = context.irBuiltIns.nothingType
@@ -48,13 +53,14 @@ abstract class AbstractBlockDecomposerLowering(
             }
             is IrField -> {
                 container.initializer?.apply {
-
-                    val initFunction = JsIrBuilder.buildFunction(
-                        container.name.asString() + "\$init\$",
-                        container.type,
-                        container.parent,
-                        Visibilities.PRIVATE
-                    )
+                    val initFunction = context.irFactory.buildFun {
+                        name = Name.identifier(container.name.asString() + "\$init\$")
+                        returnType = container.type
+                        visibility = Visibilities.PRIVATE
+                        origin = JsIrBuilder.SYNTHESIZED_DECLARATION
+                    }.apply {
+                        parent = container.parent
+                    }
 
                     val newBody = toBlockBody(initFunction)
                     newBody.patchDeclarationParents(initFunction)
@@ -80,7 +86,7 @@ abstract class AbstractBlockDecomposerLowering(
     }
 
     private fun IrExpressionBody.toBlockBody(containingFunction: IrFunction): IrBlockBody {
-        return IrBlockBodyImpl(startOffset, endOffset) {
+        return context.irFactory.createBlockBody(startOffset, endOffset) {
             expression.patchDeclarationParents(containingFunction)
             val returnStatement = JsIrBuilder.buildReturn(containingFunction.symbol, expression, nothingType)
             statements += returnStatement

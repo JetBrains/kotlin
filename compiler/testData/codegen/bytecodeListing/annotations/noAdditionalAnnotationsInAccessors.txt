@@ -1,18 +1,20 @@
 @kotlin.Metadata
 public final class Foo$Companion {
-    inner class Foo$Companion
+    // source: 'noAdditionalAnnotationsInAccessors.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final method foo(): void
+    public final inner class Foo$Companion
 }
 
 @kotlin.Metadata
 public final class Foo {
+    // source: 'noAdditionalAnnotationsInAccessors.kt'
     public final static @org.jetbrains.annotations.NotNull field Companion: Foo$Companion
-    inner class Foo$Companion
     static method <clinit>(): void
     private method <init>(p0: java.lang.String): void
     public synthetic method <init>(p0: java.lang.String, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic final static method access$foo(p0: Foo, p1: java.lang.String): void
     private final method foo(p0: java.lang.String): void
+    public final inner class Foo$Companion
 }

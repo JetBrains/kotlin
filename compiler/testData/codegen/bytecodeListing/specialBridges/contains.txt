@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public abstract class A1 {
+    // source: 'contains.kt'
     public method <init>(): void
     public method contains(p0: java.lang.Object): boolean
     public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
@@ -12,6 +13,7 @@ public abstract class A1 {
 
 @kotlin.Metadata
 public abstract class A2 {
+    // source: 'contains.kt'
     public method <init>(): void
     public method contains(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
     public bridge final method contains(p0: java.lang.Object): boolean
@@ -26,6 +28,7 @@ public abstract class A2 {
 
 @kotlin.Metadata
 public abstract class A3 {
+    // source: 'contains.kt'
     public method <init>(): void
     public abstract method getSize(): int
     public bridge final method remove(p0: int): java.lang.Object
@@ -35,6 +38,7 @@ public abstract class A3 {
 
 @kotlin.Metadata
 public abstract class A4 {
+    // source: 'contains.kt'
     public method <init>(): void
     public method contains(p0: java.lang.Object): boolean
     public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
@@ -46,6 +50,7 @@ public abstract class A4 {
 
 @kotlin.Metadata
 public abstract class A5 {
+    // source: 'contains.kt'
     public method <init>(): void
     public bridge final method contains(p0: java.lang.Object): boolean
     public bridge method contains(p0: java.lang.String): boolean
@@ -63,6 +68,7 @@ public abstract class A5 {
 
 @kotlin.Metadata
 public abstract class A6 {
+    // source: 'contains.kt'
     public method <init>(): void
     public method contains(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
     public bridge final method contains(p0: java.lang.Object): boolean
@@ -81,6 +87,7 @@ public abstract class A6 {
 
 @kotlin.Metadata
 public abstract class A7 {
+    // source: 'contains.kt'
     public method <init>(): void
     public method contains(p0: int): boolean
     public bridge final method contains(p0: java.lang.Object): boolean
@@ -94,6 +101,7 @@ public abstract class A7 {
 
 @kotlin.Metadata
 public abstract class A8 {
+    // source: 'contains.kt'
     public method <init>(): void
     public method contains(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public abstract method getSize(): int
@@ -105,28 +113,32 @@ public abstract class A8 {
 
 @kotlin.Metadata
 public final class I1$DefaultImpls {
-    inner class I1$DefaultImpls
+    // source: 'contains.kt'
     public static method contains(@org.jetbrains.annotations.NotNull p0: I1, p1: java.lang.Object): boolean
     public static method containsAll(@org.jetbrains.annotations.NotNull p0: I1, @org.jetbrains.annotations.NotNull p1: java.util.Collection): boolean
+    public final inner class I1$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface I1 {
-    inner class I1$DefaultImpls
+    // source: 'contains.kt'
     public abstract method contains(p0: java.lang.Object): boolean
     public abstract method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
+    public final inner class I1$DefaultImpls
 }
 
 @kotlin.Metadata
 public final class I2$DefaultImpls {
-    inner class I2$DefaultImpls
+    // source: 'contains.kt'
     public static method contains(@org.jetbrains.annotations.NotNull p0: I2, @org.jetbrains.annotations.NotNull p1: java.lang.String): boolean
     public static method containsAll(@org.jetbrains.annotations.NotNull p0: I2, @org.jetbrains.annotations.NotNull p1: java.util.Collection): boolean
+    public final inner class I2$DefaultImpls
 }
 
 @kotlin.Metadata
 public interface I2 {
-    inner class I2$DefaultImpls
+    // source: 'contains.kt'
     public abstract method contains(@org.jetbrains.annotations.NotNull p0: java.lang.String): boolean
     public abstract method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
+    public final inner class I2$DefaultImpls
 }

@@ -2,6 +2,7 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class Foo {
+    @org.jetbrains.annotations.NotNull()
     private final Foo.Bar bar = null;
     private final java.lang.String string = null;
 
@@ -17,7 +18,9 @@ public final class Foo {
 
     @kotlin.Metadata()
     public static final class Bar {
+        @org.jetbrains.annotations.NotNull()
         private final java.util.ArrayList<Foo.Bar.Bar> bars = null;
+        @org.jetbrains.annotations.NotNull()
         private final java.lang.String string = null;
 
         @org.jetbrains.annotations.NotNull()

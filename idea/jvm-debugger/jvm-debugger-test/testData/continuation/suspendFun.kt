@@ -19,7 +19,7 @@ suspend fun test1(i: Int): Int {
 suspend fun a(aParam: String) {
     val a = "a"
     b(a)
-    a + 1
+    a + aParam
 }
 
 suspend fun b(bParam: String) {

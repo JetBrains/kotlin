@@ -124,19 +124,19 @@ open class PodGenTask : CocoapodsWithSyntheticTask() {
 
     @TaskAction
     fun generate() {
-        val podspecDir = podspecProvider.get().parentFile
+        val syntheticDir = project.cocoapodsBuildDirs.synthetic(kotlinNativeTarget).apply { mkdirs() }
         val localPodspecPaths = cocoapodsExtension.pods.mapNotNull { it.podspec?.parentFile?.absolutePath }
 
         val podGenProcessArgs = listOfNotNull(
             "pod", "gen",
             "--platforms=${kotlinNativeTarget.platformLiteral}",
-            "--gen-directory=${project.cocoapodsBuildDirs.synthetic(kotlinNativeTarget).absolutePath}",
+            "--gen-directory=${syntheticDir.absolutePath}",
             localPodspecPaths.takeIf { it.isNotEmpty() }?.joinToString(separator = ",")?.let { "--local-sources=$it" },
-            podspecProvider.get().name
+            podspecProvider.get().absolutePath
         )
 
         val podGenProcess = ProcessBuilder(podGenProcessArgs).apply {
-            directory(podspecDir)
+            directory(syntheticDir)
         }.start()
         val podGenRetCode = podGenProcess.waitFor()
         val outputText = podGenProcess.inputStream.use { it.reader().readText() }

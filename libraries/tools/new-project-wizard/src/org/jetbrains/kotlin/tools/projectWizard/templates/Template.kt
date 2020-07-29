@@ -126,7 +126,7 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor, DisplayableSet
             else -> idFunction()
         }
 
-        RunConfigurationsPlugin::configurations.addValues(createRunConfigurations(module))
+        RunConfigurationsPlugin.configurations.addValues(createRunConfigurations(module))
 
         val result = TemplateApplicationResult(librariesToAdd, irsToAddToBuildFile, targetsUpdater)
         return result.asSuccess()
@@ -144,7 +144,7 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor, DisplayableSet
 
 
     private fun Reader.createDefaultSettings() = mapOf(
-        "projectName" to StructurePlugin::name.settingValue.capitalize()
+        "projectName" to StructurePlugin.name.settingValue.capitalize()
     )
 
     override fun equals(other: Any?): Boolean =

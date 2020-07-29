@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLocalDelegatedPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
@@ -35,11 +36,20 @@ class IrLocalDelegatedPropertyReferenceImpl(
     override val setter: IrSimpleFunctionSymbol?,
     origin: IrStatementOrigin? = null
 ) :
-    IrNoArgumentsCallableReferenceBase<IrLocalDelegatedPropertySymbol>(startOffset, endOffset, type, 0, origin),
+    IrMemberAccessExpressionBase<IrLocalDelegatedPropertySymbol>(startOffset, endOffset, type, 0, 0, origin),
     IrLocalDelegatedPropertyReference {
 
     override val referencedName: Name
         get() = symbol.owner.name
+
+    private fun throwNoValueArguments(): Nothing =
+        throw UnsupportedOperationException("Property reference $symbol has no value arguments")
+
+    override fun getValueArgument(index: Int): IrExpression? = throwNoValueArguments()
+
+    override fun putValueArgument(index: Int, valueArgument: IrExpression?): Unit = throwNoValueArguments()
+
+    override fun removeValueArgument(index: Int): Unit = throwNoValueArguments()
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitLocalDelegatedPropertyReference(this, data)

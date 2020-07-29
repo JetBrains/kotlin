@@ -16,12 +16,11 @@ fun box(): String {
 //   // Standard form of loop over progression
 //   var inductionVar = 2u
 //   val last = getProgressionLastElement(2u, UInt.MIN_VALUE - 1, 2)   // `(UInt.MIN_VALUE - 1)` underflows to UInt.MAX_VALUE
-//   val step = 2
 //   if (false && inductionVar <= last) {   // `false` comes from constant folding of `Int.MIN_VALUE != Int.MIN_VALUE`
 //     // Loop is not empty
 //     do {
 //       val i = inductionVar
-//       inductionVar += step
+//       inductionVar += 2
 //       // Loop body
 //     } while (i != last)
 //   }

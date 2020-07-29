@@ -17,7 +17,7 @@ digraph jumps_kt {
                     3 [label="Enter when branch condition "];
                     4 [label="Access variable R|<local>/x|"];
                     5 [label="Const: Null(null)"];
-                    6 [label="Operator =="];
+                    6 [label="Equality operator =="];
                     7 [label="Exit when branch condition"];
                 }
                 subgraph cluster_4 {
@@ -99,7 +99,7 @@ digraph jumps_kt {
                     33 [label="Enter when branch condition "];
                     34 [label="Access variable R|<local>/x|"];
                     35 [label="Const: Null(null)"];
-                    36 [label="Operator =="];
+                    36 [label="Equality operator =="];
                     37 [label="Exit when branch condition"];
                 }
                 subgraph cluster_11 {
@@ -127,7 +127,7 @@ digraph jumps_kt {
             }
             51 [label="Variable declaration: lval y: R|kotlin/Int?|"];
             52 [label="Access variable R|<local>/y|"];
-            53 [label="Function call: R|<local>/y|.<Inapplicable(WRONG_RECEIVER): [kotlin/Int.inc]>#()"];
+            53 [label="Function call: R|<local>/y|.<Inapplicable(WRONG_RECEIVER): kotlin/Int.inc>#()"];
             54 [label="Exit block"];
         }
         55 [label="Exit function test_2" style="filled" fillcolor=red];

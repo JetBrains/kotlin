@@ -89,7 +89,7 @@ digraph assignSafeCall_kt {
                     29 [label="Enter when branch condition "];
                     30 [label="Access variable R|<local>/x|"];
                     31 [label="Const: Null(null)"];
-                    32 [label="Operator !="];
+                    32 [label="Equality operator !="];
                     33 [label="Exit when branch condition"];
                 }
                 34 [label="Synthetic else branch"];
@@ -150,7 +150,7 @@ digraph assignSafeCall_kt {
                     52 [label="Enter when branch condition "];
                     53 [label="Access variable R|<local>/x|"];
                     54 [label="Const: Null(null)"];
-                    55 [label="Operator !="];
+                    55 [label="Equality operator !="];
                     56 [label="Exit when branch condition"];
                 }
                 57 [label="Synthetic else branch"];
@@ -280,7 +280,7 @@ digraph assignSafeCall_kt {
                     100 [label="Enter when branch condition "];
                     101 [label="Access variable R|<local>/x|"];
                     102 [label="Const: Null(null)"];
-                    103 [label="Operator !="];
+                    103 [label="Equality operator !="];
                     104 [label="Exit when branch condition"];
                 }
                 105 [label="Synthetic else branch"];
@@ -341,7 +341,7 @@ digraph assignSafeCall_kt {
                     123 [label="Enter when branch condition "];
                     124 [label="Access variable R|<local>/x|"];
                     125 [label="Const: Null(null)"];
-                    126 [label="Operator !="];
+                    126 [label="Equality operator !="];
                     127 [label="Exit when branch condition"];
                 }
                 128 [label="Synthetic else branch"];

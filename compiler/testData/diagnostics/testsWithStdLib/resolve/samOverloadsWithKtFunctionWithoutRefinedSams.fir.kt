@@ -18,5 +18,5 @@ public class Foo {
 
 // FILE: 1.kt
 fun bar() {
-    Foo().<!AMBIGUITY!>test<!> {} <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
+    Foo().<!AMBIGUITY!>test<!> {} <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
 }

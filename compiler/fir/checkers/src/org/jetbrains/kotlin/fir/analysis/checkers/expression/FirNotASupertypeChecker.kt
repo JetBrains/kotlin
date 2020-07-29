@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirNotASupertypeChecker : FirQualifiedAccessChecker() {
     override fun check(functionCall: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        val superReference = functionCall.calleeReference.safeAs<FirSuperReference>()
+        val superReference = functionCall.calleeReference.safeAs<FirSuperReference>()?.takeIf { it.hadExplicitTypeInSource() }
 
         val targetClass = superReference
             ?.superTypeRef

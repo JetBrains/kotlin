@@ -301,7 +301,7 @@ class JvmSerializerExtension @JvmOverloads constructor(
         super.serializeErrorType(type, builder)
     }
 
-    private fun <K, V> getBinding(slice: SerializationMappingSlice<K, V>, key: K): V? =
+    private fun <K : Any, V> getBinding(slice: SerializationMappingSlice<K, V>, key: K): V? =
         bindings.get(slice, key) ?: globalBindings.get(slice, key)
 
     private inner class SignatureSerializer {

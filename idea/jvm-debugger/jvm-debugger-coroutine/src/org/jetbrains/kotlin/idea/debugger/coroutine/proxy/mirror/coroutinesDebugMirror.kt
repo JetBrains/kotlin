@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.idea.debugger.coroutine.proxy.mirror
 
-import com.sun.jdi.ObjectReference
-import com.sun.jdi.ThreadReference
+import com.sun.jdi.*
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.isSubTypeOrSame
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
@@ -67,11 +66,16 @@ class DebugProbesImpl private constructor(context: DefaultExecutionContext) :
 
 class DebugProbesImplCoroutineOwner(private val coroutineInfo: CoroutineInfo, context: DefaultExecutionContext) :
     BaseMirror<MirrorOfCoroutineOwner>(COROUTINE_OWNER_CLASS_NAME, context) {
+    private val debugCoroutineInfoImpl = DebugCoroutineInfoImpl(context)
+
     private val infoField = makeField("info")
 
     override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): MirrorOfCoroutineOwner? {
         val info = objectValue(value, infoField)
-        return MirrorOfCoroutineOwner(value, coroutineInfo.mirror(info, context))
+        if (debugCoroutineInfoImpl.isCompatible(info)) {
+            return MirrorOfCoroutineOwner(value, debugCoroutineInfoImpl.mirror(info, context))
+        } else
+            return MirrorOfCoroutineOwner(value, coroutineInfo.mirror(info, context))
     }
 
     companion object {
@@ -85,6 +89,59 @@ class DebugProbesImplCoroutineOwner(private val coroutineInfo: CoroutineInfo, co
 data class MirrorOfCoroutineOwner(val that: ObjectReference, val coroutineInfo: MirrorOfCoroutineInfo?)
 
 data class MirrorOfDebugProbesImpl(val that: ObjectReference, val instance: ObjectReference?, val isInstalled: Boolean?)
+
+class DebugCoroutineInfoImpl constructor(context: DefaultExecutionContext) :
+    BaseMirror<MirrorOfCoroutineInfo>("kotlinx.coroutines.debug.internal.DebugCoroutineInfoImpl", context) {
+    private val coroutineContextMirror = CoroutineContext(context)
+    private val javaLangMirror = JavaLangMirror(context)
+    private val javaLangListMirror = JavaUtilAbstractCollection(context)
+    private val stackTraceElement = StackTraceElement(context)
+    private val weakReference = WeakReference(context)
+
+    val lastObservedThread by FieldDelegate<ThreadReference>("lastObservedThread")
+    val _context by MethodDelegate<ObjectReference>("getContext")
+    val _state by FieldDelegate<ObjectReference>("_state")
+    val _lastObservedFrame by FieldDelegate<ObjectReference>("_lastObservedFrame")
+    val creationStackBottom by FieldDelegate<ObjectReference>("creationStackBottom")
+    val sequenceNumber by FieldDelegate<LongValue>("sequenceNumber")
+
+    val getCreationStackTrace by MethodDelegate<ObjectReference>("getCreationStackTrace")
+
+    override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): MirrorOfCoroutineInfo? {
+        val state = _state.value(value)?.let {
+            stringValue(it, javaLangMirror.toString, context)
+        }
+
+        val coroutineContext = coroutineContextMirror.mirror(_context.value(value, context), context)
+        val creationStackBottom = creationStackBottom.value(value)?.let { CoroutineStackFrame(it, context).mirror() }
+        val creationStackTraceMirror = javaLangListMirror.mirror(getCreationStackTrace.value(value, context), context)
+        val creationStackTrace = creationStackTraceMirror?.values?.mapNotNull { stackTraceElement.mirror(it, context) }
+
+        val lastObservedFrame = weakReference.mirror(_lastObservedFrame.value(value), context)
+        return MirrorOfCoroutineInfo(
+            value,
+            coroutineContext,
+            creationStackBottom,
+            sequenceNumber.value(value)?.longValue(),
+            null,
+            creationStackTrace,
+            state,
+            lastObservedThread.value(value),
+            lastObservedFrame?.reference
+        )
+    }
+}
+
+class WeakReference constructor(context: DefaultExecutionContext) :
+    BaseMirror<MirrorOfWeakReference>("java.lang.ref.WeakReference", context)  {
+    val get by MethodDelegate<ObjectReference>("get")
+
+    override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): MirrorOfWeakReference? {
+        return MirrorOfWeakReference(value, get.value(value, context))
+    }
+}
+
+data class MirrorOfWeakReference(val that: ObjectReference, val reference: ObjectReference?)
 
 class CoroutineInfo private constructor(
     private val debugProbesImplMirror: DebugProbesImpl,
@@ -156,7 +213,6 @@ class CoroutineInfo private constructor(
     }
 }
 
-
 data class MirrorOfCoroutineInfo(
     val that: ObjectReference,
     val context: MirrorOfCoroutineContext?,
@@ -180,8 +236,10 @@ class CoroutineStackFrame(value: ObjectReference, context: DefaultExecutionConte
         val callerFrame = if (objectReference is ObjectReference)
             CoroutineStackFrame(objectReference, context).mirror() else null
         val stackTraceElementReference = objectValue(value, getStackTraceElementMethod, context)
-        val stackTraceElement =
-            if (stackTraceElementReference is ObjectReference) stackTraceElementMirror.mirror(stackTraceElementReference, context) else null
+        val stackTraceElement = if (stackTraceElementReference is ObjectReference)
+            stackTraceElementMirror.mirror(stackTraceElementReference, context)
+        else
+            null
         return MirrorOfCoroutineStackFrame(value, callerFrame, stackTraceElement)
     }
 }

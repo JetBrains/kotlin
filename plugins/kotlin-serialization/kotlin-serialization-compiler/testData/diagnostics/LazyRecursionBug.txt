@@ -9,12 +9,12 @@ package
 
     @kotlinx.serialization.Serializer(forClass = Digest::class) public companion object Companion : kotlinx.serialization.KSerializer<Digest> {
         private constructor Companion()
-        public open override /*1*/ /*synthesized*/ val descriptor: kotlinx.serialization.SerialDescriptor
-        public open override /*1*/ /*synthesized*/ fun deserialize(/*0*/ decoder: kotlinx.serialization.Decoder): Digest
+        public open override /*1*/ /*synthesized*/ val descriptor: kotlinx.serialization.descriptors.SerialDescriptor
+        public open override /*1*/ /*synthesized*/ fun deserialize(/*0*/ decoder: kotlinx.serialization.encoding.Decoder): Digest
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Patch function is deprecated for removal since this functionality is no longer supported by serializer.Some formats may provide implementation-specific patching in their Decoders.") public open override /*1*/ /*fake_override*/ fun patch(/*0*/ decoder: kotlinx.serialization.Decoder, /*1*/ old: Digest): Digest
-        public open override /*1*/ /*synthesized*/ fun serialize(/*0*/ encoder: kotlinx.serialization.Encoder, /*1*/ value: Digest): kotlin.Unit
+        @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Patch function is deprecated for removal since this functionality is no longer supported by serializer.Some formats may provide implementation-specific patching in their Decoders.") public open override /*1*/ /*fake_override*/ fun patch(/*0*/ decoder: kotlinx.serialization.encoding.Decoder, /*1*/ old: Digest): Digest
+        public open override /*1*/ /*synthesized*/ fun serialize(/*0*/ encoder: kotlinx.serialization.encoding.Encoder, /*1*/ value: Digest): kotlin.Unit
         public final /*synthesized*/ fun serializer(): kotlinx.serialization.KSerializer<Digest>
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }

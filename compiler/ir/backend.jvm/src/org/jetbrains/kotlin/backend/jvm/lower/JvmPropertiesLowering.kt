@@ -121,7 +121,7 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
         accessor != null && !property.needsAccessor(accessor)
 
     private fun createSyntheticMethodForAnnotations(declaration: IrProperty): IrSimpleFunction =
-        buildFun {
+        backendContext.irFactory.buildFun {
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS
             name = Name.identifier(computeSyntheticMethodName(declaration))
             visibility = declaration.visibility
