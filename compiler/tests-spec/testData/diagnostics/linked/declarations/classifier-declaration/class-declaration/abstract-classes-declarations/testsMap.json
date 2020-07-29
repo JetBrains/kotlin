@@ -1,0 +1,86 @@
+{
+  "1": {
+    "neg": {
+      "2": [
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 4,
+          "description": "abstract classes cannot be instantiated directly",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes-declarations/p-1/neg/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 4,
+          "description": "abstract classes cannot be instantiated directly",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes-declarations/p-1/neg/2.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    },
+    "pos": {
+      "2": [
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 1,
+          "description": " abstract members are implemented in a subobject of the abstract class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes-declarations/p-2/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 2,
+          "description": " abstract members are implemented in a subclass of the abstract class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes-declarations/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  },
+  "2": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "abstract members should be implemented in a subtype of the abstract class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes-declarations/p-2/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "abstract members should be implemented in a subtype of the abstract class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes-declarations/p-2/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 1,
+          "description": " abstract members are implemented in a subobject of the abstract class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes-declarations/p-2/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 2,
+          "description": " abstract members are implemented in a subclass of the abstract class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes-declarations/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    }
+  }
+}
