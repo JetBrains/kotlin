@@ -172,9 +172,13 @@ processResources {
     from(file("$rootBuildDirectory/utilities/env_blacklist"))
 }
 
-compileTestGroovy.dependsOn -= 'compileTestJava'
-compileTestKotlin.dependsOn compileTestGroovy
-compileTestKotlin.classpath += files(compileTestGroovy.destinationDir)
+tasks.named('compileTestGroovy') {
+    classpath = sourceSets.test.compileClasspath
+}
+
+tasks.named('compileTestKotlin') {
+    classpath += files(sourceSets.test.groovy.classesDirectory)
+}
 
 gradlePlugin {
     plugins {

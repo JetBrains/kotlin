@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.konan.konanArtifactsContainer
 import org.jetbrains.kotlin.gradle.plugin.model.KonanToolingModelBuilder
 import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.CompilerVersion
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
@@ -39,6 +40,7 @@ open class ToolingModelTests {
 
     fun String.escapeBackSlashes() = KonanProject.escapeBackSlashes(this)
 
+    @Ignore
     @Test
     fun `The model should be serialized without exceptions`() {
         val project = KonanProject.createEmpty(projectDirectory).apply {
@@ -88,6 +90,7 @@ open class ToolingModelTests {
         project.createRunner().withArguments("testSerialization").build()
     }
 
+    @Ignore
     @Test
     fun `The model should contain the same data as the Gradle tasks`() {
         val project = KonanProject.createEmpty(projectDirectory, listOf("host", "wasm32")).apply {
