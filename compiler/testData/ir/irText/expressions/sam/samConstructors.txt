@@ -25,14 +25,14 @@ FILE fqName:<root> fileName:/samConstructors.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 (): java.util.Comparator<kotlin.Int> declared in <root>'
         TYPE_OP type=java.util.Comparator<kotlin.Int> origin=SAM_CONVERSION typeOperand=java.util.Comparator<kotlin.Int>
-          FUN_EXPR type=kotlin.Function2<kotlin.Int?, kotlin.Int?, kotlin.Int> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (a:kotlin.Int?, b:kotlin.Int?) returnType:kotlin.Int
-              VALUE_PARAMETER name:a index:0 type:kotlin.Int?
-              VALUE_PARAMETER name:b index:1 type:kotlin.Int?
+          FUN_EXPR type=kotlin.Function2<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.Int?, kotlin.Int> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (a:@[FlexibleNullability] kotlin.Int?, b:@[FlexibleNullability] kotlin.Int?) returnType:kotlin.Int
+              VALUE_PARAMETER name:a index:0 type:@[FlexibleNullability] kotlin.Int?
+              VALUE_PARAMETER name:b index:1 type:@[FlexibleNullability] kotlin.Int?
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (a: kotlin.Int?, b: kotlin.Int?): kotlin.Int declared in <root>.test4'
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (a: @[FlexibleNullability] kotlin.Int?, b: @[FlexibleNullability] kotlin.Int?): kotlin.Int declared in <root>.test4'
                   CALL 'public final fun minus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=MINUS
                     $this: TYPE_OP type=kotlin.Int origin=IMPLICIT_NOTNULL typeOperand=kotlin.Int
-                      GET_VAR 'a: kotlin.Int? declared in <root>.test4.<anonymous>' type=kotlin.Int? origin=null
+                      GET_VAR 'a: @[FlexibleNullability] kotlin.Int? declared in <root>.test4.<anonymous>' type=@[FlexibleNullability] kotlin.Int? origin=null
                     other: TYPE_OP type=kotlin.Int origin=IMPLICIT_NOTNULL typeOperand=kotlin.Int
-                      GET_VAR 'b: kotlin.Int? declared in <root>.test4.<anonymous>' type=kotlin.Int? origin=null
+                      GET_VAR 'b: @[FlexibleNullability] kotlin.Int? declared in <root>.test4.<anonymous>' type=@[FlexibleNullability] kotlin.Int? origin=null
