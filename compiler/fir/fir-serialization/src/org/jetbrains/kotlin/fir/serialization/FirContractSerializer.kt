@@ -179,7 +179,7 @@ class FirContractSerializer {
                     val builder = ProtoBuf.Expression.newBuilder()
 
                     val indexOfParameter = valueParameterReference.parameterIndex
-                    builder.valueParameterReference = indexOfParameter
+                    builder.valueParameterReference = indexOfParameter + 1
 
                     return builder
                 }
