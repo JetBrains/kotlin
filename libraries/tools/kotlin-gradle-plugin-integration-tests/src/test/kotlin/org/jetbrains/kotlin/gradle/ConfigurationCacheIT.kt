@@ -16,7 +16,7 @@ import kotlin.test.fail
 
 open class ConfigurationCacheIT : BaseGradleIT() {
     private val androidGradlePluginVersion: AGPVersion
-        get() = AGPVersion.v4_1_0
+        get() = AGPVersion.v4_2_0
 
     override fun defaultBuildOptions() =
         super.defaultBuildOptions().copy(
@@ -25,7 +25,7 @@ open class ConfigurationCacheIT : BaseGradleIT() {
             configurationCache = true
         )
 
-    override val defaultGradleVersion: GradleVersionRequired = GradleVersionRequired.AtLeast("6.6-milestone-2")
+    override val defaultGradleVersion: GradleVersionRequired = GradleVersionRequired.AtLeast("6.6-rc-3")
 
     @Test
     fun testSimpleKotlinJvmProject() = with(Project("kotlinProject")) {

@@ -11,7 +11,7 @@ import org.junit.Test
 
 class ConfigurationCacheForAndroidIT : ConfigurationCacheIT() {
     private val androidGradlePluginVersion: AGPVersion
-        get() = AGPVersion.v4_1_0
+        get() = AGPVersion.v4_2_0
 
     override fun defaultBuildOptions() =
         super.defaultBuildOptions().copy(
