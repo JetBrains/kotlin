@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.codegen.range.inExpression.InExpressionGenerator
 import org.jetbrains.kotlin.codegen.range.inExpression.InFloatingPointRangeLiteralExpressionGenerator
 import org.jetbrains.kotlin.codegen.range.inExpression.InIntegralContinuousRangeExpressionGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.isTopLevelInPackage
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression

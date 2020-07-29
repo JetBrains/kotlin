@@ -20611,6 +20611,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 runTest("compiler/testData/codegen/box/ranges/contains/rangeContainsString.kt");
             }
 
+            @TestMetadata("userDefinedContainsExtension.kt")
+            public void testUserDefinedContainsExtension() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/contains/userDefinedContainsExtension.kt");
+            }
+
             @TestMetadata("compiler/testData/codegen/box/ranges/contains/generated")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

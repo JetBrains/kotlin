@@ -208,17 +208,25 @@ fun isPrimitiveRangeContains(descriptor: CallableDescriptor): Boolean {
 }
 
 fun isUnsignedIntegerRangeContains(descriptor: CallableDescriptor): Boolean {
-    if (descriptor.name.asString() != "contains") return false
-
     val dispatchReceiverType = descriptor.dispatchReceiverParameter?.type
     val extensionReceiverType = descriptor.extensionReceiverParameter?.type
 
-    return (dispatchReceiverType != null && isUnsignedRange(dispatchReceiverType)) ||
-            (extensionReceiverType != null && isUnsignedRange(extensionReceiverType))
+    when {
+        dispatchReceiverType != null && extensionReceiverType == null -> {
+            if (descriptor.name.asString() != "contains") return false
+            return isUnsignedRange(dispatchReceiverType)
+        }
+        extensionReceiverType != null && dispatchReceiverType == null -> {
+            if (!descriptor.isTopLevelInPackage("contains", "kotlin.ranges")) return false
+            return isUnsignedRange(extensionReceiverType)
+        }
+        else ->
+            return false
+    }
 }
 
 fun isPrimitiveNumberRangeExtensionContainsPrimitiveNumber(descriptor: CallableDescriptor): Boolean {
-    if (descriptor.name.asString() != "contains") return false
+    if (!descriptor.isTopLevelInPackage("contains", "kotlin.ranges")) return false
 
     val extensionReceiverType = descriptor.extensionReceiverParameter?.type ?: return false
 
