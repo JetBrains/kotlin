@@ -32,7 +32,7 @@ The table below shows how Kotlin concepts are mapped to Swift/Objective-C and vi
 | Method | Method | Method | [note](#top-level-functions-and-properties) [note](#method-names-translation) |
 | `suspend` -> | `completionHandler:` | | [note](#errors-and-exceptions) |
 | `@Throws fun` | `throws` | `error:(NSError**)error` | [note](#errors-and-exceptions) |
-| Extension | Extension | Category member | [note](#category-members) |
+| Extension | Extension | Category member | [note](#extensions-and-category-members) |
 | `companion` member <- | Class method or property | Class method or property |  |
 | `null` | `nil` | `nil` | |
 | `Singleton` | `Singleton()`  | `[Singleton singleton]` | [note](#kotlin-singletons) |
@@ -151,11 +151,24 @@ Note that the opposite reversed translation is not implemented yet:
 Swift/Objective-C error-throwing methods aren't imported to Kotlin as
 exception-throwing.
 
-### Category members
+### Extensions and category members
 
 Members of Objective-C categories and Swift extensions are imported to Kotlin
 as extensions. That's why these declarations can't be overridden in Kotlin.
 And the extension initializers aren't available as Kotlin constructors.
+
+Kotlin extensions to "regular" Kotlin classes are imported to Swift and Objective-C as extensions and category members respectively.
+Kotlin extensions to other types are treated as [top-level declarations](#top-level-functions-and-properties)
+with an additional receiver parameter. These types include:
+
+* Kotlin `String` type
+* Kotlin collection types and subtypes
+* Kotlin `interface` types
+* Kotlin primitive types
+* Kotlin `inline` classes
+* Kotlin `Any` type
+* Kotlin function types and subtypes
+* Objective-C classes and protocols
 
 ### Kotlin singletons
 
