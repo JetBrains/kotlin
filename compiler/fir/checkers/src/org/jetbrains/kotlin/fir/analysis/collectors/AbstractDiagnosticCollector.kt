@@ -89,6 +89,25 @@ abstract class AbstractDiagnosticCollector(
             functionCall.calleeReference.accept(visitor)
         }
 
+        override fun visitComponentCall(componentCall: FirComponentCall) {
+            componentCall.runComponents()
+            // same as FirFunctionCall.typeRef that
+            // you can see above
+            componentCall.annotations.forEach { it.accept(visitor) }
+            componentCall.typeArguments.forEach { it.accept(visitor) }
+            componentCall.argumentList.accept(visitor)
+            componentCall.calleeReference.accept(visitor)
+            componentCall.explicitReceiver.accept(visitor)
+            if (componentCall.dispatchReceiver !== componentCall.explicitReceiver) {
+                componentCall.dispatchReceiver.accept(visitor)
+            }
+            if (componentCall.extensionReceiver !== componentCall.explicitReceiver &&
+                componentCall.extensionReceiver !== componentCall.dispatchReceiver
+            ) {
+                componentCall.extensionReceiver.accept(visitor)
+            }
+        }
+
         private fun visitJump(loopJump: FirLoopJump) {
             loopJump.runComponents()
             loopJump.acceptChildren(this)
