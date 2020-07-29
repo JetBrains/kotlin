@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
@@ -21,6 +23,8 @@ import org.jetbrains.kotlin.types.Variance
 class Fir2IrTypeConverter(
     private val components: Fir2IrComponents
 ) : Fir2IrComponents by components {
+    private val annotationGenerator = AnnotationGenerator(this)
+
     internal val classIdToSymbolMap = mapOf(
         StandardClassIds.Nothing to irBuiltIns.nothingClass,
         StandardClassIds.Unit to irBuiltIns.unitClass,
@@ -55,7 +59,7 @@ class Fir2IrTypeConverter(
     fun FirTypeRef.toIrType(typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType {
         return when (this) {
             !is FirResolvedTypeRef -> createErrorType()
-            !is FirImplicitBuiltinTypeRef -> type.toIrType(typeContext)
+            !is FirImplicitBuiltinTypeRef -> type.toIrType(typeContext, annotations)
             is FirImplicitNothingTypeRef -> irBuiltIns.nothingType
             is FirImplicitUnitTypeRef -> irBuiltIns.unitType
             is FirImplicitBooleanTypeRef -> irBuiltIns.booleanType
@@ -64,11 +68,14 @@ class Fir2IrTypeConverter(
             is FirImplicitIntTypeRef -> irBuiltIns.intType
             is FirImplicitNullableAnyTypeRef -> irBuiltIns.anyNType
             is FirImplicitNullableNothingTypeRef -> irBuiltIns.nothingNType
-            else -> type.toIrType(typeContext)
+            else -> type.toIrType(typeContext, annotations)
         }
     }
 
-    fun ConeKotlinType.toIrType(typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType {
+    fun ConeKotlinType.toIrType(
+        typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT,
+        annotations: List<FirAnnotationCall> = emptyList()
+    ): IrType {
         return when (this) {
             is ConeKotlinErrorType -> createErrorType()
             is ConeLookupTagBasedType -> {
@@ -77,11 +84,10 @@ class Fir2IrTypeConverter(
                     val firSymbol = this.lookupTag.toSymbol(session) ?: return createErrorType()
                     firSymbol.toSymbol(session, classifierStorage, typeContext)
                 }
-                // TODO: annotations
                 IrSimpleTypeImpl(
                     irSymbol, !typeContext.definitelyNotNull && this.isMarkedNullable,
                     typeArguments.map { it.toIrTypeArgument() },
-                    emptyList()
+                    with(annotationGenerator) { annotations.toIrAnnotations() }
                 )
             }
             is ConeFlexibleType -> {
