@@ -10,7 +10,6 @@ import com.intellij.ide.scratch.ScratchRootType
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.roots.ModuleRootModificationUtil
@@ -23,7 +22,6 @@ import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.actions.KOTLIN_WORKSHEET_EXTENSION
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
-import org.jetbrains.kotlin.idea.artifacts.KotlinClassPath
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingUtil
 import org.jetbrains.kotlin.idea.scratch.actions.ClearScratchAction
@@ -333,12 +331,12 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
     override fun tearDown() = runAll(
         ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
+        ThrowableRunnable { super.tearDown() },
         ThrowableRunnable {
             for (scratchFile in scratchFiles) {
                 runWriteAction { scratchFile.delete(this) }
             }
         },
-        ThrowableRunnable { super.tearDown() },
     )
 
     companion object {
