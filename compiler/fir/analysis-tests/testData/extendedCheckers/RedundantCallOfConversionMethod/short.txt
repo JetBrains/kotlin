@@ -1,0 +1,3 @@
+FILE: short.kt
+    public final val foo: R|kotlin/Short| = Q|kotlin/Short|.R|kotlin/Short.Companion.MAX_VALUE|.R|kotlin/Short.toShort|()
+        public get(): R|kotlin/Short|

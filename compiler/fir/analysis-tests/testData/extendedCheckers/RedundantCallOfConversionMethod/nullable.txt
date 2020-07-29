@@ -1,0 +1,4 @@
+FILE: nullable.kt
+    public final fun foo(s: R|kotlin/String?|): R|kotlin/Unit| {
+        lval t: R|kotlin/String| = R|<local>/s|.R|kotlin/toString|()
+    }

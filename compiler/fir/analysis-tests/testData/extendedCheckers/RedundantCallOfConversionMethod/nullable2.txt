@@ -1,0 +1,17 @@
+FILE: nullable2.kt
+    public final data class Foo : R|kotlin/Any| {
+        public constructor(name: R|kotlin/String|): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val name: R|kotlin/String| = R|<local>/name|
+            public get(): R|kotlin/String|
+
+        public final fun component1(): R|kotlin/String|
+
+        public final fun copy(name: R|kotlin/String| = this@R|/Foo|.R|/Foo.name|): R|Foo|
+
+    }
+    public final fun nullable2(foo: R|Foo?|): R|kotlin/Unit| {
+        lval s: R|kotlin/String| = R|<local>/foo|?.{ $subj$.R|/Foo.name| }.R|kotlin/toString|()
+    }
