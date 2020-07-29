@@ -17,7 +17,7 @@ class Outer<T> {
 
             class Derived : LocalOuter<Double, Short>() {
                 fun foo(): LocalInner<Long> = null!!
-                fun bar(): <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>LocalAlias<Char><!> = null!!
+                fun bar(): <!UNRESOLVED_REFERENCE!>LocalAlias<Char><!> = null!!
             }
 
             Derived()
@@ -34,7 +34,7 @@ class Outer<T> {
 
             class Derived2 : LocalOuter2<Double, Short>() {
                 fun foo(): LocalInner2<Long> = null!!
-                fun bar(): <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>LocalAlias2<Char><!> = null!!
+                fun bar(): <!UNRESOLVED_REFERENCE!>LocalAlias2<Char><!> = null!!
             }
             Derived2()
         }

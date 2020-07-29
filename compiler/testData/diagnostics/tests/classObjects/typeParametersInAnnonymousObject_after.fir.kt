@@ -20,7 +20,7 @@ val x = object<T, K: Comparable<K>> {
 
 fun case_4() {
     val x = object<T> {
-        fun test() = 10 as <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>T<!>
+        fun test() = 10 as <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>T<!>
     }
 
     val y = x.test() // type y is T

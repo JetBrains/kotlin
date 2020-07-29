@@ -8,7 +8,7 @@ fun <T> foo() {
 
     val a: <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>LT<!> = emptyList()
 
-    fun localFun(): <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>LT<!> {
+    fun localFun(): <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>LT<!> {
         typealias LLT = List<T>
 
         val b: <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>LLT<!> = a

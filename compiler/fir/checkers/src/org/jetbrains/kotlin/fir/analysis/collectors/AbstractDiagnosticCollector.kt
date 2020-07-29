@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.collectors.components.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirBreakExpression
-import org.jetbrains.kotlin.fir.expressions.FirContinueExpression
-import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
-import org.jetbrains.kotlin.fir.expressions.FirLoopJump
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.collectImplicitReceivers
@@ -69,6 +66,27 @@ abstract class AbstractDiagnosticCollector(
         override fun visitElement(element: FirElement) {
             element.runComponents()
             element.acceptChildren(this)
+        }
+
+        override fun visitFunctionCall(functionCall: FirFunctionCall) {
+            functionCall.runComponents()
+            // no need to visit typeRef because if there's
+            // an error it should've been reported at the
+            // corresponding declaration
+            functionCall.annotations.forEach { it.accept(visitor) }
+            functionCall.typeArguments.forEach { it.accept(visitor) }
+            functionCall.explicitReceiver?.accept(visitor)
+            if (functionCall.dispatchReceiver !== functionCall.explicitReceiver) {
+                functionCall.dispatchReceiver.accept(visitor)
+            }
+            if (
+                functionCall.extensionReceiver !== functionCall.explicitReceiver &&
+                functionCall.extensionReceiver !== functionCall.dispatchReceiver
+            ) {
+                functionCall.extensionReceiver.accept(visitor)
+            }
+            functionCall.argumentList.accept(visitor)
+            functionCall.calleeReference.accept(visitor)
         }
 
         private fun visitJump(loopJump: FirLoopJump) {
