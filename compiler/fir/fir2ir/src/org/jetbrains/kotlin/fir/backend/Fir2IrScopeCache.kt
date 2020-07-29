@@ -7,12 +7,11 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 
-class Fir2IrCallableCache {
+class Fir2IrScopeCache {
     private val parameterCache = mutableMapOf<FirValueParameter, IrValueParameter>()
 
     private val variableCache = mutableMapOf<FirVariable<*>, IrVariable>()

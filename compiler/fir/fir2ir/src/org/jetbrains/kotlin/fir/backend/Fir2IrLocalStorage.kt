@@ -16,12 +16,12 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 
 class Fir2IrLocalStorage {
 
-    private val cacheStack = mutableListOf<Fir2IrCallableCache>()
+    private val cacheStack = mutableListOf<Fir2IrScopeCache>()
 
     private val localClassCache = mutableMapOf<FirClass<*>, IrClass>()
 
     fun enterCallable() {
-        cacheStack += Fir2IrCallableCache()
+        cacheStack += Fir2IrScopeCache()
     }
 
     fun leaveCallable() {

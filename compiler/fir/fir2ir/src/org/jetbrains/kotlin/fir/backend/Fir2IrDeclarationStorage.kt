@@ -153,6 +153,7 @@ class Fir2IrDeclarationStorage(
         symbolTable.enterScope(declaration)
         if (declaration is IrSimpleFunction ||
             declaration is IrConstructor ||
+            declaration is IrAnonymousInitializer ||
             declaration is IrProperty ||
             declaration is IrEnumEntry
         ) {
@@ -163,6 +164,7 @@ class Fir2IrDeclarationStorage(
     fun leaveScope(declaration: IrDeclaration) {
         if (declaration is IrSimpleFunction ||
             declaration is IrConstructor ||
+            declaration is IrAnonymousInitializer ||
             declaration is IrProperty ||
             declaration is IrEnumEntry
         ) {
