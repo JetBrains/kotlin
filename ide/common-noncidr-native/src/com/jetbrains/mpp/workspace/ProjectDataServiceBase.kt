@@ -18,6 +18,7 @@ import com.jetbrains.konan.getKotlinNativeVersion
 import com.jetbrains.mpp.BinaryExecutable
 import com.jetbrains.mpp.RunParameters
 import com.jetbrains.mpp.runconfig.BinaryRunConfiguration
+import org.jetbrains.kotlin.gradle.KonanArtifactModel
 import org.jetbrains.kotlin.idea.configuration.KotlinTargetData
 import org.jetbrains.kotlin.idea.configuration.kotlinNativeHome
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -72,27 +73,25 @@ abstract class ProjectDataServiceBase : AbstractProjectDataService<KotlinTargetD
         targetNodes.forEach { node ->
             val projectPrefix = getProjectPrefix(node.data.moduleIds)
 
-            node.data.konanArtifacts
-                ?.filter { it.type == CompilerOutputKind.PROGRAM.name }
-                ?.forEach art@{ artifact ->
-                    val konanTarget = KonanTarget.predefinedTargets[artifact.targetPlatform] ?: return@art
-                    val exec = ImportedExecutable(
-                        konanTarget,
-                        artifact.targetName,
-                        artifact.executableName,
-                        projectPrefix
+            node.data.konanArtifacts?.forEach art@{ artifact ->
+                val konanTarget = artifact.getSupportedTargetOrNull() ?: return@art
+                val exec = ImportedExecutable(
+                    konanTarget,
+                    artifact.targetName,
+                    artifact.executableName,
+                    projectPrefix
+                )
+                val params = ImportedVariant(
+                    artifact.buildTaskPath,
+                    artifact.file,
+                    RunParameters(
+                        artifact.runConfiguration.workingDirectory,
+                        ParametersListUtil.join(artifact.runConfiguration.programParameters),
+                        filterOutSystemEnvs(artifact.runConfiguration.environmentVariables)
                     )
-                    val params = ImportedVariant(
-                        artifact.buildTaskPath,
-                        artifact.file,
-                        RunParameters(
-                            artifact.runConfiguration.workingDirectory,
-                            ParametersListUtil.join(artifact.runConfiguration.programParameters),
-                            filterOutSystemEnvs(artifact.runConfiguration.environmentVariables)
-                        )
-                    )
-                    imported.getOrPut(exec) { ArrayList() } += params
-                }
+                )
+                imported.getOrPut(exec) { ArrayList() } += params
+            }
         }
 
         return imported.map { (exec, variants) ->
@@ -118,6 +117,12 @@ abstract class ProjectDataServiceBase : AbstractProjectDataService<KotlinTargetD
                 }
             )
         }
+    }
+
+    private fun KonanArtifactModel.getSupportedTargetOrNull(): KonanTarget? {
+        if (isTests) return null
+        if (type != CompilerOutputKind.PROGRAM.name) return null
+        return KonanTarget.predefinedTargets[targetPlatform]
     }
 
     private fun getProjectPrefix(moduleIds: Set<String>): String =
