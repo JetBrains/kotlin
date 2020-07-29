@@ -50,9 +50,6 @@ import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getA
 
 public abstract class AnnotationCodegen {
 
-    private static final String ORG_JETBRAINS_ANNOTATIONS_NOTNULL = Type.getType(NotNull.class).getDescriptor();
-    private static final String ORG_JETBRAINS_ANNOTATIONS_NULLABLE = Type.getType(Nullable.class).getDescriptor();
-
     public static final class JvmFlagAnnotation {
         private final FqName fqName;
         private final int jvmFlag;
@@ -251,15 +248,17 @@ public abstract class AnnotationCodegen {
             if (!TypeUtils.isNullableType(flexibleType.getLowerBound()) && TypeUtils.isNullableType(flexibleType.getUpperBound())) {
                 AnnotationDescriptor notNull = type.getAnnotations().findAnnotation(JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION);
                 if (notNull != null) {
-                    generateAnnotationIfNotPresent(annotationDescriptorsAlreadyPresent, ORG_JETBRAINS_ANNOTATIONS_NOTNULL, false);
+                    generateAnnotationIfNotPresent(annotationDescriptorsAlreadyPresent, Type.getType(NotNull.class).getDescriptor(), false);
                 }
                 return;
             }
         }
 
-        String annotationDescriptor =
-                TypeUtils.isNullableType(type) ? ORG_JETBRAINS_ANNOTATIONS_NULLABLE : ORG_JETBRAINS_ANNOTATIONS_NOTNULL;
-        generateAnnotationIfNotPresent(annotationDescriptorsAlreadyPresent, annotationDescriptor, false);
+        generateAnnotationIfNotPresent(
+                annotationDescriptorsAlreadyPresent,
+                TypeUtils.isNullableType(type) ? Type.getType(Nullable.class).getDescriptor() : Type.getType(NotNull.class).getDescriptor(),
+                false
+        );
     }
 
     private static final Map<JvmTarget, Map<KotlinTarget, ElementType>> annotationTargetMaps = new EnumMap<>(JvmTarget.class);
