@@ -16,7 +16,8 @@ object ExtendedDeclarationCheckers : DeclarationCheckers() {
 
     override val memberDeclarationCheckers = listOf(
         RedundantModalityModifierChecker,
-        RedundantExplicitTypeChecker
+        RedundantExplicitTypeChecker,
+        RedundantSetterParameterTypeChecker
     )
 
     override val controlFlowAnalyserCheckers: List<FirControlFlowChecker> = listOf(
