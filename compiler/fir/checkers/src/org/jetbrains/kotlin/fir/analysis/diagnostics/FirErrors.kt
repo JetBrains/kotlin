@@ -104,8 +104,7 @@ object FirErrors {
     val REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE by warning0<FirSourceElement, PsiElement>()
     val CAN_BE_VAL by warning0<FirSourceElement, PsiElement>()
     val CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT by warning0<FirSourceElement, PsiElement>()
+    val REDUNDANT_CALL_OF_CONVERSION_METHOD by warning0<FirSourceElement, PsiElement>()
     val ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS by warning0<FirSourceElement, PsiElement>()
     val EMPTY_RANGE by warning0<FirSourceElement, PsiElement>()
 }
-
-
