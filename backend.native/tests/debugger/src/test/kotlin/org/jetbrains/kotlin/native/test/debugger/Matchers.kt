@@ -130,6 +130,7 @@ class ToolDriverHelper(private val driver: ToolDriver, private val root:Path) {
     private fun Path.compile(output: Path, vararg flags:String) = output.also{ driver.compile(this, it, *flags) }
 
     fun Path.dwarfDumpLookup(address: Long, parser:List<DwarfTag>.() -> Unit) = driver.runDwarfDump(this, "-lookup", address.toString(), processor = parser)
+    fun Path.dwarfDumpLookup(name: String, parser:List<DwarfTag>.() -> Unit) = driver.runDwarfDump(this, "-find", name, processor = parser)
 
 
     private fun String.feedOutput(output: String) = root.resolve(output).also {

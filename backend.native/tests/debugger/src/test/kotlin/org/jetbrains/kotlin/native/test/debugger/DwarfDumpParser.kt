@@ -314,7 +314,7 @@ class DwarfUtilParser() {
     var currentAttribute: DwarfAttribute.Attribute? = null
     val currentAttributePayload = StringBuilder()
     companion object {
-        val tagRegexp = Regex("^(0x[0-9a-f]{8}):\\ {3}(.*)$")
+        val tagRegexp = Regex("^(0x[0-9a-f]{8}):\\ +([^\\ .]*)$")
         val attributeRegexp = Regex("^\\s+(DW_AT_[a-zA-Z0-9_]*)\\s+\\((.*)\\)$")
     }
 
