@@ -14,7 +14,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirAbstractSuperCallChecker,
         FirQualifiedSupertypeExtendedByOtherSupertypeChecker,
         FirProjectionsOnNonClassTypeArgumentChecker,
-        FirUpperBoundViolatedChecker,
+        FirUpperBoundViolatedChecker
     )
     override val functionCallCheckers: List<FirFunctionCallChecker> = listOf()
 }

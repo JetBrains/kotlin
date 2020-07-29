@@ -155,4 +155,117 @@ public class ExtendedFirDiagnosticsTestGenerated extends AbstractExtendedFirDiag
             runTest("compiler/fir/analysis-tests/testData/extendedCheckers/canBeReplacedWithOperatorAssignment/validSubtraction.kt");
         }
     }
+
+    @TestMetadata("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantCallOfConversionMethod")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RedundantCallOfConversionMethod extends AbstractExtendedFirDiagnosticsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInRedundantCallOfConversionMethod() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantCallOfConversionMethod"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("booleanToInt.kt")
+        public void testBooleanToInt() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantCallOfConversionMethod/booleanToInt.kt");
+        }
+
+        @TestMetadata("byte.kt")
+        public void testByte() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantCallOfConversionMethod/byte.kt");
+        }
+
+        @TestMetadata("char.kt")
+        public void testChar() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantCallOfConversionMethod/char.kt");
+        }
+
+        @TestMetadata("double.kt")
+        public void testDouble() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantCallOfConversionMethod/double.kt");
+        }
+
+        @TestMetadata("float.kt")
+        public void testFloat() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantCallOfConversionMethod/float.kt");
+        }
+
+        @TestMetadata("int.kt")
+        public void testInt() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantCallOfConversionMethod/int.kt");
+        }
+
+        @TestMetadata("long.kt")
+        public void testLong() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantCallOfConversionMethod/long.kt");
+        }
+
+        @TestMetadata("nullable.kt")
+        public void testNullable() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantCallOfConversionMethod/nullable.kt");
+        }
+
+        @TestMetadata("nullable2.kt")
+        public void testNullable2() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantCallOfConversionMethod/nullable2.kt");
+        }
+
+        @TestMetadata("safeString.kt")
+        public void testSafeString() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantCallOfConversionMethod/safeString.kt");
+        }
+
+        @TestMetadata("safeString2.kt")
+        public void testSafeString2() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantCallOfConversionMethod/safeString2.kt");
+        }
+
+        @TestMetadata("short.kt")
+        public void testShort() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantCallOfConversionMethod/short.kt");
+        }
+
+        @TestMetadata("string.kt")
+        public void testString() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantCallOfConversionMethod/string.kt");
+        }
+
+        @TestMetadata("StringTemplate.kt")
+        public void testStringTemplate() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantCallOfConversionMethod/StringTemplate.kt");
+        }
+
+        @TestMetadata("toOtherType.kt")
+        public void testToOtherType() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantCallOfConversionMethod/toOtherType.kt");
+        }
+
+        @TestMetadata("uByte.kt")
+        public void testUByte() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantCallOfConversionMethod/uByte.kt");
+        }
+
+        @TestMetadata("uInt.kt")
+        public void testUInt() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantCallOfConversionMethod/uInt.kt");
+        }
+
+        @TestMetadata("uLong.kt")
+        public void testULong() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantCallOfConversionMethod/uLong.kt");
+        }
+
+        @TestMetadata("uShort.kt")
+        public void testUShort() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantCallOfConversionMethod/uShort.kt");
+        }
+
+        @TestMetadata("variable.kt")
+        public void testVariable() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantCallOfConversionMethod/variable.kt");
+        }
+    }
 }

@@ -1,0 +1,78 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.fir.analysis.checkers.extended
+
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessChecker
+import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.types.ConeFlexibleType
+import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isMarkedNullable
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtSafeQualifiedExpression
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
+
+object RedundantCallOfConversionMethod : FirQualifiedAccessChecker() {
+    @ExperimentalUnsignedTypes
+    override fun check(functionCall: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (functionCall !is FirFunctionCall) return
+        if (functionCall.source?.kind == FirFakeSourceElementKind.GeneratedToStringCallOnTemplateEntry) return
+        val functionName = functionCall.calleeReference.name.asString()
+        val qualifiedType = targetClassMap[functionName] ?: return
+
+        if (functionCall.explicitReceiver?.isRedundant(qualifiedType) == true) {
+            reporter.report(functionCall.source, FirErrors.REDUNDANT_CALL_OF_CONVERSION_METHOD)
+        }
+    }
+
+    @ExperimentalUnsignedTypes
+    private val targetClassMap = mapOf(
+        "toString" to StandardClassIds.String,
+        "toDouble" to StandardClassIds.Double,
+        "toFloat" to StandardClassIds.Float,
+        "toLong" to StandardClassIds.Long,
+        "toInt" to StandardClassIds.Int,
+        "toChar" to StandardClassIds.Char,
+        "toShort" to StandardClassIds.Short,
+        "toByte" to StandardClassIds.Byte,
+        "toULong" to StandardClassIds.ULong,
+        "toUInt" to StandardClassIds.UInt,
+        "toUShort" to StandardClassIds.UShort,
+        "toUByte" to StandardClassIds.UByte
+    )
+
+    private fun FirExpression.isRedundant(qualifiedClassId: ClassId): Boolean {
+        val thisType = if (this is FirConstExpression<*>) {
+            this.typeRef.coneType.classId
+        } else {
+            val binaryExpression = psi as? KtBinaryExpression
+            val operator = binaryExpression?.operationToken
+            if (operator in OperatorConventions.COMPARISON_OPERATIONS) {
+                // Special case here because compareTo returns Int
+                StandardClassIds.Boolean
+            } else {
+                when {
+                    typeRef.coneType is ConeFlexibleType -> null
+                    psi?.parent !is KtSafeQualifiedExpression
+                            && (psi is KtSafeQualifiedExpression || typeRef.coneType.isMarkedNullable) -> null
+                    this.typeRef.coneType.isMarkedNullable -> null
+                    else -> this.typeRef.coneType.classId
+                }
+            }
+        }
+        return thisType == qualifiedClassId
+    }
+}

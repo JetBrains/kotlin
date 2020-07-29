@@ -6,9 +6,17 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.fir.analysis.checkers.extended.CanBeReplacedWithOperatorAssignmentChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.RedundantCallOfConversionMethod
+import org.jetbrains.kotlin.fir.analysis.checkers.extended.RedundantSingleExpressionStringTemplateChecker
 
 object ExtendedExpressionCheckers : ExpressionCheckers() {
+    override val expressionCheckers: List<FirBasicExpresionChecker> = listOf(
+        RedundantSingleExpressionStringTemplateChecker
+    )
     override val variableAssignmentCheckers: List<FirVariableAssignmentChecker> = listOf(
         CanBeReplacedWithOperatorAssignmentChecker
+    )
+    override val qualifiedAccessCheckers: List<FirQualifiedAccessChecker> = listOf(
+        RedundantCallOfConversionMethod
     )
 }
