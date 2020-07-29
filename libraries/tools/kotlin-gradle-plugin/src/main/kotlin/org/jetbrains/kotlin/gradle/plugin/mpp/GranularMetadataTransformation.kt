@@ -26,6 +26,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 internal sealed class MetadataDependencyResolution(
     @field:Transient // can't be used with Gradle Instant Execution, but fortunately not needed when deserialized
     val dependency: ResolvedComponentResult,
+    @field:Transient
     val projectDependency: Project?
 ) {
     /** Evaluate and store the value, as the [dependency] will be lost during Gradle instant execution */
