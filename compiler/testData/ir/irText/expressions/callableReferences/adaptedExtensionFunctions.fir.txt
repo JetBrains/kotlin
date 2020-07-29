@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/adaptedExtensionFunctions.kt
-  FUN name:use visibility:public modality:FINAL <> (f:kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:f index:0 type:kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit>
+  FUN name:use visibility:public modality:FINAL <> (f:@[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:f index:0 type:@[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit>
     BLOCK_BODY
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
@@ -43,13 +43,13 @@ FILE fqName:<root> fileName:/adaptedExtensionFunctions.kt
     BLOCK_BODY
   FUN name:testExtensionVararg visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      CALL 'public final fun use (f: kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+      CALL 'public final fun use (f: @[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         f: FUNCTION_REFERENCE 'public final fun extensionVararg (i: kotlin.Int, vararg s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction2<<root>.C, kotlin.Int, kotlin.Unit> origin=null reflectionTarget=<same>
   FUN name:testExtensionDefault visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      CALL 'public final fun use (f: kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+      CALL 'public final fun use (f: @[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         f: FUNCTION_REFERENCE 'public final fun extensionDefault (i: kotlin.Int, s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction2<<root>.C, kotlin.Int, kotlin.Unit> origin=null reflectionTarget=<same>
   FUN name:testExtensionBoth visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      CALL 'public final fun use (f: kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+      CALL 'public final fun use (f: @[ExtensionFunctionType] kotlin.Function2<<root>.C, kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         f: FUNCTION_REFERENCE 'public final fun extensionBoth (i: kotlin.Int, s: kotlin.String, vararg t: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction2<<root>.C, kotlin.Int, kotlin.Unit> origin=null reflectionTarget=<same>

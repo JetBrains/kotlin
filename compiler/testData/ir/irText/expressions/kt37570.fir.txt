@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/kt37570.kt
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-b>' type=<root>.A origin=null
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
-        CALL 'public final fun apply <T> (block: kotlin.Function1<T of kotlin.apply, kotlin.Unit>): T of kotlin.apply [inline] declared in kotlin' type=kotlin.String origin=null
+        CALL 'public final fun apply <T> (block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.apply, kotlin.Unit>): T of kotlin.apply [inline] declared in kotlin' type=kotlin.String origin=null
           <T>: kotlin.String
           $receiver: CALL 'public final fun a (): kotlin.String declared in <root>' type=kotlin.String origin=null
           block: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.Unit> origin=LAMBDA
