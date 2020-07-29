@@ -377,7 +377,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         if (type != null) {
             val fqType = DescriptorRenderer.DEBUG_TEXT.renderType(type)
             val factory = KtPsiFactory(other, true)
-            return myMatchingVisitor.match(typeReference, factory.createTypeIfPossible(fqType))
+            val analzyableFile = factory.createAnalyzableFile("${other.hashCode()}.kt", "val x: $fqType = TODO()", other)
+            return myMatchingVisitor.match(typeReference, (analzyableFile.lastChild as KtProperty).typeReference)
         }
         return false
     }
