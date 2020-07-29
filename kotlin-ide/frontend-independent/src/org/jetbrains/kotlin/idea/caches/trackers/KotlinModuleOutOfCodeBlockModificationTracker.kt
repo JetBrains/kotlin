@@ -68,8 +68,7 @@ class KotlinModuleOutOfCodeBlockModificationTracker private constructor(private 
         }
     }
 
-    // TODO: close back exposed API
-    class Updater(project: Project) {
+    internal class Updater(project: Project) {
         private val kotlinOfOfCodeBlockTracker by lazy {
             KotlinCodeBlockModificationListener.getInstance(project).kotlinOutOfCodeBlockTracker
         }
@@ -84,8 +83,7 @@ class KotlinModuleOutOfCodeBlockModificationTracker private constructor(private 
         // perModuleModCount map
         private var perModuleChangesHighWatermark: Long? = null
 
-        // TODO: close back exposed API
-        fun getModificationCount(module: Module): Long {
+        internal fun getModificationCount(module: Module): Long {
             return perModuleModCount[module] ?: perModuleChangesHighWatermark ?: kotlinOfOfCodeBlockTracker.modificationCount
         }
 
