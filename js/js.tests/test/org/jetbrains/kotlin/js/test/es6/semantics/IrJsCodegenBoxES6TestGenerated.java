@@ -20727,6 +20727,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
                 runTest("compiler/testData/codegen/box/ranges/unsigned/kt36953_continue.kt");
             }
 
+            @TestMetadata("outOfBoundsInMixedContains.kt")
+            public void testOutOfBoundsInMixedContains() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/unsigned/outOfBoundsInMixedContains.kt");
+            }
+
             @TestMetadata("compiler/testData/codegen/box/ranges/unsigned/expression")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

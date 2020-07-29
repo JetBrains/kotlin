@@ -16,9 +16,9 @@ fun ui_us(x: UInt, a: UShort, b: UShort) = x in a..b
 fun ui_ui(x: UInt, a: UInt, b: UInt) = x in a..b
 fun ui_ul(x: UInt, a: ULong, b: ULong) = x in a..b
 
-fun ul_ub(x: ULong, a: UByte, b: UByte) = x in a..b
-fun ul_us(x: ULong, a: UShort, b: UShort) = x in a..b
-fun ul_ui(x: ULong, a: UInt, b: UInt) = x in a..b
+fun ul_ub(x: ULong, a: UByte, b: UByte) = x in a..b         // ULong in range of UInt, uses non-intrinsic 'contains'
+fun ul_us(x: ULong, a: UShort, b: UShort) = x in a..b       // ULong in range of UInt, uses non-intrinsic 'contains'
+fun ul_ui(x: ULong, a: UInt, b: UInt) = x in a..b           // ULong in range of UInt, uses non-intrinsic 'contains'
 fun ul_ul(x: ULong, a: ULong, b: ULong) = x in a..b
 
 fun n_ub_ub(x: UByte, a: UByte, b: UByte) = x !in a..b
@@ -36,17 +36,17 @@ fun n_ui_us(x: UInt, a: UShort, b: UShort) = x !in a..b
 fun n_ui_ui(x: UInt, a: UInt, b: UInt) = x !in a..b
 fun n_ui_ul(x: UInt, a: ULong, b: ULong) = x !in a..b
 
-fun n_ul_ub(x: ULong, a: UByte, b: UByte) = x !in a..b
-fun n_ul_us(x: ULong, a: UShort, b: UShort) = x !in a..b
-fun n_ul_ui(x: ULong, a: UInt, b: UInt) = x !in a..b
+fun n_ul_ub(x: ULong, a: UByte, b: UByte) = x !in a..b      // ULong in range of UInt, uses non-intrinsic 'contains'
+fun n_ul_us(x: ULong, a: UShort, b: UShort) = x !in a..b    // ULong in range of UInt, uses non-intrinsic 'contains'
+fun n_ul_ui(x: ULong, a: UInt, b: UInt) = x !in a..b        // ULong in range of UInt, uses non-intrinsic 'contains'
 fun n_ul_ul(x: ULong, a: ULong, b: ULong) = x !in a..b
 
-// 0 contains
-// 16 IFLE
-// 16 IFLT
-// 16 IFGE
-// 16 IFGT
-// 6 L2I
+// 6 contains
+// 13 IFLE
+// 13 IFLT
+// 13 IFGE
+// 13 IFGT
+// 0 L2I
 // 22 SIPUSH 255
 // 24 LDC 65535
 // 2 LDC 4294967295
