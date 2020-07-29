@@ -21,7 +21,6 @@ enum class FUSEventGroups(groupIdSuffix: String, val events: Set<String> = setOf
     Editor("ide.editor"),
     Settings("ide.settings"),
     GradlePerformance("gradle.performance"),
-    NewWizard("ide.new.wizard"),
     MigrationTool("ide.migrationTool");
 
     val GROUP_ID: String = "kotlin.$groupIdSuffix"

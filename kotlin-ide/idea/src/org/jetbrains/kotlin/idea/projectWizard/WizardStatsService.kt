@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.idea.projectWizard
 import com.intellij.internal.statistic.eventLog.EventFields
 import com.intellij.internal.statistic.eventLog.EventLogGroup
 import com.intellij.internal.statistic.eventLog.EventPair
+import com.intellij.internal.statistic.eventLog.validator.ValidationResultType
+import com.intellij.internal.statistic.eventLog.validator.rules.EventContext
+import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomValidationRule
 import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesCollector
 import com.intellij.internal.statistic.utils.getPluginInfoById
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
@@ -32,9 +35,9 @@ class WizardStatsService : CounterUsagesCollector() {
         private const val contextModulesRemoved = "modules_removed"
         private const val contextModuleTemplateChanged = "module_template_changed"
 
-        val groupField = EventFields.String(contextGroup).withCustomEnum("kotlin_wizard_groups")
-        val projectTemplateField = EventFields.String(contextProjectTemplate).withCustomEnum("kotlin_wizard_templates")
-        val buildSystemField = EventFields.String(contextBuildSystem).withCustomEnum("kotlin_wizard_build_systems")
+        val groupField = EventFields.String(contextGroup).withCustomRule("kotlin_wizard_groups")
+        val projectTemplateField = EventFields.String(contextProjectTemplate).withCustomRule("kotlin_wizard_templates")
+        val buildSystemField = EventFields.String(contextBuildSystem).withCustomRule("kotlin_wizard_build_systems")
 
         val modulesCreatedField = EventFields.Int(contextModulesCreated)
         val modulesRemovedField = EventFields.Int(contextModulesRemoved)
@@ -105,4 +108,87 @@ class WizardStatsService : CounterUsagesCollector() {
 }
 
 
+class WizardGroupValidationRule : CustomValidationRule() {
+    private val groups = listOf("Java", "Kotlin", "Gradle")
+
+    override fun acceptRuleId(ruleId: String?) =
+            ruleId == "kotlin_wizard_groups"
+
+    override fun doValidate(data: String, context: EventContext): ValidationResultType {
+        try {
+            return if (groups.contains(data)) {
+                ValidationResultType.ACCEPTED
+            }
+            else {
+                ValidationResultType.REJECTED
+            }
+        }
+        catch (e: Exception) {
+            return ValidationResultType.REJECTED
+        }
+    }
+}
+
+class WizardTemplateValidationRule : CustomValidationRule() {
+    private val templates = listOf(// Modules
+                                   "JVM_|_IDEA",
+                                   "JS_|_IDEA",
+                                   // Java and Gradle groups
+                                   "Kotlin/JVM",
+                                   // Gradle group
+                                   "Kotlin/JS",
+                                   "Kotlin/JS_for_browser",
+                                   "Kotlin/JS_for_Node.js",
+                                   "Kotlin/Multiplatform_as_framework",
+                                   "Kotlin/Multiplatform",
+                                   // Kotlin group
+                                   "backendApplication",
+                                   "consoleApplication",
+                                   "multiplatformMobileApplication",
+                                   "multiplatformMobileLibrary",
+                                   "multiplatformApplication",
+                                   "multiplatformLibrary",
+                                   "nativeApplication",
+                                   "frontendApplication",
+                                   "fullStackWebApplication")
+
+    override fun acceptRuleId(ruleId: String?) = ruleId == "kotlin_wizard_templates"
+
+    override fun doValidate(data: String, context: EventContext): ValidationResultType {
+        try {
+            return if (templates.contains(data)) {
+                ValidationResultType.ACCEPTED
+            }
+            else {
+                ValidationResultType.REJECTED
+            }
+        }
+        catch (e: Exception) {
+            return ValidationResultType.REJECTED
+        }
+    }
+}
+
+class WizardBuildSystemValidationRule : CustomValidationRule() {
+    private val groups = listOf("gradleKotlin",
+                                "gradleGroovy",
+                                "jps",
+                                "maven")
+
+    override fun acceptRuleId(ruleId: String?) = ruleId == "kotlin_wizard_groups"
+
+    override fun doValidate(data: String, context: EventContext): ValidationResultType {
+        return try {
+            if (groups.contains(data)) {
+                ValidationResultType.ACCEPTED
+            }
+            else {
+                ValidationResultType.REJECTED
+            }
+        }
+        catch (e: Exception) {
+            ValidationResultType.REJECTED
+        }
+    }
+}
 

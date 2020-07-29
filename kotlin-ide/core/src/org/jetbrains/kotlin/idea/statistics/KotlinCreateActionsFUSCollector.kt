@@ -2,9 +2,6 @@ package org.jetbrains.kotlin.idea.statistics
 
 import com.intellij.internal.statistic.eventLog.EventFields
 import com.intellij.internal.statistic.eventLog.EventLogGroup
-import com.intellij.internal.statistic.eventLog.validator.ValidationResultType
-import com.intellij.internal.statistic.eventLog.validator.rules.EventContext
-import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomValidationRule
 import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesCollector
 import com.intellij.internal.statistic.utils.getPluginInfoById
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
@@ -46,60 +43,6 @@ class KotlinCreateActionsFUSCollector : CounterUsagesCollector() {
                     if (templateName == name.templateName) return name
                 return UNKNOWN
             }
-        }
-    }
-}
-
-class WizardGroupValidationRule : CustomValidationRule() {
-    private val groups = listOf("Java", "Kotlin", "Gradle")
-
-    override fun acceptRuleId(ruleId: String?) =
-        ruleId == "kotlin_wizard_group"
-
-    override fun doValidate(data: String, context: EventContext): ValidationResultType {
-        try {
-            return if (groups.contains(data)) {
-                ValidationResultType.ACCEPTED
-            }
-            else {
-                ValidationResultType.REJECTED
-            }
-        }
-        catch (e: Exception) {
-            return ValidationResultType.REJECTED
-        }
-    }
-}
-
-class WizardTemplateValidationRule : CustomValidationRule() {
-    private val templates = listOf("JVM_|_IDEA",
-                                   "JS_|_IDEA",
-                                   "Native_|_Gradle",
-                                   "Multiplatform_Library_|_Gradle",
-                                   "JS_Client_and_JVM_Server_|_Gradle",
-                                   "Mobile_Android/iOS_|_Gradle",
-                                   "Mobile_Shared_Library_|_Gradle",
-                                   "Kotlin/JVM",
-                                   "Kotlin/JS",
-                                   "Kotlin/JS_for_browser",
-                                   "Kotlin/JS_for_Node.js",
-                                   "Kotlin/Multiplatform_as_framework",
-                                   "Kotlin/Multiplatform")
-
-    override fun acceptRuleId(ruleId: String?) =
-        ruleId == "kotlin_wizard_template"
-
-    override fun doValidate(data: String, context: EventContext): ValidationResultType {
-        try {
-            return if (templates.contains(data)) {
-                ValidationResultType.ACCEPTED
-            }
-            else {
-                ValidationResultType.REJECTED
-            }
-        }
-        catch (e: Exception) {
-            return ValidationResultType.REJECTED
         }
     }
 }
