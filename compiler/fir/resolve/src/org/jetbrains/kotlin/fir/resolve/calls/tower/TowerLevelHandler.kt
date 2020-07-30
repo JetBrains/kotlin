@@ -183,6 +183,7 @@ private class TowerScopeLevelProcessor(
         implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
         builtInExtensionFunctionReceiverValue: ReceiverValue?
     ) {
+        with(candidateFactory.bodyResolveComponents) { symbol.phasedFir }
         // Check explicit extension receiver for default package members
         if (symbol is FirNamedFunctionSymbol && dispatchReceiverValue == null &&
             (implicitExtensionReceiverValue == null) != (explicitReceiver == null) &&
