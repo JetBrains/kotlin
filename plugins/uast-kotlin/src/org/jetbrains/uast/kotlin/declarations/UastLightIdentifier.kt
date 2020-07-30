@@ -34,12 +34,16 @@ class UastLightIdentifier(lightOwner: PsiNameIdentifierOwner, ktDeclaration: KtD
     override fun getContainingFile(): PsiFile = unwrapFakeFileForLightClass(super.getContainingFile())
 }
 
-class KotlinUIdentifier private constructor(
-    override val javaPsi: PsiElement?,
+class KotlinUIdentifier constructor(
+    javaPsiSupplier: () -> PsiElement?,
     override val sourcePsi: PsiElement?,
-    override val psi: PsiElement?,
     givenParent: UElement?
-) : UIdentifier(psi, givenParent) {
+) : UIdentifier(sourcePsi, givenParent) {
+
+    override val javaPsi: PsiElement? by lazy(javaPsiSupplier) // don't know any real need to call it in production
+
+    override val psi: PsiElement?
+        get() = javaPsi ?: sourcePsi
 
     init {
         if (ApplicationManager.getApplication().isUnitTestMode && !acceptableSourcePsi(sourcePsi))
@@ -72,6 +76,6 @@ class KotlinUIdentifier private constructor(
         return null
     }
 
-    constructor(javaPsi: PsiElement?, sourcePsi: PsiElement?, uastParent: UElement?) : this(javaPsi, sourcePsi, javaPsi, uastParent)
-    constructor(sourcePsi: PsiElement?, uastParent: UElement?) : this(null, sourcePsi, sourcePsi, uastParent)
+    constructor(javaPsi: PsiElement?, sourcePsi: PsiElement?, uastParent: UElement?) : this({ javaPsi }, sourcePsi, uastParent)
+    constructor(sourcePsi: PsiElement?, uastParent: UElement?) : this({ null }, sourcePsi, uastParent)
 }
