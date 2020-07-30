@@ -16,6 +16,7 @@ import org.jetbrains.konan.resolve.symbols.KtSymbol
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.unwrapModuleSourceInfo
@@ -60,6 +61,7 @@ abstract class KtFileTranslator<T : KtSymbol, M : OCSymbol> {
         override val objcGenerics: Boolean get() = false
     }
 
+    @OptIn(FrontendInternals::class)
     private inline fun translate(
         file: KtFile, frameworkName: String, destination: MutableList<in KtSymbol>,
         provideStubs: (ObjCExportLazy, KtFile) -> List<ObjCTopLevel<*>>

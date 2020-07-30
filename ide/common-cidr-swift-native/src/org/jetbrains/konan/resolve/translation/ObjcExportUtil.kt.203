@@ -3,10 +3,12 @@ package org.jetbrains.konan.resolve.translation
 import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportWarningCollector
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjcExportHeaderGeneratorMobile
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
+@OptIn(FrontendInternals::class)
 fun generateObjCHeaderLines(
     frameworkName: String,
     resolutionFacade: ResolutionFacade
