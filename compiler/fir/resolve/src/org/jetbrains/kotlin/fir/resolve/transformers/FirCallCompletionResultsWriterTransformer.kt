@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.resolve.inference.returnType
 import org.jetbrains.kotlin.fir.resolve.propagateTypeFromQualifiedAccessAfterNullCheck
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.remapArgumentsWithVararg
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
@@ -50,8 +51,20 @@ class FirCallCompletionResultsWriterTransformer(
 
     private val declarationWriter by lazy { FirDeclarationCompletionResultsWriter(finalSubstitutor) }
 
+    private val arrayOfCallTransformer = FirArrayOfCallTransformer()
+    private var enableArrayOfCallTransformation = false
+
     enum class Mode {
         Normal, DelegatedPropertyCompletion
+    }
+
+    private inline fun <T> withFirArrayOfCallTransformer(block: () -> T): T {
+        enableArrayOfCallTransformation = true
+        return try {
+            block()
+        } finally {
+            enableArrayOfCallTransformation = false
+        }
     }
 
     private fun <T : FirQualifiedAccessExpression> prepareQualifiedTransform(
@@ -167,6 +180,12 @@ class FirCallCompletionResultsWriterTransformer(
             result.transformExplicitReceiver(typeUpdater, null)
         }
 
+        if (enableArrayOfCallTransformation) {
+            arrayOfCallTransformer.toArrayOfCall(result)?.let {
+                return it.compose()
+            }
+        }
+
         return result.compose()
     }
 
@@ -182,7 +201,13 @@ class FirCallCompletionResultsWriterTransformer(
         )
         val subCandidate = calleeReference.candidate
         val expectedArgumentsTypeMapping = runIf(!calleeReference.isError) { subCandidate.createArgumentsMapping() }
-        annotationCall.argumentList.transformArguments(this, expectedArgumentsTypeMapping)
+        withFirArrayOfCallTransformer {
+            annotationCall.argumentList.transformArguments(this, expectedArgumentsTypeMapping)
+            var index = 0
+            subCandidate.argumentMapping = subCandidate.argumentMapping?.mapKeys { (_, _) ->
+                annotationCall.argumentList.arguments[index++]
+            }
+        }
         if (!calleeReference.isError) {
             subCandidate.handleVarargs(annotationCall.argumentList)
             subCandidate.argumentMapping?.let {
