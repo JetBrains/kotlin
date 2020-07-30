@@ -82,7 +82,7 @@ class KaptJavaLog(
             }
         }
 
-        if (mapDiagnosticLocations && sourceFile != null && targetElement.tree != null) {
+        if (mapDiagnosticLocations && sourceFile != null && targetElement?.tree != null) {
             val kotlinPosition = stubLineInfo.getPositionInKotlinFile(sourceFile, targetElement.tree)
             val kotlinFile = kotlinPosition?.let { getKotlinSourceFile(it) }
             if (kotlinPosition != null && kotlinFile != null) {
