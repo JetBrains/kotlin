@@ -45,7 +45,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun SimpleTypeMarker.fastCorrespondingSupertypes(constructor: TypeConstructorMarker): List<SimpleTypeMarker>? {
         require(this is ConeKotlinType)
         return if (this is ConeIntegerLiteralType) {
-            supertypes
+            supertypes.filter { isEqualTypeConstructors(constructor, it.typeConstructor()) }
         } else {
             session.correspondingSupertypesCache.getCorrespondingSupertypes(this, constructor)
         }
