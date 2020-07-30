@@ -1,38 +1,29 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.tooling.internal;
 
 import com.intellij.openapi.externalSystem.model.ExternalSystemException;
 import org.gradle.StartParameter;
 import org.gradle.api.Project;
+import org.gradle.api.internal.project.DefaultProject;
 import org.gradle.api.invocation.Gradle;
 import org.gradle.internal.impldep.com.google.common.collect.Lists;
+import org.gradle.internal.logging.progress.ProgressLogger;
+import org.gradle.internal.logging.progress.ProgressLoggerFactory;
 import org.gradle.tooling.provider.model.ToolingModelBuilder;
 import org.gradle.util.GradleVersion;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.plugins.gradle.model.internal.DummyModel;
 import org.jetbrains.plugins.gradle.model.internal.TurnOffDefaultTasks;
 import org.jetbrains.plugins.gradle.tooling.AbstractModelBuilderService;
-import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder;
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderContext;
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderService;
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions;
 import org.jetbrains.plugins.gradle.tooling.builder.ExternalProjectBuilderImpl;
 import org.jetbrains.plugins.gradle.tooling.util.VersionMatcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -40,6 +31,10 @@ import java.util.*;
  * @author Vladislav.Soroka
  */
 public class ExtraModelBuilder implements ToolingModelBuilder {
+  private static final Logger LOG = LoggerFactory.getLogger(ExtraModelBuilder.class);
+  @ApiStatus.Internal
+  public static final String MODEL_BUILDER_SERVICE_ERROR_PREFIX = "ModelBuilderService error: ";
+
   private final List<ModelBuilderService> modelBuilderServices;
 
   @NotNull
@@ -109,14 +104,11 @@ public class ExtraModelBuilder implements ToolingModelBuilder {
               if (e instanceof RuntimeException) throw (RuntimeException)e;
               throw new ExternalSystemException(e);
             }
-            ErrorMessageBuilder builderError = service.getErrorMessageBuilder(project, e);
-            project.getLogger().error(builderError.build());
+            reportModelBuilderFailure(project, service, e);
           } finally {
             if(Boolean.getBoolean("idea.gradle.custom.tooling.perf")) {
               final long timeInMs = (System.currentTimeMillis() - startTime);
-              project.getLogger().error(ErrorMessageBuilder.create(
-                project, null, "Performance statistics"
-              ).withDescription(String.format("service %s imported data in %d ms", service.getClass().getSimpleName(), timeInMs)).build());
+              reportPerformanceStatistic(project, service, modelName, timeInMs);
             }
           }
           return null;
@@ -127,6 +119,28 @@ public class ExtraModelBuilder implements ToolingModelBuilder {
       CURRENT_CONTEXT.remove();
     }
 
+  }
+
+  private static void reportPerformanceStatistic(Project project, ModelBuilderService service, String modelName, long timeInMs) {
+    String msg = String.format("%s: service %s imported '%s' in %d ms", project.getDisplayName(), service.getClass().getSimpleName(), modelName, timeInMs);
+    project.getLogger().error(msg);
+  }
+
+  private static void reportModelBuilderFailure(Project project, ModelBuilderService service, Exception modelBuilderError) {
+    if (GradleVersion.current().getBaseVersion().compareTo(GradleVersion.version("2.14.1")) < 0) {
+      return;
+    }
+
+    try {
+      String error = service.getErrorMessageBuilder(project, modelBuilderError).build();
+      ProgressLoggerFactory progressLoggerFactory = ((DefaultProject)project).getServices().get(ProgressLoggerFactory.class);
+      ProgressLogger operation = progressLoggerFactory.newOperation(service.getClass());
+      operation.setDescription(MODEL_BUILDER_SERVICE_ERROR_PREFIX + error);
+      operation.started();
+      operation.completed();
+    } catch (Throwable e) {
+      LOG.warn("Failed to report model builder error", e);
+    }
   }
 
   private boolean isVersionMatch(@NotNull ModelBuilderService builderService) {
