@@ -39,9 +39,7 @@ class KotlinCreateActionsFUSCollector : CounterUsagesCollector() {
 
         companion object {
             fun getFullName(templateName: String): NewFileTemplates {
-                for (name in values())
-                    if (templateName == name.templateName) return name
-                return UNKNOWN
+                return values().firstOrNull { it.templateName == templateName } ?: UNKNOWN
             }
         }
     }
