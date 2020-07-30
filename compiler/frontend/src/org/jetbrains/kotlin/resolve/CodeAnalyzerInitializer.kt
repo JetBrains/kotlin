@@ -18,11 +18,18 @@ package org.jetbrains.kotlin.resolve
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 
 interface CodeAnalyzerInitializer {
-    fun initialize(trace: BindingTrace, module: ModuleDescriptor, codeAnalyzer: KotlinCodeAnalyzer)
+    fun initialize(
+        trace: BindingTrace,
+        module: ModuleDescriptor,
+        codeAnalyzer: KotlinCodeAnalyzer,
+        languageVersionSettings: LanguageVersionSettings
+    )
+
     fun createTrace(): BindingTrace
 
     companion object {
@@ -32,7 +39,12 @@ interface CodeAnalyzerInitializer {
 }
 
 class DummyCodeAnalyzerInitializer : CodeAnalyzerInitializer {
-    override fun initialize(trace: BindingTrace, module: ModuleDescriptor, codeAnalyzer: KotlinCodeAnalyzer) {
+    override fun initialize(
+        trace: BindingTrace,
+        module: ModuleDescriptor,
+        codeAnalyzer: KotlinCodeAnalyzer,
+        languageVersionSettings: LanguageVersionSettings
+    ) {
         // Do nothing
     }
 

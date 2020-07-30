@@ -93,7 +93,7 @@ fun createContainerForLazyResolveWithJava(
 }
 
 fun StorageComponentContainer.initializeJavaSpecificComponents(bindingTrace: BindingTrace) {
-    get<AbstractJavaClassFinder>().initialize(bindingTrace, get<KotlinCodeAnalyzer>())
+    get<AbstractJavaClassFinder>().initialize(bindingTrace, get<KotlinCodeAnalyzer>(), get<LanguageVersionSettings>())
 }
 
 fun StorageComponentContainer.configureJavaSpecificComponents(

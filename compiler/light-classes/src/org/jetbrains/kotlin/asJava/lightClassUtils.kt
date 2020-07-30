@@ -282,9 +282,7 @@ fun computeExpression(expression: PsiElement): Any? {
     }
 
     val generationSupport = LightClassGenerationSupport.getInstance(expressionToCompute.project)
-    val evaluator = generationSupport
-        .getUltraLightClassSupport(expressionToCompute)
-        .getConstantEvaluator(expressionToCompute)
+    val evaluator = generationSupport.createConstantEvaluator(expressionToCompute)
 
     val constant = runReadAction {
         val evaluatorTrace = DelegatingBindingTrace(generationSupport.analyze(expressionToCompute), "Evaluating annotation argument")

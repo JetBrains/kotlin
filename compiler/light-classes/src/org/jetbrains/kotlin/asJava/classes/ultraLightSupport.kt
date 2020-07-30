@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.asJava.classes
 
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
 interface KtUltraLightSupport {
@@ -20,9 +19,9 @@ interface KtUltraLightSupport {
     val typeMapper: KotlinTypeMapper
     val moduleDescriptor: ModuleDescriptor
     val isReleasedCoroutine: Boolean
-    fun possiblyHasAlias(file: KtFile, shortName: Name): Boolean
+    val languageVersionSettings: LanguageVersionSettings
 
-    fun getConstantEvaluator(expression: KtExpression): ConstantExpressionEvaluator
+    fun possiblyHasAlias(file: KtFile, shortName: Name): Boolean
 
     companion object {
         // This property may be removed once IntelliJ versions earlier than 2018.3 become unsupported
@@ -31,31 +30,4 @@ interface KtUltraLightSupport {
         @get:TestOnly
         var forceUsingOldLightClasses = false
     }
-}
-
-class UltraLightSupportViaService(private val ktElement: KtElement) : KtUltraLightSupport {
-
-    private val serviceProvidedSupport: KtUltraLightSupport
-        get() = LightClassGenerationSupport.getInstance(ktElement.project).getUltraLightClassSupport(ktElement)
-
-    override val moduleName: String
-        get() = serviceProvidedSupport.moduleName
-
-    override val deprecationResolver: DeprecationResolver
-        get() = serviceProvidedSupport.deprecationResolver
-
-    override val typeMapper: KotlinTypeMapper
-        get() = serviceProvidedSupport.typeMapper
-
-    override val moduleDescriptor: ModuleDescriptor
-        get() = serviceProvidedSupport.moduleDescriptor
-
-    override val isReleasedCoroutine: Boolean
-        get() = serviceProvidedSupport.isReleasedCoroutine
-
-    override fun possiblyHasAlias(file: KtFile, shortName: Name): Boolean =
-        serviceProvidedSupport.possiblyHasAlias(file, shortName)
-
-    override fun getConstantEvaluator(expression: KtExpression): ConstantExpressionEvaluator =
-        serviceProvidedSupport.getConstantEvaluator(expression)
 }

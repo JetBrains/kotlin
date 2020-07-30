@@ -77,10 +77,7 @@ import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
-import org.jetbrains.kotlin.config.APPEND_JAVA_SOURCE_ROOTS_HANDLER_KEY
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.extensions.*
 import org.jetbrains.kotlin.extensions.internal.CandidateInterceptor
 import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
@@ -108,12 +105,13 @@ import java.util.zip.ZipFile
 
 class KotlinCoreEnvironment private constructor(
     val projectEnvironment: JavaCoreProjectEnvironment,
-    initialConfiguration: CompilerConfiguration,
+    private val initialConfiguration: CompilerConfiguration,
     configFiles: EnvironmentConfigFiles
 ) {
 
     class ProjectEnvironment(
-        disposable: Disposable, applicationEnvironment: KotlinCoreApplicationEnvironment
+        disposable: Disposable,
+        applicationEnvironment: KotlinCoreApplicationEnvironment
     ) :
         KotlinCoreProjectEnvironment(disposable, applicationEnvironment) {
 
@@ -637,7 +635,7 @@ class KotlinCoreEnvironment private constructor(
         fun registerKotlinLightClassSupport(project: MockProject) {
             with(project) {
                 val traceHolder = CliTraceHolder()
-                val cliLightClassGenerationSupport = CliLightClassGenerationSupport(traceHolder)
+                val cliLightClassGenerationSupport = CliLightClassGenerationSupport(traceHolder, project)
                 val kotlinAsJavaSupport = CliKotlinAsJavaSupport(this, traceHolder)
                 registerService(LightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
                 registerService(CliLightClassGenerationSupport::class.java, cliLightClassGenerationSupport)

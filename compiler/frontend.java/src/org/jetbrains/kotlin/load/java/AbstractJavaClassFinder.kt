@@ -20,6 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
@@ -49,8 +50,8 @@ abstract class AbstractJavaClassFinder : JavaClassFinder {
     }
 
     @PostConstruct
-    open fun initialize(trace: BindingTrace, codeAnalyzer: KotlinCodeAnalyzer) {
-        CodeAnalyzerInitializer.getInstance(project).initialize(trace, codeAnalyzer.moduleDescriptor, codeAnalyzer)
+    open fun initialize(trace: BindingTrace, codeAnalyzer: KotlinCodeAnalyzer, languageVersionSettings: LanguageVersionSettings) {
+        CodeAnalyzerInitializer.getInstance(project).initialize(trace, codeAnalyzer.moduleDescriptor, codeAnalyzer, languageVersionSettings)
     }
 
     inner class FilterOutKotlinSourceFilesScope(baseScope: GlobalSearchScope) : DelegatingGlobalSearchScope(baseScope),
