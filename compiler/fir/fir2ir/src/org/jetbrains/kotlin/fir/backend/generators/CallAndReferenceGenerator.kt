@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.buildUseSiteMemberScope
 import org.jetbrains.kotlin.fir.resolve.calls.isFunctional
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
@@ -428,6 +429,18 @@ class CallAndReferenceGenerator(
                     val irClass = symbol.owner
                     val irConstructor = (annotationCall.toResolvedCallableSymbol() as? FirConstructorSymbol)?.let {
                         this.declarationStorage.getIrConstructorSymbol(it)
+                    } ?: run {
+                        // Fallback for FirReferencePlaceholderForResolvedAnnotations from jar
+                        val fir = coneType.lookupTag.toSymbol(session)?.fir as? FirClass<*>
+                        var constructorSymbol: FirConstructorSymbol? = null
+                        fir?.buildUseSiteMemberScope(session, scopeSession)?.processDeclaredConstructors {
+                            if (it.fir.isPrimary && constructorSymbol == null) {
+                                constructorSymbol = it
+                            }
+                        }
+                        constructorSymbol?.let {
+                            this.declarationStorage.getIrConstructorSymbol(it)
+                        }
                     }
                     if (irConstructor == null) {
                         IrErrorCallExpressionImpl(startOffset, endOffset, type, "No annotation constructor found: ${irClass.name}")
