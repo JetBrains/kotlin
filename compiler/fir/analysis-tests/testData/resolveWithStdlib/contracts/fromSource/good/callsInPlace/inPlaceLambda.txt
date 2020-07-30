@@ -1,0 +1,28 @@
+FILE: inPlaceLambda.kt
+    @R|kotlin/contracts/ExperimentalContracts|() public final fun bar(x: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(x, AT_MOST_ONCE)
+        >
+     {
+        [StubStatement]
+        when () {
+            Boolean(true) ->  {
+                R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+            }
+        }
+
+    }
+    @R|kotlin/contracts/ExperimentalContracts|() public final fun foo(x: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(x, AT_LEAST_ONCE)
+        >
+     {
+        [StubStatement]
+        R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        R|/bar|(<L> = bar@fun <anonymous>(): R|kotlin/Unit| <kind=AT_MOST_ONCE>  {
+            R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        }
+        )
+    }

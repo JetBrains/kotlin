@@ -38,6 +38,7 @@ enum class EventOccurrencesRange(private val left: Int, private val right: Int) 
 
     infix fun or(other: EventOccurrencesRange): EventOccurrencesRange = Companion.or(this, other)
     operator fun plus(other: EventOccurrencesRange): EventOccurrencesRange = Companion.plus(this, other)
+    operator fun contains(other: EventOccurrencesRange): Boolean = left <= other.left && other.right <= right
 }
 
 fun EventOccurrencesRange.isDefinitelyVisited(): Boolean = this == EventOccurrencesRange.EXACTLY_ONCE || this == EventOccurrencesRange.AT_LEAST_ONCE || this == EventOccurrencesRange.MORE_THAN_ONCE

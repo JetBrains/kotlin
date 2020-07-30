@@ -11,7 +11,7 @@ FILE: fromLocalMembers.kt
         lval x: R|kotlin/Int|
         lval y: R|kotlin/Int|
         object : R|kotlin/Any| {
-            private[local] constructor(): R|<anonymous>| {
+            private constructor(): R|<anonymous>| {
                 super<R|kotlin/Any|>()
             }
 
@@ -19,7 +19,7 @@ FILE: fromLocalMembers.kt
                 R|<local>/x| = Int(0)
             }
 
-            public[local] final fun localFunc(): R|kotlin/Unit| {
+            public final fun localFunc(): R|kotlin/Unit| {
                 R|<local>/y| = Int(0)
             }
 
@@ -32,7 +32,7 @@ FILE: fromLocalMembers.kt
         lval x: R|kotlin/Int|
         lval y: R|kotlin/Int|
         local final class A : R|kotlin/Any| {
-            public[local] constructor(): R|A| {
+            public constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }
 
@@ -40,7 +40,7 @@ FILE: fromLocalMembers.kt
                 R|<local>/x| = Int(0)
             }
 
-            public[local] final fun localFunc(): R|kotlin/Unit| {
+            public final fun localFunc(): R|kotlin/Unit| {
                 R|<local>/y| = Int(0)
             }
 

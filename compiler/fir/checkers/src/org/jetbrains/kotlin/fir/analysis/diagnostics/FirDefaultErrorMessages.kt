@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_INFI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_MODIFIERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERENCE_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LEAKED_IN_PLACE_LAMBDA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LOCAL_ANNOTATION_CLASS_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LOCAL_INTERFACE_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LOCAL_OBJECT_NOT_ALLOWED
@@ -85,6 +86,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_REFERE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_VIOLATED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VARIABLE_EXPECTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_ANNOTATION_PARAMETER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_INVOCATION_KIND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS
 
 @Suppress("unused")
@@ -132,7 +134,11 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(RECURSION_IN_SUPERTYPES, "Recursion in supertypes")
             map.put(NOT_A_SUPERTYPE, "Not an immediate supertype")
             map.put(SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE, "Superclass is not accessible from interface")
-            map.put(QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE, "Explicitly qualified supertype is extended by another supertype ''{0}''", TO_STRING)
+            map.put(
+                QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE,
+                "Explicitly qualified supertype is extended by another supertype ''{0}''",
+                TO_STRING
+            )
 
             // Constructor problems
             map.put(CONSTRUCTOR_IN_OBJECT, "Constructors are not allowed for objects")
@@ -144,11 +150,17 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR, "Supertype initialization is impossible without primary constructor")
             map.put(DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR, "Call to super is not allowed in enum constructor")
             map.put(PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS, "Primary constructor required for data class")
-            map.put(EXPLICIT_DELEGATION_CALL_REQUIRED, "Explicit 'this' or 'super' call is required. There is no constructor in superclass that can be called without arguments")
+            map.put(
+                EXPLICIT_DELEGATION_CALL_REQUIRED,
+                "Explicit 'this' or 'super' call is required. There is no constructor in superclass that can be called without arguments"
+            )
 
             // Annotations
             map.put(ANNOTATION_CLASS_MEMBER, "Members are not allowed in annotation class")
-            map.put(ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT, "Default value of annotation parameter must be a compile-time constant")
+            map.put(
+                ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT,
+                "Default value of annotation parameter must be a compile-time constant"
+            )
             map.put(LOCAL_ANNOTATION_CLASS_ERROR, "Annotation class cannot be local")
             map.put(MISSING_VAL_ON_ANNOTATION_PARAMETER, "'val' keyword is missing on annotation parameter")
             map.put(NULLABLE_TYPE_OF_ANNOTATION_MEMBER, "An annotation parameter cannot be nullable")
@@ -157,14 +169,32 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(NOT_AN_ANNOTATION_CLASS, "Illegal annotation class: {0}", NULLABLE_STRING)
 
             // Exposed visibility group // #
-            map.put(EXPOSED_TYPEALIAS_EXPANDED_TYPE, "{0} typealias exposes {2} in expanded type ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
-            map.put(EXPOSED_FUNCTION_RETURN_TYPE, "{0} function exposes its {2} return type ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
+            map.put(
+                EXPOSED_TYPEALIAS_EXPANDED_TYPE,
+                "{0} typealias exposes {2} in expanded type ''{1}''",
+                TO_STRING,
+                DECLARATION_NAME,
+                TO_STRING
+            )
+            map.put(
+                EXPOSED_FUNCTION_RETURN_TYPE,
+                "{0} function exposes its {2} return type ''{1}''",
+                TO_STRING,
+                DECLARATION_NAME,
+                TO_STRING
+            )
             map.put(EXPOSED_RECEIVER_TYPE, "{0} member exposes its {2} receiver type ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
             map.put(EXPOSED_PROPERTY_TYPE, "{0} property exposes its {2} type ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
             map.put(EXPOSED_PARAMETER_TYPE, "{0} function exposes its {2} parameter type ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
             map.put(EXPOSED_SUPER_INTERFACE, "{0} sub-interface exposes its {2} supertype ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
             map.put(EXPOSED_SUPER_CLASS, "{0} subclass exposes its {2} supertype ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
-            map.put(EXPOSED_TYPE_PARAMETER_BOUND, "{0} generic exposes its {2} parameter bound type ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
+            map.put(
+                EXPOSED_TYPE_PARAMETER_BOUND,
+                "{0} generic exposes its {2} parameter bound type ''{1}''",
+                TO_STRING,
+                DECLARATION_NAME,
+                TO_STRING
+            )
 
             // Modifiers
             map.put(INAPPLICABLE_INFIX_MODIFIER, "''infix'' modifier is inapplicable on this function: {0}", TO_STRING)
@@ -188,7 +218,12 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT, "Projections are not allowed on type arguments of functions and properties")
             map.put(UPPER_BOUND_VIOLATED, "Type argument is not within its bounds: should be subtype of ''{0}''", TO_STRING, TO_STRING)
             map.put(TYPE_ARGUMENTS_NOT_ALLOWED, "Type arguments are not allowed for type parameters") // *
-            map.put(WRONG_NUMBER_OF_TYPE_ARGUMENTS, "{0,choice,0#No type arguments|1#One type argument|1<{0,number,integer} type arguments} expected for {1}", null, TO_STRING)
+            map.put(
+                WRONG_NUMBER_OF_TYPE_ARGUMENTS,
+                "{0,choice,0#No type arguments|1#One type argument|1<{0,number,integer} type arguments} expected for {1}",
+                null,
+                TO_STRING
+            )
             map.put(NO_TYPE_FOR_TYPE_PARAMETER, "There're no types suitable for this type parameter") // &
             map.put(TYPE_PARAMETERS_IN_OBJECT, "Type parameters are not allowed for objects")
 //            map.put(ILLEGAL_PROJECTION_USAGE, ...) // &
@@ -199,11 +234,28 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(REDECLARATION, "Conflicting declarations: {0}", TO_STRING) // *
 
             // Invalid local declarations
-            map.put(LOCAL_OBJECT_NOT_ALLOWED, "Named object ''{0}'' is a singleton and cannot be local. Try to use anonymous object instead", TO_STRING) // +
-            map.put(LOCAL_INTERFACE_NOT_ALLOWED, "''{0}'' is an interface so it cannot be local. Try to use anonymous object or abstract class instead", TO_STRING)
+            map.put(
+                LOCAL_OBJECT_NOT_ALLOWED,
+                "Named object ''{0}'' is a singleton and cannot be local. Try to use anonymous object instead",
+                TO_STRING
+            ) // +
+            map.put(
+                LOCAL_INTERFACE_NOT_ALLOWED,
+                "''{0}'' is an interface so it cannot be local. Try to use anonymous object or abstract class instead",
+                TO_STRING
+            )
 
             // Control flow diagnostics
             map.put(UNINITIALIZED_VARIABLE, "{0} must be initialized before access", PROPERTY_NAME)
+            map.put(
+                WRONG_INVOCATION_KIND,
+                "{2} wrong invocation kind: given {3} case, but {4} case is possible",
+                SYMBOL,
+                TO_STRING,
+                TO_STRING
+            )
+            map.put(LEAKED_IN_PLACE_LAMBDA, "Leaked in-place lambda: {2}", SYMBOL)
+
 
             // Extended checkers group
 //            map.put(REDUNDANT_VISIBILITY_MODIFIER, ...) // &

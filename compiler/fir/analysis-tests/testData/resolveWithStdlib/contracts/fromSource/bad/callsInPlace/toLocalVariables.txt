@@ -1,0 +1,26 @@
+FILE: toLocalVariables.kt
+    public final fun bar(x: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    @R|kotlin/contracts/ExperimentalContracts|() public final fun foo(x: R|() -> kotlin/Unit|, y: R|() -> kotlin/Unit|, z: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(x, AT_MOST_ONCE)
+            CallsInPlace(y, AT_MOST_ONCE)
+            CallsInPlace(z, AT_MOST_ONCE)
+        >
+     {
+        [StubStatement]
+        when () {
+            Boolean(true) ->  {
+                R|/bar|(R|<local>/x|)
+            }
+            else ->  {
+                lval yCopy: R|() -> kotlin/Unit| = R|<local>/y|
+                R|<local>/yCopy|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+            }
+        }
+
+        lval zCopy: R|() -> kotlin/Unit|
+        R|<local>/zCopy| = R|<local>/z|
+        R|<local>/zCopy|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+    }
