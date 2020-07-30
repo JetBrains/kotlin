@@ -68,46 +68,6 @@ abstract class AbstractDiagnosticCollector(
             element.acceptChildren(this)
         }
 
-        override fun visitFunctionCall(functionCall: FirFunctionCall) {
-            functionCall.runComponents()
-            // no need to visit typeRef because if there's
-            // an error it should've been reported at the
-            // corresponding declaration
-            functionCall.annotations.forEach { it.accept(visitor) }
-            functionCall.typeArguments.forEach { it.accept(visitor) }
-            functionCall.explicitReceiver?.accept(visitor)
-            if (functionCall.dispatchReceiver !== functionCall.explicitReceiver) {
-                functionCall.dispatchReceiver.accept(visitor)
-            }
-            if (
-                functionCall.extensionReceiver !== functionCall.explicitReceiver &&
-                functionCall.extensionReceiver !== functionCall.dispatchReceiver
-            ) {
-                functionCall.extensionReceiver.accept(visitor)
-            }
-            functionCall.argumentList.accept(visitor)
-            functionCall.calleeReference.accept(visitor)
-        }
-
-        override fun visitComponentCall(componentCall: FirComponentCall) {
-            componentCall.runComponents()
-            // same as FirFunctionCall.typeRef that
-            // you can see above
-            componentCall.annotations.forEach { it.accept(visitor) }
-            componentCall.typeArguments.forEach { it.accept(visitor) }
-            componentCall.argumentList.accept(visitor)
-            componentCall.calleeReference.accept(visitor)
-            componentCall.explicitReceiver.accept(visitor)
-            if (componentCall.dispatchReceiver !== componentCall.explicitReceiver) {
-                componentCall.dispatchReceiver.accept(visitor)
-            }
-            if (componentCall.extensionReceiver !== componentCall.explicitReceiver &&
-                componentCall.extensionReceiver !== componentCall.dispatchReceiver
-            ) {
-                componentCall.extensionReceiver.accept(visitor)
-            }
-        }
-
         private fun visitJump(loopJump: FirLoopJump) {
             loopJump.runComponents()
             loopJump.acceptChildren(this)
