@@ -1,0 +1,42 @@
+package
+
+public fun case1(/*0*/ d: Data1): kotlin.Unit
+public fun case2(/*0*/ d: Data2): kotlin.Unit
+
+public open class Base1 {
+    public constructor Base1()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ fun toString(): kotlin.String
+}
+
+public open class Base2 {
+    public constructor Base2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ fun toString(): kotlin.String
+}
+
+public final data class Data1 : Base1 {
+    public constructor Data1(/*0*/ x: kotlin.Int = ..., /*1*/ y: kotlin.String = ...)
+    public final val x: kotlin.Int
+    public final val y: kotlin.String
+    public final operator /*synthesized*/ fun component1(): kotlin.Int
+    public final operator /*synthesized*/ fun component2(): kotlin.String
+    public final /*synthesized*/ fun copy(/*0*/ x: kotlin.Int = ..., /*1*/ y: kotlin.String = ...): Data1
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final data class Data2 : Base2 {
+    public constructor Data2(/*0*/ x: kotlin.Int = ..., /*1*/ y: kotlin.String = ...)
+    public final val x: kotlin.Int
+    public final val y: kotlin.String
+    public final operator /*synthesized*/ fun component1(): kotlin.Int
+    public final operator /*synthesized*/ fun component2(): kotlin.String
+    public final /*synthesized*/ fun copy(/*0*/ x: kotlin.Int = ..., /*1*/ y: kotlin.String = ...): Data2
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}

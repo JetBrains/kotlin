@@ -29,6 +29,14 @@
         {
           "specVersion": "1.4-rfc+0.3-591",
           "casesNumber": 3,
+          "description": "data class functions overriding without override modifier",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.6.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
           "description": "overriding member equals function of open class",
           "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.2.kt",
           "unexpectedBehaviour": false,
@@ -63,6 +71,14 @@
           "casesNumber": 3,
           "description": "overriding member toString function of open class",
           "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "Return type of a data overriden functions is not a subtype of return type of a generated functions",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.6.kt",
           "unexpectedBehaviour": false,
           "linkType": "primary"
         },
@@ -115,6 +131,14 @@
         {
           "specVersion": "1.4-rfc+0.3-591",
           "casesNumber": 3,
+          "description": "data class functions overriding without override modifier",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.6.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
           "description": "overriding member equals function of open class",
           "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.2.kt",
           "unexpectedBehaviour": false,
@@ -161,6 +185,14 @@
         {
           "specVersion": "1.4-rfc+0.3-591",
           "casesNumber": 3,
+          "description": "data class functions overriding without override modifier",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.6.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
           "description": "overriding member equals function of open class",
           "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.2.kt",
           "unexpectedBehaviour": false,
@@ -197,6 +229,14 @@
           "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "Return type of a data overriden functions is not a subtype of return type of a generated functions",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.6.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
         },
         {
           "specVersion": "1.4-rfc+0.3-591",
@@ -243,6 +283,14 @@
         {
           "specVersion": "1.4-rfc+0.3-591",
           "casesNumber": 3,
+          "description": "data class functions overriding without override modifier",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.6.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
           "description": "overriding member equals function of open class",
           "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.2.kt",
           "unexpectedBehaviour": false,
@@ -279,6 +327,14 @@
           "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "Return type of a data overriden functions is not a subtype of return type of a generated functions",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.6.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
         },
         {
           "specVersion": "1.4-rfc+0.3-591",
@@ -329,6 +385,14 @@
         {
           "specVersion": "1.4-rfc+0.3-591",
           "casesNumber": 3,
+          "description": "data class functions overriding without override modifier",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.6.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
           "description": "overriding member equals function of open class",
           "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.2.kt",
           "unexpectedBehaviour": false,
@@ -365,6 +429,14 @@
           "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "Return type of a data overriden functions is not a subtype of return type of a generated functions",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.6.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
         },
         {
           "specVersion": "1.4-rfc+0.3-591",
@@ -437,6 +509,14 @@
         {
           "specVersion": "1.4-rfc+0.3-591",
           "casesNumber": 3,
+          "description": "Return type of a data overriden functions is not a subtype of return type of a generated functions",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.6.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
           "description": "overriding member equals function of open class (Return type of a child override function is not a subtype of return type of a base class)",
           "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.2.kt",
           "unexpectedBehaviour": false,
@@ -480,6 +560,14 @@
   "5": {
     "pos": {
       "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 2,
+          "description": "overriding member toString function of data class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-5/pos/1.6.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
         {
           "specVersion": "1.4-rfc+0.3-591",
           "casesNumber": 3,

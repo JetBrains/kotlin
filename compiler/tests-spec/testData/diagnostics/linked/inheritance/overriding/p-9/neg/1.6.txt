@@ -1,0 +1,37 @@
+package
+
+public final data class Case1 {
+    public constructor Case1(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.CharSequence)
+    public final val a: kotlin.Int
+    public final val b: kotlin.CharSequence
+    public final operator /*synthesized*/ fun component1(): kotlin.Int
+    public final operator /*synthesized*/ fun component2(): kotlin.CharSequence
+    public final /*synthesized*/ fun copy(/*0*/ a: kotlin.Int = ..., /*1*/ b: kotlin.CharSequence = ...): Case1
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public final override /*1*/ fun toString(): kotlin.String
+}
+
+public final data class Case2 {
+    public constructor Case2(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.CharSequence)
+    public final val a: kotlin.Int
+    public final val b: kotlin.CharSequence
+    public final operator /*synthesized*/ fun component1(): kotlin.Int
+    public final operator /*synthesized*/ fun component2(): kotlin.CharSequence
+    public final /*synthesized*/ fun copy(/*0*/ a: kotlin.Int = ..., /*1*/ b: kotlin.CharSequence = ...): Case2
+    public final override /*1*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final data class Case3 {
+    public constructor Case3(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.CharSequence)
+    public final val a: kotlin.Int
+    public final val b: kotlin.CharSequence
+    public final operator /*synthesized*/ fun component1(): kotlin.Int
+    public final operator /*synthesized*/ fun component2(): kotlin.CharSequence
+    public final /*synthesized*/ fun copy(/*0*/ a: kotlin.Int = ..., /*1*/ b: kotlin.CharSequence = ...): Case3
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}

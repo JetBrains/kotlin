@@ -1,0 +1,1244 @@
+{
+  "2": {
+    "pos": {
+      "12": [
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "generated component function has the same type as this property and returns the value of this property",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": " generated component function has the same type as this property and returns the value of this property. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.13.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": " generated component function has the same type as this property and returns the value of this property",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": " generated component function has the same type as this property and returns the value of this property. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.17.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": " generated component function has the same type as this property and returns the value of this property",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": " generated component function has the same type as this property and returns the value of this property. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.16.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "generated component function has the same type as this property and returns the value of this property. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.12.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": " generated component function has the same type as this property and returns the value of this property. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.18.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": " generated component function has the same type as this property and returns the value of this property",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.8.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": " generated component function has the same type as this property and returns the value of this property",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.7.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": " generated component function has the same type as this property and returns the value of this property. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.15.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": " generated component function has the same type as this property and returns the value of this property",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "generated component function has the same type as this property and returns the value of this property. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.11.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "generated component function has the same type as this property and returns the value of this property",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": " generated component function has the same type as this property and returns the value of this property",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.6.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": " generated component function has the same type as this property and returns the value of this property. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.14.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ],
+      "10": [
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.17.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.7.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.13.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.12.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.16.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.6.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.18.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.8.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.11.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.15.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.14.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ],
+      "7": [
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.17.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.7.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.13.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.12.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.16.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.6.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.18.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.8.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.11.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.15.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.14.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.6.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode with HashCode declared in supertype",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.7.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.14.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.8.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.15.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.11.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.16.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.12.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode with HashCode declared in supertype. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.13.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.17.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.18.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ],
+      "2": [
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.6.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode with HashCode declared in supertype",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.7.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.14.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.8.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.15.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.11.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.16.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.12.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode with HashCode declared in supertype. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.13.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.17.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.18.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "3": [
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.6.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode with HashCode declared in supertype",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.7.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.14.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.8.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.15.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.11.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.16.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.12.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode with HashCode declared in supertype. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.13.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.17.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.18.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "4": [
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.6.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode with HashCode declared in supertype",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.7.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.14.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.8.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.15.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.11.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.16.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.12.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode with HashCode declared in supertype. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.13.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.17.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.18.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ],
+      "5": [
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.6.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode with HashCode declared in supertype",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.7.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.14.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.8.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.15.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.11.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.16.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.12.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode with HashCode declared in supertype. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.13.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.17.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.18.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  },
+  "3": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.17.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": " generated component function has the same type as this property and returns the value of this property. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.13.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.13.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": " generated component function has the same type as this property and returns the value of this property. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.17.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.12.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": " generated component function has the same type as this property and returns the value of this property. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.16.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.16.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "generated component function has the same type as this property and returns the value of this property. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.12.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.14.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.15.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.18.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.11.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": " generated component function has the same type as this property and returns the value of this property. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.18.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.16.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.12.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "equals and hashcode with HashCode declared in supertype. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.13.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.17.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.11.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": " generated component function has the same type as this property and returns the value of this property. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.15.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.15.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "data class with default parameters at primary constructor. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.18.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "generated component function has the same type as this property and returns the value of this property. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.11.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": "copy with defaults. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.14.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 0,
+          "description": " generated component function has the same type as this property and returns the value of this property. Class includes regular property declarations in its body",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.14.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  }
+}

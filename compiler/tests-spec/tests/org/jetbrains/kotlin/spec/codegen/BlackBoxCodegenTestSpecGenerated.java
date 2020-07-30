@@ -40,6 +40,311 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked"), Pattern.compile("^(.+)\\.kt$"), null, true, "exceptions", "operator-call", "overload-resolution/building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver", "overloadable-operators");
         }
 
+        @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/declarations")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Declarations extends AbstractBlackBoxCodegenTestSpec {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInDeclarations() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/declarations"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Classifier_declaration extends AbstractBlackBoxCodegenTestSpec {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInClassifier_declaration() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Data_class_declaration extends AbstractBlackBoxCodegenTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInData_class_declaration() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class P_2 extends AbstractBlackBoxCodegenTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        public void testAllFilesPresentInP_2() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        }
+
+                        @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos")
+                        @TestDataPath("$PROJECT_ROOT")
+                        @RunWith(JUnit3RunnerWithInners.class)
+                        public static class Pos extends AbstractBlackBoxCodegenTestSpec {
+                            private void runTest(String testDataFilePath) throws Exception {
+                                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                            }
+
+                            @TestMetadata("10.1.kt")
+                            public void test10_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.1.kt");
+                            }
+
+                            @TestMetadata("10.11.kt")
+                            public void test10_11() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.11.kt");
+                            }
+
+                            @TestMetadata("10.12.kt")
+                            public void test10_12() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.12.kt");
+                            }
+
+                            @TestMetadata("10.13.kt")
+                            public void test10_13() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.13.kt");
+                            }
+
+                            @TestMetadata("10.14.kt")
+                            public void test10_14() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.14.kt");
+                            }
+
+                            @TestMetadata("10.15.kt")
+                            public void test10_15() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.15.kt");
+                            }
+
+                            @TestMetadata("10.16.kt")
+                            public void test10_16() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.16.kt");
+                            }
+
+                            @TestMetadata("10.17.kt")
+                            public void test10_17() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.17.kt");
+                            }
+
+                            @TestMetadata("10.18.kt")
+                            public void test10_18() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.18.kt");
+                            }
+
+                            @TestMetadata("10.2.kt")
+                            public void test10_2() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.2.kt");
+                            }
+
+                            @TestMetadata("10.3.kt")
+                            public void test10_3() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.3.kt");
+                            }
+
+                            @TestMetadata("10.4.kt")
+                            public void test10_4() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.4.kt");
+                            }
+
+                            @TestMetadata("10.5.kt")
+                            public void test10_5() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.5.kt");
+                            }
+
+                            @TestMetadata("10.6.kt")
+                            public void test10_6() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.6.kt");
+                            }
+
+                            @TestMetadata("10.7.kt")
+                            public void test10_7() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.7.kt");
+                            }
+
+                            @TestMetadata("10.8.kt")
+                            public void test10_8() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/10.8.kt");
+                            }
+
+                            @TestMetadata("12.1.kt")
+                            public void test12_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.1.kt");
+                            }
+
+                            @TestMetadata("12.11.kt")
+                            public void test12_11() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.11.kt");
+                            }
+
+                            @TestMetadata("12.12.kt")
+                            public void test12_12() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.12.kt");
+                            }
+
+                            @TestMetadata("12.13.kt")
+                            public void test12_13() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.13.kt");
+                            }
+
+                            @TestMetadata("12.14.kt")
+                            public void test12_14() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.14.kt");
+                            }
+
+                            @TestMetadata("12.15.kt")
+                            public void test12_15() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.15.kt");
+                            }
+
+                            @TestMetadata("12.16.kt")
+                            public void test12_16() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.16.kt");
+                            }
+
+                            @TestMetadata("12.17.kt")
+                            public void test12_17() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.17.kt");
+                            }
+
+                            @TestMetadata("12.18.kt")
+                            public void test12_18() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.18.kt");
+                            }
+
+                            @TestMetadata("12.2.kt")
+                            public void test12_2() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.2.kt");
+                            }
+
+                            @TestMetadata("12.3.kt")
+                            public void test12_3() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.3.kt");
+                            }
+
+                            @TestMetadata("12.4.kt")
+                            public void test12_4() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.4.kt");
+                            }
+
+                            @TestMetadata("12.5.kt")
+                            public void test12_5() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.5.kt");
+                            }
+
+                            @TestMetadata("12.6.kt")
+                            public void test12_6() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.6.kt");
+                            }
+
+                            @TestMetadata("12.7.kt")
+                            public void test12_7() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.7.kt");
+                            }
+
+                            @TestMetadata("12.8.kt")
+                            public void test12_8() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/12.8.kt");
+                            }
+
+                            @TestMetadata("1.1.kt")
+                            public void test1_1() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.1.kt");
+                            }
+
+                            @TestMetadata("1.11.kt")
+                            public void test1_11() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.11.kt");
+                            }
+
+                            @TestMetadata("1.12.kt")
+                            public void test1_12() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.12.kt");
+                            }
+
+                            @TestMetadata("1.13.kt")
+                            public void test1_13() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.13.kt");
+                            }
+
+                            @TestMetadata("1.14.kt")
+                            public void test1_14() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.14.kt");
+                            }
+
+                            @TestMetadata("1.15.kt")
+                            public void test1_15() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.15.kt");
+                            }
+
+                            @TestMetadata("1.16.kt")
+                            public void test1_16() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.16.kt");
+                            }
+
+                            @TestMetadata("1.17.kt")
+                            public void test1_17() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.17.kt");
+                            }
+
+                            @TestMetadata("1.18.kt")
+                            public void test1_18() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.18.kt");
+                            }
+
+                            @TestMetadata("1.2.kt")
+                            public void test1_2() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.2.kt");
+                            }
+
+                            @TestMetadata("1.3.kt")
+                            public void test1_3() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.3.kt");
+                            }
+
+                            @TestMetadata("1.4.kt")
+                            public void test1_4() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.4.kt");
+                            }
+
+                            @TestMetadata("1.5.kt")
+                            public void test1_5() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.5.kt");
+                            }
+
+                            @TestMetadata("1.6.kt")
+                            public void test1_6() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.6.kt");
+                            }
+
+                            @TestMetadata("1.7.kt")
+                            public void test1_7() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.7.kt");
+                            }
+
+                            @TestMetadata("1.8.kt")
+                            public void test1_8() throws Exception {
+                                runTest("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos/1.8.kt");
+                            }
+
+                            public void testAllFilesPresentInPos() throws Exception {
+                                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/data-class-declaration/p-2/pos"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
