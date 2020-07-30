@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.BindingTraceContext
-import org.jetbrains.kotlin.resolve.CollectionLiteralResolver.Companion.ARRAY_OF_FUNCTION
-import org.jetbrains.kotlin.resolve.CollectionLiteralResolver.Companion.PRIMITIVE_TYPE_TO_ARRAY
+import org.jetbrains.kotlin.resolve.ArrayFqNames.ARRAY_OF_FUNCTION
+import org.jetbrains.kotlin.resolve.ArrayFqNames.PRIMITIVE_TYPE_TO_ARRAY
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
