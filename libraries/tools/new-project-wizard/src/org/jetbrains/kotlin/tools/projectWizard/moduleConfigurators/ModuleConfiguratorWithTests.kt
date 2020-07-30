@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ModuleConfiguratorSetting
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ModuleConfiguratorSettingReference
-import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingType
 import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.DependencyType
@@ -56,14 +55,14 @@ interface ModuleConfiguratorWithTests : ModuleConfiguratorWithSettings {
         configurationData: ModulesToIrConversionData,
         module: Module
     ): List<BuildSystemIR> =
-        withSettingsOf(module) {
+        inContextOfModuleConfigurator(module) {
             reader {
                 testFramework.reference.settingValue.dependencyNames.map { dependencyName ->
                     KotlinArbitraryDependencyIR(
                         dependencyName,
                         isInMppModule = module.kind
                             .let { it == ModuleKind.multiplatform || it == ModuleKind.target },
-                        kotlinVersion = KotlinPlugin::version.propertyValue,
+                        kotlinVersion = KotlinPlugin.version.propertyValue,
                         dependencyType = DependencyType.TEST
                     )
                 }

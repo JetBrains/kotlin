@@ -34,7 +34,7 @@ interface JSConfigurator : ModuleConfiguratorWithModuleType, ModuleConfiguratorW
         module: Module,
         modulePath: Path
     ): TaskResult<Unit> =
-        GradlePlugin::gradleProperties
+        GradlePlugin.gradleProperties
             .addValues("kotlin.js.generate.executable.default" to "false")
 
     override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> =
@@ -96,21 +96,17 @@ interface JSConfigurator : ModuleConfiguratorWithModuleType, ModuleConfiguratorW
     }
 }
 
-object JsSingleplatformModuleConfigurator : JSConfigurator, ModuleConfiguratorWithTests, SinglePlatformModuleConfigurator,
+abstract class JsSinglePlatformModuleConfigurator :
+    JSConfigurator,
+    ModuleConfiguratorWithTests,
+    SinglePlatformModuleConfigurator,
     ModuleConfiguratorWithSettings {
     override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> =
         super<ModuleConfiguratorWithTests>.getConfiguratorSettings() +
-                super<JSConfigurator>.getConfiguratorSettings() +
-                JSConfigurator.cssSupport
-
-    override val moduleKind = ModuleKind.singleplatformJs
+                super<JSConfigurator>.getConfiguratorSettings()
 
     @NonNls
     override val suggestedModuleName = "js"
-
-    @NonNls
-    override val id = "jsSinglepaltform"
-    override val text = KotlinNewProjectWizardBundle.message("module.configurator.js")
 
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JS
 
@@ -129,10 +125,43 @@ object JsSingleplatformModuleConfigurator : JSConfigurator, ModuleConfiguratorWi
     ): List<BuildSystemIR> = irsList {
         "kotlin" {
             "js" {
-                browserSubTarget(module, reader)
+                subTarget(module, reader)
             }
         }
     }
+
+    protected abstract fun GradleIRListBuilder.subTarget(module: Module, reader: Reader)
+}
+
+object BrowserJsSinglePlatformModuleConfigurator : JsSinglePlatformModuleConfigurator() {
+    @NonNls
+    override val id = "jsBrowserSinglePlatform"
+
+    override val moduleKind = ModuleKind.singleplatformJsBrowser
+
+    override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> {
+        return super.getConfiguratorSettings() +
+                JSConfigurator.cssSupport
+    }
+
+    override fun GradleIRListBuilder.subTarget(module: Module, reader: Reader) {
+        browserSubTarget(module, reader)
+    }
+
+    override val text = KotlinNewProjectWizardBundle.message("module.configurator.simple.js.browser")
+}
+
+object NodeJsSinglePlatformModuleConfigurator : JsSinglePlatformModuleConfigurator() {
+    @NonNls
+    override val id = "jsNodeSinglePlatform"
+
+    override val moduleKind = ModuleKind.singleplatformJsNode
+
+    override fun GradleIRListBuilder.subTarget(module: Module, reader: Reader) {
+        nodejsSubTarget(module, reader)
+    }
+
+    override val text = KotlinNewProjectWizardBundle.message("module.configurator.simple.js.node")
 }
 
 fun GradleIRListBuilder.applicationSupport() {

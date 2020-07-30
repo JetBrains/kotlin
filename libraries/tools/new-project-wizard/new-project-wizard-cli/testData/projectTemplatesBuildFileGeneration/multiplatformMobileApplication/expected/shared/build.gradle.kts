@@ -19,7 +19,7 @@ repositories {
 }
 kotlin {
     android()
-    iosX64("ios") {
+    ios {
         binaries {
             framework {
                 baseName = "shared"
@@ -39,13 +39,18 @@ kotlin {
                 implementation("androidx.core:core-ktx:1.2.0")
             }
         }
-        val androidTest by getting
+        val androidTest by getting {
+            dependencies {
+                implementation("junit:junit:4.12")
+            }
+        }
         val iosMain by getting
         val iosTest by getting
     }
 }
 android {
     compileSdkVersion(29)
+    sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     defaultConfig {
         minSdkVersion(24)
         targetSdkVersion(29)
@@ -61,7 +66,9 @@ android {
 val packForXcode by tasks.creating(Sync::class) {
     group = "build"
     val mode = System.getenv("CONFIGURATION") ?: "DEBUG"
-    val framework = kotlin.targets.getByName<KotlinNativeTarget>("ios").binaries.getFramework(mode)
+    val sdkName = System.getenv("SDK_NAME") ?: "iphonesimulator"
+    val targetName = "ios" + if (sdkName.startsWith("iphoneos")) "Arm64" else "X64"
+    val framework = kotlin.targets.getByName<KotlinNativeTarget>(targetName).binaries.getFramework(mode)
     inputs.property("mode", mode)
     dependsOn(framework.linkTask)
     val targetDir = File(buildDir, "xcode-frameworks")

@@ -3,14 +3,26 @@ package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.FreeIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.settings.JavaPackage
+import java.nio.file.Path
 
 interface AndroidIR : GradleIR
 
 //TODO parematrize
-data class AndroidConfigIR(val javaPackage: JavaPackage?) : AndroidIR, FreeIR {
+data class AndroidConfigIR(val javaPackage: JavaPackage?, val newManifestPath: Path?) : AndroidIR, FreeIR {
     override fun GradlePrinter.renderGradle() {
         sectionCall("android", needIndent = true) {
             call("compileSdkVersion") { +"29" }; nlIndented() // TODO dehardcode
+            if (newManifestPath != null) {
+                when (dsl) {
+                    GradlePrinter.GradleDsl.KOTLIN -> {
+                        +"""sourceSets["main"].manifest.srcFile("$newManifestPath")"""
+                    }
+                    GradlePrinter.GradleDsl.GROOVY -> {
+                        +"""sourceSets.main.manifest.srcFile('$newManifestPath')"""
+                    }
+                }
+                nlIndented()
+            }
             sectionCall("defaultConfig", needIndent = true) {
                 if (javaPackage != null) {
                     assignmentOrCall("applicationId") { +javaPackage.asCodePackage().quotified }; nlIndented()

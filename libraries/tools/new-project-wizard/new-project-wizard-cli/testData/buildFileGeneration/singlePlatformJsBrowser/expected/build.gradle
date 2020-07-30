@@ -1,17 +1,17 @@
 plugins {
-    kotlin("js") version "KOTLIN_VERSION"
+    id 'org.jetbrains.kotlin.js' version 'KOTLIN_VERSION'
 }
-group = "testGroupId"
-version = "1.0-SNAPSHOT"
+group = 'testGroupId'
+version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
     maven {
-        url = uri("https://dl.bintray.com/kotlin/kotlin-dev")
+        url 'https://dl.bintray.com/kotlin/kotlin-dev'
     }
 }
 dependencies {
-    testImplementation(kotlin("test-js"))
+    testImplementation 'org.jetbrains.kotlin:kotlin-test-js'
 }
 kotlin {
     js {
@@ -26,7 +26,7 @@ kotlin {
             testTask {
                 useKarma {
                     useChromeHeadless()
-                    cssSupport.enabled = true
+                    webpackConfig.cssSupport.enabled = true
                 }
             }
         }

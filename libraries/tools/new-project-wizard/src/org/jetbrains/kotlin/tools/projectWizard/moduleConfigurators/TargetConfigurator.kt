@@ -146,7 +146,7 @@ object JvmTargetConfigurator : JvmModuleConfigurator,
         module: Module
     ): List<BuildSystemIR> = irsList {
         reader {
-            withSettingsOf(module) {
+            inContextOfModuleConfigurator(module) {
                 val targetVersionValue = JvmModuleConfigurator.targetJvmVersion.reference.settingValue.value
                 if (buildSystemType.isGradle) {
                     "compilations.all" {

@@ -1,7 +1,11 @@
 package org.jetbrains.kotlin.tools.projectWizard.core
 
+import org.jetbrains.kotlin.tools.projectWizard.PropertiesOwner
 import org.jetbrains.kotlin.tools.projectWizard.SettingsOwner
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.properties.PluginProperty
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.properties.Property
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.properties.PropertyBuilder
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.*
 import org.jetbrains.kotlin.tools.projectWizard.enumSettingImpl
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
@@ -9,57 +13,71 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import java.nio.file.Path
 import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KClass
-import kotlin.reflect.full.isSubclassOf
-import kotlin.reflect.full.memberProperties
 
-typealias PluginReference = KClass<out Plugin>
 typealias PluginsCreator = (Context) -> List<Plugin>
 
 
 abstract class Plugin(override val context: Context) : EntityBase(),
-    SettingsOwner,
     ContextOwner,
     EntitiesOwnerDescriptor,
     EntitiesOwner<Plugin> {
     override val descriptor get() = this
     override val id: String get() = path
 
-    override fun <V : Any, T : SettingType<V>> settingDelegate(
-        create: (path: String) -> SettingBuilder<V, T>
-    ): ReadOnlyProperty<Any, PluginSetting<V, T>> = context.pluginSettingDelegate(create)
-
     val reference = this::class
-    override val path = reference.path
-    open val title: String = reference.name
+    abstract override val path: String
 
-    val declaredSettings get() = entitiesOfType<PluginSetting<*, *>>().toSet()
-    val declaredTasks get() = entitiesOfType<Task>()
+    abstract val properties: List<Property<*>>
+    abstract val settings: List<PluginSetting<*, *>>
+    abstract val pipelineTasks: List<PipelineTask>
+}
 
-    private inline fun <reified E : Entity> entitiesOfType() =
-        reference.memberProperties.filter { kProperty ->
-            kProperty.returnType.classifier.safeAs<KClass<*>>()?.isSubclassOf(E::class) == true
-        }.mapNotNull { kProperty ->
-            kProperty.safeAs<EntityReference>()?.getter?.call(this) as? E
-        }
+abstract class PluginSettingsOwner : SettingsOwner, PropertiesOwner {
+    abstract val pluginPath: String
 
-    fun pipelineTask(phase: GenerationPhase, init: PipelineTask.Builder.() -> Unit) =
-        context.pipelineTaskDelegate(phase, init)
+    // properties
+    override fun <T : Any> propertyDelegate(
+        create: (path: String) -> PropertyBuilder<T>
+    ): ReadOnlyProperty<Any, Property<T>> =
+        cached { name -> PluginProperty(create(withPluginPath(name)).build()) }
 
-    fun <A, B : Any> task1(init: Task1.Builder<A, B>.() -> Unit) =
-        context.task1Delegate(init)
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : Any> property(
+        defaultValue: T,
+        init: PropertyBuilder<T>.() -> Unit,
+    ): ReadOnlyProperty<Any, PluginProperty<T>> =
+        super.property(defaultValue, init) as ReadOnlyProperty<Any, PluginProperty<T>>
 
-    fun <T : Any> property(defaultValue: T, init: Property.Builder<T>.() -> Unit = {}) =
-        context.propertyDelegate(init, defaultValue)
-
-    fun <T : Any> listProperty(vararg defaultValues: T, init: Property.Builder<List<T>>.() -> Unit = {}) =
+    override fun <T : Any> listProperty(
+        vararg defaultValues: T,
+        init: PropertyBuilder<List<T>>.() -> Unit,
+    ): ReadOnlyProperty<Any, PluginProperty<List<T>>> =
         property(defaultValues.toList(), init)
 
+    // pippeline tasks
+
+    fun pipelineTask(
+        phase: GenerationPhase,
+        init: PipelineTask.Builder.() -> Unit
+    ): ReadOnlyProperty<Any, PipelineTask> =
+        cached { name -> PipelineTask.Builder(withPluginPath(name), phase).apply(init).build() }
+
+    // task1
+
+    fun <A, B : Any> task1(
+        init: Task1.Builder<A, B>.() -> Unit
+    ): ReadOnlyProperty<Any, Task1<A, B>> = cached { name -> Task1.Builder<A, B>(withPluginPath(name)).apply(init).build() }
+
+    // settings
+
+    override fun <V : Any, T : SettingType<V>> settingDelegate(
+        create: (path: String) -> SettingBuilder<V, T>
+    ): ReadOnlyProperty<Any, PluginSetting<V, T>> = cached { name -> PluginSetting(create(withPluginPath(name)).buildInternal()) }
 
     // setting types
 
     @Suppress("UNCHECKED_CAST")
-    final override fun <V : DisplayableSettingItem> dropDownSetting(
+    override fun <V : DisplayableSettingItem> dropDownSetting(
         title: String,
         neededAtPhase: GenerationPhase,
         parser: Parser<V>,
@@ -73,7 +91,7 @@ abstract class Plugin(override val context: Context) : EntityBase(),
         ) as ReadOnlyProperty<Any, PluginSetting<V, DropDownSettingType<V>>>
 
     @Suppress("UNCHECKED_CAST")
-    final override fun stringSetting(
+    override fun stringSetting(
         title: String,
         neededAtPhase: GenerationPhase,
         init: StringSettingType.Builder.() -> Unit
@@ -85,7 +103,7 @@ abstract class Plugin(override val context: Context) : EntityBase(),
         ) as ReadOnlyProperty<Any, PluginSetting<String, StringSettingType>>
 
     @Suppress("UNCHECKED_CAST")
-    final override fun booleanSetting(
+    override fun booleanSetting(
         title: String,
         neededAtPhase: GenerationPhase,
         init: BooleanSettingType.Builder.() -> Unit
@@ -97,7 +115,7 @@ abstract class Plugin(override val context: Context) : EntityBase(),
         ) as ReadOnlyProperty<Any, PluginSetting<Boolean, BooleanSettingType>>
 
     @Suppress("UNCHECKED_CAST")
-    final override fun <V : Any> valueSetting(
+    override fun <V : Any> valueSetting(
         title: String,
         neededAtPhase: GenerationPhase,
         parser: Parser<V>,
@@ -111,7 +129,7 @@ abstract class Plugin(override val context: Context) : EntityBase(),
         ) as ReadOnlyProperty<Any, PluginSetting<V, ValueSettingType<V>>>
 
     @Suppress("UNCHECKED_CAST")
-    final override fun versionSetting(
+    override fun versionSetting(
         title: String,
         neededAtPhase: GenerationPhase,
         init: VersionSettingType.Builder.() -> Unit
@@ -123,7 +141,7 @@ abstract class Plugin(override val context: Context) : EntityBase(),
         ) as ReadOnlyProperty<Any, PluginSetting<Version, VersionSettingType>>
 
     @Suppress("UNCHECKED_CAST")
-    final override fun <V : Any> listSetting(
+    override fun <V : Any> listSetting(
         title: String,
         neededAtPhase: GenerationPhase,
         parser: Parser<V>,
@@ -137,7 +155,7 @@ abstract class Plugin(override val context: Context) : EntityBase(),
         ) as ReadOnlyProperty<Any, PluginSetting<List<V>, ListSettingType<V>>>
 
     @Suppress("UNCHECKED_CAST")
-    final override fun pathSetting(
+    override fun pathSetting(
         title: String,
         neededAtPhase: GenerationPhase,
         init: PathSettingType.Builder.() -> Unit
@@ -151,30 +169,9 @@ abstract class Plugin(override val context: Context) : EntityBase(),
         crossinline init: DropDownSettingType.Builder<E>.() -> Unit = {}
     ): ReadOnlyProperty<Any, PluginSetting<E, DropDownSettingType<E>>> where E : Enum<E>, E : DisplayableSettingItem =
         enumSettingImpl(title, neededAtPhase, init) as ReadOnlyProperty<Any, PluginSetting<E, DropDownSettingType<E>>>
+
+    // utils
+
+    private fun withPluginPath(name: String): String = "$pluginPath.$name"
 }
-
-val PluginReference.withParentPlugins
-    get() = generateSequence(this) { klass ->
-        klass.supertypes.firstOrNull { supertype ->
-                supertype.classifier?.safeAs<KClass<Plugin>>()
-                    ?.isSubclassOf(Plugin::class) == true
-            }?.classifier
-            ?.safeAs<KClass<Plugin>>()
-            ?.takeIf { superClass ->
-                superClass.simpleName != null
-            }
-    }
-
-val PluginReference.name
-    get() = simpleName
-        ?.removeSuffix("Plugin")
-        ?.decapitalize()
-        .orEmpty()
-
-val PluginReference.path
-    get() = withParentPlugins.mapNotNull { klass ->
-            klass.name.takeIf { it.isNotEmpty() }
-        }.toList()
-        .reversed()
-        .joinToString(".")
 

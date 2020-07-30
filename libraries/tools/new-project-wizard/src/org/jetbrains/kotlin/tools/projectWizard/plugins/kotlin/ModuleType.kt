@@ -28,6 +28,7 @@ enum class ModuleSubType(val moduleType: ModuleType) {
     android(ModuleType.android),
     androidNativeArm32(ModuleType.native), androidNativeArm64(ModuleType.native),
     iosArm32(ModuleType.native), iosArm64(ModuleType.native), iosX64(ModuleType.native),
+    ios(ModuleType.native)/*TODO TEMPORARY TILL HMPP WIZARD PART IS MERGED*/,
     linuxArm32Hfp(ModuleType.native), linuxMips32(ModuleType.native), linuxMipsel32(ModuleType.native),
     linuxX64(ModuleType.native),
     macosX64(ModuleType.native),
@@ -36,7 +37,7 @@ enum class ModuleSubType(val moduleType: ModuleType) {
 }
 
 val ModuleSubType.isIOS: Boolean
-    get() = this in EnumSet.of(ModuleSubType.iosX64, ModuleSubType.iosArm32, ModuleSubType.iosArm64)
+    get() = this in EnumSet.of(ModuleSubType.iosX64, ModuleSubType.iosArm32, ModuleSubType.iosArm64, ModuleSubType.ios)
 
 val ModuleSubType.isNativeDesktop: Boolean
     get() = this in EnumSet.of(
