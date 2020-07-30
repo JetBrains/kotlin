@@ -400,7 +400,11 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 this.type = type
             }
         }
-        var result = withScopesForClass(null, anonymousObject, type) {
+        val labelName =
+            if (anonymousObject.classKind == ClassKind.ENUM_ENTRY) {
+                anonymousObject.getPrimaryConstructorIfAny()?.symbol?.callableId?.className?.shortName()
+            } else null
+        var result = withScopesForClass(labelName, anonymousObject, type) {
             transformDeclarationContent(anonymousObject, data).single as FirAnonymousObject
         }
         if (!implicitTypeOnly && result.controlFlowGraphReference == FirEmptyControlFlowGraphReference) {
