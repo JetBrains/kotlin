@@ -20,15 +20,11 @@ import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesManager;
 import com.intellij.find.findUsages.FindUsagesOptions;
 import com.intellij.find.impl.FindManagerImpl;
-import com.intellij.openapi.application.AccessToken;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.compiler.CompilerPaths;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.importing.ImportSpec;
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder;
 import com.intellij.openapi.externalSystem.model.DataNode;
-import com.intellij.openapi.externalSystem.model.ExternalProjectInfo;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.model.project.ProjectData;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
@@ -37,7 +33,6 @@ import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMo
 import com.intellij.openapi.externalSystem.service.notification.ExternalSystemProgressNotificationManager;
 import com.intellij.openapi.externalSystem.service.project.ExternalProjectRefreshCallback;
 import com.intellij.openapi.externalSystem.service.project.ProjectDataManager;
-import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataManagerImpl;
 import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettings;
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
@@ -53,8 +48,8 @@ import com.intellij.openapi.projectRoots.impl.JavaAwareProjectJdkTableImpl;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TestDialog;
+import com.intellij.openapi.ui.TestDialogManager;
 import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.FileUtil;
@@ -66,16 +61,19 @@ import com.intellij.packaging.artifacts.ArtifactManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.IdeaTestUtil;
 import com.intellij.usageView.UsageInfo;
-import com.intellij.util.BooleanFunction;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ConcurrentWeakKeySoftValueHashMap;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
+import org.apache.log4j.Level;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.model.java.JavaResourceRootType;
+import org.jetbrains.jps.model.java.JavaSourceRootProperties;
+import org.jetbrains.jps.model.java.JavaSourceRootType;
+import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -85,12 +83,6 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
-
-import org.apache.log4j.Level;
-import org.jetbrains.jps.model.java.JavaResourceRootType;
-import org.jetbrains.jps.model.java.JavaSourceRootProperties;
-import org.jetbrains.jps.model.java.JavaSourceRootType;
-import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 
 import static com.intellij.testFramework.EdtTestUtil.runInEdtAndGet;
 
@@ -215,10 +207,12 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
         doAssertContentFolders(rootUrl, contentRoots, rootType, expected);
     }
 
-    protected static List<SourceFolder> doAssertContentFolders(@Nullable String rootUrl,
+    protected static List<SourceFolder> doAssertContentFolders(
+            @Nullable String rootUrl,
             ContentEntry[] contentRoots,
             @NotNull JpsModuleSourceRootType<?> rootType,
-            String... expected) {
+            String... expected
+    ) {
         List<SourceFolder> result = new ArrayList<>();
         List<String> actual = new ArrayList<>();
         for (ContentEntry contentRoot : contentRoots) {
@@ -306,14 +300,17 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
         assertNotNull(errorMessage, lib);
         assertModuleLibDepPath(lib, OrderRootType.CLASSES, classesPath == null ? null : Collections.singletonList(classesPath));
         assertModuleLibDepPath(lib, OrderRootType.SOURCES, sourcePath == null ? null : Collections.singletonList(sourcePath));
-        assertModuleLibDepPath(lib, JavadocOrderRootType.getInstance(), javadocPath == null ? null : Collections.singletonList(javadocPath));
+        assertModuleLibDepPath(lib, JavadocOrderRootType.getInstance(),
+                               javadocPath == null ? null : Collections.singletonList(javadocPath));
     }
 
-    protected void assertModuleLibDep(String moduleName,
+    protected void assertModuleLibDep(
+            String moduleName,
             String depName,
             List<String> classesPaths,
             List<String> sourcePaths,
-            List<String> javadocPaths) {
+            List<String> javadocPaths
+    ) {
         LibraryOrderEntry lib = ContainerUtil.getFirstItem(getModuleLibDeps(moduleName, depName));
 
         assertModuleLibDepPath(lib, OrderRootType.CLASSES, classesPaths);
@@ -351,19 +348,20 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
     protected void assertExportedDeps(String moduleName, String... expectedDeps) {
         final List<String> actual = new ArrayList<>();
 
-        getRootManager(moduleName).orderEntries().withoutSdk().withoutModuleSourceEntries().exportedOnly().process(new RootPolicy<Object>() {
-            @Override
-            public Object visitModuleOrderEntry(@NotNull ModuleOrderEntry e, Object value) {
-                actual.add(e.getModuleName());
-                return null;
-            }
+        getRootManager(moduleName).orderEntries().withoutSdk().withoutModuleSourceEntries().exportedOnly()
+                .process(new RootPolicy<Object>() {
+                    @Override
+                    public Object visitModuleOrderEntry(@NotNull ModuleOrderEntry e, Object value) {
+                        actual.add(e.getModuleName());
+                        return null;
+                    }
 
-            @Override
-            public Object visitLibraryOrderEntry(@NotNull LibraryOrderEntry e, Object value) {
-                actual.add(e.getLibraryName());
-                return null;
-            }
-        }, null);
+                    @Override
+                    public Object visitLibraryOrderEntry(@NotNull LibraryOrderEntry e, Object value) {
+                        actual.add(e.getLibraryName());
+                        return null;
+                    }
+                }, null);
 
         assertOrderedElementsAreEqual(actual, expectedDeps);
     }
@@ -415,8 +413,7 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
 
         if (expected.length == 0) {
             assertNull(path);
-        }
-        else {
+        } else {
             assertNotNull(path);
             assertOrderedElementsAreEqual(Arrays.asList(path), expected);
         }
@@ -425,7 +422,7 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
     protected void assertArtifacts(String... expectedNames) {
         final List<String> actualNames = ContainerUtil.map(
                 ArtifactManager.getInstance(myProject).getAllArtifactsIncludingInvalid(),
-                (Function<Artifact, String>)artifact -> artifact.getName());
+                (Function<Artifact, String>) artifact -> artifact.getName());
 
         assertUnorderedElementsAreEqual(actualNames, expectedNames);
     }
@@ -528,34 +525,31 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
                                 saveToProcessIfRequired(processed, toProcess, referencingObjects, referencingFieldNames, nextObject, o,
                                                         field.getName());
                             }
-                        }
-                        else if (fieldValue.getClass().isArray()) {
+                        } else if (fieldValue.getClass().isArray()) {
                             for (int i = 0; i < Array.getLength(fieldValue); i++) {
                                 Object o = Array.get(fieldValue, i);
                                 saveToProcessIfRequired(processed, toProcess, referencingObjects, referencingFieldNames, nextObject, o,
                                                         field.getName());
                             }
-                        }
-                        else if (fieldValue instanceof Map && ! (fieldValue instanceof ConcurrentWeakKeySoftValueHashMap)) {
+                        } else if (fieldValue instanceof Map && !(fieldValue instanceof ConcurrentWeakKeySoftValueHashMap)) {
                             for (Map.Entry e : ((Map<Object, Object>) fieldValue).entrySet()) {
-                                saveToProcessIfRequired(processed, toProcess, referencingObjects, referencingFieldNames, nextObject, e.getKey(),
+                                saveToProcessIfRequired(processed, toProcess, referencingObjects, referencingFieldNames, nextObject,
+                                                        e.getKey(),
                                                         field.getName());
-                                saveToProcessIfRequired(processed, toProcess, referencingObjects, referencingFieldNames, nextObject, e.getValue(),
+                                saveToProcessIfRequired(processed, toProcess, referencingObjects, referencingFieldNames, nextObject,
+                                                        e.getValue(),
                                                         "value" + field.getName());
                             }
-                        }
-                        else {
+                        } else {
                             saveToProcessIfRequired(processed, toProcess, referencingObjects, referencingFieldNames, nextObject, fieldValue,
                                                     field.getName());
                         }
-                    }
-                    catch (IllegalAccessException e) {
+                    } catch (IllegalAccessException e) {
                         fail(e.getMessage());
                     }
                 }
             }
-        }
-        finally {
+        } finally {
             for (Field f : modifiedFields) {
                 f.setAccessible(false);
             }
@@ -599,23 +593,23 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
             importSpec = new TestImportSpecBuilder(importSpec)
                     .setCreateEmptyContentRoots(projectSettings.isCreateEmptyContentRootDirectories())
                     .callback(new ExternalProjectRefreshCallback() {
-                @Override
-                public void onSuccess(@Nullable final DataNode<ProjectData> externalProject) {
-                    if (externalProject == null) {
-                        System.err.println("Got null External project after import");
-                        return;
-                    }
-                    ServiceManager.getService(ProjectDataManager.class).importData(externalProject, myProject, true);
-                    System.out.println("External project was successfully imported");
+                        @Override
+                        public void onSuccess(@Nullable final DataNode<ProjectData> externalProject) {
+                            if (externalProject == null) {
+                                System.err.println("Got null External project after import");
+                                return;
+                            }
+                            ServiceManager.getService(ProjectDataManager.class).importData(externalProject, myProject, true);
+                            System.out.println("External project was successfully imported");
 
-                    inspectForGradleMemoryLeaks(externalProject);
-                }
+                            inspectForGradleMemoryLeaks(externalProject);
+                        }
 
-                @Override
-                public void onFailure(@NotNull String errorMessage, @Nullable String errorDetails) {
-                    error.set(Couple.of(errorMessage, errorDetails));
-                }
-            }).build();
+                        @Override
+                        public void onFailure(@NotNull String errorMessage, @Nullable String errorDetails) {
+                            error.set(Couple.of(errorMessage, errorDetails));
+                        }
+                    }).build();
         }
 
         ExternalSystemProgressNotificationManager notificationManager =
@@ -630,8 +624,7 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
         notificationManager.addNotificationListener(listener);
         try {
             ExternalSystemUtil.refreshProjects(importSpec);
-        }
-        finally {
+        } finally {
             notificationManager.removeNotificationListener(listener);
         }
 
@@ -674,7 +667,7 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
 
     protected static AtomicInteger configConfirmationForYesAnswer() {
         final AtomicInteger counter = new AtomicInteger();
-        Messages.setTestDialog(new TestDialog() {
+        TestDialogManager.setTestDialog(new TestDialog() {
             @Override
             public int show(@NotNull String message) {
                 counter.set(counter.get() + 1);
@@ -686,7 +679,7 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
 
     protected static AtomicInteger configConfirmationForNoAnswer() {
         final AtomicInteger counter = new AtomicInteger();
-        Messages.setTestDialog(new TestDialog() {
+        TestDialogManager.setTestDialog(new TestDialog() {
             @Override
             public int show(@NotNull String message) {
                 counter.set(counter.get() + 1);
@@ -701,7 +694,8 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
             @Override
             protected Collection<UsageInfo> compute(@NotNull ProgressIndicator indicator) {
                 return runInEdtAndGet(() -> {
-                    FindUsagesManager findUsagesManager = ((FindManagerImpl) FindManager.getInstance(element.getProject())).getFindUsagesManager();
+                    FindUsagesManager findUsagesManager =
+                            ((FindManagerImpl) FindManager.getInstance(element.getProject())).getFindUsagesManager();
                     FindUsagesHandler handler = findUsagesManager.getFindUsagesHandler(element, false);
                     assertNotNull(handler);
                     final FindUsagesOptions options = handler.getFindUsagesOptions();
@@ -771,10 +765,15 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
 
         for (OrderEntry e : getRootManager(moduleName).getOrderEntries()) {
             if (clazz.isInstance(e) && e.getPresentableName().equals(depName)) {
-                deps.add((T)e);
+                deps.add((T) e);
             }
         }
-        assertNotNull("Dependency for module \"" + moduleName + "\" not found: " + depName + "\namong: " + collectModuleDepsNames(moduleName, clazz), deps);
+        assertNotNull("Dependency for module \"" +
+                      moduleName +
+                      "\" not found: " +
+                      depName +
+                      "\namong: " +
+                      collectModuleDepsNames(moduleName, clazz), deps);
         return deps;
     }
 
@@ -805,5 +804,4 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
     private List<String> collectModuleDepsNames(String moduleName, Class clazz) {
         return collectModuleDepsNames(moduleName, entry -> clazz.isInstance(entry));
     }
-
 }

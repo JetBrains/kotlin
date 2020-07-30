@@ -28,8 +28,8 @@ import com.intellij.openapi.projectRoots.impl.JavaAwareProjectJdkTableImpl;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable;
 import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TestDialog;
+import com.intellij.openapi.ui.TestDialogManager;
 import com.intellij.openapi.util.AsyncResult;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -39,7 +39,6 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.testFramework.IdeaTestUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.PathUtil;
-import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -52,7 +51,6 @@ import org.jetbrains.jps.model.java.JavaSourceRootProperties;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 import org.jetbrains.kotlin.idea.test.KotlinSdkCreationChecker;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -92,12 +90,11 @@ public abstract class MavenImportingTestCase extends MavenTestCase {
                 VfsRootAccess.disallowRootAccess(myGlobalSettingsFile.getAbsolutePath());
             }
             VfsRootAccess.disallowRootAccess(PathManager.getConfigPath());
-            Messages.setTestDialog(TestDialog.DEFAULT);
+            TestDialogManager.setTestDialog(TestDialog.DEFAULT);
             removeFromLocalRepository("test");
             FileUtil.delete(BuildManager.getInstance().getBuildSystemDirectory().toFile());
             sdkCreationChecker.removeNewKotlinSdk();
-        }
-        finally {
+        } finally {
             super.tearDown();
         }
     }
@@ -338,8 +335,7 @@ public abstract class MavenImportingTestCase extends MavenTestCase {
 
         if (expected.length == 0) {
             assertNull(path);
-        }
-        else {
+        } else {
             assertNotNull(path);
             assertOrderedElementsAreEqual(Arrays.asList(path), expected);
         }
@@ -351,8 +347,7 @@ public abstract class MavenImportingTestCase extends MavenTestCase {
             Module m = ModuleManager.getInstance(myProject).findModuleByName(name);
             assertNotNull("Module " + name + " not found", m);
             return m;
-        }
-        finally {
+        } finally {
             accessToken.finish();
         }
     }
@@ -449,8 +444,7 @@ public abstract class MavenImportingTestCase extends MavenTestCase {
             public void run() {
                 try {
                     myProjectsManager.waitForReadingCompletion();
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -555,7 +549,7 @@ public abstract class MavenImportingTestCase extends MavenTestCase {
 
     protected static AtomicInteger configConfirmationForYesAnswer() {
         final AtomicInteger counter = new AtomicInteger();
-        Messages.setTestDialog(new TestDialog() {
+        TestDialogManager.setTestDialog(new TestDialog() {
             @Override
             public int show(String message) {
                 counter.set(counter.get() + 1);
@@ -567,7 +561,7 @@ public abstract class MavenImportingTestCase extends MavenTestCase {
 
     protected static AtomicInteger configConfirmationForNoAnswer() {
         final AtomicInteger counter = new AtomicInteger();
-        Messages.setTestDialog(new TestDialog() {
+        TestDialogManager.setTestDialog(new TestDialog() {
             @Override
             public int show(String message) {
                 counter.set(counter.get() + 1);
