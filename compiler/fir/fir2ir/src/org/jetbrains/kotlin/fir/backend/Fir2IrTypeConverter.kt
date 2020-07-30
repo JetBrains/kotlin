@@ -7,19 +7,24 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class Fir2IrTypeConverter(
     private val components: Fir2IrComponents
@@ -57,6 +62,14 @@ class Fir2IrTypeConverter(
         StandardClassIds.Char to irBuiltIns.charType
     )
 
+    internal val extensionFunctionTypeAnnotationConstructorCall by lazy {
+        val symbol =
+            session.firSymbolProvider.getClassLikeSymbolByFqName(CompilerConeAttributes.ExtensionFunctionType.ANNOTATION_CLASS_ID)!!
+                .toSymbol(session, classifierStorage, ConversionTypeContext.DEFAULT) as IrClassSymbol
+        val ctor = symbol.owner.declarations.firstIsInstance<IrConstructor>()
+        IrConstructorCallImpl(0, 0, symbol.defaultType, ctor.symbol, 0, 0, 0)
+    }
+
     fun FirTypeRef.toIrType(typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType {
         return when (this) {
             !is FirResolvedTypeRef -> createErrorType()
@@ -88,7 +101,8 @@ class Fir2IrTypeConverter(
                 IrSimpleTypeImpl(
                     irSymbol, !typeContext.definitelyNotNull && this.isMarkedNullable,
                     fullyExpandedType(session).typeArguments.map { it.toIrTypeArgument() },
-                    with(annotationGenerator) { annotations.toIrAnnotations() }
+                    annotations = with(annotationGenerator) { annotations.toIrAnnotations() } +
+                            listOfNotNull(this.attributes.extensionFunctionType?.let { extensionFunctionTypeAnnotationConstructorCall })
                 )
             }
             is ConeFlexibleType -> {
