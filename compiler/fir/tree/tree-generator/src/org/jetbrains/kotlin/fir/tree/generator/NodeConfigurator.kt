@@ -291,7 +291,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +symbol("FirTypeParameterSymbol")
             +field(varianceType)
             +booleanField("isReified")
-            +fieldList("bounds", typeRef)
+            +fieldList("bounds", typeRef, withReplace = true)
             +annotations
         }
 

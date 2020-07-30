@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
-import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
@@ -60,6 +59,7 @@ class FirTypeResolveTransformer(
             regularClass.typeParameters.forEach {
                 it.accept(this, data)
             }
+            unboundCyclesInTypeParametersSupertypes(regularClass)
         }
 
         return resolveNestedClassesSupertypes(regularClass, data)
@@ -101,6 +101,9 @@ class FirTypeResolveTransformer(
                 property.getter?.transformReturnTypeRef(StoreType, property.returnTypeRef)
                 property.setter?.valueParameters?.map { it.transformReturnTypeRef(StoreType, property.returnTypeRef) }
             }
+
+            unboundCyclesInTypeParametersSupertypes(property)
+
             property.compose()
         }
     }
@@ -108,7 +111,36 @@ class FirTypeResolveTransformer(
     override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?): CompositeTransformResult<FirDeclaration> {
         return withScopeCleanup {
             simpleFunction.addTypeParametersScope()
-            transformDeclaration(simpleFunction, data)
+            transformDeclaration(simpleFunction, data).also {
+                unboundCyclesInTypeParametersSupertypes(it.single as FirTypeParametersOwner)
+            }
+        }
+    }
+
+    private fun unboundCyclesInTypeParametersSupertypes(typeParametersOwner: FirTypeParameterRefsOwner) {
+        for (typeParameter in typeParametersOwner.typeParameters) {
+            if (typeParameter !is FirTypeParameter) continue
+            if (hasSupertypePathToParameter(typeParameter, typeParameter, mutableSetOf())) {
+                // TODO: Report diagnostic somewhere
+                typeParameter.replaceBounds(
+                    listOf(session.builtinTypes.nullableAnyType)
+                )
+            }
+        }
+    }
+
+    private fun hasSupertypePathToParameter(
+        currentTypeParameter: FirTypeParameter,
+        typeParameter: FirTypeParameter,
+        visited: MutableSet<FirTypeParameter>
+    ): Boolean {
+        if (visited.isNotEmpty() && currentTypeParameter == typeParameter) return true
+        if (!visited.add(currentTypeParameter)) return false
+
+        return currentTypeParameter.bounds.any {
+            val nextTypeParameter = it.coneTypeSafe<ConeTypeParameterType>()?.lookupTag?.typeParameterSymbol?.fir ?: return@any false
+
+            hasSupertypePathToParameter(nextTypeParameter, typeParameter, visited)
         }
     }
 
