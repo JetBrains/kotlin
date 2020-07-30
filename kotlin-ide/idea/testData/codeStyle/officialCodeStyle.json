@@ -94,6 +94,7 @@
       "spaces_around_when_arrow": true,
       "tab_width": 4,
       "variable_annotation_wrap": "off",
+      "visual_guides": [],
       "while_on_new_line": false,
       "wrap_elvis_expressions": 1,
       "wrap_expression_body_functions": 1,
