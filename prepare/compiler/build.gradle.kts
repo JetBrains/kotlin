@@ -202,7 +202,7 @@ dependencies {
     if (Platform.P202()) {
         fatJarContents(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-1") }
     } else if (Platform.P203.orHigher()) {
-        fatJarContents(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-2") }
+        fatJarContents(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-3") }
     }
 
     if (Platform.P192.orHigher()) {
