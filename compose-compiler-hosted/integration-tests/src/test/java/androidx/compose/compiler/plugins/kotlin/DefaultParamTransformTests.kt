@@ -57,17 +57,17 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Test(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C(Test)<A(1)>,<B()>,<B(2)>:Test.kt")
+            fun Test(%composer: Composer<*>?, %changed: Int) {
+              %composer.startRestartGroup(<>, "C(Test)<A(1)>,<B()>,<B(2)>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
-                A(1, %composer, <>, 0b0110)
-                B(0, %composer, <>, 0, 0b0001)
-                B(2, %composer, <>, 0b0110, 0)
+                A(1, %composer, 0b0110)
+                B(0, %composer, 0, 0b0001)
+                B(2, %composer, 0b0110, 0)
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
-                Test(%composer, %key, %changed or 0b0001)
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                Test(%composer, %changed or 0b0001)
               }
             }
         """
@@ -90,8 +90,8 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(foo: Foo, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C(Example)P(0:Foo):Test.kt")
+            fun Example(foo: Foo, %composer: Composer<*>?, %changed: Int, %default: Int) {
+              %composer.startRestartGroup(<>, "C(Example)P(0:Foo):Test.kt")
               val %dirty = %changed
               val foo = foo
               if (%default and 0b0001 !== 0) {
@@ -107,20 +107,20 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
-                Example(foo, %composer, %key, %changed or 0b0001, %default)
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                Example(foo, %composer, %changed or 0b0001, %default)
               }
             }
             @Composable
-            fun Test(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C(Test)<Exampl...>:Test.kt")
+            fun Test(%composer: Composer<*>?, %changed: Int) {
+              %composer.startRestartGroup(<>, "C(Test)<Exampl...>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
-                Example(Foo(0), %composer, <>, 0, 0b0001)
+                Example(Foo(0), %composer, 0, 0b0001)
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
-                Test(%composer, %key, %changed or 0b0001)
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                Test(%composer, %changed or 0b0001)
               }
             }
         """
@@ -140,16 +140,16 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Test(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C(Test)<A(0,>,<A(a>:Test.kt")
+            fun Test(%composer: Composer<*>?, %changed: Int) {
+              %composer.startRestartGroup(<>, "C(Test)<A(0,>,<A(a>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
-                A(0, 1, 2, 0, 0, %composer, <>, 0b01111110, 0b00011000)
-                A(0, 0, 2, 0, 0, %composer, <>, 0b01100110, 0b00011010)
+                A(0, 1, 2, 0, 0, %composer, 0b01111110, 0b00011000)
+                A(0, 0, 2, 0, 0, %composer, 0b01100110, 0b00011010)
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
-                Test(%composer, %key, %changed or 0b0001)
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                Test(%composer, %changed or 0b0001)
               }
             }
         """
@@ -168,8 +168,8 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Test(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C(Test):Test.kt")
+            fun Test(x: Int, %composer: Composer<*>?, %changed: Int, %default: Int) {
+              %composer.startRestartGroup(<>, "C(Test):Test.kt")
               val %dirty = %changed
               val x = x
               if (%changed and 0b0110 === 0) {
@@ -192,8 +192,8 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
-                Test(x, %composer, %key, %changed or 0b0001, %default)
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                Test(x, %composer, %changed or 0b0001, %default)
               }
             }
         """
@@ -212,8 +212,8 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun A(a: Int, b: Int, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C(A):Test.kt")
+            fun A(a: Int, b: Int, %composer: Composer<*>?, %changed: Int, %default: Int) {
+              %composer.startRestartGroup(<>, "C(A):Test.kt")
               val %dirty = %changed
               val a = a
               val b = b
@@ -247,8 +247,8 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
-                A(a, b, %composer, %key, %changed or 0b0001, %default)
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                A(a, b, %composer, %changed or 0b0001, %default)
               }
             }
         """
@@ -298,8 +298,8 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Int, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, a16: Int, a17: Int, a18: Int, a19: Int, a20: Int, a21: Int, a22: Int, a23: Int, a24: Int, a25: Int, a26: Int, a27: Int, a28: Int, a29: Int, a30: Int, %composer: Composer<*>?, %key: Int, %changed: Int, %changed1: Int, %changed2: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C(Example):Test.kt")
+            fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Int, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, a16: Int, a17: Int, a18: Int, a19: Int, a20: Int, a21: Int, a22: Int, a23: Int, a24: Int, a25: Int, a26: Int, a27: Int, a28: Int, a29: Int, a30: Int, %composer: Composer<*>?, %changed: Int, %changed1: Int, %changed2: Int, %default: Int) {
+              %composer.startRestartGroup(<>, "C(Example):Test.kt")
               val %dirty = %changed
               val %dirty1 = %changed1
               val %dirty2 = %changed2
@@ -587,8 +587,8 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
-                Example(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20, a21, a22, a23, a24, a25, a26, a27, a28, a29, a30, %composer, %key, %changed or 0b0001, %changed1, %changed2, %default)
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                Example(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20, a21, a22, a23, a24, a25, a26, a27, a28, a29, a30, %composer, %changed or 0b0001, %changed1, %changed2, %default)
               }
             }
         """
@@ -639,8 +639,8 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Int, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, a16: Int, a17: Int, a18: Int, a19: Int, a20: Int, a21: Int, a22: Int, a23: Int, a24: Int, a25: Int, a26: Int, a27: Int, a28: Int, a29: Int, a30: Int, a31: Int, %composer: Composer<*>?, %key: Int, %changed: Int, %changed1: Int, %changed2: Int, %default: Int, %default1: Int) {
-              %composer.startRestartGroup(<> xor %key, "C(Example):Test.kt")
+            fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Int, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, a16: Int, a17: Int, a18: Int, a19: Int, a20: Int, a21: Int, a22: Int, a23: Int, a24: Int, a25: Int, a26: Int, a27: Int, a28: Int, a29: Int, a30: Int, a31: Int, %composer: Composer<*>?, %changed: Int, %changed1: Int, %changed2: Int, %default: Int, %default1: Int) {
+              %composer.startRestartGroup(<>, "C(Example):Test.kt")
               val %dirty = %changed
               val %dirty1 = %changed1
               val %dirty2 = %changed2
@@ -937,8 +937,8 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
-                Example(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20, a21, a22, a23, a24, a25, a26, a27, a28, a29, a30, a31, %composer, %key, %changed or 0b0001, %changed1, %changed2, %default, %default1)
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                Example(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20, a21, a22, a23, a24, a25, a26, a27, a28, a29, a30, a31, %composer, %changed or 0b0001, %changed1, %changed2, %default, %default1)
               }
             }
         """
@@ -990,8 +990,8 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Foo?, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, a16: Int, a17: Int, a18: Int, a19: Int, a20: Int, a21: Int, a22: Int, a23: Int, a24: Int, a25: Int, a26: Int, a27: Int, a28: Int, a29: Int, a30: Int, a31: Foo?, %composer: Composer<*>?, %key: Int, %changed: Int, %changed1: Int, %changed2: Int, %default: Int, %default1: Int) {
-              %composer.startRestartGroup(<> xor %key, "C(Example):Test.kt")
+            fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Foo?, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, a16: Int, a17: Int, a18: Int, a19: Int, a20: Int, a21: Int, a22: Int, a23: Int, a24: Int, a25: Int, a26: Int, a27: Int, a28: Int, a29: Int, a30: Int, a31: Foo?, %composer: Composer<*>?, %changed: Int, %changed1: Int, %changed2: Int, %default: Int, %default1: Int) {
+              %composer.startRestartGroup(<>, "C(Example):Test.kt")
               val %dirty = %changed
               val %dirty1 = %changed1
               val %dirty2 = %changed2
@@ -1298,8 +1298,8 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
-                Example(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20, a21, a22, a23, a24, a25, a26, a27, a28, a29, a30, a31, %composer, %key, %changed or 0b0001, %changed1, %changed2, %default, %default1)
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                Example(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20, a21, a22, a23, a24, a25, a26, a27, a28, a29, a30, a31, %composer, %changed or 0b0001, %changed1, %changed2, %default, %default1)
               }
             }
         """
@@ -1323,8 +1323,8 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
             open class Foo {
               @ComposableContract(restartable = false)
               @Composable
-              fun foo(x: Int, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-                %composer.startReplaceableGroup(<> xor %key, "C(foo):Test.kt")
+              fun foo(x: Int, %composer: Composer<*>?, %changed: Int, %default: Int) {
+                %composer.startReplaceableGroup(<>, "C(foo):Test.kt")
                 val x = if (%default and 0b0001 !== 0) 0 else x
                 %composer.endReplaceableGroup()
               }
@@ -1332,9 +1332,9 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
             class Bar : Foo {
               @ComposableContract(restartable = false)
               @Composable
-              fun Example(%composer: Composer<*>?, %key: Int, %changed: Int) {
-                %composer.startReplaceableGroup(<> xor %key, "C(Example)<foo()>:Test.kt")
-                foo(0, %composer, <>, 0, 0b0001)
+              fun Example(%composer: Composer<*>?, %changed: Int) {
+                %composer.startReplaceableGroup(<>, "C(Example)<foo()>:Test.kt")
+                foo(0, %composer, 0, 0b0001)
                 %composer.endReplaceableGroup()
               }
             }

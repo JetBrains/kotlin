@@ -171,14 +171,6 @@ abstract class AbstractIrTransformTest : AbstractCompilerTest() {
             ) {
                 "${it.groupValues[1]}<>"
             }
-                // %composer, -1234,
-            .replace(
-                Regex(
-                    "%composer,\\s([-\\d]+),"
-                )
-            ) {
-                "%composer, <>,"
-            }
             .trimIndent()
             .trimTrailingWhitespacesAndAddNewlineAtEOF()
 

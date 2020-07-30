@@ -35,8 +35,8 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
         """.replace('%', '$'),
         """
             @Composable
-            fun Test(enabled: Boolean, content: Function3<Composer<*>, Int, Int, Unit>?, %composer: Composer<*>?, %key: Int, %changed: Int, %default: Int) {
-              %composer.startRestartGroup(<> xor %key, "C(Test)P(1)<Wrap(c...>:Test.kt")
+            fun Test(enabled: Boolean, content: Function2<Composer<*>, Int, Unit>?, %composer: Composer<*>?, %changed: Int, %default: Int) {
+              %composer.startRestartGroup(<>, "C(Test)P(1)<Wrap(c...>:Test.kt")
               val %dirty = %changed
               val content = content
               if (%default and 0b0001 !== 0) {
@@ -51,20 +51,20 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
               }
               if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
                 if (%default and 0b0010 !== 0) {
-                  content = composableLambda(%composer, <>, true, "C<Displa...>:Test.kt") { %composer: Composer<*>?, %key: Int, %changed: Int ->
+                  content = composableLambda(%composer, <>, true, "C<Displa...>:Test.kt") { %composer: Composer<*>?, %changed: Int ->
                     if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
-                      Display("%enabled", %composer, <>, 0)
+                      Display("%enabled", %composer, 0)
                     } else {
                       %composer.skipToGroupEnd()
                     }
                   }
                 }
-                Wrap(content, %composer, <>, 0b0110 and %dirty shr 0b0010)
+                Wrap(content, %composer, 0b0110 and %dirty shr 0b0010)
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
-                Test(enabled, content, %composer, %key, %changed or 0b0001, %default)
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                Test(enabled, content, %composer, %changed or 0b0001, %default)
               }
             }
         """,
@@ -91,26 +91,26 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
         """.replace('%', '$'),
         """
             @Composable
-            fun Test(enabled: Boolean, %composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C(Test)<Wrap(c...>:Test.kt")
+            fun Test(enabled: Boolean, %composer: Composer<*>?, %changed: Int) {
+              %composer.startRestartGroup(<>, "C(Test)<Wrap(c...>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(enabled)) 0b0100 else 0b0010
               }
               if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
-                val content = composableLambda(%composer, <>, true, "C<Displa...>:Test.kt") { %composer: Composer<*>?, %key: Int, %changed: Int ->
+                val content = composableLambda(%composer, <>, true, "C<Displa...>:Test.kt") { %composer: Composer<*>?, %changed: Int ->
                   if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
-                    Display("%enabled", %composer, <>, 0)
+                    Display("%enabled", %composer, 0)
                   } else {
                     %composer.skipToGroupEnd()
                   }
                 }
-                Wrap(content, %composer, <>, 0b0110)
+                Wrap(content, %composer, 0b0110)
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
-                Test(enabled, %composer, %key, %changed or 0b0001)
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                Test(enabled, %composer, %changed or 0b0001)
               }
             }
         """,

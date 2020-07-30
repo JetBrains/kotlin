@@ -352,9 +352,7 @@ class ComposerTypeRemapper(
             makeTypeProjection(
                 composerTypeDescriptor.defaultType.replaceArgumentsWithStarProjections().toIrType(),
                 Variance.INVARIANT
-            ),
-            // key param
-            makeTypeProjection(context.irBuiltIns.intType, Variance.INVARIANT)
+            )
         )
         val changedParams = changedParamCount(realParams, 1)
         extraArgs = extraArgs + (0 until changedParams).map {

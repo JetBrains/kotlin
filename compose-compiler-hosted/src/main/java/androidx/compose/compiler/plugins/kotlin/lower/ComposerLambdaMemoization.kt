@@ -397,7 +397,7 @@ class ComposerLambdaMemoization(
         return irBuilder.irCall(restartFactorySymbol).apply {
             var index = 0
 
-            // first parameter is the composer parameter if we are ina  composable context
+            // first parameter is the composer parameter if we are in a composable context
             if (declarationContext.composable) {
                 putValueArgument(
                     index++,

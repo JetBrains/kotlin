@@ -223,7 +223,6 @@ fun changedParamCount(realValueParams: Int, thisParams: Int): Int {
 fun changedParamCountFromTotal(totalParamsIncludingThisParams: Int): Int {
     var realParams = totalParamsIncludingThisParams
     realParams-- // composer param
-    realParams-- // key param
     realParams-- // first changed param (always present)
     var changedParams = 0
     do {
@@ -245,7 +244,6 @@ fun composeSyntheticParamCount(
     hasDefaults: Boolean = false
 ): Int {
     return 1 + // composer param
-            1 + // key param
             changedParamCount(realValueParams, thisParams) +
             if (hasDefaults) defaultParamCount(realValueParams) else 0
 }
@@ -288,6 +286,7 @@ interface IrChangedBitMaskVariable : IrChangedBitMaskValue {
  * 3. Composable Function Skipping
  * 4. Comparison Propagation
  * 5. Recomposability
+ * 6. Source location information (when enabled)
  *
  * Control-Flow Group Generation
  * =============================
@@ -427,6 +426,13 @@ interface IrChangedBitMaskVariable : IrChangedBitMaskValue {
  *       f(x)
  *       $composer.endRestartGroup()?.updateScope { next -> A(x, next, $changed or 0b1) }
  *     }
+ *
+ * Source information
+ * ==================
+ * To enable Android Studio and similar tools to inspect a composition, source information is
+ * optionally generated into the source to indicate where call occur in a block. The first group
+ * of every function is also marked to correspond to indicate that the group corresponds to a call
+ * and the source location of the caller can be determined from the containing group.
  */
 @Suppress("DEPRECATION")
 class ComposableFunctionBodyTransformer(
@@ -541,7 +547,7 @@ class ComposableFunctionBodyTransformer(
         endRestartGroupDescriptor.returnType?.memberScope?.getContributedFunctions(
             KtxNameConventions.UPDATE_SCOPE,
             NoLookupLocation.FROM_BACKEND
-        )?.singleOrNull { it.valueParameters.first().type.arguments.size == 4 }
+        )?.singleOrNull { it.valueParameters.first().type.arguments.size == 3 }
             ?: error("new updateScope not found in result type of endRestartGroup")
 
     private val updateScopeBlockType = updateScopeDescriptor.valueParameters.single().type
@@ -770,7 +776,7 @@ class ComposableFunctionBodyTransformer(
                     irStartReplaceableGroup(
                         body,
                         scope,
-                        irXor(declaration.irSourceKey(), irGet(scope.keyParameter!!))
+                        declaration.irSourceKey()
                     )
                 else
                     null,
@@ -1089,7 +1095,7 @@ class ComposableFunctionBodyTransformer(
                 irStartRestartGroup(
                     body,
                     scope,
-                    irXor(declaration.irSourceKey(), irGet(scope.keyParameter!!))
+                    declaration.irSourceKey()
                 ),
                 *skipPreamble.statements.toTypedArray(),
                 transformedBody,
@@ -1523,24 +1529,10 @@ class ComposableFunctionBodyTransformer(
             source = SourceElement.NO_SOURCE
         )
 
-        val keyParameter = ValueParameterDescriptorImpl(
-            containingDeclaration = lambdaDescriptor,
-            original = null,
-            index = 1,
-            annotations = Annotations.EMPTY,
-            name = KtxNameConventions.KEY_PARAMETER,
-            outType = builtIns.int,
-            declaresDefaultValue = false,
-            isCrossinline = false,
-            isNoinline = false,
-            varargElementType = null,
-            source = SourceElement.NO_SOURCE
-        )
-
         val ignoredChangedParameter = ValueParameterDescriptorImpl(
             containingDeclaration = lambdaDescriptor,
             original = null,
-            index = 2,
+            index = 1,
             annotations = Annotations.EMPTY,
             name = KtxNameConventions.CHANGED_PARAMETER,
             outType = builtIns.int,
@@ -1556,7 +1548,7 @@ class ComposableFunctionBodyTransformer(
                 null,
                 null,
                 emptyList(),
-                listOf(passedInComposerParameter, keyParameter, ignoredChangedParameter),
+                listOf(passedInComposerParameter, ignoredChangedParameter),
                 updateScopeBlockType,
                 Modality.FINAL,
                 Visibilities.LOCAL
@@ -1564,8 +1556,7 @@ class ComposableFunctionBodyTransformer(
         }
 
         val parameterCount = function.symbol.descriptor.valueParameters.size
-        val keyIndex = numRealValueParameters + 1
-        val changedIndex = keyIndex + 1
+        val changedIndex = numRealValueParameters + 1
         val defaultIndex = changedIndex + changedParamCount(
             numRealValueParameters,
             function.thisParamCount
@@ -1601,10 +1592,6 @@ class ComposableFunctionBodyTransformer(
                     .replaceArgumentsWithStarProjections()
                     .toIrType()
                     .makeNullable()
-            )
-            fn.addValueParameter(
-                KtxNameConventions.KEY_PARAMETER.identifier,
-                context.irBuiltIns.intType
             )
             fn.addValueParameter(
                 "\$force",
@@ -1649,11 +1636,6 @@ class ComposableFunctionBodyTransformer(
                     putValueArgument(
                         numRealValueParameters,
                         irGet(fn.valueParameters[0])
-                    )
-
-                    putValueArgument(
-                        keyIndex,
-                        irGet(scope.keyParameter!!)
                     )
 
                     // the call in updateScope needs to *always* have the low bit set to 1.
@@ -2489,7 +2471,6 @@ class ComposableFunctionBodyTransformer(
             numChanged = changedParamCountFromTotal(numValueParams + ownerFn.thisParamCount)
             numRealValueParams = numValueParams -
                     1 - // composer param
-                    1 - // key param
                     numChanged
         } else {
             val hasDefaults = ownerFn.valueParameters.any {
@@ -2505,13 +2486,11 @@ class ComposableFunctionBodyTransformer(
         require(
             numRealValueParams +
                     1 + // composer param
-                    1 + // key param
                     numChanged +
                     numDefaults == numValueParams)
 
         val composerIndex = numRealValueParams
-        val keyIndex = composerIndex + 1
-        val changedArgIndex = keyIndex + 1
+        val changedArgIndex = composerIndex + 1
         val defaultArgIndex = changedArgIndex + numChanged
         val defaultArgs = (defaultArgIndex until numValueParams).map {
             expression.getValueArgument(it)
@@ -2554,11 +2533,6 @@ class ComposableFunctionBodyTransformer(
             paramMeta,
             extensionMeta,
             dispatchMeta
-        )
-
-        expression.putValueArgument(
-            keyIndex,
-            expression.irSourceKey()
         )
 
         changedParams.forEachIndexed { i, param ->
@@ -2855,7 +2829,6 @@ class ComposableFunctionBodyTransformer(
                         // if it is a call to remember with 0 input arguments, then we can
                         // consider the value static if the result type of the lambda is stable
                         val syntheticRememberParams = 1 + // composer param
-                                1 + // key param
                                 1 // changed param
                         val expectedArgumentsCount = 1 + syntheticRememberParams // 1 for lambda
                         if (
@@ -3241,9 +3214,6 @@ class ComposableFunctionBodyTransformer(
             var composerParameter: IrValueParameter? = null
                 private set
 
-            var keyParameter: IrValueParameter? = null
-                private set
-
             var defaultParameter: IrDefaultBitMaskValue? = null
                 private set
 
@@ -3409,8 +3379,6 @@ class ComposableFunctionBodyTransformer(
                         !paramName.startsWith('$') -> realValueParamCount++
                         paramName == KtxNameConventions.COMPOSER_PARAMETER.identifier ->
                             composerParameter = param
-                        paramName == KtxNameConventions.KEY_PARAMETER.identifier ->
-                            keyParameter = param
                         paramName.startsWith(KtxNameConventions.DEFAULT_PARAMETER.identifier) ->
                             defaultParams += param
                         paramName.startsWith(KtxNameConventions.CHANGED_PARAMETER.identifier) ->
@@ -3484,9 +3452,9 @@ class ComposableFunctionBodyTransformer(
 
             override val isInComposable: Boolean get() = parent?.isInComposable ?: false
 
-            fun realizeGroup(makeEnd: () -> IrExpression) {
+            fun realizeGroup(makeEnd: (() -> IrExpression)?) {
                 realizeCoalescableGroup()
-                realizeEndCalls(makeEnd)
+                makeEnd?.let { realizeEndCalls(it) }
             }
 
             fun recordComposableCall(withGroups: Boolean) {
@@ -3525,7 +3493,9 @@ class ComposableFunctionBodyTransformer(
                 realizeCoalescableChildGroup = {
                     scope.realizeGroup(makeEnd)
                     realizeGroup()
-                    realizeCoalescableChildGroup = { error("Attempted to realize group twice") }
+                    realizeCoalescableChildGroup = {
+                        error("Attempted to realize group twice")
+                    }
                 }
             }
 
@@ -3539,7 +3509,8 @@ class ComposableFunctionBodyTransformer(
                         .distinct()
                     var markedRepeatable = false
                     val fileEntry = fileScope?.declaration?.fileEntry
-                    locations.joinToString(",") {
+                    if (locations.isEmpty()) null
+                    else locations.joinToString(",") {
                         it.markUsed()
                         val lineNumber = fileEntry?.getLineNumber(it.element.startOffset) ?: ""
                         val offset = if (it.element.startOffset < it.element.endOffset) {

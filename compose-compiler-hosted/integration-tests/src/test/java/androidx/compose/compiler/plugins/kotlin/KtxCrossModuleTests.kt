@@ -154,12 +154,12 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
             // Check that the composable functions were properly mangled
             assert(
                 it.contains(
-                    "public final static foo-YmYloa0(ILandroidx/compose/runtime/Composer;II)V"
+                    "public final static foo-s0xCT_s(ILandroidx/compose/runtime/Composer;I)V"
                 )
             )
             assert(
                 it.contains(
-                    "public final static foo-xHwECpg(ILandroidx/compose/runtime/Composer;II)V"
+                    "public final static foo-N8p8aEo(ILandroidx/compose/runtime/Composer;I)V"
                 )
             )
             // Check that we didn't leave any references to the original name, which probably
@@ -821,12 +821,11 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
         val composeMethod = instanceClass.getMethod(
             "compose",
             Composer::class.java,
-            Int::class.java,
             Int::class.java
         )
 
-        return composeMulti({ composer, _, _ ->
-            composeMethod.invoke(instanceOfClass, composer, 0, 1)
+        return composeMulti({ composer, _ ->
+            composeMethod.invoke(instanceOfClass, composer, 1)
         }) {
             advanceMethod.invoke(instanceOfClass)
         }
