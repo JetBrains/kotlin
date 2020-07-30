@@ -1610,6 +1610,11 @@ public final class FileBasedIndexImpl extends FileBasedIndexEx {
     return isDirectory ? myRegisteredIndexes.getIndicesForDirectories() : myRegisteredIndexes.getNotRequiringContentIndices();
   }
 
+  @NotNull
+  public Collection<ID<?, ?>> getContentDependentIndexes() {
+    return myRegisteredIndexes.getRequiringContentIndices();
+  }
+
   static FileTypeManagerImpl getFileTypeManager() {
     return (FileTypeManagerImpl)FileTypeManager.getInstance();
   }
