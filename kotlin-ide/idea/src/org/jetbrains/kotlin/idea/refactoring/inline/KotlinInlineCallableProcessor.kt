@@ -125,7 +125,7 @@ class KotlinInlineCallableProcessor(
                 }
 
                 element.language == KotlinLanguage.INSTANCE -> LOG.error("Found unexpected Kotlin usage $element")
-                else -> GenericInlineHandler.inlineReference(usage, element, inliners)
+                else -> GenericInlineHandler.inlineReference(usage, declaration, inliners)
             }
         }
 

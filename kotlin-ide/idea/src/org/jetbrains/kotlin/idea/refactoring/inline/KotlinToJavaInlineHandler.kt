@@ -5,4 +5,4 @@
 
 package org.jetbrains.kotlin.idea.refactoring.inline
 
-class KotlinInlineHandler : AbstractCrossLanguageInlineHandler()
+class KotlinToJavaInlineHandler : AbstractCrossLanguageInlineHandler()
