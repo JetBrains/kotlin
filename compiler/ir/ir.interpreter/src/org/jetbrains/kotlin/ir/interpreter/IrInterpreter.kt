@@ -522,9 +522,12 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
     }
 
     private fun interpretSetField(expression: IrSetField): ExecutionResult {
-        expression.value.interpret().check { return it }
+        // receiver is null, for example, for top level fields; cannot interpret set on top level var
+        if (expression.receiver.let { it == null || (it.type.classifierOrNull?.owner as? IrClass)?.isObject == true }) {
+            error("Cannot interpret set method on top level properties")
+        }
 
-        // receiver is null only for top level var, but it cannot be used in constexpr; corresponding check is on frontend
+        expression.value.interpret().check { return it }
         val receiver = (expression.receiver as IrDeclarationReference).symbol
         val propertySymbol = expression.symbol.owner.correspondingPropertySymbol!!
         stack.getVariable(receiver).apply { this.state.setField(Variable(propertySymbol, stack.popReturnValue())) }
@@ -547,7 +550,12 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
             return field.initializer?.expression?.interpret() ?: Next
         }
         // receiver is null, for example, for top level fields
-        val result = receiver?.let { stack.getVariable(receiver).state.getState(field.correspondingPropertySymbol!!) }
+        if (expression.receiver.let { it == null || (it.type.classifierOrNull?.owner as? IrClass)?.isObject == true }) {
+            val propertyOwner = field.correspondingPropertySymbol?.owner
+            val isConst = propertyOwner?.isConst == true || propertyOwner?.backingField?.initializer?.expression is IrConst<*>
+            assert(isConst) { "Cannot interpret get method on top level non const properties" }
+        }
+        val result = receiver?.let { stack.getVariable(it).state.getState(field.correspondingPropertySymbol!!) }
             ?: return (expression.symbol.owner.initializer?.expression?.interpret() ?: Next)
         stack.pushReturnValue(result)
         return Next
