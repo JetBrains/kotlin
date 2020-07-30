@@ -1776,6 +1776,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             runTest("testData/quickfix/autoImports/importAliasLetAlreadyExists.kt");
         }
 
+        @TestMetadata("importFunctionMissingReceiver.kt")
+        public void testImportFunctionMissingReceiver() throws Exception {
+            runTest("testData/quickfix/autoImports/importFunctionMissingReceiver.kt");
+        }
+
+        @TestMetadata("importFunctionMissingReceiverWithTypeAlias.kt")
+        public void testImportFunctionMissingReceiverWithTypeAlias() throws Exception {
+            runTest("testData/quickfix/autoImports/importFunctionMissingReceiverWithTypeAlias.kt");
+        }
+
+        @TestMetadata("importFunctionWithMultipleReceivers.kt")
+        public void testImportFunctionWithMultipleReceivers() throws Exception {
+            runTest("testData/quickfix/autoImports/importFunctionWithMultipleReceivers.kt");
+        }
+
         @TestMetadata("inPrimaryConstructor.kt")
         public void testInPrimaryConstructor() throws Exception {
             runTest("testData/quickfix/autoImports/inPrimaryConstructor.kt");

@@ -26,12 +26,10 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.scopes.receivers.TypeAliasQualifier
+import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
+import org.jetbrains.kotlin.util.isJavaDescriptor
 import org.jetbrains.kotlin.util.supertypesWithAny
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
@@ -304,15 +302,24 @@ fun CallTypeAndReceiver<*, *>.receiverTypesWithIndex(
 
     val resolutionScope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
 
+    fun extractReceiverTypeFrom(descriptor: ClassDescriptor): KotlinType? =  // companion object type or class itself
+            descriptor.classValueType ?: (if (descriptor.isFinalOrEnum || descriptor.isJavaDescriptor) null else descriptor.defaultType)
+
+    fun tryExtractReceiver(context: BindingContext) = context.get(BindingContext.QUALIFIER, receiverExpression)
+
+    fun tryExtractClassDescriptor(context: BindingContext): ClassDescriptor? =
+            (tryExtractReceiver(context) as? ClassQualifier)?.descriptor
+
+    fun tryExtractClassDescriptorFromAlias(context: BindingContext): ClassDescriptor? =
+            (tryExtractReceiver(context) as? TypeAliasQualifier)?.classDescriptor
+
+    fun extractReceiverTypeFrom(context: BindingContext, receiverExpression: KtExpression): KotlinType? {
+        return context.getType(receiverExpression) ?: tryExtractClassDescriptor(context)?.let { extractReceiverTypeFrom(it) }
+               ?: tryExtractClassDescriptorFromAlias(context)?.let { extractReceiverTypeFrom(it) }
+    }
+
     val expressionReceiver = receiverExpression?.let {
-        val receiverType =
-            bindingContext.getType(receiverExpression) ?: (bindingContext.get(
-                BindingContext.QUALIFIER,
-                receiverExpression
-            ) as? ClassQualifier)?.descriptor?.classValueType ?: (bindingContext.get(
-                BindingContext.QUALIFIER,
-                receiverExpression
-            ) as? TypeAliasQualifier)?.classDescriptor?.classValueType ?: return emptyList()
+        val receiverType = extractReceiverTypeFrom(bindingContext, receiverExpression) ?: return emptyList()
         ExpressionReceiver.create(receiverExpression, receiverType, bindingContext)
     }
 
