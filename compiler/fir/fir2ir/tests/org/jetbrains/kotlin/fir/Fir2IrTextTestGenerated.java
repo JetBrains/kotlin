@@ -314,6 +314,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/declarations/fileWithTypeAliasesOnly.kt");
         }
 
+        @TestMetadata("genericDelegatedProperty.kt")
+        public void testGenericDelegatedProperty() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/genericDelegatedProperty.kt");
+        }
+
         @TestMetadata("interfaceProperties.kt")
         public void testInterfaceProperties() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/interfaceProperties.kt");
