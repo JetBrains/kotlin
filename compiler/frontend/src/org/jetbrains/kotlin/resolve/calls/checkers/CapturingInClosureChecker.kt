@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Errors.CAPTURED_VAL_INITIALIZATION
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.CAPTURED_IN_CLOSURE
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -54,9 +55,10 @@ class CapturingInClosureChecker : CallChecker {
         variable: VariableDescriptor,
         trace: BindingTrace,
         scopeContainer: DeclarationDescriptor,
-        reportOn: PsiElement
+        nameElement: PsiElement
     ) {
         if (variable !is PropertyDescriptor || scopeContainer !is AnonymousFunctionDescriptor || variable.isVar) return
+        if ((nameElement as KtExpression).getAssignmentByLHS() == null) return
         val scopeDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(scopeContainer) as? KtFunction ?: return
         if (scopeContainer.containingDeclaration !is ConstructorDescriptor) return
         if (!isExactlyOnceContract(trace.bindingContext, scopeDeclaration)) return
@@ -64,7 +66,7 @@ class CapturingInClosureChecker : CallChecker {
         val (callee, param) = getCalleeDescriptorAndParameter(trace.bindingContext, scopeDeclaration) ?: return
         if (callee !is FunctionDescriptor) return
         if (!callee.isInline || (param.isCrossinline || !InlineUtil.isInlineParameter(param))) {
-            trace.report(CAPTURED_VAL_INITIALIZATION.on(reportOn as KtExpression, variable))
+            trace.report(CAPTURED_VAL_INITIALIZATION.on(nameElement, variable))
         }
     }
 
