@@ -35,7 +35,6 @@ interface TowerScopeLevel {
     sealed class Token<out T : AbstractFirBasedSymbol<*>> {
         object Properties : Token<FirVariableSymbol<*>>()
         object Functions : Token<FirFunctionSymbol<*>>()
-        object ConstructorsForDelegationCall : Token<FirConstructorSymbol>()
         object Objects : Token<AbstractFirBasedSymbol<*>>()
     }
 
@@ -156,7 +155,6 @@ class MemberScopeTowerLevel(
                     consumer(it as T)
                 }
             }
-            TowerScopeLevel.Token.ConstructorsForDelegationCall -> error("ConstructorsForDelegationCall should be handled via ConstructorScopeTowerLevel")
         }
     }
 
@@ -262,38 +260,6 @@ class ScopeTowerLevel(
                     it as T, dispatchReceiverValue = null,
                     implicitExtensionReceiverValue = null
                 )
-            }
-            TowerScopeLevel.Token.ConstructorsForDelegationCall -> {
-                throw AssertionError("Should not be here")
-            }
-        }
-        return if (empty) ProcessorAction.NONE else ProcessorAction.NEXT
-    }
-}
-
-class ConstructorScopeTowerLevel(
-    session: FirSession,
-    private val scope: FirScope,
-    private val dispatchReceiver: ImplicitReceiverValue<*>?,
-) : SessionBasedTowerLevel(session) {
-    override fun <T : AbstractFirBasedSymbol<*>> processElementsByName(
-        token: TowerScopeLevel.Token<T>,
-        name: Name,
-        processor: TowerScopeLevel.TowerScopeLevelProcessor<T>
-    ): ProcessorAction {
-        var empty = true
-        when (token) {
-            TowerScopeLevel.Token.ConstructorsForDelegationCall -> scope.processDeclaredConstructors { candidate ->
-                empty = false
-                @Suppress("UNCHECKED_CAST")
-                processor.consumeCandidate(
-                    candidate as T,
-                    dispatchReceiverValue = dispatchReceiver,
-                    implicitExtensionReceiverValue = null
-                )
-            }
-            else -> {
-                throw AssertionError("Should not be here: token = $token")
             }
         }
         return if (empty) ProcessorAction.NONE else ProcessorAction.NEXT

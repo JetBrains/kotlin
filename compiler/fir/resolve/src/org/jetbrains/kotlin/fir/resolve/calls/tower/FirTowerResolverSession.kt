@@ -22,12 +22,10 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
-import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class FirTowerResolverSession internal constructor(
@@ -64,13 +62,6 @@ class FirTowerResolverSession internal constructor(
         nonLocalTowerDataElements.withIndex().mapNotNull { (index, element) ->
             element.implicitReceiver?.let { ImplicitReceiver(it, index) }
         }
-    }
-
-    fun runResolutionForDelegatingConstructor(
-        info: CallInfo,
-        constructedType: ConeClassLikeType
-    ) {
-        manager.enqueueResolverTask { runResolverForDelegatingConstructorCall(info, constructedType) }
     }
 
     fun runResolution(info: CallInfo) {
@@ -140,9 +131,6 @@ class FirTowerResolverSession internal constructor(
         extensionReceiver, extensionsOnly, includeInnerConstructors
     )
 
-    private fun FirScope.toConstructorScopeTowerLevel(dispatchReceiver: ImplicitReceiver?): ConstructorScopeTowerLevel =
-        ConstructorScopeTowerLevel(session, this, dispatchReceiver?.receiver)
-
     private fun ReceiverValue.toMemberScopeTowerLevel(
         extensionReceiver: ReceiverValue? = null,
         implicitExtensionInvokeMode: Boolean = false
@@ -211,27 +199,6 @@ class FirTowerResolverSession internal constructor(
                 }
             }
         }
-    }
-
-    private suspend fun runResolverForDelegatingConstructorCall(
-        info: CallInfo,
-        constructedType: ConeClassLikeType
-    ) {
-        val outerType = components.outerClassManager.outerType(constructedType)
-        val scope = constructedType.scope(session, components.scopeSession) ?: return
-
-        val dispatchReceiver =
-            if (outerType != null)
-                implicitReceivers.drop(1).firstOrNull {
-                    AbstractTypeChecker.isSubtypeOf(components.session.typeContext, it.receiver.type, outerType)
-                } ?: return // TODO: report diagnostic about not-found receiver
-            else
-                null
-
-        processLevel(
-            scope.toConstructorScopeTowerLevel(dispatchReceiver),
-            info, TowerGroup.Member
-        )
     }
 
     private suspend fun runResolverForNoReceiver(

@@ -7,7 +7,11 @@ package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 class FirTowerResolver(
     private val components: BodyResolveComponents,
@@ -32,14 +36,35 @@ class FirTowerResolver(
 
     fun runResolverForDelegatingConstructor(
         info: CallInfo,
-        constructedType: ConeClassLikeType,
+        constructedType: ConeClassLikeType
     ): CandidateCollector {
-        val candidateFactoriesAndCollectors = buildCandidateFactoriesAndCollectors(info, collector)
+        val outerType = components.outerClassManager.outerType(constructedType)
+        val scope = constructedType.scope(components.session, components.scopeSession) ?: return collector
 
-        val towerResolverSession = FirTowerResolverSession(components, manager, candidateFactoriesAndCollectors, info)
-        towerResolverSession.runResolutionForDelegatingConstructor(info, constructedType)
+        val dispatchReceiver =
+            if (outerType != null)
+                components.implicitReceiverStack.receiversAsReversed().drop(1).firstOrNull {
+                    AbstractTypeChecker.isSubtypeOf(components.session.typeContext, it.type, outerType)
+                } ?: return collector // TODO: report diagnostic about not-found receiver
+            else
+                null
 
-        manager.runTasks()
+        val candidateFactory = CandidateFactory(components, info)
+        val resultCollector = collector
+
+        scope.processDeclaredConstructors {
+            resultCollector.consumeCandidate(
+                TowerGroup.Member,
+                candidateFactory.createCandidate(
+                    it,
+                    ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+                    dispatchReceiver,
+                    implicitExtensionReceiverValue = null,
+                    builtInExtensionFunctionReceiverValue = null
+                )
+            )
+        }
+
         return collector
     }
 
