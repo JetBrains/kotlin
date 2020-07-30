@@ -155,7 +155,8 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             enterAnonymousFunction(function)
             return
         }
-        val (functionEnterNode, previousNode) = graphBuilder.enterFunction(function)
+        val (functionEnterNode, localFunctionNode, previousNode) = graphBuilder.enterFunction(function)
+        localFunctionNode?.mergeIncomingFlow()
         functionEnterNode.mergeIncomingFlow(shouldForkFlow = previousNode != null)
     }
 

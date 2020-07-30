@@ -98,6 +98,7 @@ digraph lambdaReturningObject_kt {
     21 -> {22};
     22 -> {23};
     23 -> {24 29};
+    23 -> {29} [style=dashed];
     24 -> {25};
     25 -> {26};
     26 -> {27};

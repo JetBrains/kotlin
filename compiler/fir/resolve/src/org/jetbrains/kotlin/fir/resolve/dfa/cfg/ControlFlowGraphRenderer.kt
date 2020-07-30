@@ -122,6 +122,19 @@ class FirControlFlowGraphRenderVisitor(
             for (kind in EdgeKind.values()) {
                 renderEdges(kind)
             }
+
+            if (node is CFGNodeWithCfgOwner<*>) {
+                val subNodes = node.subGraphs
+                if (subNodes.isNotEmpty()) {
+                    print(
+                        indices.getValue(node),
+                        EDGE,
+                        subNodes.mapNotNull { indices[it.enterNode] }.joinToString(prefix = "{", postfix = "}", separator = " ")
+                    )
+                    printWithNoIndent(" [style=dashed]")
+                    printlnWithNoIndent(";")
+                }
+            }
         }
         for (subGraph in graph.subGraphs) {
             renderEdges(subGraph)

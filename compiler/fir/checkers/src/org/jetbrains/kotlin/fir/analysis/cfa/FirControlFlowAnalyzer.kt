@@ -19,7 +19,7 @@ class FirControlFlowAnalyzer(session: FirSession) {
 
     fun analyzeClassInitializer(klass: FirClass<*>, graph: ControlFlowGraph, context: CheckerContext, reporter: DiagnosticReporter) {
         if (graph.owner != null) return
-        // TODO()
+        checkers.forEach { it.analyze(graph, reporter) }
     }
 
     fun analyzeFunction(function: FirFunction<*>, graph: ControlFlowGraph, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -29,6 +29,6 @@ class FirControlFlowAnalyzer(session: FirSession) {
 
     fun analyzePropertyInitializer(property: FirProperty, graph: ControlFlowGraph, context: CheckerContext, reporter: DiagnosticReporter) {
         if (graph.owner != null) return
-        // TODO()
+        checkers.forEach { it.analyze(graph, reporter) }
     }
 }

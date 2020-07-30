@@ -723,6 +723,24 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         }
     }
 
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/initialization")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Initialization extends AbstractFirDiagnosticsWithStdlibTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInInitialization() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/initialization"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("fromLocalMembers.kt")
+        public void testFromLocalMembers() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/initialization/fromLocalMembers.kt");
+        }
+    }
+
     @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/j+k")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
