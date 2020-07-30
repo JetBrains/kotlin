@@ -20,12 +20,15 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.RefactoringMessageDialog
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
+import org.jetbrains.kotlin.idea.codeInliner.CallableUsageReplacementStrategy
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInline
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInlineBuilder
+import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.refactoring.move.ContainerChangeInfo
 import org.jetbrains.kotlin.idea.refactoring.move.ContainerInfo
@@ -41,7 +44,9 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 fun highlightElements(project: Project, editor: Editor?, elements: List<PsiElement>) {
@@ -186,3 +191,17 @@ internal fun Editor.findSimpleNameReference(): KtSimpleNameReference? =
         is PsiMultiReference -> reference.references.firstIsInstanceOrNull()
         else -> null
     }
+
+fun createUsageReplacementStrategy(function: KtNamedFunction, editor: Editor?): UsageReplacementStrategy? {
+    val returnType = function.unsafeResolveToDescriptor().safeAs<SimpleFunctionDescriptor>()?.returnType
+    val codeToInline = buildCodeToInline(
+        function,
+        returnType,
+        function.hasDeclaredReturnType() || (function.hasBlockBody() && returnType?.isUnit() == true),
+        function.bodyExpression!!,
+        function.hasBlockBody(),
+        editor
+    ) ?: return null
+
+    return CallableUsageReplacementStrategy(codeToInline, inlineSetter = false)
+}

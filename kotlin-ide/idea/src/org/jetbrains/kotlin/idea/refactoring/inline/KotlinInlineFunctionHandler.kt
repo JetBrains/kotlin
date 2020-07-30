@@ -11,18 +11,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
-import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
-import org.jetbrains.kotlin.idea.codeInliner.CallableUsageReplacementStrategy
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class KotlinInlineFunctionHandler : KotlinInlineActionHandler() {
     override fun canInlineKotlinElement(element: KtElement): Boolean = element is KtNamedFunction && element.hasBody()
@@ -41,19 +37,7 @@ class KotlinInlineFunctionHandler : KotlinInlineActionHandler() {
             return
         }
 
-        val descriptor = element.unsafeResolveToDescriptor() as SimpleFunctionDescriptor
-        val returnType = descriptor.returnType
-        val codeToInline = buildCodeToInline(
-            element,
-            returnType,
-            element.hasDeclaredReturnType() || (element.hasBlockBody() && returnType?.isUnit() == true),
-            element.bodyExpression!!,
-            element.hasBlockBody(),
-            editor
-        ) ?: return
-
-        val replacementStrategy = CallableUsageReplacementStrategy(codeToInline, inlineSetter = false)
-
+        val replacementStrategy = createUsageReplacementStrategy(element, editor) ?: return
         val dialog = KotlinInlineFunctionDialog(
             project, element, nameReference, replacementStrategy,
             allowInlineThisOnly = recursive
