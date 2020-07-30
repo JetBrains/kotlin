@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
@@ -31,14 +30,12 @@ import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
 import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.Variance
 
 open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
     private inline val builtinTypes: BuiltinTypes get() = session.builtinTypes
@@ -757,27 +754,6 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         }
     }
 
-    private fun ConeTypeProjection.toFirTypeProjection(): FirTypeProjection = when (this) {
-        is ConeStarProjection -> buildStarProjection()
-        else -> {
-            val type = when (this) {
-                is ConeKotlinTypeProjectionIn -> type
-                is ConeKotlinTypeProjectionOut -> type
-                is ConeStarProjection -> throw IllegalStateException()
-                else -> this as ConeKotlinType
-            }
-            buildTypeProjectionWithVariance {
-                typeRef = buildResolvedTypeRef { this.type = type }
-                variance = when (kind) {
-                    ProjectionKind.IN -> Variance.IN_VARIANCE
-                    ProjectionKind.OUT -> Variance.OUT_VARIANCE
-                    ProjectionKind.INVARIANT -> Variance.INVARIANT
-                    ProjectionKind.STAR -> throw IllegalStateException()
-                }
-            }
-        }
-    }
-
     override fun transformDelegatedConstructorCall(
         delegatedConstructorCall: FirDelegatedConstructorCall,
         data: ResolutionMode,
@@ -814,38 +790,23 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 
                 delegatedConstructorCall.transformChildren(transformer, ResolutionMode.ContextDependent)
             }
-            val typeArguments: List<FirTypeProjection>
             val reference = delegatedConstructorCall.calleeReference
-            val symbol: FirClassSymbol<*> = when (reference) {
+            val constructorType: ConeClassLikeType = when (reference) {
                 is FirThisReference -> {
-                    typeArguments = emptyList()
-                    if (reference.boundSymbol == null) {
-                        lastDispatchReceiver?.boundSymbol?.also {
-                            reference.replaceBoundSymbol(it)
-                        } ?: return delegatedConstructorCall.compose()
-                    } else {
-                        reference.boundSymbol!! as FirClassSymbol<*>
-                    }
+                    lastDispatchReceiver?.type as? ConeClassLikeType ?: return delegatedConstructorCall.compose()
                 }
                 is FirSuperReference -> {
                     // TODO: unresolved supertype
-                    val supertype = reference.superTypeRef.coneTypeSafe<ConeClassLikeType>() ?: return delegatedConstructorCall.compose()
-                    val expandedSupertype = supertype.fullyExpandedType(session)
-                    val symbol =
-                        expandedSupertype.lookupTag.toSymbol(session) as? FirClassSymbol<*> ?: return delegatedConstructorCall.compose()
-                    val classTypeParametersCount =
-                        (symbol.fir as? FirTypeParameterRefsOwner)?.typeParameters?.count { it is FirTypeParameter } ?: 0
-                    typeArguments = expandedSupertype.typeArguments
-                        .takeLast(classTypeParametersCount) // Hack for KT-37525
-                        .takeIf { it.isNotEmpty() }
-                        ?.map { it.toFirTypeProjection() }
-                        ?: emptyList()
-                    symbol
+                    val supertype = reference.superTypeRef.coneTypeSafe<ConeClassLikeType>()
+                        ?.takeIf { it !is ConeClassErrorType } ?: return delegatedConstructorCall.compose()
+                    supertype.fullyExpandedType(session)
                 }
                 else -> return delegatedConstructorCall.compose()
             }
-            val resolvedCall = callResolver.resolveDelegatingConstructorCall(delegatedConstructorCall, symbol, typeArguments)
-                ?: return delegatedConstructorCall.compose()
+
+            val resolvedCall =
+                callResolver.resolveDelegatingConstructorCall(delegatedConstructorCall, constructorType)
+                    ?: return delegatedConstructorCall.compose()
             if (reference is FirThisReference && reference.boundSymbol == null) {
                 resolvedCall.dispatchReceiver.typeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.toSymbol(session)?.let {
                     reference.replaceBoundSymbol(it)

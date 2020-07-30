@@ -123,7 +123,7 @@ internal class TowerLevelHandler {
                 }
             }
             CallKind.DelegatingConstructorCall -> {
-                towerLevel.processConstructors(info.name, processor)
+                towerLevel.processElementsByNameAndStoreResult(TowerScopeLevel.Token.ConstructorsForDelegationCall, info.name, processor)
             }
             else -> {
                 throw AssertionError("Unsupported call kind in tower resolver: ${info.callKind}")
@@ -151,12 +151,6 @@ internal class TowerLevelHandler {
     ) {
         processFunctions(name, processor)
         processProperties(name, processor)
-    }
-
-    private fun TowerScopeLevel.processConstructors(
-        name: Name, processor: TowerScopeLevel.TowerScopeLevelProcessor<AbstractFirBasedSymbol<*>>
-    ) {
-        processElementsByNameAndStoreResult(TowerScopeLevel.Token.Constructors, name, processor)
     }
 
     private fun TowerScopeLevel.processObjectsAsVariables(

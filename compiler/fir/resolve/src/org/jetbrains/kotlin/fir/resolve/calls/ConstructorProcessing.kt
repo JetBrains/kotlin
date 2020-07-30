@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.fir.scopes.scope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.name.Name
 
 private operator fun <T> Pair<T, *>?.component1() = this?.first
@@ -32,7 +32,6 @@ internal fun FirScope.processConstructorsByName(
     name: Name,
     session: FirSession,
     bodyResolveComponents: BodyResolveComponents,
-    includeSyntheticConstructors: Boolean,
     includeInnerConstructors: Boolean,
     processor: (FirCallableSymbol<*>) -> Unit
 ) {
@@ -51,13 +50,11 @@ internal fun FirScope.processConstructorsByName(
             includeInnerConstructors
         )
 
-        if (includeSyntheticConstructors) {
-            processSyntheticConstructors(
-                matchedClassSymbol,
-                processor,
-                bodyResolveComponents
-            )
-        }
+        processSyntheticConstructors(
+            matchedClassSymbol,
+            processor,
+            bodyResolveComponents
+        )
     }
 }
 
@@ -70,7 +67,6 @@ internal fun FirScope.processFunctionsAndConstructorsByName(
 ) {
     processConstructorsByName(
         name, session, bodyResolveComponents,
-        includeSyntheticConstructors = true,
         includeInnerConstructors = includeInnerConstructors,
         processor = processor
     )

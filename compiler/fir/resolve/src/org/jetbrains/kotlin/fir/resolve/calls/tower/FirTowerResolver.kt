@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 
 class FirTowerResolver(
     private val components: BodyResolveComponents,
@@ -32,12 +32,12 @@ class FirTowerResolver(
 
     fun runResolverForDelegatingConstructor(
         info: CallInfo,
-        constructorClassSymbol: FirClassSymbol<*>,
+        constructedType: ConeClassLikeType,
     ): CandidateCollector {
         val candidateFactoriesAndCollectors = buildCandidateFactoriesAndCollectors(info, collector)
 
         val towerResolverSession = FirTowerResolverSession(components, manager, candidateFactoriesAndCollectors, info)
-        towerResolverSession.runResolutionForDelegatingConstructor(info, constructorClassSymbol)
+        towerResolverSession.runResolutionForDelegatingConstructor(info, constructedType)
 
         manager.runTasks()
         return collector
