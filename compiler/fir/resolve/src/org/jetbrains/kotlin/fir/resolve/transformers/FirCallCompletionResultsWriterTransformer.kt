@@ -149,6 +149,13 @@ class FirCallCompletionResultsWriterTransformer(
         return result.compose()
     }
 
+    override fun transformCheckedSafeCallSubject(
+        checkedSafeCallSubject: FirCheckedSafeCallSubject,
+        data: ExpectedArgumentType?
+    ): CompositeTransformResult<FirStatement> {
+        return checkedSafeCallSubject.transform(integerApproximator, data?.getExpectedType(checkedSafeCallSubject))
+    }
+
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: ExpectedArgumentType?): CompositeTransformResult<FirStatement> {
         val calleeReference = functionCall.calleeReference as? FirNamedReferenceWithCandidate
             ?: return functionCall.compose()
