@@ -385,35 +385,35 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitTypeReference(typeReference: KtTypeReference) {
         val other = getTreeElementDepar<KtTypeReference>() ?: return
-
-        var fqMatch = false
-
         val parent = other.parent
-        val type = try {
-            when {
-                parent is KtDeclaration && parent.descriptor is FunctionDescriptor ->
-                    (parent.descriptor as FunctionDescriptor).extensionReceiverParameter?.value?.type
-                parent is KtDeclaration && parent.descriptor is PropertyDescriptorImpl ->
-                    (parent.descriptor as PropertyDescriptorImpl).extensionReceiverParameter?.value?.type
-                else -> null
-            }
-        } catch (t: Throwable) {
-            null
+
+        val isReceiverTypeReference = when (parent) {
+            is KtProperty -> parent.receiverTypeReference == other
+            is KtNamedFunction -> parent.receiverTypeReference == other
+            else -> false
         }
 
-        if (type != null) {
-            val handler = getHandler(typeReference)
-            fqMatch = if (handler is SubstitutionHandler) {
-                if (handler.findRegExpPredicate()?.doMatch(
-                        DescriptorRenderer.DEBUG_TEXT.renderType(type), myMatchingVisitor.matchContext, other
-                    ) == true
-                ) {
-                    handler.addResult(other, myMatchingVisitor.matchContext)
-                    true
-                } else false
-            } else {
-                myMatchingVisitor.matchText(typeReference.text, DescriptorRenderer.DEBUG_TEXT.renderType(type))
+        val type = when {
+            !isReceiverTypeReference && parent is KtProperty -> parent.type()
+            isReceiverTypeReference && parent is KtDeclaration && parent.descriptor is FunctionDescriptor ->
+                (parent.descriptor as FunctionDescriptor).extensionReceiverParameter?.value?.type
+            isReceiverTypeReference && parent is KtDeclaration && parent.descriptor is PropertyDescriptorImpl ->
+                (parent.descriptor as PropertyDescriptorImpl).extensionReceiverParameter?.value?.type
+            else -> null
+        }
+
+        val fqMatch = when {
+            type != null -> {
+                val handler = getHandler(typeReference)
+                val fqType = DescriptorRenderer.DEBUG_TEXT.renderType(type)
+                if (handler is SubstitutionHandler)
+                    if (handler.findRegExpPredicate()?.doMatch(fqType, myMatchingVisitor.matchContext, other) == true) {
+                        handler.addResult(other, myMatchingVisitor.matchContext)
+                        true
+                    } else false
+                else myMatchingVisitor.matchText(typeReference.text, fqType)
             }
+            else -> false
         }
 
         myMatchingVisitor.result = fqMatch || myMatchingVisitor.matchSons(typeReference, other)
