@@ -213,12 +213,7 @@ class ComposerParamTransformer(
                 )
             )
 
-            it.putValueArgument(
-                argIndex++,
-                // The real source key gets added in ComposableFunctionBodyTransformer
-                irConst(0)
-            )
-
+            // $changed[n]
             for (i in 0 until changedParamCount(realValueParams, ownerFn.thisParamCount)) {
                 if (argIndex < ownerFn.valueParameters.size) {
                     it.putValueArgument(
@@ -230,6 +225,7 @@ class ComposerParamTransformer(
                 }
             }
 
+            // $default[n]
             for (i in 0 until defaultParamCount(realValueParams)) {
                 val start = i * BITS_PER_INT
                 val end = min(start + BITS_PER_INT, realValueParams)
@@ -541,16 +537,13 @@ class ComposerParamTransformer(
 
             val realParams = fn.valueParameters.size
 
+            // $composer
             val composerParam = fn.addValueParameter(
                 KtxNameConventions.COMPOSER_PARAMETER.identifier,
                 composerType.makeNullable()
             )
 
-            fn.addValueParameter(
-                KtxNameConventions.KEY_PARAMETER.identifier,
-                context.irBuiltIns.intType
-            )
-
+            // $changed[n]
             val changed = KtxNameConventions.CHANGED_PARAMETER.identifier
             for (i in 0 until changedParamCount(realParams, fn.thisParamCount)) {
                 fn.addValueParameter(
@@ -559,6 +552,7 @@ class ComposerParamTransformer(
                 )
             }
 
+            // $default[n]
             if (fn.requiresDefaultParameter()) {
                 val defaults = KtxNameConventions.DEFAULT_PARAMETER.identifier
                 for (i in 0 until defaultParamCount(realParams)) {

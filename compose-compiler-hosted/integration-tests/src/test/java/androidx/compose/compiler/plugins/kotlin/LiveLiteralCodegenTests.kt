@@ -45,8 +45,7 @@ class LiveLiteralCodegenTests : AbstractLoweringTests() {
                 TextView(id=1, text="abc")
             }
         """,
-            "App()",
-            dumpClasses = true
+            "App()"
         ).then { activity ->
             val tv = activity.findViewById<TextView>(1)
             assertEquals("abc", tv.text)

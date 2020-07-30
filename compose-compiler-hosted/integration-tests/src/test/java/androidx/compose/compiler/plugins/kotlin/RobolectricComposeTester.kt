@@ -43,13 +43,13 @@ private class TestActivity : Activity() {
 
 private val Activity.root get() = findViewById(ROOT_ID) as ViewGroup
 
-fun compose(composable: (Composer<*>, Int, Int) -> Unit) =
+fun compose(composable: (Composer<*>, Int) -> Unit) =
     RobolectricComposeTester(composable)
-fun composeMulti(composable: (Composer<*>, Int, Int) -> Unit, advance: () -> Unit) =
+fun composeMulti(composable: (Composer<*>, Int) -> Unit, advance: () -> Unit) =
     RobolectricComposeTester(composable, advance)
 
 class RobolectricComposeTester internal constructor(
-    val composable: (Composer<*>, Int, Int) -> Unit,
+    val composable: (Composer<*>, Int) -> Unit,
     val advance: (() -> Unit)? = null
 ) {
     inner class ActiveTest(
@@ -90,12 +90,12 @@ class RobolectricComposeTester internal constructor(
         endProviders.isAccessible = true
         setContentMethod.isAccessible = true
 
-        val realComposable: (Composer<*>, Int, Int) -> Unit = { composer, _, _ ->
+        val realComposable: (Composer<*>, Int) -> Unit = { composer, _ ->
             startProviders.invoke(
                 composer,
                 listOf(ContextAmbient provides root.context).toTypedArray()
             )
-            composable(composer, 0, 0)
+            composable(composer, 0)
             endProviders.invoke(composer)
         }
 

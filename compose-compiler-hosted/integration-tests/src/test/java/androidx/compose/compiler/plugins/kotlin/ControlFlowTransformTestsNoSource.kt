@@ -32,16 +32,16 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
         """,
         """
             @Composable
-            fun Test(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C(Test)")
+            fun Test(%composer: Composer<*>?, %changed: Int) {
+              %composer.startRestartGroup(<>, "C(Test)")
               if (%changed !== 0 || !%composer.skipping) {
-                A(a, %composer, <>, 0)
-                A(b, %composer, <>, 0)
+                A(a, %composer, 0)
+                A(b, %composer, 0)
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
-                Test(%composer, %key, %changed or 0b0001)
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                Test(%composer, %changed or 0b0001)
               }
             }
         """
@@ -58,16 +58,16 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
         """,
         """
             @Composable
-            private fun Test(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key)
+            private fun Test(%composer: Composer<*>?, %changed: Int) {
+              %composer.startRestartGroup(<>)
               if (%changed !== 0 || !%composer.skipping) {
-                A(a, %composer, <>, 0)
-                A(b, %composer, <>, 0)
+                A(a, %composer, 0)
+                A(b, %composer, 0)
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
-                Test(%composer, %key, %changed or 0b0001)
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                Test(%composer, %changed or 0b0001)
               }
             }
         """
@@ -85,21 +85,21 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
         """,
         """
             @Composable
-            fun Test(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C(Test)")
+            fun Test(%composer: Composer<*>?, %changed: Int) {
+              %composer.startRestartGroup(<>, "C(Test)")
               if (%changed !== 0 || !%composer.skipping) {
-                W(composableLambda(%composer, <>, true, null) { %composer: Composer<*>?, %key: Int, %changed: Int ->
+                W(composableLambda(%composer, <>, true, null) { %composer: Composer<*>?, %changed: Int ->
                   if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
-                    A(%composer, <>, 0)
+                    A(%composer, 0)
                   } else {
                     %composer.skipToGroupEnd()
                   }
-                }, %composer, <>, 0b0110)
+                }, %composer, 0b0110)
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
-                Test(%composer, %key, %changed or 0b0001)
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                Test(%composer, %changed or 0b0001)
               }
             }
         """
@@ -117,21 +117,21 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
         """,
         """
             @Composable
-            fun Test(%composer: Composer<*>?, %key: Int, %changed: Int) {
-              %composer.startRestartGroup(<> xor %key, "C(Test)")
+            fun Test(%composer: Composer<*>?, %changed: Int) {
+              %composer.startRestartGroup(<>, "C(Test)")
               if (%changed !== 0 || !%composer.skipping) {
-                IW({ %composer: Composer<*>?, %key: Int, %changed: Int ->
+                IW({ %composer: Composer<*>?, %changed: Int ->
                   if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
-                    A(%composer, <>, 0)
+                    A(%composer, 0)
                   } else {
                     %composer.skipToGroupEnd()
                   }
-                }, %composer, <>, 0)
+                }, %composer, 0)
               } else {
                 %composer.skipToGroupEnd()
               }
-              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %key: Int, %force: Int ->
-                Test(%composer, %key, %changed or 0b0001)
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                Test(%composer, %changed or 0b0001)
               }
             }
         """

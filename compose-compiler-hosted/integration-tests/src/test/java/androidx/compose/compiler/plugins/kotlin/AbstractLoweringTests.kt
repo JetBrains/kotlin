@@ -122,14 +122,13 @@ abstract class AbstractLoweringTests : AbstractCodegenTest() {
             "test",
             *parameterTypes,
             Composer::class.java,
-            Int::class.java,
             Int::class.java
         )
 
-        return compose { composer, _, _ ->
+        return compose { composer, _ ->
             val values = valuesFactory()
             val arguments = values.map { it.value }.toTypedArray()
-            testMethod.invoke(instanceOfClass, *arguments, composer, 0, 1)
+            testMethod.invoke(instanceOfClass, *arguments, composer, 1)
         }
     }
 }

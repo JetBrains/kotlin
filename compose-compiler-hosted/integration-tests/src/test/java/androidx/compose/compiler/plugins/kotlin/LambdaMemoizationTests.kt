@@ -193,7 +193,7 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
     @Test
     fun shouldNotRememberDirectLambdaParameter() = skipping("""
         fun eventFired(data: String) {
-          println("Validating ${'$'}data")
+          // println("Validating ${'$'}data")
           validateModel(data)
         }
 
@@ -715,11 +715,11 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
 
                 fun workToBeAvoided(msg: String = "") {
                    avoidedWorkCount++
-                   println("Work to be avoided ${'$'}avoidedWorkCount ${'$'}msg")
+                   // println("Work to be avoided ${'$'}avoidedWorkCount ${'$'}msg")
                 }
                 fun workToBeRepeated(msg: String = "") {
                    repeatedWorkCount++
-                   println("Work to be repeated ${'$'}repeatedWorkCount ${'$'}msg")
+                   // println("Work to be repeated ${'$'}repeatedWorkCount ${'$'}msg")
                 }
 
                 $text
@@ -738,14 +738,14 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
 
                 @Composable
                 fun TestHost() {
-                   println("START: Iteration - ${'$'}iterations")
+                   // println("START: Iteration - ${'$'}iterations")
                    val recompose = invalidate
                    emitView(::Button) { 
                      it.id=42 
                      it.setOnClickListener(View.OnClickListener { recompose() })
                    }
                    Example("Iteration ${'$'}iterations")
-                   println("END  : Iteration - ${'$'}iterations")
+                   // println("END  : Iteration - ${'$'}iterations")
                    validate()
                 }
 
