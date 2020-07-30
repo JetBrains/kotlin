@@ -38,9 +38,7 @@ object ComposeConfiguration {
 
 class ComposeCommandLineProcessor : CommandLineProcessor {
     companion object {
-        // TODO: b/160404330, b/160233169 move to androidx.compose.compiler.plugins once Studio
-        // support lands
-        val PLUGIN_ID = "androidx.compose.plugins.kotlin"
+        val PLUGIN_ID = "androidx.compose.compiler.plugins.kotlin"
         val LIVE_LITERALS_ENABLED_OPTION = CliOption(
             "liveLiterals",
             "<true|false>",
