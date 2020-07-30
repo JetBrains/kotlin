@@ -405,13 +405,18 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val fqMatch = when {
             type != null -> {
                 val handler = getHandler(typeReference)
-                val fqType = DescriptorRenderer.DEBUG_TEXT.renderType(type)
-                if (handler is SubstitutionHandler)
-                    if (handler.findRegExpPredicate()?.doMatch(fqType, myMatchingVisitor.matchContext, other) == true) {
-                        handler.addResult(other, myMatchingVisitor.matchContext)
-                        true
-                    } else false
-                else myMatchingVisitor.matchText(typeReference.text, fqType)
+                arrayOf(
+                    DescriptorRenderer.DEBUG_TEXT.renderType(type),
+                    DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type)
+                ).any {
+                    if (handler is SubstitutionHandler)
+                        if (handler.findRegExpPredicate()?.doMatch(it, myMatchingVisitor.matchContext, other) == true) {
+                            handler.addResult(other, myMatchingVisitor.matchContext)
+                            true
+                        } else false
+                    else myMatchingVisitor.matchText(typeReference.text, it)
+                }
+
             }
             else -> false
         }
