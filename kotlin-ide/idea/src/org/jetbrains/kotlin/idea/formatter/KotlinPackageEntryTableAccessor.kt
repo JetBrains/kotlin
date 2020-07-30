@@ -20,6 +20,8 @@ class KotlinPackageEntryTableAccessor(kotlinCodeStyle: KotlinCodeStyleSettings, 
         extVal.asSequence().map(String::trim).map(::readPackageEntry).toMutableList()
     )
 
+    override fun isEmptyListAllowed(): Boolean = false
+
     override fun toExternal(value: KotlinPackageEntryTable): List<String> = value.getEntries().map(::writePackageEntry)
 
     companion object {
