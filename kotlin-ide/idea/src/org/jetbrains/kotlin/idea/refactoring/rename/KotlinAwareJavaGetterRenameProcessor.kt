@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.idea.references.SyntheticPropertyAccessorReferenceDe
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
-import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
 import org.jetbrains.kotlin.utils.ifEmpty
 
 class KotlinAwareJavaGetterRenameProcessor : RenameJavaMethodProcessor() {
@@ -48,4 +47,14 @@ class KotlinAwareJavaGetterRenameProcessor : RenameJavaMethodProcessor() {
             setterReferences.mapTo(this) { SyntheticPropertyAccessorReferenceDescriptorImpl(it.expression, getter = true) }
         }
     }
+}
+
+private inline fun <reified T> Iterable<*>.filterIsInstanceWithChecker(additionalChecker: (T) -> Boolean): List<T> {
+    val result = arrayListOf<T>()
+    for (element in this) {
+        if (element is T && additionalChecker(element)) {
+            result += element
+        }
+    }
+    return result
 }

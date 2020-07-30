@@ -69,14 +69,7 @@ import org.jetbrains.kotlin.idea.editor.AbstractMultiLineStringIndentTest
 import org.jetbrains.kotlin.idea.editor.backspaceHandler.AbstractBackspaceHandlerTest
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractQuickDocProviderTest
 import org.jetbrains.kotlin.idea.filters.AbstractKotlinExceptionFilterTest
-import org.jetbrains.kotlin.idea.fir.AbstractKtDeclarationAndFirDeclarationEqualityChecker
-import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyResolveTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleResolveTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
-import org.jetbrains.kotlin.idea.frontend.api.fir.AbstractResolveCallTest
-import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractStdlibSymbolsBuildingTest
-import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractSymbolPointerTest
-import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractSymbolsByPsiBuildingTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyWithLibTest
 import org.jetbrains.kotlin.idea.highlighter.*
@@ -141,7 +134,6 @@ import org.jetbrains.kotlin.nj2k.inference.mutability.AbstractMutabilityInferenc
 import org.jetbrains.kotlin.nj2k.inference.nullability.AbstractNullabilityInferenceTest
 import org.jetbrains.kotlin.psi.patternMatching.AbstractPsiUnifierTest
 import org.jetbrains.kotlin.search.AbstractAnnotatedMembersSearchTest
-import org.jetbrains.kotlin.idea.highlighter.AbstractFirHighlightingTest
 import org.jetbrains.kotlin.idea.navigationToolbar.AbstractKotlinNavBarTest
 import org.jetbrains.kotlin.search.AbstractInheritorsSearchTest
 import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
@@ -883,7 +875,7 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         }
     }
 
-    testGroup("frontend-fir") {
+    /*testGroup("frontend-fir") {
         testClass<AbstractKtDeclarationAndFirDeclarationEqualityChecker> {
             model("ktDeclarationAndFirDeclarationEqualityChecker")
         }
@@ -932,7 +924,7 @@ private fun assembleWorkspace(): TWorkspace = workspace {
             model("checker/infos")
             model("checker/diagnosticsMessage")
         }
-    }
+    }*/
 
     testGroup("scripting-support") {
         testClass<AbstractScratchRunActionTest> {
