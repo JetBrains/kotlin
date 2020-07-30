@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
@@ -25,6 +23,7 @@ import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.idea.FrontendInternals
@@ -33,32 +32,26 @@ import org.jetbrains.kotlin.idea.caches.lightClasses.LazyLightClassDataHolder
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.stubindex.KotlinTypeAliasShortNameIndex
-import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.concurrent.ConcurrentMap
 
-class IDELightClassGenerationSupport(private val project: Project) : LightClassGenerationSupport() {
+class IDELightClassGenerationSupport(project: Project) : LightClassGenerationSupport() {
 
     private class KtUltraLightSupportImpl(private val element: KtElement) : KtUltraLightSupport {
 
         private val module = ModuleUtilCore.findModuleForPsiElement(element)
 
-        private val languageVersionSettings
+        override val languageVersionSettings: LanguageVersionSettings
             get() = module?.languageVersionSettings ?: KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT
 
         override val isReleasedCoroutine
             get() = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines) ?: true
-
-        override fun getConstantEvaluator(expression: KtExpression): ConstantExpressionEvaluator =
-            ConstantExpressionEvaluator(moduleDescriptor, KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT, expression.project)
 
         private val resolutionFacade get() = element.getResolutionFacade()
 
@@ -94,54 +87,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         }
     }
 
-    override fun createUltraLightClassForFacade(
-        manager: PsiManager,
-        facadeClassFqName: FqName,
-        lightClassDataCache: CachedValue<LightClassDataHolder.ForFacade>,
-        files: Collection<KtFile>
-    ): KtUltraLightClassForFacade? {
-
-        if (files.any { it.isScript() }) return null
-
-        val filesToSupports: List<Pair<KtFile, KtUltraLightSupport>> = files.map {
-            it to KtUltraLightSupportImpl(it)
-        }
-
-        return KtUltraLightClassForFacade(
-            manager,
-            facadeClassFqName,
-            lightClassDataCache,
-            files,
-            filesToSupports
-        )
-    }
-
-    override fun createUltraLightClass(element: KtClassOrObject): KtUltraLightClass? {
-        if (element.shouldNotBeVisibleAsLightClass()) {
-            return null
-        }
-
-        return KtUltraLightSupportImpl(element).let { support ->
-            when {
-                element is KtObjectDeclaration && element.isObjectLiteral() ->
-                    KtUltraLightClassForAnonymousDeclaration(element, support)
-
-                element.safeIsLocal() ->
-                    KtUltraLightClassForLocalDeclaration(element, support)
-
-                (element.hasModifier(KtTokens.INLINE_KEYWORD)) ->
-                    KtUltraLightInlineClass(element, support)
-
-                else -> KtUltraLightClass(element, support)
-            }
-        }
-    }
-
-    override fun createUltraLightClassForScript(script: KtScript): KtUltraLightClassForScript? =
-        KtUltraLightClassForScript(script, support = KtUltraLightSupportImpl(script))
-
-    override fun getUltraLightClassSupport(element: KtElement): KtUltraLightSupport =
-        KtUltraLightSupportImpl(element)
+    override fun getUltraLightClassSupport(element: KtElement): KtUltraLightSupport = KtUltraLightSupportImpl(element)
 
     private val scopeFileComparator = JavaElementFinder.byClasspathComparator(GlobalSearchScope.allScope(project))
 
