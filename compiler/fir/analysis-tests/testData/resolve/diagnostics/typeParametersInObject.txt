@@ -1,0 +1,36 @@
+FILE: typeParametersInObject.kt
+    public final object A<T, K : R|T|> : R|kotlin/Any| {
+        private constructor<T, K : R|T|>(): R|A<T, K>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final object B<L> : R|kotlin/Any| {
+            private constructor<L>(): R|A.B<L>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class N : R|kotlin/Any| {
+        public constructor(): R|N| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion<T> : R|kotlin/Any| {
+            private constructor<T>(): R|N.Companion<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        local final object M<H> : R|kotlin/Any| {
+            private constructor<H>(): R|M<H>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }

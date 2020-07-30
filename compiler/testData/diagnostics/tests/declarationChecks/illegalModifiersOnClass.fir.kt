@@ -4,9 +4,9 @@
 
 override class A {
     override companion object {}
-    open companion object {}
-    abstract companion object {}
-    final companion object {}
+    open companion <!MANY_COMPANION_OBJECTS!>object<!> {}
+    abstract companion <!MANY_COMPANION_OBJECTS!>object<!> {}
+    final companion <!MANY_COMPANION_OBJECTS!>object<!> {}
 }
 
 override object B1 {}

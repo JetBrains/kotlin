@@ -9,8 +9,8 @@ inline val z: Int
         }
     }
 
-    object B{
-        object BInner {}
+    <!LOCAL_OBJECT_NOT_ALLOWED!>object B<!>{
+        <!LOCAL_OBJECT_NOT_ALLOWED!>object BInner<!> {}
     }
 
     fun local() {

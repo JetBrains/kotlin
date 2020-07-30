@@ -916,6 +916,16 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/localAnnotationClass.kt");
         }
 
+        @TestMetadata("localEntitytNotAllowed.kt")
+        public void testLocalEntitytNotAllowed() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/localEntitytNotAllowed.kt");
+        }
+
+        @TestMetadata("manyCompanionObjects.kt")
+        public void testManyCompanionObjects() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/manyCompanionObjects.kt");
+        }
+
         @TestMetadata("notASupertype.kt")
         public void testNotASupertype() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/notASupertype.kt");
@@ -959,6 +969,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         @TestMetadata("typeOfAnnotationMember.kt")
         public void testTypeOfAnnotationMember() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/typeOfAnnotationMember.kt");
+        }
+
+        @TestMetadata("typeParametersInObject.kt")
+        public void testTypeParametersInObject() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/typeParametersInObject.kt");
         }
 
         @TestMetadata("upperBoundViolated.kt")
