@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
+import org.jetbrains.kotlin.native.test.debugger.lldbComplexTest
 import org.jetbrains.kotlin.native.test.debugger.lldbTest
 import org.junit.Test
 
@@ -118,4 +119,32 @@ class LldbTests {
         > fr var xs
         (ObjHeader *) xs = [3, 5, 8]
     """)
+
+    @Test
+    fun `swift with kotlin static framework`() = lldbComplexTest {
+        val aKtSrc = """
+            fun a() = "a"
+        """.feedOutput("a.kt")
+        val bKtSrc = """
+            fun b() = "b"
+        """.feedOutput("b.kt")
+
+        arrayOf(aKtSrc, bKtSrc).framework("AandBFramework", "-g", "-Xstatic-framework")
+
+        val swiftSrc = """
+            import AandBFramework
+
+            print(AKt.a())
+            print(BKt.b())
+
+        """.feedOutput("test.swift")
+        val application = swiftc("application", swiftSrc, "-F", root.toString())
+        """
+            > b kfun:#b(){}kotlin.String
+            Breakpoint 1: where = [..]`kfun:#b(){}kotlin.String [..] at b.kt:1:1, [..]
+
+            > b kfun:#a(){}kotlin.String
+            Breakpoint 2: where = [..]`kfun:#a(){}kotlin.String [..] at a.kt:1:1, [..]
+        """.trimIndent().lldb(application)
+    }
 }
