@@ -49,7 +49,7 @@ fun <T> bar(a: Any): T = a as T
 fun <T> foo() {
     foo<<!UNRESOLVED_REFERENCE!>Color.RED<!>>()
     foo<RedAlias>()
-    <!INAPPLICABLE_CANDIDATE!>bar<!><Color.RED>(Color.RED)
+    <!INAPPLICABLE_CANDIDATE!>bar<!><<!UNRESOLVED_REFERENCE!>Color.RED<!>>(Color.RED)
 }
 
 fun <!UNRESOLVED_REFERENCE!>Array<Color.RED><!>.foo(entries: <!UNRESOLVED_REFERENCE!>Array<Color.RED><!>): <!UNRESOLVED_REFERENCE!>Array<Color.RED><!> = null!!

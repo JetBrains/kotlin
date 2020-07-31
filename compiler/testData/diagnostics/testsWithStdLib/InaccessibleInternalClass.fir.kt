@@ -10,6 +10,6 @@ package kotlin.sequences
 import p.*
 
 interface I {
-    val <!EXPOSED_PROPERTY_TYPE!>v1<!>: <!OTHER_ERROR!>FilteringSequence<!>
+    val v1: FilteringSequence
     val <!EXPOSED_PROPERTY_TYPE!>v2<!>: IndexingSequence<String>
 }
