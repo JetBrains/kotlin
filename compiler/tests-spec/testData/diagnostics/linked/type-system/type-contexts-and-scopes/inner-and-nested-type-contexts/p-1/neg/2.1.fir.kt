@@ -8,14 +8,14 @@ class Case1<AT>(val x: AT) {
 
     class B(val y: AT) {
         fun case1() {
-            val k: AT
+            val k: <!UNRESOLVED_REFERENCE!>AT<!>
         }
     }
 
     class C() {
         fun case1(x: Any) {
             when (x) {
-                is AT -> println("at")
+                is <!UNRESOLVED_REFERENCE!>AT<!> -> println("at")
                 else -> println("else")
             }
         }
