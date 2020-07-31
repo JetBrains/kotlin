@@ -23,7 +23,7 @@ class NpmDependencyConstraint(
 
     private var reason: String? = null
 
-    private val versionConstraint = DefaultMutableVersionConstraint(version)
+    private val versionConstraint = NpmVersionConstraint(version)
 
     override fun getGroup(): String? = null
 
@@ -62,7 +62,7 @@ class NpmDependencyConstraint(
     override fun version(configureAction: Action<in MutableVersionConstraint>) {
         configureAction.execute(versionConstraint)
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
-        nodeJs.npmResolutionManager.putNpmResolution(path, version)
+        nodeJs.npmResolutionManager.putNpmResolution(path, versionConstraint.toSemVer())
     }
 
     override fun getReason(): String? {
@@ -75,7 +75,7 @@ class NpmDependencyConstraint(
 
     override fun getVersionConstraint(): VersionConstraint {
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
-        nodeJs.npmResolutionManager.putNpmResolution(path, version)
+        nodeJs.npmResolutionManager.putNpmResolution(path, versionConstraint.toSemVer())
         return versionConstraint
     }
 
