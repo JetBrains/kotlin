@@ -43,6 +43,7 @@ class JvmCachedDeclarations(
     private val defaultImplsMethods = HashMap<IrSimpleFunction, IrSimpleFunction>()
     private val defaultImplsClasses = HashMap<IrClass, IrClass>()
     private val defaultImplsRedirections = HashMap<IrSimpleFunction, IrSimpleFunction>()
+    private val defaultImplsOriginalMethods = HashMap<IrSimpleFunction, IrSimpleFunction>()
 
     fun getFieldForEnumEntry(enumEntry: IrEnumEntry): IrField =
         singletonFieldDeclarations.getOrPut(enumEntry) {
@@ -176,9 +177,14 @@ class JvmCachedDeclarations(
                         it.annotations += irCall(this@JvmCachedDeclarations.context.ir.symbols.javaLangDeprecatedConstructor)
                     }
                 }
+
+                defaultImplsOriginalMethods[it] = interfaceFun
             }
         }
     }
+
+    fun getOriginalFunctionForDefaultImpl(defaultImplFun: IrSimpleFunction) =
+        defaultImplsOriginalMethods[defaultImplFun]
 
     fun getDefaultImplsClass(interfaceClass: IrClass): IrClass =
         defaultImplsClasses.getOrPut(interfaceClass) {

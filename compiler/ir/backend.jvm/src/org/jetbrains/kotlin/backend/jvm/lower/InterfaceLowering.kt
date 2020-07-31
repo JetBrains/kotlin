@@ -64,13 +64,13 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
         val jvmDefaultMode = context.state.jvmDefaultMode
         val isCompatibilityMode = jvmDefaultMode.isCompatibility && !irClass.hasJvmDefaultNoCompatibilityAnnotation()
         // There are 6 cases for functions on interfaces:
-        loop@ for (function in irClass.functions) {
+        for (function in irClass.functions) {
             when {
                 /**
                  * 1) They are plain abstract interface functions, in which case we leave them:
                  */
                 function.modality == Modality.ABSTRACT ->
-                    continue@loop
+                    continue
 
                 /**
                  * 2) They inherit a default implementation from an interface this interface extends:
@@ -99,13 +99,13 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                     // (KT-36188) where there could be multiple implementations. (resolveFakeOverride() only returns the implementation if
                     // there's only one.)
                     if (function.name.asString().endsWith("\$default")) {
-                        continue@loop
+                        continue
                     }
                     val implementation = function.resolveFakeOverride() ?: error("No single implementation found for: ${function.render()}")
 
                     when {
                         Visibilities.isPrivate(implementation.visibility) || implementation.isMethodOfAny() ->
-                            continue@loop
+                            continue
                         !function.isDefinitelyNotDefaultImplsMethod(jvmDefaultMode, implementation) -> {
                             val defaultImpl = createDefaultImpl(function)
                             val superImpl = firstSuperMethodFromKotlin(function, implementation)
