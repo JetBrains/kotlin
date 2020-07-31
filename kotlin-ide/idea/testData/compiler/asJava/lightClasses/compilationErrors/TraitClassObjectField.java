@@ -1,5 +1,4 @@
 public interface TraitClassObjectField {
-    @org.jetbrains.annotations.NotNull
     TraitClassObjectField.Companion Companion;
     @org.jetbrains.annotations.Nullable
     java.lang.String x = "";

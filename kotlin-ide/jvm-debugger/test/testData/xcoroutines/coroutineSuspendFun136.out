@@ -11,7 +11,7 @@ CoroutineInfo: 1 coroutine RUNNING
 	CoroutineStackFrame a:!LINE_NUMBER!, CoroutineSuspendFun136Kt (continuation)
 		(a)
 	CoroutineStackFrame invokeSuspend:!LINE_NUMBER!, CoroutineSuspendFun136Kt$main$1 (continuation)
-		()
+		($this$runBlocking)
 	CoroutineStackFrame resumeWith:!LINE_NUMBER!, BaseContinuationImpl (kotlin.coroutines.jvm.internal)
 		($i$a$-with-BaseContinuationImpl$resumeWith$1, $this$with, completion, current, param, result, this)
 	CoroutineStackFrame run:!LINE_NUMBER!, DispatchedTask (kotlinx.coroutines)
