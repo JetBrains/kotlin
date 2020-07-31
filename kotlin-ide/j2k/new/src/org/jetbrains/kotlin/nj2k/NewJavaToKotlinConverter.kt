@@ -56,6 +56,13 @@ class NewJavaToKotlinConverter(
         files: List<PsiJavaFile>,
         postProcessor: PostProcessor,
         progress: ProgressIndicator
+    ): FilesResult = filesToKotlin(files, postProcessor, progress, null)
+
+    fun filesToKotlin(
+        files: List<PsiJavaFile>,
+        postProcessor: PostProcessor,
+        progress: ProgressIndicator,
+        bodyFilter: ((PsiElement) -> Boolean)?,
     ): FilesResult {
         progress.isIndeterminate = false
         val phasesCount = postProcessor.phasesCount + 1
@@ -63,7 +70,7 @@ class NewJavaToKotlinConverter(
         return withProgressProcessor.process {
             val (results, externalCodeProcessing, context) =
                 ApplicationManager.getApplication().runReadAction(Computable {
-                    elementsToKotlin(files, withProgressProcessor)
+                    elementsToKotlin(files, withProgressProcessor, bodyFilter)
                 })
 
             val kotlinFiles = results.mapIndexed { i, result ->
@@ -116,8 +123,11 @@ class NewJavaToKotlinConverter(
         return add(importList) as KtImportList
     }
 
+    fun elementsToKotlin(inputElements: List<PsiElement>, bodyFilter: ((PsiElement) -> Boolean)?): Result {
+        return elementsToKotlin(inputElements, NewJ2kWithProgressProcessor.DEFAULT, bodyFilter)
+    }
 
-    override fun elementsToKotlin(inputElements: List<PsiElement>, processor: WithProgressProcessor): Result {
+    fun elementsToKotlin(inputElements: List<PsiElement>, processor: WithProgressProcessor, bodyFilter: ((PsiElement) -> Boolean)?): Result {
         val phaseDescription = KotlinNJ2KBundle.message("phase.converting.j2k")
         val contextElement = inputElements.firstOrNull() ?: return Result(emptyList(), null, null)
         val resolver = JKResolver(project, targetModule, contextElement)
@@ -132,7 +142,7 @@ class NewJavaToKotlinConverter(
         }
 
         val importStorage = JKImportStorage(languageVersion)
-        val treeBuilder = JavaToJKTreeBuilder(symbolProvider, typeFactory, converterServices, importStorage)
+        val treeBuilder = JavaToJKTreeBuilder(symbolProvider, typeFactory, converterServices, importStorage, bodyFilter)
 
         // we want to leave all imports as is in the case when user is converting only imports
         val saveImports = inputElements.all { element ->
@@ -195,6 +205,10 @@ class NewJavaToKotlinConverter(
 
     override fun elementsToKotlin(inputElements: List<PsiElement>): Result {
         return elementsToKotlin(inputElements, NewJ2kWithProgressProcessor.DEFAULT)
+    }
+
+    override fun elementsToKotlin(inputElements: List<PsiElement>, processor: WithProgressProcessor): Result {
+        return elementsToKotlin(inputElements, processor, null)
     }
 }
 

@@ -125,16 +125,13 @@ import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.jps.build.*
 import org.jetbrains.kotlin.jps.incremental.AbstractJsProtoComparisonTest
 import org.jetbrains.kotlin.jps.incremental.AbstractJvmProtoComparisonTest
-import org.jetbrains.kotlin.nj2k.AbstractNewJavaToKotlinConverterMultiFileTest
-import org.jetbrains.kotlin.nj2k.AbstractNewJavaToKotlinConverterSingleFileTest
-import org.jetbrains.kotlin.nj2k.AbstractNewJavaToKotlinCopyPasteConversionTest
-import org.jetbrains.kotlin.nj2k.AbstractTextNewJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.nj2k.inference.common.AbstractCommonConstraintCollectorTest
 import org.jetbrains.kotlin.nj2k.inference.mutability.AbstractMutabilityInferenceTest
 import org.jetbrains.kotlin.nj2k.inference.nullability.AbstractNullabilityInferenceTest
 import org.jetbrains.kotlin.psi.patternMatching.AbstractPsiUnifierTest
 import org.jetbrains.kotlin.search.AbstractAnnotatedMembersSearchTest
 import org.jetbrains.kotlin.idea.navigationToolbar.AbstractKotlinNavBarTest
+import org.jetbrains.kotlin.nj2k.*
 import org.jetbrains.kotlin.search.AbstractInheritorsSearchTest
 import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.kotlin.test.TargetBackend
@@ -1131,6 +1128,9 @@ private fun assembleWorkspace(): TWorkspace = workspace {
     testGroup("j2k/new") {
         testClass<AbstractNewJavaToKotlinConverterSingleFileTest> {
             model("newJ2k", pattern = """^([^\.]+)\.java$""".toRegex())
+        }
+        testClass<AbstractPartialConverterTest> {
+            model("partialConverter", pattern = """^([^.]+)\.java$""".toRegex())
         }
         testClass<AbstractCommonConstraintCollectorTest> {
             model("inference/common")
