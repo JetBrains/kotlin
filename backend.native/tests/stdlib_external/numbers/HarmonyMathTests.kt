@@ -279,7 +279,7 @@ class HarmonyMath {
         assertEquals((-0.0).toBits(), expm1(-0.0).toBits())
 
         assertEquals("Should return -9.999950000166666E-6",
-                -9.999950000166666E-6, expm1(-0.00001), 0.0)
+                -9.999950000166666E-6, expm1(-0.00001))
         assertEquals("Should return 1.0145103074469635E60",
                 1.0145103074469635E60, expm1(138.16951162), 0.0)
         assertEquals("Should return POSITIVE_INFINITY",
