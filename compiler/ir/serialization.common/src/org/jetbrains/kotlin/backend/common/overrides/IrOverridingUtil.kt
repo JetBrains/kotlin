@@ -100,18 +100,16 @@ class IrOverridingUtil(
     fun buildFakeOverridesForClass(clazz: IrClass) {
         val superTypes = allPublicApiSuperTypesOrAny(clazz)
 
-        val fromCurrent = clazz.declarations
-            .filterIsInstance<IrOverridableMember>()
-            .filter { it.symbol.isPublicApi }
+        val fromCurrent = clazz.declarations.filter { it is IrOverridableMember && it.symbol.isPublicApi } as List<IrOverridableMember>
 
         val allFromSuper = superTypes.flatMap { superType ->
             val superClass = superType.getClass() ?: error("Unexpected super type: $superType")
             superClass.declarations
-                .filterIsInstance<IrOverridableMember>()
-                .filter { it.symbol.isPublicApi }
+                .filter { it is IrOverridableMember && it.symbol.isPublicApi }
                 .map {
-                    val fakeOverride = fakeOverrideBuilder.fakeOverrideMember(superType, it, clazz)
-                    originals[fakeOverride] = it
+                    val overridenMember = it as IrOverridableMember
+                    val fakeOverride = fakeOverrideBuilder.fakeOverrideMember(superType, overridenMember, clazz)
+                    originals[fakeOverride] = overridenMember
                     originalSuperTypes[fakeOverride] = superType
                     fakeOverride
                 }

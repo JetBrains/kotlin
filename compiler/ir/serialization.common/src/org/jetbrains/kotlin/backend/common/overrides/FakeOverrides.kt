@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
@@ -68,22 +69,24 @@ class FakeOverrideBuilder(
         val classifier = superType.classifier
         require(classifier is IrClassSymbol) { "superType classifier is not IrClassSymbol: $classifier" }
 
-        val typeParameters = extractTypeParameters(classifier.owner).map { it.symbol }
-        val typeArguments = superType.arguments.map {
-            require(it is IrTypeProjection) { "Unexpected super type argument: $it" }
-            assert(it.variance == Variance.INVARIANT) { "Unexpected variance in super type argument: ${it.variance}" }
-            it.type
+        val typeParameters = extractTypeParameters(classifier.owner)
+        val superArguments = superType.arguments
+        assert(typeParameters.size == superArguments.size) {
+            "typeParameters = $typeParameters size != typeArguments = $superArguments size "
         }
 
-        assert(typeParameters.size == typeArguments.size) {
-            "typeParameters = $typeParameters size != typeArguments = $typeArguments size "
+        val substitutionMap = mutableMapOf<IrTypeParameterSymbol, IrType>()
+
+        for (i in typeParameters.indices) {
+            val tp = typeParameters[i]
+            val ta = superArguments[i]
+            require(ta is IrTypeProjection) { "Unexpected super type argument: $ta @ $i" }
+            assert(ta.variance == Variance.INVARIANT) { "Unexpected variance in super type argument: ${ta.variance} @$i" }
+            substitutionMap[tp.symbol] = ta.type
         }
 
-        val substitutionMap = typeParameters.zip(typeArguments).toMap()
-        val copier =
-            DeepCopyIrTreeWithSymbolsForFakeOverrides(substitutionMap, superType, clazz)
-
-        val deepCopyFakeOverride = copier.copy(member) as IrOverridableMember
+        val copier = DeepCopyIrTreeWithSymbolsForFakeOverrides(substitutionMap)
+        val deepCopyFakeOverride = copier.copy(member, clazz) as IrOverridableMember
         deepCopyFakeOverride.parent = clazz
 
         return deepCopyFakeOverride
