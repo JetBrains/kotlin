@@ -836,12 +836,12 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
 
     if (isDisposed()) return;
     final DocumentEx document = myEditor.getDocument();
-    synchronized (LOCK) {
-      clearHyperlinkAndFoldings();
-    }
     final int documentTextLength = document.getTextLength();
     if (documentTextLength > 0) {
       DocumentUtil.executeInBulk(document, true, () -> document.deleteString(0, documentTextLength));
+    }
+    synchronized (LOCK) {
+      clearHyperlinkAndFoldings();
     }
     MarkupModel model = DocumentMarkupModel.forDocument(myEditor.getDocument(), getProject(), true);
     model.removeAllHighlighters(); // remove all empty highlighters leftovers if any
