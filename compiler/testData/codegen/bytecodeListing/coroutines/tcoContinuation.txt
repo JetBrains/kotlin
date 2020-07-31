@@ -79,7 +79,6 @@ public final class TcoContinuationKt$foo$$inlined$flow$1 {
 @kotlin.Metadata
 public final class TcoContinuationKt$foo$$inlined$map$1$2$1 {
     field L$0: java.lang.Object
-    field L$1: java.lang.Object
     synthetic field data: java.lang.Object
     synthetic field exception: java.lang.Throwable
     synthetic final field this$0: TcoContinuationKt$foo$$inlined$map$1$2
@@ -127,7 +126,6 @@ public final class TcoContinuationKt$map$$inlined$transform$1$1 {
 @kotlin.Metadata
 public final class TcoContinuationKt$map$$inlined$transform$1$2$1 {
     field L$0: java.lang.Object
-    field L$1: java.lang.Object
     synthetic field data: java.lang.Object
     synthetic field exception: java.lang.Throwable
     synthetic final field this$0: TcoContinuationKt$map$$inlined$transform$1$2
@@ -179,7 +177,6 @@ public final class TcoContinuationKt$map$$inlined$transform$2$1 {
 @kotlin.Metadata
 public final class TcoContinuationKt$map$$inlined$transform$2$2$1 {
     field L$0: java.lang.Object
-    field L$1: java.lang.Object
     synthetic field data: java.lang.Object
     synthetic field exception: java.lang.Throwable
     synthetic final field this$0: TcoContinuationKt$map$$inlined$transform$2$2

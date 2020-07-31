@@ -20,6 +20,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
+import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import kotlin.math.max
 
 private const val COROUTINES_DEBUG_METADATA_VERSION = 1
@@ -610,14 +611,13 @@ class CoroutineTransformerMethodVisitor(
             // k - continuation
             // k + 1 - data
             // k + 2 - exception
-            val variablesToSpill =
-                (0 until localsCount)
-                    .filterNot { it in setOf(continuationIndex, dataIndex, exceptionIndex) }
-                    .map { Pair(it, frame.getLocal(it)) }
-                    .filter { (index, value) ->
-                        (index == 0 && needDispatchReceiver && isForNamedFunction) ||
-                                (value.type != null && livenessFrame.isAlive(index))
-                    }
+            val variablesToSpill = arrayListOf<Pair<Int, BasicValue>>()
+            for (slot in 0 until localsCount) {
+                if (slot == continuationIndex || slot == dataIndex || slot == exceptionIndex) continue
+                val value = frame.getLocal(slot)
+                if (value.type == null || !livenessFrame.isAlive(slot)) continue
+                variablesToSpill += slot to value
+            }
 
             for ((index, basicValue) in variablesToSpill) {
                 if (basicValue == StrictBasicValue.NULL_VALUE) {

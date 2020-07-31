@@ -29,7 +29,6 @@ final class Override5Kt$box$1 {
 @kotlin.Metadata
 public final class Override5Kt$inlineMe$1$generic$1 {
     // source: 'override5.kt'
-    field L$0: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: Override5Kt$inlineMe$1
