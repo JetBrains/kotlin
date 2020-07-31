@@ -43,7 +43,7 @@ fun foo2() {}
 
 fun foo(vararg i: Int) {}
 
-<!INAPPLICABLE_CANDIDATE!>@Ann(s = "value")<!>
+@Ann(s = "value")
 fun dep1() {
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(i = 1)
+    foo(i = 1)
 }

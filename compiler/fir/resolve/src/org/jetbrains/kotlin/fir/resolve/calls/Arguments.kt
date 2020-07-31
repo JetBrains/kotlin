@@ -346,7 +346,7 @@ internal fun FirExpression.getExpectedType(
 ): ConeKotlinType {
     val shouldUnwrapVarargType = when (this) {
         is FirSpreadArgumentExpression -> !isSpread
-        is FirNamedArgumentExpression -> false
+        is FirNamedArgumentExpression -> expression is FirConstExpression<*>
         else -> true
     }
 

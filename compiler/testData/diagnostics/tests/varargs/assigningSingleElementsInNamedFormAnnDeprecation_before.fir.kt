@@ -11,7 +11,7 @@
 
 annotation class Ann(vararg val s: String)
 
-<!INAPPLICABLE_CANDIDATE!>@Ann(s = "value")<!>
+@Ann(s = "value")
 fun test1() {}
 
 @Ann(s = *arrayOf("value"))
@@ -20,7 +20,7 @@ fun test2() {}
 @Ann(s = *["value"])
 fun test3() {}
 
-<!INAPPLICABLE_CANDIDATE!>@JavaAnn(value = "value")<!>
+@JavaAnn(value = "value")
 fun test4() {}
 
 @JavaAnn("value", path = arrayOf("path"))

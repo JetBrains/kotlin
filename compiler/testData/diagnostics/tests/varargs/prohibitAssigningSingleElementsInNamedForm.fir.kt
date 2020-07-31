@@ -4,7 +4,7 @@
 annotation class Anno1(vararg val s: String)
 annotation class Anno2(vararg val i: Int)
 
-<!INAPPLICABLE_CANDIDATE!>@Anno1(s = "foo")<!>
+@Anno1(s = "foo")
 @Anno2(i = *intArrayOf(1))
 fun f1() {}
 
@@ -15,6 +15,6 @@ fun f2() {}
 fun foo(vararg ints: Int) {}
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(ints = 1)
+    foo(ints = 1)
     foo(ints = *intArrayOf(1))
 }
