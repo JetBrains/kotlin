@@ -596,6 +596,8 @@ abstract class KotlinIrLinker(
             fakeOverrideBuilder.provideFakeOverrides(klass)
         }
 
+        haveSeen.clear()
+
         // TODO: fix IrPluginContext to make it not produce additional external reference
         // symbolTable.noUnboundLeft("unbound after fake overrides:")
     }
