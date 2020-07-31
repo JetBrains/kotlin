@@ -88,11 +88,20 @@ class UnindexedFilesFinder implements VirtualFileFilter {
               try {
                 if (myFileBasedIndex.needsFileContentLoading(indexId)) {
                   FileIndexingState fileIndexingState = myFileBasedIndex.shouldIndexFile(fileContent, indexId);
+                  boolean indexInfrastructureExtensionInvalidated = false;
                   if (fileIndexingState == FileIndexingState.UP_TO_DATE) {
                     if (myShouldProcessUpToDateFiles) {
-                      myStateProcessors.forEach(p -> p.processUpToDateFile(file, inputId, indexId));
+                      for (FileBasedIndexInfrastructureExtension.FileIndexingStatusProcessor p : myStateProcessors) {
+                        if (!p.processUpToDateFile(file, inputId, indexId)) {
+                          indexInfrastructureExtensionInvalidated = true;
+                        }
+                      }
                     }
-                  } else if (fileIndexingState.updateRequired()) {
+                  }
+                  if (indexInfrastructureExtensionInvalidated) {
+                    fileIndexingState = myFileBasedIndex.shouldIndexFile(fileContent, indexId);
+                  }
+                  if (fileIndexingState.updateRequired()) {
                     if (myDoTraceForFilesToBeIndexed) {
                       LOG.trace("Scheduling indexing of " + file + " by request of index " + indexId);
                     }
