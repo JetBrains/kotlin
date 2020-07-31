@@ -2,6 +2,10 @@
 <project version="4">
   <component name="JavaProjectCodeInsightSettings">
     <excluded-names>
+      <name>com.intellij.util.containers.HashMap</name>
+      <name>com.intellij.util.containers.HashSet</name>
+      <name>com.intellij.util.containers.hash.HashMap</name>
+      <name>com.intellij.util.containers.hash.HashSet</name>
       <name>com.sun.istack</name>
       <name>com.sun.media.jfxmediaimpl.MediaDisposer.Disposable</name>
       <name>com.sun.tools.javac.util.List</name>

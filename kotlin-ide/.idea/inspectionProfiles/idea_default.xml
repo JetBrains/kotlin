@@ -941,12 +941,6 @@
         <constraint name="__context__" script="&quot;import com.intellij.psi.*&#10;import com.intellij.psi.search.GlobalSearchScope&#10;import com.intellij.psi.util.PsiUtil&#10;&#10;def project = __context__.getProject();&#10;def fqn = c.getValue().substring(1);&#10;if (fqn.indexOf('.') == -1) return false;&#10;def shortName = com.intellij.openapi.util.text.StringUtil.getShortName(fqn);&#10;if (!shortName.equals(com.intellij.openapi.util.text.StringUtil.capitalize(shortName))) return false;&#10;&#10;def cClass = JavaPsiFacade.getInstance(project).findClass(fqn, GlobalSearchScope.allScope(project));&#10; cClass == null&#10;&quot;" target="true" within="" contains="" />
         <constraint name="c" within="" contains="" />
       </searchConfiguration>
-      <searchConfiguration name="Storing localized strings in static fields prevents dynamic loading of language bundles" text="static final String $string$ = $bundle$.message(&quot;$s$&quot;);" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="member">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="s" within="" contains="" />
-        <constraint name="string" within="" contains="" />
-        <constraint name="bundle" regexp="AbstractBundle" withinHierarchy="true" within="" contains="" />
-      </searchConfiguration>
       <searchConfiguration name="nullability for array elements specified, probably nullability for the array itself was intended" text="@$Anno$ $Type$ $x$;" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
         <constraint name="__context__" within="" contains="" />
         <constraint name="x" within="" contains="" />
@@ -1234,6 +1228,25 @@
         <constraint name="Parameter" minCount="0" maxCount="2147483647" within="" contains="" />
         <constraint name="__context__" within="" contains="" />
       </replaceConfiguration>
+      <searchConfiguration name="Storing localized strings in static fields prevents dynamic loading of language bundles" order="1" text="enum $E$ {&#10;  $A$($before$, $bundle$.$message$(&quot;$string$&quot;, $p$), $after$)&#10;}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="string" within="" contains="" />
+        <constraint name="bundle" regexp="AbstractBundle" withinHierarchy="true" within="" contains="" />
+        <constraint name="E" within="" contains="" />
+        <constraint name="A" within="" contains="" />
+        <constraint name="before" minCount="0" maxCount="2147483647" within="" contains="" />
+        <constraint name="after" minCount="0" maxCount="2147483647" within="" contains="" />
+        <constraint name="message" regexp="message" target="true" within="" contains="" />
+        <constraint name="p" minCount="0" maxCount="2147483647" within="" contains="" />
+      </searchConfiguration>
+      <searchConfiguration name="Storing localized strings in static fields prevents dynamic loading of language bundles" text="static final String $string$ = $bundle$.$message$(&quot;$s$&quot;, $p$);" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="member">
+        <constraint name="__context__" within="" contains="" />
+        <constraint name="s" within="" contains="" />
+        <constraint name="string" within="" contains="" />
+        <constraint name="bundle" regexp="AbstractBundle" withinHierarchy="true" within="" contains="" />
+        <constraint name="p" minCount="0" maxCount="2147483647" within="" contains="" />
+        <constraint name="message" regexp="message" target="true" within="" contains="" />
+      </searchConfiguration>
     </inspection_tool>
     <inspection_tool class="SafeVarargsDetector" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="SeamAnnotationIncorrectSignatureInspection" enabled="false" level="ERROR" enabled_by_default="false" />
