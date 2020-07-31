@@ -1053,7 +1053,6 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-common/tests/intellij.cidr.common.tests.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-common/tests/intellij.cidr.common.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-core/intellij.cidr.core.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-core/intellij.cidr.core.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-coverage/intellij.cidr.coverage.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-coverage/intellij.cidr.coverage.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-ctest/intellij.cidr.ctest.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-ctest/intellij.cidr.ctest.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-debugger/intellij.cidr.debugger.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-debugger/intellij.cidr.debugger.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-debugger/backend-api/intellij.cidr.debugger.backend.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-debugger/backend-api/intellij.cidr.debugger.backend.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-debugger/commandInterpreterLang/intellij.cidr.debugger.commandInterpreterLang.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-debugger/commandInterpreterLang/intellij.cidr.debugger.commandInterpreterLang.iml" />
