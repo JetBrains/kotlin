@@ -9,7 +9,7 @@ expect class Foo(
         "no"
     }
 
-    constructor(s: String) {
+    <!PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED!>constructor(s: String)<!> {
         "no"
     }
 

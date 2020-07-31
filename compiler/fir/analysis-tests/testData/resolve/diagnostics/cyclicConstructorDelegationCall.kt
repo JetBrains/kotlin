@@ -42,16 +42,16 @@ class J<T> {
 }
 
 class F(s: String) {
-    constructor(i: Boolean) {}
+    <!PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED!>constructor(i: Boolean)<!> {}
     constructor(i: Int) : <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>(3) {}
 }
 
 class G(x: Int) {
-    constructor() {}
+    <!PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED!>constructor()<!> {}
 }
 
 class H(x: Int) {
-    constructor()
+    <!PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED!>constructor()<!>
 }
 
 class K(x: Int) {

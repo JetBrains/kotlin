@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirCyclicConstructorDelegationCallChecker : FirMemberDeclarationChecker() {
@@ -22,11 +24,27 @@ object FirCyclicConstructorDelegationCallChecker : FirMemberDeclarationChecker()
         }
 
         val cyclicConstructors = mutableSetOf<FirConstructor>()
+        var hasPrimaryConstructor = false
 
         for (it in declaration.declarations) {
-            if (it is FirConstructor && !it.isPrimary) {
-                it.findCycle(cyclicConstructors)?.let { visited ->
-                    cyclicConstructors += visited
+            if (it is FirConstructor) {
+                if (!it.isPrimary) {
+                    it.findCycle(cyclicConstructors)?.let { visited ->
+                        cyclicConstructors += visited
+                    }
+                } else {
+                    hasPrimaryConstructor = true
+                }
+            }
+        }
+
+        if (hasPrimaryConstructor) {
+            for (it in declaration.declarations) {
+                if (
+                    it is FirConstructor && !it.isPrimary && it !in cyclicConstructors &&
+                    it.delegatedConstructor?.constructedTypeRef?.getType() != it.returnTypeRef.getType()
+                ) {
+                    reporter.reportPrimaryConstructorDelegationCallExpected(it.delegatedConstructor?.source)
                 }
             }
         }
@@ -60,7 +78,16 @@ object FirCyclicConstructorDelegationCallChecker : FirMemberDeclarationChecker()
         ?.resolvedSymbol
         ?.fir.safeAs()
 
+    private fun FirTypeRef.getType() = when (this) {
+        is FirResolvedTypeRef -> type
+        else -> null
+    }
+
     private fun DiagnosticReporter.reportCyclicConstructorDelegationCall(source: FirSourceElement?) {
         source?.let { report(FirErrors.CYCLIC_CONSTRUCTOR_DELEGATION_CALL.on(it)) }
+    }
+
+    private fun DiagnosticReporter.reportPrimaryConstructorDelegationCallExpected(source: FirSourceElement?) {
+        source?.let { report(FirErrors.PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED.on(it)) }
     }
 }
