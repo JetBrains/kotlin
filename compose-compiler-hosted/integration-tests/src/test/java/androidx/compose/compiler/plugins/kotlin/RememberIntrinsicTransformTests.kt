@@ -16,8 +16,10 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import org.junit.Ignore
 import org.junit.Test
 
+@Ignore("Pending fix for b/162464429")
 class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
     private fun comparisonPropagation(
         unchecked: String,

@@ -2433,7 +2433,8 @@ class ComposableFunctionBodyTransformer(
 
     private fun visitComposableCall(expression: IrCall): IrExpression {
         return when (expression.symbol.descriptor.fqNameSafe) {
-            ComposeFqNames.remember -> visitRememberCall(expression)
+            // TODO: re-enable this once b/162464429 is addressed
+            // ComposeFqNames.remember -> visitRememberCall(expression)
             ComposeFqNames.key -> visitKeyCall(expression)
             else -> visitNormalComposableCall(expression)
         }
