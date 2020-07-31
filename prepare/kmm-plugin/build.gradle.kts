@@ -14,9 +14,6 @@ val handleSymlink: (FileCopyDetails, File) -> Boolean by ultimateTools
 val mainModule = ":kotlin-ultimate:ide:android-studio-native"
 val binariesDir = "bin"
 
-val kotlinVersion: String by rootProject.extra
-val kmmPluginVersion: String = findProperty("kmmPluginDeployVersion")?.toString() ?: "0.1-SNAPSHOT"
-
 dependencies {
     embedded(project(mainModule)) { isTransitive = false }
 }
@@ -66,14 +63,14 @@ val kmmPluginTask: Copy = task<Copy>("kmmPlugin") {
 
 val zipKmmPluginTask: Zip = task<Zip>("zipKmmPlugin") {
     dependsOn(kmmPluginTask)
-    val pluginNumber: String = findProperty("kmmPluginNumber")?.toString() ?: "SNAPSHOT"
-    val destinationFile: File = artifactsForCidrDir.resolve("kmm-plugin-$pluginNumber.zip").canonicalFile
+    val kmmPluginVersion: String = findProperty("kmmPluginVersion")?.toString() ?: "SNAPSHOT"
+    val destinationFile: File = artifactsForCidrDir.resolve("kmm-plugin-$kmmPluginVersion.zip").canonicalFile
 
     destinationDirectory.set(destinationFile.parentFile)
     archiveFileName.set(destinationFile.name)
 
     from(kmmPluginDir)
-    into("kmm-plugin")
+    into("kmm")
 
     doLast {
         logger.lifecycle("KMM plugin artifacts are packed to $destinationFile")
@@ -94,34 +91,5 @@ if (rootProject.findProperty("versions.androidStudioRelease") != null) {
     (rootProject.tasks.findByPath("idea-runner:runIde") as? JavaExec)?.apply {
         dependsOn(":kotlin-ultimate:prepare:kmm-plugin:kmmPlugin")
         this.setJvmArgs(addPlugin(this.allJvmArgs, kmmPluginDir.absolutePath))
-    }
-}
-
-fun replaceVersion(versionFile: File, versionPattern: String, replacement: (MatchResult) -> String) {
-    check(versionFile.isFile) { "Version file $versionFile is not found" }
-    val text = versionFile.readText()
-    val pattern = Regex(versionPattern)
-    val match = pattern.find(text) ?: error("Version pattern is missing in file $versionFile")
-    val newValue = replacement(match)
-    versionFile.writeText(text.replaceRange(match.groups[1]!!.range, newValue))
-}
-
-val writePluginVersion by tasks.registering {
-    val versionFile = project(":kotlin-ultimate:ide:android-studio-native")
-        .projectDir
-        .resolve("src/com/jetbrains/kmm/versions/VersionsUtils.kt")
-
-    inputs.property("version", kmmPluginVersion)
-    inputs.property("kotlinVersion", kotlinVersion)
-    outputs.file(versionFile)
-
-    doLast {
-        replaceVersion(versionFile, """const val pluginVersion: String = "([^"]+)"""") {
-            kmmPluginVersion
-        }
-
-        replaceVersion(versionFile, """const val compiledAgainstKotlin: String = "([^"]+)"""") {
-            kotlinVersion
-        }
     }
 }

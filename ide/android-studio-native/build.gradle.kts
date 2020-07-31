@@ -6,6 +6,9 @@ val ultimateTools: Map<String, Any> by rootProject.extensions
 val proprietaryRepositories: Project.() -> Unit by ultimateTools
 val cidrVersion: String by rootProject.extra
 
+val kotlinPluginVersion = (findProperty("pluginVersion")?.toString() ?: rootProject.extra["kotlinVersion"]) as String
+val kmmPluginVersion: String = findProperty("kmmPluginVersion")?.toString() ?: "0.1-SNAPSHOT"
+
 proprietaryRepositories(project)
 
 dependencies {
@@ -118,3 +121,31 @@ projectTest {
     useAndroidSdk()
 }
 
+fun replaceVersion(versionFile: File, versionPrefix: String, replacement: (MatchResult) -> String) {
+    check(versionFile.isFile) { "Version file $versionFile is not found" }
+    val text = versionFile.readText()
+    val pattern = Regex("$versionPrefix\"([^\"]+)\"")
+    val match = pattern.find(text) ?: error("Version pattern is missing in file $versionFile")
+    val newValue = replacement(match)
+    versionFile.writeText(text.replaceRange(match.groups[1]!!.range, newValue))
+}
+
+val writePluginVersion by tasks.creating {
+    val versionFile = project(":kotlin-ultimate:ide:android-studio-native")
+        .projectDir
+        .resolve("src/com/jetbrains/kmm/versions/VersionsUtils.kt")
+
+    inputs.property("version", kmmPluginVersion)
+    inputs.property("kotlinVersion", kotlinPluginVersion)
+    outputs.file(versionFile)
+
+    replaceVersion(versionFile, "const val pluginVersion: String = ") {
+        kmmPluginVersion
+    }
+
+    replaceVersion(versionFile, "const val compiledAgainstKotlin: String = ") {
+        kotlinPluginVersion
+    }
+}
+
+tasks["compileKotlin"].dependsOn(writePluginVersion)

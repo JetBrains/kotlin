@@ -5,7 +5,7 @@
 
 package com.jetbrains.kmm.versions
 
-// WARNING! Content of this class is filled during the build (see 'writePluginVersion' in prepare/android-studio-native/build.gradle.kts)
+// WARNING! Content of this class is filled during the build (see 'writePluginVersion' in ide/android-studio-native/build.gradle.kts)
 // DON'T MODIFY MANUALLY!
 object MobileMultiplatformPluginVersionsInfo {
     const val compiledAgainstKotlin: String = "1.4.255-SNAPSHOT"

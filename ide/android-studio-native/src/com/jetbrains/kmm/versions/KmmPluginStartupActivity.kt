@@ -23,16 +23,17 @@ class KmmPluginStartupActivity : StartupActivity.DumbAware {
     }
 }
 
+private val VERSIONS_INFO = listOf(
+    "Kotlin Plugin version: ${KotlinPluginUtil.getPluginVersion()}",
+    "Compiled against Kotlin: ${MobileMultiplatformPluginVersionsInfo.compiledAgainstKotlin}",
+    "KMM Plugin version: ${MobileMultiplatformPluginVersionsInfo.pluginVersion}"
+)
+
 object KmmCompatibilityChecker {
     fun checkCompatibilityAgainstBigKotlin(project: Project) {
-        KMM_LOG.debug(
-            """
-                KmmCompatibilityChecker
-                Kotlin Plugin version: ${KotlinPluginUtil.getPluginVersion()}
-                Compiled against Kotlin: ${MobileMultiplatformPluginVersionsInfo.compiledAgainstKotlin}
-                KMM Plugin version: ${MobileMultiplatformPluginVersionsInfo.pluginVersion}
-            """.trimIndent()
-        )
+        KMM_LOG.debug("KmmCompatibilityChecker:")
+        VERSIONS_INFO.forEach { KMM_LOG.debug(it) }
+
         if (MobileMultiplatformPluginVersionsInfo.isDevelopment()) return
 
         val actualKotlinPluginVersion = KotlinPluginVersion.parse(KotlinPluginUtil.getPluginVersion()) ?: return
@@ -57,12 +58,8 @@ object KmmCompatibilityChecker {
             UNKNOWN -> """
                 Warning!
                 Kotlin Multiplatform/Mobile plugin isn't guaranteed to work correctly and will be disabled, as the exact version of Kotlin Plugin can not be detected. 
-                Please, report this case to the JetBrains, attaching the following information:
-                
-                Kotlin Plugin version: ${KotlinPluginUtil.getPluginVersion()}
-                Compiled against Kotlin: ${MobileMultiplatformPluginVersionsInfo.compiledAgainstKotlin}
-                KMM Plugin version: ${MobileMultiplatformPluginVersionsInfo.pluginVersion}
-            """.trimIndent()
+                Please, report this case to the JetBrains, attaching the following information:                
+            """.trimIndent() + VERSIONS_INFO.joinToString("\n")
         }
 
         if (errorText != null) {
