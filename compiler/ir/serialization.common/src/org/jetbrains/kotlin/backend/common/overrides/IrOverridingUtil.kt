@@ -59,6 +59,11 @@ class IrOverridingUtil(
     private val IrOverridableMember.original get() = originals[this] ?: error("No original for ${this.render()}")
     private val originalSuperTypes = mutableMapOf<IrOverridableMember, IrType>()
 
+    fun clear() {
+        originals.clear()
+        originalSuperTypes.clear()
+    }
+
     private var IrOverridableMember.overriddenSymbols: List<IrSymbol>
         get() = when (this) {
             is IrSimpleFunction -> this.overriddenSymbols
