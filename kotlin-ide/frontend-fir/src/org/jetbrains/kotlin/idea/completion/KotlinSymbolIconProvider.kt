@@ -30,7 +30,7 @@ internal object KotlinSymbolIconProvider {
             val isAbstract = symbol.modality == KtCommonSymbolModality.ABSTRACT
 
             return when (symbol.classKind) {
-                KtClassKind.CLASS -> if (isAbstract) KotlinIcons.CLASS else KotlinIcons.ABSTRACT_CLASS
+                KtClassKind.CLASS -> if (isAbstract) KotlinIcons.ABSTRACT_CLASS else KotlinIcons.CLASS
                 KtClassKind.ENUM_CLASS, KtClassKind.ENUM_ENTRY -> KotlinIcons.ENUM
                 KtClassKind.ANNOTATION_CLASS -> KotlinIcons.ANNOTATION
                 KtClassKind.OBJECT, KtClassKind.COMPANION_OBJECT -> KotlinIcons.OBJECT
