@@ -40,6 +40,8 @@ object FirExposedVisibilityDeclarationChecker : FirMemberDeclarationChecker() {
 
     private fun checkSupertypes(declaration: FirRegularClass, reporter: DiagnosticReporter, context: CheckerContext) {
         val classVisibility = declaration.getEffectiveVisibility(context)
+
+        if (classVisibility == FirEffectiveVisibilityImpl.Local) return
         val supertypes = declaration.superTypeRefs
         val isInterface = declaration.classKind == ClassKind.INTERFACE
         for (supertypeRef in supertypes) {
@@ -64,6 +66,8 @@ object FirExposedVisibilityDeclarationChecker : FirMemberDeclarationChecker() {
 
     private fun checkParameterBounds(declaration: FirRegularClass, reporter: DiagnosticReporter, context: CheckerContext) {
         val classVisibility = declaration.getEffectiveVisibility(context)
+
+        if (classVisibility == FirEffectiveVisibilityImpl.Local) return
         for (parameter in declaration.typeParameters) {
             for (bound in parameter.symbol.fir.bounds) {
                 val restricting = bound.coneType.findVisibilityExposure(context, classVisibility)
@@ -83,6 +87,8 @@ object FirExposedVisibilityDeclarationChecker : FirMemberDeclarationChecker() {
     private fun checkTypeAlias(declaration: FirTypeAlias, reporter: DiagnosticReporter, context: CheckerContext) {
         val expandedType = declaration.expandedConeType
         val typeAliasVisibility = declaration.getEffectiveVisibility(context)
+
+        if (typeAliasVisibility == FirEffectiveVisibilityImpl.Local) return
         val restricting = expandedType?.findVisibilityExposure(context, typeAliasVisibility)
         if (restricting != null) {
             reporter.reportExposure(
@@ -96,8 +102,9 @@ object FirExposedVisibilityDeclarationChecker : FirMemberDeclarationChecker() {
     }
 
     private fun checkFunction(declaration: FirFunction<*>, reporter: DiagnosticReporter, context: CheckerContext) {
-        val functionVisibility =
-            (declaration as FirMemberDeclaration).getEffectiveVisibility(context)
+        val functionVisibility = (declaration as FirMemberDeclaration).getEffectiveVisibility(context)
+
+        if (functionVisibility == FirEffectiveVisibilityImpl.Local) return
         if (declaration !is FirConstructor) {
             val restricting = declaration.returnTypeRef.coneTypeSafe<ConeKotlinType>()
                 ?.findVisibilityExposure(context, functionVisibility)
@@ -132,6 +139,8 @@ object FirExposedVisibilityDeclarationChecker : FirMemberDeclarationChecker() {
 
     private fun checkProperty(declaration: FirProperty, reporter: DiagnosticReporter, context: CheckerContext) {
         val propertyVisibility = declaration.getEffectiveVisibility(context)
+
+        if (propertyVisibility == FirEffectiveVisibilityImpl.Local) return
         val restricting =
             declaration.returnTypeRef.coneTypeSafe<ConeKotlinType>()
                 ?.findVisibilityExposure(context, propertyVisibility)
@@ -156,6 +165,8 @@ object FirExposedVisibilityDeclarationChecker : FirMemberDeclarationChecker() {
         if (typeRef == null || memberDeclaration == null) return
         val receiverParameterType = typeRef.coneType
         val memberVisibility = memberDeclaration.getEffectiveVisibility(context)
+
+        if (memberVisibility == FirEffectiveVisibilityImpl.Local) return
         val restricting = receiverParameterType.findVisibilityExposure(context, memberVisibility)
         if (restricting != null) {
             reporter.reportExposure(
@@ -172,11 +183,8 @@ object FirExposedVisibilityDeclarationChecker : FirMemberDeclarationChecker() {
         context: CheckerContext,
         base: FirEffectiveVisibility
     ): FirMemberDeclaration? {
-        val type = this as? ConeClassLikeType
-            ?: return null
-        val fir = type.lookupTag.toSymbol(context.session)
-            ?.fir
-            ?: return null
+        val type = this as? ConeClassLikeType ?: return null
+        val fir = type.lookupTag.toSymbol(context.session)?.fir ?: return null
 
         if (fir is FirMemberDeclaration) {
             when (fir.getEffectiveVisibility(context).relation(base)) {
