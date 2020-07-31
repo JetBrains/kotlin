@@ -11,6 +11,7 @@ import com.jetbrains.cidr.lang.preprocessor.OCInclusionContext
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTable
 import com.jetbrains.cidr.lang.symbols.symtable.OCContextSignatureBuilder
 import com.jetbrains.cidr.lang.symbols.symtable.SymbolTableProvider
+import org.jetbrains.konan.isCommonOrIos
 import org.jetbrains.konan.resolve.konan.KonanTarget.Companion.PRODUCT_MODULE_NAME_KEY
 import org.jetbrains.konan.resolve.translation.KtFileTranslator.Companion.isKtTranslationSupported
 import org.jetbrains.konan.resolve.translation.KtFileTranslator.Companion.ktTranslator
@@ -19,15 +20,14 @@ import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationList
 import org.jetbrains.kotlin.psi.KtFile
 
 class KtSymbolTableProvider : SymbolTableProvider() {
-    override fun isSource(file: PsiFile): Boolean = file is KtFile
+    override fun isSource(file: PsiFile): Boolean = file is KtFile && file.virtualFile.isCommonOrIos(file.project)
 
-    //todo[medvedev] check if the source is from common or ios module
     override fun isSource(project: Project, file: VirtualFile): Boolean =
-        FileTypeManager.getInstance().isFileOfType(file, KotlinFileType.INSTANCE)
+        FileTypeManager.getInstance().isFileOfType(file, KotlinFileType.INSTANCE) && file.isCommonOrIos(project)
 
-    //todo[medvedev] check if the source is from common or ios module
     override fun isSource(project: Project, file: VirtualFile, inclusionContext: OCInclusionContext): Boolean =
-        isSource(project, file) && inclusionContext.isKtTranslationSupported && inclusionContext.isDefined(PRODUCT_MODULE_NAME_KEY)
+        isSource(project, file) && inclusionContext.isKtTranslationSupported && inclusionContext.isDefined(PRODUCT_MODULE_NAME_KEY) &&
+                file.isCommonOrIos(project)
 
     override fun isOutOfCodeBlockChange(event: PsiTreeChangeEventImpl): Boolean =
         getInsideCodeBlockModificationScope(event.parent) == null

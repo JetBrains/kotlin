@@ -1,15 +1,11 @@
 package org.jetbrains.konan
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.konan.gradle.forEachKonanProject
-import org.jetbrains.konan.resolve.konan.KonanTarget
-import org.jetbrains.konan.resolve.konan.KonanTargetManager
+import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.idea.project.platform
+import org.jetbrains.kotlin.idea.util.findModule
+import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.platform.konan.isNative
 
-fun getKonanFrameworkTargets(project: Project): List<KonanTarget> = mutableListOf<KonanTarget>().apply {
-    forEachKonanProject(project) { konanModel, module, _ ->
-        for (artifact in konanModel.artifacts) {
-            if (artifact.type != "FRAMEWORK") continue
-            add(KonanTargetManager.getInstance(project).forArtifact(module.data.id, artifact) ?: continue)
-        }
-    }
-}
+fun VirtualFile.isCommonOrIos(project: Project): Boolean =
+    findModule(project)?.platform?.let { it.isCommon() || it.isNative() } ?: false

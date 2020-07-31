@@ -9,6 +9,7 @@ import com.jetbrains.cidr.lang.refactoring.OCNameSuggester
 import com.jetbrains.cidr.lang.search.OCMethodReferencesSearch.processRefs
 import com.jetbrains.cidr.lang.symbols.objc.OCMethodSymbol
 import com.jetbrains.cidr.lang.types.OCObjectType
+import org.jetbrains.konan.isCommonOrIos
 import org.jetbrains.konan.resolve.findSymbols
 import org.jetbrains.konan.resolve.symbols.KtOCSymbolPsiWrapper
 import org.jetbrains.kotlin.idea.debugger.readAction
@@ -20,6 +21,7 @@ class KotlinFunctionOCUsagesSearcher : QueryExecutor<PsiReference, SearchParamet
 
     private fun doExecute(parameters: SearchParameters, consumer: Processor<in PsiReference>): Boolean {
         val function = parameters.getUnwrappedTarget() as? KtFunction ?: return true
+        if (!function.containingFile.virtualFile.isCommonOrIos(function.project)) return true
         val symbols = function.findSymbols(CLanguageKind.OBJ_C)
         for (symbol in symbols) {
             if (symbol is OCMethodSymbol && !processSymbol(function, symbol, parameters, consumer)) return false
