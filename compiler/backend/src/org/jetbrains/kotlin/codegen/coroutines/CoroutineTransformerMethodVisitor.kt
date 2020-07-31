@@ -143,7 +143,8 @@ class CoroutineTransformerMethodVisitor(
 
         val continuationLabels = suspensionPoints.withIndex().map {
             transformCallAndReturnContinuationLabel(
-                it.index + 1, it.value, methodNode, suspendMarkerVarIndex, suspensionPointLineNumbers[it.index])
+                it.index + 1, it.value, methodNode, suspendMarkerVarIndex, suspensionPointLineNumbers[it.index]
+            )
         }
 
         methodNode.instructions.apply {
@@ -193,7 +194,7 @@ class CoroutineTransformerMethodVisitor(
 
     private fun addCompletionParameterToLVT(methodNode: MethodNode) {
         val index =
-                /*  all args */ Type.getMethodType(methodNode.desc).argumentTypes.fold(0) { a, b -> a + b.size } +
+            /*  all args */ Type.getMethodType(methodNode.desc).argumentTypes.fold(0) { a, b -> a + b.size } +
                 /* this */ (if (isStatic(methodNode.access)) 0 else 1) -
                 /* only last */ 1
         val startLabel = with(methodNode.instructions) {
@@ -572,11 +573,15 @@ class CoroutineTransformerMethodVisitor(
 
         fun AbstractInsnNode.index() = instructions.indexOf(this)
 
-        // We postpone these actions because they change instruction indices that we use when obtaining frames
-        val postponedActions = mutableListOf<() -> Unit>()
         val maxVarsCountByType = mutableMapOf<Type, Int>()
         val livenessFrames = analyzeLiveness(methodNode)
-        val spilledToVariableMapping = arrayListOf<List<SpilledVariableAndField>>()
+
+        // References shall be cleaned up after uspill (during spill in next suspension point) to prevent memory leaks,
+        val referencesToSpillBySuspensionPointIndex = arrayListOf<List<ReferenceToSpill>>()
+        // while primitives shall not
+        val primitivesToSpillBySuspensionPointIndex = arrayListOf<List<PrimitiveToSpill>>()
+
+        // Collect information about spillable variables, that we use to determine which variables we need to cleanup
 
         for (suspension in suspensionPoints) {
             val suspensionCallBegin = suspension.suspensionCallBegin
@@ -603,7 +608,8 @@ class CoroutineTransformerMethodVisitor(
             // NB: it's also rather useful for sake of optimization
             val livenessFrame = livenessFrames[suspensionCallBegin.index()]
 
-            val spilledToVariable = arrayListOf<SpilledVariableAndField>()
+            val referencesToSpill = arrayListOf<Pair<Int, SpillableVariable?>>()
+            val primitivesToSpill = arrayListOf<Pair<Int, SpillableVariable>>()
 
             // 0 - this
             // 1 - parameter
@@ -611,68 +617,91 @@ class CoroutineTransformerMethodVisitor(
             // k - continuation
             // k + 1 - data
             // k + 2 - exception
-            val variablesToSpill = arrayListOf<Pair<Int, BasicValue>>()
             for (slot in 0 until localsCount) {
                 if (slot == continuationIndex || slot == dataIndex || slot == exceptionIndex) continue
                 val value = frame.getLocal(slot)
                 if (value.type == null || !livenessFrame.isAlive(slot)) continue
-                variablesToSpill += slot to value
-            }
 
-            for ((index, basicValue) in variablesToSpill) {
-                if (basicValue == StrictBasicValue.NULL_VALUE) {
-                    postponedActions.add {
-                        with(instructions) {
-                            insert(suspension.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
-                                aconst(null)
-                                store(index, AsmTypes.OBJECT_TYPE)
-                            })
-                        }
-                    }
+                if (value == StrictBasicValue.NULL_VALUE) {
+                    referencesToSpill += slot to null
                     continue
                 }
 
-                val type = basicValue.type!!
+                val type = value.type!!
                 val normalizedType = type.normalize()
 
                 val indexBySort = varsCountByType[normalizedType]?.plus(1) ?: 0
                 varsCountByType[normalizedType] = indexBySort
 
                 val fieldName = normalizedType.fieldNameForVar(indexBySort)
-                localVariableName(methodNode, index, suspension.suspensionCallEnd.next.index())
-                    ?.let { spilledToVariable.add(SpilledVariableAndField(fieldName, it)) }
-
-                postponedActions.add {
-                    with(instructions) {
-                        // store variable before suspension call
-                        insertBefore(suspension.suspensionCallBegin, withInstructionAdapter {
-                            load(continuationIndex, AsmTypes.OBJECT_TYPE)
-                            load(index, type)
-                            StackValue.coerce(type, normalizedType, this)
-                            putfield(classBuilderForCoroutineState.thisName, fieldName, normalizedType.descriptor)
-                        })
-
-                        // restore variable after suspension call
-                        insert(suspension.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
-                            load(continuationIndex, AsmTypes.OBJECT_TYPE)
-                            getfield(classBuilderForCoroutineState.thisName, fieldName, normalizedType.descriptor)
-                            StackValue.coerce(normalizedType, type, this)
-                            store(index, type)
-                        })
-                    }
+                if (normalizedType == AsmTypes.OBJECT_TYPE) {
+                    referencesToSpill += slot to SpillableVariable(value, type, normalizedType, fieldName)
+                } else {
+                    primitivesToSpill += slot to SpillableVariable(value, type, normalizedType, fieldName)
                 }
             }
 
-            spilledToVariableMapping.add(spilledToVariable)
+            referencesToSpillBySuspensionPointIndex += referencesToSpill
+            primitivesToSpillBySuspensionPointIndex += primitivesToSpill
 
-            varsCountByType.forEach {
-                maxVarsCountByType[it.key] = max(maxVarsCountByType[it.key] ?: 0, it.value)
+            for ((type, index) in varsCountByType) {
+                maxVarsCountByType[type] = max(maxVarsCountByType[type] ?: 0, index)
             }
         }
 
-        postponedActions.forEach(Function0<Unit>::invoke)
+        // TODO: Calculate variable to cleaup
 
-        maxVarsCountByType.forEach { entry ->
+        // Mutate method node
+
+        fun generateSpillAndUnspill(suspension: SuspensionPoint, slot: Int, spillableVariable: SpillableVariable?) {
+            if (spillableVariable == null) {
+                with(instructions) {
+                    insert(suspension.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
+                        aconst(null)
+                        store(slot, AsmTypes.OBJECT_TYPE)
+                    })
+                }
+                return
+            }
+
+            with(instructions) {
+                // store variable before suspension call
+                insertBefore(suspension.suspensionCallBegin, withInstructionAdapter {
+                    load(continuationIndex, AsmTypes.OBJECT_TYPE)
+                    load(slot, spillableVariable.type)
+                    StackValue.coerce(spillableVariable.type, spillableVariable.normalizedType, this)
+                    putfield(
+                        classBuilderForCoroutineState.thisName,
+                        spillableVariable.fieldName,
+                        spillableVariable.normalizedType.descriptor
+                    )
+                })
+
+                // restore variable after suspension call
+                insert(suspension.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
+                    load(continuationIndex, AsmTypes.OBJECT_TYPE)
+                    getfield(
+                        classBuilderForCoroutineState.thisName,
+                        spillableVariable.fieldName,
+                        spillableVariable.normalizedType.descriptor
+                    )
+                    StackValue.coerce(spillableVariable.normalizedType, spillableVariable.type, this)
+                    store(slot, spillableVariable.type)
+                })
+            }
+        }
+
+        for (suspensionPointIndex in suspensionPoints.indices) {
+            val suspension = suspensionPoints[suspensionPointIndex]
+            for ((slot, referenceToSpill) in referencesToSpillBySuspensionPointIndex[suspensionPointIndex]) {
+                generateSpillAndUnspill(suspension, slot, referenceToSpill)
+            }
+            for ((slot, primitiveToSpill) in primitivesToSpillBySuspensionPointIndex[suspensionPointIndex]) {
+                generateSpillAndUnspill(suspension, slot, primitiveToSpill)
+            }
+        }
+
+        for (entry in maxVarsCountByType) {
             val (type, maxIndex) = entry
             for (index in 0..maxIndex) {
                 classBuilderForCoroutineState.newField(
@@ -680,6 +709,34 @@ class CoroutineTransformerMethodVisitor(
                     type.fieldNameForVar(index), type.descriptor, null, null
                 )
             }
+        }
+
+        // Calculate debug metadata mapping
+
+        fun calculateSpilledVariableAndField(
+            suspension: SuspensionPoint,
+            slot: Int,
+            spillableVariable: SpillableVariable?
+        ): SpilledVariableAndField? {
+            if (spillableVariable == null) return null
+            val name = localVariableName(methodNode, slot, suspension.suspensionCallEnd.next.index()) ?: return null
+            return SpilledVariableAndField(spillableVariable.fieldName, name)
+        }
+
+        val spilledToVariableMapping = arrayListOf<List<SpilledVariableAndField>>()
+        for (suspensionPointIndex in suspensionPoints.indices) {
+            val suspension = suspensionPoints[suspensionPointIndex]
+
+            val spilledToVariable = arrayListOf<SpilledVariableAndField>()
+
+            referencesToSpillBySuspensionPointIndex[suspensionPointIndex].mapNotNullTo(spilledToVariable) { (slot, spillableVariable) ->
+                calculateSpilledVariableAndField(suspension, slot, spillableVariable)
+            }
+            primitivesToSpillBySuspensionPointIndex[suspensionPointIndex].mapNotNullTo(spilledToVariable) { (slot, spillableVariable) ->
+                calculateSpilledVariableAndField(suspension, slot, spillableVariable)
+            }
+
+            spilledToVariableMapping += spilledToVariable
         }
         return spilledToVariableMapping
     }
@@ -863,6 +920,16 @@ class CoroutineTransformerMethodVisitor(
 
     private data class SpilledVariableAndField(val fieldName: String, val variableName: String)
 }
+
+private class SpillableVariable(
+    val value: BasicValue,
+    val type: Type,
+    val normalizedType: Type,
+    val fieldName: String
+)
+
+private typealias ReferenceToSpill = Pair<Int, SpillableVariable?>
+private typealias PrimitiveToSpill = Pair<Int, SpillableVariable>
 
 internal fun InstructionAdapter.generateContinuationConstructorCall(
     objectTypeForState: Type?,
