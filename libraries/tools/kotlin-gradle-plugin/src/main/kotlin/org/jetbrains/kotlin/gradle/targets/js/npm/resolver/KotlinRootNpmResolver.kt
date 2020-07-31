@@ -49,6 +49,7 @@ internal class KotlinRootNpmResolver internal constructor(
     val compositeNodeModules = CompositeNodeModulesCache(nodeJs)
     val packageJsonUmbrella = rootProject.registerTask(PACKAGE_JSON_UMBRELLA_TASK_NAME, Task::class.java) {}
     val projectResolvers = mutableMapOf<Project, KotlinProjectNpmResolver>()
+    val resolutions = mutableMapOf<String, String>()
 
     fun alreadyResolvedMessage(action: String) = "Cannot $action. NodeJS projects already resolved."
 
@@ -110,7 +111,8 @@ internal class KotlinRootNpmResolver internal constructor(
 
             nodeJs.packageManager.prepareRootProject(
                 rootProject,
-                allNpmPackages
+                allNpmPackages,
+                resolutions
             )
 
             return Installation(
