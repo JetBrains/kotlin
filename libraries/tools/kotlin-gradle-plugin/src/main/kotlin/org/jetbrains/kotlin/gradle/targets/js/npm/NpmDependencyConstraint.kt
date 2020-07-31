@@ -9,7 +9,6 @@ import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.*
 import org.gradle.api.attributes.AttributeContainer
-import org.gradle.api.internal.artifacts.DefaultModuleIdentifier
 import org.gradle.api.internal.artifacts.dependencies.DefaultMutableVersionConstraint
 import org.gradle.api.internal.artifacts.dependencies.DependencyConstraintInternal
 import org.gradle.api.internal.attributes.ImmutableAttributes
@@ -17,17 +16,15 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 
 class NpmDependencyConstraint(
     internal val project: Project,
-    private val name: String,
-    private val version: String,
-    val scope: NpmDependency.Scope = NpmDependency.Scope.NORMAL
+    private val path: String,
+    private val version: String
 ) : DependencyConstraintInternal {
 
-    private val moduleIdentifier = DefaultModuleIdentifier.newId(null, name);
     private val versionConstraint = DefaultMutableVersionConstraint(version)
 
-    override fun getGroup(): String? = moduleIdentifier.group
+    override fun getGroup(): String? = null
 
-    override fun getName(): String = moduleIdentifier.name
+    override fun getName(): String = path
 
     override fun getVersion(): String = versionConstraint.version
 
@@ -36,7 +33,11 @@ class NpmDependencyConstraint(
     }
 
     override fun getModule(): ModuleIdentifier {
-        return moduleIdentifier
+        return object : ModuleIdentifier {
+            override fun getGroup(): String? = null
+
+            override fun getName(): String = path
+        }
     }
 
     override fun getAttributes(): AttributeContainer {
@@ -60,10 +61,8 @@ class NpmDependencyConstraint(
     }
 
     override fun getVersionConstraint(): VersionConstraint {
-        println("get version constraint")
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
-        nodeJs.npmResolutionManager.requireConfiguringState()
-            .resolutions[name] = version
+        nodeJs.npmResolutionManager.putNpmResolution(path, version)
         return versionConstraint
     }
 

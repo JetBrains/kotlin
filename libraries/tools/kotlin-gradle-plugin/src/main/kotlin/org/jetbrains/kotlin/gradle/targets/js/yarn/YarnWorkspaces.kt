@@ -88,7 +88,6 @@ class YarnWorkspaces : YarnBasics() {
             YarnImportedPackagesVersionResolver(rootProject, npmProjects, nodeJsWorldDir).resolveAndUpdatePackages()
 
         rootPackageJson.workspaces = npmProjectWorkspaces + importedProjectWorkspaces
-        println("resolutions $resolutions")
         rootPackageJson.resolutions = resolutions
         rootPackageJson.saveTo(
             rootPackageJsonFile
