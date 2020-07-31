@@ -1095,7 +1095,7 @@ class RawFirBuilder(
             delegatedSelfTypeRef: FirTypeRef,
             hasPrimaryConstructor: Boolean,
         ): FirDelegatedConstructorCall {
-            val isThis = isCallToThis || (isImplicit && hasPrimaryConstructor)
+            val isThis = isCallToThis //|| (isImplicit && hasPrimaryConstructor)
             val source = this.toFirSourceElement()
             val delegatedType = when {
                 isThis -> delegatedSelfTypeRef

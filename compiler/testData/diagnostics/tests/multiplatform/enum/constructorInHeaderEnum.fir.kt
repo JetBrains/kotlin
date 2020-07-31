@@ -7,7 +7,7 @@ expect enum class En(x: Int) {
     E2(42),
     ;
 
-    <!NONE_APPLICABLE!>constructor(s: String)<!>
+    constructor(s: String)
 }
 
 expect enum class En2 {

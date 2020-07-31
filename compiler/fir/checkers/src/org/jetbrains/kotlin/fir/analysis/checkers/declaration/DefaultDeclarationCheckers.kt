@@ -20,6 +20,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
     override val memberDeclarationCheckers: List<FirMemberDeclarationChecker> = listOf(
         FirInfixFunctionDeclarationChecker,
         FirExposedVisibilityDeclarationChecker,
+        FirCyclicConstructorDelegationCallChecker,
     )
 
     override val constructorCheckers: List<FirConstructorChecker> = listOf(

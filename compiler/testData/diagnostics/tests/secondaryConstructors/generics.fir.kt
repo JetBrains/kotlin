@@ -17,5 +17,5 @@ class A1<R> : B<R> {
 }
 
 class A2<R> {
-    constructor(t: R, i: Int) : this(i, 1)
+    constructor(t: R, i: Int) : <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>(i, 1)
 }

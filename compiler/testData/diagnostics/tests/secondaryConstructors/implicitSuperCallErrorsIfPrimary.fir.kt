@@ -2,6 +2,6 @@
 open class A(p1: String)
 
 class B() : A("") {
-    constructor(s: String) {
+    <!INAPPLICABLE_CANDIDATE!>constructor(s: String)<!> {
     }
 }

@@ -916,6 +916,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/anonymousObjectByDelegate.kt");
         }
 
+        @TestMetadata("cyclicConstructorDelegationCall.kt")
+        public void testCyclicConstructorDelegationCall() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/cyclicConstructorDelegationCall.kt");
+        }
+
         @TestMetadata("incompatibleModifiers.kt")
         public void testIncompatibleModifiers() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/incompatibleModifiers.kt");
