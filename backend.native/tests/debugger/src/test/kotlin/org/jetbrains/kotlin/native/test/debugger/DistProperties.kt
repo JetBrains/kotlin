@@ -19,6 +19,7 @@ object DistProperties {
     val lldb: Path = Paths.get("lldb")
     val devToolsSecurity: Path = Paths.get("DevToolsSecurity")
     val dwarfDump: Path = Paths.get("dwarfdump")
+    val swiftc: Path = Paths.get("swiftc")
     val lldbPrettyPrinters: Path = dist.resolve("tools/konan_lldb.py")
 
     private fun requireProp(name: String): String

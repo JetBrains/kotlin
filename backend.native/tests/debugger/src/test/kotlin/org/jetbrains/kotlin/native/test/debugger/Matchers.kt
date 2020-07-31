@@ -114,7 +114,7 @@ fun dwarfDumpTest(@Language("kotlin") programText: String, flags: List<String>, 
     }
 }
 
-class ToolDriverHelper(private val driver: ToolDriver, private val root:Path) {
+class ToolDriverHelper(private val driver: ToolDriver, val root:Path) {
     fun String.cinterop(pkg:String, output: String):Path {
         val def = feedOutput("$output.def")
         val lib = root.resolve("$output.klib")
@@ -127,15 +127,30 @@ class ToolDriverHelper(private val driver: ToolDriver, private val root:Path) {
 
     fun String.binary(output: String, vararg flags:String)= feedOutput("$output.kt").compile(root.resolve("$output.kexe"), *flags)
 
-    private fun Path.compile(output: Path, vararg flags:String) = output.also{ driver.compile(this, it, *flags) }
+    private fun Path.compile(output: Path, vararg flags:String) = output.also{ driver.compile(source = this, it, *flags) }
 
     fun Path.dwarfDumpLookup(address: Long, parser:List<DwarfTag>.() -> Unit) = driver.runDwarfDump(this, "-lookup", address.toString(), processor = parser)
     fun Path.dwarfDumpLookup(name: String, parser:List<DwarfTag>.() -> Unit) = driver.runDwarfDump(this, "-find", name, processor = parser)
 
 
-    private fun String.feedOutput(output: String) = root.resolve(output).also {
+    fun String.feedOutput(output: String) = root.resolve(output).also {
             Files.write(it, this.trimIndent().toByteArray())
         }
+
+    fun Array<Path>.framework(name:String, vararg args:String = emptyArray()):Path = root.resolve("$name.framework").also {
+
+        driver.compile(it, this, "-produce", "framework", *args)
+    }
+
+    fun swiftc(output: String, swiftSrc: Path, vararg args: String) = root.resolve(output).also {
+        driver.swiftc(it, swiftSrc, *args, "-Xlinker", "-rpath", "-Xlinker", "@executable_path")
+    }
+
+    fun String.lldb(program:Path) {
+        val lldbSessionSpec = LldbSessionSpecification.parse(this)
+        val result = driver.runLldb(program, lldbSessionSpec.commands)
+        lldbSessionSpec.match(result)
+    }
 
 }
 
@@ -151,6 +166,20 @@ fun dwarfDumpComplexTest(test:ToolDriverHelper.()->Unit) {
         val driver = ToolDriverHelper(ToolDriver(), this).test()
     }
 }
+
+fun lldbComplexTest(test:ToolDriverHelper.()->Unit) {
+    if (!haveLldb) {
+        println("Skipping test: no lldb")
+        return
+    }
+
+
+    with(Files.createTempDirectory("lldb_test_complex")) {
+        toFile().deleteOnExit()
+        val driver = ToolDriverHelper(ToolDriver(), this).test()
+    }
+}
+
 
 private val haveDwarfDump: Boolean by lazy {
     val version = try {

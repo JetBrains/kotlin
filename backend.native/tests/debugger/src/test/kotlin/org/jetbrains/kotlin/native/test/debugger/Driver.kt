@@ -21,9 +21,17 @@ import java.util.concurrent.TimeUnit
 class ToolDriver(
         private val useInProcessCompiler: Boolean = false
 ) {
-    fun compile(source: Path, output: Path, vararg args: String) {
+    fun compile(source: Path, output: Path, vararg args: String) = compile(output, *args) {
+        listOf("-output", output.toString(), source.toString(), *args).toTypedArray()
+    }
+
+    fun compile(output: Path, srcs:Array<Path>, vararg args: String) = compile(output, *args) {
+         listOf("-output", output.toString(), *srcs.map{it.toString()}.toTypedArray(), *args).toTypedArray()
+    }
+
+    private fun compile(output: Path, vararg args: String, argsCalculator:() -> Array<String>) {
         check(!Files.exists(output))
-        val allArgs = listOf("-output", output.toString(), source.toString(), *args).toTypedArray()
+        val allArgs = argsCalculator()
 
         if (useInProcessCompiler) {
             K2Native.main(allArgs)
@@ -57,6 +65,11 @@ class ToolDriver(
         val dwarfProcess = subprocess(DistProperties.dwarfDump, *args, "${program}.dSYM/Contents/Resources/DWARF/${program.fileName}")
         val out = dwarfProcess.takeIf { it.process.exitValue() == 0 }?.stdout ?: error(dwarfProcess.stderr)
         DwarfUtilParser().parse(StringReader(out)).tags.toList().processor()
+    }
+
+    fun swiftc(output: Path, swiftSrc: Path, vararg args: String) {
+        val swiftProcess = subprocess(DistProperties.swiftc, "-o", output.toString(), swiftSrc.toString(), *args)
+        val out = swiftProcess.takeIf { it.process.exitValue() == 0 }?.stdout ?: error(swiftProcess.stderr)
     }
 }
 
