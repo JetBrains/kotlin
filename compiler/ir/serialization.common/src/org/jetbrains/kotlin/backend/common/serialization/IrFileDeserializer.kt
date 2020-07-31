@@ -1368,22 +1368,22 @@ abstract class IrFileDeserializer(
             }
         }
 
-    private val allKnownDeclarationOrigins =
-        IrDeclarationOrigin::class.nestedClasses.toList() + InnerClassesSupport.FIELD_FOR_OUTER_THIS::class
+    companion object {
+        private val allKnownDeclarationOrigins =
+            IrDeclarationOrigin::class.nestedClasses.toList() + InnerClassesSupport.FIELD_FOR_OUTER_THIS::class
+        private val declarationOriginIndex =
+            allKnownDeclarationOrigins.map { it.objectInstance as IrDeclarationOriginImpl }.associateBy { it.name }
 
-    private val declarationOriginIndex =
-        allKnownDeclarationOrigins.map { it.objectInstance as IrDeclarationOriginImpl }.associateBy { it.name }
-
+        private val allKnownStatementOrigins =
+            IrStatementOrigin::class.nestedClasses.toList()
+        private val statementOriginIndex =
+            allKnownStatementOrigins.mapNotNull { it.objectInstance as? IrStatementOriginImpl }.associateBy { it.debugName }
+    }
 
     private fun deserializeIrDeclarationOrigin(protoName: Int): IrDeclarationOriginImpl {
         val originName = deserializeString(protoName)
         return declarationOriginIndex[originName] ?: object : IrDeclarationOriginImpl(originName) {}
     }
-
-    private val allKnownStatementOrigins =
-        IrStatementOrigin::class.nestedClasses.toList()
-    private val statementOriginIndex =
-        allKnownStatementOrigins.map { it.objectInstance as? IrStatementOriginImpl }.filterNotNull().associateBy { it.debugName }
 
     fun deserializeIrStatementOrigin(protoName: Int): IrStatementOrigin {
         return deserializeString(protoName).let {
