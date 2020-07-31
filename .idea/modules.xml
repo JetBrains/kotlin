@@ -1901,6 +1901,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/ide/pc/intellij.r.ide.pc.main.iml" filepath="$PROJECT_DIR$/intellij/rplugin/ide/pc/intellij.r.ide.pc.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/ide/py/intellij.r.ide.py.main.iml" filepath="$PROJECT_DIR$/intellij/rplugin/ide/py/intellij.r.ide.py.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/plugin/intellij.r.plugin.iml" filepath="$PROJECT_DIR$/intellij/rplugin/plugin/intellij.r.plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/plugin/build/intellij.r.plugin.build.iml" filepath="$PROJECT_DIR$/intellij/rplugin/plugin/build/intellij.r.plugin.build.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/python/intellij.r.python.iml" filepath="$PROJECT_DIR$/intellij/rplugin/python/intellij.r.python.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/ultimate/intellij.r.ultimate.iml" filepath="$PROJECT_DIR$/intellij/rplugin/ultimate/intellij.r.ultimate.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/python/rest/intellij.reStructuredText.iml" filepath="$PROJECT_DIR$/intellij/community/python/rest/intellij.reStructuredText.iml" />
