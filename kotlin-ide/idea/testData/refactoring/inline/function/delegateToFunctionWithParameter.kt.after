@@ -1,0 +1,8 @@
+class A {
+    fun b(a: Int) = Unit
+}
+
+fun aadada() {
+    val test = A()
+    test.b(42)
+}

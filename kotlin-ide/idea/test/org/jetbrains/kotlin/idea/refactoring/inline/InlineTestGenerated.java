@@ -34,6 +34,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/function/CommentBetweenReturnAndExpression.kt");
         }
 
+        @TestMetadata("delegateToFunctionWithParameter.kt")
+        public void testDelegateToFunctionWithParameter() throws Exception {
+            runTest("testData/refactoring/inline/function/delegateToFunctionWithParameter.kt");
+        }
+
         @TestMetadata("EmptyFunction.kt")
         public void testEmptyFunction() throws Exception {
             runTest("testData/refactoring/inline/function/EmptyFunction.kt");

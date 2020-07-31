@@ -14,6 +14,7 @@ import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.ui.GuiUtils
@@ -131,7 +132,9 @@ private fun UsageReplacementStrategy.processUsages(
                 continue
             }
 
-            createReplacer(usage)?.invoke()
+            createReplacer(usage)?.invoke()?.parent?.parent?.parent?.let { block ->
+                CodeStyleManager.getInstance(block.project).reformat(block, true)
+            }
         } catch (e: Throwable) {
             if (e is ControlFlowException) throw e
             LOG.error(e)

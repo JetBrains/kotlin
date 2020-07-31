@@ -3,7 +3,7 @@ fun t() {
     // after open brace
     // eol comment in body
             /* block comment in body
-            * second line */
+    * second line */
     // topTest
         // above return
         Unit // after return

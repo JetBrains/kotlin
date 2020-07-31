@@ -2,8 +2,7 @@ fun main(args: Array<String>) {
     if (args.size > 0) {
         println(1)
         println(2)
-    }
-    else {
+    } else {
         println(3)
         println(4)
     }

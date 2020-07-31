@@ -1,4 +1,4 @@
 fun f() {
     // this case is not processed specifically in implementation, but it works
-    println(5- -y)
+    println(5 - -y)
 }

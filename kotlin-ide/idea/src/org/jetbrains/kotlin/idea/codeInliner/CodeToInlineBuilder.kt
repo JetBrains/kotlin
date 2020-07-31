@@ -249,7 +249,13 @@ class CodeToInlineBuilder(
                 }
 
                 if (targetCallable !is ImportedFromObjectCallableDescriptor<*>) {
-                    val resolvedCall = expression.getResolvedCall(bindingContext)
+                    val callExpression = expression.parent as? KtCallExpression
+                    val (expressionToResolve, resolvedCall) = if (callExpression == null)
+                        expression to expression.getResolvedCall(bindingContext)
+                    else {
+                        callExpression to callExpression.getResolvedCall(analyze(callExpression))
+                    }
+
                     if (resolvedCall != null && resolvedCall.isReallySuccess()) {
                         val receiver = if (resolvedCall.resultingDescriptor.isExtension)
                             resolvedCall.extensionReceiver
@@ -260,7 +266,7 @@ class CodeToInlineBuilder(
                             val resolutionScope = expression.getResolutionScope(bindingContext, resolutionFacade)
                             val receiverExpression = receiver.asExpression(resolutionScope, psiFactory)
                             if (receiverExpression != null) {
-                                receiversToAdd.add(Triple(expression, receiverExpression, receiver.type))
+                                receiversToAdd.add(Triple(expressionToResolve, receiverExpression, receiver.type))
                             }
                         }
                     }
