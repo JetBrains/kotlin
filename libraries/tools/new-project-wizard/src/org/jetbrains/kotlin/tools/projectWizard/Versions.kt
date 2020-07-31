@@ -26,9 +26,9 @@ object Versions {
     }
 
     object JS_WRAPPERS {
-        val KOTLIN_REACT: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("16.13.1-pre.109-kotlin-$kotlinVersion") }
+        val KOTLIN_REACT: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("16.13.1-pre.110-kotlin-$kotlinVersion") }
         val KOTLIN_REACT_DOM = KOTLIN_REACT
-        val KOTLIN_STYLED: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("1.0.0-pre.109-kotlin-$kotlinVersion") }
+        val KOTLIN_STYLED: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("1.0.0-pre.110-kotlin-$kotlinVersion") }
     }
 
     object GRADLE_PLUGINS {
