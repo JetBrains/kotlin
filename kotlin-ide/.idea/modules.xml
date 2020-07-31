@@ -516,6 +516,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/build/intellij.idea.community.build.iml" filepath="$PROJECT_DIR$/intellij/build/intellij.idea.community.build.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community-guitests/intellij.idea.community.guiTests.iml" filepath="$PROJECT_DIR$/intellij/community-guitests/intellij.idea.community.guiTests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/intellij.idea.community.main.iml" filepath="$PROJECT_DIR$/intellij/intellij.idea.community.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/intellij.idea.community.main.space.iml" filepath="$PROJECT_DIR$/intellij/intellij.idea.community.main.space.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community-resources/intellij.idea.community.resources.iml" filepath="$PROJECT_DIR$/intellij/community-resources/intellij.idea.community.resources.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/build/launch/intellij.idea.tools.launch.iml" filepath="$PROJECT_DIR$/intellij/build/launch/intellij.idea.tools.launch.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/java/openapi/intellij.java.iml" filepath="$PROJECT_DIR$/intellij/java/openapi/intellij.java.iml" />
