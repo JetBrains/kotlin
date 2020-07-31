@@ -44,6 +44,8 @@ enum class Platform(val key: String) {
                 js.key -> js
                 native.key -> native
                 common.key -> common
+                "androidjvm", "android" -> jvm
+                "metadata" -> common
                 else -> throw IllegalArgumentException("Unrecognized platform: $key")
             }
         }
@@ -129,6 +131,7 @@ interface DokkaConfiguration : Serializable {
     interface ExternalDocumentationLink : Serializable {
         val url: URL
         val packageListUrl: URL
+
         companion object
     }
 }
