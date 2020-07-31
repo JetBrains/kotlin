@@ -5,11 +5,17 @@
 
 package org.jetbrains.kotlin.idea.completion
 
+import com.intellij.codeInsight.completion.InsertHandler
+import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.openapi.editor.Document
+import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.types.KtDenotableType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.renderer.render
 
 internal class HighLevelApiLookupElementFactory {
     private val classLookupElementFactory = ClassLookupElementFactory()
@@ -38,6 +44,11 @@ private class VariableLookupElementFactory {
     fun createLookup(symbol: KtVariableLikeSymbol): LookupElementBuilder {
         return LookupElementBuilder.create(symbol.name.asString())
             .withTypeText(ShortNamesRenderer.renderType(symbol.type))
+            .withInsertHandler(createInsertHandler(symbol))
+    }
+
+    private fun createInsertHandler(symbol: KtVariableLikeSymbol): InsertHandler<LookupElement> {
+        return QuotedNamesAwareInsertionHandler(symbol.name)
     }
 }
 
@@ -46,6 +57,23 @@ private class FunctionLookupElementFactory {
         return LookupElementBuilder.create(symbol.name.asString())
             .appendTailText(ShortNamesRenderer.renderFunctionParameters(symbol), true)
             .withTypeText(ShortNamesRenderer.renderType(symbol.type))
+            .withInsertHandler(createInsertHandler(symbol))
+    }
+
+    private fun createInsertHandler(symbol: KtFunctionSymbol): InsertHandler<LookupElement> {
+        return QuotedNamesAwareInsertionHandler(symbol.name)
+    }
+}
+
+private open class QuotedNamesAwareInsertionHandler(private val name: Name) : InsertHandler<LookupElement> {
+    override fun handleInsert(context: InsertionContext, item: LookupElement) {
+        val startOffset = context.startOffset
+        if (startOffset > 0 && context.document.isTextAt(startOffset - 1, "`")) {
+            context.document.deleteString(startOffset - 1, startOffset)
+        }
+        context.document.replaceString(context.startOffset, context.tailOffset, name.render())
+
+        context.commitDocument()
     }
 }
 
@@ -58,3 +86,6 @@ private object ShortNamesRenderer {
 
     private fun renderFunctionParameter(param: KtFunctionParameterSymbol) = "${param.name.asString()}: ${renderType(param.type)}"
 }
+
+private fun Document.isTextAt(offset: Int, text: String) =
+    offset + text.length <= textLength && getText(TextRange(offset, offset + text.length)) == text
