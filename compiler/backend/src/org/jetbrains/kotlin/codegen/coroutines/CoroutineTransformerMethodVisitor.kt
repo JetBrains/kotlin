@@ -608,8 +608,8 @@ class CoroutineTransformerMethodVisitor(
             // NB: it's also rather useful for sake of optimization
             val livenessFrame = livenessFrames[suspensionCallBegin.index()]
 
-            val referencesToSpill = arrayListOf<Pair<Int, SpillableVariable?>>()
-            val primitivesToSpill = arrayListOf<Pair<Int, SpillableVariable>>()
+            val referencesToSpill = arrayListOf<ReferenceToSpill>()
+            val primitivesToSpill = arrayListOf<PrimitiveToSpill>()
 
             // 0 - this
             // 1 - parameter
@@ -649,7 +649,40 @@ class CoroutineTransformerMethodVisitor(
             }
         }
 
-        // TODO: Calculate variable to cleaup
+        // Calculate variables to cleanup
+
+        // Use CFG to calculate amount of spilled variables in previous suspension point (P) and current one (C).
+        // All fields from L$C to L$P should be cleaned. I.e. we should spill ACONST_NULL to them.
+        val cfg = ControlFlowGraph.build(methodNode)
+
+        // Collect all immediately preceding suspension points. I.e. suspension points, from which there is a path
+        // into current one, that does not cross other suspension points.
+        val suspensionPointEnds = suspensionPoints.associateBy { it.suspensionCallEnd }
+        fun findSuspensionPointPredecessors(suspension: SuspensionPoint): List<SuspensionPoint> {
+            val visited = mutableSetOf<AbstractInsnNode>()
+            fun dfs(current: AbstractInsnNode): List<SuspensionPoint> {
+                if (!visited.add(current)) return emptyList()
+                suspensionPointEnds[current]?.let { return listOf(it) }
+                return cfg.getPredecessorsIndices(current).flatMap { dfs(instructions[it]) }
+            }
+            return dfs(suspension.suspensionCallBegin)
+        }
+
+        val predSuspensionPoints = suspensionPoints.associateWith { findSuspensionPointPredecessors(it) }
+
+        // Calculate all pairs SuspensionPoint -> C and P, where P is minimum of all preds' Cs
+        fun countVariablesToSpill(index: Int): Int =
+            referencesToSpillBySuspensionPointIndex[index].count { (_, variable) -> variable != null }
+
+        val referencesToCleanBySuspensionPointIndex = arrayListOf<Pair<Int, Int>>() // current to pred
+        for (suspensionPointIndex in suspensionPoints.indices) {
+            val suspensionPoint = suspensionPoints[suspensionPointIndex]
+            val currentSpilledReferencesCount = countVariablesToSpill(suspensionPointIndex)
+            val preds = predSuspensionPoints[suspensionPoint]
+            val predSpilledReferencesCount =
+                if (preds.isNullOrEmpty()) 0 else preds.maxOf { countVariablesToSpill(suspensionPoints.indexOf(it)) }
+            referencesToCleanBySuspensionPointIndex += currentSpilledReferencesCount to predSpilledReferencesCount
+        }
 
         // Mutate method node
 
@@ -691,10 +724,30 @@ class CoroutineTransformerMethodVisitor(
             }
         }
 
+        fun cleanUpField(suspension: SuspensionPoint, fieldIndex: Int) {
+            with(instructions) {
+                insertBefore(suspension.suspensionCallBegin, withInstructionAdapter {
+                    load(continuationIndex, AsmTypes.OBJECT_TYPE)
+                    aconst(null)
+                    putfield(
+                        classBuilderForCoroutineState.thisName,
+                        "L\$$fieldIndex",
+                        AsmTypes.OBJECT_TYPE.descriptor
+                    )
+                })
+            }
+        }
+
         for (suspensionPointIndex in suspensionPoints.indices) {
             val suspension = suspensionPoints[suspensionPointIndex]
             for ((slot, referenceToSpill) in referencesToSpillBySuspensionPointIndex[suspensionPointIndex]) {
                 generateSpillAndUnspill(suspension, slot, referenceToSpill)
+            }
+            val (currentSpilledCount, predSpilledCount) = referencesToCleanBySuspensionPointIndex[suspensionPointIndex]
+            if (predSpilledCount > currentSpilledCount) {
+                for (fieldIndex in currentSpilledCount until predSpilledCount) {
+                    cleanUpField(suspension, fieldIndex)
+                }
             }
             for ((slot, primitiveToSpill) in primitivesToSpillBySuspensionPointIndex[suspensionPointIndex]) {
                 generateSpillAndUnspill(suspension, slot, primitiveToSpill)
