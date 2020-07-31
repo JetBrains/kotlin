@@ -52,12 +52,12 @@ abstract class AbstractCoroutineDumpTest : KotlinDescriptorTestCaseWithStepping(
 
     private fun stringDump(infoData: List<CoroutineInfoData>) = buildString {
         infoData.forEach {
-            appendLine("\"${it.key.name}\", state: ${it.key.state}")
+            appendLine("\"${it.key.name}#${it.key.id}\", state: ${it.key.state}")
         }
     }
 
     override fun createJavaParameters(mainClass: String?): JavaParameters {
-        val description = JpsMavenRepositoryLibraryDescriptor("org.jetbrains.kotlinx", "kotlinx-coroutines-debug", "1.3.0")
+        val description = JpsMavenRepositoryLibraryDescriptor("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "1.3.8")
         val debugJar = JarRepositoryManager.loadDependenciesSync(
             project, description, setOf(ArtifactKind.ARTIFACT),
             RemoteRepositoryDescription.DEFAULT_REPOSITORIES, null
@@ -65,7 +65,7 @@ abstract class AbstractCoroutineDumpTest : KotlinDescriptorTestCaseWithStepping(
         val params = super.createJavaParameters(mainClass)
         for (jar in debugJar) {
             params.classPath.add(jar.file.presentableUrl)
-            if (jar.file.name.contains("kotlinx-coroutines-debug"))
+            if (jar.file.name.contains("kotlinx-coroutines-core"))
                 params.vmParametersList.add("-javaagent:${jar.file.presentableUrl}")
         }
         return params
