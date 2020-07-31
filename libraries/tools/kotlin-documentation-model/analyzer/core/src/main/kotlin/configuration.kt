@@ -129,35 +129,26 @@ interface DokkaConfiguration : Serializable {
     interface ExternalDocumentationLink : Serializable {
         val url: URL
         val packageListUrl: URL
-
-        open class Builder(
-            open var url: URL? = null,
-            open var packageListUrl: URL? = null
-        ) {
-
-            constructor(root: String, packageList: String? = null) : this(URL(root), packageList?.let { URL(it) })
-
-            fun build(): ExternalDocumentationLinkImpl =
-                if (packageListUrl != null && url != null)
-                    ExternalDocumentationLinkImpl(url!!, packageListUrl!!)
-                else if (url != null)
-                    ExternalDocumentationLinkImpl(url!!, URL(url!!, "package-list"))
-                else
-                    throw IllegalArgumentException("url or url && packageListUrl must not be null for external documentation link")
-        }
+        companion object
     }
 }
 
 fun ExternalDocumentationLink(
     url: URL? = null,
     packageListUrl: URL? = null
-): ExternalDocumentationLinkImpl =
-    DokkaConfiguration.ExternalDocumentationLink.Builder(url = url, packageListUrl = packageListUrl).build()
+): ExternalDocumentationLinkImpl {
+    return if (packageListUrl != null && url != null)
+        ExternalDocumentationLinkImpl(url, packageListUrl)
+    else if (url != null)
+        ExternalDocumentationLinkImpl(url, URL(url, "package-list"))
+    else
+        throw IllegalArgumentException("url or url && packageListUrl must not be null for external documentation link")
+}
 
 
 fun ExternalDocumentationLink(
     url: String, packageListUrl: String? = null
 ): ExternalDocumentationLinkImpl =
-    DokkaConfiguration.ExternalDocumentationLink.Builder(root = url, packageList = packageListUrl).build()
+    ExternalDocumentationLink(url.let(::URL), packageListUrl?.let(::URL))
 
 
