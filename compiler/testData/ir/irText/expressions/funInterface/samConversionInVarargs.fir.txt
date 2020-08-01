@@ -59,5 +59,6 @@ FILE fqName:<root> fileName:/samConversionInVarargs.kt
         CONST String type=kotlin.String value=""
   FUN name:testAdaptedCR visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /useVararg>#' type=kotlin.Unit
-        ERROR_CALL 'Unsupported callable reference: ::<Unresolved reference: withVarargOfInt>#' type=IrErrorType
+      CALL 'public final fun useVararg (vararg foos: <root>.IFoo): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        foos: VARARG type=kotlin.Array<out <root>.IFoo> varargElementType=<root>.IFoo
+          FUNCTION_REFERENCE 'public final fun withVarargOfInt (vararg xs: kotlin.Int): kotlin.String declared in <root>' type=kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit> origin=null reflectionTarget=<same>
