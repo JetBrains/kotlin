@@ -12,6 +12,7 @@ import com.intellij.util.CommonProcessors
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionAnchorCacheService
 import org.jetbrains.kotlin.idea.caches.trackers.ModuleDependencyProviderExtension
 import org.jetbrains.kotlin.idea.project.libraryToSourceAnalysisEnabled
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus.checkCanceled
 
 class ResolutionAnchorModuleDependencyProviderExtension(private val project: Project) : ModuleDependencyProviderExtension {
     /**
@@ -32,6 +33,7 @@ class ResolutionAnchorModuleDependencyProviderExtension(private val project: Pro
         val resolutionAnchorDependencies = HashSet<ModuleSourceInfo>()
         ModuleRootManager.getInstance(module).orderEntries().recursively().forEachLibrary { library ->
             getIdeaModelInfosCache(project).getLibraryInfosForLibrary(library).flatMapTo(resolutionAnchorDependencies) { libraryInfo ->
+                checkCanceled()
                 ResolutionAnchorCacheService.getInstance(project).getDependencyResolutionAnchors(libraryInfo)
             }
             true
