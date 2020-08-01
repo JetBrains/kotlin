@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.idea.caches.project.LibraryDependenciesCache
 import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfosFromIdeaModel
-import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus.checkCanceled
 import org.jetbrains.kotlin.types.typeUtil.closure
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
@@ -81,6 +81,7 @@ class ResolutionAnchorCacheServiceImpl(val project: Project) :
             val allTransitiveLibraryDependencies = with(LibraryDependenciesCache.getInstance(project)) {
                 val (directDependenciesOnLibraries, _) = getLibrariesAndSdksUsedWith(libraryInfo)
                 directDependenciesOnLibraries.closure { libraryDependency ->
+                    checkCanceled()
                     getLibrariesAndSdksUsedWith(libraryDependency).first
                 }
             }
@@ -90,7 +91,7 @@ class ResolutionAnchorCacheServiceImpl(val project: Project) :
 
     private fun associateModulesByNames(): Map<String, ModuleInfo> {
         return getModuleInfosFromIdeaModel(project).associateBy { moduleInfo ->
-            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+            checkCanceled()
             when (moduleInfo) {
                 is LibraryInfo -> moduleInfo.library.name ?: "" // TODO: when does library have no name?
                 is ModuleSourceInfo -> moduleInfo.module.name
