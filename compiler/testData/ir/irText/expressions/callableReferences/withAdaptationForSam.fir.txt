@@ -27,5 +27,6 @@ FILE fqName:<root> fileName:/withAdaptationForSam.kt
         CONST Int type=kotlin.Int value=42
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /useFoo>#' type=kotlin.Unit
-        ERROR_CALL 'Unsupported callable reference: ::<Unresolved reference: withVararg>#' type=IrErrorType
+      CALL 'public final fun useFoo (foo: <root>.IFoo): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        foo: TYPE_OP type=<root>.IFoo origin=SAM_CONVERSION typeOperand=<root>.IFoo
+          FUNCTION_REFERENCE 'public final fun withVararg (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit> origin=null reflectionTarget=<same>

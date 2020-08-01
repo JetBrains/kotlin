@@ -37,5 +37,5 @@ FILE fqName:<root> fileName:/adaptedWithCoercionToUnit.kt
   FUN name:testV1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testV1 (): kotlin.Unit declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /useUnit1>#' type=kotlin.Unit
-          ERROR_CALL 'Unsupported callable reference: ::<Unresolved reference: fnv>#' type=IrErrorType
+        CALL 'public final fun useUnit1 (fn: kotlin.Function1<kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+          fn: FUNCTION_REFERENCE 'public final fun fnv (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit> origin=null reflectionTarget=<same>
