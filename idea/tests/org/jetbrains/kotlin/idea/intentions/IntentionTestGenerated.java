@@ -15288,6 +15288,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/replaceWithOrdinaryAssignment/plusAssignOperatorFun.kt");
         }
 
+        @TestMetadata("qualifiedExpression.kt")
+        public void testQualifiedExpression() throws Exception {
+            runTest("idea/testData/intentions/replaceWithOrdinaryAssignment/qualifiedExpression.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("idea/testData/intentions/replaceWithOrdinaryAssignment/simple.kt");

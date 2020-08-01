@@ -21,7 +21,8 @@ class ReplaceWithOrdinaryAssignmentIntention : SelfTargetingIntention<KtBinaryEx
         val operationReference = element.operationReference
         if (!operationReference.textRange.containsOffset(caretOffset)) return false
         if (element.operationToken !in KtTokens.AUGMENTED_ASSIGNMENTS) return false
-        if (element.left !is KtNameReferenceExpression) return false
+        val left = element.left ?: return false
+        if ((left.safeAs<KtQualifiedExpression>()?.selectorExpression ?: left) !is KtNameReferenceExpression) return false
         if (element.right == null) return false
         return operationReference.mainReference.resolve().safeAs<KtFunction>()?.name?.endsWith("Assign") != true
     }
