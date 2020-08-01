@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.caches.project
 
 import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionAnchorCacheService
-import org.jetbrains.kotlin.idea.caches.trackers.ResolutionAnchorModificationCountService
+import org.jetbrains.kotlin.idea.caches.trackers.getLatestModificationCount
 
 class ResolutionAnchorAwareLibraryModificationTracker(
     private val libraryInfo: LibraryInfo,
@@ -16,6 +16,6 @@ class ResolutionAnchorAwareLibraryModificationTracker(
         val anchorDependencyModules = ResolutionAnchorCacheService.getInstance(libraryInfo.project)
             .getDependencyResolutionAnchors(libraryInfo)
             .map { it.module }
-        return ResolutionAnchorModificationCountService.getLatestModificationCount(anchorDependencyModules)
+        return getLatestModificationCount(anchorDependencyModules)
     }
 }
