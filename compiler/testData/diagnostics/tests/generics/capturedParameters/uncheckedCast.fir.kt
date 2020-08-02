@@ -22,7 +22,7 @@ fun <E> foo(x: Any, y: Any) : Any {
         return y
     }
 
-    y as <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>Outer<*>.Inner<!>
+    y as <!UNRESOLVED_REFERENCE!>Outer<*>.Inner<!>
 
     return C()
 }

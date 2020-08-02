@@ -6,7 +6,7 @@ open class Base {
 
 class Derived : Base()
 
-fun test(x: <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>Derived.Nested<!>) = x
+fun test(x: <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>Derived.Nested<!>) = x
 
 fun Base.testWithImplicitReceiver(x: <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>Nested<!>) {
     val y: <!UNRESOLVED_REFERENCE!>Nested<!> = x

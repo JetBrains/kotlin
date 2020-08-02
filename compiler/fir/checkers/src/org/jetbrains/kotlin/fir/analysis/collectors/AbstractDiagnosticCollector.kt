@@ -17,11 +17,9 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.collectImplicitReceivers
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.Name
 
 abstract class AbstractDiagnosticCollector(
@@ -33,7 +31,7 @@ abstract class AbstractDiagnosticCollector(
             throw IllegalStateException("Components are not initialized")
         }
         initializeCollector()
-        firFile.accept(visitor)
+        firFile.accept(visitor, null)
         return getCollectedDiagnostics()
     }
 
@@ -48,6 +46,8 @@ abstract class AbstractDiagnosticCollector(
     @Suppress("LeakingThis")
     private var context = PersistentCheckerContext(this)
 
+    private var lastExpression: FirExpression? = null
+
     fun initializeComponents(vararg components: AbstractDiagnosticCollectorComponent) {
         if (componentsInitialized) {
             throw IllegalStateException()
@@ -56,29 +56,29 @@ abstract class AbstractDiagnosticCollector(
         componentsInitialized = true
     }
 
-    private inner class Visitor : FirVisitorVoid() {
+    private inner class Visitor : FirDefaultVisitor<Unit, Nothing?>() {
         private fun <T : FirElement> T.runComponents() {
             components.forEach {
                 this.accept(it, context)
             }
         }
 
-        override fun visitElement(element: FirElement) {
+        override fun visitElement(element: FirElement, data: Nothing?) {
             element.runComponents()
-            element.acceptChildren(this)
+            element.acceptChildren(this, null)
         }
 
         private fun visitJump(loopJump: FirLoopJump) {
             loopJump.runComponents()
-            loopJump.acceptChildren(this)
-            loopJump.target.labeledElement.takeIf { it is FirErrorLoop }?.accept(this)
+            loopJump.acceptChildren(this, null)
+            loopJump.target.labeledElement.takeIf { it is FirErrorLoop }?.accept(this, null)
         }
 
-        override fun visitBreakExpression(breakExpression: FirBreakExpression) {
+        override fun visitBreakExpression(breakExpression: FirBreakExpression, data: Nothing?) {
             visitJump(breakExpression)
         }
 
-        override fun visitContinueExpression(continueExpression: FirContinueExpression) {
+        override fun visitContinueExpression(continueExpression: FirContinueExpression, data: Nothing?) {
             visitJump(continueExpression)
         }
 
@@ -90,23 +90,23 @@ abstract class AbstractDiagnosticCollector(
 
         }
 
-        override fun visitRegularClass(regularClass: FirRegularClass) {
+        override fun visitRegularClass(regularClass: FirRegularClass, data: Nothing?) {
             visitClassAndChildren(regularClass, regularClass.defaultType())
         }
 
-        override fun visitAnonymousObject(anonymousObject: FirAnonymousObject) {
+        override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: Nothing?) {
             visitClassAndChildren(anonymousObject, anonymousObject.defaultType())
         }
 
-        override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
+        override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?) {
             visitWithDeclarationAndReceiver(simpleFunction, simpleFunction.name, simpleFunction.receiverTypeRef)
         }
 
-        override fun visitConstructor(constructor: FirConstructor) {
+        override fun visitConstructor(constructor: FirConstructor, data: Nothing?) {
             visitWithDeclaration(constructor)
         }
 
-        override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
+        override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Nothing?) {
             val labelName = anonymousFunction.label?.name?.let { Name.identifier(it) }
             visitWithDeclarationAndReceiver(
                 anonymousFunction,
@@ -115,35 +115,65 @@ abstract class AbstractDiagnosticCollector(
             )
         }
 
-        override fun visitProperty(property: FirProperty) {
+        override fun visitProperty(property: FirProperty, data: Nothing?) {
             visitWithDeclaration(property)
         }
 
-        override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor) {
+        override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: Nothing?) {
             val property = context.containingDeclarations.last() as FirProperty
             visitWithDeclarationAndReceiver(propertyAccessor, property.name, property.receiverTypeRef)
         }
 
-        override fun visitValueParameter(valueParameter: FirValueParameter) {
+        override fun visitValueParameter(valueParameter: FirValueParameter, data: Nothing?) {
             visitWithDeclaration(valueParameter)
         }
 
-        override fun visitEnumEntry(enumEntry: FirEnumEntry) {
+        override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Nothing?) {
             visitWithDeclaration(enumEntry)
         }
 
-        override fun visitFile(file: FirFile) {
+        override fun visitFile(file: FirFile, data: Nothing?) {
             visitWithDeclaration(file)
         }
 
-        override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer) {
+        override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: Nothing?) {
             visitWithDeclaration(anonymousInitializer)
+        }
+
+        override fun visitExpression(expression: FirExpression, data: Nothing?) {
+            expression.runComponents()
+            withExpression(expression) {
+                expression.acceptChildren(this, null)
+            }
+        }
+
+        override fun visitBlock(block: FirBlock, data: Nothing?) {
+            visitExpression(block, data)
+        }
+
+        override fun visitTypeRef(typeRef: FirTypeRef, data: Nothing?) {
+            if (typeRef === lastExpression?.typeRef) {
+                return
+            }
+            super.visitTypeRef(typeRef, null)
+        }
+
+        override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Nothing?) {
+            typeOperatorCall.runComponents()
+            withExpression(typeOperatorCall) {
+                typeOperatorCall.acceptChildren(this, null)
+            }
+            if (typeOperatorCall.operation == FirOperation.AS) {
+                // NB: in this case conversionTypeRef === typeRef, so we *should* visit it explicitly
+                typeOperatorCall.conversionTypeRef.runComponents()
+                typeOperatorCall.conversionTypeRef.acceptChildren(this, null)
+            }
         }
 
         private fun visitWithDeclaration(declaration: FirDeclaration) {
             declaration.runComponents()
             withDeclaration(declaration) {
-                declaration.acceptChildren(this)
+                declaration.acceptChildren(this, null)
             }
         }
 
@@ -155,7 +185,7 @@ abstract class AbstractDiagnosticCollector(
                     declaration,
                     receiverTypeRef?.coneTypeSafe()
                 ) {
-                    declaration.acceptChildren(this)
+                    declaration.acceptChildren(this, null)
                 }
             }
         }
@@ -168,6 +198,16 @@ abstract class AbstractDiagnosticCollector(
             return block()
         } finally {
             context = existingContext
+        }
+    }
+
+    private inline fun <R> withExpression(expression: FirExpression, block: () -> R): R {
+        val previousExpression = lastExpression
+        lastExpression = expression
+        try {
+            return block()
+        } finally {
+            lastExpression = previousExpression
         }
     }
 

@@ -12,15 +12,15 @@ class MyColor(val x: <!UNRESOLVED_REFERENCE!>Color.RED<!>, y: <!UNRESOLVED_REFER
     var z: <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>Color.RED<!> = Color.RED
     set(arg: Color.RED) { z = arg }
 
-    fun foo(arg: <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>Color.RED<!>): <!UNRESOLVED_REFERENCE!>Color.RED<!> = arg
+    fun foo(arg: <!UNRESOLVED_REFERENCE!>Color.RED<!>): <!UNRESOLVED_REFERENCE!>Color.RED<!> = arg
 
     fun bar(): <!UNRESOLVED_REFERENCE!>Color.RED<!> {
         class Local : <!UNRESOLVED_REFERENCE!>Color.RED<!>
-        fun local(arg: <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>Color.RED<!>): <!UNRESOLVED_REFERENCE!>Color.RED<!> = arg
+        fun local(arg: <!UNRESOLVED_REFERENCE!>Color.RED<!>): <!UNRESOLVED_REFERENCE!>Color.RED<!> = arg
         val temp: <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>Color.RED<!> = Color.RED
         temp as? <!UNRESOLVED_REFERENCE!>Color.RED<!>
         if (temp is <!UNRESOLVED_REFERENCE!>Color.RED<!>) {
-        return temp as <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>Color.RED<!>
+        return temp as <!UNRESOLVED_REFERENCE!>Color.RED<!>
     }
         val obj = object : <!UNRESOLVED_REFERENCE!>Color.RED<!> {}
         if (obj is <!UNRESOLVED_REFERENCE!>Color.RED<!>) {
