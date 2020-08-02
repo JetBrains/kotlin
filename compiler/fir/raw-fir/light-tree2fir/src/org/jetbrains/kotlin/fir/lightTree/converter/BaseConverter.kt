@@ -31,7 +31,7 @@ open class BaseConverter(
     override fun LighterASTNode.toFirSourceElement(kind: FirFakeSourceElementKind?): FirLightSourceElement {
         val startOffset = offset + tree.getStartOffset(this)
         val endOffset = offset + tree.getEndOffset(this)
-        return toFirLightSourceElement(startOffset, endOffset, tree)
+        return toFirLightSourceElement(startOffset, endOffset, tree, kind ?: FirRealSourceElementKind)
     }
 
     override val LighterASTNode.elementType: IElementType

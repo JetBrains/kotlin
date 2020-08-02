@@ -457,7 +457,7 @@ class DeclarationsConverter(
                     )
                     //parse primary constructor
                     val primaryConstructorWrapper = convertPrimaryConstructor(
-                        primaryConstructor, classWrapper, delegatedConstructorSource,
+                        primaryConstructor, classNode, classWrapper, delegatedConstructorSource,
                         delegationSpecifiers?.primaryConstructorBody
                     )
                     val firPrimaryConstructor = primaryConstructorWrapper?.firConstructor
@@ -564,7 +564,7 @@ class DeclarationsConverter(
                     superTypeCallEntry = superTypeCallEntry
                 )
                 //parse primary constructor
-                convertPrimaryConstructor(primaryConstructor, classWrapper, delegatedConstructorSource, primaryConstructorBody)
+                convertPrimaryConstructor(primaryConstructor, objectLiteral, classWrapper, delegatedConstructorSource, primaryConstructorBody)
                     ?.let { this.declarations += it.firConstructor }
 
                 //parse declarations
@@ -635,7 +635,9 @@ class DeclarationsConverter(
                         superTypeCallEntry = enumSuperTypeCallEntry
                     )
                     superTypeRefs += enumClassWrapper.delegatedSuperTypeRef
-                    convertPrimaryConstructor(null, enumClassWrapper, null)?.let { declarations += it.firConstructor }
+                    convertPrimaryConstructor(null, enumEntry, enumClassWrapper, null)?.let {
+                        declarations += it.firConstructor
+                    }
                     classBodyNode?.also { declarations += convertClassBody(it, enumClassWrapper) }
                 }
             }
@@ -683,6 +685,7 @@ class DeclarationsConverter(
      */
     private fun convertPrimaryConstructor(
         primaryConstructor: LighterASTNode?,
+        classNode: LighterASTNode,
         classWrapper: ClassWrapper,
         delegatedConstructorSource: FirLightSourceElement?,
         body: FirBlock? = null
@@ -719,6 +722,7 @@ class DeclarationsConverter(
         return PrimaryConstructor(
             buildPrimaryConstructor {
                 source = primaryConstructor?.toFirSourceElement()
+                    ?: classNode.toFirSourceElement(FirFakeSourceElementKind.ImplicitConstructor)
                 session = baseSession
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = classWrapper.delegatedSelfTypeRef
@@ -1343,7 +1347,7 @@ class DeclarationsConverter(
                     delegatedSuperTypeRef = first
                     superTypeRefs += first
                     superTypeCallEntry += second
-                    delegateConstructorSource = it.toFirSourceElement()
+                    delegateConstructorSource = it.toFirSourceElement(FirFakeSourceElementKind.DelegatingConstructorCall)
                 }
                 DELEGATED_SUPER_TYPE_ENTRY -> {
                     superTypeRefs += convertExplicitDelegation(it, delegateNumber, delegateFields, initializeDelegateStatements, containerSymbol, delegatedTypeRef)

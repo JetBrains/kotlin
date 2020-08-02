@@ -201,7 +201,8 @@ inline fun PsiElement.toFirPsiSourceElement(kind: FirSourceElementKind = FirReal
 @Suppress("NOTHING_TO_INLINE")
 inline fun LighterASTNode.toFirLightSourceElement(
     startOffset: Int, endOffset: Int,
-    tree: FlyweightCapableTreeStructure<LighterASTNode>
-): FirLightSourceElement = FirLightSourceElement(this, startOffset, endOffset, tree)
+    tree: FlyweightCapableTreeStructure<LighterASTNode>,
+    kind: FirSourceElementKind = FirRealSourceElementKind
+): FirLightSourceElement = FirLightSourceElement(this, startOffset, endOffset, tree, kind)
 
 val FirSourceElement?.lightNode: LighterASTNode? get() = (this as? FirLightSourceElement)?.element
