@@ -79,6 +79,7 @@ private class CaptureCollector {
 private abstract class DeclarationContext {
     abstract val composable: Boolean
     abstract val symbol: IrSymbol
+    abstract val functionContext: FunctionContext?
     abstract fun declareLocal(local: IrValueDeclaration?)
     abstract fun recordCapture(local: IrValueDeclaration?)
     abstract fun pushCollector(collector: CaptureCollector)
@@ -87,11 +88,26 @@ private abstract class DeclarationContext {
 
 private class SymbolOwnerContext(val declaration: IrSymbolOwner) : DeclarationContext() {
     override val composable get() = false
+    override val functionContext: FunctionContext? get() = null
     override val symbol get() = declaration.symbol
     override fun declareLocal(local: IrValueDeclaration?) { }
     override fun recordCapture(local: IrValueDeclaration?) { }
     override fun pushCollector(collector: CaptureCollector) { }
     override fun popCollector(collector: CaptureCollector) { }
+}
+
+private class FunctionLocalSymbol(
+    val declaration: IrSymbolOwner,
+    override val functionContext: FunctionContext
+) : DeclarationContext() {
+    override val composable: Boolean get() = functionContext.composable
+    override val symbol: IrSymbol get() = declaration.symbol
+    override fun declareLocal(local: IrValueDeclaration?) = functionContext.declareLocal(local)
+    override fun recordCapture(local: IrValueDeclaration?) = functionContext.recordCapture(local)
+    override fun pushCollector(collector: CaptureCollector) =
+        functionContext.pushCollector(collector)
+    override fun popCollector(collector: CaptureCollector) =
+        functionContext.popCollector(collector)
 }
 
 private class FunctionContext(
@@ -100,7 +116,7 @@ private class FunctionContext(
     val canRemember: Boolean
 ) : DeclarationContext() {
     override val symbol get() = declaration.symbol
-
+    override val functionContext: FunctionContext? get() = this
     val locals = mutableSetOf<IrValueDeclaration>()
     var collectors = mutableListOf<CaptureCollector>()
 
@@ -150,12 +166,22 @@ class ComposerLambdaMemoization(
 
     private val declarationContextStack = mutableListOf<DeclarationContext>()
 
+    private val currentFunctionContext: FunctionContext? get() =
+        declarationContextStack.peek()?.functionContext
+
     override fun lower(module: IrModuleFragment) = module.transformChildrenVoid(this)
 
     override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
-        if (declaration is IrFunction) return super.visitDeclaration(declaration)
+        if (declaration is IrFunction)
+            return super.visitDeclaration(declaration)
         val symbolOwner = declaration as? IrSymbolOwner
-        if (symbolOwner != null) declarationContextStack.push(SymbolOwnerContext(declaration))
+        if (symbolOwner != null) {
+            val functionContext = currentFunctionContext
+            if (functionContext != null)
+                declarationContextStack.push(FunctionLocalSymbol(declaration, functionContext))
+            else
+                declarationContextStack.push(SymbolOwnerContext(declaration))
+        }
         val result = super.visitDeclaration(declaration)
         if (symbolOwner != null) declarationContextStack.pop()
         return result
@@ -206,8 +232,7 @@ class ComposerLambdaMemoization(
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
         // Memoize the instance created by using the :: operator
         val result = super.visitFunctionReference(expression)
-        val functionContext = declarationContextStack.peek() as? FunctionContext
-            ?: return result
+        val functionContext = currentFunctionContext ?: return result
         if (expression.valueArgumentsCount != 0) {
             // If this syntax is as a curry syntax in the future, don't memoize.
             // The syntax <expr>::<method>(<params>) and ::<function>(<params>) is reserved for
@@ -272,10 +297,9 @@ class ComposerLambdaMemoization(
     }
 
     private fun visitNonComposableFunctionExpression(
-        expression: IrFunctionExpression,
-        declarationContext: DeclarationContext
+        expression: IrFunctionExpression
     ): IrExpression {
-        val functionContext = declarationContext as? FunctionContext
+        val functionContext = currentFunctionContext
             ?: return super.visitFunctionExpression(expression)
 
         if (
@@ -331,7 +355,7 @@ class ComposerLambdaMemoization(
         return if (expression.allowsComposableCalls())
             visitComposableFunctionExpression(expression, declarationContext)
         else
-            visitNonComposableFunctionExpression(expression, declarationContext)
+            visitNonComposableFunctionExpression(expression)
     }
 
     private fun startCollector(collector: CaptureCollector) {

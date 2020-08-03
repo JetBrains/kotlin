@@ -541,30 +541,22 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               } else if (%changed and 0b0110 === 0) {
                 %dirty = %dirty or if (%composer.changed(modifier)) 0b0100 else 0b0010
               }
-              if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%default and 0b0010 === 0 && %composer.changed(children)) 0b00010000 else 0b1000
+              if (%default and 0b0010 !== 0) {
+                %dirty = %dirty or 0b00011000
+              } else if (%changed and 0b00011000 === 0) {
+                %dirty = %dirty or if (%composer.changed(children)) 0b00010000 else 0b1000
               }
               if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
-                if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
-                  %composer.startDefaults()
-                  if (%default and 0b0001 !== 0) {
-                    modifier = Companion
-                  }
-                  if (%default and 0b0010 !== 0) {
-                    children = composableLambdaInstance(<>, true) { %composer: Composer<*>?, %key: Int, %changed: Int ->
-                      if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
-                        Unit
-                      } else {
-                        %composer.skipToGroupEnd()
-                      }
+                if (%default and 0b0001 !== 0) {
+                  modifier = Companion
+                }
+                if (%default and 0b0010 !== 0) {
+                  children = composableLambda(%composer, <>, true, "C:Test.kt") { %composer: Composer<*>?, %key: Int, %changed: Int ->
+                    if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+                      Unit
+                    } else {
+                      %composer.skipToGroupEnd()
                     }
-                    %dirty = %dirty and 0b00011000.inv()
-                  }
-                  %composer.endDefaults()
-                } else {
-                  %composer.skipCurrentGroup()
-                  if (%default and 0b0010 !== 0) {
-                    %dirty = %dirty and 0b00011000.inv()
                   }
                 }
                 println()
