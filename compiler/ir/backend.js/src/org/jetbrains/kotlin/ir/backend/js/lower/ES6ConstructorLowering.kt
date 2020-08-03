@@ -386,7 +386,7 @@ private fun replaceCallToDefaultPrimary(context: JsIrBackendContext, constructor
     val thisSymbol = (((constructor.body as IrBlockBody).statements
         .find { it is IrVariable && it.origin === ES6_THIS_VARIABLE_ORIGIN }) as IrVariable?)?.symbol ?: return
 
-    (constructor.body as IrBlockBody).statements.transform {
+    (constructor.body as IrBlockBody).statements.transformInPlace {
         if (it is IrDelegatingConstructorCall) {
             val superCtor = it.symbol.owner
             val initFunc = context.mapping.constructorToInitFunction[superCtor]!!
@@ -501,7 +501,7 @@ private class LowerCtorHelper(
             origin = ES6_THIS_VARIABLE_ORIGIN
         }
 
-        (constructor.body as IrBlockBody).statements.transform {
+        (constructor.body as IrBlockBody).statements.transformInPlace {
             if (it === superCall) newThis
             else it
         }
@@ -561,7 +561,7 @@ private fun changeIrConstructorToIrFunction(context: JsIrBackendContext, contain
         }, null)
     }
 
-    container.parentAsClass.declarations.transform {
+    container.parentAsClass.declarations.transformInPlace {
         if (it === container) newConstructor else it
     }
 

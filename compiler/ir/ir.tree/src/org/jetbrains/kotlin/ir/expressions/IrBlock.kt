@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.util.file
-import org.jetbrains.kotlin.ir.util.transform
+import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -38,7 +38,7 @@ abstract class IrContainerExpression : IrExpression(), IrStatementContainer {
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        statements.transform { it.transform(transformer, data) }
+        statements.transformInPlace(transformer, data)
     }
 }
 
@@ -58,5 +58,6 @@ abstract class IrReturnableBlock : IrBlock(), IrSymbolOwner, IrReturnTarget {
     abstract val inlineFunctionSymbol: IrFunctionSymbol?
 }
 
+@Suppress("unused") // Used in kotlin-native
 val IrReturnableBlock.sourceFileSymbol: IrFileSymbol?
     get() = inlineFunctionSymbol?.owner?.file?.symbol

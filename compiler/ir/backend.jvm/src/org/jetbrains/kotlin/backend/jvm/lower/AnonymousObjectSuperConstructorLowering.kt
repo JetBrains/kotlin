@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.util.transform
+import org.jetbrains.kotlin.ir.util.transformInPlace
 
 internal val anonymousObjectSuperConstructorPhase = makeIrFilePhase(
     ::AnonymousObjectSuperConstructorLowering,
@@ -91,7 +91,7 @@ private class AnonymousObjectSuperConstructorLowering(val context: JvmBackendCon
             }
         }
 
-        objectConstructorBody.statements.transform {
+        objectConstructorBody.statements.transformInPlace {
             when {
                 it is IrDelegatingConstructorCall -> it.transform(listOf())
                 it is IrBlock && it.origin == IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL && it.statements.last() is IrDelegatingConstructorCall ->

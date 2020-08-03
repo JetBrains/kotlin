@@ -579,7 +579,7 @@ internal class IterableLoopHeader(
         loopVariable: IrVariable?,
         loopVariableComponents: Map<Int, IrVariable>,
         builder: DeclarationIrBuilder
-    ) =
+    ): List<IrStatement> =
         with(builder) {
             // loopVariable = iteratorVar.next()
             val iteratorClass = headerInfo.iteratorVariable.type.getClass()!!

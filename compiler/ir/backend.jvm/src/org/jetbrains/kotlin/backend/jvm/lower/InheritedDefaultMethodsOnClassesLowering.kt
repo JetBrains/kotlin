@@ -61,7 +61,7 @@ private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendCo
     }
 
     private fun generateInterfaceMethods(irClass: IrClass) {
-        irClass.declarations.transform { declaration ->
+        irClass.declarations.transformInPlace { declaration ->
             (declaration as? IrSimpleFunction)?.findInterfaceImplementation(context.state.jvmDefaultMode)?.let { implementation ->
                 generateDelegationToDefaultImpl(implementation, declaration)
             } ?: declaration
