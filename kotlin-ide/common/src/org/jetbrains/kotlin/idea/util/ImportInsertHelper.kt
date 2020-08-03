@@ -29,6 +29,18 @@ abstract class ImportInsertHelper {
         forceAllUnderImport: Boolean = false
     ): ImportDescriptorResult
 
+    fun importDescriptor(
+        file: KtFile,
+        descriptor: DeclarationDescriptor,
+        forceAllUnderImport: Boolean = false
+    ): ImportDescriptorResult = importDescriptor(
+        file,
+        descriptor,
+        ActionRunningMode.RUN_IN_CURRENT_THREAD,
+        forceAllUnderImport
+    )
+
+
     companion object {
         @JvmStatic
         fun getInstance(project: Project): ImportInsertHelper =
