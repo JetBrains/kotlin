@@ -426,7 +426,7 @@ private abstract class LazyObjCProtocol(
         get() = realStub.superProtocols
 }
 
-private fun createNamerConfiguration(configuration: ObjCExportLazy.Configuration): ObjCExportNamer.Configuration {
+internal fun createNamerConfiguration(configuration: ObjCExportLazy.Configuration): ObjCExportNamer.Configuration {
     return object : ObjCExportNamer.Configuration {
         override val topLevelNamePrefix = abbreviate(configuration.frameworkName)
 
