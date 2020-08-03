@@ -34,10 +34,7 @@ fun prepareArgumentTypeRegardingCaptureTypes(argumentType: UnwrappedType): Unwra
     return if (argumentType is NewCapturedType) null else captureFromExpression(argumentType)
 }
 
-fun captureFromExpression(type: UnwrappedType): UnwrappedType? =
-    captureFromExpression(type.lowerIfFlexible())
-
-private fun captureFromExpression(type: SimpleType): UnwrappedType? {
+fun captureFromExpression(type: UnwrappedType): UnwrappedType? {
     val typeConstructor = type.constructor
     if (typeConstructor is IntersectionTypeConstructor) {
         var changed = false
@@ -54,10 +51,26 @@ private fun captureFromExpression(type: SimpleType): UnwrappedType? {
 }
 
 // this function suppose that input type is simple classifier type
-internal fun captureFromArguments(
-    type: SimpleType,
-    status: CaptureStatus
-): SimpleType? {
+internal fun captureFromArguments(type: SimpleType, status: CaptureStatus) =
+    captureArguments(type, status)?.let { type.replaceArguments(it) }
+
+private fun captureFromArguments(type: UnwrappedType, status: CaptureStatus): UnwrappedType? {
+    val capturedArguments = captureArguments(type, status) ?: return null
+
+    return if (type is FlexibleType) {
+        KotlinTypeFactory.flexibleType(
+            type.lowerBound.replaceArguments(capturedArguments),
+            type.upperBound.replaceArguments(capturedArguments)
+        )
+    } else {
+        type.replaceArguments(capturedArguments)
+    }
+}
+
+private fun UnwrappedType.replaceArguments(arguments: List<TypeProjection>) =
+    KotlinTypeFactory.simpleType(annotations, constructor, arguments, isMarkedNullable)
+
+private fun captureArguments(type: UnwrappedType, status: CaptureStatus): List<TypeProjection>? {
     if (type.arguments.size != type.constructor.parameters.size) return null
 
     val arguments = type.arguments
@@ -77,6 +90,7 @@ internal fun captureFromArguments(
     }
 
     val substitutor = TypeConstructorSubstitution.create(type.constructor, capturedArguments).buildSubstitutor()
+
     for (index in arguments.indices) {
         val oldProjection = arguments[index]
         val newProjection = capturedArguments[index]
@@ -94,7 +108,7 @@ internal fun captureFromArguments(
         capturedType.constructor.initializeSupertypes(capturedTypeSupertypes)
     }
 
-    return KotlinTypeFactory.simpleType(type.annotations, type.constructor, capturedArguments, type.isMarkedNullable)
+    return capturedArguments
 }
 
 /**
