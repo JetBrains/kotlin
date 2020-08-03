@@ -748,15 +748,21 @@ inline void traverseReferredObjects(ObjHeader* obj, func process) {
 }
 
 template <typename func>
-inline void traverseContainerObjectFields(ContainerHeader* container, func process) {
+inline void traverseContainerObjects(ContainerHeader* container, func process) {
   RuntimeAssert(!isAggregatingFrozenContainer(container), "Must not be called on such containers");
   ObjHeader* obj = reinterpret_cast<ObjHeader*>(container + 1);
-
-  for (int object = 0; object < container->objectCount(); object++) {
-    traverseObjectFields(obj, process);
+  for (int i = 0; i < container->objectCount(); ++i) {
+    process(obj);
     obj = reinterpret_cast<ObjHeader*>(
       reinterpret_cast<uintptr_t>(obj) + objectSize(obj));
   }
+}
+
+template <typename func>
+inline void traverseContainerObjectFields(ContainerHeader* container, func process) {
+  traverseContainerObjects(container, [process](ObjHeader* obj) {
+    traverseObjectFields(obj, process);
+  });
 }
 
 template <typename func>
@@ -2582,6 +2588,34 @@ void freezeCyclic(ObjHeader* root,
   }
 }
 
+// These hooks are only allowed to modify `obj` subgraph.
+void runFreezeHooks(ObjHeader* obj) {
+  if (obj->type_info() == theWorkerBoundReferenceTypeInfo) {
+    WorkerBoundReferenceFreezeHook(obj);
+  }
+}
+
+void runFreezeHooksRecursive(ObjHeader* root) {
+  KStdUnorderedSet<KRef> seen;
+  KStdVector<KRef> toVisit;
+  seen.insert(root);
+  toVisit.push_back(root);
+  while (!toVisit.empty()) {
+    KRef obj = toVisit.back();
+    toVisit.pop_back();
+
+    runFreezeHooks(obj);
+
+    traverseReferredObjects(obj, [&seen, &toVisit](ObjHeader* field) {
+      auto wasNotSeenYet = seen.insert(field).second;
+      // Only iterating on unseen objects which containers will get frozen by freezeCyclic or freezeAcyclic.
+      if (wasNotSeenYet && canFreeze(field->container())) {
+        toVisit.push_back(field);
+      }
+    });
+  }
+}
+
 /**
  * Theory of operations.
  *
@@ -2611,6 +2645,12 @@ void freezeSubgraph(ObjHeader* root) {
   // If there are cycles - run graph condensation on cyclic graphs using Kosoraju-Sharir.
   ContainerHeader* rootContainer = root->container();
   if (isPermanentOrFrozen(rootContainer)) return;
+
+  MEMORY_LOG("Run freeze hooks on subgraph of %p\n", root);
+
+  // Note: Actual freezing can fail, but these hooks won't be undone, and moreover
+  // these hooks will run again on a repeated freezing attempt.
+  runFreezeHooksRecursive(root);
 
   MEMORY_LOG("Freeze subgraph of %p\n", root)
 

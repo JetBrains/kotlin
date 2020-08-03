@@ -17,22 +17,22 @@ external private fun derefWorkerBoundReference(ref: NativePtr): Any?
 external private fun describeWorkerBoundReference(ref: NativePtr): String
 
 /**
- * A frozen shared reference to a Kotlin object.
+ * A shared reference to a Kotlin object that doesn't freeze the referred object when it gets frozen itself.
  *
- * Can be safely passed between workers, but [value] can only be accessed on the worker [WorkerBoundReference] was created on,
- * unless the referred object is frozen too.
+ * After freezing can be safely passed between workers, but [value] can only be accessed on
+ * the worker [WorkerBoundReference] was created on, unless the referred object is frozen too.
  *
- * Note: Garbage collector currently cannot free any reference cycles with [WorkerBoundReference] in them.
+ * Note: Garbage collector currently cannot free any reference cycles with frozen [WorkerBoundReference] in them.
  * To resolve such cycles consider using [AtomicReference<WorkerBoundReference?>] which can be explicitly
  * nulled out.
  */
-@Frozen
 @NoReorderFields
 @ExportTypeInfo("theWorkerBoundReferenceTypeInfo")
 public class WorkerBoundReference<out T : Any>(value: T) {
 
-    private val ptr = createWorkerBoundReference(value)
+    private var ptr = NativePtr.NULL
     private val ownerName = Worker.current.name
+    private var valueBeforeFreezing: T? = value
 
     private val valueDescription
         get() = describeWorkerBoundReference(ptr)
@@ -48,10 +48,19 @@ public class WorkerBoundReference<out T : Any>(value: T) {
      * The referenced value or null if referred object is not frozen and current worker is different from the one created [this].
      */
     val valueOrNull: T?
-        get() = @Suppress("UNCHECKED_CAST") (derefWorkerBoundReference(ptr) as T?)
+        get() = valueBeforeFreezing ?: @Suppress("UNCHECKED_CAST") (derefWorkerBoundReference(ptr) as T?)
 
     /**
      * Worker that [value] is bound to.
      */
     val worker: Worker = Worker.current
+
+    @ExportForCppRuntime("Kotlin_WorkerBoundReference_freezeHook")
+    private fun freezeHook() {
+        // If this hook was already run, do nothing.
+        if (valueBeforeFreezing == null)
+            return
+        ptr = createWorkerBoundReference(valueBeforeFreezing!!)
+        valueBeforeFreezing = null
+    }
 }

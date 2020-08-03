@@ -24,9 +24,18 @@ WorkerBoundReference* asWorkerBoundReference(KRef thiz) {
 
 RUNTIME_NOTHROW void DisposeWorkerBoundReference(KRef thiz) {
   // DisposeSharedRef is only called when all references to thiz are gone.
-  auto* holder = asWorkerBoundReference(thiz)->holder;
-  holder->dispose();
-  konanDestructInstance(holder);
+  // Can be null if WorkerBoundReference wasn't frozen.
+  if (auto* holder = asWorkerBoundReference(thiz)->holder) {
+    holder->dispose();
+    konanDestructInstance(holder);
+  }
+}
+
+// Defined in WorkerBoundReference.kt
+extern "C" void Kotlin_WorkerBoundReference_freezeHook(KRef thiz);
+
+RUNTIME_NOTHROW void WorkerBoundReferenceFreezeHook(KRef thiz) {
+  Kotlin_WorkerBoundReference_freezeHook(thiz);
 }
 
 extern "C" {
