@@ -1,9 +1,9 @@
 class Foo<T> {
-    <!UNRESOLVED_REFERENCE!>@T<!>
+    @T
     fun foo() = 0
 }
 
 class Bar<T : Annotation> {
-    <!UNRESOLVED_REFERENCE!>@T<!>
+    @T
     fun foo() = 0
 }

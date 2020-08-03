@@ -8,6 +8,6 @@ open class Base {
 
 class Derived : Base() {
 
-    <!UNRESOLVED_REFERENCE!>@<!UNRESOLVED_REFERENCE!>Foo<!>
+    @<!UNRESOLVED_REFERENCE!>Foo<!>
     fun foo() = 42
 }
