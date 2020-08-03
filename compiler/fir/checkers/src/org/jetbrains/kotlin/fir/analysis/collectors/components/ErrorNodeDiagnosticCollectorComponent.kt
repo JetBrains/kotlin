@@ -87,6 +87,7 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
             is ConeVariableExpectedError -> FirErrors.VARIABLE_EXPECTED.on(source)
             is ConeTypeMismatchError -> FirErrors.TYPE_MISMATCH.on(source, diagnostic.expectedType, diagnostic.actualType)
             is ConeUnexpectedTypeArgumentsError -> FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.on(diagnostic.source.safeAs() ?: source)
+            is ConeIllegalAnnotationError -> FirErrors.NOT_AN_ANNOTATION_CLASS.on(source, diagnostic.name.asString())
             is ConeSimpleDiagnostic -> if (source.kind is FirFakeSourceElementKind) {
                 null
             } else if (diagnostic.kind == SymbolNotFound) {

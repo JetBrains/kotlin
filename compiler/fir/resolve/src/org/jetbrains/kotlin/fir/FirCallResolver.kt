@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.tower.FirTowerResolver
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerResolveManager
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedCallableReferenceAtom
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreNameReference
@@ -333,24 +330,35 @@ class FirCallResolver(
             containingDeclarations
         )
 
-        val resolutionResult = createCandidateForAnnotationCall(annotationCall, callInfo)
-            ?: ResolutionResult(callInfo, CandidateApplicability.HIDDEN, emptyList())
-        val resolvedReference = createResolvedNamedReference(
-            reference,
-            reference.name,
-            callInfo,
-            resolutionResult.candidates,
-            resolutionResult.applicability,
-            explicitReceiver = null
-        )
+        val annotationClassSymbol = annotationCall.getCorrespondingClassSymbolOrNull(session)
+        val resolvedReference = if (annotationClassSymbol != null && annotationClassSymbol.fir.classKind == ClassKind.ANNOTATION_CLASS) {
+            val resolutionResult = createCandidateForAnnotationCall(annotationClassSymbol, callInfo)
+                ?: ResolutionResult(callInfo, CandidateApplicability.HIDDEN, emptyList())
+            createResolvedNamedReference(
+                reference,
+                reference.name,
+                callInfo,
+                resolutionResult.candidates,
+                resolutionResult.applicability,
+                explicitReceiver = null
+            )
+        } else {
+            buildErrorReference(
+                callInfo,
+                if (annotationClassSymbol != null) ConeIllegalAnnotationError(reference.name)
+                else ConeUnresolvedNameError(reference.name),
+                reference.source,
+                reference.name
+            )
+        }
 
         return annotationCall.transformCalleeReference(StoreNameReference, resolvedReference)
     }
 
-    private fun createCandidateForAnnotationCall(annotationCall: FirAnnotationCall, callInfo: CallInfo): ResolutionResult? {
-        val annotationClassSymbol = annotationCall.getCorrespondingClassSymbolOrNull(session)
-            ?.takeIf { it.fir.classKind == ClassKind.ANNOTATION_CLASS }
-            ?: return null
+    private fun createCandidateForAnnotationCall(
+        annotationClassSymbol: FirRegularClassSymbol,
+        callInfo: CallInfo
+    ): ResolutionResult? {
         var constructorSymbol: FirConstructorSymbol? = null
         annotationClassSymbol.fir.buildUseSiteMemberScope(session, scopeSession)?.processDeclaredConstructors {
             if (it.fir.isPrimary && constructorSymbol == null) {

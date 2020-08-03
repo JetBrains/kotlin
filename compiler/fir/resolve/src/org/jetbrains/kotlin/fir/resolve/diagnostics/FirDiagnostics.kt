@@ -67,6 +67,10 @@ class ConeTypeMismatchError(val expectedType: ConeKotlinType, val actualType: Co
 
 class ConeContractDescriptionError(override val reason: String) : ConeDiagnostic()
 
+class ConeIllegalAnnotationError(val name: Name) : ConeDiagnostic() {
+    override val reason: String get() = "Not a legal annotation: $name"
+}
+
 private fun describeSymbol(symbol: AbstractFirBasedSymbol<*>): String {
     return when (symbol) {
         is FirClassLikeSymbol<*> -> symbol.classId.asString()
