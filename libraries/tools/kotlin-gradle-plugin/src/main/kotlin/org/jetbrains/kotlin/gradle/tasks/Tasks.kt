@@ -149,11 +149,13 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         cacheOnlyIfEnabledForKotlin()
     }
 
+    @get:Internal
+    private val layout = project.layout
+
     // avoid creating directory in getter: this can lead to failure in parallel build
     @get:LocalState
-    internal val taskBuildDirectory: File by project.provider {
-        File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name)
-    }
+    internal val taskBuildDirectory: File by layout.buildDirectory.dir(KOTLIN_BUILD_DIR_NAME).map { it.file(name).asFile }
+
 
     @get:Internal
     internal val projectObjects = project.objects
