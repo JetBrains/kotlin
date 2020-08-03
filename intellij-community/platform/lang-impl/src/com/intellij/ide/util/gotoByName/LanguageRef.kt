@@ -26,6 +26,21 @@ data class LanguageRef(val id: String, val displayName: String, val icon: Icon?)
         .map { forLanguage(it) }
     }
   }
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
+
+    other as LanguageRef
+
+    if (id != other.id) return false
+
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return id.hashCode()
+  }
 }
 
 data class FileTypeRef(val name: String, val icon: Icon?) {
@@ -40,4 +55,20 @@ data class FileTypeRef(val name: String, val icon: Icon?) {
         .map { forFileType(it) }
     }
   }
+
+  override fun equals(other: Any?): Boolean {
+    if (this === other) return true
+    if (javaClass != other?.javaClass) return false
+
+    other as FileTypeRef
+
+    if (name != other.name) return false
+
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return name.hashCode()
+  }
+
 }
