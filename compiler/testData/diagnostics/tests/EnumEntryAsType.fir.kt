@@ -9,8 +9,8 @@ enum class Color {
 
 class MyColor(val x: <!UNRESOLVED_REFERENCE!>Color.RED<!>, y: <!UNRESOLVED_REFERENCE!>Color.RED<!>) : <!UNRESOLVED_REFERENCE!>Color.RED<!> {
 
-    var z: <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>Color.RED<!> = Color.RED
-    set(arg: Color.RED) { z = arg }
+    var z: <!UNRESOLVED_REFERENCE!>Color.RED<!> = Color.RED
+    set(arg: <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>Color.RED<!>) { z = arg }
 
     fun foo(arg: <!UNRESOLVED_REFERENCE!>Color.RED<!>): <!UNRESOLVED_REFERENCE!>Color.RED<!> = arg
 

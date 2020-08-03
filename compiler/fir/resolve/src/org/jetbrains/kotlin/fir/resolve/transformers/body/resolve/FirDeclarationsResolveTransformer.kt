@@ -294,7 +294,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             enhancedTypeRef = returnTypeRef
         }
         setter?.let {
-            it.valueParameters[0].transformReturnTypeRef(StoreType, enhancedTypeRef)
+            if (it.valueParameters[0].returnTypeRef is FirImplicitTypeRef) {
+                it.valueParameters[0].transformReturnTypeRef(StoreType, enhancedTypeRef)
+            }
             transformAccessor(it, enhancedTypeRef, this)
         }
     }
