@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.script
 import com.intellij.openapi.module.JavaModuleType
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -172,7 +173,8 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
     }
 
     private fun createTestModuleByName(name: String): Module {
-        val newModuleDir = runWriteAction { VfsUtil.createDirectoryIfMissing(project.baseDir, name) }
+        val path = File(project.basePath, name).path
+        val newModuleDir = runWriteAction { VfsUtil.createDirectoryIfMissing(path) ?: error("unable to create $path") }
         val newModule = createModuleAt(name, project, JavaModuleType.getModuleType(), Paths.get(newModuleDir.path))
 
         PsiTestUtil.addSourceContentToRoots(newModule, newModuleDir)
@@ -181,9 +183,12 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
 
     private fun createTestModuleFromDir(dir: File): Module {
         return createTestModuleByName(dir.name).apply {
-            PlatformTestCase.copyDirContentsTo(LocalFileSystem.getInstance().findFileByIoFile(dir)!!, moduleFile!!.parent)
+            val findFileByIoFile = LocalFileSystem.getInstance().findFileByIoFile(dir) ?: error("unable to locate $dir")
+            PlatformTestCase.copyDirContentsTo(findFileByIoFile, contentRoot())
         }
     }
+
+    private fun Module.contentRoot() = ModuleRootManager.getInstance(this).contentRoots.first()
 
     private fun createScriptEnvironment(scriptFile: File): Environment {
         val defaultEnvironment = defaultEnvironment(scriptFile.parent)
@@ -269,7 +274,8 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
     protected fun createFileAndSyncDependencies(scriptFile: File): VirtualFile {
         var script: VirtualFile? = null
         if (module != null) {
-            script = module.moduleFile?.parent?.findChild(scriptFile.name)
+            val contentRoot = module.contentRoot()
+            script = contentRoot.findChild(scriptFile.name)
         }
 
         if (script == null) {
