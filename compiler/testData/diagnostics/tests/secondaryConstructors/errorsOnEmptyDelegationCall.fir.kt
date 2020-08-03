@@ -26,7 +26,7 @@ open class B2 {
 }
 
 class A2 : B2 {
-    <!NONE_APPLICABLE!>constructor()<!>
+    <!EXPLICIT_DELEGATION_CALL_REQUIRED, NONE_APPLICABLE!>constructor()<!>
     constructor(x: Int) : <!NONE_APPLICABLE!>super<!>()
 }
 

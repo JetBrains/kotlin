@@ -7,8 +7,8 @@ data class A2(val y: String, val z: Int) {
     constructor(x: String): this(x, 0)
 }
 
-data class A3 {
+<!PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS!>data class A3 {
     constructor()
-}
+}<!>
 
 data class A4 internal constructor()

@@ -12,12 +12,12 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-object FirCyclicConstructorDelegationCallChecker : FirMemberDeclarationChecker() {
+object FirCommonConstructorDelegationIssuesChecker : FirMemberDeclarationChecker() {
     override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration !is FirRegularClass) {
             return
@@ -26,9 +26,15 @@ object FirCyclicConstructorDelegationCallChecker : FirMemberDeclarationChecker()
         val cyclicConstructors = mutableSetOf<FirConstructor>()
         var hasPrimaryConstructor = false
 
+        // secondary; non-cyclic;
+        // candidates for further analysis
+        val otherConstructors = mutableSetOf<FirConstructor>()
+
         for (it in declaration.declarations) {
             if (it is FirConstructor) {
                 if (!it.isPrimary) {
+                    otherConstructors += it
+
                     it.findCycle(cyclicConstructors)?.let { visited ->
                         cyclicConstructors += visited
                     }
@@ -38,13 +44,24 @@ object FirCyclicConstructorDelegationCallChecker : FirMemberDeclarationChecker()
             }
         }
 
+        otherConstructors -= cyclicConstructors
+
         if (hasPrimaryConstructor) {
-            for (it in declaration.declarations) {
-                if (
-                    it is FirConstructor && !it.isPrimary && it !in cyclicConstructors &&
-                    it.delegatedConstructor?.constructedTypeRef?.getType() != it.returnTypeRef.getType()
-                ) {
+            for (it in otherConstructors) {
+                if (it.delegatedConstructor?.isThis == false) {
                     reporter.reportPrimaryConstructorDelegationCallExpected(it.delegatedConstructor?.source)
+                }
+            }
+        } else {
+            for (it in otherConstructors) {
+                val callee = it.delegatedConstructor?.calleeReference
+
+                // couldn't find proper super() constructor implicitly
+                if (
+                    callee is FirErrorNamedReference && callee.diagnostic is ConeAmbiguityError &&
+                    it.delegatedConstructor?.source?.startOffset == it.delegatedConstructor?.source?.endOffset
+                ) {
+                    reporter.reportExplicitDelegationCallRequired(it.source)
                 }
             }
         }
@@ -78,16 +95,15 @@ object FirCyclicConstructorDelegationCallChecker : FirMemberDeclarationChecker()
         ?.resolvedSymbol
         ?.fir.safeAs()
 
-    private fun FirTypeRef.getType() = when (this) {
-        is FirResolvedTypeRef -> type
-        else -> null
-    }
-
     private fun DiagnosticReporter.reportCyclicConstructorDelegationCall(source: FirSourceElement?) {
         source?.let { report(FirErrors.CYCLIC_CONSTRUCTOR_DELEGATION_CALL.on(it)) }
     }
 
     private fun DiagnosticReporter.reportPrimaryConstructorDelegationCallExpected(source: FirSourceElement?) {
         source?.let { report(FirErrors.PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED.on(it)) }
+    }
+
+    private fun DiagnosticReporter.reportExplicitDelegationCallRequired(source: FirSourceElement?) {
+        source?.let { report(FirErrors.EXPLICIT_DELEGATION_CALL_REQUIRED.on(it)) }
     }
 }
