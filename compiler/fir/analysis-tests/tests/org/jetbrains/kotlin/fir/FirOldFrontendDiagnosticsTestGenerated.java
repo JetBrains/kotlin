@@ -10591,6 +10591,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                 runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedTypeWithTypeVariableSubtyping.kt");
             }
 
+            @TestMetadata("capturingFromArgumentOfFlexibleType.kt")
+            public void testCapturingFromArgumentOfFlexibleType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturingFromArgumentOfFlexibleType.kt");
+            }
+
             @TestMetadata("expectedTypeMismatchWithInVariance.kt")
             public void testExpectedTypeMismatchWithInVariance() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/expectedTypeMismatchWithInVariance.kt");
