@@ -10,17 +10,17 @@ import com.github.gundy.semver4j.generated.grammar.NodeSemverExpressionParser
 import com.github.gundy.semver4j.model.Version
 import org.antlr.v4.runtime.tree.TerminalNode
 
-class NpmVersionInvertedVisitor : NodeSemverExpressionBaseVisitor<String>() {
-    override fun visitEmptyRange(ctx: NodeSemverExpressionParser.EmptyRangeContext): String =
-        NONE_VERSION
+class NpmVersionInvertedVisitor : NodeSemverExpressionBaseVisitor<NpmRange>() {
+    override fun visitEmptyRange(ctx: NodeSemverExpressionParser.EmptyRangeContext): NpmRange =
+        NONE_RANGE
 
-    override fun visitWildcard(ctx: NodeSemverExpressionParser.WildcardContext): String =
-        NONE_VERSION
+    override fun visitWildcard(ctx: NodeSemverExpressionParser.WildcardContext): NpmRange =
+        NONE_RANGE
 
-    override fun visitWildcardRange(ctx: NodeSemverExpressionParser.WildcardRangeContext): String =
+    override fun visitWildcardRange(ctx: NodeSemverExpressionParser.WildcardRangeContext): NpmRange =
         inverseVersion(ctx.partialWildcardSemver().text)
 
-    override fun visitOperator(ctx: NodeSemverExpressionParser.OperatorContext): String {
+    override fun visitOperator(ctx: NodeSemverExpressionParser.OperatorContext): NpmRange {
         val eq: TerminalNode? = ctx.unaryOperator().EQ()
         val gt: TerminalNode? = ctx.unaryOperator().GT()
         val lt: TerminalNode? = ctx.unaryOperator().LT()
@@ -40,10 +40,10 @@ class NpmVersionInvertedVisitor : NodeSemverExpressionBaseVisitor<String>() {
         return "$LT$invertedEqToken$version"
     }
 
-    override fun visitWildcardOperator(ctx: NodeSemverExpressionParser.WildcardOperatorContext): String =
-        NONE_VERSION
+    override fun visitWildcardOperator(ctx: NodeSemverExpressionParser.WildcardOperatorContext): NpmRange =
+        NONE_RANGE
 
-    override fun visitTildeRange(ctx: NodeSemverExpressionParser.TildeRangeContext): String {
+    override fun visitTildeRange(ctx: NodeSemverExpressionParser.TildeRangeContext): NpmRange {
         val version = Version.fromString(ctx.fullSemver().text)
         val nextVersion = version
             .incrementMinor()
@@ -51,7 +51,7 @@ class NpmVersionInvertedVisitor : NodeSemverExpressionBaseVisitor<String>() {
         return "$LT$version $OR $GTEQ$nextVersion"
     }
 
-    override fun visitCaretRange(ctx: NodeSemverExpressionParser.CaretRangeContext): String {
+    override fun visitCaretRange(ctx: NodeSemverExpressionParser.CaretRangeContext): NpmRange {
         val version = Version.fromString(ctx.fullSemver().text)
         val nextVersion = version
             .incrementMajor()
@@ -59,14 +59,14 @@ class NpmVersionInvertedVisitor : NodeSemverExpressionBaseVisitor<String>() {
         return "$LT$version $OR $GTEQ$nextVersion"
     }
 
-    override fun visitFullySpecifiedSemver(ctx: NodeSemverExpressionParser.FullySpecifiedSemverContext): String =
+    override fun visitFullySpecifiedSemver(ctx: NodeSemverExpressionParser.FullySpecifiedSemverContext): NpmRange =
         inverseVersion(ctx.fullSemver().text)
 
-    override fun visitLogicalAndOfSimpleExpressions(ctx: NodeSemverExpressionParser.LogicalAndOfSimpleExpressionsContext): String =
+    override fun visitLogicalAndOfSimpleExpressions(ctx: NodeSemverExpressionParser.LogicalAndOfSimpleExpressionsContext): NpmRange =
         ctx.simple()
             .joinToString(OR) { visit(it) }
 
-    override fun visitLogicalOrOfMultipleRanges(ctx: NodeSemverExpressionParser.LogicalOrOfMultipleRangesContext): String =
+    override fun visitLogicalOrOfMultipleRanges(ctx: NodeSemverExpressionParser.LogicalOrOfMultipleRangesContext): NpmRange =
         ctx.basicRange()
             .joinToString(AND) { visitBasicRange(it) }
 
