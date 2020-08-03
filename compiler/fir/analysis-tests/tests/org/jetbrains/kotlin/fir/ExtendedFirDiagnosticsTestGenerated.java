@@ -115,6 +115,11 @@ public class ExtendedFirDiagnosticsTestGenerated extends AbstractExtendedFirDiag
             runTest("compiler/fir/analysis-tests/testData/extendedCheckers/canBeReplacedWithOperatorAssignment/list.kt");
         }
 
+        @TestMetadata("logicOperators.kt")
+        public void testLogicOperators() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/canBeReplacedWithOperatorAssignment/logicOperators.kt");
+        }
+
         @TestMetadata("multipleOperators.kt")
         public void testMultipleOperators() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/extendedCheckers/canBeReplacedWithOperatorAssignment/multipleOperators.kt");
