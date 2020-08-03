@@ -376,6 +376,7 @@ class JavaSymbolProvider(
                         declarations += buildJavaConstructor {
                             session = this@JavaSymbolProvider.session
                             symbol = FirConstructorSymbol(constructorId)
+                            status = FirResolvedDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL)
                             returnTypeRef = buildResolvedTypeRef {
                                 type = buildSelfTypeRef()
                             }
