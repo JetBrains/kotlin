@@ -13,23 +13,33 @@ class NpmVersionConstraint(
 ) : DefaultMutableVersionConstraint(version) {
     override fun rejectAll() {
         super.rejectAll()
-        reject("0.0.0")
+        reject(NONE_VERSION)
     }
 
     fun toSemVer(): String {
         if (requiredVersion.isEmpty()) {
-            return preferredVersion
+            return buildNpmVersion(
+                includedVersions = listOf(preferredVersion),
+                excludedVersions = rejectedVersions
+            )
         }
 
         if (strictVersion.isNotEmpty()) {
-            return strictVersion
+            return buildNpmVersion(
+                includedVersions = listOf(strictVersion),
+                excludedVersions = rejectedVersions
+            )
         }
 
-        val requiredRange = "^$requiredVersion"
-        return if (SemVer.valid(requiredRange) && SemVer.satisfies(requiredVersion, requiredRange)) {
+        val version = buildNpmVersion(listOf(requiredVersion), rejectedVersions)
+
+        val requiredRange = "^$version"
+        return if (SemVer.valid(requiredRange) && SemVer.satisfies(version, requiredRange)) {
             requiredRange
         } else {
-            requiredVersion
+            version
         }
     }
 }
+
+const val NONE_VERSION = "0.0.0"

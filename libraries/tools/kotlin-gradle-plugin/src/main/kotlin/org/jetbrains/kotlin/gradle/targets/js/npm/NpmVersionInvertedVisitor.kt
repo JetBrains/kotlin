@@ -12,7 +12,7 @@ import org.antlr.v4.runtime.tree.TerminalNode
 
 class NpmVersionInvertedVisitor : NodeSemverExpressionBaseVisitor<String>() {
     override fun visitEmptyRange(ctx: NodeSemverExpressionParser.EmptyRangeContext): String =
-        WILDCARD_VERSION
+        NONE_VERSION
 
     override fun visitWildcard(ctx: NodeSemverExpressionParser.WildcardContext): String =
         NONE_VERSION
