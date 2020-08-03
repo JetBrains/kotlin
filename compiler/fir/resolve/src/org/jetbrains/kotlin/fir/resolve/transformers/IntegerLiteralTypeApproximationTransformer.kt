@@ -94,7 +94,7 @@ class IntegerLiteralTypeApproximationTransformer(
         }
         // TODO: Maybe resultType = data?
         //   check black box tests
-        // e.g. Byte doesn't have `and` in member scope. It's an extension
+        // e.g. Byte doesn't have `and` in member scope. It's an extension. See also: FirBlackBoxCodegenTestGenerated.testIntrinsics
         if (resultSymbol == null) return functionCall.compose()
         functionCall.resultType = data?.let { functionCall.resultType.resolvedTypeFromPrototype(it) } ?: resultSymbol!!.fir.returnTypeRef
         // If the original call has argument mapping, values in that mapping refer to value parameters in that original symbol. We should
