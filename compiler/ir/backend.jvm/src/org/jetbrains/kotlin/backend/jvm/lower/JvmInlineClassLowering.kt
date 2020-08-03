@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetVariableImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isNullable
@@ -202,7 +203,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
 
             constructor.body?.statements?.forEach { statement ->
                 +statement
-                    .transform(object : IrElementTransformerVoid() {
+                    .transformStatement(object : IrElementTransformerVoid() {
                         // Don't recurse under nested class declarations
                         override fun visitClass(declaration: IrClass): IrStatement {
                             return declaration
@@ -239,8 +240,8 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
                                 +irGet(thisVar)
                             })
                         }
-                    }, null)
-                    .transform(this@JvmInlineClassLowering, null)
+                    })
+                    .transformStatement(this@JvmInlineClassLowering)
                     .patchDeclarationParents(replacement)
             }
 
@@ -427,7 +428,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             if (statement is IrFunction)
                 transformFunctionFlat(statement)
             else
-                listOf(statement.transform(this, null))
+                listOf(statement.transformStatement(this))
         }
     }
 

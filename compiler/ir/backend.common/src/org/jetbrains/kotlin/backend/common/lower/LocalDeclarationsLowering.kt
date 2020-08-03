@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
@@ -267,9 +264,9 @@ class LocalDeclarationsLowering(
 
 
         private inner class FunctionBodiesRewriter(val localContext: LocalContext?) : IrElementTransformerVoid() {
-            override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty) =
+            override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement =
                 // Both accessors extracted as closures.
-                declaration.delegate.transform(this, null)
+                declaration.delegate.transformStatement(this)
 
             override fun visitClass(declaration: IrClass) = if (declaration in localClasses) {
                 localClasses[declaration]!!.declaration

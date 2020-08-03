@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
@@ -123,7 +124,7 @@ class BlockDecomposerTransformer(
             val transformedStatements = mutableListOf<IrStatement>()
             statements.forEach {
                 val transformer = if (it === statements.last()) expressionTransformer else statementTransformer
-                val s = it.transform(transformer, null)
+                val s = it.transformStatement(transformer)
                 if (s is IrComposite) {
                     transformedStatements.addAll(s.statements)
                 } else {
@@ -139,14 +140,14 @@ class BlockDecomposerTransformer(
     override fun visitFunction(declaration: IrFunction): IrStatement {
         function = declaration
         tmpVarCounter = 0
-        return declaration.transform(statementTransformer, null)
+        return declaration.transformStatement(statementTransformer)
     }
 
     override fun visitElement(element: IrElement) = element.transform(statementTransformer, null)
 
     private fun processStatements(statements: MutableList<IrStatement>) {
         statements.transformFlat {
-            destructureComposite(it.transform(statementTransformer, null))
+            destructureComposite(it.transformStatement(statementTransformer))
         }
     }
 
@@ -157,7 +158,7 @@ class BlockDecomposerTransformer(
 
     private fun IrStatement.asExpression(last: IrExpression): IrExpression {
         val composite = JsIrBuilder.buildComposite(last.type)
-        composite.statements += transform(statementTransformer, null)
+        composite.statements += transformStatement(statementTransformer)
         composite.statements += last
         return composite
     }
@@ -658,10 +659,10 @@ class BlockDecomposerTransformer(
             val newStatements = mutableListOf<IrStatement>()
 
             for (i in 0 until expression.statements.lastIndex) {
-                newStatements += destructureComposite(expression.statements[i].transform(statementTransformer, null))
+                newStatements += destructureComposite(expression.statements[i].transformStatement(statementTransformer))
             }
 
-            newStatements += destructureComposite(expression.statements.last().transform(expressionTransformer, null))
+            newStatements += destructureComposite(expression.statements.last().transformStatement(expressionTransformer))
 
             return JsIrBuilder.buildComposite(expression.type, newStatements)
         }

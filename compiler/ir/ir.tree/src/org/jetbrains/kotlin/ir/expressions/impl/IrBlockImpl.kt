@@ -97,7 +97,7 @@ class IrReturnableBlockImpl(
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         statements.forEachIndexed { i, irStatement ->
-            statements[i] = irStatement.transform(transformer, data)
+            statements[i] = irStatement.transform(transformer, data) as IrStatement
         }
     }
 }
