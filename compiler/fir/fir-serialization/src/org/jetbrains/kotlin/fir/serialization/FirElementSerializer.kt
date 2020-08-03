@@ -543,11 +543,13 @@ class FirElementSerializer private constructor(
 
     fun typeId(type: ConeKotlinType): Int = typeTable[typeProto(type)]
 
-    internal fun typeProto(typeRef: FirTypeRef): ProtoBuf.Type.Builder {
-        return typeProto(typeRef.coneType)
+    private fun typeProto(typeRef: FirTypeRef): ProtoBuf.Type.Builder {
+        return typeProto(typeRef.coneType).also {
+            extension.serializeType(typeRef, it)
+        }
     }
 
-    internal fun typeProto(type: ConeKotlinType): ProtoBuf.Type.Builder {
+    private fun typeProto(type: ConeKotlinType): ProtoBuf.Type.Builder {
         val builder = ProtoBuf.Type.newBuilder()
 
         when (type) {
@@ -601,8 +603,6 @@ class FirElementSerializer private constructor(
 //                builder.setAbbreviatedType(typeProto(abbreviation))
 //            }
 //        }
-
-        extension.serializeType(type, builder)
 
         return builder
     }
