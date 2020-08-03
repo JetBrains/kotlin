@@ -1350,7 +1350,12 @@ class DeclarationsConverter(
         var delegateNumber = 0
         delegationSpecifiers.forEachChildren {
             when (it.tokenType) {
-                SUPER_TYPE_ENTRY -> superTypeRefs += convertType(it)
+                SUPER_TYPE_ENTRY -> {
+                    superTypeRefs += convertType(it)
+                    if (delegateConstructorSource == null) {
+                        delegateConstructorSource = it.toFirSourceElement()
+                    }
+                }
                 SUPER_TYPE_CALL_ENTRY -> convertConstructorInvocation(it).apply {
                     delegatedSuperTypeRef = first
                     superTypeRefs += first

@@ -986,6 +986,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/superclassNotAccessibleFromInterface.kt");
         }
 
+        @TestMetadata("supertypeInitializedWithoutPrimaryConstructor.kt")
+        public void testSupertypeInitializedWithoutPrimaryConstructor() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/supertypeInitializedWithoutPrimaryConstructor.kt");
+        }
+
         @TestMetadata("typeArgumentsNotAllowed.kt")
         public void testTypeArgumentsNotAllowed() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/typeArgumentsNotAllowed.kt");

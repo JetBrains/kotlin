@@ -21,6 +21,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirInfixFunctionDeclarationChecker,
         FirExposedVisibilityDeclarationChecker,
         FirCyclicConstructorDelegationCallChecker,
+        FirSupertypeInitializedWithoutPrimaryConstructor,
     )
 
     override val constructorCheckers: List<FirConstructorChecker> = listOf(
