@@ -1,7 +1,28 @@
 FILE: RedundantReturnUnitTypeChecker.kt
+    public final data class My : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Unit|): R|My| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Unit| = R|<local>/x|
+            public get(): R|kotlin/Unit|
+
+        public final fun component1(): R|kotlin/Unit|
+
+        public final fun copy(x: R|kotlin/Unit| = this@R|/My|.R|/My.x|): R|My|
+
+    }
+    public abstract interface I : R|kotlin/Any| {
+        public abstract val x: R|kotlin/Unit|
+            public get(): R|kotlin/Unit|
+
+    }
     public final class A : R|kotlin/Any| {
         public constructor(): R|A| {
             super<R|kotlin/Any|>()
+        }
+
+        public final fun too(): @R|kotlin/Annotation|() R|kotlin/Unit| {
         }
 
         public final fun foo(): R|kotlin/Unit| {
