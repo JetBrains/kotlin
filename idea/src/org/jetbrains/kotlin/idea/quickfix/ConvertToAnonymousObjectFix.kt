@@ -36,8 +36,7 @@ class ConvertToAnonymousObjectFix(element: KtNameReferenceExpression) : KotlinQu
         val functionDescriptor = nameReference.analyze().diagnostics.forElement(nameReference).firstNotNullResult {
             if (it.factory == Errors.RESOLUTION_TO_CLASSIFIER) getFunctionDescriptor(Errors.RESOLUTION_TO_CLASSIFIER.cast(it)) else null
         } ?: return
-        val functionName = functionDescriptor.name.asString()
-        SamConversionToAnonymousObjectIntention.convertToAnonymousObject(call, lambda, functionDescriptor, functionName)
+        SamConversionToAnonymousObjectIntention.convertToAnonymousObject(call, functionDescriptor, lambda)
     }
 
     companion object : KotlinSingleIntentionActionFactory() {

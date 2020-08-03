@@ -10,10 +10,14 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.core.CollectingNameValidator
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils
@@ -63,9 +67,9 @@ class SamConversionToAnonymousObjectIntention : SelfTargetingRangeIntention<KtCa
     override fun applyTo(element: KtCallExpression, editor: Editor?) {
         val lambda = getLambdaExpression(element) ?: return
         val context = element.analyze(BodyResolveMode.PARTIAL)
-        val functionDescriptor = lambda.functionLiteral.functionDescriptor(context) ?: return
-        val functionName = element.getSingleAbstractMethod(context)?.name?.asString() ?: return
-        convertToAnonymousObject(element, lambda, functionDescriptor, functionName)
+        val lambdaFunctionDescriptor = lambda.functionLiteral.functionDescriptor(context) ?: return
+        val samDescriptor = element.getSingleAbstractMethod(context) ?: return
+        convertToAnonymousObject(element, samDescriptor, lambda, lambdaFunctionDescriptor)
     }
 
     private fun KtCallExpression.getSingleAbstractMethod(context: BindingContext): FunctionDescriptor? {
@@ -75,15 +79,15 @@ class SamConversionToAnonymousObjectIntention : SelfTargetingRangeIntention<KtCa
         return getSingleAbstractMethodOrNull(classDescriptor)
     }
 
-    private fun KtFunctionLiteral.functionDescriptor(context: BindingContext): FunctionDescriptor? =
-        context[BindingContext.DECLARATION_TO_DESCRIPTOR, this] as? FunctionDescriptor
+    private fun KtFunctionLiteral.functionDescriptor(context: BindingContext): AnonymousFunctionDescriptor? =
+        context[BindingContext.FUNCTION, this] as? AnonymousFunctionDescriptor
 
     companion object {
         fun convertToAnonymousObject(
             call: KtCallExpression,
+            samDescriptor: FunctionDescriptor,
             lambda: KtLambdaExpression,
-            functionDescriptor: FunctionDescriptor,
-            functionName: String
+            lambdaFunctionDescriptor: AnonymousFunctionDescriptor? = null
         ) {
             val parentOfCall = call.getQualifiedExpressionForSelector()
             val interfaceName = if (parentOfCall != null) {
@@ -93,14 +97,34 @@ class SamConversionToAnonymousObjectIntention : SelfTargetingRangeIntention<KtCa
             } ?: return
 
             val typeArguments = call.typeArguments.mapNotNull { it.typeReference }
-            val typeArgumentsText = if (typeArguments.isEmpty())
+            val typeArgumentsText = if (typeArguments.isEmpty()) {
                 ""
-            else
+            } else {
                 typeArguments.joinToString(prefix = "<", postfix = ">", separator = ", ") { it.text }
+            }
 
+            val functionDescriptor = lambdaFunctionDescriptor ?: samDescriptor
+            val functionName = samDescriptor.name.asString()
+            val samParameters = samDescriptor.valueParameters
+            val nameValidator = CollectingNameValidator(lambdaFunctionDescriptor?.valueParameters?.map { it.name.asString() }.orEmpty())
+            val functionParameterName: (ValueParameterDescriptor, Int) -> String = { parameter, index ->
+                val name = parameter.name
+                if (name.isSpecial) {
+                    KotlinNameSuggester.suggestNameByName((samParameters.getOrNull(index)?.name ?: name).asString(), nameValidator)
+                } else {
+                    name.asString()
+                }
+            }
             val classDescriptor = functionDescriptor.containingDeclaration as? ClassDescriptor
             val typeParameters = classDescriptor?.declaredTypeParameters?.map { it.name.asString() }?.zip(typeArguments)?.toMap().orEmpty()
-            LambdaToAnonymousFunctionIntention.convertLambdaToFunction(lambda, functionDescriptor, functionName, typeParameters) {
+
+            LambdaToAnonymousFunctionIntention.convertLambdaToFunction(
+                lambda,
+                functionDescriptor,
+                functionName,
+                functionParameterName,
+                typeParameters
+            ) {
                 it.addModifier(KtTokens.OVERRIDE_KEYWORD)
                 (parentOfCall ?: call).replaced(
                     KtPsiFactory(it).createExpression("object : $interfaceName$typeArgumentsText { ${it.text} }")
