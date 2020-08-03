@@ -28,12 +28,6 @@ class DeprecatedDocumentableFilterTransformer(val context: DokkaContext) : PreMe
             }?.skipDeprecated
                     ?: globalOptions.skipDeprecated
 
-            fun T.isDeprecated() = extra[Annotations]?.let { annotations ->
-                annotations.content.values.flatten().any {
-                    it.dri.toString() == "kotlin/Deprecated///PointingToDeclaration/"
-                }
-            } ?: false
-
             return !(condition && this.isDeprecated())
         }
 
