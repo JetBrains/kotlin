@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.idea.codeInliner
 
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInliner.CommentHolder.CommentNode.Companion.mergeComments
@@ -30,6 +27,7 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.ImportedFromObjectCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
@@ -213,6 +211,45 @@ class CodeToInlineBuilder(
         }
     }
 
+    private fun findDescriptorAndContext(
+        expression: KtSimpleNameExpression,
+        analyzer: (KtExpression) -> BindingContext
+    ): Pair<BindingContext, DeclarationDescriptor>? {
+        val currentContext = analyzer(expression)
+        val descriptor = currentContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, expression]
+            ?: currentContext[BindingContext.REFERENCE_TARGET, expression]
+
+        if (descriptor != null) return currentContext to descriptor
+        return findCallableDescriptorAndContext(expression, analyzer)
+    }
+
+    private fun findCallableDescriptorAndContext(
+        expression: KtSimpleNameExpression,
+        analyzer: (KtExpression) -> BindingContext
+    ): Pair<BindingContext, CallableDescriptor>? {
+        val callExpression = expression.parent as? KtCallExpression ?: return null
+        val context = analyzer(callExpression)
+        return callExpression.getResolvedCall(context)?.resultingDescriptor?.let { context to it }
+    }
+
+    private fun findResolvedCall(
+        expression: KtSimpleNameExpression,
+        bindingContext: BindingContext,
+        analyzer: (KtExpression) -> BindingContext,
+    ): Pair<KtExpression, ResolvedCall<out CallableDescriptor>>? {
+        return getResolvedCallIfReallySuccess(expression, bindingContext)?.let { expression to it }
+            ?: expression.parent?.safeAs<KtCallExpression>()?.let { callExpression ->
+                getResolvedCallIfReallySuccess(callExpression, analyzer(callExpression))?.let { callExpression to it }
+            }
+    }
+
+    private fun getResolvedCallIfReallySuccess(
+        expression: KtExpression,
+        bindingContext: BindingContext
+    ): ResolvedCall<out CallableDescriptor>? {
+        return expression.getResolvedCall(bindingContext)?.takeIf { it.isReallySuccess() }
+    }
+
     private fun processReferences(codeToInline: MutableCodeToInline, analyze: (KtExpression) -> BindingContext, reformat: Boolean) {
         val receiversToAdd = ArrayList<Triple<KtExpression, KtExpression, KotlinType>>()
         val targetDispatchReceiverType = targetCallable.dispatchReceiverParameter?.value?.type
@@ -220,16 +257,11 @@ class CodeToInlineBuilder(
 
         codeToInline.forEachDescendantOfType<KtSimpleNameExpression> { expression ->
             if (expression.parent is KtValueArgumentName) return@forEachDescendantOfType
-
-            val bindingContext = analyze(expression)
-            val target = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, expression]
-                ?: bindingContext[BindingContext.REFERENCE_TARGET, expression]
-                ?: return@forEachDescendantOfType
+            val (bindingContext, target) = findDescriptorAndContext(expression, analyze) ?: return@forEachDescendantOfType
 
             //TODO: other types of references ('[]' etc)
             if (expression.canBeResolvedViaImport(target, bindingContext)) {
                 val importableFqName = target.importableFqName
-
                 if (importableFqName != null) {
                     val lexicalScope = (expression.containingFile as? KtFile)?.getResolutionScope(bindingContext, resolutionFacade)
                     val lookupName = lexicalScope?.findClassifier(importableFqName.shortName(), NoLookupLocation.FROM_IDE)
@@ -251,25 +283,19 @@ class CodeToInlineBuilder(
                 }
 
                 if (targetCallable !is ImportedFromObjectCallableDescriptor<*>) {
-                    val callExpression = expression.parent as? KtCallExpression
-                    val (expressionToResolve, resolvedCall) = if (callExpression == null)
-                        expression to expression.getResolvedCall(bindingContext)
-                    else {
-                        callExpression to callExpression.getResolvedCall(analyze(callExpression))
-                    }
+                    val (expressionToResolve, resolvedCall) = findResolvedCall(expression, bindingContext, analyze)
+                        ?: return@forEachDescendantOfType
 
-                    if (resolvedCall != null && resolvedCall.isReallySuccess()) {
-                        val receiver = if (resolvedCall.resultingDescriptor.isExtension)
-                            resolvedCall.extensionReceiver
-                        else
-                            resolvedCall.dispatchReceiver
+                    val receiver = if (resolvedCall.resultingDescriptor.isExtension)
+                        resolvedCall.extensionReceiver
+                    else
+                        resolvedCall.dispatchReceiver
 
-                        if (receiver is ImplicitReceiver) {
-                            val resolutionScope = expression.getResolutionScope(bindingContext, resolutionFacade)
-                            val receiverExpression = receiver.asExpression(resolutionScope, psiFactory)
-                            if (receiverExpression != null) {
-                                receiversToAdd.add(Triple(expressionToResolve, receiverExpression, receiver.type))
-                            }
+                    if (receiver is ImplicitReceiver) {
+                        val resolutionScope = expression.getResolutionScope(bindingContext, resolutionFacade)
+                        val receiverExpression = receiver.asExpression(resolutionScope, psiFactory)
+                        if (receiverExpression != null) {
+                            receiversToAdd.add(Triple(expressionToResolve, receiverExpression, receiver.type))
                         }
                     }
                 }

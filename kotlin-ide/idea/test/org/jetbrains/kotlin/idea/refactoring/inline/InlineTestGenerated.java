@@ -231,6 +231,26 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 runTest("testData/refactoring/inline/function/expressionBody/Constant.kt");
             }
 
+            @TestMetadata("delegateToExtensionPropertyWithThis.kt")
+            public void testDelegateToExtensionPropertyWithThis() throws Exception {
+                runTest("testData/refactoring/inline/function/expressionBody/delegateToExtensionPropertyWithThis.kt");
+            }
+
+            @TestMetadata("delegateToExtensionPropertyWithoutThis.kt")
+            public void testDelegateToExtensionPropertyWithoutThis() throws Exception {
+                runTest("testData/refactoring/inline/function/expressionBody/delegateToExtensionPropertyWithoutThis.kt");
+            }
+
+            @TestMetadata("delegateToExtensionWithThis.kt")
+            public void testDelegateToExtensionWithThis() throws Exception {
+                runTest("testData/refactoring/inline/function/expressionBody/delegateToExtensionWithThis.kt");
+            }
+
+            @TestMetadata("delegateToExtensionWithoutThis.kt")
+            public void testDelegateToExtensionWithoutThis() throws Exception {
+                runTest("testData/refactoring/inline/function/expressionBody/delegateToExtensionWithoutThis.kt");
+            }
+
             @TestMetadata("DoNotKeepString.kt")
             public void testDoNotKeepString() throws Exception {
                 runTest("testData/refactoring/inline/function/expressionBody/DoNotKeepString.kt");
@@ -518,6 +538,26 @@ public class InlineTestGenerated extends AbstractInlineTest {
             @TestMetadata("DefaultParameter.kt")
             public void testDefaultParameter() throws Exception {
                 runTest("testData/refactoring/inline/function/returnAtEnd/DefaultParameter.kt");
+            }
+
+            @TestMetadata("delegateToExtensionPropertyWithThis.kt")
+            public void testDelegateToExtensionPropertyWithThis() throws Exception {
+                runTest("testData/refactoring/inline/function/returnAtEnd/delegateToExtensionPropertyWithThis.kt");
+            }
+
+            @TestMetadata("delegateToExtensionPropertyWithoutThis.kt")
+            public void testDelegateToExtensionPropertyWithoutThis() throws Exception {
+                runTest("testData/refactoring/inline/function/returnAtEnd/delegateToExtensionPropertyWithoutThis.kt");
+            }
+
+            @TestMetadata("delegateToExtensionWithThis.kt")
+            public void testDelegateToExtensionWithThis() throws Exception {
+                runTest("testData/refactoring/inline/function/returnAtEnd/delegateToExtensionWithThis.kt");
+            }
+
+            @TestMetadata("delegateToExtensionWithoutThis.kt")
+            public void testDelegateToExtensionWithoutThis() throws Exception {
+                runTest("testData/refactoring/inline/function/returnAtEnd/delegateToExtensionWithoutThis.kt");
             }
 
             @TestMetadata("GenericTypeArgument.kt")
