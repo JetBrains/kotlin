@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeHostTestRun
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeSimulatorTestRun
 import org.jetbrains.kotlin.gradle.targets.native.NativeBinaryTestRunSource
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
+import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
@@ -106,7 +107,13 @@ open class KotlinNativeTarget @Inject constructor(
             }
         }
 
-        setOf(createKotlinVariant(targetName, mainCompilation, mutableUsageContexts))
+        val result = createKotlinVariant(targetName, mainCompilation, mutableUsageContexts)
+
+        result.sourcesArtifacts = setOf(
+            sourcesJarArtifact(mainCompilation, targetName, dashSeparatedName(targetName.toLowerCase()))
+        )
+
+        setOf(result)
     }
 
     override val binaries =
