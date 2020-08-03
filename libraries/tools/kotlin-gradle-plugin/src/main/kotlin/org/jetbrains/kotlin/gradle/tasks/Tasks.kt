@@ -149,13 +149,10 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         cacheOnlyIfEnabledForKotlin()
     }
 
-    @get:Internal
-    val gradleCompileTask: GradleCompileTaskProvider = GradleCompileTaskProvider(this)
-
     // avoid creating directory in getter: this can lead to failure in parallel build
     @get:LocalState
     internal val taskBuildDirectory: File by project.provider {
-        File(File(gradleCompileTask.buildDir, KOTLIN_BUILD_DIR_NAME), name)
+        File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), name)
     }
 
     @get:Internal
@@ -302,7 +299,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     private val kotlinLogger by lazy { GradleKotlinLogger(logger) }
 
     @get:Internal
-    internal val compilerRunner = compilerRunner()
+    internal val compilerRunner by lazy { compilerRunner() }
 
     internal open fun compilerRunner(): GradleCompilerRunner = GradleCompilerRunner(GradleCompileTaskProvider(this))
 
