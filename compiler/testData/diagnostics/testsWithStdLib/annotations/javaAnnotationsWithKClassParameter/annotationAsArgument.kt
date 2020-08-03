@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: A.java
 public @interface A {
     Class<?> arg() default Integer.class;

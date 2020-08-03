@@ -11,4 +11,6 @@
 
 }
 @R|java/lang/annotation/Retention|(R|java/lang/annotation/RetentionPolicy.RUNTIME|()) @R|java/lang/annotation/Documented|() @R|javax/annotation/CheckForNull|() @R|javax/annotation/meta/TypeQualifierDefault|(<implicitArrayOf>(R|java/lang/annotation/ElementType.FIELD|())) public abstract annotation class FieldsAreNullable : R|kotlin/Annotation| {
+    public constructor(): R|FieldsAreNullable|
+
 }
