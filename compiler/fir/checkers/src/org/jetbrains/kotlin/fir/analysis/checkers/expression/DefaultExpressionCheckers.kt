@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.fir.analysis.checkers.extended.RedundantCallOfConversionMethod
-
 object CommonExpressionCheckers : ExpressionCheckers() {
     override val expressionCheckers: List<FirBasicExpresionChecker> = listOf()
     override val qualifiedAccessCheckers: List<FirQualifiedAccessChecker> = listOf(
@@ -18,7 +16,6 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirProjectionsOnNonClassTypeArgumentChecker,
         FirUpperBoundViolatedChecker,
         FirTypeArgumentsNotAllowedExpressionChecker,
-        RedundantCallOfConversionMethod
     )
     override val functionCallCheckers: List<FirFunctionCallChecker> = listOf()
 }
