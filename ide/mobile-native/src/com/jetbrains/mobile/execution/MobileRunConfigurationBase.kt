@@ -64,6 +64,8 @@ abstract class MobileRunConfigurationBase(project: Project, factory: Configurati
     private val helper = MobileBuildConfigurationHelper(project)
     override fun getHelper(): MobileBuildConfigurationHelper = helper
 
+    override fun getExecutionTarget(environment: ExecutionEnvironment): ExecutionTarget = executionTargets.single()
+
     override fun getResolveConfiguration(target: ExecutionTarget): OCResolveConfiguration? = null
 
     override fun writeExternal(element: Element) {
