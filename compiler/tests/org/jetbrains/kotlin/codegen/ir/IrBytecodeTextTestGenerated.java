@@ -1456,6 +1456,49 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/coroutines/varValueConflictsWithTableSameSort.kt");
         }
 
+        @TestMetadata("compiler/testData/codegen/bytecodeText/coroutines/cleanup")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Cleanup extends AbstractIrBytecodeTextTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInCleanup() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/cleanup"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @TestMetadata("backEdge.kt")
+            public void testBackEdge() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/cleanup/backEdge.kt");
+            }
+
+            @TestMetadata("if.kt")
+            public void testIf() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/cleanup/if.kt");
+            }
+
+            @TestMetadata("nullCleanup.kt")
+            public void testNullCleanup() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/cleanup/nullCleanup.kt");
+            }
+
+            @TestMetadata("nullNotSpill.kt")
+            public void testNullNotSpill() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/cleanup/nullNotSpill.kt");
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/cleanup/simple.kt");
+            }
+
+            @TestMetadata("when.kt")
+            public void testWhen() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/cleanup/when.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/bytecodeText/coroutines/debug")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
