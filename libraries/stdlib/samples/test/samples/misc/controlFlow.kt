@@ -16,9 +16,9 @@ class ControlFlow {
             println("Hello")
         }
         
-        // greets with a count
-        repeat(3) { count ->
-            println("Hello with count $count")
+        // greets with an index
+        repeat(3) { index ->
+            println("Hello with index $index")
         }
 
         repeat(0) {
