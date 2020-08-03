@@ -46,6 +46,7 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirExpressionChecker<FirVari
     }
 
     fun KtBinaryExpression.matcher(variable: KtNameReferenceExpression): Boolean {
+        if (!isArithmetic()) return false
         if ((left as? KtNameReferenceExpression)?.getReferencedName() == variable.getReferencedName()) return true
         if ((right as? KtNameReferenceExpression)?.getReferencedName() == variable.getReferencedName() && isCommutative()) return true
 
@@ -67,6 +68,11 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirExpressionChecker<FirVari
     }
 
     private fun KtBinaryExpression.isCommutative() = this.operationToken == KtTokens.PLUS || this.operationToken == KtTokens.MUL
+
+    private fun KtBinaryExpression.isArithmetic() = this.operationToken == KtTokens.PLUS
+            || this.operationToken == KtTokens.MUL
+            || this.operationToken == KtTokens.MINUS
+            || this.operationToken == KtTokens.DIV
 
     private fun isHierarchicallyTrue(currentOperation: IElementType, nextOperation: IElementType?) = currentOperation == nextOperation
 }
