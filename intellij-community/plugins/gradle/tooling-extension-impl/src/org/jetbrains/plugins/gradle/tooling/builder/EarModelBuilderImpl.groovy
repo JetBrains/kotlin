@@ -24,6 +24,8 @@ import org.jetbrains.plugins.gradle.tooling.util.DependencyResolver
 import org.jetbrains.plugins.gradle.tooling.util.SourceSetCachedFinder
 import org.jetbrains.plugins.gradle.tooling.util.resolve.DependencyResolverImpl
 
+import static org.jetbrains.plugins.gradle.tooling.internal.ExtraModelBuilder.reportModelBuilderFailure
+
 /**
  * @author Vladislav.Soroka
  */
@@ -93,8 +95,7 @@ class EarModelBuilderImpl extends AbstractModelBuilderService {
           })
         }
         catch (Exception e) {
-          ErrorMessageBuilder builderError = getErrorMessageBuilder(project, e)
-          project.getLogger().error(builderError.build())
+          reportModelBuilderFailure(project, this, context, e)
         }
 
         earModel.resources = earResources

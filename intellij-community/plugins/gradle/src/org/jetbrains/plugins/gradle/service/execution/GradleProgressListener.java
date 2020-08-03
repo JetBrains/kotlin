@@ -25,7 +25,7 @@ import org.gradle.tooling.events.StatusEvent;
 import org.gradle.tooling.events.task.TaskProgressEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.plugins.gradle.tooling.MessageBuilder;
+import org.jetbrains.plugins.gradle.tooling.Message;
 
 import java.io.File;
 import java.util.HashMap;
@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.intellij.openapi.util.text.StringUtil.formatFileSize;
-import static org.jetbrains.plugins.gradle.tooling.internal.ExtraModelBuilder.MODEL_BUILDER_SERVICE_ERROR_PREFIX;
+import static org.jetbrains.plugins.gradle.tooling.internal.ExtraModelBuilder.MODEL_BUILDER_SERVICE_MESSAGE_PREFIX;
 
 /**
  * @author Vladislav.Soroka
@@ -84,8 +84,7 @@ public class GradleProgressListener implements ProgressListener, org.gradle.tool
   @Override
   public void statusChanged(ProgressEvent event) {
     String eventDescription = event.getDescription();
-    if (eventDescription.startsWith(MODEL_BUILDER_SERVICE_ERROR_PREFIX)) {
-      reportModelBuilderFailure(eventDescription);
+    if (maybeReportModelBuilderMessage(eventDescription)) {
       return;
     }
     ExternalSystemTaskNotificationEvent progressBuildEvent =
@@ -95,12 +94,15 @@ public class GradleProgressListener implements ProgressListener, org.gradle.tool
     reportGradleDaemonStartingEvent(eventDescription);
   }
 
-  private void reportModelBuilderFailure(String eventDescription) {
+  private boolean maybeReportModelBuilderMessage(String eventDescription) {
+    if (!eventDescription.startsWith(MODEL_BUILDER_SERVICE_MESSAGE_PREFIX)) {
+      return false;
+    }
     try {
-      MessageBuilder.Message message = new GsonBuilder().create()
-        .fromJson(StringUtil.substringAfter(eventDescription, MODEL_BUILDER_SERVICE_ERROR_PREFIX), MessageBuilder.Message.class);
+      Message message = new GsonBuilder().create()
+        .fromJson(StringUtil.substringAfter(eventDescription, MODEL_BUILDER_SERVICE_MESSAGE_PREFIX), Message.class);
       MessageEvent.Kind kind = MessageEvent.Kind.valueOf(message.getKind().name());
-      MessageBuilder.FilePosition messageFilePosition = message.getFilePosition();
+      Message.FilePosition messageFilePosition = message.getFilePosition();
       FilePosition filePosition = messageFilePosition == null ? null :
                                   new FilePosition(new File(messageFilePosition.getFilePath()), messageFilePosition.getLine(),
                                                    messageFilePosition.getColumn());
@@ -113,10 +115,12 @@ public class GradleProgressListener implements ProgressListener, org.gradle.tool
       };
 
       myListener.onStatusChange(new ExternalSystemBuildEvent(myTaskId, messageEvent));
+      return true;
     }
     catch (Exception e) {
-      LOG.warn("Failed to report model builder error using event '" + eventDescription + "'", e);
+      LOG.warn("Failed to report model builder message using event '" + eventDescription + "'", e);
     }
+    return false;
   }
 
   private void maybeUpdateTaskStatus(@Nullable ExternalSystemTaskNotificationEvent progressBuildEvent) {
@@ -160,11 +164,13 @@ public class GradleProgressListener implements ProgressListener, org.gradle.tool
         if (currentProgress != null) {
           OperationResult operationResult = finishEvent.getResult();
           String duration = StringUtil.formatDuration(operationResult.getEndTime() - operationResult.getStartTime());
-          String text = String.format("\r%s, took %s (%s)\n", finishEvent.getDisplayName(), duration, formatFileSize(currentProgress.first));
+          String text =
+            String.format("\r%s, took %s (%s)\n", finishEvent.getDisplayName(), duration, formatFileSize(currentProgress.first));
           myListener.onTaskOutput(myTaskId, text, true);
           if (!currentProgress.first.equals(currentProgress.second)) {
             ProgressBuildEventImpl progressBuildEvent =
-              new ProgressBuildEventImpl(myTaskId, myTaskId, System.currentTimeMillis(), operationName, currentProgress.first, currentProgress.first, "bytes");
+              new ProgressBuildEventImpl(myTaskId, myTaskId, System.currentTimeMillis(), operationName, currentProgress.first,
+                                         currentProgress.first, "bytes");
             myListener.onStatusChange(new ExternalSystemBuildEvent(myTaskId, progressBuildEvent));
           }
         }

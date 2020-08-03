@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.tooling.builder
 
 import org.gradle.api.Project
@@ -25,16 +11,19 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.plugins.gradle.model.web.WebConfiguration
+import org.jetbrains.plugins.gradle.tooling.AbstractModelBuilderService
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
-import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
+import org.jetbrains.plugins.gradle.tooling.ModelBuilderContext
 import org.jetbrains.plugins.gradle.tooling.internal.web.WarModelImpl
 import org.jetbrains.plugins.gradle.tooling.internal.web.WebConfigurationImpl
 import org.jetbrains.plugins.gradle.tooling.internal.web.WebResourceImpl
 
+import static org.jetbrains.plugins.gradle.tooling.internal.ExtraModelBuilder.reportModelBuilderFailure
+
 /**
  * @author Vladislav.Soroka
  */
-class WarModelBuilderImpl implements ModelBuilderService {
+class WarModelBuilderImpl extends AbstractModelBuilderService {
 
   private static final String WEB_APP_DIR_PROPERTY = "webAppDir"
   private static final String WEB_APP_DIR_NAME_PROPERTY = "webAppDirName"
@@ -43,12 +32,12 @@ class WarModelBuilderImpl implements ModelBuilderService {
 
   @Override
   boolean canBuild(String modelName) {
-    return WebConfiguration.name.equals(modelName)
+    return WebConfiguration.name == modelName
   }
 
   @Nullable
   @Override
-  Object buildAll(String modelName, Project project) {
+  Object buildAll(String modelName, Project project, @NotNull ModelBuilderContext context) {
     final WarPlugin warPlugin = project.plugins.findPlugin(WarPlugin)
     if (warPlugin == null) return null
 
@@ -91,9 +80,8 @@ class WarModelBuilderImpl implements ModelBuilderService {
           })
           warModel.classpath = new LinkedHashSet<>(warTask.classpath.files)
         }
-        catch (Exception ignore) {
-          ErrorMessageBuilder builderError = getErrorMessageBuilder(project, ignore)
-          project.getLogger().error(builderError.build())
+        catch (Exception e) {
+          reportModelBuilderFailure(project, this, context, e)
         }
 
         warModel.webResources = webResources

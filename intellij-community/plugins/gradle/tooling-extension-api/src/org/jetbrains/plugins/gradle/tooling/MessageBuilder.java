@@ -7,11 +7,15 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.gradle.tooling.Message.FilePosition;
+import org.jetbrains.plugins.gradle.tooling.Message.Kind;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import static com.intellij.util.ExceptionUtilRt.findCause;
+import static org.jetbrains.plugins.gradle.tooling.Message.Kind.INFO;
+import static org.jetbrains.plugins.gradle.tooling.Message.Kind.WARNING;
 
 @ApiStatus.Experimental
 public final class MessageBuilder {
@@ -19,7 +23,7 @@ public final class MessageBuilder {
   @NotNull private final String myTitle;
   @NotNull private final String myText;
   @Nullable private Exception myException;
-  @NotNull private Kind myKind = Kind.INFO;
+  @NotNull private Kind myKind = INFO;
   @Nullable private String myFilePath;
   private int myLine;
   private int myColumn;
@@ -34,7 +38,7 @@ public final class MessageBuilder {
   }
 
   public final MessageBuilder warning() {
-    myKind = Kind.WARNING;
+    myKind = WARNING;
     return this;
   }
 
@@ -90,76 +94,4 @@ public final class MessageBuilder {
     }
     return sw.toString();
   }
-
-  public static class Message {
-    @NotNull private final String myTitle;
-    @NotNull private final String myText;
-    @Nullable private final String myGroup;
-    @NotNull private final Kind myKind;
-    @Nullable FilePosition myFilePosition;
-
-    public Message(@NotNull String title,
-                   @NotNull String text,
-                   @Nullable String group,
-                   @NotNull Kind kind,
-                   @Nullable FilePosition filePosition) {
-      myTitle = title;
-      myText = text;
-      myGroup = group;
-      myKind = kind;
-      myFilePosition = filePosition;
-    }
-
-    @NotNull
-    public String getTitle() {
-      return myTitle;
-    }
-
-    @NotNull
-    public String getText() {
-      return myText;
-    }
-
-    @Nullable
-    public String getGroup() {
-      return myGroup;
-    }
-
-    @NotNull
-    public Kind getKind() {
-      return myKind;
-    }
-
-    @Nullable
-    public FilePosition getFilePosition() {
-      return myFilePosition;
-    }
-  }
-
-  public static class FilePosition {
-    @NotNull private final String myFilePath;
-    private final int myLine;
-    private final int myColumn;
-
-    public FilePosition(@NotNull String filePath, int line, int column) {
-      myFilePath = filePath;
-      myLine = line;
-      myColumn = column;
-    }
-
-    @NotNull
-    public String getFilePath() {
-      return myFilePath;
-    }
-
-    public int getLine() {
-      return myLine;
-    }
-
-    public int getColumn() {
-      return myColumn;
-    }
-  }
-
-  public enum Kind {ERROR, WARNING, INFO}
 }
