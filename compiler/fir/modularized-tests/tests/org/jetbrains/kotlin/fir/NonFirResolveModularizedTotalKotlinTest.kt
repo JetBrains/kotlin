@@ -32,7 +32,7 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
         val time = measureNanoTime {
             try {
-                KotlinToJVMBytecodeCompiler.analyze(environment, null)
+                KotlinToJVMBytecodeCompiler.analyze(environment)
             } catch (e: Throwable) {
                 var exception: Throwable? = e
                 while (exception != null && exception != exception.cause) {

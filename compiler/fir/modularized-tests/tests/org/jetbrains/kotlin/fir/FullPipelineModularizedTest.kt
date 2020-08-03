@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.fir.TableTimeUnit.MS
-import org.jetbrains.kotlin.fir.TableTimeUnit.S
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.util.PerformanceCounter
 import java.io.FileOutputStream
@@ -173,10 +172,10 @@ class FullPipelineModularizedTest : AbstractModularizedTest() {
             return CumulativeTime(
                 gcInfo,
                 analysisMeasurement?.milliseconds ?: 0,
-                irMeasurements.firstOrNull { it.kind == IRMeasurement.Kind.Translation }?.milliseconds ?: 0,
-                irMeasurements.firstOrNull { it.kind == IRMeasurement.Kind.Generation }?.milliseconds ?: 0,
-                analysisMeasurement?.files ?: 0,
-                analysisMeasurement?.lines ?: 0
+                irMeasurements.firstOrNull { it.kind == IRMeasurement.Kind.TRANSLATION }?.milliseconds ?: 0,
+                irMeasurements.firstOrNull { it.kind == IRMeasurement.Kind.GENERATION }?.milliseconds ?: 0,
+                files ?: 0,
+                lines ?: 0
             )
         }
     }

@@ -201,9 +201,7 @@ object KotlinToJVMBytecodeCompiler {
             return compileModulesUsingFrontendIR(environment, buildFile, chunk)
         }
 
-        val targetDescription = "in targets [" + chunk.joinToString { input -> input.getModuleName() + "-" + input.getModuleType() } + "]"
-
-        val result = repeatAnalysisIfNeeded(analyze(environment, targetDescription), environment, targetDescription)
+        val result = repeatAnalysisIfNeeded(analyze(environment), environment)
         if (result == null || !result.shouldGenerateCode) return false
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
@@ -384,9 +382,7 @@ object KotlinToJVMBytecodeCompiler {
                 environment.messageCollector
             )
 
-            val debugTargetDescription = "target " + module.getModuleName() + "-" + module.getModuleType() + " "
-            val codeLines = environment.countLinesOfCode(ktFiles)
-            performanceManager?.notifyAnalysisFinished(ktFiles.size, codeLines, debugTargetDescription)
+            performanceManager?.notifyAnalysisFinished()
 
             performanceManager?.notifyGenerationStarted()
             val signaturer = IdSignatureDescriptor(JvmManglerDesc())
@@ -399,7 +395,7 @@ object KotlinToJVMBytecodeCompiler {
                     JvmGeneratorExtensions(), FirJvmKotlinMangler(session), IrFactoryImpl
                 )
 
-            performanceManager?.notifyIRTranslationFinished(ktFiles.size, codeLines, debugTargetDescription)
+            performanceManager?.notifyIRTranslationFinished()
 
             val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
@@ -431,11 +427,7 @@ object KotlinToJVMBytecodeCompiler {
             }
             CodegenFactory.doCheckCancelled(generationState)
             generationState.factory.done()
-            performanceManager?.notifyGenerationFinished(
-                ktFiles.size,
-                codeLines,
-                additionalDescription = debugTargetDescription
-            )
+            performanceManager?.notifyGenerationFinished()
 
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
@@ -451,7 +443,7 @@ object KotlinToJVMBytecodeCompiler {
                 generationState.extraJvmDiagnosticsTrace.bindingContext, environment.messageCollector
             )
 
-            performanceManager?.notifyIRGenerationFinished(ktFiles.size, codeLines, additionalDescription = debugTargetDescription)
+            performanceManager?.notifyIRGenerationFinished()
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             outputs[module] = generationState
         }
@@ -524,11 +516,7 @@ object KotlinToJVMBytecodeCompiler {
         }
     }
 
-    private fun repeatAnalysisIfNeeded(
-        result: AnalysisResult?,
-        environment: KotlinCoreEnvironment,
-        targetDescription: String?
-    ): AnalysisResult? {
+    private fun repeatAnalysisIfNeeded(result: AnalysisResult?, environment: KotlinCoreEnvironment): AnalysisResult? {
         if (result is AnalysisResult.RetryWithAdditionalRoots) {
             val configuration = environment.configuration
 
@@ -551,7 +539,7 @@ object KotlinToJVMBytecodeCompiler {
             configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]?.clear()
 
             // Repeat analysis with additional Java roots (kapt generated sources)
-            return analyze(environment, targetDescription)
+            return analyze(environment)
         }
 
         return result
@@ -559,7 +547,7 @@ object KotlinToJVMBytecodeCompiler {
 
     @Suppress("MemberVisibilityCanBePrivate") // Used in ExecuteKotlinScriptMojo
     fun analyzeAndGenerate(environment: KotlinCoreEnvironment): GenerationState? {
-        val result = repeatAnalysisIfNeeded(analyze(environment, null), environment, null) ?: return null
+        val result = repeatAnalysisIfNeeded(analyze(environment), environment) ?: return null
 
         if (!result.shouldGenerateCode) return null
 
@@ -568,7 +556,7 @@ object KotlinToJVMBytecodeCompiler {
         return generate(environment, environment.configuration, result, environment.getSourceFiles(), null)
     }
 
-    fun analyze(environment: KotlinCoreEnvironment, targetDescription: String?): AnalysisResult? {
+    fun analyze(environment: KotlinCoreEnvironment): AnalysisResult? {
         val sourceFiles = environment.getSourceFiles()
         val collector = environment.messageCollector
 
@@ -601,7 +589,7 @@ object KotlinToJVMBytecodeCompiler {
             )
         }
 
-        performanceManager?.notifyAnalysisFinished(sourceFiles.size, environment.countLinesOfCode(sourceFiles), targetDescription)
+        performanceManager?.notifyAnalysisFinished()
 
         val analysisResult = analyzerWithCompilerReport.analysisResult
 
@@ -682,11 +670,7 @@ object KotlinToJVMBytecodeCompiler {
 
         KotlinCodegenFacade.compileCorrectFiles(generationState)
 
-        performanceManager?.notifyGenerationFinished(
-            sourceFiles.size,
-            environment.countLinesOfCode(sourceFiles),
-            additionalDescription = if (module != null) "target " + module.getModuleName() + "-" + module.getModuleType() + " " else ""
-        )
+        performanceManager?.notifyGenerationFinished()
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
