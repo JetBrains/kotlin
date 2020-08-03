@@ -39,6 +39,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/function/delegateToFunctionWithParameter.kt");
         }
 
+        @TestMetadata("DiffirentNamedParameters.kt")
+        public void testDiffirentNamedParameters() throws Exception {
+            runTest("testData/refactoring/inline/function/DiffirentNamedParameters.kt");
+        }
+
         @TestMetadata("EmptyFunction.kt")
         public void testEmptyFunction() throws Exception {
             runTest("testData/refactoring/inline/function/EmptyFunction.kt");
@@ -157,6 +162,16 @@ public class InlineTestGenerated extends AbstractInlineTest {
         @TestMetadata("ReturnNotInTheEnd.kt")
         public void testReturnNotInTheEnd() throws Exception {
             runTest("testData/refactoring/inline/function/ReturnNotInTheEnd.kt");
+        }
+
+        @TestMetadata("SameNamedParameters.kt")
+        public void testSameNamedParameters() throws Exception {
+            runTest("testData/refactoring/inline/function/SameNamedParameters.kt");
+        }
+
+        @TestMetadata("SameNamedParameters2.kt")
+        public void testSameNamedParameters2() throws Exception {
+            runTest("testData/refactoring/inline/function/SameNamedParameters2.kt");
         }
 
         @TestMetadata("Sequence.kt")
