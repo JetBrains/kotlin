@@ -31,6 +31,7 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
                 JsModuleCallChecker,
                 JsDynamicCallChecker,
                 JsDefinedExternallyCallChecker,
+                NoFunnyNameChecker,
         ),
         identifierChecker = JsIdentifierChecker
 ) {

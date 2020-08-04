@@ -43,6 +43,11 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/localClassMetadata.kt");
     }
 
+    @TestMetadata("noFunnyName.kt")
+    public void testNoFunnyName() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLib/noFunnyName.kt");
+    }
+
     @TestMetadata("noImpl.kt")
     public void testNoImpl() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/noImpl.kt");

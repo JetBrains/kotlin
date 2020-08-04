@@ -104,6 +104,8 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.WRONG_EXPORTED_DECLARATION, "Declaration of such kind ({0}) can't be exported to JS", Renderers.STRING)
         put(ErrorsJs.NON_EXPORTABLE_TYPE, "Exported declaration uses non-exportable {0} type: {1}", Renderers.STRING, RENDER_TYPE)
 
+        put(ErrorsJs.FUNNY_NAME_NOT_ALLOWED, "Funny names are not allowed: {0}", Renderers.STRING)
+
         this
     }
 }
