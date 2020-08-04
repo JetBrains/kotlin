@@ -437,7 +437,14 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         val allNonCachedDependencies = context.librariesWithDependencies.filter {
             context.config.cachedLibraries.getLibraryCache(it) == null
         }
-        (allNonCachedDependencies + allCachedBitcodeDependencies).distinct()
+        val set = (allNonCachedDependencies + allCachedBitcodeDependencies).toSet()
+        // This list is used in particular to build the libraries' initializers chain.
+        // The initializers must be called in the topological order, so make sure that the
+        // libraries list being returned is also toposorted.
+        context.config.resolvedLibraries
+                .getFullList(TopologicalLibraryOrder)
+                .cast<List<KonanLibrary>>()
+                .filter { it in set }
     }
 
     val bitcodeToLink: List<KonanLibrary> by lazy {
