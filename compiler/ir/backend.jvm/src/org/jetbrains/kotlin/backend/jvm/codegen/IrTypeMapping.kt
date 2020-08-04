@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
@@ -62,7 +63,7 @@ private fun IrSimpleType.buildPossiblyInnerType(classifier: IrClass?, index: Int
 
     val toIndex = classifier.typeParameters.size + index
     if (!classifier.isInner) {
-        assert(toIndex == arguments.size || classifier.isLocalClass()) {
+        assert(toIndex == arguments.size || classifier.visibility == Visibilities.LOCAL) {
             "${arguments.size - toIndex} trailing arguments were found in this type: ${render()}"
         }
 
