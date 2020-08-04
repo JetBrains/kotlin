@@ -10,6 +10,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.Optional
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.Family
@@ -177,6 +178,9 @@ open class PodSetupBuildTask : CocoapodsWithSyntheticTask() {
     @Internal
     lateinit var kotlinNativeTarget: KotlinNativeTarget
 
+    @Input
+    lateinit var schemeName: Provider<String>
+
     @get:OutputFile
     internal val buildSettingsFileProvider: Provider<File> = project.provider {
         project.cocoapodsBuildDirs
@@ -191,7 +195,7 @@ open class PodSetupBuildTask : CocoapodsWithSyntheticTask() {
         val buildSettingsReceivingCommand = listOf(
             "xcodebuild", "-showBuildSettings",
             "-project", podsXcodeProjDir.name,
-            "-scheme", cocoapodsExtension.frameworkName,
+            "-scheme", schemeName.get(),
             "-sdk", kotlinNativeTarget.toValidSDK
         )
 

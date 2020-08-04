@@ -31,7 +31,8 @@ import java.io.File
  */
 open class PodspecTask : DefaultTask() {
 
-    private val specName = project.name.asValidFrameworkName()
+    @get:Input
+    internal val specName = project.name.asValidFrameworkName()
 
     @get:OutputFile
     internal val outputFileProvider: Provider<File>
