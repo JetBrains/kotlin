@@ -160,6 +160,8 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
 }
 
 abstract class WizardStep(protected val wizard: IdeWizard, private val phase: GenerationPhase) : ModuleWizardStep() {
+    override fun getHelpId(): String = HELP_ID
+
     override fun updateDataModel() = Unit // model is updated on every UI action
     override fun validate(): Boolean =
         when (val result = wizard.context.read { with(wizard) { validate(setOf(phase)) } }) {
@@ -172,6 +174,10 @@ abstract class WizardStep(protected val wizard: IdeWizard, private val phase: Ge
 
     protected open fun handleErrors(error: ValidationResult.ValidationError) {
         throw ConfigurationException(error.asHtml(), "Validation Error")
+    }
+
+    companion object {
+        private const val HELP_ID = "new_project_wizard_kotlin"
     }
 }
 
