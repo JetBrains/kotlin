@@ -54,6 +54,7 @@ fun Task.dependsOnKotlinPluginInstall() {
         ":kotlin-test:kotlin-test-annotations-common:install",
         ":kotlin-test:kotlin-test-jvm:install",
         ":kotlin-test:kotlin-test-js:install",
+        ":kotlin-test:kotlin-test-junit:install",
         ":kotlin-gradle-subplugin-example:install",
         ":kotlin-stdlib-common:install",
         ":kotlin-stdlib:install",
