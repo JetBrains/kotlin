@@ -295,8 +295,13 @@ class FirTypeIntersectionScope private constructor(
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <S : FirCallableSymbol<*>> getDirectOverriddenSymbols(symbol: S): Collection<S> =
-        overriddenSymbols[symbol].orEmpty() as Collection<S>
+    private fun <S : FirCallableSymbol<*>> getDirectOverriddenSymbols(symbol: S): Collection<S> {
+        val intersectionOverride = intersectionOverrides[symbol]
+        val allDirectOverridden = overriddenSymbols[symbol].orEmpty() + intersectionOverride?.let {
+            overriddenSymbols[it]
+        }.orEmpty()
+        return allDirectOverridden as Collection<S>
+    }
 
     override fun processOverriddenFunctionsWithDepth(
         functionSymbol: FirFunctionSymbol<*>,
