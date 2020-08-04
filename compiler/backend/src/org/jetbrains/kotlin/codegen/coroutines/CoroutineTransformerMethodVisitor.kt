@@ -141,8 +141,9 @@ class CoroutineTransformerMethodVisitor(
 
         val suspensionPointLineNumbers = suspensionPoints.map { findSuspensionPointLineNumber(it) }
 
-        val continuationLabels = suspensionPoints.withIndex().map {
-            transformCallAndReturnContinuationLabel(
+        // Create states in state-machine, to which state-machine can jump
+        val stateLabels = suspensionPoints.withIndex().map {
+            transformCallAndReturnStateLabel(
                 it.index + 1, it.value, methodNode, suspendMarkerVarIndex, suspensionPointLineNumbers[it.index]
             )
         }
@@ -167,7 +168,7 @@ class CoroutineTransformerMethodVisitor(
                         0,
                         suspensionPoints.size,
                         defaultLabel,
-                        firstStateLabel, *continuationLabels.toTypedArray()
+                        firstStateLabel, *stateLabels.toTypedArray()
                     ),
                     firstStateLabel
                 )
@@ -184,11 +185,33 @@ class CoroutineTransformerMethodVisitor(
             })
         }
 
+        initializeFakeInlinerVariables(methodNode, stateLabels)
+
         dropSuspensionMarkers(methodNode)
         methodNode.removeEmptyCatchBlocks()
 
         if (languageVersionSettings.isReleaseCoroutines()) {
             writeDebugMetadata(methodNode, suspensionPointLineNumbers, spilledToVariableMapping)
+        }
+    }
+
+    // When suspension point is inlined, it is in range of fake inliner variables.
+    // Path from TABLESWITCH into unspilling goes to latter part of the range.
+    // In this case the variables are uninitialized, initialize them
+    private fun initializeFakeInlinerVariables(methodNode: MethodNode, stateLabels: List<LabelNode>) {
+        for (stateLabel in stateLabels) {
+            val unitializedFakeInlinerVariables = arrayListOf<LocalVariableNode>()
+            for (record in methodNode.localVariables) {
+                if (isFakeLocalVariableForInline(record.name) &&
+                    methodNode.instructions.indexOf(record.start) < methodNode.instructions.indexOf(stateLabel) &&
+                    methodNode.instructions.indexOf(stateLabel) < methodNode.instructions.indexOf(record.end)
+                ) {
+                    methodNode.instructions.insert(stateLabel, withInstructionAdapter {
+                        iconst(0)
+                        store(record.index, Type.INT_TYPE)
+                    })
+                }
+            }
         }
     }
 
@@ -819,14 +842,14 @@ class CoroutineTransformerMethodVisitor(
             return suspensionCallEnd.next as LabelNode
         }
 
-    private fun transformCallAndReturnContinuationLabel(
+    private fun transformCallAndReturnStateLabel(
         id: Int,
         suspension: SuspensionPoint,
         methodNode: MethodNode,
         suspendMarkerVarIndex: Int,
         suspendPointLineNumber: LineNumberNode?
     ): LabelNode {
-        val continuationLabel = LabelNode().linkWithLabel()
+        val stateLabel = LabelNode().linkWithLabel()
         val continuationLabelAfterLoadedResult = LabelNode()
         val suspendElementLineNumber = lineNumber
         var nextLineNumberNode = nextDefinitelyHitLineNumber(suspension)
@@ -854,7 +877,7 @@ class CoroutineTransformerMethodVisitor(
                 load(suspendMarkerVarIndex, AsmTypes.OBJECT_TYPE)
                 areturn(AsmTypes.OBJECT_TYPE)
                 // Mark place for continuation
-                visitLabel(continuationLabel.label)
+                visitLabel(stateLabel.label)
             })
 
             // After suspension point there is always three nodes: L1, NOP, L2
@@ -905,7 +928,7 @@ class CoroutineTransformerMethodVisitor(
             }
         }
 
-        return continuationLabel
+        return stateLabel
     }
 
     // Find the next line number instruction that is defintely hit. That is, a line number
@@ -1175,7 +1198,7 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
     }
 
     for (variable in oldLvt) {
-        // $completion, $continuation and $result are dead, but they are used by debugger, as well as fake inliner variables
+        // $continuation and $result are dead, but they are used by debugger, as well as fake inliner variables
         // For example, $continuation is used to create async stack trace
         if (variable.name == CONTINUATION_VARIABLE_NAME ||
             variable.name == SUSPEND_CALL_RESULT_NAME ||
