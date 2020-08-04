@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.DECLARATION_NAME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.FIR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.NULLABLE_STRING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.PROPERTY_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
@@ -22,6 +24,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_FUNCTION_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_PROPERTY_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_RECEIVER_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_SUPER_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_TYPEALIAS_EXPANDED_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HIDDEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_AN_ANNOTATION_CLASS
@@ -79,14 +82,15 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(NOT_AN_ANNOTATION_CLASS, "Illegal annotation class: {0}", NULLABLE_STRING)
 
             // Exposed visibility group
-            map.put(EXPOSED_TYPEALIAS_EXPANDED_TYPE, "{0} typealias exposes {2} in expanded type{1}", TO_STRING, TO_STRING, TO_STRING)
-            map.put(EXPOSED_PROPERTY_TYPE, "{0} property exposes its {2} type{1}", TO_STRING, TO_STRING, TO_STRING)
-            map.put(EXPOSED_FUNCTION_RETURN_TYPE, "{0} function exposes its {2} return type{1}", TO_STRING, TO_STRING, TO_STRING)
-            map.put(EXPOSED_RECEIVER_TYPE, "{0} member exposes its {2} receiver type{1}", TO_STRING, TO_STRING, TO_STRING)
-            map.put(EXPOSED_PARAMETER_TYPE, "{0} function exposes its {2} parameter type{1}", TO_STRING, TO_STRING, TO_STRING)
+            map.put(EXPOSED_TYPEALIAS_EXPANDED_TYPE, "{0} typealias exposes {2} in expanded type {1}", TO_STRING, DECLARATION_NAME, TO_STRING)
+            map.put(EXPOSED_PROPERTY_TYPE, "{0} property exposes its {2} type {1}", TO_STRING, DECLARATION_NAME, TO_STRING)
+            map.put(EXPOSED_FUNCTION_RETURN_TYPE, "{0} function exposes its {2} return type {1}", TO_STRING, DECLARATION_NAME, TO_STRING)
+            map.put(EXPOSED_RECEIVER_TYPE, "{0} member exposes its {2} receiver type {1}", TO_STRING, DECLARATION_NAME, TO_STRING)
+            map.put(EXPOSED_PARAMETER_TYPE, "{0} function exposes its {2} parameter type {1}", TO_STRING, DECLARATION_NAME, TO_STRING)
+            map.put(EXPOSED_SUPER_CLASS, "{0} subclass exposes its {2} supertype {1}", TO_STRING, DECLARATION_NAME, TO_STRING)
 
             // Control flow diagnostics
-            map.put(UNINITIALIZED_VARIABLE, "{2} must be initialized before access", PROPERTY_NAME)
+            map.put(UNINITIALIZED_VARIABLE, "{0} must be initialized before access", PROPERTY_NAME)
         }
     }
 }

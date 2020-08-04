@@ -52,8 +52,12 @@ import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
+import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmClassCodegen
@@ -83,6 +87,7 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
+import org.jetbrains.kotlin.resolve.diagnostics.SimpleDiagnostics
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
@@ -356,17 +361,28 @@ object KotlinToJVMBytecodeCompiler {
             val firProvider = (session.firProvider as FirProviderImpl)
             val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
             val resolveTransformer = FirTotalResolveProcessor(session)
+            val collector = FirDiagnosticsCollector.create(session)
+            val diagnostics = mutableListOf<FirDiagnostic<*>>()
             val firFiles = ktFiles.map {
                 val firFile = builder.buildFirFile(it)
                 firProvider.recordFile(firFile)
                 firFile
-            }.also {
+            }.also { firFiles ->
                 try {
-                    resolveTransformer.process(it)
+                    resolveTransformer.process(firFiles)
+                    firFiles.forEach {
+                        diagnostics += collector.collectDiagnostics(it)
+                    }
                 } catch (e: Exception) {
                     throw e
                 }
             }
+            AnalyzerWithCompilerReport.reportDiagnostics(
+                SimpleDiagnostics(
+                    diagnostics.map { it.toRegularDiagnostic() }
+                ),
+                environment.messageCollector
+            )
 
             val debugTargetDescription = "target " + module.getModuleName() + "-" + module.getModuleType() + " "
             val codeLines = environment.countLinesOfCode(ktFiles)
@@ -440,6 +456,30 @@ object KotlinToJVMBytecodeCompiler {
             outputs[module] = generationState
         }
         return writeOutputs(environment, projectConfiguration, chunk, outputs)
+    }
+
+    private fun FirDiagnostic<*>.toRegularDiagnostic(): Diagnostic {
+        val psiSource = element as FirPsiSourceElement<*>
+        @Suppress("TYPE_MISMATCH")
+        when (this) {
+            is FirSimpleDiagnostic ->
+                return SimpleDiagnostic(
+                    psiSource.psi, factory.psiDiagnosticFactory, severity
+                )
+            is FirDiagnosticWithParameters1<*, *> ->
+                return DiagnosticWithParameters1(
+                    psiSource.psi, this.a, factory.psiDiagnosticFactory, severity
+                )
+            is FirDiagnosticWithParameters2<*, *, *> ->
+                return DiagnosticWithParameters2(
+                    psiSource.psi, this.a, this.b, factory.psiDiagnosticFactory, severity
+                )
+            is FirDiagnosticWithParameters3<*, *, *, *> ->
+                return DiagnosticWithParameters3(
+                    psiSource.psi, this.a, this.b, this.c, factory.psiDiagnosticFactory, severity
+                )
+        }
+        throw IllegalArgumentException("Unknown diagnostics: $this")
     }
 
     private fun getBuildFilePaths(buildFile: File?, sourceFilePaths: List<String>): List<String> =
