@@ -9,7 +9,6 @@ import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.codeInsight.TargetElementUtil.ELEMENT_NAME_ACCEPTED
 import com.intellij.codeInsight.TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED
 import com.intellij.lang.refactoring.InlineActionHandler
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.util.CommonRefactoringUtil
@@ -48,9 +47,8 @@ abstract class AbstractInlineTest : KotlinLightCodeInsightFixtureTestCase() {
                 ELEMENT_NAME_ACCEPTED or REFERENCED_ELEMENT_ACCEPTED
             )
 
-            @Suppress("DEPRECATION")
             val handler = if (targetElement != null)
-                Extensions.getExtensions(InlineActionHandler.EP_NAME).firstOrNull { it.canInlineElement(targetElement) }
+                InlineActionHandler.EP_NAME.extensions.firstOrNull { it.canInlineElement(targetElement) }
             else
                 null
 

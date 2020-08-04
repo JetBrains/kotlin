@@ -1,0 +1,96 @@
+fun a() {
+    JavaClass()
+
+    val d = JavaClass()
+
+    d.let {
+        null
+    }
+
+    d.also {
+    }
+
+    with(d) {
+        null
+    }
+
+    with(d) out@{
+        with(4) {
+            null
+        }
+    }
+}
+
+fun a2() {
+    val d: JavaClass? = null
+    d?.let {}
+
+    d?.let {
+        null
+    }
+
+    d?.also {
+    }
+
+    with(d) {
+        this?.let { null }
+    }
+
+    with(d) out@{
+        with(4) {
+            this@out?.let { null }
+        }
+    }
+}
+
+fun a3() {
+    val d: JavaClass? = null
+    val a1 = d?.let { null }
+
+    val a2 = d?.let {
+        null
+    }
+
+    val a3 = d?.also {
+    }
+
+    val a4 = with(d) {
+        this?.let { null }
+    }
+
+    val a5 = with(d) out@{
+        with(4) {
+            this@out?.let { null }
+        }
+    }
+}
+
+fun a4() {
+    val d: JavaClass? = null
+    // KT-40777
+    d?.let { null }?.dec()
+
+    val a2 = d?.let {
+        null
+    }
+    a2?.toLong()
+    // KT-40777
+    d?.also {
+    }?.let { null }?.and(4)
+
+    val a4 = with(d) {
+        this?.let { null }
+    }
+
+    val a5 = with(d) out@{
+        with(4) {
+            this@out?.let { null }
+        }
+    }
+    // KT-40777
+    val a6 = a4?.let { out -> a5?.let { out + it } }
+}
+// KT-40777
+fun JavaClass.b() = null
+fun JavaClass.c() = null
+fun d(d: JavaClass) = null

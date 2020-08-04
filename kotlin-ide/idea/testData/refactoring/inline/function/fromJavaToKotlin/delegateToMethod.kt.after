@@ -1,0 +1,100 @@
+fun a() {
+    JavaClass().otherMethod()
+
+    val d = JavaClass()
+    d.otherMethod()
+
+    d.let {
+        it.otherMethod()
+    }
+
+    d.also {
+        it.otherMethod()
+    }
+
+    with(d) {
+        otherMethod()
+    }
+
+    with(d) out@{
+        with(4) {
+            this@out.otherMethod()
+        }
+    }
+}
+
+fun a2() {
+    val d: JavaClass? = null
+    d?.otherMethod()
+
+    d?.let {
+        it.otherMethod()
+    }
+
+    d?.also {
+        it.otherMethod()
+    }
+
+    with(d) {
+        this?.otherMethod()
+    }
+
+    with(d) out@{
+        with(4) {
+            this@out?.otherMethod()
+        }
+    }
+}
+
+fun a3() {
+    val d: JavaClass? = null
+    val a1 = d?.otherMethod()
+
+    val a2 = d?.let {
+        it.otherMethod()
+    }
+
+    val a3 = d?.also {
+        it.otherMethod()
+    }
+
+    val a4 = with(d) {
+        this?.otherMethod()
+    }
+
+    val a5 = with(d) out@{
+        with(4) {
+            this@out?.otherMethod()
+        }
+    }
+}
+
+fun a4() {
+    val d: JavaClass? = null
+    d?.otherMethod()?.dec()
+
+    val a2 = d?.let {
+        it.otherMethod()
+    }
+    a2?.toLong()
+
+    d?.also {
+        it.otherMethod()
+    }?.otherMethod()?.and(4)
+
+    val a4 = with(d) {
+        this?.otherMethod()
+    }
+
+    val a5 = with(d) out@{
+        with(4) {
+            this@out?.otherMethod()
+        }
+    }
+
+    val a6 = a4?.let { out -> a5?.let { out + it } }
+}
+
+fun JavaClass.b(): Int? = otherMethod()
+fun JavaClass.c(): Int = this.otherMethod()
+fun d(d: JavaClass) = d.otherMethod()

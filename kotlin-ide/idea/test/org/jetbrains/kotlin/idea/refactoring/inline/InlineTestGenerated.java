@@ -54,6 +54,16 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/function/ExtensionAndDispatchReceivers.kt");
         }
 
+        @TestMetadata("extensionFunction.kt")
+        public void testExtensionFunction() throws Exception {
+            runTest("testData/refactoring/inline/function/extensionFunction.kt");
+        }
+
+        @TestMetadata("extensionFunction2.kt")
+        public void testExtensionFunction2() throws Exception {
+            runTest("testData/refactoring/inline/function/extensionFunction2.kt");
+        }
+
         @TestMetadata("getOperator.kt")
         public void testGetOperator() throws Exception {
             runTest("testData/refactoring/inline/function/getOperator.kt");
@@ -92,6 +102,16 @@ public class InlineTestGenerated extends AbstractInlineTest {
         @TestMetadata("LocalSimple.kt")
         public void testLocalSimple() throws Exception {
             runTest("testData/refactoring/inline/function/LocalSimple.kt");
+        }
+
+        @TestMetadata("methodFunction.kt")
+        public void testMethodFunction() throws Exception {
+            runTest("testData/refactoring/inline/function/methodFunction.kt");
+        }
+
+        @TestMetadata("methodFunction2.kt")
+        public void testMethodFunction2() throws Exception {
+            runTest("testData/refactoring/inline/function/methodFunction2.kt");
         }
 
         @TestMetadata("MethodReferenceAsParameter.kt")
@@ -466,40 +486,103 @@ public class InlineTestGenerated extends AbstractInlineTest {
         }
 
         @RunWith(JUnit3RunnerWithInners.class)
-        @TestMetadata("testData/refactoring/inline/function/javaUsages")
-        public static class JavaUsages extends AbstractInlineTest {
+        @TestMetadata("testData/refactoring/inline/function/fromJavaToKotlin")
+        public static class FromJavaToKotlin extends AbstractInlineTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            @TestMetadata("delegateToField.kt")
+            public void testDelegateToField() throws Exception {
+                runTest("testData/refactoring/inline/function/fromJavaToKotlin/delegateToField.kt");
+            }
+
+            @TestMetadata("delegateToField2.kt")
+            public void testDelegateToField2() throws Exception {
+                runTest("testData/refactoring/inline/function/fromJavaToKotlin/delegateToField2.kt");
+            }
+
+            @TestMetadata("delegateToKotlinExtentionFunction.kt")
+            public void testDelegateToKotlinExtentionFunction() throws Exception {
+                runTest("testData/refactoring/inline/function/fromJavaToKotlin/delegateToKotlinExtentionFunction.kt");
+            }
+
+            @TestMetadata("delegateToKotlinFunction.kt")
+            public void testDelegateToKotlinFunction() throws Exception {
+                runTest("testData/refactoring/inline/function/fromJavaToKotlin/delegateToKotlinFunction.kt");
+            }
+
+            @TestMetadata("delegateToMethod.kt")
+            public void testDelegateToMethod() throws Exception {
+                runTest("testData/refactoring/inline/function/fromJavaToKotlin/delegateToMethod.kt");
+            }
+
+            @TestMetadata("delegateToMethod2.kt")
+            public void testDelegateToMethod2() throws Exception {
+                runTest("testData/refactoring/inline/function/fromJavaToKotlin/delegateToMethod2.kt");
+            }
+
+            @TestMetadata("delegateToStaticField.kt")
+            public void testDelegateToStaticField() throws Exception {
+                runTest("testData/refactoring/inline/function/fromJavaToKotlin/delegateToStaticField.kt");
+            }
+
+            @TestMetadata("delegateToStaticFieldWithNameConflict.kt")
+            public void testDelegateToStaticFieldWithNameConflict() throws Exception {
+                runTest("testData/refactoring/inline/function/fromJavaToKotlin/delegateToStaticFieldWithNameConflict.kt");
+            }
+
+            @TestMetadata("delegateToStaticMethod.kt")
+            public void testDelegateToStaticMethod() throws Exception {
+                runTest("testData/refactoring/inline/function/fromJavaToKotlin/delegateToStaticMethod.kt");
+            }
+
+            @TestMetadata("delegateToStaticMethodWithNameConflict.kt")
+            public void testDelegateToStaticMethodWithNameConflict() throws Exception {
+                runTest("testData/refactoring/inline/function/fromJavaToKotlin/delegateToStaticMethodWithNameConflict.kt");
+            }
+
+            @TestMetadata("emptyMethod.kt")
+            public void testEmptyMethod() throws Exception {
+                runTest("testData/refactoring/inline/function/fromJavaToKotlin/emptyMethod.kt");
+            }
+
+            @TestMetadata("removeOverrideInChildFromJava.kt")
+            public void testRemoveOverrideInChildFromJava() throws Exception {
+                runTest("testData/refactoring/inline/function/fromJavaToKotlin/removeOverrideInChildFromJava.kt");
+            }
+
+            @TestMetadata("returnNullAsInteger.kt")
+            public void testReturnNullAsInteger() throws Exception {
+                runTest("testData/refactoring/inline/function/fromJavaToKotlin/returnNullAsInteger.kt");
+            }
+        }
+
+        @RunWith(JUnit3RunnerWithInners.class)
+        @TestMetadata("testData/refactoring/inline/function/fromKotlinToJava")
+        public static class FromKotlinToJava extends AbstractInlineTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
             @TestMetadata("conflictWithSuperFunctions.kt")
             public void testConflictWithSuperFunctions() throws Exception {
-                runTest("testData/refactoring/inline/function/javaUsages/conflictWithSuperFunctions.kt");
+                runTest("testData/refactoring/inline/function/fromKotlinToJava/conflictWithSuperFunctions.kt");
             }
 
             @TestMetadata("removeOverrideInChild.kt")
             public void testRemoveOverrideInChild() throws Exception {
-                runTest("testData/refactoring/inline/function/javaUsages/removeOverrideInChild.kt");
-            }
-
-            @TestMetadata("removeOverrideInChildFromJava.kt")
-            public void testRemoveOverrideInChildFromJava() throws Exception {
-                runTest("testData/refactoring/inline/function/javaUsages/removeOverrideInChildFromJava.kt");
+                runTest("testData/refactoring/inline/function/fromKotlinToJava/removeOverrideInChild.kt");
             }
 
             @TestMetadata("usage.kt")
             public void testUsage() throws Exception {
-                runTest("testData/refactoring/inline/function/javaUsages/usage.kt");
-            }
-
-            @TestMetadata("usageFromJava.kt")
-            public void testUsageFromJava() throws Exception {
-                runTest("testData/refactoring/inline/function/javaUsages/usageFromJava.kt");
+                runTest("testData/refactoring/inline/function/fromKotlinToJava/usage.kt");
             }
 
             @TestMetadata("usageInImport.kt")
             public void testUsageInImport() throws Exception {
-                runTest("testData/refactoring/inline/function/javaUsages/usageInImport.kt");
+                runTest("testData/refactoring/inline/function/fromKotlinToJava/usageInImport.kt");
             }
         }
 

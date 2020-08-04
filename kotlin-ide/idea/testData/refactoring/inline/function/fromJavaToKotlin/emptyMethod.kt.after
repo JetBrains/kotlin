@@ -1,0 +1,44 @@
+fun a() {
+    JavaClass()
+
+    val d = JavaClass()
+
+    d.let {
+    }
+
+    d.also {
+    }
+
+    with(d) {
+    }
+
+    with(d) out@{
+        with(4) {
+        }
+    }
+}
+
+fun a2() {
+    val d: JavaClass? = null
+    d?.let {}
+
+    d?.let {
+    }
+
+    d?.also {
+    }
+
+    with(d) {
+        this?.let {}
+    }
+
+    with(d) out@{
+        with(4) {
+            this@out?.let {}
+        }
+    }
+}
+
+fun JavaClass.b() = Unit
+fun JavaClass.c() = Unit
+fun d(d: JavaClass) = Unit

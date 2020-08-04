@@ -131,6 +131,7 @@ import org.jetbrains.kotlin.nj2k.inference.nullability.AbstractNullabilityInfere
 import org.jetbrains.kotlin.psi.patternMatching.AbstractPsiUnifierTest
 import org.jetbrains.kotlin.search.AbstractAnnotatedMembersSearchTest
 import org.jetbrains.kotlin.idea.navigationToolbar.AbstractKotlinNavBarTest
+import org.jetbrains.kotlin.idea.refactoring.inline.AbstractInlineMultiFileTest
 import org.jetbrains.kotlin.nj2k.*
 import org.jetbrains.kotlin.search.AbstractInheritorsSearchTest
 import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
@@ -431,6 +432,10 @@ private fun assembleWorkspace(): TWorkspace = workspace {
 
         testClass<AbstractInlineTest> {
             model("refactoring/inline", pattern = "^(\\w+)\\.kt$".toRegex())
+        }
+
+        testClass<AbstractInlineMultiFileTest> {
+            model("refactoring/inlineMultiFile", pattern = TEST, flatten = true)
         }
 
         testClass<AbstractUnwrapRemoveTest> {
