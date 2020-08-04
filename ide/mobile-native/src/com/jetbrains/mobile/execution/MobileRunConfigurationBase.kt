@@ -85,13 +85,8 @@ abstract class MobileRunConfigurationBase(project: Project, factory: Configurati
         super<CidrRunConfiguration>.readExternal(element)
         _module.readExternal(element)
 
-        val deviceNames = mutableListOf<String>()
-        val devicesElement = element.getChild(DEVICES_ELEMENT)
-        for (deviceElement in devicesElement.getChildren(DEVICE_ELEMENT)) {
-            val deviceName = deviceElement.getAttributeValue(DEVICE_NAME_ATTRIBUTE)
-            deviceNames.add(deviceName)
-        }
-        executionTargetNames = deviceNames
+        val deviceElements = element.getChild(DEVICES_ELEMENT)?.getChildren(DEVICE_ELEMENT) ?: emptyList()
+        executionTargetNames = deviceElements.mapNotNull { it.getAttributeValue(DEVICE_NAME_ATTRIBUTE) }
     }
 
     override fun clone(): MobileRunConfigurationBase {
