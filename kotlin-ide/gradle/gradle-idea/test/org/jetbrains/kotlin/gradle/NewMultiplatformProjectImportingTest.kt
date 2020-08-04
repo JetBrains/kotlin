@@ -22,6 +22,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
+//ToDo: Need to remove RUNTIME dependencies when KT-40551 is resolved
 class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTestCase() {
 
     @Before
@@ -101,6 +102,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("app_commonMain", DependencyScope.TEST)
                 moduleDependency("app_commonTest", DependencyScope.TEST)
                 moduleDependency("app_jsMain", DependencyScope.TEST)
+                moduleDependency("app_jsMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
                 sourceFolder("app/src/jsTest/kotlin", TestSourceKotlinRootType)
                 sourceFolder("app/src/jsTest/resources", TestResourceKotlinRootType)
                 outputPath("app/build/classes/kotlin/js/test", false)
@@ -188,6 +190,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("lib_commonMain", DependencyScope.TEST)
                 moduleDependency("lib_commonTest", DependencyScope.TEST)
                 moduleDependency("lib_jsMain", DependencyScope.TEST)
+                moduleDependency("lib_jsMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
                 sourceFolder("lib/src/jsTest/kotlin", TestSourceKotlinRootType)
                 sourceFolder("lib/src/jsTest/resources", TestResourceKotlinRootType)
                 outputPath("lib/build/classes/kotlin/js/test", false)
@@ -210,6 +213,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("lib_commonTest", DependencyScope.TEST)
                 moduleDependency("lib_commonMain", DependencyScope.TEST)
                 moduleDependency("lib_jvmMain", DependencyScope.TEST)
+                moduleDependency("lib_jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
                 sourceFolder("lib/src/jvmTest/kotlin", JavaSourceRootType.TEST_SOURCE)
                 sourceFolder("lib/src/jvmTest/resources", JavaResourceRootType.TEST_RESOURCE)
                 outputPath("lib/build/classes/kotlin/jvm/test", false)
@@ -385,6 +389,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("project_commonMain", DependencyScope.TEST)
                 moduleDependency("project_commonTest", DependencyScope.TEST)
                 moduleDependency("project_jvmMain", DependencyScope.TEST)
+                moduleDependency("project_jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
             }
         }
 
@@ -505,6 +510,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("project_commonMain", DependencyScope.TEST)
                 moduleDependency("project_commonTest", DependencyScope.TEST)
                 moduleDependency("project_jvmMain", DependencyScope.TEST)
+                moduleDependency("project_jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
             }
 
             module("subproject")
@@ -522,10 +528,13 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             }
             module("subproject_jvmTest") {
                 moduleDependency("project_commonMain", DependencyScope.TEST)
+                moduleDependency("project_commonMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
                 moduleDependency("subproject_commonMain", DependencyScope.TEST)
                 moduleDependency("subproject_commonTest", DependencyScope.TEST)
                 moduleDependency("project_jvmMain", DependencyScope.TEST)
+                moduleDependency("project_jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
                 moduleDependency("subproject_jvmMain", DependencyScope.TEST)
+                moduleDependency("subproject_jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
             }
         }
 
@@ -715,8 +724,11 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("project.mpp.commonMain", DependencyScope.TEST)
                 moduleDependency("project.mpp.commonTest", DependencyScope.TEST, true)
                 moduleDependency("project.mpp-base.commonMain", DependencyScope.TEST)
+                moduleDependency("project.mpp-base.commonMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
                 moduleDependency("project.mpp-base.jvmMain", DependencyScope.TEST)
+                moduleDependency("project.mpp-base.jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
                 moduleDependency("project.mpp.jvmMain", DependencyScope.TEST)
+                moduleDependency("project.mpp.jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
             }
 
             module("project.mpp-base") {}
@@ -730,6 +742,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             module("project.mpp-base.jvmTest") {
                 moduleDependency("project.mpp-base.commonMain", DependencyScope.TEST)
                 moduleDependency("project.mpp-base.jvmMain", DependencyScope.TEST)
+                moduleDependency("project.mpp-base.jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
                 moduleDependency("project.mpp-base.commonTest", DependencyScope.TEST, true)
             }
         }
@@ -776,6 +789,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.TEST)
                 moduleDependency("mpp-jardep.library1.commonTest", DependencyScope.TEST, true)
                 moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.TEST)
+                moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
             }
 
             module("mpp-jardep.library2") {}
@@ -792,10 +806,13 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             }
             module("mpp-jardep.library2.jvmTest") {
                 moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.TEST)
+                moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
                 moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.TEST)
+                moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
                 moduleDependency("mpp-jardep.library2.commonMain", DependencyScope.TEST)
                 moduleDependency("mpp-jardep.library2.commonTest", DependencyScope.TEST, true)
                 moduleDependency("mpp-jardep.library2.jvmMain", DependencyScope.TEST)
+                moduleDependency("mpp-jardep.library2.jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
             }
         }
     }
@@ -847,6 +864,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             }
             module("jvm-on-mpp.mpp-mod-a.jsTest") {
                 moduleDependency("jvm-on-mpp.mpp-mod-a.jsMain", DependencyScope.TEST, false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.jsMain", DependencyScope.RUNTIME, false)  // Temporary dependency, need to remove after KT-40551 is solved
                 moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.TEST, false)
                 moduleDependency("jvm-on-mpp.mpp-mod-a.commonTest", DependencyScope.TEST, true)
             }
@@ -857,6 +875,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.TEST, false)
                 moduleDependency("jvm-on-mpp.mpp-mod-a.commonTest", DependencyScope.TEST, true)
                 moduleDependency("jvm-on-mpp.mpp-mod-a.jvmMain", DependencyScope.TEST, false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.jvmMain", DependencyScope.RUNTIME, false)  // Temporary dependency, need to remove after KT-40551 is solved
             }
 
             //At the moment this is 'fake' source roots and they have no explicit dependencies.
