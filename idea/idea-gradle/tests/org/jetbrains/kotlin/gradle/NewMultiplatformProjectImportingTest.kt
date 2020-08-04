@@ -657,6 +657,16 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             module("project.commonTest") {
                 moduleDependency("project.commonMain", DependencyScope.TEST)
             }
+            module("project.jvmMain") {
+                moduleDependency("project.commonMain", DependencyScope.COMPILE)
+            }
+            module("project.jvmTest"){
+                moduleDependency("project.commonMain", DependencyScope.TEST)
+                moduleDependency("project.commonTest", DependencyScope.TEST)
+                moduleDependency("project.jvmMain", DependencyScope.TEST)
+                moduleDependency("project.jvmMain", DependencyScope.RUNTIME)
+            }
+
             module("toInclude")
             module("toInclude.commonMain")
             module("toInclude.commonTest") {
@@ -670,6 +680,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("toInclude.commonMain", DependencyScope.TEST)
                 moduleDependency("toInclude.commonTest", DependencyScope.TEST)
                 moduleDependency("toInclude.jsMain", DependencyScope.TEST)
+                moduleDependency("toInclude.jsMain", DependencyScope.RUNTIME)
             }
             module("toInclude.jvmMain") {
                 moduleDependency("toInclude.commonMain", DependencyScope.COMPILE)
@@ -678,6 +689,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("toInclude.commonMain", DependencyScope.TEST)
                 moduleDependency("toInclude.commonTest", DependencyScope.TEST)
                 moduleDependency("toInclude.jvmMain", DependencyScope.TEST)
+                moduleDependency("toInclude.jvmMain", DependencyScope.RUNTIME)
             }
         }
     }
