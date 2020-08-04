@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.descriptors.substitute
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.KonanCompilationException
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
@@ -192,14 +190,6 @@ fun IrFunctionAccessExpression.addArguments(args: Map<IrValueParameter, IrExpres
             this.putValueArgument(it.index, arg)
         }
     }
-}
-
-private fun FunctionDescriptor.substitute(
-        typeArguments: List<IrType>
-): FunctionDescriptor = if (typeArguments.isEmpty()) {
-    this
-} else {
-    this.substitute(*typeArguments.map { it.toKotlinType() }.toTypedArray())
 }
 
 fun IrType.substitute(map: Map<IrTypeParameterSymbol, IrType>): IrType {
