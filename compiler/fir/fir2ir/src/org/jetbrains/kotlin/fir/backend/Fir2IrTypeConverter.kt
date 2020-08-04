@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
@@ -86,7 +87,7 @@ class Fir2IrTypeConverter(
                 }
                 IrSimpleTypeImpl(
                     irSymbol, !typeContext.definitelyNotNull && this.isMarkedNullable,
-                    typeArguments.map { it.toIrTypeArgument() },
+                    fullyExpandedType(session).typeArguments.map { it.toIrTypeArgument() },
                     with(annotationGenerator) { annotations.toIrAnnotations() }
                 )
             }
