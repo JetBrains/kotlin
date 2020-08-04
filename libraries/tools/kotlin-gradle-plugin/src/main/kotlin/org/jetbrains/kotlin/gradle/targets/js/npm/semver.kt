@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import com.github.gundy.semver4j.model.Version
 import java.math.BigInteger
 
 data class SemVer(
@@ -170,4 +171,25 @@ private fun String.foldDelimiters(): String {
         }
     }
     return result.toString()
+}
+
+fun Version.toSemVer(): SemVer =
+    SemVer(
+        major.toBigInteger(),
+        minor.toBigInteger(),
+        patch.toBigInteger(),
+        preRelease = preReleaseIdentifiers.joinToString("."),
+        build = buildIdentifiers.joinToString(".")
+    )
+
+fun min(a: SemVer?, b: SemVer?): SemVer? {
+    if (a == null || b == null) return null
+
+    return if (a < b) a else b
+}
+
+fun max(a: SemVer?, b: SemVer?): SemVer? {
+    if (a == null || b == null) return null
+
+    return if (a > b) a else b
 }
