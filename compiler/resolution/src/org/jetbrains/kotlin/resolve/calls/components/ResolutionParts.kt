@@ -273,6 +273,28 @@ internal object CompatibilityOfTypeVariableAsIntersectionTypePart : ResolutionPa
     }
 }
 
+internal object CompatibilityOfPartiallyApplicableSamConversion : ResolutionPart() {
+    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+        if (resolvedCall.argumentsWithConversion.isEmpty()) return
+        if (resolvedCall.argumentsWithConversion.size == candidateDescriptor.valueParameters.size) return
+
+        for (argument in kotlinCall.argumentsInParenthesis) {
+            if (resolvedCall.argumentsWithConversion[argument] != null) continue
+
+            val expectedParameterType = argument.getExpectedType(
+                resolvedCall.argumentToCandidateParameter[argument] ?: continue,
+                callComponents.languageVersionSettings
+            )
+
+            // argument for the parameter doesn't have a conversion but parameter can be converted => we need a compatibility resolve
+            if (SamTypeConversions.isJavaParameterCanBeConverted(this, expectedParameterType)) {
+                markCandidateForCompatibilityResolve()
+                return
+            }
+        }
+    }
+}
+
 internal object CheckExplicitReceiverKindConsistency : ResolutionPart() {
     private fun KotlinResolutionCandidate.hasError(): Nothing =
         error(
