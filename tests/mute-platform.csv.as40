@@ -114,5 +114,4 @@ org.jetbrains.kotlin.idea.codeInsight.gradle.GradleKtsImportTest.testError[0: wi
 org.jetbrains.kotlin.idea.codeInsight.surroundWith.SurroundWithTestGenerated.If.MoveDeclarationsOut.Var.testVarWithTypeWoInitializer, Unprocessed,, FLAKY
 org.jetbrains.kotlin.idea.refactoring.move.MoveTestGenerated.testKotlin_moveTopLevelDeclarations_moveFunctionToPackage_MoveFunctionToPackage, fail on TeamCity but works well locally,, FLAKY
 org.jetbrains.kotlin.idea.intentions.IntentionTestGenerated.ConvertSealedClassToEnum.testInstancesAndMembers, Enum reorder,, FLAKY
-org.jetbrains.kotlin.idea.codeInsight.gradle.GradleConfiguratorTest.testAddNonKotlinLibraryGSK[1: with Gradle-5.6.4], unresolved kotlinModule,,
 org.jetbrains.kotlin.idea.debugger.test.KotlinSteppingTestGenerated.Custom.testFunctionBreakpointInStdlib, Unprocessed,,

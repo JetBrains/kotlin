@@ -1,8 +1,8 @@
 plugins {
-    kotlin("jvm") version "1.2.50"
+    kotlin("jvm") version "{{kotlin_plugin_version}}"
 }
 
 dependencies {
     testCompile("junit:junit:4.12")
-    compile(kotlinModule("stdlib-jre8"))
+    compile(kotlin("stdlib-jre8"))
 }
