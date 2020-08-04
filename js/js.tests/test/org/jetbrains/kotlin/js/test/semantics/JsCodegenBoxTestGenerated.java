@@ -41,6 +41,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
         }
 
+        @TestMetadata("annotatedObjectLiteral.kt")
+        public void testAnnotatedObjectLiteral() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/annotatedObjectLiteral.kt");
+        }
+
         @TestMetadata("nestedAnnotation.kt")
         public void testNestedAnnotation() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/nestedAnnotation.kt");
@@ -10752,6 +10757,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
 
         public void testAllFilesPresentInInference() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+        }
+
+        @TestMetadata("approximateNonTopLevelCapturedTypes.kt")
+        public void testApproximateNonTopLevelCapturedTypes() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/approximateNonTopLevelCapturedTypes.kt");
         }
 
         @TestMetadata("builderInferenceLeakingVariable.kt")
