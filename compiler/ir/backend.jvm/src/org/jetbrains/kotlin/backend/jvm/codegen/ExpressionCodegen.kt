@@ -718,7 +718,7 @@ class ExpressionCodegen(
             is Float -> mv.fconst(value)
             is Double -> mv.dconst(value)
             is Number -> mv.iconst(value.toInt())
-            else -> mv.aconst(value)
+            else -> if (expression.kind == IrConstKind.Null) return nullConstant else mv.aconst(value)
         }
         return expression.onStack
     }

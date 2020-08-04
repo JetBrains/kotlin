@@ -16,14 +16,12 @@ fun test(ss: List<String?>) {
     }
 }
 
-// JVM_TEMPLATES
-// 2 POP
 // 0 INVOKESTATIC java/lang/Boolean\.valueOf
 // 0 CHECKCAST java/lang/Boolean
 // 0 ACONST_NULL
 
-// JVM_IR_TEMPLATES
+// JVM_TEMPLATES
 // 2 POP
-// 0 INVOKESTATIC java/lang/Boolean\.valueOf
-// 1 CHECKCAST java/lang/Boolean
-// 1 ACONST_NULL
+
+// JVM_IR_TEMPLATES
+// 1 POP

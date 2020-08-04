@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
@@ -162,3 +163,12 @@ val IrType.unboxed: IrType
 // A Non-materialized value of Unit type that is only materialized through coercion.
 val ExpressionCodegen.unitValue: PromisedValue
     get() = MaterialValue(this, Type.VOID_TYPE, context.irBuiltIns.unitType)
+
+val ExpressionCodegen.nullConstant: PromisedValue
+    get() = object : PromisedValue(this, AsmTypes.OBJECT_TYPE, context.irBuiltIns.nothingNType) {
+        override fun materializeAt(target: Type, irTarget: IrType) {
+            mv.aconst(null)
+        }
+
+        override fun discard() {}
+    }
