@@ -19833,6 +19833,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/samConversions/GenericSubstitutionKT.kt");
             }
 
+            @TestMetadata("javaMemberAgainstExtension.kt")
+            public void testJavaMemberAgainstExtension() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/samConversions/javaMemberAgainstExtension.kt");
+            }
+
             @TestMetadata("OverloadPriority.kt")
             public void testOverloadPriority() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/samConversions/OverloadPriority.kt");
