@@ -842,7 +842,11 @@ class DeclarationsConverter(
             }
 
         return buildDelegatedConstructorCall {
-            source = constructorDelegationCall.toFirSourceElement()
+            source = if (isImplicit) {
+                constructorDelegationCall.toFirSourceElement().fakeElement(FirFakeSourceElementKind.ImplicitConstructor)
+            } else {
+                constructorDelegationCall.toFirSourceElement()
+            }
             constructedTypeRef = delegatedType
             this.isThis = isThis
             extractArgumentsFrom(firValueArguments, stubMode)

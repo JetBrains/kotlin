@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -21,13 +22,10 @@ object FirDelegationSuperCallInEnumConstructorChecker : FirMemberDeclarationChec
         }
 
         for (it in declaration.declarations) {
-            // checking offsets is needed because we
-            // still have a real source element ("") here,
-            // even if the user hasn't written anything
             if (
                 it is FirConstructor && !it.isPrimary &&
                 it.delegatedConstructor?.isThis == false &&
-                it.delegatedConstructor?.source?.startOffset != it.delegatedConstructor?.source?.endOffset
+                it.delegatedConstructor?.source?.kind !is FirFakeSourceElementKind
             ) {
                 reporter.report(it.delegatedConstructor?.source)
             }

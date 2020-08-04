@@ -19,7 +19,7 @@ FILE: constructorInObject.kt
             }
 
             public? constructor(): R|<anonymous>| {
-                this<R|<anonymous>|>()
+                super<R|B|>()
             }
 
         }

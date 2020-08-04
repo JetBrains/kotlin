@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -48,8 +49,12 @@ object FirCommonConstructorDelegationIssuesChecker : FirMemberDeclarationChecker
 
         if (hasPrimaryConstructor) {
             for (it in otherConstructors) {
-                if (it.delegatedConstructor?.isThis == false) {
-                    reporter.reportPrimaryConstructorDelegationCallExpected(it.delegatedConstructor?.source)
+                if (it.delegatedConstructor?.isThis != true) {
+                    if (it.delegatedConstructor?.source != null) {
+                        reporter.reportPrimaryConstructorDelegationCallExpected(it.delegatedConstructor?.source)
+                    } else {
+                        reporter.reportPrimaryConstructorDelegationCallExpected(it.source)
+                    }
                 }
             }
         } else {
@@ -59,7 +64,7 @@ object FirCommonConstructorDelegationIssuesChecker : FirMemberDeclarationChecker
                 // couldn't find proper super() constructor implicitly
                 if (
                     callee is FirErrorNamedReference && callee.diagnostic is ConeAmbiguityError &&
-                    it.delegatedConstructor?.source?.startOffset == it.delegatedConstructor?.source?.endOffset
+                    it.delegatedConstructor?.source?.kind is FirFakeSourceElementKind
                 ) {
                     reporter.reportExplicitDelegationCallRequired(it.source)
                 }
