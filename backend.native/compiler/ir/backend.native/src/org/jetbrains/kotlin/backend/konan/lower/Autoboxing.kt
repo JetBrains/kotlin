@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
@@ -448,7 +449,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
 
             (irConstructor.body as IrBlockBody).statements.forEach { statement ->
                 statement.setDeclarationsParent(result)
-                +statement.transform(object : IrElementTransformerVoid() {
+                +statement.transformStatement(object : IrElementTransformerVoid() {
                     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
                         expression.transformChildrenVoid()
 
@@ -479,8 +480,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
 
                         return expression
                     }
-
-                }, null)
+                })
             }
             +irReturn(irGet(thisVar))
         }
