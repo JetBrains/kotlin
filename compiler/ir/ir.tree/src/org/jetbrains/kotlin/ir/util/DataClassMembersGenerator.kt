@@ -129,12 +129,14 @@ abstract class DataClassMembersGenerator(
         private val intType = context.builtIns.intType
 
         private val intTimesSymbol: IrSimpleFunctionSymbol =
-            intClass.findFirstFunction("times") { KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, intType) }
-                .let { symbolTable.referenceSimpleFunction(it) }
+            intClass.unsubstitutedMemberScope.findFirstFunction("times") {
+                KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, intType)
+            }.let { symbolTable.referenceSimpleFunction(it) }
 
         private val intPlusSymbol: IrSimpleFunctionSymbol =
-            intClass.findFirstFunction("plus") { KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, intType) }
-                .let { symbolTable.referenceSimpleFunction(it) }
+            intClass.unsubstitutedMemberScope.findFirstFunction("plus") {
+                KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, intType)
+            }.let { symbolTable.referenceSimpleFunction(it) }
 
         fun generateHashCodeMethodBody(properties: List<PropertyDescriptor>) {
             val irIntType = context.irBuiltIns.intType

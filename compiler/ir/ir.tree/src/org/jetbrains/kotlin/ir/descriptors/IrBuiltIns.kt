@@ -80,7 +80,7 @@ class IrBuiltIns(
                 val valueParameterSymbol = IrValueParameterSymbolImpl(valueParameterDescriptor)
                 irFactory.createValueParameter(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, BUILTIN_OPERATOR, valueParameterSymbol, Name.identifier("arg$i"), i,
-                    valueParameterType, null, false, false
+                    valueParameterType, null, isCrossinline = false, isNoinline = false
                 ).apply {
                     parent = operator
                 }
@@ -120,7 +120,8 @@ class IrBuiltIns(
 
             valueParameterDescriptor = ValueParameterDescriptorImpl(
                 this, null, 0, Annotations.EMPTY, Name.identifier("arg0"), valueKotlinType,
-                false, false, false, null, SourceElement.NO_SOURCE
+                declaresDefaultValue = false, isCrossinline = false, isNoinline = false, varargElementType = null,
+                source = SourceElement.NO_SOURCE
             )
 
             returnKotlinType = typeParameterDescriptor.typeConstructor.makeNonNullType()
@@ -184,7 +185,6 @@ class IrBuiltIns(
         associate { it.classifierOrFail to defineComparisonOperator(name, it) }
 
     val any = builtIns.anyType
-    val anyN = builtIns.nullableAnyType
     val anyType = any.toIrType()
     val anyClass = builtIns.any.toIrSymbol()
     val anyNType = anyType.withHasQuestionMark(true)
@@ -226,7 +226,6 @@ class IrBuiltIns(
     val doubleClass = builtIns.double.toIrSymbol()
 
     val nothing = builtIns.nothingType
-    val nothingN = builtIns.nullableNothingType
     val nothingType = nothing.toIrType()
     val nothingClass = builtIns.nothing.toIrSymbol()
     val nothingNType = nothingType.withHasQuestionMark(true)
@@ -320,9 +319,6 @@ class IrBuiltIns(
 
     fun function(n: Int): IrClassSymbol = functionFactory.functionN(n).symbol
     fun suspendFunction(n: Int): IrClassSymbol = functionFactory.suspendFunctionN(n).symbol
-
-    fun kFunction(n: Int): IrClassSymbol = functionFactory.kFunctionN(n).symbol
-    fun kSuspendFunction(n: Int): IrClassSymbol = functionFactory.kSuspendFunctionN(n).symbol
 
     companion object {
         val KOTLIN_INTERNAL_IR_FQN = FqName("kotlin.internal.ir")

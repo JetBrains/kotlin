@@ -242,7 +242,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
                     val klass = function.parentAsClass
                     return when {
                         !klass.isInline -> expression
-                        function.isPrimary -> irConstructorCall(expression, function)
+                        function.isPrimary -> irConstructorCall(expression, function.symbol)
                         else -> irCall(expression, getOrCreateStaticMethod(function))
                     }
                 }

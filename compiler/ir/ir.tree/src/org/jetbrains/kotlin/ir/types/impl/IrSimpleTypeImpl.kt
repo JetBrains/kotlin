@@ -80,9 +80,6 @@ fun IrSimpleTypeBuilder.buildTypeProjection() =
 inline fun IrSimpleType.buildSimpleType(b: IrSimpleTypeBuilder.() -> Unit): IrSimpleType =
     toBuilder().apply(b).buildSimpleType()
 
-inline fun IrSimpleType.buildTypeProjection(b: IrSimpleTypeBuilder.() -> Unit): IrTypeProjection =
-    toBuilder().apply(b).buildTypeProjection()
-
 class IrTypeProjectionImpl internal constructor(
     override val type: IrType,
     override val variance: Variance

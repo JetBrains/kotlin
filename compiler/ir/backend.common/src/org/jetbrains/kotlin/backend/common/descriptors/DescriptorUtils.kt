@@ -16,24 +16,15 @@
 
 package org.jetbrains.kotlin.backend.common.descriptors
 
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.builtins.getFunctionalClassKind
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.replace
 
 val String.synthesizedName: Name get() = Name.identifier(this.synthesizedString)
 
 val String.synthesizedString: String get() = "\$$this"
-
-val DeclarationDescriptor.propertyIfAccessor: DeclarationDescriptor
-    get() = if (this is PropertyAccessorDescriptor)
-        this.correspondingProperty
-    else this
 
 val CallableDescriptor.isSuspend: Boolean
     get() = this is FunctionDescriptor && isSuspend
@@ -68,21 +59,4 @@ val CallableDescriptor.explicitParameters: List<ParameterDescriptor>
         result.addAll(valueParameters)
 
         return result
-    }
-
-// Used in Kotlin/Native
-@Suppress("unused")
-fun FunctionDescriptor.substitute(vararg types: KotlinType): FunctionDescriptor {
-    val typeSubstitutor = TypeSubstitutor.create(
-        typeParameters
-            .withIndex()
-            .associateBy({ it.value.typeConstructor }, { TypeProjectionImpl(types[it.index]) })
-    )
-    return substitute(typeSubstitutor)!!
-}
-
-val KotlinType.isFunctionOrKFunctionType: Boolean
-    get() {
-        val kind = constructor.declarationDescriptor?.getFunctionalClassKind()
-        return kind == FunctionClassDescriptor.Kind.Function || kind == FunctionClassDescriptor.Kind.KFunction
     }

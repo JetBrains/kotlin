@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.scripting.ide_services.compiler.impl
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.backend.common.onlyIf
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
@@ -236,7 +235,9 @@ private class KJvmReplCompleter(
                         )
                     Triple(it, presentation, (presentation.presentableText + presentation.tailText).toLowerCase())
                 }
-                .onlyIf({ isSortNeeded }) { it.sortedBy { descTriple -> descTriple.third } }
+                .let {
+                    if (isSortNeeded) it.sortedBy { descTriple -> descTriple.third } else it
+                }
                 .forEach {
                     val descriptor = it.first
                     val (rawName, presentableText, tailText, completionText) = it.second

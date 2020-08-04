@@ -40,7 +40,7 @@ import java.io.StringWriter
 
 fun ir2string(ir: IrElement?): String = ir?.render() ?: ""
 
-// NB: this function is used in native
+@Suppress("unused") // Used in kotlin-native
 fun ir2stringWhole(ir: IrElement?): String {
     val strWriter = StringWriter()
     ir?.accept(DumpIrTreeVisitor(strWriter), "")
@@ -106,15 +106,6 @@ fun IrReturnTarget.returnType(context: CommonBackendContext) =
 
 val IrClass.isFinalClass: Boolean
     get() = modality == Modality.FINAL && kind != ClassKind.ENUM_CLASS
-
-// For an annotation, get the annotation class.
-fun IrCall.getAnnotationClass(): IrClass {
-    val callable = symbol.owner
-    assert(callable is IrConstructor) { "Constructor call expected, got ${ir2string(this)}" }
-    val annotationClass = callable.parentAsClass
-    assert(annotationClass.isAnnotationClass) { "Annotation class expected, got ${ir2string(annotationClass)}" }
-    return annotationClass
-}
 
 val IrTypeParametersContainer.classIfConstructor get() = if (this is IrConstructor) parentAsClass else this
 
@@ -346,10 +337,6 @@ fun IrDeclarationContainer.addChild(declaration: IrDeclaration) {
         this.declarations += declaration
     }
     declaration.setDeclarationsParent(this)
-}
-
-fun IrDeclarationContainer.addChildren(declarations: List<IrDeclaration>) {
-    declarations.forEach { this.addChild(it) }
 }
 
 fun <T : IrElement> T.setDeclarationsParent(parent: IrDeclarationParent): T {
