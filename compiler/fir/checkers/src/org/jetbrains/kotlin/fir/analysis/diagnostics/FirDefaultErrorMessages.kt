@@ -51,42 +51,67 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
 
     companion object {
         val MAP = FirDiagnosticFactoryToRendererMap("FIR").also { map ->
-            map.put(UNRESOLVED_REFERENCE, "Unresolved reference: {0}", NULLABLE_STRING)
-            map.put(HIDDEN, "Symbol {0} is invisible", SYMBOL)
-            map.put(NONE_APPLICABLE, "None of the following functions are applicable: {0}", SYMBOLS)
-            map.put(INAPPLICABLE_CANDIDATE, "Inapplicable candidate(s): {0}", SYMBOL)
-            map.put(AMBIGUITY, "Ambiguity between candidates: {0}", SYMBOLS)
-            map.put(ASSIGN_OPERATOR_AMBIGUITY, "Ambiguity between assign operator candidates: {0}", SYMBOLS)
+            // Miscellaneous
             map.put(SYNTAX_ERROR, "Syntax error")
-            map.put(UNRESOLVED_LABEL, "Unresolved label")
+            map.put(OTHER_ERROR, "Unknown (other) error")
+
+            // General syntax
             map.put(ILLEGAL_CONST_EXPRESSION, "Illegal const expression")
             map.put(ILLEGAL_UNDERSCORE, "Illegal underscore")
+
+            // Unresolved
+            map.put(HIDDEN, "Symbol {0} is invisible", SYMBOL)
+            map.put(UNRESOLVED_REFERENCE, "Unresolved reference: {0}", NULLABLE_STRING)
+            map.put(UNRESOLVED_LABEL, "Unresolved label")
             map.put(DESERIALIZATION_ERROR, "Deserialization error")
-            map.put(INFERENCE_ERROR, "Inference error")
+            map.put(ERROR_FROM_JAVA_RESOLUTION, "Java resolution error")
+
+            // Super
+            map.put(SUPER_IS_NOT_AN_EXPRESSION, "Super cannot be a callee")
+
+            // Supertypes
             map.put(TYPE_PARAMETER_AS_SUPERTYPE, "Type parameter as supertype")
             map.put(ENUM_AS_SUPERTYPE, "Enum as supertype")
             map.put(RECURSION_IN_SUPERTYPES, "Recursion in supertypes")
-            map.put(RECURSION_IN_IMPLICIT_TYPES, "Recursion in implicit types")
-            map.put(ERROR_FROM_JAVA_RESOLUTION, "Java resolution error")
-            map.put(OTHER_ERROR, "Unknown (other) error")
-            map.put(SUPER_IS_NOT_AN_EXPRESSION, "Super cannot be a callee")
-            map.put(REPEATED_MODIFIER, "Repeated ''{0}''", TO_STRING)
-            map.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING)
-            map.put(DEPRECATED_MODIFIER_PAIR, "Modifier ''{0}'' is deprecated in presence of ''{1}''", TO_STRING, TO_STRING)
-            map.put(INCOMPATIBLE_MODIFIERS, "Modifier ''{0}'' is incompatible with ''{1}''", TO_STRING, TO_STRING)
+
+            // Constructor problems
 
             // Annotations
             map.put(NOT_AN_ANNOTATION_CLASS, "Illegal annotation class: {0}", NULLABLE_STRING)
 
             // Exposed visibility group
             map.put(EXPOSED_TYPEALIAS_EXPANDED_TYPE, "{0} typealias exposes {2} in expanded type{1}", TO_STRING, TO_STRING, TO_STRING)
-            map.put(EXPOSED_PROPERTY_TYPE, "{0} property exposes its {2} type{1}", TO_STRING, TO_STRING, TO_STRING)
             map.put(EXPOSED_FUNCTION_RETURN_TYPE, "{0} function exposes its {2} return type{1}", TO_STRING, TO_STRING, TO_STRING)
             map.put(EXPOSED_RECEIVER_TYPE, "{0} member exposes its {2} receiver type{1}", TO_STRING, TO_STRING, TO_STRING)
+            map.put(EXPOSED_PROPERTY_TYPE, "{0} property exposes its {2} type{1}", TO_STRING, TO_STRING, TO_STRING)
             map.put(EXPOSED_PARAMETER_TYPE, "{0} function exposes its {2} parameter type{1}", TO_STRING, TO_STRING, TO_STRING)
+
+            // Modifiers
+            map.put(REPEATED_MODIFIER, "Repeated ''{0}''", TO_STRING)
+            map.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING)
+            map.put(DEPRECATED_MODIFIER_PAIR, "Modifier ''{0}'' is deprecated in presence of ''{1}''", TO_STRING, TO_STRING)
+            map.put(INCOMPATIBLE_MODIFIERS, "Modifier ''{0}'' is incompatible with ''{1}''", TO_STRING, TO_STRING)
+
+            // Applicability
+            map.put(NONE_APPLICABLE, "None of the following functions are applicable: {0}", SYMBOLS)
+            map.put(INAPPLICABLE_CANDIDATE, "Inapplicable candidate(s): {0}", SYMBOL)
+
+            // Ambiguity
+            map.put(AMBIGUITY, "Ambiguity between candidates: {0}", SYMBOLS)
+            map.put(ASSIGN_OPERATOR_AMBIGUITY, "Ambiguity between assign operator candidates: {0}", SYMBOLS)
+
+            // Types & type parameters
+            map.put(RECURSION_IN_IMPLICIT_TYPES, "Recursion in implicit types")
+            map.put(INFERENCE_ERROR, "Inference error")
+
+            // Redeclarations
+
+            // Invalid local declarations
 
             // Control flow diagnostics
             map.put(UNINITIALIZED_VARIABLE, "{2} must be initialized before access", PROPERTY_NAME)
+
+            // Extended checkers group
         }
     }
 }
