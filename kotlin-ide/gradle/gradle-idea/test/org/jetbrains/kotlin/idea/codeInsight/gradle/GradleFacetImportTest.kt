@@ -73,6 +73,7 @@ internal fun GradleImportingTestCase.getSourceRootInfos(moduleName: String): Lis
     }
 }
 
+//ToDo: Remove @TargetVersions("4.7 <=> 6.0") after updating plugin versions in testData
 class GradleFacetImportTest : GradleImportingTestCase() {
 
     private fun assertSameKotlinSdks(vararg moduleNames: String) {
@@ -83,6 +84,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.7 <=> 6.0")
     fun testJvmImport() {
         configureByFiles()
         importProject()
@@ -141,6 +143,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.7 <=> 6.0")
     fun testJvmImport_1_1_2() {
         configureByFiles()
         importProject()
@@ -185,6 +188,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.7 <=> 6.0")
     fun testJvmImportWithCustomSourceSets() {
         configureByFiles()
         importProject()
@@ -231,6 +235,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.7 <=> 6.0")
     fun testJvmImportWithCustomSourceSets_1_1_2() {
         configureByFiles()
         importProject()
@@ -275,6 +280,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.7 <=> 6.0")
     fun testCoroutineImportByOptions() {
         configureByFiles()
         importProject()
@@ -285,6 +291,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.7 <=> 6.0")
     fun testCoroutineImportByProperties() {
         configureByFiles()
         importProject()
@@ -454,6 +461,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.7 <=> 6.0")
     fun testJvmImportByPlatformPlugin() {
         configureByFiles()
         importProject()
@@ -549,6 +557,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.7 <=> 6.0")
     fun testJvmImportByKotlinPlugin() {
         configureByFiles()
         importProject()
@@ -605,6 +614,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.7 <=> 6.0")
     fun testArgumentEscaping() {
         configureByFiles()
         importProject()
@@ -686,6 +696,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.7 <=> 6.0")
     fun testKotlinAndroidPluginDetection() {
         configureByFiles()
         createProjectSubFile(
@@ -699,6 +710,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.7 <=> 6.0")
     fun testNoFacetInModuleWithoutKotlinPlugin() {
         configureByFiles()
 
@@ -711,6 +723,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.7 <=> 6.0")
     fun testClasspathWithDependenciesImport() {
         configureByFiles()
         importProject()
@@ -721,6 +734,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.7 <=> 6.0")
     fun testDependenciesClasspathImport() {
         configureByFiles()
         importProject()
@@ -731,6 +745,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.7 <=> 6.0")
     fun testJDKImport() {
         val mockJdkPath = "${PathManager.getHomePath()}/community/java/mockJDK-1.8"
         object : WriteAction<Unit>() {
@@ -784,6 +799,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.7 <=> 6.0")
     fun testAPIVersionExceedingLanguageVersion() {
         configureByFiles()
         importProject()
@@ -797,6 +813,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.7 <=> 6.0")
     fun testIgnoreProjectLanguageAndAPIVersion() {
         KotlinCommonCompilerArgumentsHolder.getInstance(myProject).update {
             languageVersion = "1.0"
@@ -815,6 +832,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.7 <=> 6.0")
     fun testCommonArgumentsImport() {
         configureByFiles()
         importProject()
@@ -862,6 +880,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.7 <=> 6.0")
     fun testInternalArgumentsFacetImporting() {
         configureByFiles()
         importProject()
@@ -882,6 +901,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.7 <=> 6.0")
     fun testStableModuleNameWhileUsingGradleJS() {
         configureByFiles()
         importProject()
@@ -894,6 +914,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.7 <=> 6.0")
     fun testStableModuleNameWhileUsingGradleJVM() {
         configureByFiles()
         importProject()
@@ -905,6 +926,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.7 <=> 6.0")
     fun testNoFriendPathsAreShown() {
         configureByFiles()
         importProject()
@@ -918,6 +940,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.7 <=> 6.0")
     fun testSharedLanguageVersion() {
         configureByFiles()
 
@@ -931,6 +954,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
+    @TargetVersions("4.7 <=> 6.0")
     fun testNonSharedLanguageVersion() {
         configureByFiles()
         val holder = KotlinCommonCompilerArgumentsHolder.getInstance(myProject)

@@ -25,9 +25,7 @@ import kotlin.reflect.KMutableProperty0
 class GradleQuickFixTest : GradleImportingTestCase() {
     private lateinit var codeInsightTestFixture: CodeInsightTestFixture
 
-    private fun getTestDataDirectory(): File {
-        return IDEA_TEST_DATA_DIR.resolve("gradle/fixes").resolve(getTestName(true).substringBefore("_"))
-    }
+    override fun testDataDirName() = "fixes"
 
     override fun setUpFixtures() {
         myTestFixture = IdeaTestFixtureFactory.getFixtureFactory().createFixtureBuilder(getName()).fixture
@@ -48,7 +46,7 @@ class GradleQuickFixTest : GradleImportingTestCase() {
     }
 
     private fun doGradleQuickFixTest(localInspectionTool: LocalInspectionTool) {
-        val buildGradleVFile = createProjectSubFile("build.gradle", File(getTestDataDirectory(), "build.gradle").readText())
+        val buildGradleVFile = configureByFiles().first { it.name == "build.gradle" }
         importProject()
 
         applyInspectionFixes(localInspectionTool, buildGradleVFile)
@@ -79,6 +77,10 @@ class GradleQuickFixTest : GradleImportingTestCase() {
     }
 
     private fun checkResult(file: VirtualFile) {
-        KotlinTestUtils.assertEqualsToFile(File(getTestDataDirectory(), "build.gradle.after"), LoadTextUtil.loadText(file).toString())
+        KotlinTestUtils.assertEqualsToFile(
+            File(testDataDirectory(), "build.gradle.after"),
+            configureKotlinVersionAndProperties(LoadTextUtil.loadText(file).toString())
+        )
+        { s -> configureKotlinVersionAndProperties(s) }
     }
 }

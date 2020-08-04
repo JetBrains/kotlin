@@ -5,7 +5,7 @@ buildscript {
         maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
     }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.11"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:{{kotlin_plugin_version}}"
     }
 }
 apply plugin: "kotlin"
@@ -19,7 +19,7 @@ dependencies {
 }
 compileKotlin {
     kotlinOptions {
-        freeCompilerArgs = ["-XXLanguage:+SamConversionForKotlinFunctions", "-XXLanguage:+InlineClasses"]
+        freeCompilerArgs = ["-XXLanguage:+SamConversionForKotlinFunctions", "-Xinline-classes"]
         // Free compiler arguments
     }
 }
