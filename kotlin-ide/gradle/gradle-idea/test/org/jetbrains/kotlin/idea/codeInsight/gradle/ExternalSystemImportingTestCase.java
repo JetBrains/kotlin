@@ -90,7 +90,7 @@ import static com.intellij.testFramework.EdtTestUtil.runInEdtAndGet;
 public abstract class ExternalSystemImportingTestCase extends ExternalSystemTestCase {
 
     public static final String MINIMAL_SUPPORTED_GRADLE_PLUGIN_VERSION = "1.3.0";
-    public static final String LATEST_STABLE_GRADLE_PLUGIN_VERSION = "1.3.50";
+    public static final String LATEST_STABLE_GRADLE_PLUGIN_VERSION = "1.3.72";
 
     private Logger logger;
 
