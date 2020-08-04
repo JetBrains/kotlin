@@ -82,7 +82,7 @@ class CocoaPodsIT : BaseGradleIT() {
         cocoapodsSingleKtPod,
         "ios-app",
         ImportMode.FRAMEWORKS,
-        listOf("kotlin-library")
+        mapOf("kotlin-library" to null)
     )
 
     @Test
@@ -91,7 +91,7 @@ class CocoaPodsIT : BaseGradleIT() {
             cocoapodsSingleKtPod,
             "ios-app",
             ImportMode.MODULAR_HEADERS,
-            listOf("kotlin-library")
+            mapOf("kotlin-library" to null)
         )
 
     @Test
@@ -148,7 +148,7 @@ class CocoaPodsIT : BaseGradleIT() {
         cocoapodsMultipleKtPods,
         "ios-app",
         ImportMode.FRAMEWORKS,
-        listOf("kotlin-library", "second-library")
+        mapOf("kotlin-library" to null, "second-library" to null)
     )
 
     @Test
@@ -157,8 +157,37 @@ class CocoaPodsIT : BaseGradleIT() {
             cocoapodsMultipleKtPods,
             "ios-app",
             ImportMode.MODULAR_HEADERS,
-            listOf("kotlin-library", "second-library")
+            mapOf("kotlin-library" to null, "second-library" to null)
         )
+
+    @Test
+    fun testPodImportCustomFrameworkName() = doTestPodImport(
+        cocoapodsSingleKtPod,
+        "ios-app",
+        ImportMode.FRAMEWORKS,
+        mapOf("kotlin-library" to "foobaz")
+    )
+
+    private fun BaseGradleIT.Project.useCustomFrameworkName(subproject: String, frameworkName: String, iosAppLocation: String? = null) {
+        // Change the name at the Gradle side.
+        gradleBuildScript(subproject).appendText(
+            """
+                |kotlin {
+                |    cocoapods {
+                |        frameworkName = "$frameworkName"
+                |    }
+                |}
+            """.trimMargin()
+        )
+
+        // Change swift sources import if needed.
+        if (iosAppLocation != null) {
+            val iosAppDir = projectDir.resolve(iosAppLocation)
+            iosAppDir.resolve("ios-app/ViewController.swift").modify {
+                it.replace("import ${subproject.validFrameworkName}", "import $frameworkName")
+            }
+        }
+    }
 
     private fun doTestPodspec(
         projectName: String,
@@ -175,16 +204,8 @@ class CocoaPodsIT : BaseGradleIT() {
         }
 
         for ((subproject, frameworkName) in subprojectsToFrameworkNamesMap) {
-            frameworkName?.also {
-                gradleProject.gradleBuildScript(subproject).appendText(
-                    """
-                |kotlin {
-                |    cocoapods {
-                |        frameworkName = "$frameworkName"
-                |    }
-                |}
-            """.trimMargin()
-                )
+            frameworkName?.let {
+                gradleProject.useCustomFrameworkName(subproject, it)
             }
 
             // Check that we can generate the wrapper along with the podspec if the corresponding property specified
@@ -194,8 +215,6 @@ class CocoaPodsIT : BaseGradleIT() {
 
                 // Check that the podspec file is correctly generated.
                 val podspecFileName = "$subproject/${subproject.validFrameworkName}.podspec"
-
-
 
                 assertFileExists(podspecFileName)
                 val actualPodspecContentWithoutBlankLines = fileInWorkingDir(podspecFileName).readText()
@@ -212,12 +231,20 @@ class CocoaPodsIT : BaseGradleIT() {
         projectName: String,
         iosAppLocation: String,
         mode: ImportMode,
-        subprojects: List<String>
+        subprojectsToFrameworkNamesMap: Map<String, String?>,
     ) {
         assumeTrue(HostManager.hostIsMac)
         assumeTrue(KotlinCocoapodsPlugin.isAvailableToProduceSynthetic())
 
+        val subprojects = subprojectsToFrameworkNamesMap.keys
         val gradleProject = transformProjectWithPluginsDsl(projectName, gradleVersion)
+
+        subprojectsToFrameworkNamesMap.forEach { subproject, frameworkName ->
+            frameworkName?.let {
+                gradleProject.useCustomFrameworkName(subproject, it, iosAppLocation)
+            }
+        }
+
         with(gradleProject) {
             preparePodfile(iosAppLocation, mode)
             podImportAsserts()
@@ -313,24 +340,9 @@ class CocoaPodsIT : BaseGradleIT() {
             for ((subproject, frameworkName) in subprojectsToFrameworkNamesMap) {
 
                 // Add property with custom framework name
-                frameworkName?.also { name ->
-                    gradleBuildScript(subproject).appendText(
-                        """
-                        kotlin {
-                            cocoapods {
-                                frameworkName = "$name"
-                            }
-                        }
-                        """.trimIndent()
-                    )
-
-                    // Change swift sources import
-                    val iosAppDir = projectDir.resolve(iosAppLocation)
-                    iosAppDir.resolve("ios-app/ViewController.swift").modify {
-                        it.replace("import ${subproject.validFrameworkName}", "import $name")
-                    }
+                frameworkName?.let {
+                    useCustomFrameworkName(subproject, it, iosAppLocation)
                 }
-
 
                 // Generate podspec.
                 gradleProject.build(":$subproject:podspec", "-Pkotlin.native.cocoapods.generate.wrapper=true") {
