@@ -19,7 +19,9 @@ val NONE_RANGE = NpmRange(
         .toSemVer()
 )
 
-infix fun NpmRange.or(other: NpmRange): List<NpmRange> {
+infix fun NpmRange.union(other: NpmRange): List<NpmRange> {
+    if (!isIntersect(other)) return listOf(this, other)
+
     val startVersion = min(this.startVersion, other.startVersion)
 
     val endVersion = max(this.endVersion, other.endVersion)
@@ -29,7 +31,9 @@ infix fun NpmRange.or(other: NpmRange): List<NpmRange> {
         startInclusive = if (startVersion == other.startVersion) other.startInclusive else this.startInclusive,
         endVersion = endVersion,
         endInclusive = if (startVersion == other.startVersion) other.startInclusive else this.startInclusive
-    )
+    ).let {
+        listOf(it)
+    }
 }
 
 infix fun NpmRange.intersect(other: NpmRange): NpmRange? {
