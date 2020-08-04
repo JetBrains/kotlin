@@ -5235,6 +5235,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertLambdaToReference/receiverParameter.kt");
         }
 
+        @TestMetadata("receiverParameter2.kt")
+        public void testReceiverParameter2() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/receiverParameter2.kt");
+        }
+
+        @TestMetadata("receiverParameter3.kt")
+        public void testReceiverParameter3() throws Exception {
+            runTest("idea/testData/intentions/convertLambdaToReference/receiverParameter3.kt");
+        }
+
         @TestMetadata("receiverParameterReversed.kt")
         public void testReceiverParameterReversed() throws Exception {
             runTest("idea/testData/intentions/convertLambdaToReference/receiverParameterReversed.kt");

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -122,8 +123,10 @@ open class ConvertLambdaToReferenceIntention(textGetter: () -> String) : SelfTar
         }
 
         val lambdaValueParameterDescriptors = context[FUNCTION, lambdaExpression.functionLiteral]?.valueParameters ?: return false
-        if (explicitReceiver is KtClassLiteralExpression
-            && explicitReceiver.receiverExpression?.getCallableDescriptor() in lambdaValueParameterDescriptors
+        if (explicitReceiver != null && explicitReceiver !is KtSimpleNameExpression &&
+            explicitReceiver.anyDescendantOfType<KtSimpleNameExpression> {
+                it.getResolvedCall(context)?.resultingDescriptor in lambdaValueParameterDescriptors
+            }
         ) return false
         val explicitReceiverDescriptor = (explicitReceiver as? KtNameReferenceExpression)?.let {
             context[REFERENCE_TARGET, it]
