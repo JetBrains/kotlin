@@ -1177,8 +1177,7 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
     for (variable in oldLvt) {
         // $completion, $continuation and $result are dead, but they are used by debugger, as well as fake inliner variables
         // For example, $continuation is used to create async stack trace
-        if (variable.name == SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME ||
-            variable.name == CONTINUATION_VARIABLE_NAME ||
+        if (variable.name == CONTINUATION_VARIABLE_NAME ||
             variable.name == SUSPEND_CALL_RESULT_NAME ||
             isFakeLocalVariableForInline(variable.name)
         ) {
