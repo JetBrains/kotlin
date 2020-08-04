@@ -118,7 +118,7 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
             "-Xmx256m -XX:MaxPermSize=64m"
         else ->
             // 128M should be enough for gradle 5.0+ (leak is fixed), and <4.0 (amount of tests is less)
-            "-Xms128M -Xmx128m -XX:MaxPermSize=64m"
+            "-Xms128M -Xmx192m -XX:MaxPermSize=64m"
     }
 
     override fun setUp() {
