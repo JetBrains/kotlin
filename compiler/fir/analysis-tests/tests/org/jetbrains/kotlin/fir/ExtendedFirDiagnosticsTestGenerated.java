@@ -171,6 +171,29 @@ public class ExtendedFirDiagnosticsTestGenerated extends AbstractExtendedFirDiag
         }
     }
 
+    @TestMetadata("compiler/fir/analysis-tests/testData/extendedCheckers/emptyRangeChecker")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class EmptyRangeChecker extends AbstractExtendedFirDiagnosticsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInEmptyRangeChecker() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/extendedCheckers/emptyRangeChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("NoWarning.kt")
+        public void testNoWarning() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/emptyRangeChecker/NoWarning.kt");
+        }
+
+        @TestMetadata("Warning.kt")
+        public void testWarning() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/emptyRangeChecker/Warning.kt");
+        }
+    }
+
     @TestMetadata("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantCallOfConversionMethod")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -281,29 +304,6 @@ public class ExtendedFirDiagnosticsTestGenerated extends AbstractExtendedFirDiag
         @TestMetadata("variable.kt")
         public void testVariable() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/extendedCheckers/RedundantCallOfConversionMethod/variable.kt");
-        }
-    }
-
-    @TestMetadata("compiler/fir/analysis-tests/testData/extendedCheckers/emptyRangeChecker")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class EmptyRangeChecker extends AbstractExtendedFirDiagnosticsTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInEmptyRangeChecker() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/extendedCheckers/emptyRangeChecker"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
-        }
-
-        @TestMetadata("NoWarning.kt")
-        public void testNoWarning() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/emptyRangeChecker/NoWarning.kt");
-        }
-
-        @TestMetadata("Warning.kt")
-        public void testWarning() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/emptyRangeChecker/Warning.kt");
         }
     }
 }
