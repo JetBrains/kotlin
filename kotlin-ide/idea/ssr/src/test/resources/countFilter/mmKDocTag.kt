@@ -1,21 +1,21 @@
 <warning descr="SSR">/**
- * @param foo bar
+ * lorem
  */</warning>
-class Foo1
+
+<warning descr="SSR">/**
+ * ipsum
+ * @a
+ */</warning>
+
+<warning descr="SSR">/**
+ * dolor
+ * @a
+ * @b
+ */</warning>
 
 /**
- *
+ * sit
+ * @a
+ * @b
+ * @c
  */
-class Bar1
-
-<warning descr="SSR">/**
- * foo
- * @since 1
- */</warning>
-class Foo2
-
-<warning descr="SSR">/**
- * @property foo bar
- */</warning>
-class Bar2
-

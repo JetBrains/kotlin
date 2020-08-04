@@ -35,27 +35,26 @@ class KotlinSSCommentTest : KotlinSSResourceInspectionTest() {
      * KDoc
      */
 
-    fun testKdoc() { doTest("""
+    fun testKDoc() { doTest("""
         /**
          *
          */
     """.trimIndent()) }
 
-
-    fun testKdocTag() { doTest("""
+    fun testKDocTag() { doTest("""
         /**
          * @'_ '_
          */
     """.trimIndent()) }
 
-    fun testKdocClass() { doTest("""
+    fun testKDocClass() { doTest("""
         /**
          *
          */
         class '_
     """.trimIndent()) }
 
-    fun testKdocProperty() { doTest("""
+    fun testKDocProperty() { doTest("""
         /**
          *
          */

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
@@ -85,12 +86,6 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
 
     override fun visitElement(element: PsiElement) {
         myCompilingVisitor.handle(element)
-        when (element) {
-            is LeafPsiElement -> visitLeafPsiElement(element)
-            is KDoc -> visitKDoc(element)
-            is KDocLink -> visitKDocLink(element)
-        }
-
         super.visitElement(element)
     }
 
@@ -102,11 +97,31 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
             else ReferenceExpressionFilter
     }
 
-    private fun visitLeafPsiElement(element: LeafPsiElement) {
-        getHandler(element).setFilter { it is LeafPsiElement }
+    override fun visitLeafPsiElement(leafPsiElement: LeafPsiElement) {
+        getHandler(leafPsiElement).setFilter { it is LeafPsiElement }
 
-        when (element.elementType) {
-            KDocTokens.TEXT, KDocTokens.TAG_NAME -> processPatternStringWithFragments(element)
+        when (leafPsiElement.elementType) {
+            KDocTokens.TEXT -> processPatternStringWithFragments(leafPsiElement)
+            KDocTokens.TAG_NAME -> {
+                val handler = getHandler(leafPsiElement)
+                if (handler is SubstitutionHandler) {
+                    handler.findRegExpPredicate()?.setNodeTextGenerator { it.text.drop(1) }
+                    if (handler.minOccurs != 1 || handler.maxOccurs != 1) {
+                        setHandler(
+                            leafPsiElement.parent, SubstitutionHandler(
+                                "${handler.name}_",
+                                false,
+                                handler.minOccurs,
+                                handler.maxOccurs,
+                                false
+                            ).apply {
+                                filter = NodeFilter { it is KDocTag }
+                            }
+                        )
+                        leafPsiElement.resetCountFilter()
+                    }
+                }
+            }
         }
     }
 
@@ -297,12 +312,16 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         }
     }
 
-    private fun visitKDoc(kDoc: KDoc) {
+    override fun visitKDoc(kDoc: KDoc) {
         getHandler(kDoc).setFilter { it is KDoc }
     }
 
-    private fun visitKDocLink(link: KDocLink) {
+    override fun visitKDocLink(link: KDocLink) {
         getHandler(link).setFilter { it is KDocLink }
+    }
+
+    override fun visitKDocTag(tag: KDocTag) {
+        getHandler(tag).setFilter { it is KDocTag }
     }
 
     private fun PsiElement.setAbsenceOfMatchHandlerIfApplicable(considerAllChildren: Boolean = false) {
@@ -325,7 +344,7 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
     private fun PsiElement.resetCountFilter() {
         val handler = getHandler(this)
         if (handler is SubstitutionHandler && (handler.minOccurs != 1 || handler.maxOccurs != 1)) {
-            val newHandler = SubstitutionHandler(handler.name, false, 1, 1, false)
+            val newHandler = SubstitutionHandler(handler.name, handler.isTarget, 1, 1, false)
             val predicate = handler.predicate
             if (predicate != null) newHandler.predicate = predicate
             setHandler(this, newHandler)

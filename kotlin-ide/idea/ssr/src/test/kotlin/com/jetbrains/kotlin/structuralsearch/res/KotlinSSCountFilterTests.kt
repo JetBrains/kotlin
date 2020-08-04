@@ -56,4 +56,10 @@ class KotlinSSCountFilterTests : KotlinSSResourceInspectionTest() {
     fun testMmSimpleNameStringTemplateEntry() { doTest(""" "$$'_{0,2}" """) }
     
     fun testMmTypeProjection() { doTest("fun '_('_ : '_<'_{0,2}>)") }
+
+    fun testMmKDocTag() { doTest("""
+        /**
+         * @'_{0,2}
+         */
+    """.trimIndent()) }
 }

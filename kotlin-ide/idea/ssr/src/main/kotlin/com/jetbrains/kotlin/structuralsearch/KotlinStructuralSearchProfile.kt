@@ -27,6 +27,7 @@ import com.jetbrains.kotlin.structuralsearch.visitor.KotlinRecursiveElementWalki
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
@@ -47,6 +48,11 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
             str.isEmpty() -> false
             str[0] == '@' -> str.regionMatches(1, TYPED_VAR_PREFIX, 0, TYPED_VAR_PREFIX.length)
             else -> str.startsWith(TYPED_VAR_PREFIX)
+        }
+
+        override fun getTypedVarString(element: PsiElement): String {
+            val typedVarString = super.getTypedVarString(element)
+            return if (typedVarString.firstOrNull() == '@') typedVarString.drop(1) else typedVarString
         }
     }
 
@@ -256,6 +262,8 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
             family[1] is KtUserType && family[4] is KtAnnotationEntry -> true
             // Strings
             family[1] is KtSimpleNameStringTemplateEntry -> true
+            // KDoc
+            family[0] is KDocTag -> true
             // Default: count filter not applicable
             else -> false
         }
