@@ -29,7 +29,6 @@ constexpr uint32_t PrintableHexSize(uint32_t input_length) {
 
 void PrintableHex(const uint8_t* data, uint32_t data_length, char* hex) {
   static const char* hex_digits = "0123456789ABCDEF";
-  int i = 0;
   for(int i = 0; i < data_length; ++i) {
     *hex++ = hex_digits[(*data >> 4) & 0xf];
     *hex++ = hex_digits[(*data++) & 0xf];

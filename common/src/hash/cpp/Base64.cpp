@@ -136,7 +136,11 @@ int DecodeBase64(
   size_t buf = 0, len = 0;
 
   while (in < end) {
-    unsigned char c = kDecode[*in++];
+    // char may be a signed type. Explicitly convert it to an unsigned byte,
+    // so that indexing into kDecode array is safe. The latter has exactly
+    // 256 elements, so any unsigned byte value is valid.
+    uint8_t index = *in++;
+    unsigned char c = kDecode[index];
 
     switch (c) {
       case WHITESPACE: continue;   /* skip whitespace */

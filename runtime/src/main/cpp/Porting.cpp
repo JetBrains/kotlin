@@ -85,7 +85,7 @@ int getLastErrorMessage(char* message, uint32_t size) {
     auto errMsgBufSize = size / 4;
     wchar_t errMsgBuffer[errMsgBufSize];
     ::FormatMessageW(flags, NULL, errCode, 0, errMsgBuffer, errMsgBufSize, NULL);
-    auto errMsgLength = ::WideCharToMultiByte(CP_UTF8, 0, errMsgBuffer, -1, message, size, NULL, NULL);
+    ::WideCharToMultiByte(CP_UTF8, 0, errMsgBuffer, -1, message, size, NULL, NULL);
   }
   return errCode;
 }
@@ -108,7 +108,6 @@ int32_t consoleReadUtf8(void* utf8, uint32_t maxSizeBytes) {
       if (!length && KonanNeedDebugInfo) {
         char msg[512];
         auto errCode = getLastErrorMessage(msg, sizeof(msg));
-        char buffer[1024];
         consoleErrorf("UTF-16 to UTF-8 conversion error %d: %s", errCode, msg);
       }
       ((char*) utf8)[length] = 0;

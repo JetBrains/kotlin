@@ -119,13 +119,18 @@ typedef KStdUnorderedMap<void**, std::pair<KRef*,int>> KThreadLocalStorageMap;
 // Prevents clang from replacing FrameOverlay struct
 // with single pointer.
 // Can be removed when FrameOverlay will become more complex.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-variable"
 FrameOverlay exportFrameOverlay;
+#pragma clang diagnostic pop
 
 // Current number of allocated containers.
 volatile int allocCount = 0;
 volatile int aliveMemoryStatesCount = 0;
 
+#if USE_CYCLIC_GC
 KBoolean g_hasCyclicCollector = true;
+#endif  // USE_CYCLIC_GC
 
 // TODO: can we pass this variable as an explicit argument?
 THREAD_LOCAL_VARIABLE MemoryState* memoryState = nullptr;
@@ -980,7 +985,7 @@ void freeContainer(ContainerHeader* container) {
   runDeallocationHooks(container);
 
   // Now let's clean all object's fields in this container.
-  traverseContainerObjectFields(container, [container](ObjHeader** location) {
+  traverseContainerObjectFields(container, [](ObjHeader** location) {
       ZeroHeapRef(location);
   });
 
@@ -1017,7 +1022,7 @@ void depthFirstTraversal(ContainerHeader* start, bool* hasCycles,
       continue;
     }
     toVisit.push_front(markAsRemoved(container));
-    traverseContainerReferredObjects(container, [container, hasCycles, firstBlocker, &order, &toVisit](ObjHeader* obj) {
+    traverseContainerReferredObjects(container, [container, hasCycles, firstBlocker, &toVisit](ObjHeader* obj) {
       if (*firstBlocker != nullptr)
         return;
       if (obj->has_meta_object() && ((obj->meta_object()->flags_ & MF_NEVER_FROZEN) != 0)) {
@@ -1426,7 +1431,7 @@ void collectWhite(MemoryState* state, ContainerHeader* start) {
      toVisit.pop_front();
      if (container->color() != CONTAINER_TAG_GC_WHITE || container->buffered()) continue;
      container->setColorAssertIfGreen(CONTAINER_TAG_GC_BLACK);
-     traverseContainerObjectFields(container, [state, &toVisit](ObjHeader** location) {
+     traverseContainerObjectFields(container, [&toVisit](ObjHeader** location) {
         auto* ref = *location;
         if (ref == nullptr) return;
         auto* childContainer = ref->container();
@@ -1610,7 +1615,9 @@ void decrementStack(MemoryState* state) {
 void garbageCollect(MemoryState* state, bool force) {
   RuntimeAssert(!state->gcInProgress, "Recursive GC is disallowed");
 
+#if TRACE_GC
   uint64_t allocSinceLastGc = state->allocSinceLastGc;
+#endif  // TRACE_GC
   state->allocSinceLastGc = 0;
 
   if (!IsStrictMemoryModel) {
@@ -2493,7 +2500,7 @@ void freezeAcyclic(ContainerHeader* rootContainer, ContainerHeaderSet* newlyFroz
       newlyFrozen->insert(current);
     MEMORY_LOG("freezing %p\n", current)
     current->freeze();
-    traverseContainerReferredObjects(current, [current, &queue](ObjHeader* obj) {
+    traverseContainerReferredObjects(current, [&queue](ObjHeader* obj) {
         ContainerHeader* objContainer = obj->container();
         if (canFreeze(objContainer)) {
           if (objContainer->marked())

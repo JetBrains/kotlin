@@ -44,7 +44,7 @@ OBJ_GETTER(utf8ToUtf16Impl, const char* rawString, const char* end, uint32_t cha
   if (rawString == nullptr) RETURN_OBJ(nullptr);
   ArrayHeader* result = AllocArrayInstance(theStringTypeInfo, charCount, OBJ_RESULT)->array();
   KChar* rawResult = CharArrayAddressOfElementAt(result, 0);
-  auto convertResult = conversion(rawString, end, rawResult);
+  conversion(rawString, end, rawResult);
   RETURN_OBJ(result->obj());
 }
 
@@ -1091,7 +1091,6 @@ KInt Kotlin_String_lastIndexOfChar(KString thiz, KChar ch, KInt fromIndex) {
   if (fromIndex >= thiz->count_) {
     fromIndex = thiz->count_ - 1;
   }
-  KInt count = thiz->count_;
   KInt index = fromIndex;
   const KChar* thizRaw = CharArrayAddressOfElementAt(thiz, index);
   while (index >= 0) {
@@ -1116,7 +1115,6 @@ KInt Kotlin_String_indexOfString(KString thiz, KString other, KInt fromIndex) {
   if (other->count_ == 0) {
     return fromIndex;
   }
-  KInt count = thiz->count_;
   const KChar* thizRaw = CharArrayAddressOfElementAt(thiz, fromIndex);
   const KChar* otherRaw = CharArrayAddressOfElementAt(other, 0);
   void* result = konan::memmem(thizRaw, (thiz->count_ - fromIndex) * sizeof(KChar),
