@@ -110,3 +110,16 @@ org.jetbrains.kotlin.idea.refactoring.move.MoveTestGenerated.testKotlin_moveTopL
 org.jetbrains.kotlin.idea.refactoring.pullUp.PullUpTestGenerated.K2K.testAccidentalOverrides, Unprocessed,, FLAKY
 org.jetbrains.kotlin.idea.refactoring.rename.RenameTestGenerated.testOverloadsWithSameOrigin_OverloadsWithSameOrigin, Bad imports after rename,, FLAKY
 org.jetbrains.kotlin.idea.intentions.IntentionTestGenerated.ConvertSealedClassToEnum.testWithNonObjectInheritors, Enum reorder,, FLAKY
+org.jetbrains.kotlin.gradle.HierarchicalMultiplatformProjectImportingTest.testImportIntermediateModules, KMM-304,,
+"org.jetbrains.kotlin.gradle.HierarchicalMultiplatformProjectImportingTest.testJvmWithJavaOnHMPP[8: Gradle-6.5.1, KotlinGradlePlugin-master]", KMM-304,,
+org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testProjectDependency, KMM-304,,
+org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testNestedDependencies, KMM-304,,
+"org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testAndroidDependencyOnMPP[4: Gradle-5.6.4, KotlinGradlePlugin-latest stable]", KMM-304,,
+"org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testAndroidDependencyOnMPP[7: Gradle-6.5.1, KotlinGradlePlugin-latest stable]", KMM-304,,
+"org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testAndroidDependencyOnMPP[8: Gradle-6.5.1, KotlinGradlePlugin-master]", KMM-304,,
+"org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testDependencyOnRoot[7: Gradle-5.6.4, KotlinGradlePlugin-latest stable]", KMM-304,,
+"org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testDependencyOnRoot[8: Gradle-6.5.1, KotlinGradlePlugin-master]", KMM-304,,
+"org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testJavaTransitiveOnMPP[8: Gradle-6.5.1, KotlinGradlePlugin-master]", KMM-304,,
+"org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testImportBeforeBuild[8: Gradle-6.5.1, KotlinGradlePlugin-master]", KMM-304,,
+"org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testJsTestOutputFileInProjectWithAndroid[7: Gradle-6.5.1, KotlinGradlePlugin-latest stable]", NoSuchMethodError,,
+"org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testJsTestOutputFileInProjectWithAndroid[8: Gradle-6.5.1, KotlinGradlePlugin-master]", NoSuchMethodError,,
