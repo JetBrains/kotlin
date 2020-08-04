@@ -45,7 +45,7 @@ class CheckIrElementVisitor(
     override fun visitElement(element: IrElement) {
         if (config.ensureAllNodesAreDifferent) {
             if (set.contains(element))
-                reportError(element, "Duplicate IR node")
+                reportError(element, "Duplicate IR node: ${element.render()}")
             set.add(element)
         }
         // Nothing to do.
