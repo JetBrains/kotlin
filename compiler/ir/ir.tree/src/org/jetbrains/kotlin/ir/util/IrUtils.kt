@@ -609,3 +609,9 @@ val IrDeclaration.isFileClass: Boolean
 
 val IrValueDeclaration.isImmutable: Boolean
     get() = this is IrValueParameter || this is IrVariable && !isVar
+
+fun IrExpression.isSafeToUseWithoutCopying() =
+    this is IrGetObjectValue ||
+            this is IrGetEnumValue ||
+            this is IrConst<*> ||
+            this is IrGetValue && symbol.isBound && symbol.owner.isImmutable
