@@ -22,16 +22,19 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
 
 object CanBeReplacedWithOperatorAssignmentChecker : FirExpressionChecker<FirVariableAssignment>() {
-    override fun check(functionCall: FirVariableAssignment, context: CheckerContext, reporter: DiagnosticReporter) {
-        val lValue = functionCall.lValue
+    override fun check(assignment: FirVariableAssignment, context: CheckerContext, reporter: DiagnosticReporter) {
+        val lValue = assignment.lValue
         if (lValue !is FirResolvedNamedReference) return
-        val operator = functionCall.psi?.children?.getOrNull(1) ?: return
-        if (operator.text != "=") return
+
+        val operator = assignment.psi?.children?.getOrNull(1) ?: return
+        val operationSign = (operator as? KtOperationReferenceExpression)?.operationSignTokenType
+        if (operationSign != KtTokens.EQ) return
 
         val lValuePsi = lValue.psi as? KtNameReferenceExpression ?: return
-        val rValue = functionCall.rValue as? FirFunctionCall ?: return
+        val rValue = assignment.rValue as? FirFunctionCall ?: return
         val rValuePsi = rValue.psi as? KtBinaryExpression ?: return
         val rValueClassId = rValue.explicitReceiver?.typeRef?.coneType?.classId
 
@@ -56,9 +59,12 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirExpressionChecker<FirVari
 
             val isLeftMatch = isHierarchicallyTrue(operationToken, leftExpression?.operationToken)
                     && leftExpression?.matcher(variable) == true
+            if (isLeftMatch) return true
             val isRightMatch = isHierarchicallyTrue(operationToken, rightExpression?.operationToken)
                     && rightExpression?.matcher(variable) == true
-            isLeftMatch or isRightMatch
+            if (isRightMatch) return true
+
+            false
         } else {
             val leftExpression = left as? KtBinaryExpression
 

@@ -37,7 +37,7 @@ object RedundantCallOfConversionMethod : FirQualifiedAccessChecker() {
         }
     }
 
-    private val targetClassMap = mapOf(
+    private val targetClassMap = hashMapOf(
         "toString" to StandardClassIds.String,
         "toDouble" to StandardClassIds.Double,
         "toFloat" to StandardClassIds.Float,

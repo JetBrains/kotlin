@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirFakeSourceElement
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
+import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirCfaPropertyAssignmentChecker
 import org.jetbrains.kotlin.fir.analysis.cfa.TraverseDirection
 import org.jetbrains.kotlin.fir.analysis.cfa.traverse
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -22,16 +22,17 @@ import org.jetbrains.kotlin.fir.toFirPsiSourceElement
 import org.jetbrains.kotlin.psi.KtProperty
 
 
-object VariableAssignmentChecker : AbstractFirPropertyInitializationChecker() {
-    override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter) {
+object VariableAssignmentChecker : AbstractFirCfaPropertyAssignmentChecker() {
+    override fun analyze(
+        graph: ControlFlowGraph,
+        reporter: DiagnosticReporter,
+        data: Map<CFGNode<*>, PropertyInitializationInfo>,
+        properties: Set<FirPropertySymbol>
+    ) {
         val unprocessedProperties = mutableSetOf<FirPropertySymbol>()
         val propertiesCharacteristics = mutableMapOf<FirPropertySymbol, EventOccurrencesRange>()
 
-        val localProperties = LocalPropertyCollector.collect(graph)
-        if (localProperties.isEmpty()) return
-
-        val data = DataCollector(localProperties).getData(graph)
-        val reporterVisitor = UninitializedPropertyReporter(data, localProperties, unprocessedProperties, propertiesCharacteristics)
+        val reporterVisitor = UninitializedPropertyReporter(data, properties, unprocessedProperties, propertiesCharacteristics)
         graph.traverse(TraverseDirection.Forward, reporterVisitor)
 
         for (property in unprocessedProperties) {
@@ -63,7 +64,7 @@ object VariableAssignmentChecker : AbstractFirPropertyInitializationChecker() {
                     destructuringCanBeVal = false
                 }
                 lastDestructuredVariables--
-            } else if (canBeVal(symbol, value) && symbol.fir.delegate == null ) {
+            } else if (canBeVal(symbol, value) && symbol.fir.delegate == null) {
                 reporter.report(source, FirErrors.CAN_BE_VAL)
             }
         }

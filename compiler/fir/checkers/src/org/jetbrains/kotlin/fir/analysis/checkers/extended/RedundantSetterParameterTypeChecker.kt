@@ -21,6 +21,7 @@ object RedundantSetterParameterTypeChecker : FirMemberDeclarationChecker() {
         val valueParameter = setter.valueParameters.firstOrNull() ?: return
         val propertyTypeSource = declaration.returnTypeRef.source
         val setterParameterTypeSource = valueParameter.returnTypeRef.source ?: return
+
         if (setterParameterTypeSource != propertyTypeSource) {
             reporter.report(setterParameterTypeSource, REDUNDANT_SETTER_PARAMETER_TYPE)
         }
