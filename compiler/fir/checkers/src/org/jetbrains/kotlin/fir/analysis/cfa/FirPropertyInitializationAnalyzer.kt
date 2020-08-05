@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.isLateInit
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
@@ -38,6 +39,7 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
             val reference = node.fir.calleeReference as? FirResolvedNamedReference ?: return
             val symbol = reference.resolvedSymbol as? FirPropertySymbol ?: return
             if (symbol !in localProperties) return
+            if (symbol.fir.isLateInit) return
             val kind = data.getValue(node)[symbol] ?: EventOccurrencesRange.ZERO
             if (!kind.isDefinitelyVisited()) {
                 node.fir.source?.let {
