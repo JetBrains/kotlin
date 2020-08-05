@@ -5,6 +5,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.WrappedProgressIndicator;
+import com.intellij.openapi.progress.impl.ProgressSuspender;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
@@ -82,7 +84,9 @@ public final class IndexUpdateRunner {
     indicator.setIndeterminate(false);
 
     CachedFileContentLoader contentLoader = new CurrentProjectHintedCachedFileContentLoader(project);
-    IndexingJob indexingJob = new IndexingJob(project, indicator, contentLoader, files);
+    ProgressIndicator originalIndicator = unwrapAll(indicator);
+    ProgressSuspender originalSuspender = ProgressSuspender.getSuspender(originalIndicator);
+    IndexingJob indexingJob = new IndexingJob(project, indicator, contentLoader, files, originalIndicator, originalSuspender);
     if (ApplicationManager.getApplication().isWriteAccessAllowed()) {
       // If the current thread has acquired the write lock, we can't grant it to worker threads, so we must do the work in the current thread.
       while (!indexingJob.areAllFilesProcessed()) {
@@ -106,12 +110,13 @@ public final class IndexUpdateRunner {
           numberOfRunningWorkers.incrementAndGet();
         }
         while (!project.isDisposed() && !indexingJob.areAllFilesProcessed() && indexingJob.myError.get() == null) {
-          // Add a worker if the previous died for whatever reason, to avoid waiting for nothing.
-          if (numberOfRunningWorkers.get() < myNumberOfIndexingThreads) {
+          // Internally checks for suspension of the indexing and blocks the current thread if necessary.
+          indicator.checkCanceled();
+          // Add workers if the previous have stopped for whatever reason.
+          while (numberOfRunningWorkers.get() < myNumberOfIndexingThreads) {
             myIndexingExecutor.execute(worker);
             numberOfRunningWorkers.incrementAndGet();
           }
-          indicator.checkCanceled();
           try {
             if (indexingJob.myAllFilesAreProcessedLatch.await(100, TimeUnit.MILLISECONDS)) {
               break;
@@ -140,21 +145,39 @@ public final class IndexUpdateRunner {
   // Drops finished, cancelled and failed jobs from {@code ourIndexingJobs}. Does not throw exceptions.
   private void indexJobsFairly() {
     while (!ourIndexingJobs.isEmpty()) {
+      boolean allJobsAreSuspended = true;
       for (IndexingJob job : ourIndexingJobs) {
+        ProgressIndicator jobIndicator = job.myIndicator;
         if (job.myProject.isDisposed()
             || job.myNoMoreFilesInQueue.get()
-            || job.myIndicator.isCanceled()
+            || jobIndicator.isCanceled()
             || job.myError.get() != null) {
           ourIndexingJobs.remove(job);
+          allJobsAreSuspended = false;
           continue;
         }
+        ProgressSuspender suspender = job.myOriginalProgressSuspender;
+        if (suspender != null && suspender.isSuspended()) {
+          continue;
+        }
+        allJobsAreSuspended = false;
         try {
-          indexOneFileOfJob(job);
+          Runnable work = () -> indexOneFileOfJob(job);
+          if (suspender != null) {
+            // Here it is important to use the original progress indicator which is directly associated with the ProgressSuspender.
+            suspender.executeNonSuspendableSection(job.myOriginalProgressIndicator, work);
+          } else {
+            work.run();
+          }
         }
         catch (Throwable e) {
           job.myError.compareAndSet(null, e);
           ourIndexingJobs.remove(job);
         }
+      }
+      if (allJobsAreSuspended) {
+        // To avoid busy-looping.
+        break;
       }
     }
   }
@@ -355,6 +378,14 @@ public final class IndexUpdateRunner {
     return file.getPath();
   }
 
+  private static @NotNull ProgressIndicator unwrapAll(@NotNull ProgressIndicator indicator) {
+    // Can't use "ProgressWrapper.unwrapAll" here because it unwraps "ProgressWrapper"s only (not any "WrappedProgressIndicator")
+    while (indicator instanceof WrappedProgressIndicator) {
+      indicator = ((WrappedProgressIndicator)indicator).getOriginalProgressIndicator();
+    }
+    return indicator;
+  }
+
   private static class IndexingJob {
     final Project myProject;
     final CachedFileContentLoader myContentLoader;
@@ -363,19 +394,25 @@ public final class IndexUpdateRunner {
     final int myTotalFiles;
     final AtomicBoolean myNoMoreFilesInQueue = new AtomicBoolean();
     final CountDownLatch myAllFilesAreProcessedLatch;
+    final ProgressIndicator myOriginalProgressIndicator;
+    @Nullable final ProgressSuspender myOriginalProgressSuspender;
     final IndexingJobStatistics myStatistics = new IndexingJobStatistics();
     final AtomicReference<Throwable> myError = new AtomicReference<>();
 
     IndexingJob(@NotNull Project project,
                 @NotNull ProgressIndicator indicator,
                 @NotNull CachedFileContentLoader contentLoader,
-                @NotNull Collection<VirtualFile> files) {
+                @NotNull Collection<VirtualFile> files,
+                @NotNull ProgressIndicator originalProgressIndicator,
+                @Nullable ProgressSuspender originalProgressSuspender) {
       myProject = project;
       myIndicator = indicator;
       myTotalFiles = files.size();
       myContentLoader = contentLoader;
       myQueueOfFiles = new ArrayBlockingQueue<>(files.size(), false, files);
       myAllFilesAreProcessedLatch = new CountDownLatch(files.size());
+      myOriginalProgressIndicator = originalProgressIndicator;
+      myOriginalProgressSuspender = originalProgressSuspender;
     }
 
     public void oneMoreFileProcessed() {
