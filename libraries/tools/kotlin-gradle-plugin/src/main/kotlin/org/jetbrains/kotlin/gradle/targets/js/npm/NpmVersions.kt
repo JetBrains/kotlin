@@ -11,7 +11,7 @@ import org.antlr.v4.runtime.ANTLRInputStream
 import org.antlr.v4.runtime.CommonTokenStream
 import org.gradle.api.InvalidUserDataException
 
-fun versionToNpmRanges(version: String): List<NpmRange?> {
+fun versionToNpmRanges(version: String): List<NpmRange> {
     val lexer = NodeSemverExpressionLexer(ANTLRInputStream(version))
     val tokens = CommonTokenStream(lexer)
     val parser = NodeSemverExpressionParser(tokens)
@@ -26,12 +26,6 @@ fun buildNpmVersion(
     val includedRange: NpmRange? = try {
         includedVersions
             .flatMap { versionToNpmRanges(it) }
-            .onEach {
-                if (it == null) {
-                    throw InvalidUserDataException("Problem with parsing of included versions $includedVersions")
-                }
-            }
-            .filterNotNull()
             .reduce { acc: NpmRange, next: NpmRange ->
                 val intersection = acc intersect next
                 requireNotNull(intersection) {
@@ -48,7 +42,7 @@ fun buildNpmVersion(
     val excludedRanges: List<NpmRange> = try {
         excludedVersions
             .flatMap { versionToNpmRanges(it) }
-            .mapNotNull { it?.invert() }
+            .map { it.invert() }
             .reduce { acc, next -> acc intersect next }
     } catch (e: UnsupportedOperationException) {
         throw InvalidUserDataException("No ranges for excluded versions $excludedVersions")

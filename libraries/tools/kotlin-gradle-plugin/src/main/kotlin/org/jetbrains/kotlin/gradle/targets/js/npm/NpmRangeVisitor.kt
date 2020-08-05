@@ -9,14 +9,16 @@ import com.github.gundy.semver4j.generated.grammar.NodeSemverExpressionBaseVisit
 import com.github.gundy.semver4j.generated.grammar.NodeSemverExpressionParser
 import com.github.gundy.semver4j.model.Version
 import org.antlr.v4.runtime.tree.TerminalNode
+import org.jetbrains.kotlin.gradle.utils.toListOrEmpty
 
-class NpmRangeVisitor : NodeSemverExpressionBaseVisitor<List<NpmRange?>>() {
-    override fun visitEmptyRange(ctx: NodeSemverExpressionParser.EmptyRangeContext): List<NpmRange?> =
-        listOf(null)
+class NpmRangeVisitor : NodeSemverExpressionBaseVisitor<List<NpmRange>>() {
+    override fun visitEmptyRange(ctx: NodeSemverExpressionParser.EmptyRangeContext): List<NpmRange> =
+        listOf(NpmRange())
 
-    override fun visitWildcard(ctx: NodeSemverExpressionParser.WildcardContext): List<NpmRange?> =
-        listOf(null)
+    override fun visitWildcard(ctx: NodeSemverExpressionParser.WildcardContext): List<NpmRange> =
+        listOf(NpmRange())
 
+    // TODO check it
     override fun visitWildcardRange(ctx: NodeSemverExpressionParser.WildcardRangeContext): List<NpmRange> =
         listOf(eq(ctx.partialWildcardSemver().text))
 
@@ -44,15 +46,16 @@ class NpmRangeVisitor : NodeSemverExpressionBaseVisitor<List<NpmRange?>>() {
         )
     }
 
-    override fun visitWildcardOperator(ctx: NodeSemverExpressionParser.WildcardOperatorContext): List<NpmRange?> =
-        listOf(null)
+    override fun visitWildcardOperator(ctx: NodeSemverExpressionParser.WildcardOperatorContext): List<NpmRange> =
+        listOf(NpmRange())
 
     override fun visitTildeRange(ctx: NodeSemverExpressionParser.TildeRangeContext): List<NpmRange> {
         val version = Version.fromString(ctx.fullSemver().text)
         val nextVersion = version
             .incrementMinor()
 
-        return listOf(gteq(version))
+        return (gteq(version) intersect lt(nextVersion))
+            .toListOrEmpty()
     }
 
     override fun visitCaretRange(ctx: NodeSemverExpressionParser.CaretRangeContext): List<NpmRange> {
@@ -60,41 +63,39 @@ class NpmRangeVisitor : NodeSemverExpressionBaseVisitor<List<NpmRange?>>() {
         val nextVersion = version
             .incrementMajor()
 
-        return lt(version) union gteq(nextVersion)
+        return (gteq(version) intersect lt(nextVersion))
+            .toListOrEmpty()
     }
 
     override fun visitFullySpecifiedSemver(ctx: NodeSemverExpressionParser.FullySpecifiedSemverContext): List<NpmRange> =
-        inverseVersion(ctx.fullSemver().text)
+        version(ctx.fullSemver().text)
 
-    override fun visitLogicalAndOfSimpleExpressions(ctx: NodeSemverExpressionParser.LogicalAndOfSimpleExpressionsContext): List<NpmRange?> =
+    override fun visitLogicalAndOfSimpleExpressions(ctx: NodeSemverExpressionParser.LogicalAndOfSimpleExpressionsContext): List<NpmRange> =
         try {
             ctx.simple()
                 .flatMap { visit(it) }
-                .filterNotNull()
                 .reduce { acc: NpmRange?, next: NpmRange ->
                     val npmRange = if (acc == null) null else acc intersect next
                     npmRange
                 }
         } catch (e: UnsupportedOperationException) {
             null
-        }.let { listOf(it) }
+        }.toListOrEmpty()
 
-    override fun visitLogicalOrOfMultipleRanges(ctx: NodeSemverExpressionParser.LogicalOrOfMultipleRangesContext): List<NpmRange?> =
+    override fun visitLogicalOrOfMultipleRanges(ctx: NodeSemverExpressionParser.LogicalOrOfMultipleRangesContext): List<NpmRange> =
         ctx.basicRange()
             .flatMap { visitBasicRange(it) }
-            .onEach { if (it == null) return listOf(null) }
-            .filterNotNull()
-            .fold(listOf<NpmRange>()) { ranges, range ->
+            .fold(listOf()) { ranges, range ->
                 if (ranges.isEmpty()) listOf(range)
                 else ranges
                     .flatMap { it union range }
 
             }
 
-    private fun inverseVersion(version: String): List<NpmRange> =
-        inverseVersion(Version.fromString(version))
+    private fun version(version: String): List<NpmRange> =
+        version(Version.fromString(version))
 
-    private fun inverseVersion(version: Version): List<NpmRange> =
+    private fun version(version: Version): List<NpmRange> =
         gt(version) union lt(version)
 
     private fun lt(version: String): NpmRange =
@@ -151,6 +152,6 @@ class NpmRangeVisitor : NodeSemverExpressionBaseVisitor<List<NpmRange?>>() {
         const val LTEQ = "<="
 
         const val AND = " "
-        const val OR = "||"
+        const val OR = " || "
     }
 }
