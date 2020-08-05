@@ -31,6 +31,7 @@ class Fir2IrLazyProperty(
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val fir: FirProperty,
+    internal val containingClass: FirRegularClass,
     override val symbol: Fir2IrPropertySymbol,
     override val isFakeOverride: Boolean
 ) : IrProperty(), AbstractFir2IrLazyDeclaration<FirProperty, IrProperty>, Fir2IrComponents by components {

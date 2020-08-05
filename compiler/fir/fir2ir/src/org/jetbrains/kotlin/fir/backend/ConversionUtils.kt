@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenProperties
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.AccessorSymbol
-import org.jetbrains.kotlin.fir.symbols.Fir2IrClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.IrElement
@@ -42,13 +41,10 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassPublicSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
@@ -338,85 +334,6 @@ internal fun FirProperty.generateOverriddenAccessorSymbols(
     return overriddenSet.toList()
 }
 
-internal fun IrClass.findMatchingOverriddenSymbolsFromSupertypes(
-    irBuiltIns: IrBuiltIns,
-    target: IrDeclaration,
-    result: MutableList<IrSymbol> = mutableListOf(),
-    visited: MutableSet<IrClass> = mutableSetOf()
-): List<IrSymbol> {
-    for (superType in superTypes) {
-        when (val superTypeClass = superType.classOrNull) {
-            is IrClassSymbolImpl, is IrClassPublicSymbolImpl, is Fir2IrClassSymbol -> {
-                superTypeClass.owner.findMatchingOverriddenSymbolsFromThisAndSupertypes(irBuiltIns, target, result, visited)
-            }
-        }
-    }
-    return result
-}
-
-private fun IrClass.findMatchingOverriddenSymbolsFromThisAndSupertypes(
-    irBuiltIns: IrBuiltIns,
-    target: IrDeclaration,
-    result: MutableList<IrSymbol>,
-    visited: MutableSet<IrClass>
-): List<IrSymbol> {
-    if (this in visited) {
-        return result
-    }
-    visited += this
-    val targetIsPropertyAccessor = target is IrFunction && target.isPropertyAccessor
-    for (declaration in declarations) {
-        if (declaration.isFakeOverride || declaration is IrConstructor) {
-            continue
-        }
-        when {
-            declaration is IrSimpleFunction && target is IrSimpleFunction ->
-                if (declaration.modality != Modality.FINAL &&
-                    !Visibilities.isPrivate(declaration.visibility) &&
-                    isOverriding(irBuiltIns, target, declaration)
-                ) {
-                    result.add(declaration.symbol)
-                }
-            declaration is IrProperty && (target is IrField || targetIsPropertyAccessor) -> {
-                val backingField = declaration.backingField
-                if (target is IrField && backingField != null) {
-                    if (!backingField.isFinal && !backingField.isStatic &&
-                        !Visibilities.isPrivate(backingField.visibility) &&
-                        isOverriding(irBuiltIns, target, backingField)
-                    ) {
-                        result.add(backingField.symbol)
-                    }
-                }
-                if (targetIsPropertyAccessor) {
-                    val getter = declaration.getter
-                    if (getter != null) {
-                        if (getter.modality != Modality.FINAL &&
-                            !Visibilities.isPrivate(getter.visibility) &&
-                            isOverriding(irBuiltIns, target, getter)
-                        ) {
-                            result.add(getter.symbol)
-                        }
-                    }
-                    val setter = declaration.setter
-                    if (setter != null) {
-                        if (setter.modality != Modality.FINAL &&
-                            !Visibilities.isPrivate(setter.visibility) &&
-                            isOverriding(irBuiltIns, target, setter)
-                        ) {
-                            result.add(setter.symbol)
-                        }
-                    }
-                }
-            }
-        }
-    }
-    // Stop traversing upwards if we find matching overridden symbols at this level.
-    if (result.isNotEmpty()) {
-        return result
-    }
-    return findMatchingOverriddenSymbolsFromSupertypes(irBuiltIns, target, result, visited)
-}
-
 fun isOverriding(
     irBuiltIns: IrBuiltIns,
     target: IrDeclaration,
@@ -520,10 +437,6 @@ fun FirClass<*>.irOrigin(firProvider: FirProvider): IrDeclarationOrigin = when {
     origin == FirDeclarationOrigin.Java -> IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
     else -> IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
 }
-
-fun FirClass<*>.getSamIfAny(): FirSimpleFunction? =
-    declarations.filterIsInstance<FirSimpleFunction>()
-        .singleOrNull { it.modality == Modality.ABSTRACT && !it.isPublicInObject(checkOnlyName = true) }
 
 val IrType.isSamType: Boolean
     get() {

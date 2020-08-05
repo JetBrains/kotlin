@@ -571,7 +571,9 @@ class Fir2IrDeclarationStorage(
                     parent = irParent
                 }
                 if (correspondingProperty is Fir2IrLazyProperty && !isFakeOverride && thisReceiverOwner != null) {
-                    populateOverriddenSymbols(thisReceiverOwner)
+                    this.overriddenSymbols = correspondingProperty.fir.generateOverriddenAccessorSymbols(
+                        correspondingProperty.containingClass, !isSetter, session, scopeSession, declarationStorage
+                    )
                 }
             }
         }
@@ -979,7 +981,7 @@ class Fir2IrDeclarationStorage(
                                     firVariableSymbol is FirPropertySymbol && firVariableSymbol.isFakeOverride &&
                                             firVariableSymbol.callableId != firVariableSymbol.overriddenSymbol?.callableId
                                 Fir2IrLazyProperty(
-                                    components, startOffset, endOffset, parentOrigin, fir, symbol, isFakeOverride
+                                    components, startOffset, endOffset, parentOrigin, fir, irParent.fir, symbol, isFakeOverride
                                 ).apply {
                                     parent = irParent
                                 }
@@ -1047,15 +1049,6 @@ class Fir2IrDeclarationStorage(
                 getIrVariableSymbol(firDeclaration)
             }
         }
-    }
-
-    private fun IrSimpleFunction.populateOverriddenSymbols(thisReceiverOwner: IrClass) {
-        thisReceiverOwner.findMatchingOverriddenSymbolsFromSupertypes(components.irBuiltIns, this)
-            .filterIsInstance<IrSimpleFunctionSymbol>().let {
-                if (it.isNotEmpty()) {
-                    overriddenSymbols = it
-                }
-            }
     }
 
     private fun IrMutableAnnotationContainer.convertAnnotationsFromLibrary(firAnnotationContainer: FirAnnotationContainer) {
