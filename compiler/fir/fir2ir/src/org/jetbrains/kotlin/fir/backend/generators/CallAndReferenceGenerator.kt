@@ -192,13 +192,6 @@ class CallAndReferenceGenerator(
         }
     }
 
-    // TODO: refactor/reuse the same logic in ReflectionReferencesGenerator
-    private fun IrExpression.isSafeToUseWithoutCopying() =
-        this is IrGetObjectValue ||
-                this is IrGetEnumValue ||
-                this is IrConst<*> ||
-                this is IrGetValue && symbol.isBound && symbol.owner.isImmutable
-
     private fun createAdapterFunction(
         callableReferenceAccess: FirCallableReferenceAccess,
         startOffset: Int,
