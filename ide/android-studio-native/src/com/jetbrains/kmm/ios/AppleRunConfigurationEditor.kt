@@ -12,6 +12,7 @@ import com.intellij.ui.components.JBLabel
 import com.intellij.util.ui.GridBag
 import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import com.jetbrains.kmm.KmmBundle
 import com.jetbrains.mobile.execution.AppleDevice
 import com.jetbrains.mobile.execution.DeviceService
 import org.jetbrains.kotlin.idea.facet.selectedItemTyped
@@ -54,13 +55,13 @@ class AppleRunConfigurationEditor(
     }
 
     override fun createEditor() = JPanel(GridBagLayout()).apply {
-        val schemeLabel = JBLabel("Xcode project scheme:")
+        val schemeLabel = JBLabel(KmmBundle.message("apple.runconfig.xcodeSchemeLabel"))
         schemeLabel.labelFor = schemeCombo
 
         add(schemeLabel, gridBag.nextLine().next())
         add(schemeCombo, gridBag.next().coverLine())
 
-        val targetLabel = JBLabel("Execution target:")
+        val targetLabel = JBLabel(KmmBundle.message("apple.runconfig.execTargetLabel"))
         targetLabel.labelFor = targetCombo
 
         add(targetLabel, gridBag.nextLine().next())

@@ -6,7 +6,7 @@
 package com.jetbrains.kmm.wizard
 
 import com.android.tools.idea.wizard.template.*
-import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
+import com.jetbrains.kmm.KmmBundle
 
 object KmmTemplate : RecipeHolder(), Template {
     override val category = Category.Application
@@ -16,9 +16,9 @@ object KmmTemplate : RecipeHolder(), Template {
     override val minCompileSdk: Int = 0
     override val minSdk: Int = 0
 
-    override val name: String = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.title")
-    override val description: String = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.description")
-    override val documentationUrl = "https://kotlinlang.org/lp/mobile/"
+    override val name: String = KmmBundle.message("wizard.project.title")
+    override val description: String = KmmBundle.message("wizard.project.description")
+    override val documentationUrl = KmmBundle.message("wizard.project.documentationUrl")
 
     override val recipe: Recipe = { data -> recipeImpl(data) }
 

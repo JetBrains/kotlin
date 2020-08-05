@@ -23,6 +23,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.ui.ComponentUtil
 import com.jetbrains.cidr.execution.testing.CidrLauncher
+import com.jetbrains.kmm.KmmBundle
 import com.jetbrains.kmm.ios.XcFileExtensions.isXcFile
 import com.jetbrains.konan.KonanBundle
 import com.jetbrains.mobile.execution.*
@@ -69,10 +70,10 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
 
         when {
             status is XcProjectStatus.Misconfiguration -> throwConfigurationError(
-                "Project is misconfigured: " + status.reason
+                KmmBundle.message("apple.runconfig.error.misconfigured", status.reason)
             )
             status == XcProjectStatus.NotLocated -> throwConfigurationError(
-                "Please specify Xcode project location in $propertyKey property of gradle.properties",
+                KmmBundle.message("apple.runconfig.error.xcodeNotLocated", propertyKey),
                 Runnable {
                     fixXcProjectPath()
                     openGradlePropertiesFile()
@@ -80,20 +81,20 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
                 }
             )
             status is XcProjectStatus.NotFound -> throwConfigurationError(
-                "Please check $propertyKey property of gradle.properties: " + status.reason,
+                KmmBundle.message("apple.runconfig.error.xcodeNotFound", propertyKey, status.reason),
                 Runnable {
                     openGradlePropertiesFile()
                     closeSettingsDialog()
                 }
             )
             xcProjectFile!!.schemes.isEmpty() -> throwConfigurationError(
-                "Please check specified Xcode project file: " + xcProjectFile!!.schemesStatus
+                KmmBundle.message("apple.runconfig.error.xcodeEmptySchemes", xcProjectFile!!.schemesStatus)
             )
             xcodeScheme == null -> throwConfigurationError(
-                "Please select Xcode scheme"
+                KmmBundle.message("apple.runconfig.error.xcodeNullScheme")
             )
             xcodeScheme!! !in xcProjectFile!!.schemes -> throwConfigurationError(
-                "Selected scheme '$xcodeScheme' is not found in ${xcProjectFile!!.absolutePath}"
+                KmmBundle.message("apple.runconfig.error.xcodeInvalidScheme", xcodeScheme!!, xcProjectFile!!.absolutePath)
             )
         }
     }

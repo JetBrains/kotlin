@@ -10,11 +10,12 @@ import com.intellij.execution.configurations.ConfigurationTypeBase
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.openapi.project.Project
 import com.intellij.ui.IconManager
+import com.jetbrains.kmm.KmmBundle
 
 class AppleRunConfigurationType : ConfigurationTypeBase(
     ID,
-    "iOS Application",
-    "Kotlin multiplatform mobile iOS application",
+    KmmBundle.message("apple.runconfig.title"),
+    KmmBundle.message("apple.runconfig.description"),
     ICON
 ) {
     init {

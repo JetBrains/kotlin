@@ -5,7 +5,6 @@
 
 package com.jetbrains.kmm.wizard
 
-import com.intellij.diff.comparison.trim
 import com.intellij.openapi.vfs.VfsUtil
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import java.io.File

@@ -6,6 +6,7 @@
 package com.jetbrains.kmm.wizard
 
 import com.android.tools.idea.wizard.template.*
+import com.jetbrains.kmm.KmmBundle
 import com.jetbrains.konan.KonanLog
 import org.jetbrains.kotlin.tools.projectWizard.core.onFailure
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
@@ -54,29 +55,29 @@ open class RecipeHolder {
     }
 
     protected val androidAppName: StringParameter = stringParameter {
-        name = "Android Application Name"
+        name = KmmBundle.message("wizard.project.androidAppNameLabel")
         default = "androidApp"
-        help = "The name of the module responsible for Android application"
+        help = KmmBundle.message("wizard.project.androidAppNameHelp")
         suggest = { default }
     }
 
     protected val iosAppName: StringParameter = stringParameter {
-        name = "iOS Application Name"
+        name = KmmBundle.message("wizard.project.iosAppNameLabel")
         default = "iosApp"
-        help = "The name of the Xcode project"
+        help = KmmBundle.message("wizard.project.iosAppNameHelp")
         suggest = { default }
     }
 
     protected val sharedName: StringParameter = stringParameter {
-        name = "Shared Module Name"
+        name = KmmBundle.message("wizard.project.sharedNameLabel")
         default = "shared"
-        help = "The name of the common module"
+        help = KmmBundle.message("wizard.project.sharedNameHelp")
         suggest = { default }
     }
 
     protected val sharedTests = booleanParameter {
-        name = "Add sample tests for Shared Module"
+        name = KmmBundle.message("wizard.project.addSharedTestsLabel")
         default = false
-        help = "Adds test stubs into the common module"
+        help = KmmBundle.message("wizard.project.addSharedTestsHelp")
     }
 }

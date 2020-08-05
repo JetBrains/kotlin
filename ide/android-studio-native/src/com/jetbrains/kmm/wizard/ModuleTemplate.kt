@@ -35,9 +35,9 @@ import com.intellij.openapi.util.IconLoader
 import com.intellij.ui.components.JBCheckBox
 import com.intellij.ui.layout.panel
 import com.jetbrains.kmm.KMM_LOG
+import com.jetbrains.kmm.KmmBundle
 import com.jetbrains.kmm.wizard.templates.*
 import org.jetbrains.android.refactoring.getProjectProperties
-import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import javax.swing.Icon
 import javax.swing.JTextField
 
@@ -81,11 +81,10 @@ fun RecipeExecutor.generateKmmModule(project: Project, data: ModuleTemplateData,
 
 class KmmWizardModel(
     project: Project,
-    moduleParent: String,
     projectSyncInvoker: ProjectSyncInvoker
 ) : ModuleModel(
-    KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.lib.title"),
-    "Create " + KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.lib.title"),
+    KmmBundle.message("wizard.module.title"),
+    "Create " + KmmBundle.message("wizard.module.title"),
     true,
     ExistingProjectModelData(project, projectSyncInvoker)
 ) {
@@ -120,10 +119,10 @@ class KmmWizardModel(
 class ConfigureKmmModuleStep(model: KmmWizardModel) : ConfigureModuleStep<KmmWizardModel>(
     model,
     FormFactor.MOBILE,
-    title = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.lib.title")
+    title = KmmBundle.message("wizard.module.title")
 ) {
-    private val generateTestsCheck = JBCheckBox("Add sample tests")
-    private val generatePackTaskCheck = JBCheckBox("Generate packForXcode Gradle task")
+    private val generateTestsCheck = JBCheckBox(KmmBundle.message("wizard.module.generateTestsLabel"))
+    private val generatePackTaskCheck = JBCheckBox(KmmBundle.message("wizard.module.generatePackForXcodeLabel"))
     private val packageNameField = JTextField()
 
     init {
@@ -147,13 +146,13 @@ class ConfigureKmmModuleStep(model: KmmWizardModel) : ConfigureModuleStep<KmmWiz
     private val panel: DialogPanel = panel {
         row {
             cell {
-                labelFor("Module Name", moduleName)
+                labelFor(KmmBundle.message("wizard.module.moduleNameLabel"), moduleName)
             }
             moduleName()
         }
 
         row {
-            labelFor("Package Name", packageName)
+            labelFor(KmmBundle.message("wizard.module.packageNameLabel"), packageName)
             packageNameField()
         }
 
@@ -175,12 +174,12 @@ class ConfigureKmmModuleStep(model: KmmWizardModel) : ConfigureModuleStep<KmmWiz
 
 private class KmmModuleTemplateGalleryEntry : ModuleGalleryEntry {
     override val icon: Icon = IconLoader.findIcon("/META-INF/kmm-project-logo.png")!!
-    override val name: String = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.lib.title")
-    override val description: String = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.lib.description")
+    override val name: String = KmmBundle.message("wizard.module.title")
+    override val description: String = KmmBundle.message("wizard.module.description")
     override fun toString(): String = name
 
     override fun createStep(project: Project, projectSyncInvoker: ProjectSyncInvoker, moduleParent: String?): SkippableWizardStep<*> {
-        return ConfigureKmmModuleStep(KmmWizardModel(project, moduleParent ?: "No parent", projectSyncInvoker))
+        return ConfigureKmmModuleStep(KmmWizardModel(project, projectSyncInvoker))
     }
 }
 

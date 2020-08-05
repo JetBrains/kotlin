@@ -35,6 +35,7 @@ import com.jetbrains.cidr.execution.build.CidrBuildId
 import com.jetbrains.cidr.execution.build.CidrBuildResult
 import com.jetbrains.cidr.execution.build.CidrBuildTaskType
 import com.jetbrains.kmm.KMM_LOG
+import com.jetbrains.kmm.KmmBundle
 import java.io.File
 
 
@@ -72,7 +73,7 @@ class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
             CidrBuildConfiguration { "Xcode Build Configuration" },
             CidrBuildTaskType.BUILD,
             name,
-            "Preparing build"
+            KmmBundle.message("apple.build.progressTitle")
         )
 
         buildContext.processHandler = createBuildProcess(
@@ -156,7 +157,7 @@ class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
                     id,
                     null,
                     System.currentTimeMillis(),
-                    "success",
+                    KmmBundle.message("apple.build.success"),
                     SuccessResultImpl()
                 )
             } else {
@@ -164,7 +165,7 @@ class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
                     id,
                     null,
                     System.currentTimeMillis(),
-                    "failed with code: ${event.exitCode}",
+                    KmmBundle.message("apple.build.failedWithCode", event.exitCode),
                     AndroidStudioFailureResult()
                 )
             }
