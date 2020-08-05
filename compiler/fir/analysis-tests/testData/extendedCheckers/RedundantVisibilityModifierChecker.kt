@@ -11,11 +11,11 @@ internal inline fun internal() {
     f()
 }
 
-class C {
+<!REDECLARATION!>class C {
     internal val z = object {
         fun foo() = 13
     }
-}
+}<!>
 
 class Foo2<
         T1,
@@ -27,12 +27,12 @@ class Foo2<
     internal inner class B<T,T2,>
 }
 
-<!REDUNDANT_VISIBILITY_MODIFIER!>public<!> class C {
+<!REDECLARATION!><!REDUNDANT_VISIBILITY_MODIFIER!>public<!> class C {
     <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> val foo: Int = 0
 
     <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> fun bar() {}
 
-}
+}<!>
 
 open class D {
     protected open fun willRemainProtected() {

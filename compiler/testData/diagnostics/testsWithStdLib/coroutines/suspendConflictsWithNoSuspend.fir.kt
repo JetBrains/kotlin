@@ -1,15 +1,15 @@
 // FILE: main.kt
 interface A {
-    suspend fun foo()
-    fun foo()
+    <!CONFLICTING_OVERLOADS!>suspend fun foo()<!>
+    <!CONFLICTING_OVERLOADS!>fun foo()<!>
 }
 
 interface B : A {
-    suspend override fun foo() {
+    <!CONFLICTING_OVERLOADS!>suspend override fun foo() {
 
-    }
+    }<!>
 
-    override fun foo() {
+    <!CONFLICTING_OVERLOADS!>override fun foo() {
 
-    }
+    }<!>
 }

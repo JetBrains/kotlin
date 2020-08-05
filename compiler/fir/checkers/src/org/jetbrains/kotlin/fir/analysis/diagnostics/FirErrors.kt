@@ -118,6 +118,8 @@ object FirErrors {
 
     // Redeclarations
     val MANY_COMPANION_OBJECTS by error0<FirSourceElement, PsiElement>()
+    val CONFLICTING_OVERLOADS by error1<FirSourceElement, PsiElement, String>()
+    val REDECLARATION by error1<FirSourceElement, PsiElement, String>()
 
     // Invalid local declarations
     val LOCAL_OBJECT_NOT_ALLOWED by error1<FirSourceElement, PsiElement, Name>()

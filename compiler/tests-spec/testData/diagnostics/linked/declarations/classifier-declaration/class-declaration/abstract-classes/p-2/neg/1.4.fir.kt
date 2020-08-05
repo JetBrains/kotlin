@@ -54,9 +54,9 @@ class Case2() {
 * TESTCASE NUMBER: 3
 * NOTE: check abstract member cannot be accessed directly
 */
-class Case3(override val boo: String) : BaseCase3() {
+class Case3(<!REDECLARATION!>override val boo: String<!>) : BaseCase3() {
     override val zoo: String = super.<!ABSTRACT_SUPER_CALL!>foo<!>()
-    override val boo: String = super.<!ABSTRACT_SUPER_CALL!>boo<!>
+    <!REDECLARATION!>override val boo: String = super.<!ABSTRACT_SUPER_CALL!>boo<!><!>
     override val value: String = super.<!ABSTRACT_SUPER_CALL!>zoo<!>
     val hoo: String = super.<!ABSTRACT_SUPER_CALL!>zoo<!>
 

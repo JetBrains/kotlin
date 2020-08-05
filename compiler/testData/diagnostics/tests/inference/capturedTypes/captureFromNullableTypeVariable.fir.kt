@@ -10,5 +10,5 @@ fun test1(a: Array<out Int?>) {
 
 fun test2(vararg a: Int?) {
     val list = a.<!INAPPLICABLE_CANDIDATE!>filterNotNull<!>()
-    list checkType { <!INAPPLICABLE_CANDIDATE!>_<!><List<Int>>() }
+    list checkType { _<List<Int>>() }
 }

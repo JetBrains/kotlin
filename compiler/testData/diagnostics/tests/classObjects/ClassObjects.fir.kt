@@ -2,10 +2,10 @@
 package Jet86
 
 class A {
-  companion object {
+  companion <!REDECLARATION!>object<!> {
     val x = 1
   }
-  companion <!MANY_COMPANION_OBJECTS!>object<!> {
+  companion <!MANY_COMPANION_OBJECTS, REDECLARATION!>object<!> {
     val x = 1
   }
 }

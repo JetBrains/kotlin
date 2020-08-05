@@ -9,12 +9,17 @@ import org.jetbrains.kotlin.fir.analysis.cfa.FirPropertyInitializationAnalyzer
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 
 object CommonDeclarationCheckers : DeclarationCheckers() {
+    override val fileCheckers: List<FirFileChecker> = listOf(
+
+    )
+
     override val declarationCheckers: List<FirBasicDeclarationChecker> = listOf(
         FirAnnotationClassDeclarationChecker,
         FirModifierChecker,
         FirManyCompanionObjectsChecker,
         FirLocalEntityNotAllowedChecker,
         FirTypeParametersInObjectChecker,
+        FirConflictsChecker,
     )
 
     override val memberDeclarationCheckers: List<FirMemberDeclarationChecker> = listOf(
@@ -24,6 +29,10 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirSupertypeInitializedWithoutPrimaryConstructor,
         FirDelegationSuperCallInEnumConstructorChecker,
         FirPrimaryConstructorRequiredForDataClassChecker,
+    )
+
+    override val regularClassCheckers: List<FirRegularClassChecker> = listOf(
+
     )
 
     override val constructorCheckers: List<FirConstructorChecker> = listOf(

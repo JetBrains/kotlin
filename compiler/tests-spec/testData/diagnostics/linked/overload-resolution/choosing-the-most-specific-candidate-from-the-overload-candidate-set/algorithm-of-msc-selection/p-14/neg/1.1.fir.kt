@@ -18,7 +18,7 @@ class Case2() {
     fun foo(vararg x: Int?): Unit = TODO() // (1.2)
 
     fun case(){
-        foo(1, 1)
+        <!AMBIGUITY!>foo<!>(1, 1)
     }
 }
 // TESTCASE NUMBER: 3
@@ -27,7 +27,7 @@ class Case3() {
     fun foo(vararg x: Int?): Unit = TODO() // (1.2)
 
     fun case(){
-        foo(1, 1)
+        <!AMBIGUITY!>foo<!>(1, 1)
     }
 }
 

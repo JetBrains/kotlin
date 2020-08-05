@@ -1,9 +1,9 @@
 class A {
-    companion object {
+    companion <!REDECLARATION!>object<!> {
 
     }
 
-    companion <!MANY_COMPANION_OBJECTS!>object<!> {
+    companion <!MANY_COMPANION_OBJECTS, REDECLARATION!>object<!> {
 
     }
 }

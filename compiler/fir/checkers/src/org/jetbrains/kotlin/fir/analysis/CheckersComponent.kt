@@ -53,25 +53,31 @@ fun FirSession.registerCheckersComponent() {
 }
 
 private class ComposedDeclarationCheckers : DeclarationCheckers() {
+    override val fileCheckers: List<FirFileChecker>
+        get() = _fileCheckers
     override val declarationCheckers: List<FirBasicDeclarationChecker>
         get() = _declarationCheckers
-
     override val memberDeclarationCheckers: List<FirMemberDeclarationChecker>
         get() = _memberDeclarationCheckers
-
+    override val regularClassCheckers: List<FirRegularClassChecker>
+        get() = _regularClassCheckers
     override val constructorCheckers: List<FirConstructorChecker>
         get() = _constructorCheckers
     override val controlFlowAnalyserCheckers: List<FirControlFlowChecker>
         get() = _controlFlowAnalyserCheckers
 
+    private val _fileCheckers: MutableList<FirFileChecker> = mutableListOf()
     private val _declarationCheckers: MutableList<FirBasicDeclarationChecker> = mutableListOf()
     private val _memberDeclarationCheckers: MutableList<FirMemberDeclarationChecker> = mutableListOf()
+    private val _regularClassCheckers: MutableList<FirRegularClassChecker> = mutableListOf()
     private val _constructorCheckers: MutableList<FirConstructorChecker> = mutableListOf()
     private val _controlFlowAnalyserCheckers: MutableList<FirControlFlowChecker> = mutableListOf()
 
     fun register(checkers: DeclarationCheckers) {
+        _fileCheckers += checkers.allFileCheckers
         _declarationCheckers += checkers.declarationCheckers
         _memberDeclarationCheckers += checkers.allMemberDeclarationCheckers
+        _regularClassCheckers += checkers.allRegularClassCheckers
         _constructorCheckers += checkers.allConstructorCheckers
         _controlFlowAnalyserCheckers += checkers.controlFlowAnalyserCheckers
     }

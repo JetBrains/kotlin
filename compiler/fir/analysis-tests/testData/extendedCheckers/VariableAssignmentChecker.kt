@@ -17,7 +17,7 @@ class LocalFreezableVar<T>(private var value: T)  {
 }
 
 
-class C
+<!REDECLARATION!>class C<!>
 operator fun C.plus(a: Any): C = this
 operator fun C.plusAssign(a: Any) {}
 
@@ -172,14 +172,14 @@ fun notAssignedWhenNotUsed(p: Int) {
 
 var global = 1
 
-class C {
+<!REDECLARATION!>class C {
     var field = 2
 
     fun foo() {
         print(field)
         print(global)
     }
-}
+}<!>
 
 fun withDelegate() {
     var s: String by Delegates.notNull()
