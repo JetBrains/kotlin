@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveToDescriptors
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.idea.resolve.getDataFlowValueFactory
+import org.jetbrains.kotlin.idea.resolve.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstanceToExpression
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.name.FqName
@@ -101,7 +103,6 @@ fun KtImportDirective.targetDescriptors(resolutionFacade: ResolutionFacade = thi
     return nameExpression.mainReference.resolveToDescriptors(resolutionFacade.analyze(nameExpression))
 }
 
-@OptIn(FrontendInternals::class)
 fun Call.resolveCandidates(
     bindingContext: BindingContext,
     resolutionFacade: ResolutionFacade,
@@ -117,9 +118,11 @@ fun Call.resolveCandidates(
     val callResolutionContext = BasicCallResolutionContext.create(
         bindingTrace, resolutionScope, this, expectedType, dataFlowInfo,
         ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-        false, resolutionFacade.frontendService(),
-        resolutionFacade.frontendService()
+        false, resolutionFacade.getLanguageVersionSettings(),
+        resolutionFacade.getDataFlowValueFactory()
     ).replaceCollectAllCandidates(true)
+
+    @OptIn(FrontendInternals::class)
     val callResolver = resolutionFacade.frontendService<CallResolver>()
 
     val results = callResolver.resolveFunctionCall(callResolutionContext)

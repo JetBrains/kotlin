@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.idea.resolve.getLanguageVersionSettings
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -125,7 +126,7 @@ object ReplaceWithAnnotationAnalyzer {
     ): LexicalScope? {
         val module = resolutionFacade.moduleDescriptor
         val explicitImportsScope = buildExplicitImportsScope(annotation, resolutionFacade, module)
-        val languageVersionSettings = resolutionFacade.frontendService<LanguageVersionSettings>()
+        val languageVersionSettings = resolutionFacade.getLanguageVersionSettings()
         val defaultImportsScopes = buildDefaultImportsScopes(resolutionFacade, module, languageVersionSettings)
 
         return getResolutionScope(

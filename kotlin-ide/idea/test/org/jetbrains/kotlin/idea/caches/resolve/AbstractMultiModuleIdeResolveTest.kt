@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromTextFile
 import org.jetbrains.kotlin.idea.project.KotlinMultiplatformAnalysisModeComponent
-import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.idea.resolve.getDataFlowValueFactory
+import org.jetbrains.kotlin.idea.resolve.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.allKotlinFiles
@@ -84,7 +85,6 @@ abstract class AbstractMultiModuleIdeResolveTest : AbstractMultiModuleTest() {
         return testSourcePath.toFile()
     }
 
-    @OptIn(FrontendInternals::class)
     protected open fun checkFile(file: KtFile, expectedFile: File) {
         val resolutionFacade = file.getResolutionFacade()
         val (bindingContext, moduleDescriptor) = resolutionFacade.analyzeWithAllCompilerChecks(listOf(file))
@@ -100,9 +100,9 @@ abstract class AbstractMultiModuleIdeResolveTest : AbstractMultiModuleTest() {
             configuration = DiagnosticsRenderingConfiguration(
                 platform = null, // we don't need to attach platform-description string to diagnostic here
                 withNewInference = false,
-                languageVersionSettings = resolutionFacade.frontendService(),
+                languageVersionSettings = resolutionFacade.getLanguageVersionSettings(),
             ),
-            dataFlowValueFactory = resolutionFacade.frontendService(),
+            dataFlowValueFactory = resolutionFacade.getDataFlowValueFactory(),
             moduleDescriptor = moduleDescriptor as ModuleDescriptorImpl
         ).filter { diagnosticsFilter.value(it.diagnostic) }
 

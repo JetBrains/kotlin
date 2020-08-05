@@ -11,13 +11,13 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.inspections.collections.isCalling
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.resolve.getDataFlowValueFactory
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtReferenceExpression
@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isNullable
@@ -57,7 +56,6 @@ class RedundantRequireNotNullCallInspection : AbstractKotlinInspection() {
         )
     })
 
-    @OptIn(FrontendInternals::class)
     private fun KtReferenceExpression.isNullable(
         descriptor: CallableDescriptor,
         type: KotlinType,
@@ -65,7 +63,7 @@ class RedundantRequireNotNullCallInspection : AbstractKotlinInspection() {
         resolutionFacade: ResolutionFacade,
     ): Boolean {
         if (!type.isNullable()) return false
-        val dataFlowValueFactory = resolutionFacade.getFrontendService(DataFlowValueFactory::class.java)
+        val dataFlowValueFactory = resolutionFacade.getDataFlowValueFactory()
         val dataFlow = dataFlowValueFactory.createDataFlowValue(this, type, context, descriptor)
         val stableTypes = context.getDataFlowInfoBefore(this).getStableTypes(dataFlow, this.languageVersionSettings)
         return stableTypes.none { !it.isNullable() }
