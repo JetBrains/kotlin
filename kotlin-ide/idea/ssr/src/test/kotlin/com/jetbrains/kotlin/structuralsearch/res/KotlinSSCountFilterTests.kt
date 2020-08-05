@@ -17,6 +17,8 @@ class KotlinSSCountFilterTests : KotlinSSResourceInspectionTest() {
 
     fun testMinWhenExpression() { doTest("when ('_?) {}") }
 
+    fun testMinConstructorCallee() { doTest("class '_ : '_?('_*)") }
+
     // isApplicableMaxCount
 
     fun testMaxDestructuringDeclarationEntry() { doTest("for (('_{3,3}) in '_) { '_* }") }

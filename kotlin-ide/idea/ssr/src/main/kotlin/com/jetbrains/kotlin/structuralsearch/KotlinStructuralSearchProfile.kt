@@ -258,6 +258,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
             family[1] is KtBlockExpression && family[3] is KtDoWhileExpression -> true
             family[0] is KtNameReferenceExpression && family[1] is KtBlockExpression -> true
             family[1] is KtUserType && family[3] is KtTypeProjection && family[5] !is KtNamedFunction -> true
+            family[1] is KtUserType && family[3] is KtConstructorCalleeExpression && family[5] is KtSuperTypeList -> true
             // Annotations
             family[1] is KtUserType && family[4] is KtAnnotationEntry -> true
             // Strings

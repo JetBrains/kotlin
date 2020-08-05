@@ -298,6 +298,13 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         list.setAbsenceOfMatchHandlerIfApplicable()
     }
 
+    override fun visitConstructorCalleeExpression(constructorCalleeExpression: KtConstructorCalleeExpression) {
+        super.visitConstructorCalleeExpression(constructorCalleeExpression)
+        if (constructorCalleeExpression.allowsAbsenceOfMatch) {
+            setHandler(constructorCalleeExpression.parent, absenceOfMatchHandler(constructorCalleeExpression))
+        }
+    }
+
     override fun visitWhenEntry(jetWhenEntry: KtWhenEntry) {
         super.visitWhenEntry(jetWhenEntry)
         val condition = jetWhenEntry.firstChild.firstChild
