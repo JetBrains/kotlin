@@ -72,6 +72,7 @@ val copyRuntimeDeps: Task by tasks.creating(Copy::class) {
     from(configurations.runtime)
     into(File(mobilePluginDir, "lib"))
     rename(quote("-$version"), "")
+    rename(quote("-$bootstrapKotlinVersion"), "")
 }
 
 val mobilePlugin: Task by tasks.creating(Copy::class) {
