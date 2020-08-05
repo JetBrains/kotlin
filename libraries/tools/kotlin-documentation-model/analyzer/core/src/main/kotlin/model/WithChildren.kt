@@ -23,6 +23,11 @@ inline fun <reified T> WithChildren<WithChildren<*>>.firstMemberOfType(): T wher
     return withDescendants().filterIsInstance<T>().first()
 }
 
+inline fun <reified T> WithChildren<WithChildren<*>>.firstMemberOfType(
+    predicate: (T) -> Boolean
+): T where T : WithChildren<*> = withDescendants().filterIsInstance<T>().first(predicate)
+
+
 inline fun <reified T> WithChildren<WithChildren<*>>.firstMemberOfTypeOrNull(): T? where T : WithChildren<*> {
     return withDescendants().filterIsInstance<T>().firstOrNull()
 }
@@ -66,7 +71,7 @@ fun <T> T.dfs(predicate: (T) -> Boolean): T? where T : WithChildren<T> = if (pre
     children.asSequence().mapNotNull { it.dfs(predicate) }.firstOrNull()
 }
 
-fun <T: WithChildren<T>> T.asPrintableTree(
+fun <T : WithChildren<T>> T.asPrintableTree(
     nodeNameBuilder: Appendable.(T) -> Unit = { append(it.toString()) }
 ): String {
     fun Appendable.append(element: T, ownPrefix: String, childPrefix: String) {
