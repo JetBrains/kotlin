@@ -198,9 +198,8 @@ object KotlinToJVMBytecodeCompiler {
         }
 
         val projectConfiguration = environment.configuration
-        val extendedAnalysisMode = projectConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR_EXTENDED_CHECKERS)
-
         if (projectConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
+            val extendedAnalysisMode = projectConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR_EXTENDED_CHECKERS)
             return compileModulesUsingFrontendIR(environment, buildFile, chunk, extendedAnalysisMode)
         }
 

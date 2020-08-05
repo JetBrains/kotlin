@@ -319,7 +319,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @Argument(
         value = "-Xuse-fir-extended-checkers",
-        description = "Use fir extended checkers. Warning: this feature is far from being production-ready"
+        description = "Use extended analysis mode based on Front-end IR. Warning: this feature is far from being production-ready"
     )
     var useFirExtendedCheckers: Boolean by FreezableVar(false)
 
