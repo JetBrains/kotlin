@@ -66,7 +66,7 @@ class KotlinMultiplatformPlugin(
         checkGradleCompatibility("the Kotlin Multiplatform plugin", GradleVersion.version("6.0"))
 
         project.plugins.apply(JavaBasePlugin::class.java)
-        SingleWarningPerBuild.show(project, "Kotlin Multiplatform Projects are an experimental feature.")
+        SingleWarningPerBuild.show(project, "Kotlin Multiplatform Projects are an Alpha feature.")
 
         val targetsContainer = project.container(KotlinTarget::class.java)
         val kotlinMultiplatformExtension = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
