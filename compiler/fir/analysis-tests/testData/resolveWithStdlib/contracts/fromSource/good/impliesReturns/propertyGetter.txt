@@ -4,8 +4,8 @@ FILE: propertyGetter.kt
     }
     public final fun always(): R|kotlin/Boolean|
     public final infix fun R|kotlin/Boolean|.implies(condition: R|kotlin/Boolean|): R|kotlin/Unit|
-    public final fun <T> identity(any: R|T|): R|T| {
-        ^identity R|<local>/any|
+    public final fun <K> id(x: R|K|): R|K| {
+        ^id R|<local>/x|
     }
     public final val something: R|kotlin/Any?|
         public get(): R|kotlin/Any?|
@@ -28,10 +28,10 @@ FILE: propertyGetter.kt
 
     }
     public final fun test2(): R|kotlin/Unit| {
-        lval i: R|kotlin/String| = R|/identity|<R|kotlin/String|>(R|/something|)
+        lval i: R|kotlin/String| = R|/id|<R|kotlin/String|>(R|/something|)
         lval asString: R|kotlin/Int| = R|<local>/i|.R|kotlin/String.length|
         when () {
-            ==(R|/identity|<R|kotlin/String|>(R|/something|).R|kotlin/String.get|(Int(0)), Char(A)) ->  {
+            ==(R|/id|<R|kotlin/String|>(R|/something|).R|kotlin/String.get|(Int(0)), Char(A)) ->  {
                 R|kotlin/io/println|(String(A))
             }
         }

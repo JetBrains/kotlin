@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.serialization
 
-import org.jetbrains.kotlin.contracts.description.*
-import org.jetbrains.kotlin.contracts.description.expressions.*
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.contracts.description.expressions.ConstantReference
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.contracts.effects
@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.LogicOperationKind
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 class FirContractSerializer {
     fun serializeContractOfFunctionIfAny(
@@ -67,6 +69,11 @@ class FirContractSerializer {
                             builder.addEffectConstructorArgument(contractExpressionProto(effectDeclaration.value, contractDescription))
                         }
                     }
+                }
+
+                is ConeParametersEffectDeclaration -> {
+                    builder.effectType = ProtoBuf.Effect.EffectType.PARAMETERS_IMPLIES
+                    builder.setConditionOfConditionalEffect(contractExpressionProto(effectDeclaration.value, contractDescription))
                 }
 
                 is ConeCallsEffectDeclaration -> {
@@ -181,6 +188,14 @@ class FirContractSerializer {
 
                     val indexOfParameter = valueParameterReference.parameterIndex
                     builder.valueParameterReference = indexOfParameter + 1
+
+                    return builder
+                }
+
+                override fun visitReturnValue(returnValue: ConeReturnValue, data: Unit): ProtoBuf.Expression.Builder {
+                    val builder = ProtoBuf.Expression.newBuilder()
+
+                    builder.valueParameterReference = Int.MAX_VALUE
 
                     return builder
                 }

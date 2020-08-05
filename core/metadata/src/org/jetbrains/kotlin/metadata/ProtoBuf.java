@@ -23820,7 +23820,7 @@ public final class ProtoBuf {
      * <code>optional .org.jetbrains.kotlin.metadata.Expression conclusion_of_conditional_effect = 3;</code>
      *
      * <pre>
-     * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+     * If present, then whole message is clause of form 'Something -&gt; Expression', where 'Something'
      * is given by other fields in this message, and 'Expression' is stored in this field.
      * </pre>
      */
@@ -23829,7 +23829,7 @@ public final class ProtoBuf {
      * <code>optional .org.jetbrains.kotlin.metadata.Expression conclusion_of_conditional_effect = 3;</code>
      *
      * <pre>
-     * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+     * If present, then whole message is clause of form 'Something -&gt; Expression', where 'Something'
      * is given by other fields in this message, and 'Expression' is stored in this field.
      * </pre>
      */
@@ -23843,6 +23843,25 @@ public final class ProtoBuf {
      * <code>optional .org.jetbrains.kotlin.metadata.Effect.InvocationKind kind = 4;</code>
      */
     org.jetbrains.kotlin.metadata.ProtoBuf.Effect.InvocationKind getKind();
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Expression condition_of_conditional_effect = 5;</code>
+     *
+     * <pre>
+     * If present, then whole message is clause of form 'Expression -&gt; Expression', where second 'Expression'
+     * is given by other fields in this message, and first 'Expression' is stored in this field.
+     * </pre>
+     */
+    boolean hasConditionOfConditionalEffect();
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Expression condition_of_conditional_effect = 5;</code>
+     *
+     * <pre>
+     * If present, then whole message is clause of form 'Expression -&gt; Expression', where second 'Expression'
+     * is given by other fields in this message, and first 'Expression' is stored in this field.
+     * </pre>
+     */
+    org.jetbrains.kotlin.metadata.ProtoBuf.Expression getConditionOfConditionalEffect();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.metadata.Effect}
@@ -24013,6 +24032,14 @@ public final class ProtoBuf {
        * </pre>
        */
       RETURNS_NOT_NULL(2, 2),
+      /**
+       * <code>PARAMETERS_IMPLIES = 3;</code>
+       *
+       * <pre>
+       * (boolean condition)
+       * </pre>
+       */
+      PARAMETERS_IMPLIES(3, 3),
       ;
 
       /**
@@ -24196,7 +24223,7 @@ public final class ProtoBuf {
      * <code>optional .org.jetbrains.kotlin.metadata.Expression conclusion_of_conditional_effect = 3;</code>
      *
      * <pre>
-     * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+     * If present, then whole message is clause of form 'Something -&gt; Expression', where 'Something'
      * is given by other fields in this message, and 'Expression' is stored in this field.
      * </pre>
      */
@@ -24207,7 +24234,7 @@ public final class ProtoBuf {
      * <code>optional .org.jetbrains.kotlin.metadata.Expression conclusion_of_conditional_effect = 3;</code>
      *
      * <pre>
-     * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+     * If present, then whole message is clause of form 'Something -&gt; Expression', where 'Something'
      * is given by other fields in this message, and 'Expression' is stored in this field.
      * </pre>
      */
@@ -24230,11 +24257,37 @@ public final class ProtoBuf {
       return kind_;
     }
 
+    public static final int CONDITION_OF_CONDITIONAL_EFFECT_FIELD_NUMBER = 5;
+    private org.jetbrains.kotlin.metadata.ProtoBuf.Expression conditionOfConditionalEffect_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Expression condition_of_conditional_effect = 5;</code>
+     *
+     * <pre>
+     * If present, then whole message is clause of form 'Expression -&gt; Expression', where second 'Expression'
+     * is given by other fields in this message, and first 'Expression' is stored in this field.
+     * </pre>
+     */
+    public boolean hasConditionOfConditionalEffect() {
+      return ((bitField0_ & 0x00000008) == 0x00000008);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.metadata.Expression condition_of_conditional_effect = 5;</code>
+     *
+     * <pre>
+     * If present, then whole message is clause of form 'Expression -&gt; Expression', where second 'Expression'
+     * is given by other fields in this message, and first 'Expression' is stored in this field.
+     * </pre>
+     */
+    public org.jetbrains.kotlin.metadata.ProtoBuf.Expression getConditionOfConditionalEffect() {
+      return conditionOfConditionalEffect_;
+    }
+
     private void initFields() {
       effectType_ = org.jetbrains.kotlin.metadata.ProtoBuf.Effect.EffectType.RETURNS_CONSTANT;
       effectConstructorArgument_ = java.util.Collections.emptyList();
       conclusionOfConditionalEffect_ = org.jetbrains.kotlin.metadata.ProtoBuf.Expression.getDefaultInstance();
       kind_ = org.jetbrains.kotlin.metadata.ProtoBuf.Effect.InvocationKind.AT_MOST_ONCE;
+      conditionOfConditionalEffect_ = org.jetbrains.kotlin.metadata.ProtoBuf.Expression.getDefaultInstance();
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -24250,6 +24303,12 @@ public final class ProtoBuf {
       }
       if (hasConclusionOfConditionalEffect()) {
         if (!getConclusionOfConditionalEffect().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasConditionOfConditionalEffect()) {
+        if (!getConditionOfConditionalEffect().isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -24272,6 +24331,9 @@ public final class ProtoBuf {
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         output.writeEnum(4, kind_.getNumber());
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        output.writeMessage(5, conditionOfConditionalEffect_);
       }
       output.writeRawBytes(unknownFields);
     }
@@ -24297,6 +24359,10 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeEnumSize(4, kind_.getNumber());
+      }
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+                .computeMessageSize(5, conditionOfConditionalEffect_);
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -24400,6 +24466,8 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000004);
         kind_ = org.jetbrains.kotlin.metadata.ProtoBuf.Effect.InvocationKind.AT_MOST_ONCE;
         bitField0_ = (bitField0_ & ~0x00000008);
+        conditionOfConditionalEffect_ = org.jetbrains.kotlin.metadata.ProtoBuf.Expression.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
 
@@ -24440,6 +24508,10 @@ public final class ProtoBuf {
           to_bitField0_ |= 0x00000004;
         }
         result.kind_ = kind_;
+        if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+          to_bitField0_ |= 0x00000008;
+        }
+        result.conditionOfConditionalEffect_ = conditionOfConditionalEffect_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -24465,6 +24537,9 @@ public final class ProtoBuf {
         if (other.hasKind()) {
           setKind(other.getKind());
         }
+        if (other.hasConditionOfConditionalEffect()) {
+          mergeConditionOfConditionalEffect(other.getConditionOfConditionalEffect());
+        }
         setUnknownFields(
             getUnknownFields().concat(other.unknownFields));
         return this;
@@ -24480,6 +24555,12 @@ public final class ProtoBuf {
         if (hasConclusionOfConditionalEffect()) {
           if (!getConclusionOfConditionalEffect().isInitialized()) {
             
+            return false;
+          }
+        }
+        if (hasConditionOfConditionalEffect()) {
+          if (!getConditionOfConditionalEffect().isInitialized()) {
+
             return false;
           }
         }
@@ -24670,7 +24751,7 @@ public final class ProtoBuf {
        * <code>optional .org.jetbrains.kotlin.metadata.Expression conclusion_of_conditional_effect = 3;</code>
        *
        * <pre>
-       * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+       * If present, then whole message is clause of form 'Something -&gt; Expression', where 'Something'
        * is given by other fields in this message, and 'Expression' is stored in this field.
        * </pre>
        */
@@ -24681,7 +24762,7 @@ public final class ProtoBuf {
        * <code>optional .org.jetbrains.kotlin.metadata.Expression conclusion_of_conditional_effect = 3;</code>
        *
        * <pre>
-       * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+       * If present, then whole message is clause of form 'Something -&gt; Expression', where 'Something'
        * is given by other fields in this message, and 'Expression' is stored in this field.
        * </pre>
        */
@@ -24692,7 +24773,7 @@ public final class ProtoBuf {
        * <code>optional .org.jetbrains.kotlin.metadata.Expression conclusion_of_conditional_effect = 3;</code>
        *
        * <pre>
-       * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+       * If present, then whole message is clause of form 'Something -&gt; Expression', where 'Something'
        * is given by other fields in this message, and 'Expression' is stored in this field.
        * </pre>
        */
@@ -24709,7 +24790,7 @@ public final class ProtoBuf {
        * <code>optional .org.jetbrains.kotlin.metadata.Expression conclusion_of_conditional_effect = 3;</code>
        *
        * <pre>
-       * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+       * If present, then whole message is clause of form 'Something -&gt; Expression', where 'Something'
        * is given by other fields in this message, and 'Expression' is stored in this field.
        * </pre>
        */
@@ -24724,7 +24805,7 @@ public final class ProtoBuf {
        * <code>optional .org.jetbrains.kotlin.metadata.Expression conclusion_of_conditional_effect = 3;</code>
        *
        * <pre>
-       * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+       * If present, then whole message is clause of form 'Something -&gt; Expression', where 'Something'
        * is given by other fields in this message, and 'Expression' is stored in this field.
        * </pre>
        */
@@ -24744,7 +24825,7 @@ public final class ProtoBuf {
        * <code>optional .org.jetbrains.kotlin.metadata.Expression conclusion_of_conditional_effect = 3;</code>
        *
        * <pre>
-       * If present, then whole message is clause of form 'Effect -&gt; Expression', where 'Effect'
+       * If present, then whole message is clause of form 'Something -&gt; Expression', where 'Something'
        * is given by other fields in this message, and 'Expression' is stored in this field.
        * </pre>
        */
@@ -24787,6 +24868,97 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000008);
         kind_ = org.jetbrains.kotlin.metadata.ProtoBuf.Effect.InvocationKind.AT_MOST_ONCE;
         
+        return this;
+      }
+
+      private org.jetbrains.kotlin.metadata.ProtoBuf.Expression conditionOfConditionalEffect_ = org.jetbrains.kotlin.metadata.ProtoBuf.Expression.getDefaultInstance();
+
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Expression condition_of_conditional_effect = 5;</code>
+       *
+       * <pre>
+       * If present, then whole message is clause of form 'Expression -&gt; Expression', where second 'Expression'
+       * is given by other fields in this message, and first 'Expression' is stored in this field.
+       * </pre>
+       */
+      public boolean hasConditionOfConditionalEffect() {
+        return ((bitField0_ & 0x00000010) == 0x00000010);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Expression condition_of_conditional_effect = 5;</code>
+       *
+       * <pre>
+       * If present, then whole message is clause of form 'Expression -&gt; Expression', where second 'Expression'
+       * is given by other fields in this message, and first 'Expression' is stored in this field.
+       * </pre>
+       */
+      public org.jetbrains.kotlin.metadata.ProtoBuf.Expression getConditionOfConditionalEffect() {
+        return conditionOfConditionalEffect_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Expression condition_of_conditional_effect = 5;</code>
+       *
+       * <pre>
+       * If present, then whole message is clause of form 'Expression -&gt; Expression', where second 'Expression'
+       * is given by other fields in this message, and first 'Expression' is stored in this field.
+       * </pre>
+       */
+      public Builder setConditionOfConditionalEffect(org.jetbrains.kotlin.metadata.ProtoBuf.Expression value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        conditionOfConditionalEffect_ = value;
+
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Expression condition_of_conditional_effect = 5;</code>
+       *
+       * <pre>
+       * If present, then whole message is clause of form 'Expression -&gt; Expression', where second 'Expression'
+       * is given by other fields in this message, and first 'Expression' is stored in this field.
+       * </pre>
+       */
+      public Builder setConditionOfConditionalEffect(
+              org.jetbrains.kotlin.metadata.ProtoBuf.Expression.Builder builderForValue) {
+        conditionOfConditionalEffect_ = builderForValue.build();
+
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Expression condition_of_conditional_effect = 5;</code>
+       *
+       * <pre>
+       * If present, then whole message is clause of form 'Expression -&gt; Expression', where second 'Expression'
+       * is given by other fields in this message, and first 'Expression' is stored in this field.
+       * </pre>
+       */
+      public Builder mergeConditionOfConditionalEffect(org.jetbrains.kotlin.metadata.ProtoBuf.Expression value) {
+        if (((bitField0_ & 0x00000010) == 0x00000010) &&
+            conditionOfConditionalEffect_ != org.jetbrains.kotlin.metadata.ProtoBuf.Expression.getDefaultInstance()) {
+          conditionOfConditionalEffect_ =
+                  org.jetbrains.kotlin.metadata.ProtoBuf.Expression.newBuilder(conditionOfConditionalEffect_).mergeFrom(value).buildPartial();
+        } else {
+          conditionOfConditionalEffect_ = value;
+        }
+
+        bitField0_ |= 0x00000010;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.metadata.Expression condition_of_conditional_effect = 5;</code>
+       *
+       * <pre>
+       * If present, then whole message is clause of form 'Expression -&gt; Expression', where second 'Expression'
+       * is given by other fields in this message, and first 'Expression' is stored in this field.
+       * </pre>
+       */
+      public Builder clearConditionOfConditionalEffect() {
+        conditionOfConditionalEffect_ = org.jetbrains.kotlin.metadata.ProtoBuf.Expression.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000010);
         return this;
       }
 
@@ -24839,6 +25011,7 @@ public final class ProtoBuf {
      * <pre>
      * stored as index in valueParameters list of owner-function in 1-indexation
      * Index '0' is reserved for extension receiver
+     * Index 'Int.MAX_VALUE' is reserved for return value
      * </pre>
      */
     int getValueParameterReference();
@@ -25204,6 +25377,7 @@ public final class ProtoBuf {
      * <pre>
      * stored as index in valueParameters list of owner-function in 1-indexation
      * Index '0' is reserved for extension receiver
+     * Index 'Int.MAX_VALUE' is reserved for return value
      * </pre>
      */
     public int getValueParameterReference() {
@@ -25816,6 +25990,7 @@ public final class ProtoBuf {
        * <pre>
        * stored as index in valueParameters list of owner-function in 1-indexation
        * Index '0' is reserved for extension receiver
+       * Index 'Int.MAX_VALUE' is reserved for return value
        * </pre>
        */
       public int getValueParameterReference() {
@@ -25827,6 +26002,7 @@ public final class ProtoBuf {
        * <pre>
        * stored as index in valueParameters list of owner-function in 1-indexation
        * Index '0' is reserved for extension receiver
+       * Index 'Int.MAX_VALUE' is reserved for return value
        * </pre>
        */
       public Builder setValueParameterReference(int value) {

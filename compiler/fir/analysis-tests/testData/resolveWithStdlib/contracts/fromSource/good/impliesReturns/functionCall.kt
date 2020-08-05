@@ -4,7 +4,7 @@ fun returnValue(): Any? = null
 fun always(): Boolean
 infix fun Boolean.implies(condition: Boolean)
 
-fun <T> identity(any: T): T = any
+fun <K> id(x: K): K = x
 
 fun length(x: String?): Any? {
     contract {
@@ -28,8 +28,8 @@ fun test2(x: String?) {
 }
 
 fun test3(x: String) {
-    val i = identity(length(x))
+    val i = id(length(x))
 
     val asString = i.length
-    if (identity(length(x)).get(0) == 'A') println("A")
+    if (id(length(x)).get(0) == 'A') println("A")
 }

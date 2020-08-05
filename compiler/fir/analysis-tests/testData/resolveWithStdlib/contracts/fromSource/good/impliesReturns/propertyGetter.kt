@@ -4,7 +4,7 @@ fun returnValue(): Any? = null
 fun always(): Boolean
 infix fun Boolean.implies(condition: Boolean)
 
-fun <T> identity(any: T): T = any
+fun <K> id(x: K): K = x
 
 val something: Any?
     get() {
@@ -22,8 +22,8 @@ fun test1() {
 }
 
 fun test2() {
-    val i = identity(something)
+    val i = id(something)
 
     val asString = i.length
-    if (identity(something).get(0) == 'A') println("A")
+    if (id(something).get(0) == 'A') println("A")
 }

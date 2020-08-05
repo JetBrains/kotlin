@@ -707,6 +707,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
                         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/impliesReturns/functionCall.kt");
                     }
 
+                    @TestMetadata("impliesIntersectionType.kt")
+                    public void testImpliesIntersectionType() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/impliesReturns/impliesIntersectionType.kt");
+                    }
+
                     @TestMetadata("impliesIsInstance.kt")
                     public void testImpliesIsInstance() throws Exception {
                         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/impliesReturns/impliesIsInstance.kt");
@@ -715,11 +720,6 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
                     @TestMetadata("impliesNotNull.kt")
                     public void testImpliesNotNull() throws Exception {
                         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/impliesReturns/impliesNotNull.kt");
-                    }
-
-                    @TestMetadata("impliesUnionType.kt")
-                    public void testImpliesUnionType() throws Exception {
-                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/impliesReturns/impliesUnionType.kt");
                     }
 
                     @TestMetadata("propertyGetter.kt")

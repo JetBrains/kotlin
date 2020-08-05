@@ -1,4 +1,4 @@
-FILE: impliesUnionType.kt
+FILE: impliesIntersectionType.kt
     public final fun returnValue(): R|kotlin/Any?| {
         ^returnValue Null(null)
     }

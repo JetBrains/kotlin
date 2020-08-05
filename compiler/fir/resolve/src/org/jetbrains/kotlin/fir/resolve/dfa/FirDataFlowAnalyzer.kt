@@ -168,30 +168,30 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
         conditionalEffects.forEach { effectDeclaration ->
             val effect = effectDeclaration.effect
-            if (effect is ConeParametersEffectDeclaration) {
-                fun ConeContractDescriptionValue.checkType(type: ConeKotlinType): Boolean = if (this is ConeValueParameterReference) {
-                    val parameterType = argumentsMapping[parameterIndex]?.typeRef?.coneType ?: nullableAny
-                    AbstractTypeChecker.isSubtypeOf(components.session.typeContext, parameterType, type)
-                } else false
-
-                fun ConeBooleanExpression.check(): Boolean = when (this) {
-                    is ConeBinaryLogicExpression -> if (kind == LogicOperationKind.AND) {
-                        left.check() && right.check()
-                    } else left.check() || right.check()
-
-                    is ConeBooleanConstantReference -> this == ConeBooleanConstantReference.TRUE
-                    is ConeIsInstancePredicate -> !isNegated && arg.checkType(type)
-                    is ConeIsNullPredicate -> isNegated && arg.checkType(any)
-                    else -> false
-                }
-
-                if (effect.value.check()) {
-                    effectDeclaration.collectReturnValueConditionalTypes(conditionalTypes, components.session.builtinTypes)
-                }
+            if (effect is ConeParametersEffectDeclaration && effect.value.checkCondition(argumentsMapping)) {
+                effectDeclaration.collectReturnValueConditionalTypes(conditionalTypes, components.session.builtinTypes)
             }
         }
 
         return if (conditionalTypes.isNotEmpty()) conditionalTypes else null
+    }
+
+    private fun ConeContractDescriptionValue.isSubtypeOf(type: ConeKotlinType, argumentsMapping: Map<Int, FirExpression>): Boolean {
+        return if (this is ConeValueParameterReference) {
+            val parameterType = argumentsMapping[parameterIndex]?.typeRef?.coneType ?: nullableAny
+            AbstractTypeChecker.isSubtypeOf(components.session.typeContext, parameterType, type)
+        } else false
+    }
+
+    private fun ConeBooleanExpression.checkCondition(argumentsMapping: Map<Int, FirExpression>): Boolean = when (this) {
+        is ConeBinaryLogicExpression -> if (kind == LogicOperationKind.AND) {
+            left.checkCondition(argumentsMapping) && right.checkCondition(argumentsMapping)
+        } else left.checkCondition(argumentsMapping) || right.checkCondition(argumentsMapping)
+
+        is ConeBooleanConstantReference -> this == ConeBooleanConstantReference.TRUE
+        is ConeIsInstancePredicate -> !isNegated && arg.isSubtypeOf(type, argumentsMapping)
+        is ConeIsNullPredicate -> isNegated && arg.isSubtypeOf(any, argumentsMapping)
+        else -> false
     }
 
     // ----------------------------------- Named function -----------------------------------
