@@ -1,6 +1,8 @@
 package com.jetbrains.swift
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -28,6 +30,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardOpenOption
+import java.util.concurrent.Callable
 import java.util.concurrent.TimeUnit
 
 private sealed class Request
@@ -53,7 +56,7 @@ interface MobileFrameworkMockForSourceKitGenerator {
     fun generateIfInvalid(swiftFile: PsiFile, future: FutureResult<Boolean>? = null)
 }
 
-class MobileFrameworkMockForSourceKitGeneratorImpl(val project: Project) : MobileFrameworkMockForSourceKitGenerator, ModuleDescriptorListener {
+class MobileFrameworkMockForSourceKitGeneratorImpl(val project: Project) : MobileFrameworkMockForSourceKitGenerator, ModuleDescriptorListener, Disposable {
     companion object {
         fun getInstance(project: Project): MobileFrameworkMockForSourceKitGeneratorImpl = project.service()
         val LOG = OCLog.LOG
@@ -152,6 +155,16 @@ class MobileFrameworkMockForSourceKitGeneratorImpl(val project: Project) : Mobil
     }
 
     private fun doGenerateForModule(target: AppleTargetModel, project: Project, module: MobileKonanSwiftModule) {
+        val headerLines = ReadAction
+            .nonBlocking(Callable { generateHeaderLinesForModule(project, module) })
+            .inSmartMode(project)
+            .expireWith(this)
+            .executeSynchronously()
+
+        doGenerateModuleFiles(target, module, headerLines)
+    }
+
+    private fun doGenerateModuleFiles(target: AppleTargetModel, module: MobileKonanSwiftModule, headerLines: List<String>) {
         val frameworkName = module.konanBridgeFile().target.productModuleName
         val frameworkDir = File(baseDir(target), "$frameworkName.framework")
         frameworkDir.deleteRecursively()
@@ -161,7 +174,6 @@ class MobileFrameworkMockForSourceKitGeneratorImpl(val project: Project) : Mobil
         val headerName = "$frameworkName.h"
         val header = File(headersDir, headerName)
         header.createNewFile()
-        val headerLines = generateHeaderLinesForModule(project, module)
         Files.write(header.toPath(), headerLines, StandardOpenOption.APPEND)
 
         val moduleMapDir = File(frameworkDir, "Modules")
@@ -214,4 +226,8 @@ class MobileFrameworkMockForSourceKitGeneratorImpl(val project: Project) : Mobil
 
     private fun duration(sinceNano: Long): String =
         "${TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - sinceNano)} ms"
+
+    override fun dispose() {
+        // Empty
+    }
 }
