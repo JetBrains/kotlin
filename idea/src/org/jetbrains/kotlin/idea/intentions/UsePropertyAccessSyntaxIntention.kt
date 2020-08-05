@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.idea.resolve.getDataFlowValueFactory
+import org.jetbrains.kotlin.idea.resolve.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.shouldNotConvertToProperty
@@ -224,7 +226,6 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
         return property.name
     }
 
-    @OptIn(FrontendInternals::class)
     private fun checkWillResolveToProperty(
         resolvedCall: ResolvedCall<out CallableDescriptor>,
         property: SyntheticJavaPropertyDescriptor,
@@ -248,10 +249,11 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
         val context = BasicCallResolutionContext.create(
             bindingTrace, resolutionScope, newCall, expectedType, dataFlowInfo,
             ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-            false, facade.frontendService<LanguageVersionSettings>(),
-            facade.frontendService<DataFlowValueFactory>()
+            false, facade.getLanguageVersionSettings(),
+            facade.getDataFlowValueFactory()
         )
 
+        @OptIn(FrontendInternals::class)
         val callResolver = facade.frontendService<CallResolver>()
         val result = callResolver.resolveSimpleProperty(context)
         return result.isSuccess && result.resultingDescriptor.original == property

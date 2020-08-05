@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.idea.resolve.getDataFlowValueFactory
+import org.jetbrains.kotlin.idea.resolve.getLanguageVersionSettings
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
@@ -19,7 +21,6 @@ import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.scopes.ExplicitImportsScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -97,7 +98,6 @@ class ShadowedDeclarationsFilter(
 
     private fun packageName(descriptor: DeclarationDescriptor) = descriptor.importableFqName?.parent()
 
-    @OptIn(FrontendInternals::class)
     private fun <TDescriptor : DeclarationDescriptor> filterEqualSignatureGroup(
         descriptors: Collection<TDescriptor>,
         descriptorsToImport: Collection<TDescriptor> = emptyList()
@@ -194,9 +194,11 @@ class ShadowedDeclarationsFilter(
         val context = BasicCallResolutionContext.create(
             bindingTrace, scope, newCall, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo,
             ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-            false, /* languageVersionSettings */ resolutionFacade.frontendService(),
-            resolutionFacade.frontendService<DataFlowValueFactory>()
+            false, resolutionFacade.getLanguageVersionSettings(),
+            resolutionFacade.getDataFlowValueFactory()
         )
+
+        @OptIn(FrontendInternals::class)
         val callResolver = resolutionFacade.frontendService<CallResolver>()
         val results = if (isFunction) callResolver.resolveFunctionCall(context) else callResolver.resolveSimpleProperty(context)
         val resultingDescriptors = results.resultingCalls.map { it.resultingDescriptor }
