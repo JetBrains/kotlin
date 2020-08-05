@@ -67,6 +67,11 @@
       <option name="url" value="https://cache-redirector.jetbrains.com/jetbrains.bintray.com/space" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="eb94f73a-fe47-462f-b75d-c3a008a4627b" />
+      <option name="name" value="eb94f73a-fe47-462f-b75d-c3a008a4627b" />
+      <option name="url" value="https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlin-dev" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="caeb020e-2153-45d1-b752-f56d66968d08" />
       <option name="name" value="caeb020e-2153-45d1-b752-f56d66968d08" />
       <option name="url" value="https://cache-redirector.jetbrains.com/kotlin.bintray.com/kotlin-ide-plugin-dependencies" />
