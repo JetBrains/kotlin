@@ -36,15 +36,20 @@ internal class HighLevelApiLookupElementFactory {
     }
 }
 
+/**
+ * This is a temporary hack to prevent clash of the lookup elements with same names.
+ */
+private class UniqueLookupObject
+
 private class ClassLookupElementFactory {
     fun createLookup(symbol: KtClassLikeSymbol): LookupElementBuilder {
-        return LookupElementBuilder.create(symbol.name.asString())
+        return LookupElementBuilder.create(UniqueLookupObject(), symbol.name.asString())
     }
 }
 
 private class VariableLookupElementFactory {
     fun createLookup(symbol: KtVariableLikeSymbol): LookupElementBuilder {
-        return LookupElementBuilder.create(symbol.name.asString())
+        return LookupElementBuilder.create(UniqueLookupObject(), symbol.name.asString())
             .withTypeText(ShortNamesRenderer.renderType(symbol.type))
             .withInsertHandler(createInsertHandler(symbol))
     }
@@ -56,7 +61,7 @@ private class VariableLookupElementFactory {
 
 private class FunctionLookupElementFactory {
     fun createLookup(symbol: KtFunctionSymbol): LookupElementBuilder {
-        return LookupElementBuilder.create(symbol.name.asString())
+        return LookupElementBuilder.create(UniqueLookupObject(), symbol.name.asString())
             .appendTailText(ShortNamesRenderer.renderFunctionParameters(symbol), true)
             .withTypeText(ShortNamesRenderer.renderType(symbol.type))
             .withInsertHandler(createInsertHandler(symbol))
