@@ -36,6 +36,14 @@ class ConeReturnsEffectDeclaration(val value: ConeConstantReference) : ConeEffec
 
 }
 
+/**
+ * Effect which specifies that parameters have some particular values
+ */
+class ConeParametersEffectDeclaration(val value: ConeBooleanExpression) : ConeEffectDeclaration() {
+    override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
+        contractDescriptionVisitor.visitParametersEffectDeclaration(this, data)
+}
+
 
 /**
  * Effect which specifies, that during execution of subroutine, callable [valueParameterReference] will be invoked

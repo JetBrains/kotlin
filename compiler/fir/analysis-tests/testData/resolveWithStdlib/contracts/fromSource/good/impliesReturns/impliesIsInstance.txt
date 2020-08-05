@@ -1,0 +1,51 @@
+FILE: impliesIsInstance.kt
+    public final fun returnValue(): R|kotlin/Any?| {
+        ^returnValue Null(null)
+    }
+    public final fun always(): R|kotlin/Boolean|
+    public final infix fun R|kotlin/Boolean|.implies(condition: R|kotlin/Boolean|): R|kotlin/Unit|
+    public open class Container : R|kotlin/Any| {
+        public constructor(): R|Container| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class NullContainer : R|Container| {
+        public constructor(): R|NullContainer| {
+            super<R|Container|>()
+        }
+
+    }
+    public final class NotNullContainer : R|Container| {
+        public constructor(value: R|kotlin/Any|): R|NotNullContainer| {
+            super<R|Container|>()
+        }
+
+        public final val value: R|kotlin/Any| = R|<local>/value|
+            public get(): R|kotlin/Any|
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun R|kotlin/Any?|.toContainer(): R|Container|
+        [R|Contract description]
+         <
+            this != null -> returnValue() is NotNullContainer
+        >
+     {
+        [StubStatement]
+        ^toContainer when () {
+            !=(this@R|/toContainer|, Null(null)) ->  {
+                R|/NotNullContainer.NotNullContainer|(this@R|/toContainer|)
+            }
+            else ->  {
+                R|/NullContainer.NullContainer|()
+            }
+        }
+
+    }
+    public final fun test(value: R|kotlin/String|): R|kotlin/Unit| {
+        lval value: R|NotNullContainer| = R|<local>/value|.R|/toContainer|
+        R|<local>/value|.R|/NotNullContainer.foo|()
+    }

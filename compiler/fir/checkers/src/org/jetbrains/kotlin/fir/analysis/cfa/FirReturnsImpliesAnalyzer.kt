@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.JumpNode
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.typeContext
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.intersectTypesOrNull
+import org.jetbrains.kotlin.fir.types.isNullable
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
@@ -156,14 +159,18 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
             } else (left ?: right)
         }
         is ConeIsInstancePredicate -> {
-            val fir = function.getParameterSymbol(arg.parameterIndex).fir
-            val realVar = variableStorage.getOrCreateRealVariable(flow, fir.symbol, fir)
-            realVar?.to(simpleTypeStatement(realVar, !isNegated, type))?.let { mutableMapOf(it) }
+            if (arg is ConeValueParameterReference) {
+                val fir = function.getParameterSymbol((arg as ConeValueParameterReference).parameterIndex).fir
+                val realVar = variableStorage.getOrCreateRealVariable(flow, fir.symbol, fir)
+                realVar?.to(simpleTypeStatement(realVar, !isNegated, type))?.let { mutableMapOf(it) }
+            } else null
         }
         is ConeIsNullPredicate -> {
-            val fir = function.getParameterSymbol(arg.parameterIndex).fir
-            val realVar = variableStorage.getOrCreateRealVariable(flow, fir.symbol, fir)
-            realVar?.to(simpleTypeStatement(realVar, isNegated, function.session.builtinTypes.anyType.type))?.let { mutableMapOf(it) }
+            if (arg is ConeValueParameterReference) {
+                val fir = function.getParameterSymbol((arg as ConeValueParameterReference).parameterIndex).fir
+                val realVar = variableStorage.getOrCreateRealVariable(flow, fir.symbol, fir)
+                realVar?.to(simpleTypeStatement(realVar, isNegated, function.session.builtinTypes.anyType.type))?.let { mutableMapOf(it) }
+            } else null
         }
         is ConeLogicalNot -> arg.buildTypeStatements(function, logicSystem, variableStorage, flow)
             ?.mapValuesTo(mutableMapOf()) { (_, value) -> value.invert() }

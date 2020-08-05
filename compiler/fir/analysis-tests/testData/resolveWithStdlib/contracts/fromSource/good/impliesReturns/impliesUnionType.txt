@@ -1,0 +1,46 @@
+FILE: impliesUnionType.kt
+    public final fun returnValue(): R|kotlin/Any?| {
+        ^returnValue Null(null)
+    }
+    public final fun always(): R|kotlin/Boolean|
+    public final infix fun R|kotlin/Boolean|.implies(condition: R|kotlin/Boolean|): R|kotlin/Unit|
+    public abstract interface A : R|kotlin/Any| {
+        public open fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public abstract interface B : R|kotlin/Any| {
+        public open fun bar(): R|kotlin/Unit| {
+        }
+
+    }
+    public final class AB : R|A|, R|B| {
+        public constructor(): R|AB| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun R|kotlin/Any|.asAB(): R|kotlin/Any|
+        [R|Contract description]
+         <
+            this is AB -> returnValue() is A && returnValue() is B
+        >
+     {
+        [StubStatement]
+        ^asAB this@R|/asAB|
+    }
+    public final fun R|kotlin/Any|.otherAsAB(): R|kotlin/Any|
+        [R|Contract description]
+         <
+            this is AB -> returnValue() is A
+            this is AB -> returnValue() is B
+        >
+     {
+        [StubStatement]
+        ^otherAsAB this@R|/otherAsAB|
+    }
+    public final fun test(value: R|AB|): R|kotlin/Unit| {
+        lval ab: R|it(A & B)| = R|<local>/value|.R|/otherAsAB|
+        R|<local>/ab|.R|/A.foo|()
+        R|<local>/ab|.R|/B.bar|()
+    }

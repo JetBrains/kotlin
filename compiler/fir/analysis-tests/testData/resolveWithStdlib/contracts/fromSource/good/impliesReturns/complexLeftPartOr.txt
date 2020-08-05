@@ -1,0 +1,34 @@
+FILE: complexLeftPartOr.kt
+    public final fun returnValue(): R|kotlin/Any?| {
+        ^returnValue Null(null)
+    }
+    public final fun always(): R|kotlin/Boolean|
+    public final infix fun R|kotlin/Boolean|.implies(condition: R|kotlin/Boolean|): R|kotlin/Unit|
+    public final fun R|kotlin/Any|.foo(): R|kotlin/Int| {
+        ^foo Int(1)
+    }
+    public final fun R|kotlin/Any?|.orElse(other: R|kotlin/Any?|): R|kotlin/Any?|
+        [R|Contract description]
+         <
+            this != null || other != null -> returnValue() != null
+        >
+     {
+        [StubStatement]
+        ^orElse this@R|/orElse| ?: R|<local>/other|
+    }
+    public final fun test1(x: R|kotlin/String?|, y: R|kotlin/String|): R|kotlin/Unit| {
+        lval z: R|kotlin/Any| = R|<local>/x|.R|/orElse|
+        R|<local>/z|.R|/foo|()
+    }
+    public final fun test2(x: R|kotlin/String|, y: R|kotlin/String?|): R|kotlin/Unit| {
+        lval z: R|kotlin/Any| = R|<local>/x|.R|/orElse|
+        R|<local>/z|.R|/foo|()
+    }
+    public final fun test3(x: R|kotlin/String|, y: R|kotlin/String|): R|kotlin/Unit| {
+        lval z: R|kotlin/Any| = R|<local>/x|.R|/orElse|
+        R|<local>/z|.R|/foo|()
+    }
+    public final fun test3(x: R|kotlin/String?|, y: R|kotlin/String?|): R|kotlin/Unit| {
+        lval z: R|kotlin/Any?| = R|<local>/x|.R|/orElse|(R|<local>/y|)
+        R|<local>/z|.<Inapplicable(WRONG_RECEIVER): /foo>#()
+    }

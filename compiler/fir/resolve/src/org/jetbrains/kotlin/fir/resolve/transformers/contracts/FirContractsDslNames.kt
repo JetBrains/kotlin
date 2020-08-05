@@ -24,11 +24,14 @@ object FirContractsDslNames {
     // Structure-defining calls
     val CONTRACT = id("contract")
     val IMPLIES = simpleEffect("implies")
+    val IMPLIES_RETURNS = id("", null, "implies")
 
     // Effect-declaration calls
     val RETURNS = contractBuilder("returns")
     val RETURNS_NOT_NULL = contractBuilder("returnsNotNull")
     val CALLS_IN_PLACE = contractBuilder("callsInPlace")
+    val ALWAYS = id("", null, "always")
+    val RETURN_VALUE = id("", null, "returnValue")
 
     // enum class InvocationKind
     val INVOCATION_KIND_ENUM = id("InvocationKind")

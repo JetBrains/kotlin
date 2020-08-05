@@ -1,0 +1,34 @@
+FILE: impliesNotNull.kt
+    public final fun returnValue(): R|kotlin/Any?| {
+        ^returnValue Null(null)
+    }
+    public final fun always(): R|kotlin/Boolean|
+    public final infix fun R|kotlin/Boolean|.implies(condition: R|kotlin/Boolean|): R|kotlin/Unit|
+    public open class ValueReference : R|kotlin/Any| {
+        public constructor(): R|ValueReference| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class ValueReferenceImpl : R|ValueReference| {
+        public constructor(value: R|kotlin/String|): R|ValueReferenceImpl| {
+            super<R|ValueReference|>()
+        }
+
+        public final val value: R|kotlin/String| = R|<local>/value|
+            public get(): R|kotlin/String|
+
+    }
+    public final fun R|ValueReference|.value(): R|kotlin/String?|
+        [R|Contract description]
+         <
+            this is ValueReferenceImpl -> returnValue() != null
+        >
+     {
+        [StubStatement]
+        ^value (this@R|/value| as? R|ValueReferenceImpl|)?.{ $subj$.R|/ValueReferenceImpl.value| }
+    }
+    public final fun test(ref: R|ValueReferenceImpl|): R|kotlin/Unit| {
+        lval value: R|kotlin/String| = R|<local>/ref|.R|/value|
+        lval valueLength: R|kotlin/Int| = R|<local>/value|.R|kotlin/String.length|
+    }
