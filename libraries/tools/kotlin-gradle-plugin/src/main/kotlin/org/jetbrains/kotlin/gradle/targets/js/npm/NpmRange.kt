@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import com.github.gundy.semver4j.model.Version
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmRangeVisitor.Companion.GT
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmRangeVisitor.Companion.GTEQ
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmRangeVisitor.Companion.LT
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmRangeVisitor.Companion.LTEQ
+import org.jetbrains.kotlin.gradle.utils.toListOrEmpty
 
 data class NpmRange(
     val startVersion: SemVer? = null,
@@ -17,16 +17,31 @@ data class NpmRange(
     val endVersion: SemVer? = null,
     val endInclusive: Boolean = false
 ) {
-    override fun toString(): String {
-        return "${if (startVersion != null) "${if (startInclusive) GTEQ else GT}$startVersion" else ""} ${if (endVersion != null) "${if (endInclusive) LTEQ else LT}$endVersion" else ""}"
+    override fun toString(): String =
+        "${if (startVersion != null) "${if (startInclusive) GTEQ else GT}$startVersion" else ""} ${if (endVersion != null) "${if (endInclusive) LTEQ else LT}$endVersion" else ""}"
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as NpmRange
+
+        if (startVersion != other.startVersion) return false
+        if (endVersion != other.endVersion) return false
+        if (startInclusive != other.startInclusive && startVersion != null && other.startVersion != null) return false
+        if (endInclusive != other.endInclusive && endVersion != null && other.endVersion != null) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = startVersion?.hashCode() ?: 0
+        result = 31 * result + (endVersion?.hashCode() ?: 0)
+        result = 31 * result + (startInclusive && startVersion != null).hashCode()
+        result = 31 * result + (endInclusive && endVersion != null).hashCode()
+        return result
     }
 }
-
-val NONE_RANGE = NpmRange(
-    endVersion = Version.fromString(NONE_VERSION)
-        .toSemVer()
-)
 
 infix fun NpmRange.union(other: NpmRange): List<NpmRange> {
     if (!isIntersect(other)) return listOf(this, other)
@@ -46,9 +61,7 @@ infix fun NpmRange.union(other: NpmRange): List<NpmRange> {
         startInclusive = if (startVersion == other.startVersion) other.startInclusive else this.startInclusive,
         endVersion = endVersion,
         endInclusive = if (startVersion == other.startVersion) other.startInclusive else this.startInclusive
-    ).let {
-        listOf(it)
-    }
+    ).toListOrEmpty()
 }
 
 fun NpmRange.invert(): List<NpmRange> {
