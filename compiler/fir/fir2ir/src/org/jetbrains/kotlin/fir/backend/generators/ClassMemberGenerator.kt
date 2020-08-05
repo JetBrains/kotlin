@@ -264,25 +264,9 @@ internal class ClassMemberGenerator(
                 }
             }
             if (containingClass != null) {
-                val scope = containingClass.unsubstitutedScope(session, scopeSession)
-                scope.processPropertiesByName(property.name) {}
-                val overriddenSet = mutableSetOf<IrSimpleFunctionSymbol>()
-                scope.processDirectlyOverriddenProperties(property.symbol) {
-                    if (it.fir.visibility == Visibilities.PRIVATE) {
-                        return@processDirectlyOverriddenProperties ProcessorAction.NEXT
-                    }
-                    val overridden = declarationStorage.getIrPropertyOrFieldSymbol(it.unwrapSubstitutionOverrides())
-                    if (overridden is IrPropertySymbol) {
-                        val accessorSymbol =
-                            if (isGetter) overridden.owner.getter?.symbol
-                            else overridden.owner.setter?.symbol
-                        if (accessorSymbol != null) {
-                            overriddenSet += accessorSymbol
-                        }
-                    }
-                    ProcessorAction.NEXT
-                }
-                this.overriddenSymbols = overriddenSet.toList()
+                this.overriddenSymbols = property.generateOverriddenAccessorSymbols(
+                    containingClass, isGetter, session, scopeSession, declarationStorage
+                )
             }
 
         }

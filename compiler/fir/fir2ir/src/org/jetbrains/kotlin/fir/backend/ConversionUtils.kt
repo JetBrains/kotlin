@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.SyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenFunctions
+import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenProperties
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.AccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.Fir2IrClassSymbol
@@ -308,6 +309,30 @@ internal fun FirSimpleFunction.generateOverriddenFunctionSymbols(
         }
         val overridden = declarationStorage.getIrFunctionSymbol(it.unwrapSubstitutionOverrides())
         overriddenSet += overridden as IrSimpleFunctionSymbol
+        ProcessorAction.NEXT
+    }
+    return overriddenSet.toList()
+}
+
+internal fun FirProperty.generateOverriddenAccessorSymbols(
+    containingClass: FirClass<*>,
+    isGetter: Boolean,
+    session: FirSession,
+    scopeSession: ScopeSession,
+    declarationStorage: Fir2IrDeclarationStorage
+): List<IrSimpleFunctionSymbol> {
+    val scope = containingClass.unsubstitutedScope(session, scopeSession)
+    scope.processPropertiesByName(name) {}
+    val overriddenSet = mutableSetOf<IrSimpleFunctionSymbol>()
+    scope.processDirectlyOverriddenProperties(symbol) {
+        if (it.fir.visibility == Visibilities.PRIVATE) {
+            return@processDirectlyOverriddenProperties ProcessorAction.NEXT
+        }
+        val overriddenProperty = declarationStorage.getIrPropertyOrFieldSymbol(it.unwrapSubstitutionOverrides()) as IrPropertySymbol
+        val overriddenAccessor = if (isGetter) overriddenProperty.owner.getter?.symbol else overriddenProperty.owner.setter?.symbol
+        if (overriddenAccessor != null) {
+            overriddenSet += overriddenAccessor
+        }
         ProcessorAction.NEXT
     }
     return overriddenSet.toList()
