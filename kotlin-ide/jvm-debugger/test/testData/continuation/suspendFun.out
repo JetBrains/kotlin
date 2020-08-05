@@ -6,10 +6,10 @@ Thread stack trace:
 	KotlinStackFrame b:!LINE_NUMBER!, SuspendFunKt (coroutine1)
 		($completion, b, bParam)
 	CoroutinePreflightFrame a:!LINE_NUMBER!, SuspendFunKt (coroutine1)
-		($completion, $continuation, $result, a, aParam)
+		($continuation, $result, a, aParam)
 CoroutineInfo: -1 coroutine UNKNOWN
 	CoroutineStackFrame test1:!LINE_NUMBER!, SuspendFunKt (coroutine1)
-		($completion, $continuation, $result, i, test1)
+		($continuation, $result, i, test1)
 	CoroutineStackFrame invoke:!LINE_NUMBER!, SuspendFunKt$main$result$1 (coroutine1)
 		(continuation, p1, this)
 	CoroutineStackFrame invokeSuspend:!LINE_NUMBER!, IntrinsicsKt__IntrinsicsJvmKt$createCoroutineUnintercepted$$inlined$createCoroutineFromSuspendFunction$IntrinsicsKt__IntrinsicsJvmKt$3 (kotlin.coroutines.intrinsics)
