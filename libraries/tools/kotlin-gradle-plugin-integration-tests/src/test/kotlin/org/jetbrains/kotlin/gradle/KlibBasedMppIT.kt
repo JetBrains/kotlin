@@ -148,7 +148,7 @@ class KlibBasedMppIT : BaseGradleIT() {
         // Check that the metadata JAR doesn't contain the host-specific source set entries, but contains the shared-Native source set
         // that can be built on every host:
 
-        ZipFile(groupDir.resolve("$dependencyModuleName-metadata/1.0/$dependencyModuleName-metadata-1.0.jar")).use { metadataJar ->
+        ZipFile(groupDir.resolve("$dependencyModuleName-metadata/1.0/$dependencyModuleName-metadata-1.0-all.jar")).use { metadataJar ->
             assertTrue { metadataJar.entries().asSequence().none { it.name.startsWith(hostSpecificSourceSet) } }
             assertTrue { metadataJar.entries().asSequence().any { it.name.startsWith("linuxMain") } }
         }
@@ -213,7 +213,12 @@ class KlibBasedMppIT : BaseGradleIT() {
         setupDependencies: Project.() -> Unit
     ) = with(Project("common-klib-lib-and-app")) {
         embedProject(Project("common-klib-lib-and-app"), renameTo = transitiveDepModuleName)
-        embedProject(Project("common-klib-lib-and-app"), renameTo = dependencyModuleName)
+        embedProject(Project("common-klib-lib-and-app"), renameTo = dependencyModuleName).apply {
+            projectDir.resolve(dependencyModuleName).walkTopDown().filter { it.extension == "kt" }.forEach { file ->
+                // Avoid duplicate FQNs as in the compatibility mode, the K2Metadata compiler reports duplicate symbols on them:
+                file.modify { it.replace("package com.h0tk3y.hmpp.klib.demo", "package com.h0tk3y.hmpp.klib.demo1") }
+            }
+        }
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
         gradleBuildScript(dependencyModuleName).appendText("\ndependencies { \"commonMainImplementation\"(project(\":$transitiveDepModuleName\")) }")
 
