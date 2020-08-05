@@ -94,8 +94,7 @@ FILE fqName:<root> fileName:/suspendConversion.kt
         fn: FUN_EXPR type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
           FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo3 visibility:local modality:FINAL <> () returnType:kotlin.Unit [suspend]
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun foo3 (): kotlin.Unit [suspend] declared in <root>.testWithCoercionToUnit'
-                CALL 'public final fun foo3 (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+              CALL 'public final fun foo3 (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
   FUN name:testWithDefaults visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useSuspend (fn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -106,7 +105,13 @@ FILE fqName:<root> fileName:/suspendConversion.kt
   FUN name:testWithBoundReceiver visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useSuspend (fn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        fn: FUN_EXPR type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
-          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:bar visibility:local modality:FINAL <> () returnType:kotlin.Unit [suspend]
+        fn: BLOCK type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
+          VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.C [val]
+            CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
+          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:bar visibility:local modality:FINAL <> ($receiver:<root>.C) returnType:kotlin.Unit [suspend]
+            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:receiver type:<root>.C
             BLOCK_BODY
               CALL 'public final fun bar (): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
+                $this: GET_VAR 'receiver: <root>.C declared in <root>.testWithBoundReceiver.bar' type=<root>.C origin=ADAPTED_FUNCTION_REFERENCE
+          FUNCTION_REFERENCE 'local final fun bar (): kotlin.Unit [suspend] declared in <root>.testWithBoundReceiver' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=null
+            $receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
