@@ -4,7 +4,7 @@ Connected to the target VM
 suspendFunWithInner.kt:40
 Thread stack trace:
 	CoroutinePreflightFrame c:!LINE_NUMBER!, TestSuspendA$InClassB$InClassC (continuation)
-		($completion, $continuation, $result, inClassCMethodVal)
+		($continuation, $result, inClassCMethodVal)
 CoroutineInfo: 1 coroutine RUNNING
 	CoroutineStackFrame b:!LINE_NUMBER!, TestSuspendA$InClassB (continuation)
 		(inClassBMethodVal)

@@ -6,7 +6,7 @@ Thread stack trace:
 	KotlinStackFrame c:!LINE_NUMBER!, CoroutineSuspendFunKt (continuation)
 		($completion, c, paramB)
 	CoroutinePreflightFrame b:!LINE_NUMBER!, CoroutineSuspendFunKt (continuation)
-		($completion, $continuation, $result, b, paramA)
+		($continuation, $result, b, paramA)
 CoroutineInfo: 1 coroutine RUNNING
 	CoroutineStackFrame a:!LINE_NUMBER!, CoroutineSuspendFunKt (continuation)
 		(a)
