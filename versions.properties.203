@@ -16,7 +16,7 @@ versions.clion=202.5648
 versions.clion.strict=true
 versions.clion.repo=ijplatform_master_CIDR_CLion_Installers
 
-versions.kotlinNativeBackend=1.4-M3-dev-15369
+versions.kotlinNativeBackend=1.4.20-dev-16232
 versions.kotlinNativeBackend.repo=Kotlin_KotlinNative_Development_KotlinNativeLinuxBundle
 
 versions.nativeDebug=201.6487.11
