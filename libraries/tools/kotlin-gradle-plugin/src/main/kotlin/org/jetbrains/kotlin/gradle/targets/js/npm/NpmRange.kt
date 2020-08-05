@@ -31,9 +31,15 @@ val NONE_RANGE = NpmRange(
 infix fun NpmRange.union(other: NpmRange): List<NpmRange> {
     if (!isIntersect(other)) return listOf(this, other)
 
-    val startVersion = min(this.startVersion, other.startVersion)
+    val startVersion = when {
+        this.startVersion == null || other.startVersion == null -> null
+        else -> min(this.startVersion, other.startVersion)
+    }
 
-    val endVersion = max(this.endVersion, other.endVersion)
+    val endVersion = when {
+        this.endVersion == null || other.endVersion == null -> null
+        else -> max(this.endVersion, other.endVersion)
+    }
 
     return NpmRange(
         startVersion = startVersion,

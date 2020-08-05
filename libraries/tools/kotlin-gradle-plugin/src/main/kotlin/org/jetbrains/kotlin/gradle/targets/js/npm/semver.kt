@@ -182,14 +182,8 @@ fun Version.toSemVer(): SemVer =
         build = buildIdentifiers.joinToString(".").let { if (it.isNotEmpty()) it else null }
     )
 
-fun min(a: SemVer?, b: SemVer?): SemVer? {
-    if (a == null || b == null) return null
+fun min(a: SemVer, b: SemVer): SemVer =
+    if (a < b) a else b
 
-    return if (a < b) a else b
-}
-
-fun max(a: SemVer?, b: SemVer?): SemVer? {
-    if (a == null || b == null) return null
-
-    return if (a > b) a else b
-}
+fun max(a: SemVer, b: SemVer): SemVer =
+    if (a > b) a else b
