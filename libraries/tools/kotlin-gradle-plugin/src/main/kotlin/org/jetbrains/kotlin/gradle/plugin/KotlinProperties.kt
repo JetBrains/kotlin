@@ -89,8 +89,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val enableGranularSourceSetsMetadata: Boolean?
         get() = booleanProperty("kotlin.mpp.enableGranularSourceSetsMetadata")
 
-    val enableCompatibilityMetadataVariant: Boolean?
-        get() = booleanProperty("kotlin.mpp.enableCompatibilityMetadataVariant")
+    val enableCompatibilityMetadataVariant: Boolean
+        get() = booleanProperty("kotlin.mpp.enableCompatibilityMetadataVariant") ?: true
 
     val ignoreDisabledNativeTargets: Boolean?
         get() = booleanProperty(DisabledNativeTargetsReporter.DISABLE_WARNING_PROPERTY_NAME)
