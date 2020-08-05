@@ -32,7 +32,7 @@ data class DokkaSourceSetImpl(
     override val jdkVersion: Int = DokkaDefaults.jdkVersion,
     override val sourceLinks: Set<SourceLinkDefinitionImpl> = emptySet(),
     override val perPackageOptions: List<PackageOptionsImpl> = emptyList(),
-    override var externalDocumentationLinks: Set<ExternalDocumentationLinkImpl> = emptySet(),
+    override val externalDocumentationLinks: Set<ExternalDocumentationLinkImpl> = emptySet(),
     override val languageVersion: String? = null,
     override val apiVersion: String? = null,
     override val noStdlibLink: Boolean = DokkaDefaults.noStdlibLink,
