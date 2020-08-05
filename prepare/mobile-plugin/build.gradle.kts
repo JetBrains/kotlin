@@ -1,3 +1,4 @@
+import java.util.regex.Pattern.quote
 import com.github.jk1.tcdeps.KotlinScriptDslAdapter.tc
 import com.github.jk1.tcdeps.KotlinScriptDslAdapter.teamcityServer
 import org.gradle.jvm.tasks.Jar
@@ -48,6 +49,7 @@ dependencies {
     }
     runtime(project(":kotlin-ultimate:libraries:tools:apple-gradle-plugin-api")) { isTransitive = false }
     runtime(tc("$kotlinNativeBackendRepo:${kotlinNativeBackendVersion}:backend.native.jar"))
+    runtime(kotlinStdlib("jdk8"))
 }
 
 val pluginJarTask: Task by tasks.named<Jar>("jar") {
@@ -69,6 +71,8 @@ val pluginJarTask: Task by tasks.named<Jar>("jar") {
 val copyRuntimeDeps: Task by tasks.creating(Copy::class) {
     from(configurations.runtime)
     into(File(mobilePluginDir, "lib"))
+    rename(quote("-$version"), "")
+    rename(quote("-$bootstrapKotlinVersion"), "")
 }
 
 val mobilePlugin: Task by tasks.creating(Copy::class) {
