@@ -15,3 +15,5 @@ open class <caret>Server {
         println("Server")
     }
 }
+
+// DISABLE-ERRORS

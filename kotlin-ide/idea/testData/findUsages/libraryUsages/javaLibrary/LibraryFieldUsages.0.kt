@@ -6,5 +6,5 @@ package usages
 import library.Foo
 
 fun test() {
-    Foo().<caret>x = 1
+    Foo(1).<caret>x = 1
 }

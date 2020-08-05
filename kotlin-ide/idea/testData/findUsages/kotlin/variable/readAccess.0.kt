@@ -11,3 +11,5 @@ fun foo() {
     v += 1
     (v) -= 1
 }
+
+// ERROR: Unresolved reference: X

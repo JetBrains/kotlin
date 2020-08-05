@@ -13,3 +13,5 @@ fun foo() {
 }
 
 bar()
+
+// DISABLE-ERRORS
