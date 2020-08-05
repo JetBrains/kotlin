@@ -66,6 +66,7 @@ FILE fqName:<root> fileName:/unboundMemberReferenceWithAdaptedArguments.kt
             VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p1 index:1 type:kotlin.Int
             BLOCK_BODY
               CALL 'public open fun foo (vararg xs: kotlin.Int): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
+                $this: GET_VAR 'p0: <root>.A declared in <root>.testUnbound.foo' type=<root>.A origin=null
   FUN name:testBound visibility:public modality:FINAL <> (a:<root>.A) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A
     BLOCK_BODY
