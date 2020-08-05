@@ -14,7 +14,7 @@ interface MobileRunConfiguration : RunConfiguration {
     fun getProductBundle(device: Device): File
 
     fun createAppleState(environment: ExecutionEnvironment, executor: Executor, device: AppleDevice): CommandLineState {
-        return CidrCommandLineState(environment, createLauncher(environment)).also {
+        return CidrCommandLineState(environment, createLauncher(environment, device)).also {
             it.consoleBuilder = CidrConsoleBuilder(project, null, project.basePath?.let { Paths.get(it) })
         }
     }
