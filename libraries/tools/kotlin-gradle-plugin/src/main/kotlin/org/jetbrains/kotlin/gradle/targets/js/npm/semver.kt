@@ -178,8 +178,8 @@ fun Version.toSemVer(): SemVer =
         major.toBigInteger(),
         minor.toBigInteger(),
         patch.toBigInteger(),
-        preRelease = preReleaseIdentifiers.joinToString("."),
-        build = buildIdentifiers.joinToString(".")
+        preRelease = preReleaseIdentifiers.joinToString(".").let { if (it.isNotEmpty()) it else null },
+        build = buildIdentifiers.joinToString(".").let { if (it.isNotEmpty()) it else null }
     )
 
 fun min(a: SemVer?, b: SemVer?): SemVer? {

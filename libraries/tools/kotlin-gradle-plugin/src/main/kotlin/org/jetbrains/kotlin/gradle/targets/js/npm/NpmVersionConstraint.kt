@@ -31,14 +31,7 @@ class NpmVersionConstraint(
             )
         }
 
-        val version = buildNpmVersion(listOf(requiredVersion), rejectedVersions)
-
-        val requiredRange = "^$version"
-        return if (SemVer.valid(requiredRange) && SemVer.satisfies(version, requiredRange)) {
-            requiredRange
-        } else {
-            version
-        }
+        return buildNpmVersion(listOf(requiredVersion), rejectedVersions)
     }
 }
 

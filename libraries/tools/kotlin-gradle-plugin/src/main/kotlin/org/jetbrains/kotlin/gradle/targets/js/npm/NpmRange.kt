@@ -6,16 +6,25 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import com.github.gundy.semver4j.model.Version
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmVersionInvertedVisitor.Companion.GT
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmVersionInvertedVisitor.Companion.GTEQ
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmVersionInvertedVisitor.Companion.LT
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmVersionInvertedVisitor.Companion.LTEQ
 
 data class NpmRange(
     val startVersion: SemVer? = null,
     val startInclusive: Boolean = false,
     val endVersion: SemVer? = null,
     val endInclusive: Boolean = false
-)
+) {
+    override fun toString(): String {
+        return "${if (startVersion != null) "${if (startInclusive) GTEQ else GT}$startVersion" else ""} ${if (endVersion != null) "${if (endInclusive) LTEQ else LT}$endVersion" else ""}"
+
+    }
+}
 
 val NONE_RANGE = NpmRange(
-    startVersion = Version.fromString(NONE_VERSION)
+    endVersion = Version.fromString(NONE_VERSION)
         .toSemVer()
 )
 
@@ -36,12 +45,49 @@ infix fun NpmRange.union(other: NpmRange): List<NpmRange> {
     }
 }
 
+fun NpmRange.invert(): List<NpmRange> {
+    val result = mutableListOf<NpmRange>()
+    if (startVersion != null || endVersion == null) {
+        result.add(
+            NpmRange(
+                endVersion = startVersion,
+                endInclusive = !startInclusive
+            )
+        )
+    }
+
+    if (endVersion != null || startVersion == null) {
+        result.add(
+            NpmRange(
+                startVersion = endVersion,
+                startInclusive = !endInclusive
+            )
+        )
+    }
+
+    return result.distinct()
+}
+
+infix fun List<NpmRange>.intersect(others: List<NpmRange>): List<NpmRange> = flatMap { current ->
+    others.mapNotNull { other ->
+        current intersect other
+    }
+}
+
 infix fun NpmRange.intersect(other: NpmRange): NpmRange? {
     if (!isIntersect(other)) return null
 
-    val startVersion = max(this.startVersion, other.startVersion)
+    val startVersion = when {
+        startVersion == null -> other.startVersion
+        other.startVersion == null -> startVersion
+        else -> max(this.startVersion, other.startVersion)
+    }
 
-    val endVersion = min(this.endVersion, other.endVersion)
+    val endVersion = when {
+        endVersion == null -> other.endVersion
+        other.endVersion == null -> endVersion
+        else -> min(this.endVersion, other.endVersion)
+    }
 
     return NpmRange(
         startVersion = startVersion,
