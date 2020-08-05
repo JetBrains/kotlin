@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.scripting.gradle.roots
 
 interface StandaloneScriptsUpdater {
-    var standaloneScripts: Collection<String>
+    val standaloneScripts: Collection<String>
 
     fun addStandaloneScript(path: String)
 
