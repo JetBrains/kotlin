@@ -38,13 +38,20 @@ object FirQualifiedSupertypeExtendedByOtherSupertypeChecker : FirQualifiedAccess
         // have `explicitType` as their supertype or
         // equal to it
         var count = 0
+        var candidate: FirClass<*>? = null
 
         for (it in surroundingType.superTypeRefs) {
             val that = it.firClassLike(context.session)
                 ?.followAllAlias(context.session).safeAs<FirClass<*>>()
                 ?: continue
 
-            if (explicitType == that || explicitType.isSupertypeOf(that)) {
+            val isSupertype = explicitType.isSupertypeOf(that)
+
+            if (explicitType == that || isSupertype) {
+                if (isSupertype) {
+                    candidate = that
+                }
+
                 count += 1
 
                 if (count >= 2) {
@@ -53,14 +60,14 @@ object FirQualifiedSupertypeExtendedByOtherSupertypeChecker : FirQualifiedAccess
             }
         }
 
-        if (count >= 2) {
-            reporter.report(superReference.superTypeRef.source)
+        if (count >= 2 && candidate != null) {
+            reporter.report(superReference.superTypeRef.source, candidate)
         }
     }
 
-    private fun DiagnosticReporter.report(source: FirSourceElement?) {
+    private fun DiagnosticReporter.report(source: FirSourceElement?, candidate: FirClass<*>) {
         source?.let {
-            report(FirErrors.QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE.on(it))
+            report(FirErrors.QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE.on(it, candidate))
         }
     }
 }

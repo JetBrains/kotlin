@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.CandidateApplicability
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -69,6 +70,10 @@ class ConeContractDescriptionError(override val reason: String) : ConeDiagnostic
 
 class ConeIllegalAnnotationError(val name: Name) : ConeDiagnostic() {
     override val reason: String get() = "Not a legal annotation: $name"
+}
+
+class ConeWrongNumberOfTypeArgumentsError(val desiredCount: Int, val type: FirRegularClassSymbol) : ConeDiagnostic() {
+    override val reason: String get() = "Wrong number of type arguments"
 }
 
 private fun describeSymbol(symbol: AbstractFirBasedSymbol<*>): String {

@@ -26,7 +26,6 @@ enum class DiagnosticKind {
     RecursionInImplicitTypes,
     Java,
     SuperNotAllowed,
-    WrongNumberOfTypeArguments,
     NoTypeForTypeParameter,
     UnknownCallableKind,
     SymbolNotFound,

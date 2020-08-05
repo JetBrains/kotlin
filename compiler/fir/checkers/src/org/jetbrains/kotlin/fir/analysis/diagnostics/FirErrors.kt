@@ -10,11 +10,15 @@ import com.intellij.psi.PsiTypeElement
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.fir.FirEffectiveVisibility
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 object FirErrors {
@@ -51,13 +55,19 @@ object FirErrors {
     val RECURSION_IN_SUPERTYPES by error0<FirSourceElement, PsiElement>()
     val NOT_A_SUPERTYPE by error0<FirSourceElement, PsiElement>()
     val SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE by error0<FirSourceElement, PsiElement>()
-    val QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE by error0<FirSourceElement, PsiElement>()
+    val QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE by error1<FirSourceElement, PsiElement, FirClass<*>>()
 
     // Constructor problems
     val CONSTRUCTOR_IN_OBJECT by existing<FirSourceElement, KtDeclaration>(Errors.CONSTRUCTOR_IN_OBJECT)
     val CONSTRUCTOR_IN_INTERFACE by existing<FirSourceElement, KtDeclaration>(Errors.CONSTRUCTOR_IN_INTERFACE)
     val NON_PRIVATE_CONSTRUCTOR_IN_ENUM by existing<FirSourceElement, PsiElement>(Errors.NON_PRIVATE_CONSTRUCTOR_IN_ENUM)
     val NON_PRIVATE_CONSTRUCTOR_IN_SEALED by existing<FirSourceElement, PsiElement>(Errors.NON_PRIVATE_CONSTRUCTOR_IN_SEALED)
+    val CYCLIC_CONSTRUCTOR_DELEGATION_CALL by warning0<FirSourceElement, PsiElement>()
+    val PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED by warning0<FirSourceElement, PsiElement>()
+    val SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR by warning0<FirSourceElement, PsiElement>()
+    val DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR by warning0<FirSourceElement, PsiElement>()
+    val PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS by warning0<FirSourceElement, PsiElement>()
+    val EXPLICIT_DELEGATION_CALL_REQUIRED by warning0<FirSourceElement, PsiElement>()
 
     // Annotations
     val ANNOTATION_CLASS_MEMBER by existing<FirSourceElement, PsiElement>(Errors.ANNOTATION_CLASS_MEMBER)
@@ -68,13 +78,6 @@ object FirErrors {
     val INVALID_TYPE_OF_ANNOTATION_MEMBER by existing<FirSourceElement, KtTypeReference>(Errors.INVALID_TYPE_OF_ANNOTATION_MEMBER)
     val VAR_ANNOTATION_PARAMETER by existing<FirSourceElement, KtParameter>(Errors.VAR_ANNOTATION_PARAMETER)
     val NOT_AN_ANNOTATION_CLASS by error1<FirSourceElement, PsiElement, String>()
-
-    val CYCLIC_CONSTRUCTOR_DELEGATION_CALL by warning0<FirSourceElement, PsiElement>()
-    val PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED by warning0<FirSourceElement, PsiElement>()
-    val SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR by warning0<FirSourceElement, PsiElement>()
-    val DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR by warning0<FirSourceElement, PsiElement>()
-    val PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS by warning0<FirSourceElement, PsiElement>()
-    val EXPLICIT_DELEGATION_CALL_REQUIRED by warning0<FirSourceElement, PsiElement>()
 
     // Exposed visibility group
     val EXPOSED_TYPEALIAS_EXPANDED_TYPE by error3<FirSourceElement, PsiElement, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>()
@@ -106,9 +109,9 @@ object FirErrors {
     val RECURSION_IN_IMPLICIT_TYPES by error0<FirSourceElement, PsiElement>()
     val INFERENCE_ERROR by error0<FirSourceElement, PsiElement>()
     val PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT by error0<FirSourceElement, PsiElement>()
-    val UPPER_BOUND_VIOLATED by error0<FirSourceElement, PsiElement>()
+    val UPPER_BOUND_VIOLATED by error2<FirSourceElement, PsiElement, FirTypeParameterSymbol, ConeKotlinType>()
     val TYPE_ARGUMENTS_NOT_ALLOWED by error0<FirSourceElement, PsiElement>()
-    val WRONG_NUMBER_OF_TYPE_ARGUMENTS by error0<FirSourceElement, PsiElement>()
+    val WRONG_NUMBER_OF_TYPE_ARGUMENTS by error2<FirSourceElement, PsiElement, Int, FirRegularClassSymbol>()
     val NO_TYPE_FOR_TYPE_PARAMETER by error0<FirSourceElement, PsiElement>()
     val TYPE_PARAMETERS_IN_OBJECT by error0<FirSourceElement, PsiElement>()
     val ILLEGAL_PROJECTION_USAGE by error0<FirSourceElement, PsiElement>()
@@ -117,8 +120,8 @@ object FirErrors {
     val MANY_COMPANION_OBJECTS by error0<FirSourceElement, PsiElement>()
 
     // Invalid local declarations
-    val LOCAL_OBJECT_NOT_ALLOWED by error0<FirSourceElement, PsiElement>()
-    val LOCAL_INTERFACE_NOT_ALLOWED by error0<FirSourceElement, PsiElement>()
+    val LOCAL_OBJECT_NOT_ALLOWED by error1<FirSourceElement, PsiElement, Name>()
+    val LOCAL_INTERFACE_NOT_ALLOWED by error1<FirSourceElement, PsiElement, Name>()
 
     // Control flow diagnostics
     val UNINITIALIZED_VARIABLE by error1<FirSourceElement, PsiElement, FirPropertySymbol>()

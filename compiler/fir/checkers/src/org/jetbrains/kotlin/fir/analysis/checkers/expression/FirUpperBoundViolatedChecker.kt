@@ -68,7 +68,7 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
             }
 
             if (!satisfiesBounds(proto, actual.type, substitutor, typeCheckerContext)) {
-                reporter.report(actual.source)
+                reporter.report(actual.source, proto, actual.type)
                 return
             }
 
@@ -158,7 +158,7 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
             val satisfiesBounds = AbstractTypeChecker.isSubtypeOf(typeCheckerContext, target, intersection)
 
             if (!satisfiesBounds) {
-                reporter.report(functionCall.source)
+                reporter.report(functionCall.source, proto, actual)
                 return
             }
         }
@@ -203,7 +203,7 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
         parameterPairs.forEach { (proto, actual) ->
             if (!satisfiesBounds(proto, actual.type, substitutor, typeCheckerContext)) {
                 // should report on the parameter instead!
-                reporter.report(reportTarget)
+                reporter.report(reportTarget, proto, actual)
                 return true
             }
 
@@ -235,9 +235,9 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
         return AbstractTypeChecker.isSubtypeOf(typeCheckerContext, target, intersection)
     }
 
-    private fun DiagnosticReporter.report(source: FirSourceElement?) {
+    private fun DiagnosticReporter.report(source: FirSourceElement?, proto: FirTypeParameterSymbol, actual: ConeKotlinType) {
         source?.let {
-            report(FirErrors.UPPER_BOUND_VIOLATED.on(it))
+            report(FirErrors.UPPER_BOUND_VIOLATED.on(it, proto, actual))
         }
     }
 }
