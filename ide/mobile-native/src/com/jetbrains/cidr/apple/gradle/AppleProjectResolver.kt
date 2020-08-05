@@ -14,7 +14,6 @@ import com.intellij.util.PathUtilRt
 import org.gradle.tooling.model.idea.IdeaModule
 import org.jetbrains.kotlin.gradle.KotlinMPPGradleModel
 import org.jetbrains.kotlin.gradle.KotlinPlatform
-import org.jetbrains.kotlin.gradle.KotlinSourceSet
 import org.jetbrains.plugins.gradle.model.DefaultExternalSourceDirectorySet
 import org.jetbrains.plugins.gradle.model.DefaultExternalSourceSet
 import org.jetbrains.plugins.gradle.model.ExternalProject
@@ -159,8 +158,10 @@ class AppleProjectResolver : AbstractProjectResolverExtension() {
                 val target = (dataNode.appleSourceSet ?: continue).also { targets[it.name] = it }
 
                 fun createRoot(dir: File, type: ExternalSystemSourceType) {
-                    val contentRoot = ContentRootData(GradleConstants.SYSTEM_ID, dir.path)
-                    contentRoot.storePath(type, contentRoot.rootPath)
+                    // When there are multiple source roots, rootPath can be set to dir.path (like in KotlinGradleMPPProjectResolver), 
+                    // they will be merged into a single content root in GradleProjectResolver.mergeModuleContentRoots
+                    val contentRoot = ContentRootData(GradleConstants.SYSTEM_ID, dir.parentFile.path)
+                    contentRoot.storePath(type, dir.path)
                     dataNode.createChild(ProjectKeys.CONTENT_ROOT, contentRoot)
                 }
 
