@@ -20674,9 +20674,34 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/ranges/contains/evaluationOrderForDownTo.kt");
             }
 
+            @TestMetadata("evaluationOrderForDownToReversed.kt")
+            public void testEvaluationOrderForDownToReversed() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/contains/evaluationOrderForDownToReversed.kt");
+            }
+
+            @TestMetadata("evaluationOrderForNullableArgument.kt")
+            public void testEvaluationOrderForNullableArgument() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/contains/evaluationOrderForNullableArgument.kt");
+            }
+
             @TestMetadata("evaluationOrderForRangeLiteral.kt")
             public void testEvaluationOrderForRangeLiteral() throws Exception {
                 runTest("compiler/testData/codegen/box/ranges/contains/evaluationOrderForRangeLiteral.kt");
+            }
+
+            @TestMetadata("evaluationOrderForRangeLiteralReversed.kt")
+            public void testEvaluationOrderForRangeLiteralReversed() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/contains/evaluationOrderForRangeLiteralReversed.kt");
+            }
+
+            @TestMetadata("evaluationOrderForUntil.kt")
+            public void testEvaluationOrderForUntil() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/contains/evaluationOrderForUntil.kt");
+            }
+
+            @TestMetadata("evaluationOrderForUntilReversed.kt")
+            public void testEvaluationOrderForUntilReversed() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/contains/evaluationOrderForUntilReversed.kt");
             }
 
             @TestMetadata("genericCharInRangeLiteral.kt")
@@ -20792,6 +20817,21 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("inUntil.kt")
             public void testInUntil() throws Exception {
                 runTest("compiler/testData/codegen/box/ranges/contains/inUntil.kt");
+            }
+
+            @TestMetadata("inUntilMaxValue.kt")
+            public void testInUntilMaxValue() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/contains/inUntilMaxValue.kt");
+            }
+
+            @TestMetadata("inUntilMinValue.kt")
+            public void testInUntilMinValue() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/contains/inUntilMinValue.kt");
+            }
+
+            @TestMetadata("inUntilMinValueNonConst.kt")
+            public void testInUntilMinValueNonConst() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/contains/inUntilMinValueNonConst.kt");
             }
 
             @TestMetadata("kt20106.kt")

@@ -20,12 +20,21 @@ fun high(i: Int): Int {
     return i
 }
 
-fun x(i: Int): Int {
+fun x(i: Int?): Int? {
     order.append("X")
     return i
 }
 
 fun box(): String {
+    expectOrder("x(null) in low(1) .. high(3)", "LHX") { assertFalse(x(null) in low(1) .. high(3)) }
+    expectOrder("null in low(1) .. high(3)", "LH") { assertFalse(null in low(1) .. high(3)) }
+    expectOrder("x(null) in 1 .. high(3)", "HX") { assertFalse(x(null) in 1 .. high(3)) }
+    expectOrder("x(null) in low(1) .. 3", "LX") { assertFalse(x(null) in low(1) .. 3) }
+    expectOrder("x(null) !in low(1) .. high(3)", "LHX") { assertTrue(x(null) !in low(1) .. high(3)) }
+    expectOrder("null !in low(1) .. high(3)", "LH") { assertTrue(null !in low(1) .. high(3)) }
+    expectOrder("x(null) !in 1 .. high(3)", "HX") { assertTrue(x(null) !in 1 .. high(3)) }
+    expectOrder("x(null) !in low(1) .. 3", "LX") { assertTrue(x(null) !in low(1) .. 3) }
+
     expectOrder("x(0) in low(1) .. high(3)", "LHX") { assertFalse(x(0) in low(1) .. high(3)) }
     expectOrder("0 in low(1) .. high(3)", "LH") { assertFalse(0 in low(1) .. high(3)) }
     expectOrder("x(0) in 1 .. high(3)", "HX") { assertFalse(x(0) in 1 .. high(3)) }

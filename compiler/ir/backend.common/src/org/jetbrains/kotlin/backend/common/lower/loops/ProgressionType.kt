@@ -38,24 +38,6 @@ internal sealed class ProgressionType(
 
     fun IrExpression.asStepType() = castIfNecessary(stepClass)
 
-    private fun IrExpression.castIfNecessary(targetClass: IrClass) =
-        // This expression's type could be Nothing from an exception throw.
-        if (type == targetClass.defaultType || type.isNothing()) {
-            this
-        } else {
-            val numberCastFunctionName = Name.identifier("to${targetClass.name.asString()}")
-            val castFun = type.getClass()!!.functions.single {
-                it.name == numberCastFunctionName &&
-                        it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null && it.valueParameters.isEmpty()
-            }
-            IrCallImpl(
-                startOffset, endOffset,
-                castFun.returnType, castFun.symbol,
-                typeArgumentsCount = 0,
-                valueArgumentsCount = 0
-            ).apply { dispatchReceiver = this@castIfNecessary }
-        }
-
     companion object {
         fun fromIrType(irType: IrType, symbols: Symbols<CommonBackendContext>): ProgressionType? = when {
             irType.isSubtypeOfClass(symbols.charProgression) -> CharProgressionType(symbols)

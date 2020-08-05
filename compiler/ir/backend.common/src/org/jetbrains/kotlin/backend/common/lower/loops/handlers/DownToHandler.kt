@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.FqName
 
 /** Builds a [HeaderInfo] for progressions built using the `downTo` extension function. */
-internal class DownToHandler(private val context: CommonBackendContext, private val progressionElementTypes: Collection<IrType>) :
+internal class DownToHandler(private val context: CommonBackendContext) :
     ProgressionHandler {
+
+    private val progressionElementTypes = context.ir.symbols.progressionElementTypes
 
     override val matcher = SimpleCalleeMatcher {
         singleArgumentExtension(FqName("kotlin.ranges.downTo"), progressionElementTypes)

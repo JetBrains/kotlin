@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower.loops
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
@@ -18,7 +19,9 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNothing
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /** Return the negated value if the expression is const, otherwise call unaryMinus(). */
@@ -95,4 +98,22 @@ internal fun DeclarationIrBuilder.createTemporaryVariableIfNecessary(
         scope.createTmpVariable(expression, nameHint = nameHint, irType = irType, isMutable = isMutable).let { Pair(it, irGet(it)) }
     } else {
         Pair(null, expression)
+    }
+
+internal fun IrExpression.castIfNecessary(targetClass: IrClass) =
+    // This expression's type could be Nothing from an exception throw.
+    if (type == targetClass.defaultType || type.isNothing()) {
+        this
+    } else {
+        val numberCastFunctionName = Name.identifier("to${targetClass.name.asString()}")
+        val castFun = type.getClass()!!.functions.single {
+            it.name == numberCastFunctionName &&
+                    it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null && it.valueParameters.isEmpty()
+        }
+        IrCallImpl(
+            startOffset, endOffset,
+            castFun.returnType, castFun.symbol,
+            typeArgumentsCount = 0,
+            valueArgumentsCount = 0
+        ).apply { dispatchReceiver = this@castIfNecessary }
     }
