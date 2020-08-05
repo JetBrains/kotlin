@@ -104,7 +104,8 @@ class ExpressionCodegen(
     val mv: InstructionAdapter,
     val classCodegen: ClassCodegen,
     val inlinedInto: ExpressionCodegen?,
-    val smap: SourceMapper
+    val smap: SourceMapper,
+    val delegatedPropertyOptimizer: DelegatedPropertyOptimizer?,
 ) : IrElementVisitor<PromisedValue, BlockInfo>, BaseExpressionCodegen {
 
     var finallyDepth = 0
@@ -557,7 +558,7 @@ class ExpressionCodegen(
         expression.receiver?.let { receiver ->
             receiver.accept(this, data).materializeAt(ownerType, receiver.type)
         }
-        
+
         return if (expression is IrSetField) {
             val value = expression.value.accept(this, data)
 
@@ -725,7 +726,8 @@ class ExpressionCodegen(
     override fun visitClass(declaration: IrClass, data: BlockInfo): PromisedValue {
         if (declaration.origin != JvmLoweredDeclarationOrigin.CONTINUATION_CLASS) {
             closureReifiedMarkers[declaration] =
-                ClassCodegen.getOrCreate(declaration, context, generateSequence(this) { it.inlinedInto }.last().irFunction).generate()
+                ClassCodegen.getOrCreate(declaration, context, generateSequence(this) { it.inlinedInto }.last().irFunction)
+                    .generate(delegatedPropertyOptimizer)
         }
         return unitValue
     }
