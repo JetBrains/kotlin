@@ -37,6 +37,7 @@ class AndroidProcessHandler : ProcessHandler() {
                         processClient = client
                         debuggerPort.complete(client.debuggerListenPort)
                         if (shouldHandleTermination) {
+                            startNotify()
                             notifyTextAvailable(
                                 MobileBundle.message("run.android.started", client.clientData.pid) + "\n",
                                 ProcessOutputType.SYSTEM
@@ -54,8 +55,9 @@ class AndroidProcessHandler : ProcessHandler() {
             if (!isRelevantEvent(device, changeMask, IDevice.CHANGE_CLIENT_LIST)) return
 
             synchronized(this@AndroidProcessHandler) {
-                if (device.getClient(appId) == null && processClient != null) {
+                if (!isProcessTerminated && device.getClient(appId) == null && processClient != null) {
                     detachProcess()
+                    notifyProcessDetached()
                 }
             }
         }
