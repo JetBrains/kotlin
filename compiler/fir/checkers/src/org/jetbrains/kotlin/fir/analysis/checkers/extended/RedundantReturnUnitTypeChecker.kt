@@ -19,10 +19,9 @@ object RedundantReturnUnitType : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration !is FirSimpleFunction) return
         if (declaration.body is FirSingleExpressionBlock) return
-        if (declaration.returnTypeRef.source == null) return
-        if (declaration.source is FirFakeSourceElement<*>) return
-
         val returnType = declaration.returnTypeRef
+        if (returnType.source == null) return
+        if (declaration.source is FirFakeSourceElement<*>) return
         if (returnType.annotations.isNotEmpty()) return
 
         if (returnType.isUnit) {
