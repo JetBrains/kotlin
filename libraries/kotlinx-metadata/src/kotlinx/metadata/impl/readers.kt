@@ -416,6 +416,7 @@ private fun ProtoBuf.Contract.accept(v: KmContractVisitor, c: ReadContext) {
             ProtoBuf.Effect.EffectType.RETURNS_CONSTANT -> KmEffectType.RETURNS_CONSTANT
             ProtoBuf.Effect.EffectType.CALLS -> KmEffectType.CALLS
             ProtoBuf.Effect.EffectType.RETURNS_NOT_NULL -> KmEffectType.RETURNS_NOT_NULL
+            ProtoBuf.Effect.EffectType.PARAMETERS_IMPLIES -> TODO()
         }
 
         val effectKind = if (!effect.hasKind()) null else when (effect.kind!!) {

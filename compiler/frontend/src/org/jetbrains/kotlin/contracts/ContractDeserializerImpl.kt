@@ -97,6 +97,8 @@ class ContractDeserializerImpl(
                         EventOccurrencesRange.UNKNOWN
                     CallsEffectDeclaration(callable, invocationKind)
                 }
+
+                else -> null
             }
         }
 

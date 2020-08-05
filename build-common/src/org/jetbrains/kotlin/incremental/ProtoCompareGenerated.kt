@@ -1209,6 +1209,11 @@ open class ProtoCompareGenerated(
             if (old.kind != new.kind) return false
         }
 
+        if (old.hasConditionOfConditionalEffect() != new.hasConditionOfConditionalEffect()) return false
+        if (old.hasConditionOfConditionalEffect()) {
+            if (!checkEquals(old.conditionOfConditionalEffect, new.conditionOfConditionalEffect)) return false
+        }
+
         return true
     }
 
@@ -2426,7 +2431,7 @@ fun ProtoBuf.Effect.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -
         hashCode = 31 * hashCode + effectType.hashCode()
     }
 
-    for(i in 0..effectConstructorArgumentCount - 1) {
+    for (i in 0..effectConstructorArgumentCount - 1) {
         hashCode = 31 * hashCode + getEffectConstructorArgument(i).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
@@ -2436,6 +2441,10 @@ fun ProtoBuf.Effect.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -
 
     if (hasKind()) {
         hashCode = 31 * hashCode + kind.hashCode()
+    }
+
+    if (hasConditionOfConditionalEffect()) {
+        hashCode = 31 * hashCode + conditionOfConditionalEffect.hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     return hashCode

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.serialization
 
 import org.jetbrains.kotlin.contracts.description.*
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.contracts.effects
@@ -66,6 +67,11 @@ class FirContractSerializer {
                             builder.addEffectConstructorArgument(contractExpressionProto(effectDeclaration.value, contractDescription))
                         }
                     }
+                }
+
+                is ConeParametersEffectDeclaration -> {
+                    builder.effectType = ProtoBuf.Effect.EffectType.PARAMETERS_IMPLIES
+                    builder.setConditionOfConditionalEffect(contractExpressionProto(effectDeclaration.value, contractDescription))
                 }
 
                 is ConeCallsEffectDeclaration -> {
@@ -180,6 +186,14 @@ class FirContractSerializer {
 
                     val indexOfParameter = valueParameterReference.parameterIndex
                     builder.valueParameterReference = indexOfParameter + 1
+
+                    return builder
+                }
+
+                override fun visitReturnValue(returnValue: ConeReturnValue, data: Unit): ProtoBuf.Expression.Builder {
+                    val builder = ProtoBuf.Expression.newBuilder()
+
+                    builder.valueParameterReference = Int.MAX_VALUE
 
                     return builder
                 }

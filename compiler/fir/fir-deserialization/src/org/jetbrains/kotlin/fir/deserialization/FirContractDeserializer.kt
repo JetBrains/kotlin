@@ -45,7 +45,7 @@ class FirContractDeserializer(private val c: FirDeserializationContext) {
 
     private fun loadSimpleEffect(proto: ProtoBuf.Effect, owner: FirContractDescriptionOwner): ConeEffectDeclaration? {
         val type: ProtoBuf.Effect.EffectType = if (proto.hasEffectType()) proto.effectType else return null
-        return when(type) {
+        return when (type) {
             ProtoBuf.Effect.EffectType.RETURNS_CONSTANT -> {
                 val argument = proto.effectConstructorArgumentList.firstOrNull()
                 val returnValue = if (argument == null) {
@@ -66,6 +66,10 @@ class FirContractDeserializer(private val c: FirDeserializationContext) {
                 else
                     EventOccurrencesRange.UNKNOWN
                 ConeCallsEffectDeclaration(callable, invocationKind)
+            }
+            ProtoBuf.Effect.EffectType.PARAMETERS_IMPLIES -> {
+                val condition = loadExpression(proto.conditionOfConditionalEffect, owner)
+                if (condition != null) ConeParametersEffectDeclaration(condition) else null
             }
         }
     }
@@ -93,25 +97,29 @@ class FirContractDeserializer(private val c: FirDeserializationContext) {
         }
     }
 
-    private fun extractPrimitiveExpression(proto: ProtoBuf.Expression, primitiveType: PrimitiveExpressionType?, owner: FirContractDescriptionOwner): ConeBooleanExpression? {
+    private fun extractPrimitiveExpression(
+        proto: ProtoBuf.Expression,
+        primitiveType: PrimitiveExpressionType?,
+        owner: FirContractDescriptionOwner
+    ): ConeBooleanExpression? {
         val isInverted = Flags.IS_NEGATED.get(proto.flags)
 
         return when (primitiveType) {
-            PrimitiveExpressionType.VALUE_PARAMETER_REFERENCE, PrimitiveExpressionType.RECEIVER_REFERENCE -> {
-                (extractVariable(proto, owner) as? ConeBooleanValueParameterReference?)?.invertIfNecessary(isInverted)
+            PrimitiveExpressionType.VALUE_PARAMETER_REFERENCE, PrimitiveExpressionType.RECEIVER_REFERENCE, PrimitiveExpressionType.RETURN_VALUE -> {
+                (extractValue(proto, owner) as? ConeBooleanValueParameterReference?)?.invertIfNecessary(isInverted)
             }
 
             PrimitiveExpressionType.CONSTANT ->
                 (loadConstant(proto.constantValue) as? ConeBooleanConstantReference)?.invertIfNecessary(isInverted)
 
             PrimitiveExpressionType.INSTANCE_CHECK -> {
-                val variable = extractVariable(proto, owner) ?: return null
+                val variable = extractValue(proto, owner) ?: return null
                 val type = extractType(proto) ?: return null
                 ConeIsInstancePredicate(variable, type, isInverted)
             }
 
             PrimitiveExpressionType.NULLABILITY_CHECK -> {
-                val variable = extractVariable(proto, owner) ?: return null
+                val variable = extractValue(proto, owner) ?: return null
                 ConeIsNullPredicate(variable, isInverted)
             }
 
@@ -121,6 +129,13 @@ class FirContractDeserializer(private val c: FirDeserializationContext) {
 
     private fun ConeBooleanExpression.invertIfNecessary(shouldInvert: Boolean): ConeBooleanExpression =
         if (shouldInvert) ConeLogicalNot(this) else this
+
+    private fun extractValue(proto: ProtoBuf.Expression, owner: FirContractDescriptionOwner): ConeContractDescriptionValue? {
+        if (!proto.hasValueParameterReference()) return null
+        return if (proto.valueParameterReference != Int.MAX_VALUE) {
+            extractVariable(proto, owner)
+        } else ConeReturnValue()
+    }
 
     private fun extractVariable(proto: ProtoBuf.Expression, owner: FirContractDescriptionOwner): ConeValueParameterReference? {
         if (!proto.hasValueParameterReference()) return null
@@ -194,6 +209,9 @@ class FirContractDeserializer(private val c: FirDeserializationContext) {
 
         // Otherwise, check if it is a value
         when {
+            proto.hasValueParameterReference() && proto.valueParameterReference == Int.MAX_VALUE ->
+                expressionTypes.add(PrimitiveExpressionType.RETURN_VALUE)
+
             proto.hasValueParameterReference() && proto.valueParameterReference > 0 ->
                 expressionTypes.add(PrimitiveExpressionType.VALUE_PARAMETER_REFERENCE)
 
@@ -212,6 +230,7 @@ class FirContractDeserializer(private val c: FirDeserializationContext) {
     private enum class PrimitiveExpressionType {
         VALUE_PARAMETER_REFERENCE,
         RECEIVER_REFERENCE,
+        RETURN_VALUE,
         CONSTANT,
         INSTANCE_CHECK,
         NULLABILITY_CHECK
