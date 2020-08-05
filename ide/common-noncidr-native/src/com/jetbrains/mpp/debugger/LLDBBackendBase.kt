@@ -117,7 +117,7 @@ abstract class LLDBBackendBase : DebuggerBackendExtension {
             taskName.startsWith("run") -> {
                 val executableId = taskName.removePrefix("run")
                 allAvailableExecutables.find { exec ->
-                    exec.projectPrefix == projectPrefix &&
+                    exec.projectPrefix.endsWith(projectPrefix) &&
                             exec.variants.any { variant -> variant.gradleTask.contains(executableId) }
                 }
             }
