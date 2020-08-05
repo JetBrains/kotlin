@@ -243,9 +243,6 @@ class Fir2IrConverter(
             // Necessary call to generate built-in IR classes
             externalDependenciesGenerator.generateUnboundSymbolsAsDependencies()
             classifierStorage.preCacheBuiltinClasses()
-            for (firFile in firFiles) {
-                converter.processClassHeaders(firFile)
-            }
             val fakeOverrideGenerator = FakeOverrideGenerator(
                 session, scopeSession, classifierStorage, declarationStorage, conversionScope, FakeOverrideMode.NORMAL
             )
@@ -254,6 +251,9 @@ class Fir2IrConverter(
             val callGenerator = CallAndReferenceGenerator(components, fir2irVisitor, conversionScope)
             components.callGenerator = callGenerator
             declarationStorage.annotationGenerator = AnnotationGenerator(components)
+            for (firFile in firFiles) {
+                converter.processClassHeaders(firFile)
+            }
             for (firFile in firFiles) {
                 converter.processFileAndClassMembers(firFile)
             }
