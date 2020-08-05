@@ -6,18 +6,18 @@
 package com.jetbrains.swift
 
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.Version
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
-import com.jetbrains.cidr.apple.gradle.AppleProjectDataService
-import com.jetbrains.cidr.apple.gradle.AppleProjectModel
+import com.intellij.util.concurrency.FutureResult
+import com.jetbrains.cidr.apple.gradle.GradleAppleWorkspace
 import com.jetbrains.cidr.lang.preprocessor.OCInclusionContextUtil
 import com.jetbrains.cidr.lang.toolchains.CidrCompilerSwitches
+import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
 import com.jetbrains.cidr.lang.workspace.headerRoots.HeadersSearchPath
-import com.jetbrains.cidr.xcode.frameworks.ApplePlatform
-import com.jetbrains.cidr.xcode.frameworks.AppleSdkManager
 import com.jetbrains.swift.codeinsight.resolve.MobileSwiftModuleManager
 import com.jetbrains.swift.codeinsight.resolve.module.ModuleInfo
 import com.jetbrains.swift.codeinsight.resolve.module.SwiftCustomIncludePathProvider
@@ -25,9 +25,15 @@ import com.jetbrains.swift.lang.SwiftNames
 import com.jetbrains.swift.lang.parser.SwiftFileType
 import java.io.File
 import java.util.*
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 class MobileSwiftSourceKitCompileArgumentsCollector private constructor() :
     SwiftSourceKitCompileArgumentsCollector<MobileSwiftSourceKitCompileArgumentsCollector.Info>() {
+
+    override fun accepts(resolveConfiguration: OCResolveConfiguration): Boolean =
+        GradleAppleWorkspace.getInstance(resolveConfiguration.project).isOwnerOf(resolveConfiguration)
+
     override fun collectInformation(file: PsiFile): Info? {
         val resolveConfiguration = OCInclusionContextUtil.getActiveConfiguration(file) ?: return null
 
@@ -41,24 +47,20 @@ class MobileSwiftSourceKitCompileArgumentsCollector private constructor() :
         }
 
         val roots = SwiftCustomIncludePathProvider.EP_NAME.extensionList
-            .flatMap { it.getCustomLibrarySearchPaths(resolveConfiguration) }
+            .map { it.getCustomLibrarySearchPaths(resolveConfiguration) }
+            .flatten()
             .mapNotNull { File(it) }
             .distinct()
 
         includePaths += roots.map { HeadersSearchPath.frameworks(it) }
         val distinctPaths = includePaths.distinct()
 
-        var projectModel: AppleProjectModel? = null
-        AppleProjectDataService.forEachProject(file.project) { appleProjectModel, _, _ ->
-            projectModel = appleProjectModel
-        }
-        val targetModel = projectModel?.targets?.values?.firstOrNull() ?: return null
+        val targetModel = MobileFrameworkMockForSourceKitGeneratorImpl.findTarget(file.project) ?: return null
         val projectName = targetModel.name
         val bridgingHeaderPath = targetModel.bridgingHeader?.absolutePath
         val sdkInfo = MobileSwiftModuleManager.getAppleSdkInfo(resolveConfiguration) ?: return null
-        val sdkVersion = AppleSdkManager.getInstance().findSdksForPlatform(ApplePlatform.Type.IOS_SIMULATOR).firstOrNull()?.versionString ?: return null
+        val sdkVersion = sdkInfo.versionString ?: return null
 
-        // TODO: Provide "-simulator" suffix
         val targetTriple = ModuleInfo.getLLVMTargetTriple(sdkInfo, sdkVersion, null, null)
 
         return Info(
@@ -72,14 +74,27 @@ class MobileSwiftSourceKitCompileArgumentsCollector private constructor() :
             frameworkPaths = distinctPaths,
             includePaths = distinctPaths,
             swiftVersion = SwiftCompilerSettings.getCompilerVersion(),
-            workingDirectory = targetModel.editableXcodeProjectDir.absolutePath,
             files = swiftFiles,
             bridgingHeaderPath = bridgingHeaderPath,
-            swiftCompatibilityVersion = SwiftCompilerSettings.getSwiftCompatibilityVersion(resolveConfiguration)
+            swiftCompatibilityVersion = SwiftCompilerSettings.getSwiftCompatibilityVersion(resolveConfiguration),
+            appFrameworkMockPath = MobileFrameworkMockForSourceKitGeneratorImpl.baseDir(targetModel).path
         )
     }
 
     override fun prepareArguments(info: Info): List<String> {
+        val future = FutureResult<Boolean>()
+        MobileFrameworkMockForSourceKitGeneratorImpl.getInstance(info.file.project).generateIfInvalid(info.file, future)
+
+        while (true) {
+            try {
+                future.get(50, TimeUnit.MILLISECONDS)
+                break
+            } catch (ignore: TimeoutException) {
+                ProgressManager.checkCanceled()
+            }
+        }
+        ProgressManager.checkCanceled()
+
         return collectCompileArguments(info)
     }
 
@@ -124,8 +139,7 @@ class MobileSwiftSourceKitCompileArgumentsCollector private constructor() :
             args.add(info.bridgingHeaderPath)
         }
 
-        args.add("-working-directory")
-        args.add(info.workingDirectory)
+        args.addAll(listOf("-Xcc", "-F${info.appFrameworkMockPath}", "-F${info.appFrameworkMockPath}"))
 
         return args
     }
@@ -147,12 +161,12 @@ class MobileSwiftSourceKitCompileArgumentsCollector private constructor() :
         frameworkPaths: Collection<HeadersSearchPath>,
         includePaths: Collection<HeadersSearchPath>,
         swiftVersion: Version,
-        workingDirectory: String,
         override val files: Collection<File>,
         internal val bridgingHeaderPath: String?,
-        val swiftCompatibilityVersion: Version?
+        val swiftCompatibilityVersion: Version?,
+        val appFrameworkMockPath: String
     ) : SwiftSourceKitCompileArgumentsCollector.BaseInfo(
         moduleName, productName, compilerSwitches, file, sdkPath, target, document,
-        frameworkPaths, includePaths, swiftVersion, workingDirectory
+        frameworkPaths, includePaths, swiftVersion, ""
     )
 }

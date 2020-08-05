@@ -22,6 +22,10 @@
     </component>
   </application-components>
 
+  <extensions defaultExtensionNs="swift.lang">
+    <sourceKit.compileArgumentsCollector implementation="com.jetbrains.swift.MobileSwiftSourceKitCompileArgumentsCollector"/>
+  </extensions>
+
   <extensions defaultExtensionNs="com.intellij">
     <actionConfigurationCustomizer implementation="com.jetbrains.mobile.actions.MobileActionsCustomizer"/>
 
@@ -67,11 +71,6 @@
     <applicationService serviceInterface="com.jetbrains.swift.SwiftSourceKitCompileArgumentsCollector"
                         serviceImplementation="com.jetbrains.swift.MobileSwiftSourceKitCompileArgumentsCollector"/>
 
-    <completion.contributor language="Swift"
-                            order="first"
-                            id="swift_source_kit_completion"
-                            implementationClass="com.jetbrains.swift.completion.SwiftSourceKitCompletionContributor" />
-
     <highlightingPassFactory implementation="com.jetbrains.swift.codeinsight.highlighting.MobileSwiftSourceKitHighlighterFactory"/>
 
     <!--<externalAnnotator implementationClass="com.jetbrains.swift.swiftpm.codeinsight.highlighting.CLionSwiftSourceKitAnnotator"
@@ -85,6 +84,8 @@
 
     <registryKey key="konan.enable.lazy.symbol.translation" defaultValue="false"
                  description="Enables lazy translation of Kotlin symbols into Swift, Obj-C symbols."/>
+
+    <projectService serviceImplementation="com.jetbrains.swift.MobileFrameworkMockForSourceKitGeneratorImpl"/>
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin.android.model">
