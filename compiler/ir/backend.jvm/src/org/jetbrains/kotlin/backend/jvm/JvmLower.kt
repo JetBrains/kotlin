@@ -302,6 +302,7 @@ private val jvmFilePhases = listOf(
 
     jvmStandardLibraryBuiltInsPhase,
 
+    rangeContainsLoweringPhase,
     forLoopsPhase,
     jvmInlineClassPhase,
 

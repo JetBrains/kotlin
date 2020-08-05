@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
@@ -43,6 +44,15 @@ internal sealed class HeaderInfo {
      * Returns null if the iterable cannot be iterated in reverse.
      */
     abstract fun asReversed(): HeaderInfo?
+}
+
+// TODO: Update comments and member names in this file.
+internal class FloatingPointRangeHeaderInfo(
+    val start: IrExpression,
+    val endInclusive: IrExpression
+) : HeaderInfo() {
+    // No reverse() in ClosedFloatingPointRange.
+    override fun asReversed(): HeaderInfo? = null
 }
 
 internal sealed class NumericHeaderInfo(
@@ -243,25 +253,13 @@ internal abstract class HeaderInfoBuilder(context: CommonBackendContext, private
 
     private val symbols = context.ir.symbols
 
-    private val progressionElementTypes = listOfNotNull(
-        symbols.byte,
-        symbols.short,
-        symbols.int,
-        symbols.long,
-        symbols.char,
-        symbols.uByte,
-        symbols.uShort,
-        symbols.uInt,
-        symbols.uLong
-    ).map { it.defaultType }
-
-    private val progressionHandlers = listOf(
+    protected open val progressionHandlers = listOf(
         CollectionIndicesHandler(context),
         ArrayIndicesHandler(context),
         CharSequenceIndicesHandler(context),
-        UntilHandler(context, progressionElementTypes),
-        DownToHandler(context, progressionElementTypes),
-        RangeToHandler(context, progressionElementTypes),
+        UntilHandler(context),
+        DownToHandler(context),
+        RangeToHandler(context),
         StepHandler(context, this)
     )
 
@@ -340,3 +338,6 @@ internal class NestedHeaderInfoBuilderForWithIndex(context: CommonBackendContext
         DefaultSequenceHandler(context),
     )
 }
+
+internal val Symbols<*>.progressionElementTypes: Collection<IrType>
+    get() = listOfNotNull(byte, short, int, long, char, uByte, uShort, uInt, uLong).map { it.defaultType }

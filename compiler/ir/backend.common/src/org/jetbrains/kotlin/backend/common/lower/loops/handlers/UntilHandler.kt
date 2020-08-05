@@ -20,10 +20,11 @@ import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.name.FqName
 
 /** Builds a [HeaderInfo] for progressions built using the `until` extension function. */
-internal class UntilHandler(private val context: CommonBackendContext, private val progressionElementTypes: Collection<IrType>) :
+internal class UntilHandler(private val context: CommonBackendContext) :
     ProgressionHandler {
 
     private val symbols = context.ir.symbols
+    private val progressionElementTypes = symbols.progressionElementTypes
     private val uByteType = symbols.uByte?.defaultType
     private val uShortType = symbols.uShort?.defaultType
     private val uIntType = symbols.uInt?.defaultType
