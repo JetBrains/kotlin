@@ -4302,6 +4302,16 @@ public class FirDiagnosticsTestSpecGenerated extends AbstractFirDiagnosticsTestS
                                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/5.1.kt");
                             }
 
+                            @TestMetadata("5.2.kt")
+                            public void test5_2() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/5.2.kt");
+                            }
+
+                            @TestMetadata("5.3.kt")
+                            public void test5_3() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/5.3.kt");
+                            }
+
                             @TestMetadata("6.1.kt")
                             public void test6_1() throws Exception {
                                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/6.1.kt");
@@ -4315,6 +4325,16 @@ public class FirDiagnosticsTestSpecGenerated extends AbstractFirDiagnosticsTestS
                             @TestMetadata("6.3.kt")
                             public void test6_3() throws Exception {
                                 runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/6.3.kt");
+                            }
+
+                            @TestMetadata("6.4.kt")
+                            public void test6_4() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/6.4.kt");
+                            }
+
+                            @TestMetadata("6.5.kt")
+                            public void test6_5() throws Exception {
+                                runTest("compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/6.5.kt");
                             }
 
                             @TestMetadata("7.1.kt")

@@ -164,6 +164,22 @@
         },
         {
           "specVersion": "0.1-278",
+          "casesNumber": 1,
+          "description": "Top-level non-extension functions: Callables declared in the same package (root package)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/5.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 2,
+          "description": "Top-level non-extension functions: callables star-imported into the current file",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/6.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
           "casesNumber": 3,
           "description": "Top-level non-extension functions: Callables star-imported into the current file;",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/6.1.kt",
@@ -176,6 +192,22 @@
           "description": "Top-level non-extension functions: Implicitly imported callables",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/7.1.kt",
           "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 1,
+          "description": "Top-level non-extension functions: Callables declared in the same package",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/5.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-278",
+          "casesNumber": 4,
+          "description": "Top-level non-extension functions: callables star-imported into the current file",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/6.4.kt",
+          "unexpectedBehaviour": true,
           "linkType": "primary"
         },
         {
