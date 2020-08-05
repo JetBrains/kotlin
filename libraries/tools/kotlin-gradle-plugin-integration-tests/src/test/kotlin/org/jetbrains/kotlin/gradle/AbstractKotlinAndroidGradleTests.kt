@@ -726,7 +726,7 @@ fun getSomething() = 10
 
         project.build("assemble", options = options) {
             assertFailed()
-            assertContains("Class 'User' is not abstract and does not implement abstract member public abstract fun writeToParcel")
+            assertContainsRegex("Class 'User' is not abstract and does not implement abstract member public abstract fun (writeToParcel|describeContents)".toRegex())
         }
 
         File(project.projectDir, "app/build.gradle").modify { it.replace("[\"views\"]", "[\"parcelize\", \"views\"]") }
