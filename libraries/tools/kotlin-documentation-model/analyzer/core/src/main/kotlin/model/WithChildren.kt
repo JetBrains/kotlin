@@ -65,3 +65,25 @@ fun <T> T.dfs(predicate: (T) -> Boolean): T? where T : WithChildren<T> = if (pre
 } else {
     children.asSequence().mapNotNull { it.dfs(predicate) }.firstOrNull()
 }
+
+fun <T: WithChildren<T>> T.asPrintableTree(
+    nodeNameBuilder: Appendable.(T) -> Unit = { append(it.toString()) }
+): String {
+    fun Appendable.append(element: T, ownPrefix: String, childPrefix: String) {
+        append(ownPrefix)
+        nodeNameBuilder(element)
+        appendLine()
+        element.children.takeIf(Collection<*>::isNotEmpty)?.also { children ->
+            val newOwnPrefix = childPrefix + '\u251c' + '\u2500' + ' '
+            val lastOwnPrefix = childPrefix + '\u2514' + '\u2500' + ' '
+            val newChildPrefix = childPrefix + '\u2502' + ' ' + ' '
+            val lastChildPrefix = childPrefix + ' ' + ' ' + ' '
+            children.forEachIndexed { n, e ->
+                if (n != children.lastIndex) append(e, newOwnPrefix, newChildPrefix)
+                else append(e, lastOwnPrefix, lastChildPrefix)
+            }
+        }
+    }
+
+    return buildString { append(this@asPrintableTree, "", "") }
+}
