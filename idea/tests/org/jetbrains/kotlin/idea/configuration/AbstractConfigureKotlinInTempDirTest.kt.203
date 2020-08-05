@@ -12,10 +12,10 @@ import java.io.File
 import java.nio.file.Path
 
 abstract class AbstractConfigureKotlinInTempDirTest : AbstractConfigureKotlinTest() {
-    override fun getProjectDirOrFile(): Path {
+    override fun getProjectDirOrFile(isDirectoryBasedProject: Boolean): Path {
         val tempDir = FileUtil.generateRandomTemporaryPath()
         FileUtil.createTempDirectory("temp", null)
-        myFilesToDelete.add(tempDir.toPath())
+        getTempDir().scheduleDelete(tempDir.toPath())
 
         FileUtil.copyDir(File(projectRoot), tempDir)
 
