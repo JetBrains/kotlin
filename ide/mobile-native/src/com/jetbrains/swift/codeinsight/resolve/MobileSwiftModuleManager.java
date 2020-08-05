@@ -229,7 +229,8 @@ public class MobileSwiftModuleManager extends SwiftModuleManagerBase {
         String platform = platformName(sdk.getPlatform());
 
         Version version = SwiftCompilerSettings.getSwiftVersion(configuration);
-        return new SdkInfo(sdk.getName(), platform, architecture.toString(), version, null);
+        return new SdkInfo(
+                sdk.getName(), platform, architecture.toString(), sdk.getHomePath(), version, sdk.getVariant(), sdk.getVersionString());
     }
 
     @Nullable

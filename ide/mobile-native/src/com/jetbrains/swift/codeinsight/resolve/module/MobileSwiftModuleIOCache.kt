@@ -38,7 +38,8 @@ class MobileSwiftModuleIOCache : SwiftModuleIOCacheImpl(Xcode.getBuildVersionStr
             architectureDir.name,
             sdk.homePath,
             Objects.requireNonNull<Version>(Version.parseVersion(versionDir.name)),
-            sdk.variant
+            sdk.variant,
+            sdk.versionString
         )
     }
 }

@@ -43,9 +43,9 @@ import org.jetbrains.plugins.gradle.settings.GradleSettings
 import java.io.File
 
 @State(name = "GradleAppleWorkspace", storages = [Storage("gradle.xml")])
-class GradleAppleWorkspace(private val project: Project) : PersistentStateComponent<Element> {
+class GradleAppleWorkspace(private val project: Project) : PersistentStateComponent<Element>, Disposable {
     private val reloadsQueue = BackgroundTaskQueue(project, LOADING_GRADLE_APPLE_PROJECT)
-    private var disposable: Disposable = Disposer.newDisposable()
+    private var disposable: Disposable = newDisposable()
     private var configurationData: Map<String, Data> = emptyMap()
     private var konanFrameworkTargets: Map<String, KonanTarget> = emptyMap()
 
@@ -76,8 +76,9 @@ class GradleAppleWorkspace(private val project: Project) : PersistentStateCompon
         })
     }
 
-    private fun newDisposable(): Disposable =
-        Disposer.newDisposable("GradleAppleWorkspaceState").also { Disposer.register(project, it) }
+    private fun newDisposable(): Disposable = Disposer.newDisposable(this, "GradleAppleWorkspaceState")
+
+    override fun dispose(): Unit = Unit
 
     private fun updateOCWorkspace() {
         var committed = false
