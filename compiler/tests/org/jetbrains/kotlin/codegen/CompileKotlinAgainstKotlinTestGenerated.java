@@ -38,11 +38,6 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/annotationInInterface.kt");
     }
 
-    @TestMetadata("annotationOnTypeUseInTypeAlias.kt")
-    public void testAnnotationOnTypeUseInTypeAlias() throws Exception {
-        runTest("compiler/testData/compileKotlinAgainstKotlin/annotationOnTypeUseInTypeAlias.kt");
-    }
-
     @TestMetadata("annotationsOnTypeAliases.kt")
     public void testAnnotationsOnTypeAliases() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/annotationsOnTypeAliases.kt");
