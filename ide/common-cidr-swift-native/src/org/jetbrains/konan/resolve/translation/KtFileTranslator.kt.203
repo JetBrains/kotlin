@@ -16,11 +16,17 @@ import org.jetbrains.konan.resolve.symbols.KtDependencyMarker
 import org.jetbrains.konan.resolve.symbols.KtSymbol
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.backend.konan.objcexport.*
+import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
-import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.caches.project.getPlatformModuleInfo
 import org.jetbrains.kotlin.idea.core.unwrapModuleSourceInfo
 import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
@@ -65,7 +71,8 @@ abstract class KtFileTranslator<T : KtSymbol, M : OCSymbol> {
         file: KtFile, frameworkName: String, destination: MutableList<in KtSymbol>,
         provideStubs: (ObjCExportLazy, KtFile) -> List<ObjCTopLevel<*>>
     ) {
-        val resolutionFacade = file.getResolutionFacade()
+        val (moduleInfo, platform) = file.getIOSModuleInfoAndPlatform()
+        val resolutionFacade = KotlinCacheService.getInstance(file.project).getResolutionFacadeByModuleInfo(moduleInfo, platform)!!
         val moduleDescriptor = resolutionFacade.moduleDescriptor
         val resolveSession = resolutionFacade.frontendService<ResolveSession>()
         val deprecationResolver = resolutionFacade.frontendService<DeprecationResolver>()
@@ -82,8 +89,7 @@ abstract class KtFileTranslator<T : KtSymbol, M : OCSymbol> {
         )
 
         val virtualFile = file.virtualFile
-        val moduleInfo = moduleDescriptor.getCapability(ModuleInfo.Capability)?.unwrapModuleSourceInfo()
-        val dependencies = determineDependencies(virtualFile, moduleInfo)
+        val dependencies = determineDependencies(virtualFile, moduleInfo.unwrapModuleSourceInfo())
         translate(StubTrace(virtualFile, resolutionFacade, moduleDescriptor), provideStubs(lazy, file), virtualFile, destination)
         destination += KtDependencyMarker(virtualFile, dependencies)
     }
@@ -135,6 +141,15 @@ abstract class KtFileTranslator<T : KtSymbol, M : OCSymbol> {
                 moduleInfo.dependencies().mapNotNull { it.unwrapModuleSourceInfo()?.contentScope() }.toTypedArray()
             )
             return FileTypeIndex.processFiles(KotlinFileType.INSTANCE, processor, scope)
+        }
+
+        //TODO properly pass target platform from gradle build file to referenced modules
+        private fun KtFile.getIOSModuleInfoAndPlatform(): Pair<IdeaModuleInfo, TargetPlatform> {
+            for (target in arrayOf(KonanTarget.IOS_X64, KonanTarget.IOS_ARM64, KonanTarget.IOS_ARM32)) { // HACK: search for iOS module
+                val platform = NativePlatforms.nativePlatformBySingleTarget(target)
+                getPlatformModuleInfo(platform)?.let { return it to platform }
+            }
+            return getModuleInfo() to NativePlatforms.unspecifiedNativePlatform
         }
     }
 }
