@@ -65,6 +65,8 @@ infix fun NpmRange.union(other: NpmRange): List<NpmRange> {
 }
 
 fun NpmRange.invert(): List<NpmRange> {
+    if (startVersion == null && endVersion == null) return emptyList()
+
     val result = mutableListOf<NpmRange>()
     if (startVersion != null || endVersion == null) {
         result.add(

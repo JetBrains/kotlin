@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import com.github.gundy.semver4j.SemVer
 import org.gradle.api.internal.artifacts.dependencies.DefaultMutableVersionConstraint
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmRangeVisitor.Companion.WILDCARD
 
 class NpmVersionConstraint(
     version: String
 ) : DefaultMutableVersionConstraint(version) {
     override fun rejectAll() {
         super.rejectAll()
-        reject(NONE_VERSION)
+        reject(WILDCARD)
     }
 
     fun toSemVer(): String {
@@ -38,5 +38,3 @@ class NpmVersionConstraint(
         )
     }
 }
-
-const val NONE_VERSION = "0.0.0"

@@ -175,5 +175,6 @@ class NpmRangeVisitor : NodeSemverExpressionBaseVisitor<List<NpmRange>>() {
 
         const val AND = " "
         const val OR = " || "
+        const val WILDCARD = "*"
     }
 }
