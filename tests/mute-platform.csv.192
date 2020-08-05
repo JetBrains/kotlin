@@ -32,4 +32,5 @@ org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testNestedDepen
 "org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.simpleAndroidAppWithCommonModule[8: Gradle-6.5.1, KotlinGradlePlugin-master]", NoSuchMethodError,,
 "org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testTransitiveImplementWithAndroid[7: Gradle-6.5.1, KotlinGradlePlugin-latest stable]", NoSuchMethodError,,
 "org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testTransitiveImplementWithAndroid[8: Gradle-6.5.1, KotlinGradlePlugin-master]", NoSuchMethodError,,
+org.jetbrains.kotlin.idea.codeInsight.gradle.GradleFacetImportTest.testJDKImport, Old story with Idea core,,
 "org.jetbrains.kotlin.ide.konan.gradle.GradleNativeLibrariesInIDENamingTest.testLibrariesNaming[0: with Gradle-4.10.2]", Old IDE with new plugin problem,,
