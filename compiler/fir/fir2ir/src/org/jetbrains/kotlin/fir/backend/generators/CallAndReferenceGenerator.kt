@@ -166,7 +166,6 @@ class CallAndReferenceGenerator(
                 }
             }
 
-            // TODO: handle transient receiver, such as class symbol, like A::foo
             val boundReceiver = boundDispatchReceiver ?: boundExtensionReceiver
             if (boundReceiver == null) {
                 IrFunctionExpressionImpl(startOffset, endOffset, type, irAdapterFunction, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE)
@@ -306,6 +305,7 @@ class CallAndReferenceGenerator(
                 error("unknown callee kind: ${adapteeFunction.render()}")
         }
 
+        var shift = 0
         if (boundDispatchReceiver != null || boundExtensionReceiver != null) {
             val receiverValue = IrGetValueImpl(
                 startOffset, endOffset, adapterFunction.extensionReceiverParameter!!.symbol, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
@@ -314,20 +314,34 @@ class CallAndReferenceGenerator(
                 boundDispatchReceiver != null -> irCall.dispatchReceiver = receiverValue
                 boundExtensionReceiver != null -> irCall.extensionReceiver = receiverValue
             }
+        } else if (callableReferenceAccess.explicitReceiver is FirResolvedQualifier) {
+            // Unbound callable reference 'A::foo'
+            val adaptedReceiverParameter = adapterFunction.valueParameters[0]
+            val adaptedReceiverValue = IrGetValueImpl(
+                startOffset, endOffset, adaptedReceiverParameter.type, adaptedReceiverParameter.symbol
+            )
+            if (adapteeFunction.extensionReceiverParameter != null) {
+                irCall.extensionReceiver = adaptedReceiverValue
+                shift = 1
+            } else {
+                irCall.dispatchReceiver = adaptedReceiverValue
+            }
         }
 
         adapteeFunction.valueParameters.mapIndexed { index, valueParameter ->
             when {
                 valueParameter.hasDefaultValue() -> {
-                    irCall.putValueArgument(index, null)
+                    irCall.putValueArgument(shift + index, null)
                 }
                 valueParameter.isVararg -> {
                     // TODO: handle vararg and spread
-                    irCall.putValueArgument(index, null)
+                    irCall.putValueArgument(shift + index, null)
                 }
                 else -> {
                     val irValueArgument = adapterFunction.valueParameters[index]
-                    irCall.putValueArgument(index, IrGetValueImpl(startOffset, endOffset, irValueArgument.type, irValueArgument.symbol))
+                    irCall.putValueArgument(
+                        shift + index, IrGetValueImpl(startOffset, endOffset, irValueArgument.type, irValueArgument.symbol)
+                    )
                 }
             }
         }
