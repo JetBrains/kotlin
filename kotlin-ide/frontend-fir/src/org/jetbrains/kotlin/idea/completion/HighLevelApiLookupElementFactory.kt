@@ -30,7 +30,9 @@ internal class HighLevelApiLookupElementFactory {
             else -> throw IllegalArgumentException("Cannot create a lookup element for $symbol")
         }
 
-        return elementBuilder.withIcon(KotlinSymbolIconProvider.getIconFor(symbol))
+        return elementBuilder
+            .withPsiElement(symbol.psi) // TODO check if it is a heavy operation and should be postponed
+            .withIcon(KotlinSymbolIconProvider.getIconFor(symbol))
     }
 }
 
