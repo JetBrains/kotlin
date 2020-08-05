@@ -1,6 +1,7 @@
 package com.jetbrains.mobile.execution
 
 import com.intellij.execution.ExecutionTarget
+import com.intellij.execution.Executor
 import com.intellij.execution.configurations.*
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.diagnostic.logger
@@ -9,6 +10,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.util.SmartList
 import com.jetbrains.cidr.execution.CidrRunConfiguration
 import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
 import com.jetbrains.mobile.MobileBundle
@@ -61,10 +63,23 @@ abstract class MobileRunConfigurationBase(project: Project, factory: Configurati
         }
     }
 
+    override fun getState(executor: Executor, environment: ExecutionEnvironment): CommandLineState {
+        val states = SmartList<CommandLineState>()
+        val appleDevice = executionTargets.filterIsInstance<AppleDevice>().singleOrNull()
+        if (appleDevice != null) {
+            states += createAppleState(environment, executor, appleDevice)
+        }
+        val androidDevice = executionTargets.filterIsInstance<AndroidDevice>().singleOrNull()
+        if (androidDevice != null) {
+            states += createAndroidState(environment, androidDevice)
+        }
+        return CompositeCommandLineState(environment, states)
+    }
+
+    abstract fun createAndroidState(environment: ExecutionEnvironment, device: AndroidDevice): CommandLineState
+
     private val helper = MobileBuildConfigurationHelper(project)
     override fun getHelper(): MobileBuildConfigurationHelper = helper
-
-    override fun getExecutionTarget(environment: ExecutionEnvironment): ExecutionTarget = executionTargets.single()
 
     override fun getResolveConfiguration(target: ExecutionTarget): OCResolveConfiguration? = null
 
@@ -121,7 +136,6 @@ class MobileAppRunConfiguration(project: Project, factory: ConfigurationFactory,
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> =
         MobileRunConfigurationEditor(project, ::isSuitable)
 
-    override fun createOtherState(environment: ExecutionEnvironment): CommandLineState {
-        return AndroidAppCommandLineState(this, environment)
-    }
+    override fun createAndroidState(environment: ExecutionEnvironment, device: AndroidDevice): CommandLineState =
+        AndroidAppCommandLineState(this, device, environment)
 }

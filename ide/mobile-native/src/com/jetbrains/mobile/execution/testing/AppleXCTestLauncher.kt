@@ -15,7 +15,7 @@ import java.util.*
 class AppleXCTestLauncher(configuration: MobileTestRunConfiguration, environment: ExecutionEnvironment, device: AppleDevice) :
     AppleLauncher<MobileTestRunConfiguration>(configuration, environment, device) {
 
-    override fun createInstaller(bundle: File) = object : AppleInstaller(configuration, environment, bundle) {
+    override fun createInstaller(bundle: File) = object : AppleInstaller(configuration, device, environment, bundle) {
         override fun createCommandLineBuilder(
             params: CidrProgramParameters,
             platform: ApplePlatform,

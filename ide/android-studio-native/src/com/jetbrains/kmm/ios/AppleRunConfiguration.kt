@@ -6,6 +6,8 @@
 package com.jetbrains.kmm.ios
 
 import com.intellij.execution.BeforeRunTask
+import com.intellij.execution.Executor
+import com.intellij.execution.configurations.CommandLineState
 import com.intellij.execution.configurations.LocatableConfigurationBase
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.execution.configurations.RuntimeConfigurationError
@@ -138,9 +140,13 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
         return File(projectPath).resolve(iosBuildDirectory).resolve("$buildType/$xcodeScheme.app")
     }
 
-    override fun getExecutionTarget(environment: ExecutionEnvironment) = executionTarget
+    override fun getState(executor: Executor, environment: ExecutionEnvironment): CommandLineState =
+        when (executionTarget) {
+            is AppleDevice -> createAppleState(environment, executor, executionTarget)
+            else -> throw IllegalStateException()
+        }
 
-    override fun createLauncher(environment: ExecutionEnvironment): CidrLauncher =
+    fun createLauncher(environment: ExecutionEnvironment): CidrLauncher =
         object : AppleLauncher<AppleRunConfiguration>(this, environment, executionTarget) {
             override fun createDebuggerDriverConfiguration() = AppleLLDBDriverConfiguration()
         }

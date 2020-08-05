@@ -8,14 +8,16 @@ import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.util.Disposer
 import com.jetbrains.mobile.execution.AndroidCommandLineState
+import com.jetbrains.mobile.execution.AndroidDevice
 import com.jetbrains.mobile.execution.AndroidProcessHandler
 import com.jetbrains.mobile.gradle.AndroidProjectResolver
 import org.jetbrains.plugins.gradle.util.GradleUtil
 
 class AndroidTestCommandLineState(
     configuration: MobileTestRunConfiguration,
+    device: AndroidDevice,
     environment: ExecutionEnvironment
-) : AndroidCommandLineState(configuration, environment) {
+) : AndroidCommandLineState(configuration, device, environment) {
     private val testRunnerApk = configuration.getTestRunnerBundle(device)
     private val testData = configuration.testData as AndroidTestRunConfigurationData
     private val testInstrumentationRunner =

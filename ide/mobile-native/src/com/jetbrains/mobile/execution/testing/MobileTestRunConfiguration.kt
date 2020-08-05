@@ -53,13 +53,16 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
     override fun createAppleState(environment: ExecutionEnvironment, executor: Executor, device: AppleDevice): CommandLineState =
         getTestData().createState(environment, executor, null)!!
 
-    override fun createOtherState(environment: ExecutionEnvironment): CommandLineState = AndroidTestCommandLineState(this, environment)
+    override fun createAndroidState(environment: ExecutionEnvironment, device: AndroidDevice): CommandLineState =
+        AndroidTestCommandLineState(this, device, environment)
 
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> =
         MobileTestRunConfigurationEditor(project, ::isSuitable)
 
-    override fun createLauncher(environment: ExecutionEnvironment): CidrLauncher =
-        AppleXCTestLauncher(this, environment, executionTargets.filterIsInstance<AppleDevice>().first())
+    override fun createLauncher(environment: ExecutionEnvironment, device: AppleDevice): CidrLauncher =
+        AppleXCTestLauncher(this, environment, device)
+
+    override fun createLauncher(environment: ExecutionEnvironment): CidrLauncher = throw IllegalStateException()
 
     override fun writeExternal(element: Element) {
         super<MobileRunConfigurationBase>.writeExternal(element)

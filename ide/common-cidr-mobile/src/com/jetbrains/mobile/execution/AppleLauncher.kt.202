@@ -49,7 +49,7 @@ open class AppleLauncher<T : MobileRunConfiguration>(
 
     protected open fun createDebuggerDriverConfiguration(): DebuggerDriverConfiguration = XcodeLLDBDriverConfiguration(null)
 
-    protected open fun createInstaller(bundle: File): Installer = AppleInstaller(configuration, environment, bundle)
+    protected open fun createInstaller(bundle: File): Installer = AppleInstaller(configuration, device, environment, bundle)
 
     private fun createDebugProcess(parameters: RunParameters, session: XDebugSession, state: CommandLineState): CidrDebugProcess =
         when (device) {

@@ -25,10 +25,10 @@ import java.io.OutputStream
 
 abstract class AndroidCommandLineState(
     configuration: MobileRunConfigurationBase,
+    protected val device: AndroidDevice,
     environment: ExecutionEnvironment
 ) : CommandLineState(environment) {
     protected val project = configuration.project
-    protected val device = configuration.executionTargets.filterIsInstance<AndroidDevice>().single()
     protected val apk = configuration.getProductBundle(device)
 
     override fun execute(executor: Executor, runner: ProgramRunner<*>): ExecutionResult {
@@ -94,8 +94,9 @@ abstract class AndroidCommandLineState(
 
 open class AndroidAppCommandLineState(
     configuration: MobileRunConfigurationBase,
+    device: AndroidDevice,
     environment: ExecutionEnvironment
-) : AndroidCommandLineState(configuration, environment) {
+) : AndroidCommandLineState(configuration, device, environment) {
 
     override fun startProcess(): AndroidProcessHandler =
         device.installAndLaunch(apk, project)

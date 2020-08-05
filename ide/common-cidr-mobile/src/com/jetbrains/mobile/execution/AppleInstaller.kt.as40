@@ -13,11 +13,11 @@ import java.io.File
 
 open class AppleInstaller(
     private val configuration: MobileRunConfiguration,
+    private val device: AppleDevice,
     environment: ExecutionEnvironment,
     appBundle: File
 ) : OCInstaller(environment, appBundle, appBundle, false) {
     override fun doInstall(): GeneralCommandLine {
-        val device = configuration.getExecutionTarget(myEnvironment) as AppleDevice
         val commandLine = device.install(bundle, project)
 
         val params = SimpleProgramParameters().also {
