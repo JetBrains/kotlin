@@ -97,32 +97,6 @@ class NewJavaToKotlinConverter(
         }
     }
 
-    private fun KtFile.addImports(imports: Collection<FqName>) {
-        val factory = KtPsiFactory(this)
-        var importList = importList
-        for (import in imports) {
-            val importDirective = factory.createImportDirective(ImportPath(import, isAllUnder = false))
-            if (importList == null) {
-                importList = addImportList(importDirective.parent as KtImportList)
-            } else {
-                importList.add(importDirective)
-            }
-        }
-    }
-
-    private fun KtFile.addImportList(importList: KtImportList): KtImportList {
-        if (packageDirective != null) {
-            return addAfter(importList, packageDirective) as KtImportList
-        }
-
-        val firstDeclaration = findChildByClass(KtDeclaration::class.java)
-        if (firstDeclaration != null) {
-            return addBefore(importList, firstDeclaration) as KtImportList
-        }
-
-        return add(importList) as KtImportList
-    }
-
     fun elementsToKotlin(inputElements: List<PsiElement>, bodyFilter: ((PsiElement) -> Boolean)?): Result {
         return elementsToKotlin(inputElements, NewJ2kWithProgressProcessor.DEFAULT, bodyFilter)
     }
@@ -209,6 +183,34 @@ class NewJavaToKotlinConverter(
 
     override fun elementsToKotlin(inputElements: List<PsiElement>, processor: WithProgressProcessor): Result {
         return elementsToKotlin(inputElements, processor, null)
+    }
+
+    companion object {
+        fun KtFile.addImports(imports: Collection<FqName>) {
+            val factory = KtPsiFactory(this)
+            var importList = importList
+            for (import in imports) {
+                val importDirective = factory.createImportDirective(ImportPath(import, isAllUnder = false))
+                if (importList == null) {
+                    importList = addImportList(importDirective.parent as KtImportList)
+                } else {
+                    importList.add(importDirective)
+                }
+            }
+        }
+
+        private fun KtFile.addImportList(importList: KtImportList): KtImportList {
+            if (packageDirective != null) {
+                return addAfter(importList, packageDirective) as KtImportList
+            }
+
+            val firstDeclaration = findChildByClass(KtDeclaration::class.java)
+            if (firstDeclaration != null) {
+                return addBefore(importList, firstDeclaration) as KtImportList
+            }
+
+            return add(importList) as KtImportList
+        }
     }
 }
 

@@ -43,19 +43,25 @@ fun a2() {
     }
 
     with(d) {
-        this?.let { JavaClassOne().extensionSelf().toJavaClassTwo().extensionSelf().returnSelf().toJavaOne().otherMethod() }
+        this?.let {
+            JavaClassOne().extensionSelf().toJavaClassTwo().extensionSelf().returnSelf().toJavaOne().otherMethod()
+        }
     }
 
     with(d) out@{
         with(4) {
-            this@out?.let { JavaClassOne().extensionSelf().toJavaClassTwo().extensionSelf().returnSelf().toJavaOne().otherMethod() }
+            this@out?.let {
+                JavaClassOne().extensionSelf().toJavaClassTwo().extensionSelf().returnSelf().toJavaOne().otherMethod()
+            }
         }
     }
 }
 
 fun a3() {
     val d: JavaClassOne? = null
-    val a1 = d?.let { JavaClassOne().extensionSelf().toJavaClassTwo().extensionSelf().returnSelf().toJavaOne().otherMethod() }
+    val a1 = d?.let {
+        JavaClassOne().extensionSelf().toJavaClassTwo().extensionSelf().returnSelf().toJavaOne().otherMethod()
+    }
 
     val a2 = d?.let {
         JavaClassOne().extensionSelf().toJavaClassTwo().extensionSelf().returnSelf().toJavaOne().otherMethod()
@@ -66,12 +72,16 @@ fun a3() {
     }
 
     val a4 = with(d) {
-        this?.let { JavaClassOne().extensionSelf().toJavaClassTwo().extensionSelf().returnSelf().toJavaOne().otherMethod() }
+        this?.let {
+            JavaClassOne().extensionSelf().toJavaClassTwo().extensionSelf().returnSelf().toJavaOne().otherMethod()
+        }
     }
 
     val a5 = with(d) out@{
         with(4) {
-            this@out?.let { JavaClassOne().extensionSelf().toJavaClassTwo().extensionSelf().returnSelf().toJavaOne().otherMethod() }
+            this@out?.let {
+                JavaClassOne().extensionSelf().toJavaClassTwo().extensionSelf().returnSelf().toJavaOne().otherMethod()
+            }
         }
     }
 }
@@ -90,18 +100,25 @@ fun a4() {
     }?.let { JavaClassOne().extensionSelf().toJavaClassTwo().extensionSelf().returnSelf().toJavaOne().otherMethod() }?.and(4)
 
     val a4 = with(d) {
-        this?.let { JavaClassOne().extensionSelf().toJavaClassTwo().extensionSelf().returnSelf().toJavaOne().otherMethod() }
+        this?.let {
+            JavaClassOne().extensionSelf().toJavaClassTwo().extensionSelf().returnSelf().toJavaOne().otherMethod()
+        }
     }
 
     val a5 = with(d) out@{
         with(4) {
-            this@out?.let { JavaClassOne().extensionSelf().toJavaClassTwo().extensionSelf().returnSelf().toJavaOne().otherMethod() }
+            this@out?.let {
+                JavaClassOne().extensionSelf().toJavaClassTwo().extensionSelf().returnSelf().toJavaOne().otherMethod()
+            }
         }
     }
 
     val a6 = a4?.let { out -> a5?.let { out + it } }
 }
 
-fun JavaClassOne.b(): Int? = JavaClassOne().extensionSelf().toJavaClassTwo().extensionSelf().returnSelf().toJavaOne().otherMethod()
-fun JavaClassOne.c(): Int = JavaClassOne().extensionSelf().toJavaClassTwo().extensionSelf().returnSelf().toJavaOne().otherMethod()
-fun d(d: JavaClassOne) = JavaClassOne().extensionSelf().toJavaClassTwo().extensionSelf().returnSelf().toJavaOne().otherMethod()
+fun JavaClassOne.b(): Int? =
+    JavaClassOne().extensionSelf().toJavaClassTwo().extensionSelf().returnSelf().toJavaOne().otherMethod()
+fun JavaClassOne.c(): Int =
+    JavaClassOne().extensionSelf().toJavaClassTwo().extensionSelf().returnSelf().toJavaOne().otherMethod()
+fun d(d: JavaClassOne) =
+    JavaClassOne().extensionSelf().toJavaClassTwo().extensionSelf().returnSelf().toJavaOne().otherMethod()
