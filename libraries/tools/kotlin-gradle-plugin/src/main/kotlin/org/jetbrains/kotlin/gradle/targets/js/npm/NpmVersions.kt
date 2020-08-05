@@ -21,11 +21,13 @@ fun versionToNpmRanges(version: String): List<NpmRange> {
 
 fun buildNpmVersion(
     includedVersions: List<String>,
-    excludedVersions: List<String>
+    excludedVersions: List<String>,
+    includedWithCaret: Boolean = false
 ): String {
     val includedRange: NpmRange? = try {
         includedVersions
             .flatMap { versionToNpmRanges(it) }
+            .map { if (includedWithCaret) it.caretizeSingleVersion() else it }
             .reduce { acc: NpmRange, next: NpmRange ->
                 val intersection = acc intersect next
                 requireNotNull(intersection) {
@@ -38,6 +40,8 @@ fun buildNpmVersion(
     }
 
     includedRange!!
+
+    if (excludedVersions.isEmpty()) return includedRange.toString()
 
     val excludedRanges: List<NpmRange> = try {
         excludedVersions
@@ -55,4 +59,19 @@ fun buildNpmVersion(
             .mapNotNull { it intersect includedRange }
             .sortedBy { it.startVersion }
             .joinToString(NpmRangeVisitor.OR)
+}
+
+private fun NpmRange.caretizeSingleVersion(): NpmRange {
+    if (startVersion?.toVersion() != endVersion?.toVersion() || !(startInclusive || endInclusive)) {
+        return this
+    }
+
+    return NpmRange(
+        startVersion = startVersion,
+        startInclusive = startInclusive,
+        endVersion = startVersion
+            ?.toVersion()
+            ?.incrementMajor()
+            ?.toSemVer()
+    )
 }

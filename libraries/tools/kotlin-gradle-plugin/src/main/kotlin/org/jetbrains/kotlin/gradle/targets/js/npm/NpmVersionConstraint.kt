@@ -31,7 +31,11 @@ class NpmVersionConstraint(
             )
         }
 
-        return buildNpmVersion(listOf(requiredVersion), rejectedVersions)
+        return buildNpmVersion(
+            listOf(requiredVersion),
+            rejectedVersions,
+            true
+        )
     }
 }
 

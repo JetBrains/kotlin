@@ -182,6 +182,15 @@ fun Version.toSemVer(): SemVer =
         build = buildIdentifiers.joinToString(".").let { if (it.isNotEmpty()) it else null }
     )
 
+fun SemVer.toVersion(): Version =
+    Version.builder()
+        .major(major.toInt())
+        .minor(minor.toInt())
+        .patch(patch.toInt())
+        .preReleaseIdentifiers(preRelease?.split(".")?.map { Version.Identifier.fromString(it) } ?: emptyList())
+        .buildIdentifiers(build?.split(".")?.map { Version.Identifier.fromString(it) } ?: emptyList())
+        .build()
+
 fun min(a: SemVer, b: SemVer): SemVer =
     if (a < b) a else b
 
