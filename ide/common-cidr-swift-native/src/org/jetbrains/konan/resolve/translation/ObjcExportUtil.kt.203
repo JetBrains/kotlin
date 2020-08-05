@@ -1,0 +1,27 @@
+package org.jetbrains.konan.resolve.translation
+
+import com.intellij.openapi.application.ApplicationManager
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportWarningCollector
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjcExportHeaderGeneratorMobile
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
+
+fun generateObjCHeaderLines(
+    frameworkName: String,
+    resolutionFacade: ResolutionFacade
+): List<String> {
+    val moduleDescriptor = resolutionFacade.moduleDescriptor
+    val deprecationResolver = resolutionFacade.frontendService<DeprecationResolver>()
+
+    val generator = ObjcExportHeaderGeneratorMobile.createInstance(
+        KtFileTranslator.ObjCExportConfiguration(frameworkName),
+        ObjCExportWarningCollector.SILENT,
+        moduleDescriptor.builtIns,
+        listOf(moduleDescriptor),
+        deprecationResolver
+    )
+
+    ApplicationManager.getApplication().runReadAction { generator.translateModule() }
+    return generator.build()
+}

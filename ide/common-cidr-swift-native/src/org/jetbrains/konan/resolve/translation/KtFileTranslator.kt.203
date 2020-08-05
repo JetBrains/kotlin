@@ -57,7 +57,7 @@ abstract class KtFileTranslator<T : KtSymbol, M : OCSymbol> {
 
     protected abstract fun translateMember(stub: Stub<*>, project: Project, file: VirtualFile, containingClass: T, processor: (M) -> Unit)
 
-    private class ObjCExportConfiguration(override val frameworkName: String) : ObjCExportLazy.Configuration {
+    class ObjCExportConfiguration(override val frameworkName: String) : ObjCExportLazy.Configuration {
         override fun getCompilerModuleName(moduleInfo: ModuleInfo): String =
             TODO() // no implementation in `KonanCompilerFrontendServices.kt` either
 
