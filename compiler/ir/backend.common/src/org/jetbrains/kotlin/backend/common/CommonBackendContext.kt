@@ -28,7 +28,7 @@ interface CommonBackendContext : BackendContext, LoggingContext {
     val scriptMode: Boolean
 
     fun throwUninitializedPropertyAccessException(builder: IrBuilderWithScope, name: String): IrExpression {
-        val throwErrorFunction = ir.symbols.ThrowUninitializedPropertyAccessException.owner
+        val throwErrorFunction = ir.symbols.throwUninitializedPropertyAccessException.owner
         return builder.irCall(throwErrorFunction).apply {
             putValueArgument(0, builder.irString(name))
         }

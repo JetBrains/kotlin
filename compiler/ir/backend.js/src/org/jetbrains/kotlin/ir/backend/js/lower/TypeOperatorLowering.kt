@@ -39,8 +39,8 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     private val devMode = context.devMode
 
     //NOTE: Should we define JS-own functions similar to current implementation?
-    private val throwCCE = context.ir.symbols.ThrowTypeCastException
-    private val throwNPE = context.ir.symbols.ThrowNullPointerException
+    private val throwCCE = context.ir.symbols.throwTypeCastException
+    private val throwNPE = context.ir.symbols.throwNullPointerException
 
     private val eqeq = context.irBuiltIns.eqeqSymbol
 

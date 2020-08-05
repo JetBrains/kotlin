@@ -67,12 +67,12 @@ class JvmDefaultArgumentStubGenerator(override val context: JvmBackendContext) :
         +irIfThen(
             context.irBuiltIns.unitType,
             irNot(irEqualsNull(irGet(handlerDeclaration))),
-            irThrow(irCall(this@JvmDefaultArgumentStubGenerator.context.ir.symbols.ThrowUnsupportOperationExceptionClass).apply {
+            irCall(this@JvmDefaultArgumentStubGenerator.context.ir.symbols.throwUnsupportedOperationException).apply {
                 putValueArgument(
                     0,
                     irString("Super calls with default arguments not supported in this target, function: ${irFunction.name.asString()}")
                 )
-            })
+            }
         )
     }
 }

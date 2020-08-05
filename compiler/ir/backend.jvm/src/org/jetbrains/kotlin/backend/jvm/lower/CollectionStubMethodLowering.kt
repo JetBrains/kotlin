@@ -83,13 +83,11 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
             valueParameters = function.valueParameters.map { it.copyWithSubstitution(this, substitutionMap) }
             // Function body consist only of throwing UnsupportedOperationException statement
             body = context.createIrBuilder(function.symbol).irBlockBody {
-                +irThrow(
-                    irCall(
-                        this@CollectionStubMethodLowering.context.ir.symbols.ThrowUnsupportOperationExceptionClass
-                    ).apply {
-                        putValueArgument(0, irString("Operation is not supported for read-only collection"))
-                    }
-                )
+                +irCall(
+                    this@CollectionStubMethodLowering.context.ir.symbols.throwUnsupportedOperationException
+                ).apply {
+                    putValueArgument(0, irString("Operation is not supported for read-only collection"))
+                }
             }
         }
     }

@@ -52,40 +52,6 @@ class JvmSymbols(
 
     private val generateOptimizedCallableReferenceSuperClasses = context.state.generateOptimizedCallableReferenceSuperClasses
 
-    private val nullPointerExceptionClass: IrClassSymbol =
-        createClass(FqName("java.lang.NullPointerException")) { klass ->
-            klass.addConstructor().apply {
-                addValueParameter("message", irBuiltIns.stringType)
-            }
-        }
-
-    override val ThrowNullPointerException: IrFunctionSymbol =
-        nullPointerExceptionClass.constructors.single()
-
-    override val ThrowNoWhenBranchMatchedException: IrSimpleFunctionSymbol
-        get() = error("Unused in JVM IR")
-
-    private val typeCastExceptionClass: IrClassSymbol =
-        createClass(FqName("kotlin.TypeCastException")) { klass ->
-            klass.addConstructor().apply {
-                addValueParameter("message", irBuiltIns.stringType)
-            }
-        }
-
-    override val ThrowTypeCastException: IrFunctionSymbol =
-        typeCastExceptionClass.constructors.single()
-
-    private val unsupportedOperationExceptionClass: IrClassSymbol =
-        createClass(FqName("java.lang.UnsupportedOperationException")) { klass ->
-            klass.addConstructor().apply {
-                addValueParameter("message", irBuiltIns.stringType.makeNullable())
-            }
-        }
-
-    val ThrowUnsupportOperationExceptionClass: IrFunctionSymbol =
-        unsupportedOperationExceptionClass.constructors.single()
-
-
     private fun createPackage(fqName: FqName): IrPackageFragment =
         IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(context.state.module, fqName)
 
@@ -119,9 +85,19 @@ class JvmSymbols(
     private val intrinsicsClass: IrClassSymbol = createClass(
         JvmClassName.byInternalName(IrIntrinsicMethods.INTRINSICS_CLASS_NAME).fqNameForTopLevelClassMaybeWithDollars
     ) { klass ->
+        klass.addFunction("throwNullPointerException", irBuiltIns.nothingType, isStatic = true).apply {
+            addValueParameter("message", irBuiltIns.stringType)
+        }
+        klass.addFunction("throwTypeCastException", irBuiltIns.nothingType, isStatic = true).apply {
+            addValueParameter("message", irBuiltIns.stringType)
+        }
+        klass.addFunction("throwUnsupportedOperationException", irBuiltIns.nothingType, isStatic = true).apply {
+            addValueParameter("message", irBuiltIns.stringType)
+        }
         klass.addFunction("throwUninitializedPropertyAccessException", irBuiltIns.unitType, isStatic = true).apply {
             addValueParameter("propertyName", irBuiltIns.stringType)
         }
+        klass.addFunction("throwKotlinNothingValueException", irBuiltIns.nothingType, isStatic = true)
         klass.addFunction("checkExpressionValueIsNotNull", irBuiltIns.unitType, isStatic = true).apply {
             addValueParameter("value", irBuiltIns.anyNType)
             addValueParameter("expression", irBuiltIns.stringType)
@@ -159,8 +135,23 @@ class JvmSymbols(
     val throwNpe: IrSimpleFunctionSymbol =
         intrinsicsClass.functions.single { it.owner.name.asString() == "throwNpe" }
 
-    override val ThrowUninitializedPropertyAccessException: IrSimpleFunctionSymbol =
+    override val throwNullPointerException: IrSimpleFunctionSymbol =
+        intrinsicsClass.functions.single { it.owner.name.asString() == "throwNullPointerException" }
+
+    override val throwNoWhenBranchMatchedException: IrSimpleFunctionSymbol
+        get() = error("Unused in JVM IR")
+
+    override val throwTypeCastException: IrSimpleFunctionSymbol =
+        intrinsicsClass.functions.single { it.owner.name.asString() == "throwTypeCastException" }
+
+    val throwUnsupportedOperationException: IrSimpleFunctionSymbol =
+        intrinsicsClass.functions.single { it.owner.name.asString() == "throwUnsupportedOperationException" }
+
+    override val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol =
         intrinsicsClass.functions.single { it.owner.name.asString() == "throwUninitializedPropertyAccessException" }
+
+    override val throwKotlinNothingValueException: IrSimpleFunctionSymbol =
+        intrinsicsClass.functions.single { it.owner.name.asString() == "throwKotlinNothingValueException" }
 
     val intrinsicStringPlus: IrFunctionSymbol =
         intrinsicsClass.functions.single { it.owner.name.asString() == "stringPlus" }
@@ -744,15 +735,6 @@ class JvmSymbols(
 
     val runSuspendFunction: IrSimpleFunctionSymbol =
         kotlinCoroutinesJvmInternalRunSuspendKt.functionByName("runSuspend")
-
-    override val ThrowKotlinNothingValueException: IrSimpleFunctionSymbol =
-        irFactory.buildFun {
-            name = Name.identifier("ThrowKotlinNothingValueException")
-            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
-            returnType = irBuiltIns.nothingType
-        }.apply {
-            parent = kotlinJvmInternalPackage
-        }.symbol
 }
 
 private fun IrClassSymbol.functionByName(name: String): IrSimpleFunctionSymbol =

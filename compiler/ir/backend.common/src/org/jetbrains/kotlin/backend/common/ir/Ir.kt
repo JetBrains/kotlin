@@ -274,13 +274,13 @@ open class BuiltinSymbolsBase(protected val irBuiltIns: IrBuiltIns, protected va
 @Suppress("MemberVisibilityCanBePrivate", "PropertyName")
 abstract class Symbols<out T : CommonBackendContext>(val context: T, irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) :
     BuiltinSymbolsBase(irBuiltIns, context.builtIns, symbolTable) {
-    abstract val ThrowNullPointerException: IrFunctionSymbol
-    abstract val ThrowNoWhenBranchMatchedException: IrFunctionSymbol
-    abstract val ThrowTypeCastException: IrFunctionSymbol
+    abstract val throwNullPointerException: IrSimpleFunctionSymbol
+    abstract val throwNoWhenBranchMatchedException: IrSimpleFunctionSymbol
+    abstract val throwTypeCastException: IrSimpleFunctionSymbol
 
-    abstract val ThrowUninitializedPropertyAccessException: IrSimpleFunctionSymbol
+    abstract val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol
 
-    abstract val ThrowKotlinNothingValueException: IrSimpleFunctionSymbol
+    abstract val throwKotlinNothingValueException: IrSimpleFunctionSymbol
 
     abstract val stringBuilder: IrClassSymbol
 
