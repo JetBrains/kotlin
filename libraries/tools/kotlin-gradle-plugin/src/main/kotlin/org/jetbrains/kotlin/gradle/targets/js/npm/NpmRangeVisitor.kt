@@ -9,6 +9,7 @@ import com.github.gundy.semver4j.generated.grammar.NodeSemverExpressionBaseVisit
 import com.github.gundy.semver4j.generated.grammar.NodeSemverExpressionParser
 import com.github.gundy.semver4j.model.Version
 import org.antlr.v4.runtime.tree.TerminalNode
+import org.gradle.api.GradleException
 import org.jetbrains.kotlin.gradle.utils.toListOrEmpty
 
 class NpmRangeVisitor : NodeSemverExpressionBaseVisitor<List<NpmRange>>() {
@@ -18,9 +19,24 @@ class NpmRangeVisitor : NodeSemverExpressionBaseVisitor<List<NpmRange>>() {
     override fun visitWildcard(ctx: NodeSemverExpressionParser.WildcardContext): List<NpmRange> =
         listOf(NpmRange())
 
-    // TODO check it
-    override fun visitWildcardRange(ctx: NodeSemverExpressionParser.WildcardRangeContext): List<NpmRange> =
-        listOf(eq(ctx.partialWildcardSemver().text))
+    override fun visitWildcardRange(ctx: NodeSemverExpressionParser.WildcardRangeContext): List<NpmRange> {
+        val partialWildcardSemver = ctx.partialWildcardSemver()
+        val versionText = partialWildcardSemver.text
+        val version = versionText
+            .replace(".x", "")
+            .replace(".X", "")
+            .replace(".*", "")
+            .let { Version.fromString(it) }
+
+        val nextVersion = when {
+            partialWildcardSemver.minor == null -> version.incrementMajor()
+            partialWildcardSemver.patch == null -> version.incrementMinor()
+            else -> throw GradleException("Incorrect version pattern $versionText")
+        }
+
+        return (gteq(version) intersect lt(nextVersion))
+            .toListOrEmpty()
+    }
 
     override fun visitOperator(ctx: NodeSemverExpressionParser.OperatorContext): List<NpmRange> {
         val eq: TerminalNode? = ctx.unaryOperator().EQ()
