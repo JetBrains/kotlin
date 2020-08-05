@@ -64,7 +64,7 @@ import java.util.concurrent.atomic.AtomicBoolean
  *   - [New] - not yet imported
  *   - [Imported] - imported
  */
-class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(), ScriptingSupport {
+class GradleBuildRootsManager(val project: Project) : GradleBuildRootsLocator(project), ScriptingSupport {
     private val manager: CompositeScriptConfigurationManager
         get() = ScriptConfigurationManager.getInstance(project) as CompositeScriptConfigurationManager
 

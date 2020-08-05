@@ -19,6 +19,8 @@
         <loader order="first" implementation="org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleLegacyScriptConfigurationLoader"/>
 
         <scriptingSupport implementation="org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager"/>
+
+        <settings.provider implementation="org.jetbrains.kotlin.idea.scripting.gradle.settings.GradleSettingsProvider"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
@@ -48,6 +50,7 @@
                      restartRequired="false"/>
 
         <projectService serviceImplementation="org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleStandaloneScriptActionsManager"/>
+        <projectService serviceImplementation="org.jetbrains.kotlin.idea.scripting.gradle.settings.StandaloneScriptsStorage"/>
     </extensions>
 
     <actions>
