@@ -398,7 +398,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             type != null -> {
                 val handler = getHandler(typeReference)
                 arrayOf(
-                    DescriptorRenderer.DEBUG_TEXT.renderType(type),
+                    DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type),
                     DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type)
                 ).any {
                     if (handler is SubstitutionHandler)

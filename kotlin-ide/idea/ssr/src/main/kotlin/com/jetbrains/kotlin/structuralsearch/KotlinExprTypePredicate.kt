@@ -8,7 +8,9 @@ import com.intellij.structuralsearch.StructuralSearchUtil
 import com.intellij.structuralsearch.impl.matcher.MatchContext
 import com.intellij.structuralsearch.impl.matcher.predicates.MatchPredicate
 import com.intellij.structuralsearch.impl.matcher.predicates.RegExpPredicate
+import org.jetbrains.kotlin.cfg.pseudocode.getSubtypesPredicate
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.resolveType
 import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
 import org.jetbrains.kotlin.idea.search.allScope
@@ -25,9 +27,12 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtStringTemplateEntry
 import org.jetbrains.kotlin.psi.psiUtil.isNull
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlinx.serialization.compiler.resolve.toSimpleType
 
 class KotlinExprTypePredicate(
@@ -60,7 +65,13 @@ class KotlinExprTypePredicate(
 
         if (regex) {
             val delegate = RegExpPredicate(search, !ignoreCase, baseName, false, target)
-            return delegate.doMatch(type.fqName.toString(), context, matchedNode)
+            val typesToTest = mutableListOf(type)
+            if (withinHierarchy) typesToTest.addAll(type.supertypes())
+
+            return typesToTest.any {
+                delegate.doMatch(DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it), context, matchedNode)
+                        || delegate.doMatch(DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(it), context, matchedNode)
+            }
         }
 
         return searchedTypeNames
