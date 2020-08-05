@@ -2,6 +2,10 @@ package usage
 
 import javapackage.one.JavaClassOne
 
+/*
+    missing import "kotlinpackage.two.extensionSelf"
+    KT-40856
+ */
 fun a() {
     JavaClassOne().<caret>a()
 
