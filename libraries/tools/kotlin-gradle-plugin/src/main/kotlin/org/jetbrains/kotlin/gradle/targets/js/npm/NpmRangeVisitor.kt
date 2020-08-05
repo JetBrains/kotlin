@@ -9,7 +9,6 @@ import com.github.gundy.semver4j.generated.grammar.NodeSemverExpressionBaseVisit
 import com.github.gundy.semver4j.generated.grammar.NodeSemverExpressionParser
 import com.github.gundy.semver4j.model.Version
 import org.antlr.v4.runtime.tree.TerminalNode
-import org.gradle.api.GradleException
 import org.jetbrains.kotlin.gradle.utils.toListOrEmpty
 
 class NpmRangeVisitor : NodeSemverExpressionBaseVisitor<List<NpmRange>>() {
@@ -31,7 +30,7 @@ class NpmRangeVisitor : NodeSemverExpressionBaseVisitor<List<NpmRange>>() {
         val nextVersion = when {
             partialWildcardSemver.minor == null -> version.incrementMajor()
             partialWildcardSemver.patch == null -> version.incrementMinor()
-            else -> throw GradleException("Incorrect version pattern $versionText")
+            else -> return version(version)
         }
 
         return (gteq(version) intersect lt(nextVersion))
@@ -84,7 +83,14 @@ class NpmRangeVisitor : NodeSemverExpressionBaseVisitor<List<NpmRange>>() {
     }
 
     override fun visitFullySpecifiedSemver(ctx: NodeSemverExpressionParser.FullySpecifiedSemverContext): List<NpmRange> =
-        version(ctx.fullSemver().text)
+        visitFullSemver(ctx.fullSemver())
+
+    override fun visitFullSemver(ctx: NodeSemverExpressionParser.FullSemverContext): List<NpmRange> =
+        version(ctx.text)
+
+    override fun visitHyphenatedRangeOfFullySpecifiedVersions(ctx: NodeSemverExpressionParser.HyphenatedRangeOfFullySpecifiedVersionsContext): List<NpmRange> =
+        (gteq(ctx.left.text) intersect lteq(ctx.right.text))
+            .toListOrEmpty()
 
     override fun visitLogicalAndOfSimpleExpressions(ctx: NodeSemverExpressionParser.LogicalAndOfSimpleExpressionsContext): List<NpmRange> =
         try {
@@ -112,7 +118,7 @@ class NpmRangeVisitor : NodeSemverExpressionBaseVisitor<List<NpmRange>>() {
         version(Version.fromString(version))
 
     private fun version(version: Version): List<NpmRange> =
-        gt(version) union lt(version)
+        (gteq(version) intersect lteq(version)).toListOrEmpty()
 
     private fun lt(version: String): NpmRange =
         lt(Version.fromString(version))
