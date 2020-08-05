@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeWrongNumberOfTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.providers.bindSymbolToLookupTag
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -115,9 +116,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
                 val n = symbol.fir.typeParameters.size - typeArguments.size
                 if (n < 0) {
                     typeArguments = (1..symbol.fir.typeParameters.size).map {
-                        ConeClassErrorType(
-                            ConeSimpleDiagnostic("Type arguments number mismatch", DiagnosticKind.WrongNumberOfTypeArguments)
-                        )
+                        ConeClassErrorType(ConeWrongNumberOfTypeArgumentsError(typeArguments.size, symbol))
                     }.toTypedArray()
                 } else {
                     val argumentsFromOuterClassesAndParents = symbol.fir.typeParameters.takeLast(n).map {

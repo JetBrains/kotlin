@@ -88,6 +88,8 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
             is ConeTypeMismatchError -> FirErrors.TYPE_MISMATCH.on(source, diagnostic.expectedType, diagnostic.actualType)
             is ConeUnexpectedTypeArgumentsError -> FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.on(diagnostic.source.safeAs() ?: source)
             is ConeIllegalAnnotationError -> FirErrors.NOT_AN_ANNOTATION_CLASS.on(source, diagnostic.name.asString())
+            is ConeWrongNumberOfTypeArgumentsError ->
+                FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(source, diagnostic.desiredCount, diagnostic.type)
             is ConeSimpleDiagnostic -> if (source.kind is FirFakeSourceElementKind) {
                 null
             } else if (diagnostic.kind == SymbolNotFound) {
@@ -118,7 +120,6 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
             RecursionInImplicitTypes -> FirErrors.RECURSION_IN_IMPLICIT_TYPES
             Java -> FirErrors.ERROR_FROM_JAVA_RESOLUTION
             SuperNotAllowed -> FirErrors.SUPER_IS_NOT_AN_EXPRESSION
-            WrongNumberOfTypeArguments -> FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS
             ExpressionRequired -> FirErrors.EXPRESSION_REQUIRED
             JumpOutsideLoop -> FirErrors.BREAK_OR_CONTINUE_OUTSIDE_A_LOOP
             NotLoopLabel -> FirErrors.NOT_A_LOOP_LABEL
