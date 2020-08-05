@@ -19,6 +19,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.HeavyPlatformTestCase
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.util.indexing.FileBasedIndex
+import com.intellij.util.io.ZipUtil
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -30,6 +31,8 @@ import org.jetbrains.kotlin.test.util.jarRoot
 import org.jetbrains.kotlin.test.util.projectLibrary
 import org.junit.runner.RunWith
 import java.io.File
+import java.io.FileOutputStream
+import java.util.zip.ZipOutputStream
 
 @RunWith(JUnit3RunnerWithInners::class)
 abstract class AbstractScriptTemplatesFromDependenciesTest : HeavyPlatformTestCase() {
@@ -137,6 +140,20 @@ abstract class AbstractScriptTemplatesFromDependenciesTest : HeavyPlatformTestCa
 
     private fun packJar(dir: File): File {
         val contentDir = KotlinTestUtils.tmpDirForReusableFolder("folderForLibrary-${getTestName(true)}")
-        return MockLibraryUtil.createJarFile(contentDir, dir, "templates")
+        return createJarFile(contentDir, dir, "templates")
+    }
+
+    // Copied from `MockLibraryUtil.createJarFile` of old repo
+    private fun createJarFile(contentDir: File, dirToAdd: File, jarName: String, sourcesPath: String? = null): File {
+        val jarFile = File(contentDir, jarName + ".jar")
+
+        ZipOutputStream(FileOutputStream(jarFile)).use { zip ->
+            ZipUtil.addDirToZipRecursively(zip, jarFile, dirToAdd, "", null, null)
+            if (sourcesPath != null) {
+                ZipUtil.addDirToZipRecursively(zip, jarFile, File(sourcesPath), "src", null, null)
+            }
+        }
+
+        return jarFile
     }
 }
