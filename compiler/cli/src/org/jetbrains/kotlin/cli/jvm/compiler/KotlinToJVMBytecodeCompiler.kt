@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.analysis.registerExtendedCheckersComponent
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmClassCodegen
@@ -197,8 +198,10 @@ object KotlinToJVMBytecodeCompiler {
         }
 
         val projectConfiguration = environment.configuration
+        val extendedAnalysisMode = projectConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR_EXTENDED_CHECKERS)
+
         if (projectConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-            return compileModulesUsingFrontendIR(environment, buildFile, chunk)
+            return compileModulesUsingFrontendIR(environment, buildFile, chunk, extendedAnalysisMode)
         }
 
         val targetDescription = "in targets [" + chunk.joinToString { input -> input.getModuleName() + "-" + input.getModuleType() } + "]"
@@ -308,7 +311,12 @@ object KotlinToJVMBytecodeCompiler {
         configuration.addAll(JVMConfigurationKeys.MODULES, chunk)
     }
 
-    private fun compileModulesUsingFrontendIR(environment: KotlinCoreEnvironment, buildFile: File?, chunk: List<Module>): Boolean {
+    private fun compileModulesUsingFrontendIR(
+        environment: KotlinCoreEnvironment,
+        buildFile: File?,
+        chunk: List<Module>,
+        extendedAnalysisMode: Boolean
+    ): Boolean {
         val project = environment.project
         val performanceManager = environment.configuration.get(CLIConfigurationKeys.PERF_MANAGER)
 
@@ -357,6 +365,9 @@ object KotlinToJVMBytecodeCompiler {
                     project, environment.createPackagePartProvider(librariesScope)
                 )
                 it.extensionService.registerExtensions(BunchOfRegisteredExtensions.empty())
+                if (extendedAnalysisMode) {
+                    it.registerExtendedCheckersComponent()
+                }
             }
             val firProvider = (session.firProvider as FirProviderImpl)
             val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
@@ -383,6 +394,8 @@ object KotlinToJVMBytecodeCompiler {
                 ),
                 environment.messageCollector
             )
+
+            if (extendedAnalysisMode) return false
 
             val debugTargetDescription = "target " + module.getModuleName() + "-" + module.getModuleType() + " "
             val codeLines = environment.countLinesOfCode(ktFiles)
