@@ -10,7 +10,7 @@ import com.github.gundy.semver4j.generated.grammar.NodeSemverExpressionParser
 import com.github.gundy.semver4j.model.Version
 import org.antlr.v4.runtime.tree.TerminalNode
 
-class NpmVersionInvertedVisitor : NodeSemverExpressionBaseVisitor<List<NpmRange?>>() {
+class NpmRangeVisitor : NodeSemverExpressionBaseVisitor<List<NpmRange?>>() {
     override fun visitEmptyRange(ctx: NodeSemverExpressionParser.EmptyRangeContext): List<NpmRange?> =
         listOf(null)
 

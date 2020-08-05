@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import com.github.gundy.semver4j.model.Version
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmVersionInvertedVisitor.Companion.GT
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmVersionInvertedVisitor.Companion.GTEQ
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmVersionInvertedVisitor.Companion.LT
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmVersionInvertedVisitor.Companion.LTEQ
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmRangeVisitor.Companion.GT
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmRangeVisitor.Companion.GTEQ
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmRangeVisitor.Companion.LT
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmRangeVisitor.Companion.LTEQ
 
 data class NpmRange(
     val startVersion: SemVer? = null,

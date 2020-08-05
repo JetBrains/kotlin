@@ -15,7 +15,7 @@ fun versionToNpmRanges(version: String): List<NpmRange?> {
     val lexer = NodeSemverExpressionLexer(ANTLRInputStream(version))
     val tokens = CommonTokenStream(lexer)
     val parser = NodeSemverExpressionParser(tokens)
-    return NpmVersionInvertedVisitor()
+    return NpmRangeVisitor()
         .visit(parser.rangeSet())!!
 }
 
@@ -59,5 +59,6 @@ fun buildNpmVersion(
     } else
         excludedRanges
             .mapNotNull { it intersect includedRange }
-            .joinToString(NpmVersionInvertedVisitor.OR)
+            .sortedBy { it.startVersion }
+            .joinToString(NpmRangeVisitor.OR)
 }
