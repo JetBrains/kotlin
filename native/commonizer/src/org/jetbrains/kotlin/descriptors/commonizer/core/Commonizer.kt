@@ -20,13 +20,14 @@ abstract class AbstractStandardCommonizer<T, R> : Commonizer<T, R> {
     private var state = State.EMPTY
 
     protected val hasResult: Boolean
-        get() = when (state) {
-            State.EMPTY, State.ERROR -> false
-            State.IN_PROGRESS -> true
-        }
+        get() = state == State.IN_PROGRESS
 
     final override val result: R
-        get() = if (hasResult) commonizationResult() else throw IllegalCommonizerStateException()
+        get() = when (state) {
+            State.EMPTY -> failInEmptyState()
+            State.ERROR -> failInErrorState()
+            State.IN_PROGRESS -> commonizationResult()
+        }
 
     final override fun commonizeWith(next: T): Boolean {
         val result = when (state) {
@@ -49,4 +50,16 @@ abstract class AbstractStandardCommonizer<T, R> : Commonizer<T, R> {
     protected abstract fun doCommonizeWith(next: T): Boolean
 }
 
-class IllegalCommonizerStateException : IllegalStateException("Illegal commonizer state: error or empty")
+@Suppress("unused")
+fun Commonizer<*, *>.failInEmptyState(): Nothing = throw IllegalCommonizerStateException("empty")
+
+@Suppress("unused")
+fun Commonizer<*, *>.failInErrorState(): Nothing = throw IllegalCommonizerStateException("empty")
+
+fun <T : Any> Commonizer<*, *>.checkState(value: T?, error: Boolean): T = when {
+    value == null -> failInEmptyState()
+    error -> failInErrorState()
+    else -> value
+}
+
+class IllegalCommonizerStateException(message: String) : IllegalStateException("Illegal commonizer state: $message")

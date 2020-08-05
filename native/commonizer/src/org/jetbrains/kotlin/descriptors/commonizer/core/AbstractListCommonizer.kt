@@ -22,7 +22,7 @@ abstract class AbstractListCommonizer<T, R>(
     private var error = false
 
     final override val result: List<R>
-        get() = commonizers?.takeIf { !error }?.map { it.result } ?: throw IllegalCommonizerStateException()
+        get() = checkState(commonizers, error).map { it.result }
 
     final override fun commonizeWith(next: List<T>): Boolean {
         if (error)
