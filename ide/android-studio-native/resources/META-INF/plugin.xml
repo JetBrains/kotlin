@@ -1,17 +1,33 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
-  <xi:include href="/META-INF/CocoaCommonPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
-  <xi:include href="/META-INF/NonCidrNative.xml" xpointer="xpointer(/idea-plugin/*)"/>
   <id>com.jetbrains.kmm</id>
-  <name>Mobile Multiplatform</name>
+
+  <name>Kotlin Multiplatform Mobile</name>
+  <description><![CDATA[
+    Kotlin Multiplatform Mobile (KMM) plugin helps you develop applications that work both on Android and iOS.
+    With KMM, you can write business logic only once and share code on both platforms.
+    Write, run, test and debug shared code in Android Studio, without switching to other IDEs.<br>
+    Learn more about KMM: <a href="https://kotlinlang.org/lp/mobile/">https://kotlinlang.org/lp/mobile/</a>
+    ]]>
+  </description>
   <version>0.1</version>
   <vendor url="http://jetbrains.com">JetBrains</vendor>
+  <idea-version since-build="201.0" until-build="201.*"/>
+
+  <change-notes><![CDATA[
+    <h3>0.1:</h3>
+    Kotlin Multiplatform Mobile (KMM) plugin is out!<br>
+    It is still in beta but we are working hard on stabilizing it.
+    We'll be very thankful if you report any bugs you faced and feature requests to <a href="https://youtrack.jetbrains.com/newIssue?project=KT">our issue tracker</a>.<br>
+    This version requires Kotlin Plugin: "1.4.255-SNAPSHOT"
+    ]]>
+  </change-notes>
 
   <depends>com.intellij.modules.androidstudio</depends>
   <depends>org.jetbrains.kotlin</depends>
   <depends>org.jetbrains.android</depends>
 
-  <description>Kotlin for cross-platform mobile development.</description>
-  <idea-version since-build="201.0" until-build="201.*"/>
+  <xi:include href="/META-INF/CocoaCommonPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <xi:include href="/META-INF/NonCidrNative.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <project-components>
     <component>
@@ -29,7 +45,7 @@
     <configurationType implementation="com.jetbrains.kmm.ios.AppleRunConfigurationType"/>
     <programRunner implementation="com.jetbrains.kmm.ios.execution.AppleRunner"/>
     <stepsBeforeRunProvider implementation="com.jetbrains.kmm.ios.BuildIOSAppTaskProvider"/>
-    <externalSystem.debuggerBackend implementation="com.jetbrains.kmm.ios.LLDBBackend" />
+    <externalSystem.debuggerBackend implementation="com.jetbrains.kmm.ios.LLDBBackend"/>
     <configurationType implementation="com.jetbrains.kmm.ios.execution.BinaryRunConfigurationType"/>
     <postStartupActivity implementation="com.jetbrains.kmm.versions.KmmPluginStartupActivity"/>
   </extensions>
@@ -47,6 +63,6 @@
   </extensions>
 
   <extensions defaultExtensionNs="com.android.tools.idea.wizard.template">
-    <wizardTemplateProvider implementation="com.jetbrains.kmm.wizard.KmmTemplateProvider" />
+    <wizardTemplateProvider implementation="com.jetbrains.kmm.wizard.KmmTemplateProvider"/>
   </extensions>
 </idea-plugin>

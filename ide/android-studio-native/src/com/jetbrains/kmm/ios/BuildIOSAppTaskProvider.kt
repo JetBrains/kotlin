@@ -47,9 +47,9 @@ class BuildIOSAppTask : BeforeRunTask<BuildIOSAppTask>(BUILD_IOS_APP_TASK_ID) {
 }
 
 class BuildIOSAppTaskProvider : BeforeRunTaskProvider<BuildIOSAppTask>() {
-    override fun getName() = "Build iOS app"
-
     override fun getId() = BUILD_IOS_APP_TASK_ID
+    override fun getName() = "Build iOS application"
+    override fun getIcon() = AppleRunConfigurationType.ICON
 
     override fun createTask(runConfiguration: RunConfiguration): BuildIOSAppTask? =
         if (runConfiguration is AppleRunConfiguration) BuildIOSAppTask() else null

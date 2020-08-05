@@ -13,7 +13,7 @@ import com.intellij.ui.IconManager
 
 class AppleRunConfigurationType : ConfigurationTypeBase(
     ID,
-    "iOS App",
+    "iOS Application",
     "Kotlin multiplatform mobile iOS application",
     ICON
 ) {
@@ -23,7 +23,7 @@ class AppleRunConfigurationType : ConfigurationTypeBase(
 
     companion object {
         internal const val ID = "KmmRunConfiguration"
-        private val ICON = IconManager.getInstance().getIcon(
+        internal val ICON = IconManager.getInstance().getIcon(
             "/META-INF/appleRunConfigurationIcon.svg",
             AppleRunConfigurationType::class.java
         )

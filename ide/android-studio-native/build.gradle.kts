@@ -121,23 +121,26 @@ projectTest {
     useAndroidSdk()
 }
 
-fun replaceVersion(versionFile: File, versionPrefix: String, replacement: (MatchResult) -> String) {
-    check(versionFile.isFile) { "Version file $versionFile is not found" }
-    val text = versionFile.readText()
+fun replaceVersion(file: File, versionPrefix: String, replacement: (MatchResult) -> String) {
+    check(file.isFile) { "$file is not found" }
+    val text = file.readText()
     val pattern = Regex("$versionPrefix\"([^\"]+)\"")
-    val match = pattern.find(text) ?: error("Version pattern is missing in file $versionFile")
+    val match = pattern.find(text) ?: error("Version prefix \"$versionPrefix\" is missing in file $file")
     val newValue = replacement(match)
-    versionFile.writeText(text.replaceRange(match.groups[1]!!.range, newValue))
+    file.writeText(text.replaceRange(match.groups[1]!!.range, newValue))
 }
 
 val writePluginVersion by tasks.creating {
-    val versionFile = project(":kotlin-ultimate:ide:android-studio-native")
-        .projectDir
-        .resolve("src/com/jetbrains/kmm/versions/VersionsUtils.kt")
+    val projectDir = project(":kotlin-ultimate:ide:android-studio-native").projectDir
+    val versionFile = projectDir.resolve("src/com/jetbrains/kmm/versions/VersionsUtils.kt")
+    val pluginXmlFiles = projectDir.resolve("resources/META-INF").listFiles { f ->
+        f.name.startsWith("plugin.xml")
+    } ?: emptyArray()
 
     inputs.property("version", kmmPluginVersion)
     inputs.property("kotlinVersion", kotlinPluginVersion)
     outputs.file(versionFile)
+    outputs.files(pluginXmlFiles)
 
     replaceVersion(versionFile, "const val pluginVersion: String = ") {
         kmmPluginVersion
@@ -145,6 +148,11 @@ val writePluginVersion by tasks.creating {
 
     replaceVersion(versionFile, "const val compiledAgainstKotlin: String = ") {
         kotlinPluginVersion
+    }
+    pluginXmlFiles.forEach { f ->
+        replaceVersion(f, "This version requires Kotlin Plugin: ") {
+            kotlinPluginVersion
+        }
     }
 }
 

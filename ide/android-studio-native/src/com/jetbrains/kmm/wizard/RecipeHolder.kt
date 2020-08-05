@@ -75,7 +75,7 @@ open class RecipeHolder {
     }
 
     protected val sharedTests = booleanParameter {
-        name = "Generate Test Stubs"
+        name = "Add sample tests for Shared Module"
         default = false
         help = "Adds test stubs into the common module"
     }

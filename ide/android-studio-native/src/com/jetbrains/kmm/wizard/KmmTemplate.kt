@@ -6,10 +6,7 @@
 package com.jetbrains.kmm.wizard
 
 import com.android.tools.idea.wizard.template.*
-import com.jetbrains.konan.KonanLog
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
-import org.jetbrains.kotlin.tools.projectWizard.core.onFailure
-import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 
 object KmmTemplate : RecipeHolder(), Template {
     override val category = Category.Application
@@ -21,7 +18,7 @@ object KmmTemplate : RecipeHolder(), Template {
 
     override val name: String = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.title")
     override val description: String = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.description")
-    override val documentationUrl = "https://www.jetbrains.com/lp/mobilecrossplatform/"
+    override val documentationUrl = "https://kotlinlang.org/lp/mobile/"
 
     override val recipe: Recipe = { data -> recipeImpl(data) }
 

@@ -37,11 +37,10 @@ import com.intellij.ui.layout.panel
 import com.jetbrains.kmm.KMM_LOG
 import com.jetbrains.kmm.wizard.templates.*
 import org.jetbrains.android.refactoring.getProjectProperties
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import javax.swing.Icon
 import javax.swing.JTextField
 
-
-private const val KMM_MODULE_NAME = "KMM Module"
 private const val HMMP_SUPPORT_KEY = "kotlin.mpp.enableGranularSourceSetsMetadata"
 
 private fun String.asDirectory(): String = this.replace(".", "/")
@@ -58,7 +57,7 @@ fun RecipeExecutor.generateKmmModule(project: Project, data: ModuleTemplateData,
     if (propertiesFile != null) {
         propertiesFile.findPropertyByKey(HMMP_SUPPORT_KEY)?.setValue("true") ?: propertiesFile.addProperty(HMMP_SUPPORT_KEY, "true")
     } else {
-        KMM_LOG.error("Failed to update gradle.properties during $KMM_MODULE_NAME instantiation")
+        KMM_LOG.error("Failed to update gradle.properties during KMM module instantiation")
     }
 
     val templates = mutableListOf(CommonMainPlatformKt, CommonMainGreetingKt, IosMainPlatformKt, AndroidMainPlatformKt)
@@ -80,8 +79,16 @@ fun RecipeExecutor.generateKmmModule(project: Project, data: ModuleTemplateData,
     save(androidManifestXml(entryPointsPackage), srcDir.resolve("androidMain/AndroidManifest.xml"))
 }
 
-class KmmWizardModel(project: Project, moduleParent: String, projectSyncInvoker: ProjectSyncInvoker) :
-    ModuleModel("KMM Module", "Create new KMM Module", true, ExistingProjectModelData(project, projectSyncInvoker)) {
+class KmmWizardModel(
+    project: Project,
+    moduleParent: String,
+    projectSyncInvoker: ProjectSyncInvoker
+) : ModuleModel(
+    KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.lib.title"),
+    "Create " + KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.lib.title"),
+    true,
+    ExistingProjectModelData(project, projectSyncInvoker)
+) {
 
     override val androidSdkInfo = OptionalValueProperty(
         AndroidVersionsInfo().apply { loadLocalVersions() }
@@ -110,11 +117,13 @@ class KmmWizardModel(project: Project, moduleParent: String, projectSyncInvoker:
     }
 }
 
-class ConfigureKmmModuleStep(model: KmmWizardModel) :
-    ConfigureModuleStep<KmmWizardModel>(model, FormFactor.MOBILE, title = KMM_MODULE_NAME) {
-
-    private val generateTestsCheck = JBCheckBox("Generate Test Stubs")
-    private val generatePackTaskCheck = JBCheckBox("Generate packForXcode")
+class ConfigureKmmModuleStep(model: KmmWizardModel) : ConfigureModuleStep<KmmWizardModel>(
+    model,
+    FormFactor.MOBILE,
+    title = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.lib.title")
+) {
+    private val generateTestsCheck = JBCheckBox("Add sample tests")
+    private val generatePackTaskCheck = JBCheckBox("Generate packForXcode Gradle task")
     private val packageNameField = JTextField()
 
     init {
@@ -166,9 +175,8 @@ class ConfigureKmmModuleStep(model: KmmWizardModel) :
 
 private class KmmModuleTemplateGalleryEntry : ModuleGalleryEntry {
     override val icon: Icon = IconLoader.findIcon("/META-INF/kmm-project-logo.png")!!
-    override val name: String = KMM_MODULE_NAME
-
-    override val description: String = "Kotlin Multiplatform Mobile module for sharing logic between iOS and Android mobile applications"
+    override val name: String = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.lib.title")
+    override val description: String = KotlinNewProjectWizardBundle.message("project.template.mpp.mobile.lib.description")
     override fun toString(): String = name
 
     override fun createStep(project: Project, projectSyncInvoker: ProjectSyncInvoker, moduleParent: String?): SkippableWizardStep<*> {
