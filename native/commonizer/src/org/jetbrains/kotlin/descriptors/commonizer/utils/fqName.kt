@@ -26,7 +26,14 @@ private val KOTLIN_NATIVE_SYNTHETIC_PACKAGES = ForwardDeclarationsFqNames.synthe
         fqName.asString()
     }
 
-private const val DARWIN_PACKAGE_PREFIX = "platform.darwin"
+private const val CINTEROP_PACKAGE = "kotlinx.cinterop"
+private const val DARWIN_PACKAGE = "platform.darwin"
+
+private val OBJC_INTEROP_CALLABLE_ANNOTATIONS = listOf(
+    "ObjCMethod",
+    "ObjCConstructor",
+    "ObjCFactory"
+)
 
 internal val FqName.isUnderStandardKotlinPackages: Boolean
     get() = hasAnyPrefix(STANDARD_KOTLIN_PACKAGES)
@@ -35,7 +42,7 @@ internal val FqName.isUnderKotlinNativeSyntheticPackages: Boolean
     get() = hasAnyPrefix(KOTLIN_NATIVE_SYNTHETIC_PACKAGES)
 
 internal val FqName.isUnderDarwinPackage: Boolean
-    get() = asString().hasPrefix(DARWIN_PACKAGE_PREFIX)
+    get() = asString().hasPrefix(DARWIN_PACKAGE)
 
 private fun FqName.hasAnyPrefix(prefixes: List<String>): Boolean =
     asString().let { fqName -> prefixes.any(fqName::hasPrefix) }
@@ -48,3 +55,6 @@ private fun String.hasPrefix(prefix: String): Boolean {
         else -> false
     }
 }
+
+internal val ClassId.isObjCInteropCallableAnnotation: Boolean
+    get() = packageFqName.asString() == CINTEROP_PACKAGE && relativeClassName.asString() in OBJC_INTEROP_CALLABLE_ANNOTATIONS

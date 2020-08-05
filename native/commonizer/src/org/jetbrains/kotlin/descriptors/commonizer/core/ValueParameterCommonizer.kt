@@ -39,7 +39,6 @@ class ValueParameterCommonizer(cache: CirClassifiersCache) : AbstractStandardCom
     override fun doCommonizeWith(next: CirValueParameter): Boolean {
         val result = !next.declaresDefaultValue
                 && varargElementType.isNull() == next.varargElementType.isNull()
-                && name == next.name
                 && returnType.commonizeWith(next.returnType)
 
         if (result) {
@@ -48,5 +47,9 @@ class ValueParameterCommonizer(cache: CirClassifiersCache) : AbstractStandardCom
         }
 
         return result
+    }
+
+    fun overwriteName(name: Name) {
+        this.name = name
     }
 }

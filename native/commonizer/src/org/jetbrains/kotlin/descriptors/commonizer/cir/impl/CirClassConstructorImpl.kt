@@ -14,8 +14,8 @@ data class CirClassConstructorImpl(
     override val typeParameters: List<CirTypeParameter>,
     override val visibility: Visibility,
     override val containingClassDetails: CirContainingClassDetails,
-    override val valueParameters: List<CirValueParameter>,
-    override val hasStableParameterNames: Boolean,
+    override var valueParameters: List<CirValueParameter>,
+    override var hasStableParameterNames: Boolean,
     override val isPrimary: Boolean,
     override val kind: CallableMemberDescriptor.Kind
 ) : CirClassConstructor

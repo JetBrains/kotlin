@@ -28,21 +28,21 @@ data class PropertyApproximationKey(
 /** Used for approximation of [SimpleFunctionDescriptor]s before running concrete [Commonizer]s */
 data class FunctionApproximationKey(
     val name: Name,
-    val valueParameters: List<Pair<Name, CirTypeSignature>>,
+    val valueParameters: List<CirTypeSignature>,
     val extensionReceiverParameter: CirTypeSignature?
 ) {
     constructor(function: SimpleFunctionDescriptor) : this(
         function.name.intern(),
-        function.valueParameters.map { it.name.intern() to it.type.signature },
+        function.valueParameters.map { it.type.signature },
         function.extensionReceiverParameter?.type?.signature
     )
 }
 
 /** Used for approximation of [ConstructorDescriptor]s before running concrete [Commonizer]s */
 data class ConstructorApproximationKey(
-    val valueParameters: List<Pair<Name, CirTypeSignature>>
+    val valueParameters: List<CirTypeSignature>
 ) {
     constructor(constructor: ConstructorDescriptor) : this(
-        constructor.valueParameters.map { it.name.intern() to it.type.signature }
+        constructor.valueParameters.map { it.type.signature }
     )
 }

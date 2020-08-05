@@ -17,19 +17,23 @@ class ClassConstructorCommonizer(cache: CirClassifiersCache) : AbstractStandardC
     private lateinit var kind: CallableMemberDescriptor.Kind
     private val visibility = VisibilityCommonizer.equalizing()
     private val typeParameters = TypeParameterListCommonizer(cache)
-    private val valueParameters = ValueParameterListCommonizer(cache)
-    private var hasStableParameterNames = true
+    private val valueParameters = CallableValueParametersCommonizer(cache)
 
-    override fun commonizationResult() = CirClassConstructorFactory.create(
-        annotations = emptyList(),
-        typeParameters = typeParameters.result,
-        visibility = visibility.result,
-        containingClassDetails = CirContainingClassDetailsFactory.DOES_NOT_MATTER,
-        valueParameters = valueParameters.result,
-        hasStableParameterNames = hasStableParameterNames,
-        isPrimary = isPrimary,
-        kind = kind
-    )
+    override fun commonizationResult(): CirClassConstructor {
+        val valueParameters = valueParameters.result
+        valueParameters.patchCallables()
+
+        return CirClassConstructorFactory.create(
+            annotations = emptyList(),
+            typeParameters = typeParameters.result,
+            visibility = visibility.result,
+            containingClassDetails = CirContainingClassDetailsFactory.DOES_NOT_MATTER,
+            valueParameters = valueParameters.valueParameters,
+            hasStableParameterNames = valueParameters.hasStableParameterNames,
+            isPrimary = isPrimary,
+            kind = kind
+        )
+    }
 
     override fun initialize(first: CirClassConstructor) {
         isPrimary = first.isPrimary
@@ -37,18 +41,12 @@ class ClassConstructorCommonizer(cache: CirClassifiersCache) : AbstractStandardC
     }
 
     override fun doCommonizeWith(next: CirClassConstructor): Boolean {
-        val result = !next.containingClassDetails.kind.isSingleton // don't commonize constructors for objects and enum entries
+        return !next.containingClassDetails.kind.isSingleton // don't commonize constructors for objects and enum entries
                 && next.containingClassDetails.modality != Modality.SEALED // don't commonize constructors for sealed classes (not not their subclasses)
                 && isPrimary == next.isPrimary
                 && kind == next.kind
                 && visibility.commonizeWith(next)
                 && typeParameters.commonizeWith(next.typeParameters)
-                && valueParameters.commonizeWith(next.valueParameters)
-
-        if (result) {
-            hasStableParameterNames = hasStableParameterNames && next.hasStableParameterNames
-        }
-
-        return result
+                && valueParameters.commonizeWith(next)
     }
 }

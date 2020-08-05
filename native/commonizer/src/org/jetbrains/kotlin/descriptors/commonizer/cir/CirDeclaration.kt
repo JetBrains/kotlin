@@ -52,8 +52,8 @@ interface CirHasTypeParameters {
 }
 
 interface CirCallableMemberWithParameters {
-    val valueParameters: List<CirValueParameter>
-    val hasStableParameterNames: Boolean
+    var valueParameters: List<CirValueParameter>
+    var hasStableParameterNames: Boolean
 }
 
 /**

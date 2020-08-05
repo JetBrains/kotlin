@@ -51,4 +51,9 @@ abstract class AbstractListCommonizer<T, R>(
 
         return !error
     }
+
+    protected fun forEachSingleElementCommonizer(action: (index: Int, Commonizer<T, R>) -> Unit) {
+        val commonizers = commonizers ?: failInEmptyState()
+        commonizers.forEachIndexed(action)
+    }
 }
