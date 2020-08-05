@@ -24,6 +24,10 @@ class KotlinGradleFinishBuildHandler {
     private var startMemory: Long? = null
     private val shouldReportMemoryUsage = System.getProperty(KotlinGradleBuildServices.SHOULD_REPORT_MEMORY_USAGE_PROPERTY) != null
 
+    fun buildStart() {
+        startMemory = getUsedMemoryKb()
+    }
+
     fun buildFinished(gradle: Gradle) {
         TaskLoggers.clear()
         TaskExecutionResults.clear()

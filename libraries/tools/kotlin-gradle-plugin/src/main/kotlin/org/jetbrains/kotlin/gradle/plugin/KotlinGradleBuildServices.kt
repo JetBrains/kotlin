@@ -88,13 +88,13 @@ internal class KotlinGradleBuildServices private constructor(
 
 
     private val log = Logging.getLogger(this.javaClass)
-    private var startMemory: Long? = null
-    private val shouldReportMemoryUsage = System.getProperty(SHOULD_REPORT_MEMORY_USAGE_PROPERTY) != null
+    private var buildHandler: KotlinGradleFinishBuildHandler? = null
 
     // There is function with the same name in BuildAdapter,
     // but it is called before any plugin can attach build listener
     fun buildStarted() {
-        startMemory = KotlinGradleFinishBuildHandler().getUsedMemoryKb()
+        buildHandler = KotlinGradleFinishBuildHandler()
+        buildHandler!!.buildStart()
 
         TaskLoggers.clear()
         TaskExecutionResults.clear()
@@ -103,7 +103,7 @@ internal class KotlinGradleBuildServices private constructor(
     }
 
     override fun buildFinished(result: BuildResult) {
-        KotlinGradleFinishBuildHandler().buildFinished(result.gradle!!)
+        buildHandler!!.buildFinished(result.gradle!!)
         instance = null
         log.kotlinDebug(DISPOSE_MESSAGE)
     }
