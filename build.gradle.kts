@@ -9,7 +9,7 @@ buildscript {
             if (cacheRedirectorEnabled) {
                 maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com")
             }
-            maven("https://dl.bintray.com/kotlin/kotlin-bootstrap")
+            maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap")
             jcenter()
         }
 
@@ -33,7 +33,7 @@ if (isStandaloneBuild) { // only for standalone build:
                 maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com")
             }
             jcenter()
-            maven("https://dl.bintray.com/kotlin/kotlin-bootstrap")
+            maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap")
             localMavenRepo?.let { maven(it) }
         }
 
