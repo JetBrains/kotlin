@@ -81,9 +81,18 @@ class DelegatedPropertyOptimizer {
         }
 
         // Remove the unused KProperty loads.
+        val locals = methodNode.localVariables.mapTo(mutableSetOf()) { it.index }
         for (kPropertyRanges in variableToDelegatedPropertyIndex.values) {
             for ((from, to) in kPropertyRanges.ranges) {
-                methodNode.instructions.removeRange(from, to)
+                // Stores to variables with LVT entries need to be preserved. We store `null` for
+                // unused KProperties, for compatibility with the JVM BE.
+                val storeInsn = to as VarInsnNode
+                if (storeInsn.`var` !in locals) {
+                    methodNode.instructions.removeRange(from, to)
+                } else {
+                    methodNode.instructions.removeRange(from, to.previous)
+                    methodNode.instructions.insertBefore(to, InsnNode(Opcodes.ACONST_NULL))
+                }
             }
         }
     }
