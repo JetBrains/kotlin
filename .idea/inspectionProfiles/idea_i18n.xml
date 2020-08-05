@@ -64,6 +64,7 @@
       <option name="ignoreAssignedToConstants" value="false" />
       <option name="ignoreToString" value="false" />
       <option name="nonNlsCommentPattern" value="NON-NLS" />
+      <option name="reportUnannotatedReferences" value="true" />
       <option name="ignoreAllButNls" value="true" />
     </inspection_tool>
     <inspection_tool class="I18nForm" enabled="true" level="WARNING" enabled_by_default="true">
