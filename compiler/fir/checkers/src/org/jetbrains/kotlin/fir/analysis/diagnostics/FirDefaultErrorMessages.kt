@@ -286,17 +286,17 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(FirErrors.WRONG_IMPLIES_CONDITION, "Wrong implies condition")
 
             // Extended checkers group
-            map.put(REDUNDANT_VISIBILITY_MODIFIER, "redundant visibility modifier")
-            map.put(REDUNDANT_MODALITY_MODIFIER, "redundant modality modifier")
-            map.put(REDUNDANT_RETURN_UNIT_TYPE, "redundant return 'unit' type")
-            map.put(REDUNDANT_EXPLICIT_TYPE, "redundant explicit type")
-            map.put(REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE, "redundant string template")
+            map.put(REDUNDANT_VISIBILITY_MODIFIER, "Redundant visibility modifier")
+            map.put(REDUNDANT_MODALITY_MODIFIER, "Redundant modality modifier")
+            map.put(REDUNDANT_RETURN_UNIT_TYPE, "Redundant return 'unit' type")
+            map.put(REDUNDANT_EXPLICIT_TYPE, "Redundant explicit type")
+            map.put(REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE, "Redundant string template")
             map.put(CAN_BE_VAL, "'var' can be 'val'")
-            map.put(CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT, "assignment can be replaced with operator assignment")
-            map.put(REDUNDANT_CALL_OF_CONVERSION_METHOD, "redundant call of conversion method")
+            map.put(CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT, "Assignment can be replaced with operator assignment")
+            map.put(REDUNDANT_CALL_OF_CONVERSION_METHOD, "Redundant call of conversion method")
             map.put(ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS, "Replace '==' with 'Arrays.equals'")
-            map.put(EMPTY_RANGE, "range is empty")
-            map.put(REDUNDANT_SETTER_PARAMETER_TYPE, "redundant setter parameter type")
+            map.put(EMPTY_RANGE, "Range is empty")
+            map.put(REDUNDANT_SETTER_PARAMETER_TYPE, "Redundant setter parameter type")
         }
     }
 }

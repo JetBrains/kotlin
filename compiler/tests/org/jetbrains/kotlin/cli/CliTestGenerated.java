@@ -250,6 +250,16 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/expression1.args");
         }
 
+        @TestMetadata("extendedCheckers.args")
+        public void testExtendedCheckers() throws Exception {
+            runTest("compiler/testData/cli/jvm/extendedCheckers.args");
+        }
+
+        @TestMetadata("extendedCheckersNoWarning.args")
+        public void testExtendedCheckersNoWarning() throws Exception {
+            runTest("compiler/testData/cli/jvm/extendedCheckersNoWarning.args");
+        }
+
         @TestMetadata("extraArgumentPassedInObsoleteForm.args")
         public void testExtraArgumentPassedInObsoleteForm() throws Exception {
             runTest("compiler/testData/cli/jvm/extraArgumentPassedInObsoleteForm.args");

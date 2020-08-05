@@ -52,6 +52,11 @@ fun FirSession.registerCheckersComponent() {
     register(CheckersComponent::class, CheckersComponent.componentWithDefaultCheckers())
 }
 
+fun FirSession.registerExtendedCheckersComponent() {
+    this.checkersComponent.register(ExtendedExpressionCheckers)
+    this.checkersComponent.register(ExtendedDeclarationCheckers)
+}
+
 private class ComposedDeclarationCheckers : DeclarationCheckers() {
     override val fileCheckers: List<FirFileChecker>
         get() = _fileCheckers
