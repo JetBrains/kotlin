@@ -96,6 +96,8 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
         super.tearDown()
     }
 
+    open fun useIrBackend() = false
+
     fun doTest(path: String) {
         val wholeFile = File(path)
         val wholeFileContents = FileUtil.loadFile(wholeFile, true)
@@ -108,7 +110,7 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
         val rawJvmTarget = preferences[DebuggerPreferenceKeys.JVM_TARGET]
         val jvmTarget = JvmTarget.fromString(rawJvmTarget) ?: error("Invalid JVM target value: $rawJvmTarget")
 
-        val compilerFacility = DebuggerTestCompilerFacility(testFiles, jvmTarget)
+        val compilerFacility = DebuggerTestCompilerFacility(testFiles, jvmTarget, useIrBackend())
 
         for (library in preferences[DebuggerPreferenceKeys.ATTACH_LIBRARY]) {
             if (library.startsWith("maven("))
@@ -151,7 +153,7 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
     abstract fun doMultiFileTest(files: TestFiles, preferences: DebuggerPreferences)
 
     override fun initOutputChecker(): OutputChecker {
-        return KotlinOutputChecker(getTestDirectoryPath(), testAppPath, appOutputPath)
+        return KotlinOutputChecker(getTestDirectoryPath(), testAppPath, appOutputPath, useIrBackend())
     }
 
     override fun setUpModule() {

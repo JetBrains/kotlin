@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 LineBreakpoint created at smartStepIntoWithDelegates.kt:24
 LineBreakpoint created at smartStepIntoWithDelegates.kt:32
 LineBreakpoint created at smartStepIntoWithDelegates.kt:40

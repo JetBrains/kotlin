@@ -216,6 +216,31 @@ fun main(args: Array<String>) {
                 model("stepping/custom", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doCustomTest")
             }
 
+            testClass<AbstractIrKotlinSteppingTest> {
+                model(
+                    "stepping/stepIntoAndSmartStepInto",
+                    pattern = KT_WITHOUT_DOTS_IN_NAME,
+                    testMethod = "doStepIntoTest",
+                    testClassName = "StepInto"
+                )
+                model(
+                    "stepping/stepIntoAndSmartStepInto",
+                    pattern = KT_WITHOUT_DOTS_IN_NAME,
+                    testMethod = "doSmartStepIntoTest",
+                    testClassName = "SmartStepInto"
+                )
+                model(
+                    "stepping/stepInto",
+                    pattern = KT_WITHOUT_DOTS_IN_NAME,
+                    testMethod = "doStepIntoTest",
+                    testClassName = "StepIntoOnly"
+                )
+                model("stepping/stepOut", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doStepOutTest")
+                model("stepping/stepOver", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doStepOverTest")
+                model("stepping/filters", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doStepIntoTest")
+                model("stepping/custom", pattern = KT_WITHOUT_DOTS_IN_NAME, testMethod = "doCustomTest")
+            }
+
             testClass<AbstractKotlinEvaluateExpressionTest> {
                 model("evaluation/singleBreakpoint", testMethod = "doSingleBreakpointTest")
                 model("evaluation/multipleBreakpoints", testMethod = "doMultipleBreakpointsTest")
