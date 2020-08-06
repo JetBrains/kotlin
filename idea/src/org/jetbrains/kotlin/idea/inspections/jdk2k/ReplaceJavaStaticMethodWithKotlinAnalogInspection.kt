@@ -82,11 +82,21 @@ class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspecti
                     "java.lang.$javaPrimitive.toString",
                     "kotlin.primitives.$kotlinPrimitive.toString",
                     ToExtensionFunctionWithNullableReceiver
-                ) {
-                    val valueArguments = it.valueArguments
-                    if (valueArguments.size != 1) return@Replacement false
-                    javaPrimitive != "Character" ||
-                            valueArguments.first().getArgumentExpression()?.getType(it.analyze(BodyResolveMode.PARTIAL))?.isChar() == true
+                ) { call ->
+                    val valueArguments = call.valueArguments
+                    when {
+                        valueArguments.size != 1 -> false
+                        javaPrimitive != "Character" -> true
+                        else -> {
+                            val singleArgument = valueArguments.single().getArgumentExpression()
+                            if (singleArgument != null) {
+                                val context = call.analyze(BodyResolveMode.PARTIAL)
+                                singleArgument.getType(context)?.isChar() == true
+                            } else {
+                                false
+                            }
+                        }
+                    }
                 },
                 Replacement(
                     "java.lang.$javaPrimitive.compare",
