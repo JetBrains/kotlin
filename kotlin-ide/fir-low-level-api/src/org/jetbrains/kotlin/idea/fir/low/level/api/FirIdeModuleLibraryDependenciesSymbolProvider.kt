@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirDependenciesSymbolProv
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.isLibraryClasses
 import org.jetbrains.kotlin.idea.caches.resolve.IDEPackagePartProvider
-import javax.annotation.concurrent.NotThreadSafe
+import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.NotThreadSafe
 
 
 @NotThreadSafe

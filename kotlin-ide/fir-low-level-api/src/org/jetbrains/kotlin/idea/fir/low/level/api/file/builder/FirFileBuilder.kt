@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.createTransformerBasedProce
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirIdeSessionProvider
 import org.jetbrains.kotlin.psi.KtFile
-import javax.annotation.concurrent.ThreadSafe
+import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.ThreadSafe
 
 /**
  * Responsible for building [FirFile] by [KtFile]
