@@ -55,6 +55,13 @@ internal class FloatingPointRangeHeaderInfo(
     override fun asReversed(): HeaderInfo? = null
 }
 
+internal class ComparableRangeInfo(
+    val start: IrExpression,
+    val endInclusive: IrExpression
+) : HeaderInfo() {
+    override fun asReversed(): HeaderInfo? = null
+}
+
 internal sealed class NumericHeaderInfo(
     val progressionType: ProgressionType,
     val first: IrExpression,
