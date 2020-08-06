@@ -11,7 +11,7 @@ import kotlin.test.assertTrue
 
 class NpmRangeTest {
     @Test
-    fun maxStartWith() {
+    fun maxStartTest() {
         val nullRange1 = npmRange()
         val nullRange2 = npmRange()
         val maxStart1 = maxStart(
@@ -40,6 +40,105 @@ class NpmRangeTest {
         )
         assertTrue("Max start should be ${startRange2.startVersion} but $maxStart3 found") {
             maxStart3 == startRange2.startVersion
+        }
+    }
+
+    @Test
+    fun minStartTest() {
+        val nullRange1 = npmRange()
+        val nullRange2 = npmRange()
+        val minStart1 = minStart(
+            nullRange1,
+            nullRange2
+        )
+        assertTrue("Min start should be ${null} but $minStart1 found") {
+            minStart1 == null
+        }
+
+        val startRange1 = npmRange(
+            startMajor = 1
+        )
+        val minStart2 = minStart(
+            startRange1,
+            npmRange()
+        )
+        assertTrue("Min start should be ${null} but $minStart2 found") {
+            minStart2 == null
+        }
+
+        val startRange2 = npmRange(startMajor = 2)
+        val minStart3 = minStart(
+            startRange1,
+            startRange2
+        )
+        assertTrue("Min start should be ${startRange1.startVersion} but $minStart3 found") {
+            minStart3 == startRange1.startVersion
+        }
+    }
+
+    @Test
+    fun maxEndTest() {
+        val nullRange1 = npmRange()
+        val nullRange2 = npmRange()
+        val maxEnd1 = maxEnd(
+            nullRange1,
+            nullRange2
+        )
+        assertTrue("Max end should be ${null} but $maxEnd1 found") {
+            maxEnd1 == null
+        }
+
+        val endRange1 = npmRange(
+            endMajor = 1
+        )
+        val maxEnd2 = maxEnd(
+            endRange1,
+            npmRange()
+        )
+        assertTrue("Max end should be ${null} but $maxEnd2 found") {
+            maxEnd2 == null
+        }
+
+        val endRange2 = npmRange(endMajor = 2)
+        val maxEnd3 = maxEnd(
+            endRange1,
+            endRange2
+        )
+        assertTrue("Max end should be ${endRange2.endVersion} but $maxEnd3 found") {
+            maxEnd3 == endRange2.endVersion
+        }
+    }
+
+    @Test
+    fun minEndTest() {
+        val nullRange1 = npmRange()
+        val nullRange2 = npmRange()
+        val minEnd1 = minEnd(
+            nullRange1,
+            nullRange2
+        )
+        assertTrue("Min end should be ${nullRange1.endVersion} but $minEnd1 found") {
+            minEnd1 == nullRange1.endVersion
+        }
+
+        val endRange1 = npmRange(
+            endMajor = 1
+        )
+        val minEnd2 = minEnd(
+            endRange1,
+            npmRange()
+        )
+        assertTrue("Min end should be ${endRange1.endVersion} but $minEnd2 found") {
+            minEnd2 == endRange1.endVersion
+        }
+
+        val endRange2 = npmRange(endMajor = 2)
+        val minEnd3 = minEnd(
+            endRange1,
+            endRange2
+        )
+        assertTrue("Min end should be ${endRange1.endVersion} but $minEnd3 found") {
+            minEnd3 == endRange1.endVersion
         }
     }
 }
