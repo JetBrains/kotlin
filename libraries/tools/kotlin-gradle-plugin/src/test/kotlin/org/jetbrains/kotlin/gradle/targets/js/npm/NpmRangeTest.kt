@@ -11,6 +11,31 @@ import kotlin.test.assertTrue
 
 class NpmRangeTest {
     @Test
+    fun rangeInvertTest() {
+        fun assertInvert(invertible: NpmRange, expected: List<NpmRange>) {
+            val invert = invertible.invert()
+            assertTrue("Inverted $invertible should be $expected but found $invert") {
+                invert == expected
+            }
+        }
+
+        assertInvert(npmRange(), emptyList())
+
+        assertInvert(npmRange(endMajor = 1), listOf(npmRange(startMajor = 1, startInclusive = true)))
+        assertInvert(npmRange(startMajor = 1), listOf(npmRange(endMajor = 1, endInclusive = true)))
+        assertInvert(npmRange(endMajor = 1, endInclusive = true), listOf(npmRange(startMajor = 1)))
+        assertInvert(npmRange(startMajor = 1, startInclusive = true), listOf(npmRange(endMajor = 1)))
+
+        assertInvert(
+            npmRange(startMajor = 1, endMajor = 2),
+            listOf(
+                npmRange(endMajor = 1, endInclusive = true),
+                npmRange(startMajor = 2, startInclusive = true)
+            )
+        )
+    }
+
+    @Test
     fun hasIntersectionTest() {
         fun assertHasIntersection(range1: NpmRange, range2: NpmRange) =
             assertTrue("Range $range1 and $range2 expected to have intersection, but actual is not") {
