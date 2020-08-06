@@ -58,7 +58,7 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
             type.isReifiedTypeParameter ->
                 irIs(argument, type)
             argument.type.isNullable() && type.isNullable() -> {
-                irLetS(argument) { valueSymbol ->
+                irLetS(argument, irType = context.irBuiltIns.anyNType) { valueSymbol ->
                     context.oror(
                         irEqualsNull(irGet(valueSymbol.owner)),
                         irIs(irGet(valueSymbol.owner), type.makeNotNull())
@@ -76,7 +76,7 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
             builder.irAs(argument, type)
         argument.type.isNullable() && !type.isNullable() ->
             with(builder) {
-                irLetS(argument) { valueSymbol ->
+                irLetS(argument, irType = context.irBuiltIns.anyNType) { valueSymbol ->
                     irIfNull(
                         type,
                         irGet(valueSymbol.owner),
@@ -118,7 +118,11 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
                     expression.transformChildrenVoid()
                     expression
                 } else {
-                    irLetS(expression.argument.transformVoid(), IrStatementOrigin.SAFE_CALL) { valueSymbol ->
+                    irLetS(
+                        expression.argument.transformVoid(),
+                        IrStatementOrigin.SAFE_CALL,
+                        irType = context.irBuiltIns.anyNType
+                    ) { valueSymbol ->
                         irIfThenElse(
                             expression.type,
                             lowerInstanceOf(irGet(valueSymbol.owner), expression.typeOperand.makeNotNull()),
@@ -138,21 +142,13 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
                 val (startOffset, endOffset) = expression.extents()
                 val source = sourceViewFor(parent as IrDeclaration).subSequence(startOffset, endOffset).toString()
 
-                fun checkExpressionValue(valueSymbol: IrValueSymbol): IrExpression =
+                irLetS(expression.argument.transformVoid(), irType = context.irBuiltIns.anyNType) { valueSymbol ->
                     irComposite(resultType = expression.type) {
                         +irCall(checkExpressionValueIsNotNull).apply {
                             putValueArgument(0, irGet(valueSymbol.owner))
                             putValueArgument(1, irString(source))
                         }
                         +irGet(valueSymbol.owner)
-                    }
-
-                val argument = expression.argument.transformVoid()
-                if (argument is IrGetValue) {
-                    checkExpressionValue(argument.symbol)
-                } else {
-                    irLetS(argument) { valueSymbol ->
-                        checkExpressionValue(valueSymbol)
                     }
                 }
             }
