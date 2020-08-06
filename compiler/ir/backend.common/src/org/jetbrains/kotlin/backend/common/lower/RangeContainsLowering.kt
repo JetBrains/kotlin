@@ -35,12 +35,10 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 // TODO:
-// 1. Handle (kotlin.ranges.)ClosedRange.contains on (kotlin.ranges.)Comparable.rangeTo(Comparable).
-//    Make sure right extension function was called!
-// 2. Handle contains on ClosedFloatingPointRange non-literal expression (similar to DefaultProgressionHandler)
-// 3. Note for unsigned until, the decremented last is signed (see UntilHandler.kt:81). Rather than converting back to unsigned,
+// - Handle contains on ClosedFloatingPointRange non-literal expression (similar to DefaultProgressionHandler)
+// - Note for unsigned until, the decremented last is signed (see UntilHandler.kt:81). Rather than converting back to unsigned,
 //     should we remove the conversion call instead?
-// 4. Unsigned step has similar concerns as well. getProgressionLastElement return value is signed.
+// - Unsigned step has similar concerns as well. getProgressionLastElement return value is signed.
 
 val rangeContainsLoweringPhase = makeIrFilePhase(
     ::RangeContainsLowering,
@@ -133,6 +131,7 @@ private class Transformer(
         val upper: IrExpression
         val shouldUpperComeFirst: Boolean
         val useCompareTo: Boolean
+        val isNumericRange: Boolean
         val additionalNotEmptyCondition: IrExpression?
         val additionalStatements = mutableListOf<IrStatement>()
 
@@ -184,6 +183,7 @@ private class Transformer(
 
                 // `compareTo` must be used for UInt/ULong; they don't have intrinsic comparison operators.
                 useCompareTo = headerInfo.progressionType is UnsignedProgressionType
+                isNumericRange = true
                 additionalNotEmptyCondition = headerInfo.additionalNotEmptyCondition
             }
             is FloatingPointRangeHeaderInfo -> {
@@ -191,6 +191,15 @@ private class Transformer(
                 upper = headerInfo.endInclusive
                 shouldUpperComeFirst = false
                 useCompareTo = false
+                isNumericRange = true
+                additionalNotEmptyCondition = null
+            }
+            is ComparableRangeInfo -> {
+                lower = headerInfo.start
+                upper = headerInfo.endInclusive
+                shouldUpperComeFirst = false
+                useCompareTo = true
+                isNumericRange = false
                 additionalNotEmptyCondition = null
             }
             else -> return null
@@ -226,9 +235,9 @@ private class Transformer(
         // **  - Bound with side effect is stored in a temp variable to ensure evaluation even if right side is short-circuited.
         // *** - Bound with side effect is on left side of && to make sure it always gets evaluated.
 
-        val (argVar, argExpression) = createTemporaryVariableIfNecessary(argument, "containsArg")
-        val lowerExpression: IrExpression
-        val upperExpression: IrExpression
+        var (argVar, argExpression) = createTemporaryVariableIfNecessary(argument, "containsArg")
+        var lowerExpression: IrExpression
+        var upperExpression: IrExpression
         val useLowerClauseOnLeftSide: Boolean
         if (argVar != null) {
             val (lowerVar, tmpLowerExpression) = createTemporaryVariableIfNecessary(lower, "containsLower")
@@ -266,44 +275,57 @@ private class Transformer(
 
         // TODO: Handle unsigned (comparisonClass is currently null).
         val builtIns = context.irBuiltIns
-        val comparisonClass =
+        val comparisonClass = if (isNumericRange) {
             computeComparisonClass(this@Transformer.context.ir.symbols, lowerExpression.type, upperExpression.type, argExpression.type)
                 ?: return null
+        } else {
+            assert(headerInfo is ComparableRangeInfo)
+            this@Transformer.context.ir.symbols.comparable.owner
+        }
+
+        if (isNumericRange) {
+            lowerExpression = lowerExpression.castIfNecessary(comparisonClass)
+            upperExpression = upperExpression.castIfNecessary(comparisonClass)
+            argExpression = argExpression.castIfNecessary(comparisonClass)
+        }
 
         val lessOrEqualFun = builtIns.lessOrEqualFunByOperandType.getValue(if (useCompareTo) builtIns.intClass else comparisonClass.symbol)
         val compareToFun = comparisonClass.functions.singleOrNull {
             it.name == OperatorNameConventions.COMPARE_TO &&
                     it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null &&
-                    it.valueParameters.size == 1 && it.valueParameters[0].type == argument.type.makeNotNull()
+                    it.valueParameters.size == 1 && (!isNumericRange || it.valueParameters[0].type == argument.type.makeNotNull())
         } ?: return null
-        // TODO: Handle null. This can happen with an extension fun, e.g., IntRange.compareTo(String) (See rangeContainsString.kt).
 
+        // contains() function for ComparableRange is implemented as `value >= start && value <= endInclusive` (`value` is the argument).
+        // Therefore the dispatch receiver for the compareTo() calls should be the argument. This is important since the implementation
+        // for compareTo() may have side effects dependent on which expressions are the receiver and argument
+        // (see evaluationOrderForComparableRange.kt test).
         val lowerClause = if (useCompareTo) {
             irCall(lessOrEqualFun).apply {
+                putValueArgument(0, irInt(0))
+                putValueArgument(1, irCall(compareToFun).apply {
+                    dispatchReceiver = argExpression
+                    putValueArgument(0, lowerExpression)
+                })
+            }
+        } else {
+            irCall(lessOrEqualFun).apply {
+                putValueArgument(0, lowerExpression)
+                putValueArgument(1, argExpression)
+            }
+        }
+        val upperClause = if (useCompareTo) {
+            irCall(lessOrEqualFun).apply {
                 putValueArgument(0, irCall(compareToFun).apply {
-                    dispatchReceiver = lowerExpression.castIfNecessary(comparisonClass)
-                    putValueArgument(0, argExpression.castIfNecessary(comparisonClass))
+                    dispatchReceiver = argExpression.deepCopyWithSymbols()
+                    putValueArgument(0, upperExpression)
                 })
                 putValueArgument(1, irInt(0))
             }
         } else {
             irCall(lessOrEqualFun).apply {
-                putValueArgument(0, lowerExpression.castIfNecessary(comparisonClass))
-                putValueArgument(1, argExpression.castIfNecessary(comparisonClass))
-            }
-        }
-        val upperClause = if (useCompareTo) {
-            irCall(lessOrEqualFun).apply {
-                putValueArgument(0, irInt(0))
-                putValueArgument(1, irCall(compareToFun).apply {
-                    dispatchReceiver = upperExpression.castIfNecessary(comparisonClass)
-                    putValueArgument(0, argExpression.deepCopyWithSymbols().castIfNecessary(comparisonClass))
-                })
-            }
-        } else {
-            irCall(lessOrEqualFun).apply {
-                putValueArgument(0, argExpression.deepCopyWithSymbols().castIfNecessary(comparisonClass))
-                putValueArgument(1, upperExpression.castIfNecessary(comparisonClass))
+                putValueArgument(0, argExpression.deepCopyWithSymbols())
+                putValueArgument(1, upperExpression)
             }
         }
 
@@ -378,7 +400,11 @@ internal open class RangeHeaderInfoBuilder(context: CommonBackendContext, scopeO
         RangeToHandler(context)
     )
 
-    override val callHandlers = listOf(ReversedHandler(context, this), FloatingPointRangeToHandler)
+    override val callHandlers = listOf(
+        FloatingPointRangeToHandler,
+        ComparableRangeToHandler(context),
+        ReversedHandler(context, this)
+    )
 
     override val expressionHandlers = listOf(DefaultProgressionHandler(context))
 }
@@ -387,7 +413,7 @@ internal open class RangeHeaderInfoBuilder(context: CommonBackendContext, scopeO
 internal object FloatingPointRangeToHandler : HeaderInfoFromCallHandler<Nothing?> {
 
     override val matcher = SimpleCalleeMatcher {
-        fqName { it == FqName("kotlin.ranges.rangeTo") }
+        fqName { it == FqName("kotlin.ranges.${OperatorNameConventions.RANGE_TO}") }
         extensionReceiver { it != null && it.type.run { isFloat() || isDouble() } }
         parameterCount { it == 1 }
         parameter(0) { it.type.run { isFloat() || isDouble() } }
@@ -395,6 +421,22 @@ internal object FloatingPointRangeToHandler : HeaderInfoFromCallHandler<Nothing?
 
     override fun build(expression: IrCall, data: Nothing?, scopeOwner: IrSymbol) =
         FloatingPointRangeHeaderInfo(
+            start = expression.extensionReceiver!!,
+            endInclusive = expression.getValueArgument(0)!!
+        )
+}
+
+/** Builds a [HeaderInfo] for ranges of Comparables built using the `rangeTo` extension function. */
+internal class ComparableRangeToHandler(context: CommonBackendContext) : HeaderInfoFromCallHandler<Nothing?> {
+
+    override val matcher = SimpleCalleeMatcher {
+        fqName { it == FqName("kotlin.ranges.${OperatorNameConventions.RANGE_TO}") }
+        extensionReceiver { it != null && it.type.isSubtypeOfClass(context.ir.symbols.comparable) }
+        parameterCount { it == 1 }
+    }
+
+    override fun build(expression: IrCall, data: Nothing?, scopeOwner: IrSymbol) =
+        ComparableRangeInfo(
             start = expression.extensionReceiver!!,
             endInclusive = expression.getValueArgument(0)!!
         )
