@@ -446,6 +446,13 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
     }
 
+    override fun transformContractFunction(
+        contractFunction: FirContractFunction,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirDeclaration> {
+        return contractFunction.compose()
+    }
+
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,
         data: ResolutionMode

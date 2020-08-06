@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitTypeBodyResolveProcessor
+import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractFunctionResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.*
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
@@ -33,6 +34,7 @@ fun FirResolvePhase.createCompilerProcessorByPhase(
         ARGUMENTS_OF_PLUGIN_ANNOTATIONS -> FirAnnotationArgumentsResolveProcessor(session, scopeSession)
         EXTENSION_STATUS_UPDATE -> FirGlobalExtensionStatusProcessor(session, scopeSession)
         STATUS -> FirStatusResolveProcessor(session, scopeSession)
+        CONTRACT_FUNCTIONS -> FirContractFunctionResolveProcessor(session, scopeSession)
         CONTRACTS -> FirContractResolveProcessor(session, scopeSession)
         NEW_MEMBERS_GENERATION -> FirGlobalNewMemberGenerationProcessor(session, scopeSession)
         IMPLICIT_TYPES_BODY_RESOLVE -> FirImplicitTypeBodyResolveProcessor(session, scopeSession)
@@ -55,6 +57,7 @@ fun FirResolvePhase.createTransformerBasedProcessorByPhase(
         ARGUMENTS_OF_PLUGIN_ANNOTATIONS -> FirAnnotationArgumentsResolveProcessor(session, scopeSession)
         EXTENSION_STATUS_UPDATE -> FirTransformerBasedExtensionStatusProcessor(session, scopeSession)
         STATUS -> FirStatusResolveProcessor(session, scopeSession)
+        CONTRACT_FUNCTIONS -> FirContractFunctionResolveProcessor(session, scopeSession)
         CONTRACTS -> FirContractResolveProcessor(session, scopeSession)
         NEW_MEMBERS_GENERATION -> FirDummyTransformerBasedProcessor(session, scopeSession) // TODO: remove
         IMPLICIT_TYPES_BODY_RESOLVE -> FirImplicitTypeBodyResolveProcessor(session, scopeSession)

@@ -16,6 +16,7 @@ enum class FirResolvePhase {
     ARGUMENTS_OF_PLUGIN_ANNOTATIONS, // plugin phase
     EXTENSION_STATUS_UPDATE, // plugin phase
     STATUS,
+    CONTRACT_FUNCTIONS,
     CONTRACTS,
     NEW_MEMBERS_GENERATION, // plugin phase
     IMPLICIT_TYPES_BODY_RESOLVE,

@@ -252,6 +252,10 @@ open class FirBodyResolveTransformer(
         return declarationsTransformer.transformSimpleFunction(simpleFunction, data)
     }
 
+    override fun transformContractFunction(contractFunction: FirContractFunction, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
+        return declarationsTransformer.transformContractFunction(contractFunction, data)
+    }
+
     override fun <F : FirFunction<F>> transformFunction(function: FirFunction<F>, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         return declarationsTransformer.transformFunction(function, data)
     }

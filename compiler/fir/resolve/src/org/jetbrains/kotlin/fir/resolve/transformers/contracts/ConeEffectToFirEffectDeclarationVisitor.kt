@@ -1,24 +1,58 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.resolve.dfa.contracts
+package org.jetbrains.kotlin.fir.resolve.transformers.contracts
 
+import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
+import org.jetbrains.kotlin.fir.contracts.builder.buildEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.*
-import org.jetbrains.kotlin.fir.declarations.FirContractFunction
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.contracts.toFirEffectDeclaration
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-private object ConeConditionalEffectToFirVisitor : ConeContractDescriptionVisitor<FirExpression?, Map<Int, FirExpression>>() {
-    override fun visitConditionalEffectDeclaration(conditionalEffect: ConeConditionalEffectDeclaration, data: Map<Int, FirExpression>): FirExpression? {
-        return conditionalEffect.condition.accept(this, data)
+class ConeEffectToFirEffectDeclarationVisitor(
+    private val effectExtractor: ConeEffectExtractor
+) : ConeContractDescriptionVisitor<FirExpression?, Map<Int, FirExpression>>() {
+    override fun visitConditionalEffectDeclaration(
+        conditionalEffect: ConeConditionalEffectDeclaration,
+        data: Map<Int, FirExpression>
+    ): FirExpression? {
+        val effectDeclaration = conditionalEffect.effect.accept(this, data) as? FirEffectDeclaration
+        val condition = conditionalEffect.condition
+            .accept(this, data)
+            ?.accept(effectExtractor, null) as? ConeBooleanExpression
+        return if (effectDeclaration != null && condition != null) {
+            buildEffectDeclaration {
+                this.effect = ConeConditionalEffectDeclaration(effectDeclaration.effect, condition)
+            }
+        } else {
+            null
+        }
+    }
+
+    override fun visitReturnsEffectDeclaration(
+        returnsEffect: ConeReturnsEffectDeclaration,
+        data: Map<Int, FirExpression>
+    ): FirExpression? {
+        return returnsEffect.toFirEffectDeclaration()
+    }
+
+    override fun visitCallsEffectDeclaration(callsEffect: ConeCallsEffectDeclaration, data: Map<Int, FirExpression>): FirExpression? {
+        val parameter = callsEffect.valueParameterReference
+            .accept(this, data)
+            ?.accept(effectExtractor, null) as? ConeValueParameterReference
+        return if (parameter != null) {
+            return buildEffectDeclaration {
+                effect = ConeCallsEffectDeclaration(parameter, callsEffect.kind)
+            }
+        } else {
+            null
+        }
     }
 
     override fun visitConstantDescriptor(constantReference: ConeConstantReference, data: Map<Int, FirExpression>): FirExpression? {
@@ -52,7 +86,7 @@ private object ConeConditionalEffectToFirVisitor : ConeContractDescriptionVisito
     }
 
     override fun visitIsInstancePredicate(isInstancePredicate: ConeIsInstancePredicate, data: Map<Int, FirExpression>): FirExpression? {
-        val argument = isInstancePredicate.arg.accept(this@ConeConditionalEffectToFirVisitor, data) ?: return null
+        val argument = isInstancePredicate.arg.accept(this@ConeEffectToFirEffectDeclarationVisitor, data) ?: return null
         return buildTypeOperatorCall {
             argumentList = buildUnaryArgumentList(argument)
             operation = if (isInstancePredicate.isNegated) {
@@ -83,41 +117,6 @@ private object ConeConditionalEffectToFirVisitor : ConeContractDescriptionVisito
     private fun createConstNull(): FirConstExpression<*> = buildConstExpression(null, FirConstKind.Null, null)
 }
 
-fun ConeConditionalEffectDeclaration.buildContractFir(argumentMapping: Map<Int, FirExpression>): FirExpression? {
-    return condition.accept(ConeConditionalEffectToFirVisitor, argumentMapping)
+fun ConeEffectDeclaration.buildContractEffectFir(effectExtractor: ConeEffectExtractor, argumentMapping: Map<Int, FirExpression>): FirExpression? {
+    return this.accept(ConeEffectToFirEffectDeclarationVisitor(effectExtractor), argumentMapping)
 }
-
-fun createArgumentsMapping(qualifiedAccess: FirQualifiedAccess): Map<Int, FirExpression>? {
-    val argumentsMapping = mutableMapOf<Int, FirExpression>()
-    qualifiedAccess.extensionReceiver.takeIf { it != FirNoReceiverExpression }?.let { argumentsMapping[-1] = it }
-        ?: qualifiedAccess.dispatchReceiver.takeIf { it != FirNoReceiverExpression }?.let { argumentsMapping[-1] = it }
-    when (qualifiedAccess) {
-        is FirFunctionCall -> {
-            val function = qualifiedAccess.toResolvedCallableSymbol()?.fir
-            return when (function) {
-                is FirContractFunction -> getArgumentsToParametersMapping(function, qualifiedAccess, argumentsMapping)
-                is FirSimpleFunction -> getArgumentsToParametersMapping(function, qualifiedAccess, argumentsMapping)
-                else -> null
-            }
-        }
-        is FirVariableAssignment -> {
-            argumentsMapping[0] = qualifiedAccess.rValue
-        }
-    }
-    return argumentsMapping
-}
-
-private fun getArgumentsToParametersMapping(
-    function: FirFunction<*>,
-    functionCall: FirFunctionCall,
-    argumentsMapping: MutableMap<Int, FirExpression>
-): Map<Int, FirExpression>? {
-    val parameterToIndex = function.valueParameters.mapIndexed { index, parameter -> parameter to index }.toMap()
-    val callArgumentMapping = functionCall.argumentMapping ?: return null
-    for (argument in functionCall.arguments) {
-        argumentsMapping[parameterToIndex.getValue(callArgumentMapping.getValue(argument))] = argument.unwrap()
-    }
-    return argumentsMapping
-}
-
-private fun FirExpression.unwrap(): FirExpression = if (this is FirWrappedArgumentExpression) expression else this

@@ -128,6 +128,10 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
             visitCallableDeclaration(simpleFunction, data)
         }
 
+        override fun visitContractFunction(contractFunction: FirContractFunction, data: Pair<State, FirFile>) {
+            visitCallableDeclaration(contractFunction, data)
+        }
+
         override fun visitProperty(property: FirProperty, data: Pair<State, FirFile>) {
             visitCallableDeclaration(property, data)
         }
