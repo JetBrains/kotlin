@@ -11,6 +11,10 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmRangeVisitor.Companion.LT
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmRangeVisitor.Companion.LTEQ
 import org.jetbrains.kotlin.gradle.utils.toListOrEmpty
 
+/**
+[startVersion] or [endVersion] equaling null means Infinite on appropriate edge,
+In this case appropriate [startInclusive] or [endInclusive] do no matter
+ */
 data class NpmRange(
     val startVersion: SemVer? = null,
     val startInclusive: Boolean = false,
