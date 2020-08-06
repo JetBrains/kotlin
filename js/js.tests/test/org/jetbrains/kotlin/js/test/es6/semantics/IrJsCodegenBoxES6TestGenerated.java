@@ -41,11 +41,6 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
         }
 
-        @TestMetadata("annotatedObjectLiteral.kt")
-        public void testAnnotatedObjectLiteral() throws Exception {
-            runTest("compiler/testData/codegen/box/annotations/annotatedObjectLiteral.kt");
-        }
-
         @TestMetadata("nestedAnnotation.kt")
         public void testNestedAnnotation() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/nestedAnnotation.kt");
@@ -4180,6 +4175,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
         @TestMetadata("lambdaParameter.kt")
         public void testLambdaParameter() throws Exception {
             runTest("compiler/testData/codegen/box/contracts/lambdaParameter.kt");
+        }
+
+        @TestMetadata("listAppend.kt")
+        public void testListAppend() throws Exception {
+            runTest("compiler/testData/codegen/box/contracts/listAppend.kt");
         }
 
         @TestMetadata("valInWhen.kt")

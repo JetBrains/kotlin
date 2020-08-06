@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Errors.CAPTURED_VAL_INITIALIZATION
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.CAPTURED_IN_CLOSURE
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -58,7 +58,7 @@ class CapturingInClosureChecker : CallChecker {
         nameElement: PsiElement
     ) {
         if (variable !is PropertyDescriptor || scopeContainer !is AnonymousFunctionDescriptor || variable.isVar) return
-        if ((nameElement as KtExpression).getAssignmentByLHS() == null) return
+        if (!isLhsOfAssignment(nameElement as KtExpression)) return
         val scopeDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(scopeContainer) as? KtFunction ?: return
         if (scopeContainer.containingDeclaration !is ConstructorDescriptor) return
         if (!isExactlyOnceContract(trace.bindingContext, scopeDeclaration)) return
@@ -68,6 +68,11 @@ class CapturingInClosureChecker : CallChecker {
         if (!callee.isInline || (param.isCrossinline || !InlineUtil.isInlineParameter(param))) {
             trace.report(CAPTURED_VAL_INITIALIZATION.on(nameElement, variable))
         }
+    }
+
+    private fun isLhsOfAssignment(nameElement: KtExpression): Boolean {
+        val parent = nameElement.parent as? KtBinaryExpression ?: return false
+        return parent.operationToken == KtTokens.EQ && parent.left == nameElement
     }
 
     private fun isCapturedVariable(variableParent: DeclarationDescriptor, scopeContainer: DeclarationDescriptor): Boolean {
