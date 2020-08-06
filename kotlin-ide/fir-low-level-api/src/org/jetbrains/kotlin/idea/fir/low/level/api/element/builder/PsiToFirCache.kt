@@ -19,12 +19,9 @@ import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.isErrorElement
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtTypeReference
 import java.util.concurrent.ConcurrentHashMap
-import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
+import org.jetbrains.kotlin.psi.*
 
 /**
  * Belongs to a [org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState]
@@ -60,8 +57,15 @@ internal class FileCache(val ktFile: KtFile, firFile: FirFile, moduleFileCache: 
     }
 
     fun getFir(element: KtElement, containerFir: FirDeclaration): FirElement {
-        val psi = when (element) {
-            is KtPropertyDelegate -> element.expression ?: element
+        val psi = when {
+            element is KtPropertyDelegate -> element.expression ?: element
+            element is KtQualifiedExpression && element.selectorExpression is KtCallExpression -> {
+                /*
+                 KtQualifiedExpression with KtCallExpression in selector transformed in FIR to FirFunctionCall expression
+                 Which will have a receiver as qualifier
+                 */
+                element.selectorExpression ?: error("Incomplete code:\n${element.getElementTextInContext()}")
+            }
             else -> element
         }
         cache[psi]?.let { return it }
