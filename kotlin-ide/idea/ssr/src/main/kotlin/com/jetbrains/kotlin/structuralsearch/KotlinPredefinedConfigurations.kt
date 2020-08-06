@@ -3,6 +3,8 @@ package com.jetbrains.kotlin.structuralsearch
 import com.intellij.structuralsearch.PatternContext
 import com.intellij.structuralsearch.PredefinedConfigurationUtil.createSearchTemplateInfo
 import com.intellij.structuralsearch.plugin.ui.Configuration
+import org.jetbrains.annotations.Nls
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.KotlinFileType
 
 object KotlinPredefinedConfigurations {
@@ -14,9 +16,9 @@ object KotlinPredefinedConfigurations {
     private val INTERESTING_TYPE = KSSRBundle.message("category.interesting")
 
     private fun searchTemplate(
-        name: String,
-        pattern: String,
-        category: String,
+        @Nls name: String,
+        @NonNls pattern: String,
+        @Nls category: String,
         context: PatternContext = KotlinStructuralSearchProfile.DEFAULT_CONTEXT
     ) = createSearchTemplateInfo(name, pattern, category, KotlinFileType.INSTANCE, context)
 
@@ -113,7 +115,7 @@ object KotlinPredefinedConfigurations {
         // Comments, KDoc and Metadata
         searchTemplate(
             KSSRBundle.message("predefined.configuration.comments.containing.word"),
-            "// '_before bug '_after".trimIndent(),
+            "// '_before bug '_after",
             COMMENT_TYPE
         ),
         searchTemplate(

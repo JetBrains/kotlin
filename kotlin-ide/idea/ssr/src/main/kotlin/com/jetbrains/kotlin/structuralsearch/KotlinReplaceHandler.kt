@@ -18,7 +18,7 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         val replaceTemplate = MatcherImplUtil.createTreeFromText(
             info.replacement, PatternTreeContext.Block, options.matchOptions.fileType, project
         ).first()
-        val match = info.getMatch(0) ?: throw IllegalStateException("No match found.")
+        val match = info.getMatch(0) ?: throw IllegalStateException(KSSRBundle.message("error.no.match.found"))
         replaceTemplate.structuralReplace(match)
         CodeStyleManager.getInstance(project).reformat(replaceTemplate)
         (0 until info.matchesCount).mapNotNull(info::getMatch).forEach { it.replace(replaceTemplate) }
@@ -33,7 +33,7 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
 
     private fun KtClass.replaceClass(match: PsiElement): PsiElement {
         check(match is KtDeclaration) {
-            "Can't replace klass $text by ${match.text} because it is not a declaration."
+            KSSRBundle.message("error.can.t.replace.klass.0.by.1.because.it.is.not.a.declaration", text, match.text)
         }
         if(match !is KtClass) return replaceDeclaration(match)
 
@@ -56,7 +56,7 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
 
     private fun KtClassOrObject.replaceClassOrObject(match: PsiElement) : PsiElement {
         check(match is KtDeclaration) {
-            "Can't replace klass $text by ${match.text} because it is not a declaration."
+            KSSRBundle.message("error.can.t.replace.klass.0.by.1.because.it.is.not.a.declaration", text, match.text)
         }
         if(match !is KtClassOrObject) return replaceDeclaration(match)
 

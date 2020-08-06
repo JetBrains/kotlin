@@ -10,6 +10,7 @@ import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.handlers.LiteralWithSubstitutionHandler
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import com.intellij.util.containers.reverse
+import com.jetbrains.kotlin.structuralsearch.KSSRBundle
 import com.jetbrains.kotlin.structuralsearch.binaryExprOpName
 import com.jetbrains.kotlin.structuralsearch.getCommentText
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -480,7 +481,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 i++
             } else {
                 val curParam = params[i] ?: throw IllegalStateException(
-                    "Param can't be null at index $i in ${params.map { it?.text }}."
+                    KSSRBundle.message("error.param.can.t.be.null.at.index.0.in.1", i, params.map { it?.text })
                 )
                 params[i] = null
                 if (curParam.isVarArg) {
