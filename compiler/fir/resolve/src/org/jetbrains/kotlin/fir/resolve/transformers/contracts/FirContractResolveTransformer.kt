@@ -6,43 +6,20 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.contracts
 
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
-import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
-import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
-import org.jetbrains.kotlin.fir.contracts.builder.buildEffectDeclaration
-import org.jetbrains.kotlin.fir.contracts.builder.buildLegacyRawContractDescription
-import org.jetbrains.kotlin.fir.contracts.builder.buildResolvedContractDescription
-import org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration
+import org.jetbrains.kotlin.fir.contracts.*
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
-import org.jetbrains.kotlin.fir.contracts.toFirEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.*
-import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeContractDescriptionError
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeStarProjection.kind
-import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.resolve.transformers.obtainResolvedContractDescription
+import org.jetbrains.kotlin.fir.resolve.transformers.wrapEffectsInContractCall
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.name.Name
-import kotlin.contracts.contract
 
 class FirContractResolveTransformer(
     session: FirSession,
@@ -135,7 +112,12 @@ class FirContractResolveTransformer(
             dataFlowAnalyzer.enterContractDescription()
             return when (val contractDescription = owner.contractDescription) {
                 is FirLegacyRawContractDescription -> transformLegacyRawContractDescriptionOwner(owner, contractDescription)
-                is FirRawContractDescription -> transformRawContractDescriptionOwner(owner, contractDescription)
+                is FirRawContractDescription -> {
+                    wrapEffectsInContractCall(session, owner, contractDescription)
+                    val legacyRawContractDescription = owner.contractDescription as? FirLegacyRawContractDescription
+                        ?: return transformOwnerOfErrorContract(owner)
+                    transformLegacyRawContractDescriptionOwner(owner, legacyRawContractDescription)
+                }
                 else -> throw IllegalArgumentException("$owner has a contract description of an unknown type")
             }
         }
@@ -159,61 +141,16 @@ class FirContractResolveTransformer(
             val argument = contractCall.argument as? FirLambdaArgumentExpression ?: return transformOwnerOfErrorContract(owner)
             val lambdaBody = (argument.expression as FirAnonymousFunction).body ?: return transformOwnerOfErrorContract(owner)
 
-            val resolvedContractDescription = buildResolvedContractDescription {
-                val effectExtractor = ConeEffectExtractor(session, owner, valueParameters)
-                for (statement in lambdaBody.statements) {
-                    val effect = statement.accept(effectExtractor, null) as? ConeEffectDeclaration
-                    if (effect == null) {
-                        unresolvedEffects += statement
-                    } else {
-                        effects += effect.toFirEffectDeclaration(owner.source)
-                    }
-                }
-            }
+            val resolvedContractDescription = obtainResolvedContractDescription(
+                session,
+                transformer,
+                owner,
+                valueParameters,
+                lambdaBody
+            )
             owner.replaceContractDescription(resolvedContractDescription)
             dataFlowAnalyzer.exitContractDescription()
             return owner.compose()
-        }
-
-        private fun <T : FirContractDescriptionOwner> transformRawContractDescriptionOwner(
-            owner: T,
-            contractDescription: FirRawContractDescription
-        ): CompositeTransformResult<T> {
-            val effectsBlock = buildAnonymousFunction {
-                session = this@FirDeclarationsContractResolveTransformer.session
-                origin = FirDeclarationOrigin.Source
-                returnTypeRef = buildImplicitTypeRef()
-                receiverTypeRef = buildImplicitTypeRef()
-                symbol = FirAnonymousFunctionSymbol()
-                isLambda = true
-
-                body = buildBlock {
-                    contractDescription.rawEffects.forEach {
-                        statements += it
-                    }
-                }
-            }
-
-            val lambdaArgument = buildLambdaArgumentExpression {
-                expression = effectsBlock
-            }
-
-            val contractCall = buildFunctionCall {
-                calleeReference = buildSimpleNamedReference {
-                    name = Name.identifier("contract")
-                }
-                argumentList = buildArgumentList {
-                    arguments += lambdaArgument
-                }
-            }
-
-            val legacyRawContractDescription = buildLegacyRawContractDescription {
-                this.contractCall = contractCall
-            }
-
-            owner.replaceContractDescription(legacyRawContractDescription)
-
-            return transformLegacyRawContractDescriptionOwner(owner, legacyRawContractDescription)
         }
 
         private fun <T : FirContractDescriptionOwner> transformOwnerWithUnresolvedContract(owner: T): CompositeTransformResult<T> {
