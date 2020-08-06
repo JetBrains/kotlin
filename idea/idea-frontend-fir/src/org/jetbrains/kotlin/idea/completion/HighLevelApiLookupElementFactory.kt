@@ -91,7 +91,8 @@ private object ShortNamesRenderer {
 
     fun renderType(ktType: KtType): String = (ktType as? KtDenotableType)?.asString() ?: ""
 
-    private fun renderFunctionParameter(param: KtFunctionParameterSymbol) = "${param.name.asString()}: ${renderType(param.type)}"
+    private fun renderFunctionParameter(param: KtFunctionParameterSymbol): String =
+        "${if (param.isVararg) "vararg " else ""}${param.name.asString()}: ${renderType(param.type)}"
 }
 
 private fun Document.isTextAt(offset: Int, text: String) =
