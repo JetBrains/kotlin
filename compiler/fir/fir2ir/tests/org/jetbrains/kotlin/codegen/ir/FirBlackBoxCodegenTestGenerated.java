@@ -5156,6 +5156,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/contracts/lambdaParameter.kt");
         }
 
+        @TestMetadata("listAppend.kt")
+        public void testListAppend() throws Exception {
+            runTest("compiler/testData/codegen/box/contracts/listAppend.kt");
+        }
+
         @TestMetadata("valInWhen.kt")
         public void testValInWhen() throws Exception {
             runTest("compiler/testData/codegen/box/contracts/valInWhen.kt");

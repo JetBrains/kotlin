@@ -4191,6 +4191,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/contracts/lambdaParameter.kt");
         }
 
+        @TestMetadata("listAppend.kt")
+        public void testListAppend() throws Exception {
+            runTest("compiler/testData/codegen/box/contracts/listAppend.kt");
+        }
+
         @TestMetadata("valInWhen.kt")
         public void testValInWhen() throws Exception {
             runTest("compiler/testData/codegen/box/contracts/valInWhen.kt");
