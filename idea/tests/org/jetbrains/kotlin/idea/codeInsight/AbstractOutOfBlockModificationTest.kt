@@ -13,7 +13,6 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiModificationTrackerImpl
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.trackers.outOfBlockModificationCount
@@ -89,8 +88,6 @@ abstract class AbstractOutOfBlockModificationTest : KotlinLightCodeInsightFixtur
         val ktDeclaration: KtDeclaration? = PsiTreeUtil.getParentOfType(updateElement, KtDeclaration::class.java, false)
         val ktElement = ktExpression ?: ktDeclaration ?: return
         val facade = ktElement.containingKtFile.getResolutionFacade()
-
-        @OptIn(FrontendInternals::class)
         val session = facade.getFrontendService(ResolveSession::class.java)
 
         session.forceResolveAll()

@@ -22,7 +22,6 @@ import com.intellij.refactoring.classMembers.AbstractMemberInfoStorage
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
@@ -40,8 +39,6 @@ class KotlinMemberInfoStorage(
     classOrObject: KtClassOrObject,
     filter: (KtNamedDeclaration) -> Boolean = { true }
 ) : AbstractMemberInfoStorage<KtNamedDeclaration, PsiNamedElement, KotlinMemberInfo>(classOrObject, filter) {
-
-    @OptIn(FrontendInternals::class)
     override fun memberConflict(member1: KtNamedDeclaration, member: KtNamedDeclaration): Boolean {
         val descriptor1 = member1.resolveToDescriptorWrapperAware()
         val descriptor = member.resolveToDescriptorWrapperAware()

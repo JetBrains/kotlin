@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.core
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.analysis.computeTypeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -16,8 +15,6 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveToDescriptors
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
-import org.jetbrains.kotlin.idea.resolve.getDataFlowValueFactory
-import org.jetbrains.kotlin.idea.resolve.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstanceToExpression
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.name.FqName
@@ -118,11 +115,9 @@ fun Call.resolveCandidates(
     val callResolutionContext = BasicCallResolutionContext.create(
         bindingTrace, resolutionScope, this, expectedType, dataFlowInfo,
         ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-        false, resolutionFacade.getLanguageVersionSettings(),
-        resolutionFacade.getDataFlowValueFactory()
+        false, resolutionFacade.frontendService(),
+        resolutionFacade.frontendService()
     ).replaceCollectAllCandidates(true)
-
-    @OptIn(FrontendInternals::class)
     val callResolver = resolutionFacade.frontendService<CallResolver>()
 
     val results = callResolver.resolveFunctionCall(callResolutionContext)

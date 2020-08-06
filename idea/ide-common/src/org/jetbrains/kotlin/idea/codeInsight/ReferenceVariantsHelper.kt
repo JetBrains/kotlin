@@ -9,7 +9,6 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.*
@@ -41,7 +40,6 @@ import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import java.util.*
 
-@OptIn(FrontendInternals::class)
 class ReferenceVariantsHelper(
     private val bindingContext: BindingContext,
     private val resolutionFacade: ResolutionFacade,
@@ -465,7 +463,6 @@ private fun MemberScope.collectStaticMembers(
     )
 }
 
-@OptIn(FrontendInternals::class)
 fun ResolutionScope.collectSyntheticStaticMembersAndConstructors(
     resolutionFacade: ResolutionFacade,
     kindFilter: DescriptorKindFilter,

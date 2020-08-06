@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -27,8 +26,6 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
-import org.jetbrains.kotlin.idea.resolve.getDataFlowValueFactory
-import org.jetbrains.kotlin.idea.resolve.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.shouldNotConvertToProperty
@@ -167,8 +164,6 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
         if (function.shouldNotConvertToProperty(notProperties)) return null
 
         val resolutionScope = callExpression.getResolutionScope(bindingContext, resolutionFacade)
-
-        @OptIn(FrontendInternals::class)
         val property = findSyntheticProperty(function, resolutionFacade.getFrontendService(SyntheticScopes::class.java)) ?: return null
 
         if (KtTokens.KEYWORDS.types.any { it.toString() == property.name.asString() }) return null
@@ -249,11 +244,10 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
         val context = BasicCallResolutionContext.create(
             bindingTrace, resolutionScope, newCall, expectedType, dataFlowInfo,
             ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-            false, facade.getLanguageVersionSettings(),
-            facade.getDataFlowValueFactory()
+            false, facade.frontendService<LanguageVersionSettings>(),
+            facade.frontendService<DataFlowValueFactory>()
         )
 
-        @OptIn(FrontendInternals::class)
         val callResolver = facade.frontendService<CallResolver>()
         val result = callResolver.resolveSimpleProperty(context)
         return result.isSuccess && result.resultingDescriptor.original == property

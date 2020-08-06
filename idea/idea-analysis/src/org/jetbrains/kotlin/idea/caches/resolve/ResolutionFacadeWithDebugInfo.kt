@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.ResolverForProject
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -67,7 +66,6 @@ private class ResolutionFacadeWithDebugInfo(
     override val moduleDescriptor: ModuleDescriptor
         get() = delegate.moduleDescriptor
 
-    @FrontendInternals
     override fun <T : Any> getFrontendService(serviceClass: Class<T>): T {
         return wrapExceptions({ ResolvingWhat(serviceClass = serviceClass) }) {
             delegate.getFrontendService(serviceClass)
@@ -80,14 +78,12 @@ private class ResolutionFacadeWithDebugInfo(
         }
     }
 
-    @FrontendInternals
     override fun <T : Any> getFrontendService(element: PsiElement, serviceClass: Class<T>): T {
         return wrapExceptions({ ResolvingWhat(listOf(element), serviceClass = serviceClass) }) {
             delegate.getFrontendService(element, serviceClass)
         }
     }
 
-    @FrontendInternals
     override fun <T : Any> tryGetFrontendService(element: PsiElement, serviceClass: Class<T>): T? {
         return wrapExceptions({ ResolvingWhat(listOf(element), serviceClass = serviceClass) }) {
             delegate.tryGetFrontendService(element, serviceClass)
@@ -98,7 +94,6 @@ private class ResolutionFacadeWithDebugInfo(
         return delegate.getResolverForProject()
     }
 
-    @FrontendInternals
     override fun <T : Any> getFrontendService(moduleDescriptor: ModuleDescriptor, serviceClass: Class<T>): T {
         return wrapExceptions({ ResolvingWhat(serviceClass = serviceClass, moduleDescriptor = moduleDescriptor) }) {
             delegate.getFrontendService(moduleDescriptor, serviceClass)

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.analysis
 
-import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 
 @JvmOverloads
-@OptIn(FrontendInternals::class)
 fun KtExpression.computeTypeInfoInContext(
     scope: LexicalScope,
     contextExpression: KtExpression = this,
@@ -46,7 +44,6 @@ fun KtExpression.computeTypeInfoInContext(
 }
 
 @JvmOverloads
-@OptIn(FrontendInternals::class)
 fun KtExpression.analyzeInContext(
     scope: LexicalScope,
     contextExpression: KtExpression = this,

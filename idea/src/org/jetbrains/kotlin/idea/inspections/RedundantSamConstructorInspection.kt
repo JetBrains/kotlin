@@ -11,7 +11,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.codegen.SamCodegenUtil
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -120,8 +119,6 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             val originalCall = parentCall.getResolvedCall(context) ?: return false
 
             val dataFlow = context.getDataFlowInfoBefore(parentCall)
-
-            @OptIn(FrontendInternals::class)
             val callResolver = parentCall.getResolutionFacade().frontendService<CallResolver>()
             val newCall = CallWithConvertedArguments(originalCall.call, samConstructorCallArgumentMap)
 
@@ -164,7 +161,6 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             override fun getValueArguments() = newArguments
         }
 
-        @OptIn(FrontendInternals::class)
         fun samConstructorCallsToBeConverted(functionCall: KtCallExpression): Collection<KtCallExpression> {
             val valueArguments = functionCall.valueArguments
             if (valueArguments.none { canBeSamConstructorCall(it) }) return emptyList()
