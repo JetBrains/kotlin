@@ -44,17 +44,11 @@ data class NpmRange(
 }
 
 infix fun NpmRange.union(other: NpmRange): List<NpmRange> {
-    if (!isIntersect(other)) return listOf(this, other)
+    if (!hasIntersection(other)) return listOf(this, other)
 
-    val startVersion = when {
-        this.startVersion == null || other.startVersion == null -> null
-        else -> min(this.startVersion, other.startVersion)
-    }
+    val startVersion = minStart(this, other)
 
-    val endVersion = when {
-        this.endVersion == null || other.endVersion == null -> null
-        else -> max(this.endVersion, other.endVersion)
-    }
+    val endVersion = maxEnd(this, other)
 
     return NpmRange(
         startVersion = startVersion,
@@ -96,19 +90,11 @@ infix fun List<NpmRange>.intersect(others: List<NpmRange>): List<NpmRange> = fla
 }
 
 infix fun NpmRange.intersect(other: NpmRange): NpmRange? {
-    if (!isIntersect(other)) return null
+    if (!hasIntersection(other)) return null
 
-    val startVersion = when {
-        startVersion == null -> other.startVersion
-        other.startVersion == null -> startVersion
-        else -> max(this.startVersion, other.startVersion)
-    }
+    val startVersion = maxStart(this, other)
 
-    val endVersion = when {
-        endVersion == null -> other.endVersion
-        other.endVersion == null -> endVersion
-        else -> min(this.endVersion, other.endVersion)
-    }
+    val endVersion = minEnd(this, other)
 
     return NpmRange(
         startVersion = startVersion,
@@ -118,49 +104,34 @@ infix fun NpmRange.intersect(other: NpmRange): NpmRange? {
     )
 }
 
-infix fun NpmRange.isIntersect(other: NpmRange): Boolean {
-    if (this.startVersion == null) {
-        return other.startVersion == null || this.endVersion == null || other.startVersion < this.endVersion ||
-                (other.startInclusive && this.endInclusive && other.startVersion == this.endVersion)
-    }
-
-    if (other.startVersion == null) {
-        return other.endVersion == null || this.startVersion < other.endVersion ||
-                (this.startInclusive && other.endInclusive && this.startVersion == other.endVersion)
-    }
-
-    if (this.endVersion == null) {
-        return other.endVersion == null || other.endVersion > this.startVersion ||
-                (this.startInclusive && other.endInclusive && other.endVersion == this.startVersion)
-    }
-
-    if (other.endVersion == null) {
-        return this.endVersion > other.startVersion ||
-                (other.startInclusive && this.endInclusive && this.endVersion == other.startVersion)
-    }
-
-    if (other.startVersion < this.startVersion) {
-        return this.startVersion < other.endVersion ||
-                (this.startInclusive && other.endInclusive && this.startVersion == other.endVersion)
-    }
-
-    if (this.startVersion < other.startVersion) {
-        return other.startVersion < this.endVersion ||
-                (other.startInclusive && this.endInclusive && other.startVersion == this.endVersion)
-    }
-
-    if (this.endVersion < other.endVersion) {
-        return this.startVersion < other.endVersion ||
-                (this.startInclusive && other.endInclusive && this.startVersion == other.endVersion)
-    }
-
-    if (this.startVersion < other.startVersion) {
-        return other.startVersion < this.endVersion ||
-                (other.startInclusive && this.endInclusive && other.startVersion == this.endVersion)
-    }
-
-    return this.startInclusive && other.startInclusive && this.startVersion == other.startVersion ||
-            this.startInclusive && other.endInclusive && this.startVersion == other.endVersion ||
-            this.endInclusive && other.startInclusive && this.endVersion == other.startVersion ||
-            this.endInclusive && other.endInclusive && this.endVersion == other.endVersion
+infix fun NpmRange.hasIntersection(other: NpmRange): Boolean {
+    val maxStart = maxStart(this, other)
+    val minEnd = minEnd(this, other)
+    return maxStart == null || minEnd == null || maxStart < minEnd
 }
+
+fun maxStart(a: NpmRange, b: NpmRange): SemVer? =
+    when {
+        a.startVersion == null -> b.startVersion
+        b.startVersion == null -> a.startVersion
+        else -> max(a.startVersion, b.startVersion)
+    }
+
+fun minStart(a: NpmRange, b: NpmRange): SemVer? =
+    when {
+        a.startVersion == null || b.startVersion == null -> null
+        else -> min(a.startVersion, b.startVersion)
+    }
+
+fun maxEnd(a: NpmRange, b: NpmRange): SemVer? =
+    when {
+        a.endVersion == null || b.endVersion == null -> null
+        else -> max(a.endVersion, b.endVersion)
+    }
+
+fun minEnd(a: NpmRange, b: NpmRange): SemVer? =
+    when {
+        a.endVersion == null -> b.endVersion
+        b.endVersion == null -> a.endVersion
+        else -> min(a.endVersion, b.endVersion)
+    }

@@ -62,16 +62,16 @@ fun buildNpmVersion(
 }
 
 private fun NpmRange.caretizeSingleVersion(): NpmRange {
-    if (startVersion?.toVersion() != endVersion?.toVersion() || !(startInclusive || endInclusive)) {
-        return this
+    if (startVersion?.toVersion() == endVersion?.toVersion() && (startInclusive || endInclusive)) {
+        return NpmRange(
+            startVersion = startVersion,
+            startInclusive = startInclusive,
+            endVersion = startVersion
+                ?.toVersion()
+                ?.incrementMajor()
+                ?.toSemVer()
+        )
     }
 
-    return NpmRange(
-        startVersion = startVersion,
-        startInclusive = startInclusive,
-        endVersion = startVersion
-            ?.toVersion()
-            ?.incrementMajor()
-            ?.toSemVer()
-    )
+    return this
 }
