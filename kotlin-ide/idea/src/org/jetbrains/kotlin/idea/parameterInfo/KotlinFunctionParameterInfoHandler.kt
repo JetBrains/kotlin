@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.completion.canBeUsedWithoutNameInCall
@@ -190,9 +189,9 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         context.setCurrentParameter(parameterIndex)
 
         runReadAction {
-            val resolutionFacade = argumentList.getResolutionFacade()
-            val bindingContext = argumentList.analyze(resolutionFacade, BodyResolveMode.PARTIAL)
+            val bindingContext = argumentList.analyze(BodyResolveMode.PARTIAL)
             val call = findCall(argumentList, bindingContext) ?: return@runReadAction
+            val resolutionFacade = argumentList.getResolutionFacade()
 
             context.objectsToView.forEach { resolveCallInfo(it as CallInfo, call, bindingContext, resolutionFacade) }
         }
@@ -453,7 +452,6 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
                     !argument.hasError(bindingContext) /* ignore arguments that have error type */
         }
 
-        @OptIn(FrontendInternals::class)
         val isDeprecated = resolutionFacade.frontendService<DeprecationResolver>().getDeprecations(resultingDescriptor).isNotEmpty()
 
         with(info) {

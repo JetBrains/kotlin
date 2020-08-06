@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.kdoc
 import com.intellij.openapi.components.ServiceManager
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.getFileResolutionScope
@@ -120,8 +119,6 @@ private fun resolveDefaultKDocLink(
     }
 
     val moduleDescriptor = fromDescriptor.module
-
-    @OptIn(FrontendInternals::class)
     val qualifiedExpressionResolver = resolutionFacade.getFrontendService(moduleDescriptor, QualifiedExpressionResolver::class.java)
 
     val contextElement = DescriptorToSourceUtils.descriptorToDeclaration(fromDescriptor)

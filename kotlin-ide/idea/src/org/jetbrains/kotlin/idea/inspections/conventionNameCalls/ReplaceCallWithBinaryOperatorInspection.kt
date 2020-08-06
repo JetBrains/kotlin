@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.idea.intentions.isOperatorOrCompatible
 import org.jetbrains.kotlin.idea.intentions.isReceiverExpressionWithValue
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
-import org.jetbrains.kotlin.idea.resolve.getDataFlowValueFactory
 import org.jetbrains.kotlin.idea.util.calleeTextRangeInThis
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -50,6 +49,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getKotlinTypeWithPossibleSmartCastToFP
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
@@ -203,10 +203,9 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
 
     private fun KtDotQualifiedExpression.isFloatingPointNumberEquals(): Boolean {
         val resolvedCall = resolveToCall() ?: return false
-        val resolutionFacade = getResolutionFacade()
-        val context = analyze(resolutionFacade, BodyResolveMode.PARTIAL)
+        val context = analyze(BodyResolveMode.PARTIAL)
         val declarationDescriptor = containingDeclarationForPseudocode?.resolveToDescriptorIfAny()
-        val dataFlowValueFactory = resolutionFacade.getDataFlowValueFactory()
+        val dataFlowValueFactory = getResolutionFacade().getFrontendService(DataFlowValueFactory::class.java)
         val defaultType: (KotlinType, Set<KotlinType>) -> KotlinType = { givenType, stableTypes -> stableTypes.firstOrNull() ?: givenType }
         val receiverType = resolvedCall.getReceiverExpression()?.getKotlinTypeWithPossibleSmartCastToFP(
             context, declarationDescriptor, languageVersionSettings, dataFlowValueFactory, defaultType

@@ -10,7 +10,6 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.resolve.frontendService
@@ -39,7 +38,6 @@ class OverridingDeprecatedMemberInspection : AbstractKotlinInspection() {
                 val resolutionFacade = declaration.getResolutionFacade()
                 val accessorDescriptor = declaration.resolveToDescriptorIfAny(resolutionFacade) as? CallableMemberDescriptor ?: return
 
-                @OptIn(FrontendInternals::class)
                 val deprecationProvider = resolutionFacade.frontendService<DeprecationResolver>()
 
                 val message = deprecationProvider.getDeprecations(accessorDescriptor)

@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
@@ -86,7 +85,6 @@ open class RemovePartsFromPropertyFix(
             //
             // But calling another type refinement also helps because it makes KotlinType instance using new module descriptor
             @OptIn(TypeRefinement::class)
-            @OptIn(FrontendInternals::class)
             typeToAdd = replaceElement.getResolutionFacade().frontendService<KotlinTypeRefiner>().refineType(typeToAdd)
 
             SpecifyTypeExplicitlyIntention.addTypeAnnotation(editor, replaceElement, typeToAdd)

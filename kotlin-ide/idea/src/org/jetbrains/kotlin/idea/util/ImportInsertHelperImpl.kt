@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.util
 import com.intellij.application.options.CodeStyle
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.findAnalyzerServices
 import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
-import org.jetbrains.kotlin.idea.resolve.getLanguageVersionSettings
+import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -47,7 +48,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
     )
 
     override fun isImportedWithDefault(importPath: ImportPath, contextFile: KtFile): Boolean {
-        val languageVersionSettings = contextFile.getResolutionFacade().getLanguageVersionSettings()
+        val languageVersionSettings = contextFile.getResolutionFacade().frontendService<LanguageVersionSettings>()
         val platform = TargetPlatformDetector.getPlatform(contextFile)
         val analyzerServices = platform.findAnalyzerServices(contextFile.project)
         val allDefaultImports = analyzerServices.getDefaultImports(languageVersionSettings, includeLowPriorityImports = true)

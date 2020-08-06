@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.quickfix.replaceWith
 import com.intellij.openapi.diagnostic.ControlFlowException
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInline
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
-import org.jetbrains.kotlin.idea.resolve.getLanguageVersionSettings
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -40,7 +38,6 @@ import java.util.*
 
 data class ReplaceWith(val pattern: String, val imports: List<String>, val replaceInWholeProject: Boolean)
 
-@OptIn(FrontendInternals::class)
 object ReplaceWithAnnotationAnalyzer {
     fun analyzeCallableReplacement(
         annotation: ReplaceWith,
@@ -126,7 +123,7 @@ object ReplaceWithAnnotationAnalyzer {
     ): LexicalScope? {
         val module = resolutionFacade.moduleDescriptor
         val explicitImportsScope = buildExplicitImportsScope(annotation, resolutionFacade, module)
-        val languageVersionSettings = resolutionFacade.getLanguageVersionSettings()
+        val languageVersionSettings = resolutionFacade.frontendService<LanguageVersionSettings>()
         val defaultImportsScopes = buildDefaultImportsScopes(resolutionFacade, module, languageVersionSettings)
 
         return getResolutionScope(

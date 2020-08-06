@@ -26,8 +26,7 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromTextFile
 import org.jetbrains.kotlin.idea.project.KotlinMultiplatformAnalysisModeComponent
-import org.jetbrains.kotlin.idea.resolve.getDataFlowValueFactory
-import org.jetbrains.kotlin.idea.resolve.getLanguageVersionSettings
+import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.allKotlinFiles
@@ -100,9 +99,9 @@ abstract class AbstractMultiModuleIdeResolveTest : AbstractMultiModuleTest() {
             configuration = DiagnosticsRenderingConfiguration(
                 platform = null, // we don't need to attach platform-description string to diagnostic here
                 withNewInference = false,
-                languageVersionSettings = resolutionFacade.getLanguageVersionSettings(),
+                languageVersionSettings = resolutionFacade.frontendService(),
             ),
-            dataFlowValueFactory = resolutionFacade.getDataFlowValueFactory(),
+            dataFlowValueFactory = resolutionFacade.frontendService(),
             moduleDescriptor = moduleDescriptor as ModuleDescriptorImpl
         ).filter { diagnosticsFilter.value(it.diagnostic) }
 

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionFactoryWithDelegate
@@ -63,7 +62,6 @@ object CreateTypeParameterByUnresolvedRefActionFactory : KotlinIntentionActionFa
         return ktUserType
     }
 
-    @OptIn(FrontendInternals::class)
     fun extractFixData(element: KtTypeElement, newName: String): CreateTypeParameterData? {
         val declaration = element.parents.firstOrNull {
             it is KtProperty || it is KtNamedFunction || it is KtClass
