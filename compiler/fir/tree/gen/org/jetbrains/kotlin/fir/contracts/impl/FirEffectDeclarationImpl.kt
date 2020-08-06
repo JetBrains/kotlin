@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.fir.contracts.impl
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -17,11 +20,28 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirEffectDeclarationImpl(
     override val source: FirSourceElement?,
+    override val annotations: MutableList<FirAnnotationCall>,
     override val effect: ConeEffectDeclaration,
 ) : FirEffectDeclaration() {
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
+    override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
+
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        typeRef.accept(visitor, data)
+        annotations.forEach { it.accept(visitor, data) }
+    }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirEffectDeclarationImpl {
+        typeRef = typeRef.transformSingle(transformer, data)
+        transformAnnotations(transformer, data)
         return this
+    }
+
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirEffectDeclarationImpl {
+        annotations.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun replaceTypeRef(newTypeRef: FirTypeRef) {
+        typeRef = newTypeRef
     }
 }
