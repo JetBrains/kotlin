@@ -658,6 +658,21 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
                             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts/newSyntax"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
                         }
 
+                        @TestMetadata("contractFunctionCalls.kt")
+                        public void testContractFunctionCalls() throws Exception {
+                            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts/newSyntax/contractFunctionCalls.kt");
+                        }
+
+                        @TestMetadata("contractFunctionCallsComplexCase.kt")
+                        public void testContractFunctionCallsComplexCase() throws Exception {
+                            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts/newSyntax/contractFunctionCallsComplexCase.kt");
+                        }
+
+                        @TestMetadata("contractFunctionDeclarations.kt")
+                        public void testContractFunctionDeclarations() throws Exception {
+                            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts/newSyntax/contractFunctionDeclarations.kt");
+                        }
+
                         @TestMetadata("functionsWithContract.kt")
                         public void testFunctionsWithContract() throws Exception {
                             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts/newSyntax/functionsWithContract.kt");

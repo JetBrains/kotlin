@@ -1,0 +1,22 @@
+FILE: contractFunctionCalls.kt
+    public? final? contract fun notNull(arg: R|kotlin/Any?|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> arg != null
+        >
+    public? final? contract fun calledOnce(block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(block, EXACTLY_ONCE)
+        >
+    public final fun foo(str: R|kotlin/String?|, block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> str != null
+            CallsInPlace(block, EXACTLY_ONCE)
+        >
+     {
+        R|kotlin/require|(!=(R|<local>/str|, Null(null)))
+        R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        R|kotlin/io/println|(R|<local>/str|)
+    }

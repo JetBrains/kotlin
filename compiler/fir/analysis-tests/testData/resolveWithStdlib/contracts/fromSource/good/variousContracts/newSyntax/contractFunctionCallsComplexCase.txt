@@ -1,0 +1,53 @@
+FILE: contractFunctionCallsComplexCase.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+    }
+    public? final? contract fun notNull(a: R|A?|, b: R|A?|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> a != null
+            Returns(WILDCARD) -> b != null
+        >
+    public? final? contract fun argIsStringWhenReturnsTrue(arg: R|kotlin/Any?|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            Returns(TRUE) -> arg is kotlin/String
+        >
+    public? final? contract fun myContract(a: R|A?|, b: R|A?|, arg: R|kotlin/Any?|, block: R|(A, A) -> kotlin/Int|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> a != null
+            Returns(WILDCARD) -> b != null
+            Returns(TRUE) -> arg is kotlin/String
+            CallsInPlace(block, EXACTLY_ONCE)
+        >
+    public final fun foo(arg1: R|A?|, arg2: R|A?|, arg3: R|kotlin/Any?|, block: R|(A, A) -> kotlin/Int|): R|kotlin/Boolean|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> arg1 != null
+            Returns(WILDCARD) -> arg2 != null
+            Returns(TRUE) -> arg3 is kotlin/String
+            CallsInPlace(block, EXACTLY_ONCE)
+        >
+     {
+        R|kotlin/require|(!=(R|<local>/arg1|, Null(null)))
+        R|kotlin/require|(!=(R|<local>/arg2|, Null(null)))
+        lval res: R|kotlin/Int| = R|<local>/block|.R|FakeOverride<kotlin/Function2.invoke: R|kotlin/Int|>|(R|<local>/arg1|, R|<local>/arg2|)
+        R|kotlin/io/println|(R|<local>/res|)
+        when () {
+            (R|<local>/arg3| !is R|kotlin/String|) ->  {
+                ^foo Boolean(false)
+            }
+        }
+
+        ^foo Boolean(true)
+    }
