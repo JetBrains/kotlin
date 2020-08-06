@@ -1124,10 +1124,15 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/kubernetes/intellij.clouds.kubernetes.iml" filepath="$PROJECT_DIR$/intellij/plugins/kubernetes/intellij.clouds.kubernetes.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/kubernetes/charts-gotpl/intellij.clouds.kubernetes.charts.gotpl.iml" filepath="$PROJECT_DIR$/intellij/plugins/kubernetes/charts-gotpl/intellij.clouds.kubernetes.charts.gotpl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cmake-psi/intellij.cmake.psi.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cmake-psi/intellij.cmake.psi.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/platform/rdserver/intellij.codeWithMe.abstract.main.iml" filepath="$PROJECT_DIR$/intellij/platform/rdserver/intellij.codeWithMe.abstract.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/rd-platform-code-with-me/intellij.codeWithMe.common.iml" filepath="$PROJECT_DIR$/intellij/platform/rd-platform-code-with-me/intellij.codeWithMe.common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/platform/rdserver/intellij.codeWithMe.datagrip.main.iml" filepath="$PROJECT_DIR$/intellij/platform/rdserver/intellij.codeWithMe.datagrip.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/platform/rdserver/intellij.codeWithMe.goland.main.iml" filepath="$PROJECT_DIR$/intellij/platform/rdserver/intellij.codeWithMe.goland.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/platform/rdserver/intellij.codeWithMe.idea.ultimate.main.iml" filepath="$PROJECT_DIR$/intellij/platform/rdserver/intellij.codeWithMe.idea.ultimate.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/rdserver/intellij.codeWithMe.plugin.iml" filepath="$PROJECT_DIR$/intellij/platform/rdserver/intellij.codeWithMe.plugin.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/platform/rdserver/intellij.codeWithMe.plugin.main.iml" filepath="$PROJECT_DIR$/intellij/platform/rdserver/intellij.codeWithMe.plugin.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/rdserver/plugins/rdserver-terminal/intellij.codeWithMe.plugin.terminal.iml" filepath="$PROJECT_DIR$/intellij/platform/rdserver/plugins/rdserver-terminal/intellij.codeWithMe.plugin.terminal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/platform/rdserver/intellij.codeWithMe.pycharm.pro.main.iml" filepath="$PROJECT_DIR$/intellij/platform/rdserver/intellij.codeWithMe.pycharm.pro.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/platform/rdserver/intellij.codeWithMe.webstorm.main.iml" filepath="$PROJECT_DIR$/intellij/platform/rdserver/intellij.codeWithMe.webstorm.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/phpstorm/codeception/intellij.codeception.iml" filepath="$PROJECT_DIR$/intellij/phpstorm/codeception/intellij.codeception.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/coffeescript/coffeescript-core/intellij.coffeescript.iml" filepath="$PROJECT_DIR$/intellij/plugins/coffeescript/coffeescript-core/intellij.coffeescript.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/coffeescript/coffeescript-tests/intellij.coffeescript.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/coffeescript/coffeescript-tests/intellij.coffeescript.tests.iml" />
