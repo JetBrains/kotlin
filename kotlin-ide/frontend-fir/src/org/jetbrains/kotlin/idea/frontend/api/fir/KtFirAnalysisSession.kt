@@ -130,7 +130,7 @@ private constructor(
             element,
             firSession,
             contextResolveState,
-            firSymbolBuilder,
+            firSymbolBuilder.createReadOnlyCopy(),
             typeContext,
             token,
             isContextSession = true
@@ -200,7 +200,7 @@ private constructor(
         }
 
         @Deprecated("Please use org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProviderKt.analyze")
-        fun createForElement(element: KtElement): KtFirAnalysisSession {
+        internal fun createForElement(element: KtElement): KtFirAnalysisSession {
             val firResolveState = LowLevelFirApiFacade.getResolveStateFor(element)
             val firSession = firResolveState.firSession
             val project = element.project
@@ -216,7 +216,7 @@ private constructor(
                 element,
                 firSession,
                 firResolveState,
-                firSymbolBuilder.createReadOnlyCopy(),
+                firSymbolBuilder,
                 typeContext,
                 token,
                 isContextSession = false
