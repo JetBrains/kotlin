@@ -11,6 +11,83 @@ import kotlin.test.assertTrue
 
 class NpmRangeTest {
     @Test
+    fun intersectTest() {
+        fun assertIntersect(range1: NpmRange, range2: NpmRange, expected: NpmRange?) {
+            val intersection = range1 intersect range2
+            assertTrue("Range $range1 and $range2 expected to have intersection $expected, but actual is $intersection") {
+                intersection == expected
+            }
+
+            val symIntersection = range2 intersect range1
+            assertTrue("Range $range2 and $range1 expected to have union $expected, but actual is $symIntersection") {
+                symIntersection == expected
+            }
+        }
+
+        val range1 = npmRange(startMajor = 1, endMajor = 2)
+        val range2 = npmRange(startMajor = 3, endMajor = 4)
+        assertIntersect(range1, range2, null)
+
+        assertIntersect(
+            npmRange(startMajor = 1, endMajor = 3),
+            npmRange(startMajor = 2, endMajor = 4),
+            npmRange(
+                startMajor = 2,
+                endMajor = 3
+            )
+        )
+
+        assertIntersect(
+            npmRange(startMajor = 1, endMajor = 3),
+            npmRange(startMajor = 2, endMajor = 4, startInclusive = true, endInclusive = true),
+            npmRange(
+                startMajor = 2,
+                endMajor = 3,
+                startInclusive = true
+            )
+        )
+
+        assertIntersect(
+            npmRange(startMajor = 1, endMajor = 3, startInclusive = true, endInclusive = true),
+            npmRange(startMajor = 2, endMajor = 4, startInclusive = true, endInclusive = true),
+            npmRange(
+                startMajor = 2,
+                endMajor = 3,
+                startInclusive = true,
+                endInclusive = true
+            )
+        )
+
+        assertIntersect(
+            npmRange(startMajor = 1, endMajor = 4, startInclusive = true, endInclusive = true),
+            npmRange(startMajor = 2, endMajor = 3, startInclusive = true, endInclusive = true),
+            npmRange(
+                startMajor = 2,
+                endMajor = 3,
+                startInclusive = true,
+                endInclusive = true
+            )
+        )
+
+        assertIntersect(
+            npmRange(startMajor = 1, endMajor = 2),
+            npmRange(startMajor = 2, endMajor = 3),
+            null
+        )
+
+        assertIntersect(
+            npmRange(startMajor = 1, endMajor = 2, endInclusive = true),
+            npmRange(startMajor = 2, endMajor = 3, startInclusive = true),
+            npmRange(
+                startMajor = 2,
+                endMajor = 2,
+                startInclusive = true,
+                endInclusive = true
+            )
+        )
+    }
+
+    @Test
     fun unionTest() {
         fun assertUnion(range1: NpmRange, range2: NpmRange, expected: List<NpmRange>) {
             val union = range1 union range2
@@ -18,7 +95,7 @@ class NpmRangeTest {
                 union == expected
             }
 
-            val symUnion = range1 union range2
+            val symUnion = range2 union range1
             assertTrue("Range $range2 and $range1 expected to have union $expected, but actual is $symUnion") {
                 symUnion == expected
             }
@@ -60,6 +137,45 @@ class NpmRangeTest {
                     endMajor = 4,
                     startInclusive = true,
                     endInclusive = true
+                )
+            )
+        )
+
+        assertUnion(
+            npmRange(startMajor = 1, endMajor = 4, startInclusive = true, endInclusive = true),
+            npmRange(startMajor = 2, endMajor = 3, startInclusive = true, endInclusive = true),
+            listOf(
+                npmRange(
+                    startMajor = 1,
+                    endMajor = 4,
+                    startInclusive = true,
+                    endInclusive = true
+                )
+            )
+        )
+
+        assertUnion(
+            npmRange(startMajor = 1, endMajor = 2),
+            npmRange(startMajor = 2, endMajor = 3),
+            listOf(
+                npmRange(
+                    startMajor = 1,
+                    endMajor = 2
+                ),
+                npmRange(
+                    startMajor = 2,
+                    endMajor = 3
+                )
+            )
+        )
+
+        assertUnion(
+            npmRange(startMajor = 1, endMajor = 2, endInclusive = true),
+            npmRange(startMajor = 2, endMajor = 3, startInclusive = true),
+            listOf(
+                npmRange(
+                    startMajor = 1,
+                    endMajor = 3
                 )
             )
         )
