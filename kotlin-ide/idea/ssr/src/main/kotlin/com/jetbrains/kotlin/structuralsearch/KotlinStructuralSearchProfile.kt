@@ -71,7 +71,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         KotlinCompilingVisitor(globalVisitor).compile(elements)
     }
 
-    override fun getPresentableElement(element: PsiElement?): PsiElement {
+    override fun getPresentableElement(element: PsiElement): PsiElement {
         val pElement = super.getPresentableElement(element)
         val parent = pElement.parent
         return if (parent is KtProperty
@@ -309,12 +309,12 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
     }
 
     override fun getCustomPredicates(
-        constraint: MatchVariableConstraint?,
+        constraint: MatchVariableConstraint,
         name: String,
         options: MatchOptions
     ): MutableList<MatchPredicate> {
         val result = SmartList<MatchPredicate>()
-        constraint?.apply {
+        constraint.apply {
             if (!StringUtil.isEmptyOrSpaces(nameOfExprType)) {
                 val predicate = KotlinExprTypePredicate(
                     search = if (isRegexExprType) nameOfExprType else expressionTypes,

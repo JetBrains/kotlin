@@ -13,8 +13,7 @@ class CommentedDeclarationHandler : MatchingHandler() {
     private fun KtDeclaration.getNonKDocCommentChild(): PsiComment? =
         this.getChildrenOfType<PsiComment>().firstOrNull { it !is KDoc }
 
-    override fun match(patternNode: PsiElement?, matchedNode: PsiElement?, context: MatchContext?): Boolean {
-        if (context == null) return false
+    override fun match(patternNode: PsiElement?, matchedNode: PsiElement?, context: MatchContext): Boolean {
         when (patternNode) {
             is PsiComment -> {
                 return when (matchedNode) {
