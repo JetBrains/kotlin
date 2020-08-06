@@ -11,6 +11,80 @@ import kotlin.test.assertTrue
 
 class NpmRangeTest {
     @Test
+    fun hasIntersectionTest() {
+        fun assertHasIntersection(range1: NpmRange, range2: NpmRange) =
+            assertTrue("Range $range1 and $range2 expected to have intersection, but actual is not") {
+                (range1 hasIntersection range2) && (range2 hasIntersection range1)
+            }
+
+        assertHasIntersection(npmRange(endMajor = 1), npmRange(endMajor = 2))
+        assertHasIntersection(npmRange(startMajor = 1), npmRange(startMajor = 2))
+        assertHasIntersection(npmRange(startMajor = 1, endMajor = 4), npmRange(startMajor = 2, endMajor = 3))
+        assertHasIntersection(npmRange(startMajor = 1, endMajor = 3), npmRange(startMajor = 2, endMajor = 4))
+        assertHasIntersection(
+            npmRange(
+                startMajor = 1,
+                endMajor = 2,
+                endInclusive = true
+            ),
+            npmRange(
+                startMajor = 2,
+                endMajor = 3,
+                startInclusive = true
+            )
+        )
+    }
+
+    @Test
+    fun hasNoIntersectionTest() {
+        fun assertHasNoIntersection(range1: NpmRange, range2: NpmRange) =
+            assertTrue("Range $range1 and $range2 expected to not have intersection, but actual is") {
+                !(range1 hasIntersection range2) && !(range2 hasIntersection range1)
+            }
+
+        assertHasNoIntersection(npmRange(endMajor = 1), npmRange(startMajor = 2))
+        assertHasNoIntersection(npmRange(startMajor = 1, endMajor = 2), npmRange(startMajor = 3, endMajor = 4))
+        assertHasNoIntersection(
+            npmRange(
+                startMajor = 1,
+                endMajor = 2,
+                endInclusive = false
+            ),
+            npmRange(
+                startMajor = 2,
+                endMajor = 3,
+                startInclusive = true
+            )
+        )
+
+        assertHasNoIntersection(
+            npmRange(
+                startMajor = 1,
+                endMajor = 2,
+                endInclusive = true
+            ),
+            npmRange(
+                startMajor = 2,
+                endMajor = 3,
+                startInclusive = false
+            )
+        )
+
+        assertHasNoIntersection(
+            npmRange(
+                startMajor = 1,
+                endMajor = 2,
+                endInclusive = false
+            ),
+            npmRange(
+                startMajor = 2,
+                endMajor = 3,
+                startInclusive = false
+            )
+        )
+    }
+
+    @Test
     fun maxStartTest() {
         val nullRange1 = npmRange()
         val nullRange2 = npmRange()

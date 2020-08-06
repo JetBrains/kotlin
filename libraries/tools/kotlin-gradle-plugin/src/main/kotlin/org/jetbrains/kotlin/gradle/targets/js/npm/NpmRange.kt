@@ -111,7 +111,13 @@ infix fun NpmRange.intersect(other: NpmRange): NpmRange? {
 infix fun NpmRange.hasIntersection(other: NpmRange): Boolean {
     val maxStart = maxStart(this, other)
     val minEnd = minEnd(this, other)
-    return maxStart == null || minEnd == null || maxStart < minEnd
+
+    return maxStart == null || minEnd == null || maxStart < minEnd ||
+            run {
+                val startInclusive = if (maxStart == startVersion) this.startInclusive else other.startInclusive
+                val endInclusive = if (minEnd == endVersion) this.endInclusive else other.endInclusive
+                startInclusive && endInclusive && maxStart == minEnd
+            }
 }
 
 fun maxStart(a: NpmRange, b: NpmRange): SemVer? =
