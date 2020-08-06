@@ -3323,6 +3323,56 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 runTest("compiler/testData/codegen/box/casts/javaInterop/instanceOfWithWrongType.kt");
             }
 
+            @TestMetadata("noNullCheckOnCollectionContains.kt")
+            public void testNoNullCheckOnCollectionContains() throws Exception {
+                runTest("compiler/testData/codegen/box/casts/javaInterop/noNullCheckOnCollectionContains.kt");
+            }
+
+            @TestMetadata("noNullCheckOnCollectionRemove.kt")
+            public void testNoNullCheckOnCollectionRemove() throws Exception {
+                runTest("compiler/testData/codegen/box/casts/javaInterop/noNullCheckOnCollectionRemove.kt");
+            }
+
+            @TestMetadata("noNullCheckOnListIndexOf.kt")
+            public void testNoNullCheckOnListIndexOf() throws Exception {
+                runTest("compiler/testData/codegen/box/casts/javaInterop/noNullCheckOnListIndexOf.kt");
+            }
+
+            @TestMetadata("noNullCheckOnListLastIndexOf.kt")
+            public void testNoNullCheckOnListLastIndexOf() throws Exception {
+                runTest("compiler/testData/codegen/box/casts/javaInterop/noNullCheckOnListLastIndexOf.kt");
+            }
+
+            @TestMetadata("noNullCheckOnMapContainsKey.kt")
+            public void testNoNullCheckOnMapContainsKey() throws Exception {
+                runTest("compiler/testData/codegen/box/casts/javaInterop/noNullCheckOnMapContainsKey.kt");
+            }
+
+            @TestMetadata("noNullCheckOnMapContainsValue.kt")
+            public void testNoNullCheckOnMapContainsValue() throws Exception {
+                runTest("compiler/testData/codegen/box/casts/javaInterop/noNullCheckOnMapContainsValue.kt");
+            }
+
+            @TestMetadata("noNullCheckOnMapGet.kt")
+            public void testNoNullCheckOnMapGet() throws Exception {
+                runTest("compiler/testData/codegen/box/casts/javaInterop/noNullCheckOnMapGet.kt");
+            }
+
+            @TestMetadata("noNullCheckOnMapRemove.kt")
+            public void testNoNullCheckOnMapRemove() throws Exception {
+                runTest("compiler/testData/codegen/box/casts/javaInterop/noNullCheckOnMapRemove.kt");
+            }
+
+            @TestMetadata("nullCheckOnMapGetOrDefault.kt")
+            public void testNullCheckOnMapGetOrDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/casts/javaInterop/nullCheckOnMapGetOrDefault.kt");
+            }
+
+            @TestMetadata("nullCheckOnMapRemove2.kt")
+            public void testNullCheckOnMapRemove2() throws Exception {
+                runTest("compiler/testData/codegen/box/casts/javaInterop/nullCheckOnMapRemove2.kt");
+            }
+
             @TestMetadata("safeCastWithWrongType.kt")
             public void testSafeCastWithWrongType() throws Exception {
                 runTest("compiler/testData/codegen/box/casts/javaInterop/safeCastWithWrongType.kt");

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.SpecialBridgeMethods
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.ir.hasPlatformDependent
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -30,7 +31,8 @@ private enum class AssertionScope {
     Enabled, Disabled
 }
 
-private class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContext) : FileLoweringPass, IrElementTransformer<AssertionScope> {
+private class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContext) : FileLoweringPass,
+    IrElementTransformer<AssertionScope> {
 
     private val isWithUnifiedNullChecks = context.state.unifiedNullChecks
     private val isCallAssertionsDisabled = context.state.isCallAssertionsDisabled
@@ -90,7 +92,13 @@ private class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContex
     }
 
     private fun isCallToMethodWithTypeCheckBarrier(expression: IrMemberAccessExpression<*>): Boolean =
-        expression.symbol.owner.safeAs<IrSimpleFunction>()?.let { specialBridgeMethods.findSpecialWithOverride(it) != null } == true
+        expression.symbol.owner.safeAs<IrSimpleFunction>()
+            ?.let {
+                val bridgeInfo = specialBridgeMethods.findSpecialWithOverride(it, includeSelf = true)
+                // The JVM BE adds null checks around platform dependent special bridge methods (Map.getOrDefault and the version of
+                // MutableMap.remove with two arguments).
+                bridgeInfo != null && !bridgeInfo.first.hasPlatformDependent()
+            } == true
 
     private val IrStatementOrigin?.isOperatorWithNoNullabilityAssertionsOnExtensionReceiver
         get() = this is IrStatementOrigin.COMPONENT_N || this in operatorsWithNoNullabilityAssertionsOnExtensionReceiver

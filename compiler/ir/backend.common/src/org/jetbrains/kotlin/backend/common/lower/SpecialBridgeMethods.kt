@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -103,8 +105,14 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
         makeDescription(KotlinBuiltIns.FQ_NAMES.mutableList, "removeAt", 1) to BuiltInWithDifferentJvmName(needsGenericSignature = true)
     )
 
-    fun findSpecialWithOverride(irFunction: IrSimpleFunction): Pair<IrSimpleFunction, SpecialMethodWithDefaultInfo>? {
-        irFunction.allOverridden().forEach { overridden ->
+    fun findSpecialWithOverride(
+        irFunction: IrSimpleFunction,
+        includeSelf: Boolean = false
+    ): Pair<IrSimpleFunction, SpecialMethodWithDefaultInfo>? {
+        if (irFunction.parent !is IrClass)
+            return null
+
+        irFunction.allOverridden(includeSelf).forEach { overridden ->
             val description = overridden.toDescription()
             SPECIAL_METHODS_WITH_DEFAULTS_MAP[description]?.let {
                 return Pair(overridden, it)
