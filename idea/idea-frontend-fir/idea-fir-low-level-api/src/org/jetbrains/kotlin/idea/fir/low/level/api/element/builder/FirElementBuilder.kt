@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.util.FirElementFinder
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import javax.annotation.concurrent.ThreadSafe
+import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.ThreadSafe
 
 /**
  * Maps [KtElement] to [FirElement]

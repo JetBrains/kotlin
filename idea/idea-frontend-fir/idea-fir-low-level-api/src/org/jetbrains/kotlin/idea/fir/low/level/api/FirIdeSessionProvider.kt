@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.psi.KtElement
 import java.util.concurrent.ConcurrentHashMap
-import javax.annotation.concurrent.ThreadSafe
+import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.ThreadSafe
 
 @ThreadSafe
 internal class FirIdeSessionProvider(project: Project) : FirProjectSessionProvider(project) {
