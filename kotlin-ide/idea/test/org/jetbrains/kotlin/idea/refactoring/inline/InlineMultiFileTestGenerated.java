@@ -40,4 +40,9 @@ public class InlineMultiFileTestGenerated extends AbstractInlineMultiFileTest {
     public void testFromJavaToKotlin_delegateToCallChain_DelegateToCallChain() throws Exception {
         runTest("testData/refactoring/inlineMultiFile/fromJavaToKotlin/delegateToCallChain/delegateToCallChain.test");
     }
+
+    @TestMetadata("fromJavaToKotlin/inheritance/inheritance.test")
+    public void testFromJavaToKotlin_inheritance_Inheritance() throws Exception {
+        runTest("testData/refactoring/inlineMultiFile/fromJavaToKotlin/inheritance/inheritance.test");
+    }
 }
