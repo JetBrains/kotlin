@@ -92,10 +92,10 @@ fun createArgumentsMapping(qualifiedAccess: FirQualifiedAccess): Map<Int, FirExp
     when (qualifiedAccess) {
         is FirFunctionCall -> {
             val function = qualifiedAccess.toResolvedCallableSymbol()?.fir as? FirSimpleFunction ?: return null
-            val parameterToIndex = function.valueParameters.mapIndexed { index, parameter -> parameter to index }.toMap()
-            val callArgumentMapping = qualifiedAccess.argumentMapping ?: return null
-            for (argument in qualifiedAccess.arguments) {
-                argumentsMapping[parameterToIndex.getValue(callArgumentMapping.getValue(argument))] = argument.unwrap()
+            val parameterToExpression = qualifiedAccess.argumentMapping?.map { it.value to it.key.unwrap() }?.toMap() ?: return null
+            for ((index, parameter) in function.valueParameters.withIndex()) {
+                val expression = parameterToExpression[parameter] ?: parameter.defaultValue
+                if (expression != null) argumentsMapping[index] = expression
             }
         }
         is FirVariableAssignment -> {
