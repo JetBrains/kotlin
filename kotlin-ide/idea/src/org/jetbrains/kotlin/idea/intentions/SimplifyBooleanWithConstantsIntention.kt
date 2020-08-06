@@ -18,10 +18,13 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
+import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode.PARTIAL
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.isFlexible
 
 @Suppress("DEPRECATION")
@@ -47,10 +50,38 @@ class SimplifyBooleanWithConstantsIntention : SelfTargetingOffsetIndependentInte
                     if (areThereExpressionsToBeSimplified(element.left) && element.right.hasBooleanType()) return true
                     if (areThereExpressionsToBeSimplified(element.right) && element.left.hasBooleanType()) return true
                 }
+                if (isPositiveNegativeZeroComparison(element)) return false
+
             }
         }
 
         return element.canBeReducedToBooleanConstant()
+    }
+
+    private fun isPositiveNegativeZeroComparison(element: KtBinaryExpression): Boolean {
+        val op = element.operationToken
+        if (op != EQEQ && op != EQEQEQ) {
+            return false
+        }
+
+        val left = element.left?.deparenthesize() as? KtExpression ?: return false
+        val right = element.right?.deparenthesize() as? KtExpression ?: return false
+
+        val context = element.analyze(PARTIAL)
+
+        fun KtExpression.getConstantValue() =
+            ConstantExpressionEvaluator.getConstant(this, context)?.toConstantValue(TypeUtils.NO_EXPECTED_TYPE)?.value
+
+        val leftValue = left.getConstantValue()
+        val rightValue = right.getConstantValue()
+
+        fun isPositiveZero(value: Any?) = value == +0.0 || value == +0.0f
+        fun isNegativeZero(value: Any?) = value == -0.0 || value == -0.0f
+
+        val hasPositiveZero = isPositiveZero(leftValue) || isPositiveZero(rightValue)
+        val hasNegativeZero = isNegativeZero(leftValue) || isNegativeZero(rightValue)
+
+        return hasPositiveZero && hasNegativeZero
     }
 
     override fun applyTo(element: KtBinaryExpression, editor: Editor?) {

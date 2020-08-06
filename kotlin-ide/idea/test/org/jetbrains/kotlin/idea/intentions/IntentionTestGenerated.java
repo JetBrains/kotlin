@@ -14595,6 +14595,26 @@ public abstract class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("testData/intentions/simplifyBooleanWithConstants/nullableComplex2.kt");
         }
 
+        @TestMetadata("positiveZeroNegativeZero1.kt")
+        public void testPositiveZeroNegativeZero1() throws Exception {
+            runTest("idea/testData/intentions/simplifyBooleanWithConstants/positiveZeroNegativeZero1.kt");
+        }
+
+        @TestMetadata("positiveZeroNegativeZero2.kt")
+        public void testPositiveZeroNegativeZero2() throws Exception {
+            runTest("idea/testData/intentions/simplifyBooleanWithConstants/positiveZeroNegativeZero2.kt");
+        }
+
+        @TestMetadata("positiveZeroNegativeZero3.kt")
+        public void testPositiveZeroNegativeZero3() throws Exception {
+            runTest("idea/testData/intentions/simplifyBooleanWithConstants/positiveZeroNegativeZero3.kt");
+        }
+
+        @TestMetadata("positiveZeroNegativeZero4.kt")
+        public void testPositiveZeroNegativeZero4() throws Exception {
+            runTest("idea/testData/intentions/simplifyBooleanWithConstants/positiveZeroNegativeZero4.kt");
+        }
+
         @TestMetadata("reduceableBinary.kt")
         public void testReduceableBinary() throws Exception {
             runTest("testData/intentions/simplifyBooleanWithConstants/reduceableBinary.kt");
