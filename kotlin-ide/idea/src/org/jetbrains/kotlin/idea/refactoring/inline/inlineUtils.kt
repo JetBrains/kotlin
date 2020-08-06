@@ -6,14 +6,10 @@
 package org.jetbrains.kotlin.idea.refactoring.inline
 
 import com.intellij.codeInsight.TargetElementUtil
-import com.intellij.codeInsight.highlighting.HighlightManager
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.colors.EditorColors
-import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
-import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
@@ -44,15 +40,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
-
-fun highlightElements(project: Project, editor: Editor?, elements: List<PsiElement>) {
-    if (editor == null || ApplicationManager.getApplication().isUnitTestMode) return
-
-    val editorColorsManager = EditorColorsManager.getInstance()
-    val searchResultsAttributes = editorColorsManager.globalScheme.getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES)
-    val highlightManager = HighlightManager.getInstance(project)
-    highlightManager.addOccurrenceHighlights(editor, elements.toTypedArray(), searchResultsAttributes, true, null)
-}
 
 fun showDialog(
     project: Project,

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.refactoring.inline
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.wm.WindowManager
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
@@ -83,10 +82,6 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : KotlinInlineActi
             return showErrorHint(project, editor, KotlinBundle.message("0.1.is.never.used", kind.capitalize(), name))
         }
 
-        val referencesInOriginalFile = referenceExpressions.filter { it.containingFile == file }
-        val hasHighlightings = referencesInOriginalFile.isNotEmpty()
-        highlightElements(project, editor, referencesInOriginalFile)
-
         val readReplacement: CodeToInline?
         val writeReplacement: CodeToInline?
         val assignmentToDelete: KtBinaryExpression?
@@ -107,6 +102,7 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : KotlinInlineActi
             assignmentToDelete = null
         }
 
+        val replacementStrategy = PropertyUsageReplacementStrategy(readReplacement, writeReplacement)
         if (!conflicts.isEmpty) {
             val conflictsCopy = conflicts.copy()
             val allOrSome = if (referenceExpressions.isEmpty())
@@ -123,10 +119,10 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : KotlinInlineActi
             )
 
             project.checkConflictsInteractively(conflictsCopy) {
-                performRefactoring(declaration, readReplacement, writeReplacement, assignmentToDelete, editor, hasHighlightings)
+                performRefactoring(declaration, replacementStrategy, assignmentToDelete, editor)
             }
         } else {
-            performRefactoring(declaration, readReplacement, writeReplacement, assignmentToDelete, editor, hasHighlightings)
+            performRefactoring(declaration, replacementStrategy, assignmentToDelete, editor)
         }
     }
 
@@ -187,23 +183,14 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : KotlinInlineActi
 
     private fun performRefactoring(
         declaration: KtProperty,
-        readReplacement: CodeToInline?,
-        writeReplacement: CodeToInline?,
+        replacementStrategy: PropertyUsageReplacementStrategy,
         assignmentToDelete: KtBinaryExpression?,
-        editor: Editor?,
-        hasHighlightings: Boolean
+        editor: Editor?
     ) {
-        val replacementStrategy = PropertyUsageReplacementStrategy(readReplacement, writeReplacement)
         val reference = editor?.findSimpleNameReference()
-
         val dialog = KotlinInlineValDialog(declaration, reference, replacementStrategy, assignmentToDelete, withPreview = withPrompt)
-
         if (withPrompt && !ApplicationManager.getApplication().isUnitTestMode && dialog.shouldBeShown()) {
             dialog.show()
-            if (!dialog.isOK && hasHighlightings) {
-                val statusBar = WindowManager.getInstance().getStatusBar(declaration.project)
-                statusBar?.info = RefactoringBundle.message("press.escape.to.remove.the.highlighting")
-            }
         } else {
             dialog.doAction()
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.refactoring.inline
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.wm.WindowManager
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
@@ -69,28 +68,11 @@ class KotlinInlineTypeAliasHandler : KotlinInlineActionHandler() {
         )
 
         val usagesInOriginalFile = usages.filter { it.containingFile == file }
-        val isHighlighting = usagesInOriginalFile.isNotEmpty()
-        highlightElements(project, editor, usagesInOriginalFile)
-
         if (usagesInOriginalFile.size != usages.size) {
             preProcessInternalUsages(aliasBody, usages)
         }
 
-        if (!showDialog(
-                project,
-                name,
-                REFACTORING_NAME,
-                typeAlias,
-                usages,
-                HelpID.INLINE_VARIABLE
-            )
-        ) {
-            if (isHighlighting) {
-                val statusBar = WindowManager.getInstance().getStatusBar(project)
-                statusBar?.info = RefactoringBundle.message("press.escape.to.remove.the.highlighting")
-            }
-            return
-        }
+        if (!showDialog(project, name, REFACTORING_NAME, typeAlias, usages, HelpID.INLINE_VARIABLE)) return
 
         val psiFactory = KtPsiFactory(project)
 
@@ -177,10 +159,6 @@ class KotlinInlineTypeAliasHandler : KotlinInlineActionHandler() {
                 } ?: return@mapNotNull null
 
                 postProcessInternalReferences(inlinedElement)
-            }
-
-            if (inlinedElements.isNotEmpty() && isHighlighting) {
-                highlightElements(project, editor, inlinedElements)
             }
 
             typeAlias.delete()
