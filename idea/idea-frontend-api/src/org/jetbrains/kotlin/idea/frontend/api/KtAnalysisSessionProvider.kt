@@ -13,9 +13,15 @@ abstract class KtAnalysisSessionProvider {
     abstract fun getAnalysisSessionFor(contextElement: KtElement): KtAnalysisSession
 }
 
+@Suppress("DeprecatedCallableAddReplaceWith")
+@Deprecated(
+    "Should not be directly used as it is not allowed to store KtAnalysisSession in a variable, consider using `analyze` instead",
+    level = DeprecationLevel.WARNING,
+)
 fun getAnalysisSessionFor(contextElement: KtElement): KtAnalysisSession =
     contextElement.project.service<KtAnalysisSessionProvider>().getAnalysisSessionFor(contextElement)
 
+@Suppress("DEPRECATION")
 inline fun <R> analyze(contextElement: KtElement, action: KtAnalysisSession.() -> R): R =
     getAnalysisSessionFor(contextElement).action()
 
