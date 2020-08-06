@@ -68,11 +68,16 @@ interface AddValVarToConstructorParameterAction {
     class QuickFix(parameter: KtParameter) :
         KotlinQuickFixAction<KtParameter>(parameter),
         AddValVarToConstructorParameterAction {
-        override fun getText() = element?.let {
-            val key =
-                if (it.getStrictParentOfType<KtClass>()?.isInline() == true) "add.val.to.parameter.0" else "add.val.var.to.parameter.0"
-            KotlinBundle.message(key, it.name ?: "")
-        } ?: ""
+        override fun getText(): String {
+            val element = this.element ?: return ""
+
+            val key = when {
+                element.getStrictParentOfType<KtClass>()?.isInline() == true -> "add.val.to.parameter.0"
+                else -> "add.val.var.to.parameter.0"
+            }
+
+            return KotlinBundle.message(key, element.name ?: "")
+        }
 
         override fun getFamilyName() = KotlinBundle.message("add.val.var.to.primary.constructor.parameter")
 
