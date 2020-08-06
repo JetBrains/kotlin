@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.allOverridden
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -107,8 +108,14 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
     val specialMethodNames = (specialMethodsWithDefaults + specialMethods).map { (description) -> description.name }.toHashSet()
     val specialPropertyNames = specialProperties.map { (description) -> description.name }.toHashSet()
 
-    fun findSpecialWithOverride(irFunction: IrSimpleFunction): Pair<IrSimpleFunction, SpecialMethodWithDefaultInfo>? {
-        for (overridden in irFunction.allOverridden()) {
+    fun findSpecialWithOverride(
+        irFunction: IrSimpleFunction,
+        includeSelf: Boolean = false
+    ): Pair<IrSimpleFunction, SpecialMethodWithDefaultInfo>? {
+        if (irFunction.parent !is IrClass)
+            return null
+
+        for (overridden in irFunction.allOverridden(includeSelf)) {
             val description = overridden.toDescription()
             specialMethodsWithDefaults[description]?.let {
                 return Pair(overridden, it)
