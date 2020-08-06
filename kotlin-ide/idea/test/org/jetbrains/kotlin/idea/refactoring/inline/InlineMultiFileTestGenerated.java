@@ -26,18 +26,18 @@ public class InlineMultiFileTestGenerated extends AbstractInlineMultiFileTest {
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    @TestMetadata("complexJavaToKotlin2/complexJavaToKotlin2.test")
-    public void testComplexJavaToKotlin2_ComplexJavaToKotlin2() throws Exception {
-        runTest("testData/refactoring/inlineMultiFile/complexJavaToKotlin2/complexJavaToKotlin2.test");
+    @TestMetadata("fromJavaToKotlin/complexJavaToKotlin2/complexJavaToKotlin2.test")
+    public void testFromJavaToKotlin_complexJavaToKotlin2_ComplexJavaToKotlin2() throws Exception {
+        runTest("testData/refactoring/inlineMultiFile/fromJavaToKotlin/complexJavaToKotlin2/complexJavaToKotlin2.test");
     }
 
-    @TestMetadata("complexJavaToKotlin/complexJavaToKotlin.test")
-    public void testComplexJavaToKotlin_ComplexJavaToKotlin() throws Exception {
-        runTest("testData/refactoring/inlineMultiFile/complexJavaToKotlin/complexJavaToKotlin.test");
+    @TestMetadata("fromJavaToKotlin/complexJavaToKotlin/complexJavaToKotlin.test")
+    public void testFromJavaToKotlin_complexJavaToKotlin_ComplexJavaToKotlin() throws Exception {
+        runTest("testData/refactoring/inlineMultiFile/fromJavaToKotlin/complexJavaToKotlin/complexJavaToKotlin.test");
     }
 
-    @TestMetadata("delegateToCallChain/delegateToCallChain.test")
-    public void testDelegateToCallChain_DelegateToCallChain() throws Exception {
-        runTest("testData/refactoring/inlineMultiFile/delegateToCallChain/delegateToCallChain.test");
+    @TestMetadata("fromJavaToKotlin/delegateToCallChain/delegateToCallChain.test")
+    public void testFromJavaToKotlin_delegateToCallChain_DelegateToCallChain() throws Exception {
+        runTest("testData/refactoring/inlineMultiFile/fromJavaToKotlin/delegateToCallChain/delegateToCallChain.test");
     }
 }
