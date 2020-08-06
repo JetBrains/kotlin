@@ -1,4 +1,4 @@
-package usage
+package otheruse
 
 import javapackage.one.JavaClassOne
 import kotlinpackage.one.extensionSelf

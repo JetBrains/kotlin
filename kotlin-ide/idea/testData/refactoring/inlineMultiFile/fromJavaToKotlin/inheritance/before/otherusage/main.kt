@@ -1,4 +1,4 @@
-package usage
+package otheruse
 
 import javapackage.one.JavaClassOne
 
@@ -9,7 +9,7 @@ fun a() {
     d.a()
 
     d.let {
-        it.<caret>a()
+        it.a()
     }
 
     d.also {

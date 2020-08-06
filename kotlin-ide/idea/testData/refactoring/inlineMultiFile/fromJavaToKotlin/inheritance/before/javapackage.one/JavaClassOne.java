@@ -2,7 +2,6 @@ package javapackage.one;
 
 import javapackage.two.JavaClassTwo;
 import kotlinpackage.one.KotlinClassOneKt;
-import kotlinpackage.two.KotlinClassTwoKt;
 import parentpack.JavaParent;
 
 public class JavaClassOne extends JavaParent {
@@ -15,7 +14,7 @@ public class JavaClassOne extends JavaParent {
         System.out.println(onlySuperMethod());
         System.out.println(superClassMethod());
         System.out.println(this.superClassMethod());
-        return KotlinClassTwoKt.extensionSelf(KotlinClassOneKt.extensionSelf(new JavaClassOne()).toJavaClassTwo()).returnSelf().toJavaOne().otherMethod();
+        return KotlinClassOneKt.extensionSelf(new JavaClassOne()).toJavaClassTwo().returnSelf().toJavaOne().otherMethod();
     }
 
     public Integer otherMethod() {
