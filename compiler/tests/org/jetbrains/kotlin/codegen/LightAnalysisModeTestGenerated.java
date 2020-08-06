@@ -3316,6 +3316,39 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/casts/javaInterop")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JavaInterop extends AbstractLightAnalysisModeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJavaInterop() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/casts/javaInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("castWithWrongType.kt")
+            public void testCastWithWrongType() throws Exception {
+                runTest("compiler/testData/codegen/box/casts/javaInterop/castWithWrongType.kt");
+            }
+
+            @TestMetadata("implicitNotNullWithWrongType.kt")
+            public void testImplicitNotNullWithWrongType() throws Exception {
+                runTest("compiler/testData/codegen/box/casts/javaInterop/implicitNotNullWithWrongType.kt");
+            }
+
+            @TestMetadata("instanceOfWithWrongType.kt")
+            public void testInstanceOfWithWrongType() throws Exception {
+                runTest("compiler/testData/codegen/box/casts/javaInterop/instanceOfWithWrongType.kt");
+            }
+
+            @TestMetadata("safeCastWithWrongType.kt")
+            public void testSafeCastWithWrongType() throws Exception {
+                runTest("compiler/testData/codegen/box/casts/javaInterop/safeCastWithWrongType.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

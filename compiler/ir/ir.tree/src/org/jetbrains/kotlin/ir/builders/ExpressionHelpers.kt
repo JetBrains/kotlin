@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.isImmutable
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.types.KotlinType
@@ -23,14 +24,23 @@ inline fun IrBuilderWithScope.irLetS(
     value: IrExpression,
     origin: IrStatementOrigin? = null,
     nameHint: String? = null,
+    irType: IrType? = null,
     body: (IrValueSymbol) -> IrExpression
 ): IrExpression {
-    val irTemporary = scope.createTemporaryVariable(value, nameHint)
-    val irResult = body(irTemporary.symbol)
-    val irBlock = IrBlockImpl(startOffset, endOffset, irResult.type, origin)
-    irBlock.statements.add(irTemporary)
-    irBlock.statements.add(irResult)
-    return irBlock
+    val (valueSymbol, irTemporary) = if (value is IrGetValue && value.symbol.owner.isImmutable) {
+        value.symbol to null
+    } else {
+        scope.createTemporaryVariable(value, nameHint, irType = irType).let { it.symbol to it }
+    }
+    val irResult = body(valueSymbol)
+    return if (irTemporary == null) {
+        irResult
+    } else {
+        val irBlock = IrBlockImpl(startOffset, endOffset, irResult.type, origin)
+        irBlock.statements.add(irTemporary)
+        irBlock.statements.add(irResult)
+        irBlock
+    }
 }
 
 
