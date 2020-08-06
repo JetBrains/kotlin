@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.idea.codeInliner.unwrapSpecialUsageOrNull
 import org.jetbrains.kotlin.idea.inspections.findExistingEditor
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
+import org.jetbrains.kotlin.idea.refactoring.inline.J2KInlineCache.Companion.findOrCreateUsageReplacementStrategy
+import org.jetbrains.kotlin.idea.refactoring.inline.J2KInlineCache.Companion.findUsageReplacementStrategy
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.J2kConverterExtension
@@ -56,7 +58,7 @@ class JavaToKotlinInlineHandler : AbstractCrossLanguageInlineHandler() {
             return
         }
 
-        val replacementStrategy = referenced.findUsageReplacementStrategy() ?: run {
+        val replacementStrategy = referenced.findUsageReplacementStrategy(withValidation = false) ?: run {
             LOG.error("Can't find strategy for ${unwrappedElement.getKotlinFqName()} => ${unwrappedElement.text}")
             return
         }
@@ -87,32 +89,47 @@ private fun NewJavaToKotlinConverter.convertToKotlinAndFindFunction(
     } ?: error("Can't find ${referenced.name} function in ${fakeFile.text}")
 }
 
-private val USAGE_REPLACEMENT_STRATEGY_KEY = Key<UsageReplacementStrategy>("USAGE_REPLACEMENT_STRATEGY")
-
-private fun findOrCreateUsageReplacementStrategy(javaMethod: PsiMethod, context: PsiElement): UsageReplacementStrategy? {
-    javaMethod.findUsageReplacementStrategy()?.let { return it }
-
-    val converter = NewJavaToKotlinConverter(
-        javaMethod.project,
-        javaMethod.module,
-        ConverterSettings.defaultSettings,
-        IdeaJavaToKotlinServices
-    )
-
-    val declaration = converter.convertToKotlinAndFindFunction(
-        referenced = javaMethod,
-        context = context,
-    )
-
-    return createUsageReplacementStrategy(declaration, javaMethod.findExistingEditor()).also { javaMethod.setUsageReplacementStrategy(it) }
-}
-
-private fun PsiElement.findUsageReplacementStrategy(): UsageReplacementStrategy? = getUserData(USAGE_REPLACEMENT_STRATEGY_KEY)
-private fun PsiElement.setUsageReplacementStrategy(strategy: UsageReplacementStrategy?) {
-    putUserData(USAGE_REPLACEMENT_STRATEGY_KEY, strategy)
-}
-
 private fun unwrapUsage(usage: UsageInfo): KtReferenceExpression? {
     val ktReferenceExpression = usage.element as? KtReferenceExpression ?: return null
     return unwrapSpecialUsageOrNull(ktReferenceExpression) ?: ktReferenceExpression
+}
+
+internal class J2KInlineCache(private val strategy: UsageReplacementStrategy, private val originalText: String) {
+    /**
+     * @return [strategy] without validation if [elementToValidation] is null
+     */
+    fun getStrategy(elementToValidation: PsiElement?): UsageReplacementStrategy? = strategy.takeIf {
+        elementToValidation?.textMatches(originalText) != false
+    }
+
+    companion object {
+        private val JAVA_TO_KOTLIN_INLINE_CACHE_KEY = Key<J2KInlineCache>("JAVA_TO_KOTLIN_INLINE_CACHE")
+
+        internal fun PsiElement.findUsageReplacementStrategy(withValidation: Boolean): UsageReplacementStrategy? =
+            getUserData(JAVA_TO_KOTLIN_INLINE_CACHE_KEY)?.getStrategy(this.takeIf { withValidation })
+
+        internal fun PsiElement.setUsageReplacementStrategy(strategy: UsageReplacementStrategy): Unit =
+            putUserData(JAVA_TO_KOTLIN_INLINE_CACHE_KEY, J2KInlineCache(strategy, text))
+
+        internal fun findOrCreateUsageReplacementStrategy(javaMethod: PsiMethod, context: PsiElement): UsageReplacementStrategy? {
+            javaMethod.findUsageReplacementStrategy(withValidation = true)?.let { return it }
+
+            val converter = NewJavaToKotlinConverter(
+                javaMethod.project,
+                javaMethod.module,
+                ConverterSettings.defaultSettings,
+                IdeaJavaToKotlinServices
+            )
+
+            val declaration = converter.convertToKotlinAndFindFunction(
+                referenced = javaMethod,
+                context = context,
+            )
+
+            return createUsageReplacementStrategy(
+                declaration,
+                javaMethod.findExistingEditor()
+            )?.also { javaMethod.setUsageReplacementStrategy(it) }
+        }
+    }
 }
