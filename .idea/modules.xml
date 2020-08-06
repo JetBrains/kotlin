@@ -1905,6 +1905,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/plugin/build/intellij.r.plugin.build.iml" filepath="$PROJECT_DIR$/intellij/rplugin/plugin/build/intellij.r.plugin.build.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/python/intellij.r.python.iml" filepath="$PROJECT_DIR$/intellij/rplugin/python/intellij.r.python.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/ultimate/intellij.r.ultimate.iml" filepath="$PROJECT_DIR$/intellij/rplugin/ultimate/intellij.r.ultimate.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/rplugin/ultimate/tests/intellij.r.ultimate.tests.iml" filepath="$PROJECT_DIR$/intellij/rplugin/ultimate/tests/intellij.r.ultimate.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/python/rest/intellij.reStructuredText.iml" filepath="$PROJECT_DIR$/intellij/community/python/rest/intellij.reStructuredText.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/reactive/reactive-streams-api/intellij.reactivestreams.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/reactive/reactive-streams-api/intellij.reactivestreams.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/reactive/reactive-streams-core/intellij.reactivestreams.core.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/reactive/reactive-streams-core/intellij.reactivestreams.core.iml" />
