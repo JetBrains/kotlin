@@ -65,6 +65,7 @@ internal class KtFirClassType(
             firBuilder.buildTypeArgument(typeArgument)
         }
     }
+    override val nullability: KtTypeNullability get() = withValidityAssertion { KtTypeNullability.create(coneType.isNullable) }
 
     override fun asString(): String = withValidityAssertion {
         coneType.render() //todo
@@ -96,6 +97,8 @@ internal class KtFirTypeParameterType(
         firBuilder.buildTypeParameterSymbolByLookupTag(coneType.lookupTag)
             ?: error("Type parameter ${coneType.lookupTag} was not found")
     }
+
+    override val nullability: KtTypeNullability get() = withValidityAssertion { KtTypeNullability.create(coneType.isNullable) }
 
     override fun asString(): String = withValidityAssertion {
         coneType.render() //todo
