@@ -11,6 +11,61 @@ import kotlin.test.assertTrue
 
 class NpmRangeTest {
     @Test
+    fun unionTest() {
+        fun assertUnion(range1: NpmRange, range2: NpmRange, expected: List<NpmRange>) {
+            val union = range1 union range2
+            assertTrue("Range $range1 and $range2 expected to have union $expected, but actual is $union") {
+                union == expected
+            }
+
+            val symUnion = range1 union range2
+            assertTrue("Range $range2 and $range1 expected to have union $expected, but actual is $symUnion") {
+                symUnion == expected
+            }
+        }
+
+        val range1 = npmRange(startMajor = 1, endMajor = 2)
+        val range2 = npmRange(startMajor = 3, endMajor = 4)
+        assertUnion(range1, range2, listOf(range1, range2))
+
+        assertUnion(
+            npmRange(startMajor = 1, endMajor = 3),
+            npmRange(startMajor = 2, endMajor = 4),
+            listOf(
+                npmRange(
+                    startMajor = 1,
+                    endMajor = 4
+                )
+            )
+        )
+
+        assertUnion(
+            npmRange(startMajor = 1, endMajor = 3),
+            npmRange(startMajor = 2, endMajor = 4, startInclusive = true, endInclusive = true),
+            listOf(
+                npmRange(
+                    startMajor = 1,
+                    endMajor = 4,
+                    endInclusive = true
+                )
+            )
+        )
+
+        assertUnion(
+            npmRange(startMajor = 1, endMajor = 3, startInclusive = true, endInclusive = true),
+            npmRange(startMajor = 2, endMajor = 4, startInclusive = true, endInclusive = true),
+            listOf(
+                npmRange(
+                    startMajor = 1,
+                    endMajor = 4,
+                    startInclusive = true,
+                    endInclusive = true
+                )
+            )
+        )
+    }
+
+    @Test
     fun rangeInvertTest() {
         fun assertInvert(invertible: NpmRange, expected: List<NpmRange>) {
             val invert = invertible.invert()

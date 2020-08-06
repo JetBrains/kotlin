@@ -58,7 +58,7 @@ infix fun NpmRange.union(other: NpmRange): List<NpmRange> {
         startVersion = startVersion,
         startInclusive = if (startVersion == other.startVersion) other.startInclusive else this.startInclusive,
         endVersion = endVersion,
-        endInclusive = if (startVersion == other.startVersion) other.startInclusive else this.startInclusive
+        endInclusive = if (endVersion == other.endVersion) other.endInclusive else this.endInclusive
     ).toListOrEmpty()
 }
 
