@@ -26,6 +26,11 @@ public class InlineMultiFileTestGenerated extends AbstractInlineMultiFileTest {
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
+    @TestMetadata("complexJavaToKotlin2/complexJavaToKotlin2.test")
+    public void testComplexJavaToKotlin2_ComplexJavaToKotlin2() throws Exception {
+        runTest("testData/refactoring/inlineMultiFile/complexJavaToKotlin2/complexJavaToKotlin2.test");
+    }
+
     @TestMetadata("complexJavaToKotlin/complexJavaToKotlin.test")
     public void testComplexJavaToKotlin_ComplexJavaToKotlin() throws Exception {
         runTest("testData/refactoring/inlineMultiFile/complexJavaToKotlin/complexJavaToKotlin.test");
