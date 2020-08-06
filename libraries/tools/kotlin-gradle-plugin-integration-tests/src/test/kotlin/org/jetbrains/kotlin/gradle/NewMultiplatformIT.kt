@@ -2107,13 +2107,13 @@ class NewMultiplatformIT : BaseGradleIT() {
         fun testDependencies() = testResolveAllConfigurations("app") {
             assertContains(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata --> junit-4.12.jar")
             assertEquals(
-                2, // the dependency above and stdlib
+                1,
                 (Regex.escape(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata") + " .*").toRegex().findAll(output).count()
             )
 
             assertContains(">> :app:testNonTransitiveDependencyNotationApiDependenciesMetadata --> kotlin-reflect-${defaultBuildOptions().kotlinVersion}.jar")
             assertEquals(
-                2, // the dependency above and stdlib
+                1,
                 (Regex.escape(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata") + " .*").toRegex().findAll(output).count()
             )
 
