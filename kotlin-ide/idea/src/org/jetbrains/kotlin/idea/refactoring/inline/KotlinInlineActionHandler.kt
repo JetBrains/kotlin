@@ -26,8 +26,8 @@ abstract class KotlinInlineActionHandler : InlineActionHandler() {
         inlineKotlinElement(project, editor, kotlinElement)
     }
 
-    protected fun unwrapKotlinElement(element: PsiElement): KtElement? = element.unwrapped as? KtElement
-
     abstract fun canInlineKotlinElement(element: KtElement): Boolean
     abstract fun inlineKotlinElement(project: Project, editor: Editor?, element: KtElement)
 }
+
+private fun unwrapKotlinElement(element: PsiElement): KtElement? = element.unwrapped as? KtElement

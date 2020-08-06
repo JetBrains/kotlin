@@ -12,6 +12,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
+import org.jetbrains.annotations.Nls
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
@@ -39,7 +40,7 @@ class KotlinInlineTypeAliasHandler : KotlinInlineActionHandler() {
         val REFACTORING_NAME get() = KotlinBundle.message("name.inline.type.alias")
     }
 
-    private fun showErrorHint(project: Project, editor: Editor?, message: String) {
+    private fun showErrorHint(project: Project, editor: Editor?, @Nls message: String) {
         CommonRefactoringUtil.showErrorHint(project, editor, message, REFACTORING_NAME, null)
     }
 

@@ -25,6 +25,7 @@ import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.annotations.Nls
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
@@ -214,7 +215,7 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : KotlinInlineActi
         showErrorHint(project, editor, message)
     }
 
-    private fun showErrorHint(project: Project, editor: Editor?, message: String) {
+    private fun showErrorHint(project: Project, editor: Editor?, @Nls message: String) {
         CommonRefactoringUtil.showErrorHint(
             project,
             editor,

@@ -10,6 +10,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.ElementDescriptionUtil
 import com.intellij.refactoring.inline.InlineOptionsDialog
 import com.intellij.usageView.UsageViewTypeLocation
+import org.jetbrains.annotations.Nls
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
@@ -55,6 +56,7 @@ abstract class AbstractKotlinInlineDialog(
         return "${kind.capitalize()} ${callable.nameAsSafeName} $occurrencesString"
     }
 
+    @Nls
     private fun getInlineText(verb: String) = KotlinBundle.message(
         "text.inline.all.references.and.verb.0.the.kind.1.occurrences.2",
         verb,
