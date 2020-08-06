@@ -15,6 +15,9 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.ArchiveFileSystem
 import com.intellij.psi.PsiManager
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
+import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.findMainClass
@@ -34,7 +37,11 @@ import org.jetbrains.kotlin.test.KotlinCompilerStandalone
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
 
-class DebuggerTestCompilerFacility(files: List<TestFile>, private val jvmTarget: JvmTarget) {
+class DebuggerTestCompilerFacility(
+    files: List<TestFile>, 
+    private val jvmTarget: JvmTarget,
+    private val useIrBackend: Boolean
+) {
     private val kotlinStdlibPath = KotlinArtifacts.instance.kotlinStdlib.absolutePath
 
     private val mainFiles: TestFilesByLanguage
@@ -85,10 +92,16 @@ class DebuggerTestCompilerFacility(files: List<TestFile>, private val jvmTarget:
         if (kotlinStdlibInMavenArtifacts() == null)
             mavenArtifacts.add(kotlinStdlibPath)
 
+        val options = mutableListOf("-jvm-target", jvmTarget.description)
+
+        if (useIrBackend) {
+            options.add("-Xuse-ir")
+        }
+
         if (kotlin.isNotEmpty()) {
             KotlinCompilerStandalone(
                 listOf(srcDir), target = classesDir,
-                options = listOf("-jvm-target", jvmTarget.description),
+                options = options,
                 classpath = mavenArtifacts.map(::File)
             ).compile()
         }
@@ -160,10 +173,17 @@ class DebuggerTestCompilerFacility(files: List<TestFile>, private val jvmTarget:
 
         val configuration = CompilerConfiguration()
         configuration.put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
+        configuration.put(JVMConfigurationKeys.IR, useIrBackend)
 
         val state = GenerationState.Builder(project, ClassBuilderFactories.BINARIES, moduleDescriptor, bindingContext, files, configuration)
             .generateDeclaredClassFilter(GenerationState.GenerateClassFilter.GENERATE_ALL)
-            .codegenFactory(DefaultCodegenFactory)
+            .codegenFactory(
+                if (useIrBackend) {
+                    JvmIrCodegenFactory(PhaseConfig(jvmPhases))
+                } else {
+                    DefaultCodegenFactory
+                }
+            )
             .build()
 
         KotlinCodegenFacade.compileCorrectFiles(state)

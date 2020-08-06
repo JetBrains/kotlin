@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 LineBreakpoint created at smartStepIntoConstructor.kt:7
 LineBreakpoint created at smartStepIntoConstructor.kt:11
 LineBreakpoint created at smartStepIntoConstructor.kt:15

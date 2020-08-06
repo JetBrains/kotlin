@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 LineBreakpoint created at functionReference.kt:11
 Run Java
 Connected to the target VM
