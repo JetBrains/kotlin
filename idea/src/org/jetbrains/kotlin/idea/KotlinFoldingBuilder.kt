@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.allChildren
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtFunctionElementType
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 
@@ -76,7 +73,7 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
 
     private fun appendDescriptors(node: ASTNode, document: Document, descriptors: MutableList<FoldingDescriptor>) {
         if (needFolding(node, document)) {
-            val textRange = getRangeToFold(node)
+            val textRange = getRangeToFold(node, document)
             val relativeRange = textRange.shiftRight(-node.textRange.startOffset)
             val foldRegionText = node.chars.subSequence(relativeRange.startOffset, relativeRange.endOffset)
             if (StringUtil.countNewLines(foldRegionText) > 0) {
@@ -126,10 +123,17 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
         return functionDescriptor.valueParameters.size == 1 && functionDescriptor.valueParameters.first().isVararg
     }
 
-    private fun getRangeToFold(node: ASTNode): TextRange {
+    private fun getRangeToFold(node: ASTNode, document: Document): TextRange {
         if (node.elementType is KtFunctionElementType) {
-            val bodyExpression = (node.psi as? KtNamedFunction)?.bodyExpression
+            val function = node.psi as? KtNamedFunction
+            val bodyExpression = function?.bodyExpression
             if (bodyExpression != null && bodyExpression !is KtBlockExpression) {
+                if (function.startLine(document) != bodyExpression.startLine(document)) {
+                    val lineBreak = bodyExpression.siblings(forward = false, withItself = false).firstOrNull { "\n" in it.text }
+                    if (lineBreak != null) {
+                        return TextRange(lineBreak.startOffset, bodyExpression.endOffset)
+                    }
+                }
                 return bodyExpression.textRange
             }
         }
