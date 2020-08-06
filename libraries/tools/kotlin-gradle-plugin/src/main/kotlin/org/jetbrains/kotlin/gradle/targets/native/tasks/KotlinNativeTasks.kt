@@ -336,7 +336,7 @@ open class KotlinNativeCompile : AbstractKotlinNativeCompile<KotlinCommonOptions
 
     @get:Internal
     override val baseName: String by
-    compilation.map { if (it.isMain()) project.name else "${project.name}_${name}" }
+    compilation.map { if (it.isMain()) project.name else "${project.name}_${it.name}" }
 
     // Store as an explicit provider in order to allow Gradle Instant Execution to capture the state
 //    private val allSourceProvider = compilation.map { project.files(it.allSources).asFileTree }
@@ -366,7 +366,7 @@ open class KotlinNativeCompile : AbstractKotlinNativeCompile<KotlinCommonOptions
 
     private val friendModule: FileCollection by compilation.map { compilationInstance ->
         project.files(
-            compilationInstance.associateWithTransitiveClosure.map { compilationInstance.output.allOutputs },
+            compilationInstance.associateWithTransitiveClosure.map { it.output.allOutputs },
             compilationInstance.friendArtifacts
         )
     }
