@@ -126,7 +126,7 @@ internal class J2KInlineCache(private val strategy: UsageReplacementStrategy, pr
                 context = context,
             )
 
-            return createUsageReplacementStrategy(
+            return createUsageReplacementStrategyForFunction(
                 declaration,
                 javaMethod.findExistingEditor()
             )?.also { javaMethod.setUsageReplacementStrategy(it) }

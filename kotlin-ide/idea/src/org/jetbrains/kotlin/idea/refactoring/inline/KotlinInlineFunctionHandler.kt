@@ -11,14 +11,20 @@ import com.intellij.openapi.project.Project
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
+import org.jetbrains.kotlin.idea.codeInliner.CallableUsageReplacementStrategy
+import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinInlineFunctionHandler : KotlinInlineActionHandler() {
     override fun canInlineKotlinElement(element: KtElement): Boolean = element is KtNamedFunction && element.hasBody()
@@ -37,7 +43,7 @@ class KotlinInlineFunctionHandler : KotlinInlineActionHandler() {
             return
         }
 
-        val replacementStrategy = createUsageReplacementStrategy(element, editor) ?: return
+        val replacementStrategy = createUsageReplacementStrategyForFunction(element, editor) ?: return
         val dialog = KotlinInlineFunctionDialog(
             project, element, nameReference, replacementStrategy,
             allowInlineThisOnly = recursive
@@ -60,5 +66,18 @@ class KotlinInlineFunctionHandler : KotlinInlineActionHandler() {
             it !== this && descriptor == it.getResolvedCall(context)?.resultingDescriptor
         }
     }
+}
 
+fun createUsageReplacementStrategyForFunction(function: KtNamedFunction, editor: Editor?): UsageReplacementStrategy? {
+    val returnType = function.unsafeResolveToDescriptor().safeAs<SimpleFunctionDescriptor>()?.returnType
+    val codeToInline = buildCodeToInline(
+        function,
+        returnType,
+        function.hasDeclaredReturnType() || (function.hasBlockBody() && returnType?.isUnit() == true),
+        function.bodyExpression!!,
+        function.hasBlockBody(),
+        editor
+    ) ?: return null
+
+    return CallableUsageReplacementStrategy(codeToInline, inlineSetter = false)
 }
