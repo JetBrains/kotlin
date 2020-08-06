@@ -19,11 +19,23 @@ interface KtType : ValidityTokenOwner {
     fun asStringForDebugging(): String
 }
 
+interface KtTypeWithNullability : KtType {
+    val nullability: KtTypeNullability
+}
+
+enum class KtTypeNullability {
+    NULLABLE, NON_NULLABLE;
+
+    companion object {
+        fun create(isNullable: Boolean) = if (isNullable) NULLABLE else NON_NULLABLE
+    }
+}
+
 sealed class KtDenotableType : KtType {
     abstract fun asString(): String
 }
 
-abstract class KtClassType : KtDenotableType() {
+abstract class KtClassType : KtDenotableType(), KtTypeWithNullability {
     abstract val classId: ClassId
     abstract val classSymbol: KtClassLikeSymbol
     abstract val typeArguments: List<KtTypeArgument>
@@ -33,7 +45,7 @@ abstract class KtErrorType : KtType {
     abstract val error: String
 }
 
-abstract class KtTypeParameterType : KtDenotableType() {
+abstract class KtTypeParameterType : KtDenotableType(), KtTypeWithNullability {
     abstract val name: Name
     abstract val symbol: KtTypeParameterSymbol
 }
