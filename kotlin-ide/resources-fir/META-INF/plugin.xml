@@ -69,8 +69,14 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
     <beforeResolveHighlightingVisitor implementation="org.jetbrains.kotlin.idea.fir.highlighter.visitors.DeclarationHighlightingExtension"/>
   </extensions>
 
+  <actions>
+    <action id="Kotlin.NewFile" class="org.jetbrains.kotlin.idea.actions.NewKotlinFileAction">
+      <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewGroup1"/>
+    </action>
+  </actions>
 
-<!--decompiler-->
+
+  <!--decompiler-->
   <extensions defaultExtensionNs="com.intellij">
     <psi.classFileDecompiler implementation="org.jetbrains.kotlin.idea.decompiler.classFile.KotlinClassFileDecompiler"/>
     <psi.classFileDecompiler implementation="org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInDecompiler"/>
