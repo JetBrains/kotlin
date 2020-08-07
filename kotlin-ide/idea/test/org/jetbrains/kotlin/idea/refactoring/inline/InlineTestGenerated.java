@@ -79,6 +79,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/function/InStringTemplates.kt");
         }
 
+        @TestMetadata("InvokeFunction.kt")
+        public void testInvokeFunction() throws Exception {
+            runTest("testData/refactoring/inline/function/InvokeFunction.kt");
+        }
+
         @TestMetadata("Kt19459.kt")
         public void testKt19459() throws Exception {
             runTest("testData/refactoring/inline/function/Kt19459.kt");

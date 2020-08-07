@@ -16,13 +16,18 @@
 
 package org.jetbrains.kotlin.idea.codeInliner
 
+import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
+
+private val LOG = Logger.getInstance(CallableUsageReplacementStrategy::class.java)
 
 class CallableUsageReplacementStrategy(
     private val replacement: CodeToInline,
@@ -43,7 +48,7 @@ class CallableUsageReplacementStrategy(
         //TODO: precheck pattern correctness for annotation entry
 
         return when {
-            usage is KtArrayAccessExpression -> {
+            usage is KtArrayAccessExpression || usage is KtCallExpression -> {
                 {
                     val nameExpression = OperatorToFunctionIntention.convert(usage).second
                     createReplacer(nameExpression)?.invoke()
@@ -60,7 +65,14 @@ class CallableUsageReplacementStrategy(
                     CodeInliner(usage, bindingContext, resolvedCall, callElement, inlineSetter, replacement).doInline()
                 }
             }
-            else -> null
+            else -> {
+                val exceptionWithAttachments = KotlinExceptionWithAttachments("Unsupported usage")
+                    .withAttachment("type", usage)
+                    .withAttachment("usage", usage.getElementTextWithContext())
+
+                LOG.error(exceptionWithAttachments)
+                null
+            }
         }
     }
 }

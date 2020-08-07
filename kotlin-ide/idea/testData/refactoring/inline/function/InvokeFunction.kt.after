@@ -1,0 +1,9 @@
+class SimpleClass {
+}
+
+fun test() {
+    val simpleClass = SimpleClass()
+    val str = "test1"
+    val str2 = "test2"
+    val str3 = (SimpleClass() as? SimpleClass)?.let { "test3" }
+}
