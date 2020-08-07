@@ -22,6 +22,7 @@ internal interface Stack {
 
     fun setCurrentFrameName(irFunction: IrFunction)
     fun getStackTrace(): List<String>
+    fun getStackCount(): Int
 
     fun clean()
     fun addVar(variable: Variable)
@@ -39,6 +40,7 @@ internal interface Stack {
 internal class StackImpl : Stack {
     private val frameList = mutableListOf(FrameContainer()) // first frame is default, it is easier to work when last() is not null
     private fun getCurrentFrame() = frameList.last()
+    private var stackCount = 0
 
     override fun newFrame(asSubFrame: Boolean, initPool: List<Variable>, block: () -> ExecutionResult): ExecutionResult {
         val typeArgumentsPool = initPool.filter { it.symbol is IrTypeParameterSymbol }
@@ -47,8 +49,10 @@ internal class StackImpl : Stack {
         if (asSubFrame) getCurrentFrame().addSubFrame(newFrame) else frameList.add(FrameContainer(newFrame))
 
         return try {
+            stackCount++
             block()
         } finally {
+            stackCount--
             if (asSubFrame) getCurrentFrame().removeSubFrame() else removeLastFrame()
         }
     }
@@ -71,7 +75,10 @@ internal class StackImpl : Stack {
         return frameList.mapNotNull { it.frameEntryPoint }
     }
 
+    override fun getStackCount(): Int = stackCount
+
     override fun clean() {
+        stackCount = 0
         frameList.clear()
         frameList.add(FrameContainer())
     }

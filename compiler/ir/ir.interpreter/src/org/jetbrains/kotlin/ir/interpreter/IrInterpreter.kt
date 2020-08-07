@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.Name
 import java.lang.invoke.MethodHandle
 
 private const val MAX_COMMANDS = 500_000
+private const val MAX_STACK = 500
 
 class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSignature, IrBody> = emptyMap()) {
     private val irExceptions = mutableListOf<IrClass>()
@@ -82,7 +83,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
                 }
                 else -> TODO("$returnLabel not supported as result of interpretation")
             }
-        } catch (e: InterpreterException) {
+        } catch (e: Throwable) {
             // TODO don't handle, throw to lowering
             IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, "\n" + e.message)
         }
@@ -142,6 +143,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
 
     // this method is used to get stack trace after exception
     private fun interpretFunction(irFunction: IrSimpleFunction): ExecutionResult {
+        if (stack.getStackCount() >= MAX_STACK) StackOverflowError().throwAsUserException()
         if (irFunction.fileOrNull != null) stack.setCurrentFrameName(irFunction)
 
         if (irFunction.body is IrSyntheticBody) return handleIntrinsicMethods(irFunction)
