@@ -22,7 +22,11 @@ import com.intellij.structuralsearch.plugin.replace.ReplaceOptions
 import com.intellij.structuralsearch.plugin.ui.Configuration
 import com.intellij.structuralsearch.plugin.ui.UIUtil
 import com.intellij.util.SmartList
-import com.jetbrains.kotlin.structuralsearch.filters.VarValFilter
+import com.jetbrains.kotlin.structuralsearch.filters.OneStateFilter
+import com.jetbrains.kotlin.structuralsearch.filters.ValOnlyFilter
+import com.jetbrains.kotlin.structuralsearch.filters.VarOnlyFilter
+import com.jetbrains.kotlin.structuralsearch.predicates.KotlinExprTypePredicate
+import com.jetbrains.kotlin.structuralsearch.predicates.KotlinVarValOnlyPredicate
 import com.jetbrains.kotlin.structuralsearch.visitor.KotlinCompilingVisitor
 import com.jetbrains.kotlin.structuralsearch.visitor.KotlinMatchingVisitor
 import com.jetbrains.kotlin.structuralsearch.visitor.KotlinRecursiveElementWalkingVisitor
@@ -203,7 +207,8 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
                 UIUtil.MAXIMUM_UNLIMITED -> isApplicableMaxCount(variableNode) || isApplicableMinMaxCount(variableNode)
                 UIUtil.TEXT_HIERARCHY -> isApplicableTextHierarchy(variableNode)
                 UIUtil.REFERENCE -> isApplicableReference(variableNode)
-                VarValFilter.CONSTRAINT_NAME -> variableNode.parent is KtProperty
+                ValOnlyFilter.CONSTRAINT_NAME -> variableNode.parent is KtProperty && !(variableNode.parent as KtProperty).isVar
+                VarOnlyFilter.CONSTRAINT_NAME -> variableNode.parent is KtProperty && (variableNode.parent as KtProperty).isVar
                 else -> super.isApplicableConstraint(constraintName, variableNode, completePattern, target)
             }
 
@@ -328,6 +333,10 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
                 )
                 result.add(if (isInvertExprType) NotPredicate(predicate) else predicate)
             }
+            if (getAdditionalConstraint(VarOnlyFilter.CONSTRAINT_NAME) == OneStateFilter.ENABLED)
+                result.add(KotlinVarValOnlyPredicate(true))
+            else if (getAdditionalConstraint(ValOnlyFilter.CONSTRAINT_NAME) == OneStateFilter.ENABLED)
+                result.add(KotlinVarValOnlyPredicate(false))
         }
         return result
     }

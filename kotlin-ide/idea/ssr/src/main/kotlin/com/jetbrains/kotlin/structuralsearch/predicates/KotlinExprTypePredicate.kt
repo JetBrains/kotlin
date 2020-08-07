@@ -1,4 +1,4 @@
-package com.jetbrains.kotlin.structuralsearch
+package com.jetbrains.kotlin.structuralsearch.predicates
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -10,6 +10,7 @@ import com.intellij.structuralsearch.StructuralSearchUtil
 import com.intellij.structuralsearch.impl.matcher.MatchContext
 import com.intellij.structuralsearch.impl.matcher.predicates.MatchPredicate
 import com.intellij.structuralsearch.impl.matcher.predicates.RegExpPredicate
+import com.jetbrains.kotlin.structuralsearch.KSSRBundle
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.resolveType
 import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
