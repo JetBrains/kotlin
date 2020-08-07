@@ -18,9 +18,11 @@ internal class FirIdeResolveStateService(private val project: Project) {
 
     private fun createResolveStateFor(moduleInfo: IdeaModuleInfo): FirModuleResolveStateImpl {
         val sessionProvider = FirIdeSessionProvider(project)
+        val firPhaseRunner = FirPhaseRunner()
         val session = FirIdeJavaModuleBasedSession.create(
             project,
             moduleInfo as ModuleSourceInfo,
+            firPhaseRunner,
             sessionProvider,
         ).apply { sessionProvider.registerSession(moduleInfo, this) }
 
