@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.idea.frontend.api.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.scopes.KtFirScopeProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbolProvider
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.*
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeProvider
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
@@ -60,8 +61,9 @@ private constructor(
 
     private val firScopeStorage = FirScopeRegistry()
 
-    override val scopeProvider: KtScopeProvider =
+    override val scopeProvider: KtScopeProvider by threadLocal {
         KtFirScopeProvider(token, firSymbolBuilder, project, firSession, firResolveState, firScopeStorage)
+    }
 
     init {
         assertIsValid()
