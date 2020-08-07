@@ -121,7 +121,7 @@ abstract class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDe
     }
 
     override fun performRefactoring(usages: Array<out UsageInfo>) {
-        val replacementStrategy = createReplacementStrategy() ?: TODO()
+        val replacementStrategy = createReplacementStrategy() ?: return
 
         val (kotlinReferenceUsages, nonKotlinReferenceUsages) = usages.partition { it !is OverrideUsageInfo && it.element is KtReferenceExpression }
         for (usage in nonKotlinReferenceUsages) {
