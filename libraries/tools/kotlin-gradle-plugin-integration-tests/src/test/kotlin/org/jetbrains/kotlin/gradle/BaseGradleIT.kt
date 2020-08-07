@@ -207,8 +207,13 @@ abstract class BaseGradleIT {
         val kaptOptions: KaptOptions? = null,
         val parallelTasksInProject: Boolean? = null,
         val jsCompilerType: KotlinJsCompilerType? = null,
-        val configurationCache: Boolean = false
+        val configurationCache: Boolean = false,
+        val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL
     )
+
+    enum class ConfigurationCacheProblems {
+        FAIL, WARN
+    }
 
     data class KaptOptions(
         val verbose: Boolean,
@@ -803,10 +808,8 @@ Finished executing task ':$taskName'|
                 add("-Pkotlin.js.compiler=$it")
             }
 
-            options.configurationCache.let {
-                add("-Dorg.gradle.unsafe.configuration-cache=$it")
-                add("-Dorg.gradle.unsafe.configuration-cache-problems=fail")
-            }
+            add("-Dorg.gradle.unsafe.configuration-cache=${options.configurationCache}")
+            add("-Dorg.gradle.unsafe.configuration-cache-problems=${options.configurationCacheProblems.name.toLowerCase()}")
 
             // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):
             add("--console=plain")
