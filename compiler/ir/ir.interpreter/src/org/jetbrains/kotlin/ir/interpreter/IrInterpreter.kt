@@ -728,14 +728,13 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
             for (catchBlock in expression.catches) {
                 if (exception.isSubtypeOf(catchBlock.catchParameter.type.classOrNull!!.owner)) {
                     catchBlock.interpret().check { return it }
-                    break
+                    return Next
                 }
             }
+            return Exception
         } finally {
-            expression.finallyExpression?.interpret()?.check { return it }
+            expression.finallyExpression?.takeIf { (it as? IrBlock)?.statements?.isEmpty() != true }?.interpret()?.check { return it }
         }
-
-        return Next
     }
 
     private fun interpretCatch(expression: IrCatch): ExecutionResult {
