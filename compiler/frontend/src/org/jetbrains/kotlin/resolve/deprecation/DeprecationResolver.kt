@@ -64,15 +64,17 @@ class DeprecationResolver(
         descriptor: DeclarationDescriptor,
         call: Call? = null,
         bindingContext: BindingContext? = null,
-        isSuperCall: Boolean = false
+        isSuperCall: Boolean = false,
+        fromImportingScope: Boolean = false
     ): Boolean =
-        isHiddenInResolution(descriptor, call?.callElement, bindingContext, isSuperCall)
+        isHiddenInResolution(descriptor, call?.callElement, bindingContext, isSuperCall, fromImportingScope)
 
     fun isHiddenInResolution(
         descriptor: DeclarationDescriptor,
         callElement: KtElement?,
         bindingContext: BindingContext?,
-        isSuperCall: Boolean
+        isSuperCall: Boolean,
+        fromImportingScope: Boolean
     ): Boolean {
         if (descriptor is FunctionDescriptor) {
             if (descriptor.isHiddenToOvercomeSignatureClash) return true
@@ -83,14 +85,17 @@ class DeprecationResolver(
         if (sinceKotlinAccessibility is SinceKotlinAccessibility.NotAccessible) return true
 
         if (sinceKotlinAccessibility is SinceKotlinAccessibility.NotAccessibleButWasExperimental) {
-            if (callElement != null && bindingContext != null) {
-                return with(ExperimentalUsageChecker) {
+            return if (callElement != null && bindingContext != null) {
+                with(ExperimentalUsageChecker) {
                     sinceKotlinAccessibility.markerClasses.any { classDescriptor ->
                         !callElement.isExperimentalityAccepted(classDescriptor.fqNameSafe, languageVersionSettings, bindingContext)
                     }
                 }
+            } else {
+                // We need a softer check for descriptors from importing scope as there is no access to PSI elements
+                // It's fine to return false here as there will be additional checks for accessibility later
+                !fromImportingScope
             }
-            return true
         }
 
         return isDeprecatedHidden(descriptor)

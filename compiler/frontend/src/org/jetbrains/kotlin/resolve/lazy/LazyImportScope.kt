@@ -235,7 +235,8 @@ class LazyImportScope(
     private fun LazyImportResolver<*>.isClassifierVisible(descriptor: ClassifierDescriptor): Boolean {
         if (filteringKind == FilteringKind.ALL) return true
 
-        if (components.deprecationResolver.isHiddenInResolution(descriptor)) return false
+        // TODO: do not perform this check here because for correct work it requires corresponding PSI element
+        if (components.deprecationResolver.isHiddenInResolution(descriptor, fromImportingScope = true)) return false
 
         val visibility = (descriptor as DeclarationDescriptorWithVisibility).visibility
         val includeVisible = filteringKind == FilteringKind.VISIBLE_CLASSES
