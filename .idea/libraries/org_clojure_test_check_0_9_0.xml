@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="org.clojure:test.check:0.9.0" type="repository">
+    <properties maven-id="org.clojure:test.check:0.9.0" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/clojure/test.check/0.9.0/test.check-0.9.0.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/clojure/clojure/1.7.0/clojure-1.7.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
