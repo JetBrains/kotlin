@@ -570,19 +570,17 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
     }
 
     private fun interpretVariable(expression: IrVariable): ExecutionResult {
-        expression.initializer?.interpret()?.check { return it } ?: return Next
+        if (expression.initializer == null) {
+            return Next.apply { stack.addVar(Variable(expression.symbol)) }
+        }
+        expression.initializer?.interpret()?.check { return it } //?: return Next
         stack.addVar(Variable(expression.symbol, stack.popReturnValue()))
         return Next
     }
 
     private fun interpretSetVariable(expression: IrSetValue): ExecutionResult {
         expression.value.interpret().check { return it }
-
-        if (stack.contains(expression.symbol)) {
-            stack.getVariable(expression.symbol).apply { this.state = stack.popReturnValue() }
-        } else {
-            stack.addVar(Variable(expression.symbol, stack.popReturnValue()))
-        }
+        stack.getVariable(expression.symbol).apply { this.state = stack.popReturnValue() }
         return Next
     }
 
