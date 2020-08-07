@@ -90,14 +90,14 @@ class NpmRangeTest {
     @Test
     fun unionTest() {
         fun assertUnion(range1: NpmRange, range2: NpmRange, expected: List<NpmRange>) {
-            val union = range1 union range2
+            val union = (range1 union range2)
             assertTrue("Range $range1 and $range2 expected to have union $expected, but actual is $union") {
-                union == expected
+                union.toSet() == expected.toSet()
             }
 
             val symUnion = range2 union range1
             assertTrue("Range $range2 and $range1 expected to have union $expected, but actual is $symUnion") {
-                symUnion == expected
+                symUnion.toSet() == expected.toSet()
             }
         }
 
@@ -186,7 +186,7 @@ class NpmRangeTest {
         fun assertInvert(invertible: NpmRange, expected: List<NpmRange>) {
             val invert = invertible.invert()
             assertTrue("Inverted $invertible should be $expected but found $invert") {
-                invert == expected
+                invert.toSet() == expected.toSet()
             }
         }
 
