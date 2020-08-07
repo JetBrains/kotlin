@@ -5,42 +5,23 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.findFileByName
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import java.io.File
 import java.net.URI
 import java.util.Arrays.asList
 import kotlin.test.fail
 
-open class ConfigurationCacheIT : BaseGradleIT() {
-    private val androidGradlePluginVersion: AGPVersion
-        get() = AGPVersion.v4_2_0
-
-    override fun defaultBuildOptions() =
-        super.defaultBuildOptions().copy(
-            androidHome = KotlinTestUtils.findAndroidSdk(),
-            androidGradlePluginVersion = androidGradlePluginVersion,
-            configurationCache = true
-        )
-
-    override val defaultGradleVersion: GradleVersionRequired = GradleVersionRequired.AtLeast("6.6-rc-3")
-
+class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @Test
     fun testSimpleKotlinJvmProject() = with(Project("kotlinProject")) {
         testConfigurationCacheOf(":compileKotlin")
     }
 
     @Test
-    fun testSimpleKotlinAndroidProject() = with(Project("android-dagger", directoryPrefix = "kapt2")) {
-        applyAndroid40Alpha4KotlinVersionWorkaround()
-        projectDir.resolve("gradle.properties").appendText("\nkapt.incremental.apt=false")
-        testConfigurationCacheOf(":app:compileDebugKotlin", ":app:kaptDebugKotlin", ":app:kaptGenerateStubsDebugKotlin")
-    }
+    fun testIncrementalKaptProject() = with(Project("kaptIncrementalCompilationProject")) {
+        setupIncrementalAptProject("AGGREGATING")
 
-    @Test
-    fun testIncrementalKaptProject() = with(getIncrementalKaptProject()) {
         testConfigurationCacheOf(
             ":compileKotlin",
             ":kaptKotlin",
@@ -56,12 +37,24 @@ open class ConfigurationCacheIT : BaseGradleIT() {
         )
     }
 
-    private fun getIncrementalKaptProject() =
-        Project("kaptIncrementalCompilationProject").apply {
-            setupIncrementalAptProject("AGGREGATING")
-        }
+    @Test
+    fun testInstantExecution() = with(Project("instantExecution")) {
+        testConfigurationCacheOf("assemble", executedTaskNames = asList(":lib-project:compileKotlin"))
+    }
 
-    internal fun Project.testConfigurationCacheOf(
+    @Test
+    fun testInstantExecutionForJs() = with(Project("instantExecutionToJs")) {
+        testConfigurationCacheOf("assemble", executedTaskNames = asList(":compileKotlin2Js"))
+    }
+}
+
+abstract class AbstractConfigurationCacheIT : BaseGradleIT() {
+    override fun defaultBuildOptions() =
+        super.defaultBuildOptions().copy(configurationCache = true)
+
+    override val defaultGradleVersion: GradleVersionRequired = GradleVersionRequired.AtLeast("6.6-rc-3")
+
+    protected fun Project.testConfigurationCacheOf(
         vararg taskNames: String,
         executedTaskNames: List<String>? = null,
         buildOptions: BuildOptions = defaultBuildOptions()
@@ -122,42 +115,4 @@ open class ConfigurationCacheIT : BaseGradleIT() {
 
     private fun File.asClickableFileUrl(): String =
         URI("file", "", toURI().path, null, null).toString()
-
-    /**
-     * Android Gradle plugin 4.0-alpha4 depends on the EAP versions of some o.j.k modules.
-     * Force the current Kotlin version, so the EAP versions are not queried from the
-     * test project's repositories, where there's no 'kotlin-eap' repo.
-     * TODO remove this workaround once an Android Gradle plugin version is used that depends on the stable Kotlin version
-     */
-    private fun Project.applyAndroid40Alpha4KotlinVersionWorkaround() {
-        setupWorkingDir()
-
-        val resolutionStrategyHack = """
-            configurations.all { 
-                resolutionStrategy.dependencySubstitution.all { dependency ->
-                    def requested = dependency.requested
-                    if (requested instanceof ModuleComponentSelector && requested.group == 'org.jetbrains.kotlin') {
-                        dependency.useTarget requested.group + ':' + requested.module + ':' + '${defaultBuildOptions().kotlinVersion}'
-                    }
-                }
-            }
-        """.trimIndent()
-
-        gradleBuildScript().appendText("\n" + """
-            buildscript {
-                $resolutionStrategyHack
-            }
-            $resolutionStrategyHack
-        """.trimIndent())
-    }
-
-    @Test
-    fun testInstantExecution() = with(Project("instantExecution")) {
-        testConfigurationCacheOf("assemble", executedTaskNames = asList(":lib-project:compileKotlin"))
-    }
-
-    @Test
-    fun testInstantExecutionForJs() = with(Project("instantExecutionToJs")) {
-        testConfigurationCacheOf("assemble", executedTaskNames = asList(":compileKotlin2Js"))
-    }
 }

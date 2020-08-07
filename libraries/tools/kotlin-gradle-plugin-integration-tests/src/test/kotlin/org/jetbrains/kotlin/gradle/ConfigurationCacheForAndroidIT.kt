@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 
-class ConfigurationCacheForAndroidIT : ConfigurationCacheIT() {
+class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
     private val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v4_2_0
 
@@ -20,16 +20,16 @@ class ConfigurationCacheForAndroidIT : ConfigurationCacheIT() {
             configurationCache = true,
         )
 
-    override val defaultGradleVersion = GradleVersionRequired.AtLeast("6.6-milestone-2")
-
     @Test
-    fun testKotlinJvmProject() = with(Project("kotlinProject")) {
-        testConfigurationCacheOf(":compileKotlin")
+    fun testAndroidKaptProject() = with(Project("android-dagger", directoryPrefix = "kapt2")) {
+        applyAndroid40Alpha4KotlinVersionWorkaround()
+        projectDir.resolve("gradle.properties").appendText("\nkapt.incremental.apt=false")
+        testConfigurationCacheOf(":app:compileDebugKotlin", ":app:kaptDebugKotlin", ":app:kaptGenerateStubsDebugKotlin")
     }
 
     @Test
     fun testKotlinAndroidProject() = with(Project("AndroidProject")) {
-        applyAndroidAndroid40Alpha4KotlinVersionWorkaround()
+        applyAndroid40Alpha4KotlinVersionWorkaround()
         testConfigurationCacheOf(":Lib:compileFlavor1DebugKotlin", ":Android:compileFlavor1DebugKotlin")
     }
 
@@ -39,7 +39,7 @@ class ConfigurationCacheForAndroidIT : ConfigurationCacheIT() {
      * test project's repositories, where there's no 'kotlin-eap' repo.
      * TODO remove this workaround once an Android Gradle plugin version is used that depends on the stable Kotlin version
      */
-    private fun Project.applyAndroidAndroid40Alpha4KotlinVersionWorkaround() {
+    private fun Project.applyAndroid40Alpha4KotlinVersionWorkaround() {
         setupWorkingDir()
 
         val resolutionStrategyHack = """
@@ -59,7 +59,7 @@ class ConfigurationCacheForAndroidIT : ConfigurationCacheIT() {
                 $resolutionStrategyHack
             }
             $resolutionStrategyHack
-        """.trimIndent(),
+        """.trimIndent()
         )
     }
 }
