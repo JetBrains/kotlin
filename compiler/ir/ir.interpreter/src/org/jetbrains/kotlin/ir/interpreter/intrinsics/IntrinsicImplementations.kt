@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.interpreter.exceptions.throwAsUserException
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
 
@@ -96,7 +97,7 @@ internal object EnumValueOf : IntrinsicBase() {
         val enumEntryName = stack.getVariable(irFunction.valueParameters.first().symbol).state.asString()
         val enumEntry = enumClass.declarations.filterIsInstance<IrEnumEntry>().singleOrNull { it.name.asString() == enumEntryName }
         enumEntry?.interpret()?.check { return it }
-            ?: throw IllegalArgumentException("No enum constant ${enumClass.fqNameWhenAvailable}.$enumEntryName")
+            ?: IllegalArgumentException("No enum constant ${enumClass.fqNameWhenAvailable}.$enumEntryName").throwAsUserException()
 
         return Next
     }

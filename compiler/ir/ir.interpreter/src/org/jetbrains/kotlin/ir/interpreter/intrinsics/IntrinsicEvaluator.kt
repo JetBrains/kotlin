@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.interpreter.intrinsics
 
 import org.jetbrains.kotlin.ir.interpreter.ExecutionResult
-import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterMethodNotFoundException
+import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterMethodNotFoundError
 import org.jetbrains.kotlin.ir.interpreter.stack.Stack
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -23,7 +23,7 @@ internal class IntrinsicEvaluator {
             EnumHashCode.equalTo(irFunction) -> EnumHashCode.evaluate(irFunction, stack, interpret)
             JsPrimitives.equalTo(irFunction) -> JsPrimitives.evaluate(irFunction, stack, interpret)
             ArrayConstructor.equalTo(irFunction) -> ArrayConstructor.evaluate(irFunction, stack, interpret)
-            else -> throw InterpreterMethodNotFoundException("Method ${irFunction.name} hasn't implemented")
+            else -> throw InterpreterMethodNotFoundError("Method ${irFunction.name} hasn't implemented")
         }
     }
 }

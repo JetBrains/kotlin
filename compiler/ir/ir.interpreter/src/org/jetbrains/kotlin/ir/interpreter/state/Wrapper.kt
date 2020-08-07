@@ -56,7 +56,7 @@ internal class Wrapper(val value: Any, override val irClass: IrClass) : Complex(
 
         fun getCompanionObject(irClass: IrClass): Wrapper {
             val objectName = irClass.getEvaluateIntrinsicValue()!!
-            val objectValue = companionObjectValue[objectName] ?: throw AssertionError("Companion object $objectName cannot be interpreted")
+            val objectValue = companionObjectValue[objectName] ?: throw InternalError("Companion object $objectName cannot be interpreted")
             return Wrapper(objectValue, irClass)
         }
 

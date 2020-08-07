@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
+import org.jetbrains.kotlin.ir.interpreter.exceptions.throwAsUserException
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
@@ -72,7 +73,7 @@ internal fun ExecutionResult.implicitCastIfNeeded(expectedType: IrType, actualTy
 
     if (!actualState.isSubtypeOf(expectedType)) {
         val convertibleClassName = stack.popReturnValue().irClass.fqNameWhenAvailable
-        throw ClassCastException("$convertibleClassName cannot be cast to ${expectedType.render()}")
+        ClassCastException("$convertibleClassName cannot be cast to ${expectedType.render()}").throwAsUserException()
     }
     return this
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.interpreter.stack
 
+import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterEmptyReturnStackError
 import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -65,7 +66,7 @@ internal class InterpreterFrame(
         if (returnStack.isNotEmpty()) {
             return returnStack.last()
         }
-        throw NoSuchElementException("Return values stack is empty")
+        throw InterpreterEmptyReturnStackError()
     }
 
     override fun popReturnValue(): State {
@@ -74,6 +75,6 @@ internal class InterpreterFrame(
             returnStack.removeAt(returnStack.size - 1)
             return item
         }
-        throw NoSuchElementException("Return values stack is empty")
+        throw InterpreterEmptyReturnStackError()
     }
 }

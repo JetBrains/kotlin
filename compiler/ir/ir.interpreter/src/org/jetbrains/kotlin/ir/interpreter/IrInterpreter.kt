@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.interpreter.builtins.*
-import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterException
-import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterMethodNotFoundException
-import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterTimeOutException
+import org.jetbrains.kotlin.ir.interpreter.exceptions.*
 import org.jetbrains.kotlin.ir.interpreter.intrinsics.IntrinsicEvaluator
 import org.jetbrains.kotlin.ir.interpreter.stack.StackImpl
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
@@ -70,7 +68,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
 
     private fun incrementAndCheckCommands() {
         commandCount++
-        if (commandCount >= MAX_COMMANDS) throw InterpreterTimeOutException()
+        if (commandCount >= MAX_COMMANDS) throw InterpreterTimeOutError()
     }
 
     fun interpret(expression: IrExpression): IrExpression {
@@ -133,13 +131,11 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
             }
 
             return executionResult.getNextLabel(this) { this@getNextLabel.interpret() }
-        } catch (e: InterpreterException) {
-            throw e
-        } catch (e: Throwable) {
-            // catch exception from JVM such as: ArithmeticException, StackOverflowError and others
-            val exceptionName = e::class.java.simpleName
+        } catch (e: UserException) {
+            // can handle only user exceptions, all others must be rethrown
+            val exceptionName = e.exception::class.java.simpleName
             val irExceptionClass = irExceptions.firstOrNull { it.name.asString() == exceptionName } ?: irBuiltIns.throwableClass.owner
-            stack.pushReturnValue(ExceptionState(e, irExceptionClass, stack.getStackTrace()))
+            stack.pushReturnValue(ExceptionState(e.exception, irExceptionClass, stack.getStackTrace()))
             return Exception
         }
     }
@@ -149,12 +145,12 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
         if (irFunction.fileOrNull != null) stack.setCurrentFrameName(irFunction)
 
         if (irFunction.body is IrSyntheticBody) return handleIntrinsicMethods(irFunction)
-        return irFunction.body?.interpret() ?: throw InterpreterException("Ir function must be with body")
+        return irFunction.body?.interpret() ?: throw InterpreterError("Ir function must be with body")
     }
 
     private fun MethodHandle?.invokeMethod(irFunction: IrFunction): ExecutionResult {
         this ?: return handleIntrinsicMethods(irFunction)
-        val result = this.invokeWithArguments(irFunction.getArgsForMethodInvocation(stack.getAll()))
+        val result = withExceptionHandler { this.invokeWithArguments(irFunction.getArgsForMethodInvocation(stack.getAll())) }
         stack.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
 
         return Next
@@ -197,26 +193,28 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
         val signature = CompileTimeFunction(methodName, argsType.map { it.getOnlyName() })
 
         // TODO replace unary, binary, ternary functions with vararg
-        val result = when (argsType.size) {
-            1 -> {
-                val function = unaryFunctions[signature]
-                    ?: throw InterpreterMethodNotFoundException("For given function $signature there is no entry in unary map")
-                function.invoke(argsValues.first())
-            }
-            2 -> {
-                val function = binaryFunctions[signature]
-                    ?: throw InterpreterMethodNotFoundException("For given function $signature there is no entry in binary map")
-                when (methodName) {
-                    "rangeTo" -> return calculateRangeTo(irFunction.returnType)
-                    else -> function.invoke(argsValues[0], argsValues[1])
+        val result = withExceptionHandler {
+            when (argsType.size) {
+                1 -> {
+                    val function = unaryFunctions[signature]
+                        ?: throw InterpreterMethodNotFoundError("For given function $signature there is no entry in unary map")
+                    function.invoke(argsValues.first())
                 }
+                2 -> {
+                    val function = binaryFunctions[signature]
+                        ?: throw InterpreterMethodNotFoundError("For given function $signature there is no entry in binary map")
+                    when (methodName) {
+                        "rangeTo" -> return calculateRangeTo(irFunction.returnType)
+                        else -> function.invoke(argsValues[0], argsValues[1])
+                    }
+                }
+                3 -> {
+                    val function = ternaryFunctions[signature]
+                        ?: throw InterpreterMethodNotFoundError("For given function $signature there is no entry in ternary map")
+                    function.invoke(argsValues[0], argsValues[1], argsValues[2])
+                }
+                else -> throw InterpreterError("Unsupported number of arguments for invocation as builtin functions")
             }
-            3 -> {
-                val function = ternaryFunctions[signature]
-                    ?: throw InterpreterMethodNotFoundException("For given function $signature there is no entry in ternary map")
-                function.invoke(argsValues[0], argsValues[1], argsValues[2])
-            }
-            else -> throw InterpreterException("Unsupported number of arguments")
         }
 
         stack.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
@@ -259,7 +257,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
                 stack.peekReturnValue().checkNullability(valueParametersSymbols[i].owner.type) {
                     val method = irFunction.getCapitalizedFileName() + "." + irFunction.fqNameWhenAvailable
                     val parameter = valueParametersSymbols[i].owner.name
-                    throw IllegalArgumentException("Parameter specified as non-null is null: method $method, parameter $parameter")
+                    IllegalArgumentException("Parameter specified as non-null is null: method $method, parameter $parameter").throwAsUserException()
                 }
 
                 with(Variable(valueParametersSymbols[i], stack.popReturnValue())) {
@@ -637,7 +635,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
 
         val executionResult = enumEntry.initializerExpression?.interpret()?.check { return it }
         enumSuperCall?.apply { (0 until this.valueArgumentsCount).forEach { putValueArgument(it, null) } } // restore to null
-        return executionResult ?: throw InterpreterException("Initializer at enum entry ${enumEntry.fqNameWhenAvailable} is null")
+        return executionResult ?: throw InterpreterError("Initializer at enum entry ${enumEntry.fqNameWhenAvailable} is null")
     }
 
     private fun interpretTypeOperatorCall(expression: IrTypeOperatorCall): ExecutionResult {
@@ -653,7 +651,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
             IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST -> {
                 if (!isErased && !stack.peekReturnValue().isSubtypeOf(typeOperand)) {
                     val convertibleClassName = stack.popReturnValue().irClass.fqNameWhenAvailable
-                    throw ClassCastException("$convertibleClassName cannot be cast to ${typeOperand.render()}")
+                    ClassCastException("$convertibleClassName cannot be cast to ${typeOperand.render()}").throwAsUserException()
                 }
             }
             IrTypeOperator.SAFE_CAST -> {
@@ -750,7 +748,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
             is Common -> stack.pushReturnValue(ExceptionState(exception, stack.getStackTrace()))
             is Wrapper -> stack.pushReturnValue(ExceptionState(exception, stack.getStackTrace()))
             is ExceptionState -> stack.pushReturnValue(exception)
-            else -> throw InterpreterException("${exception::class} cannot be used as exception state")
+            else -> throw InterpreterError("${exception::class} cannot be used as exception state")
         }
         return Exception
     }
@@ -778,7 +776,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
                 }
             }
             is Lambda -> state.toString()
-            else -> throw InterpreterException("${state::class.java} cannot be used in StringConcatenation expression")
+            else -> throw InterpreterError("${state::class.java} cannot be used in StringConcatenation expression")
         }
         stack.pushReturnValue(result.toState(irBuiltIns.stringType))
         return Next

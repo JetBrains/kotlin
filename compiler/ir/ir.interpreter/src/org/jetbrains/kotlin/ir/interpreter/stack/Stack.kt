@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.ir.interpreter.stack
 
 import org.jetbrains.kotlin.ir.interpreter.ExecutionResult
-import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterException
 import org.jetbrains.kotlin.ir.interpreter.getCapitalizedFileName
 import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.name
+import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterError
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.util.file
@@ -132,7 +132,7 @@ private class FrameContainer(current: Frame = InterpreterFrame()) {
     fun getAll() = innerStack.flatMap { it.getAll() }
     fun getVariable(symbol: IrSymbol): Variable {
         return innerStack.firstNotNullOfOrNull { it.getVariable(symbol) }
-            ?: throw InterpreterException("$symbol not found") // TODO better message
+            ?: throw InterpreterError("$symbol not found") // TODO better message
     }
 
     fun contains(symbol: IrSymbol) = innerStack.any { it.contains(symbol) }

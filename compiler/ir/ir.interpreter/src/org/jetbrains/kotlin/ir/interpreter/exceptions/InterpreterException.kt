@@ -5,5 +5,4 @@
 
 package org.jetbrains.kotlin.ir.interpreter.exceptions
 
-open class InterpreterException(override val message: String) : Exception(message) {
-}
+abstract class InterpreterException : Exception()
