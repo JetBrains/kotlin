@@ -80,6 +80,7 @@ class KotlinResolutionStatelessCallbacksImpl(
             kotlinCallArgument.psiCallArgument.psiExpression,
             (resolutionCallbacks as? KotlinResolutionCallbacksImpl)?.trace?.bindingContext,
             isSuperCall = false,
+            fromImportingScope = false
         )
 
     override fun isSuperExpression(receiver: SimpleKotlinCallArgument?): Boolean =
