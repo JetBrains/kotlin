@@ -123,3 +123,4 @@ org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testNestedDepen
 "org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testImportBeforeBuild[8: Gradle-6.5.1, KotlinGradlePlugin-master]", KMM-304,,
 "org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testJsTestOutputFileInProjectWithAndroid[7: Gradle-6.5.1, KotlinGradlePlugin-latest stable]", NoSuchMethodError,,
 "org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testJsTestOutputFileInProjectWithAndroid[8: Gradle-6.5.1, KotlinGradlePlugin-master]", NoSuchMethodError,,
+"org.jetbrains.kotlin.ide.konan.gradle.GradleNativeLibrariesInIDENamingTest.testLibrariesNaming[0: with Gradle-4.10.2]", Old IDE with new plugin problem,,
