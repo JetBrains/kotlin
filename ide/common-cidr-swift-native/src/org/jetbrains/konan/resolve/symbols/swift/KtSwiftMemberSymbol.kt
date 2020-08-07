@@ -7,7 +7,7 @@ import com.jetbrains.swift.symbols.SwiftTypeSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.Stub
 
 abstract class KtSwiftMemberSymbol : KtSwiftImmediateSymbol, SwiftMemberSymbol {
-    private lateinit var containingTypeSymbol: SwiftTypeSymbol
+    private lateinit var _containingTypeSymbol: SwiftTypeSymbol
 
     constructor(
         stub: Stub<*>,
@@ -15,12 +15,12 @@ abstract class KtSwiftMemberSymbol : KtSwiftImmediateSymbol, SwiftMemberSymbol {
         project: Project,
         containingTypeSymbol: SwiftTypeSymbol
     ) : super(stub, file, project) {
-        this.containingTypeSymbol = containingTypeSymbol
+        this._containingTypeSymbol = containingTypeSymbol
     }
 
     constructor() : super()
 
-    override fun getContainingTypeSymbol(): SwiftTypeSymbol = containingTypeSymbol
+    override val containingTypeSymbol: SwiftTypeSymbol get() = _containingTypeSymbol
 
     override val context: SwiftTypeSymbol
         get() = containingTypeSymbol
