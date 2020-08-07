@@ -19,10 +19,13 @@ package org.jetbrains.kotlin.idea.refactoring.inline
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.refactoring.HelpID
+import com.intellij.refactoring.RefactoringBundle
+import com.intellij.refactoring.util.CommonRefactoringUtil
+import org.jetbrains.annotations.Nls
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
+import org.jetbrains.kotlin.idea.findUsages.ReferencesSearchScopeHelper
 import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlinePropertyProcessor.Companion.extractInitialization
-import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlinePropertyProcessor.Companion.showErrorHint
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtProperty
@@ -31,6 +34,12 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : KotlinInlineActi
     constructor() : this(withPrompt = true)
 
     override fun canInlineKotlinElement(element: KtElement): Boolean = element is KtProperty && element.name != null
+
+    @Nls
+    private fun getKind(declaration: KtProperty): String = if (declaration.isLocal)
+        KotlinBundle.message("text.variable")
+    else
+        KotlinBundle.message("text.property")
 
     override fun inlineKotlinElement(project: Project, editor: Editor?, element: KtElement) {
         val declaration = element as KtProperty
@@ -47,7 +56,6 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : KotlinInlineActi
 
         val getter = declaration.getter?.takeIf { it.hasBody() }
         val setter = declaration.setter?.takeIf { it.hasBody() }
-
         if ((getter != null || setter != null) && declaration.initializer != null) {
             return showErrorHint(
                 project,
@@ -56,42 +64,17 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : KotlinInlineActi
             )
         }
 
-        val (referenceExpressions, conflicts) = KotlinInlinePropertyProcessor.findUsages(declaration)
-        if (referenceExpressions.isEmpty() && conflicts.isEmpty) {
-            val kind = if (declaration.isLocal)
-                KotlinBundle.message("text.variable")
-            else
-                KotlinBundle.message("text.property")
-            return showErrorHint(project, editor, KotlinBundle.message("0.1.is.never.used", kind.capitalize(), name))
+        if (ReferencesSearchScopeHelper.search(declaration).findFirst() == null) {
+            return showErrorHint(project, editor, KotlinBundle.message("0.1.is.never.used", getKind(declaration).capitalize(), name))
         }
 
         var assignmentToDelete: KtBinaryExpression? = null
         if (getter == null && setter == null) {
-            val initialization = extractInitialization(declaration, referenceExpressions, project, editor) ?: return
+            val initialization = extractInitialization(declaration, project, editor) ?: return
             assignmentToDelete = initialization.assignment
         }
 
-        if (!conflicts.isEmpty) {
-            val conflictsCopy = conflicts.copy()
-            val allOrSome = if (referenceExpressions.isEmpty())
-                KotlinBundle.message("text.all")
-            else
-                KotlinBundle.message("text.the.following")
-
-            conflictsCopy.putValue(
-                null,
-                KotlinBundle.message(
-                    "0.usages.are.not.supported.by.the.inline.refactoring.they.won.t.be.processed",
-                    allOrSome
-                )
-            )
-
-            project.checkConflictsInteractively(conflictsCopy) {
-                performRefactoring(declaration, assignmentToDelete, editor)
-            }
-        } else {
-            performRefactoring(declaration, assignmentToDelete, editor)
-        }
+        performRefactoring(declaration, assignmentToDelete, editor)
     }
 
     private fun performRefactoring(
@@ -105,6 +88,18 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : KotlinInlineActi
             dialog.show()
         } else {
             dialog.doAction()
+        }
+    }
+
+    companion object {
+        fun showErrorHint(project: Project, editor: Editor?, @Nls message: String) {
+            CommonRefactoringUtil.showErrorHint(
+                project,
+                editor,
+                message,
+                RefactoringBundle.message("inline.variable.title"),
+                HelpID.INLINE_VARIABLE
+            )
         }
     }
 }

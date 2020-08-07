@@ -1,4 +1,4 @@
-// ERROR: Non-Kotlin usage: TopLevelPropertyKt.getX\nThe following usages are not supported by the Inline refactoring. They won't be processed.
+// ERROR: Cannot inline reference from Kotlin to Java
 
 val <caret>x = 4
 

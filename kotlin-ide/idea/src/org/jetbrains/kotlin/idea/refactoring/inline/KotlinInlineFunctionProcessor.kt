@@ -28,7 +28,7 @@ class KotlinInlineFunctionProcessor(
     deleteAfter = deleteAfter,
     editor = editor
 ) {
-    override fun createReplacementStrategy(declaration: KtNamedFunction, editor: Editor?): UsageReplacementStrategy? {
+    override fun createReplacementStrategy(): UsageReplacementStrategy? {
         return createUsageReplacementStrategyForFunction(declaration, editor)
     }
 }
