@@ -1,0 +1,1 @@
+java.lang.IllegalStateException: RETURN_TYPE_MISMATCH_ON_OVERRIDE: Return type of 'foo' is not a subtype of the return type of the overridden member 'public open fun foo(): Int defined in BaseCase1' (18,25) in /1.4.kt

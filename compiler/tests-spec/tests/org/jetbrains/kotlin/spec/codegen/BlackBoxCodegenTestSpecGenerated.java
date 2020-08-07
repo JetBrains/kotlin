@@ -3293,6 +3293,144 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
             }
         }
 
+        @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/inheritance")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Inheritance extends AbstractBlackBoxCodegenTestSpec {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInInheritance() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/inheritance"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Overriding extends AbstractBlackBoxCodegenTestSpec {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInOverriding() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-8")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class P_8 extends AbstractBlackBoxCodegenTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInP_8() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-8"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-8/neg")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Neg extends AbstractBlackBoxCodegenTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        @TestMetadata("1.1.kt")
+                        public void test1_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-8/neg/1.1.kt");
+                        }
+
+                        @TestMetadata("1.2.kt")
+                        public void test1_2() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-8/neg/1.2.kt");
+                        }
+
+                        @TestMetadata("1.3.kt")
+                        public void test1_3() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-8/neg/1.3.kt");
+                        }
+
+                        @TestMetadata("1.4.kt")
+                        public void test1_4() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-8/neg/1.4.kt");
+                        }
+
+                        @TestMetadata("1.5.kt")
+                        public void test1_5() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-8/neg/1.5.kt");
+                        }
+
+                        @TestMetadata("1.6.kt")
+                        public void test1_6() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-8/neg/1.6.kt");
+                        }
+
+                        public void testAllFilesPresentInNeg() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-8/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        }
+                    }
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-9")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class P_9 extends AbstractBlackBoxCodegenTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInP_9() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-9"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                    }
+
+                    @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-9/neg")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class Neg extends AbstractBlackBoxCodegenTestSpec {
+                        private void runTest(String testDataFilePath) throws Exception {
+                            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                        }
+
+                        @TestMetadata("1.1.kt")
+                        public void test1_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-9/neg/1.1.kt");
+                        }
+
+                        @TestMetadata("1.2.kt")
+                        public void test1_2() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-9/neg/1.2.kt");
+                        }
+
+                        @TestMetadata("1.3.kt")
+                        public void test1_3() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-9/neg/1.3.kt");
+                        }
+
+                        @TestMetadata("1.4.kt")
+                        public void test1_4() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-9/neg/1.4.kt");
+                        }
+
+                        @TestMetadata("1.5.kt")
+                        public void test1_5() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-9/neg/1.5.kt");
+                        }
+
+                        @TestMetadata("1.6.kt")
+                        public void test1_6() throws Exception {
+                            runTest("compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-9/neg/1.6.kt");
+                        }
+
+                        public void testAllFilesPresentInNeg() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-9/neg"), Pattern.compile("^(.+)\\.kt$"), null, true);
+                        }
+                    }
+                }
+            }
+        }
+
         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/overload-resolution")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

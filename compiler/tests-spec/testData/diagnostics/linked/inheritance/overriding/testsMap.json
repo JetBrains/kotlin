@@ -25,6 +25,500 @@
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/abstract-classes/p-2/neg/1.9.kt",
           "unexpectedBehaviour": true,
           "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member equals function of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member hashCode function of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member custom function of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member custom properties of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member toString function of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member equals function of open class (Return type of a child override function is not a subtype of return type of a base class)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member hashCode function of open class (Return type of a child override function is not a subtype of return type of a base class)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member custom function of open class (Return type of a child override function is not a subtype of return type of a base class)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member custom properties of open class (Return type of a child override function is not a subtype of return type of a base class)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member toString function of open class (Return type of a child override function is not a subtype of return type of a base class)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  },
+  "9": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member equals function of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member hashCode function of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member custom function of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member custom properties of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member toString function of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    }
+  },
+  "2": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member equals function of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member hashCode function of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member custom function of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member custom properties of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member toString function of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member equals function of open class (Return type of a child override function is not a subtype of return type of a base class)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member hashCode function of open class (Return type of a child override function is not a subtype of return type of a base class)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member custom function of open class (Return type of a child override function is not a subtype of return type of a base class)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member custom properties of open class (Return type of a child override function is not a subtype of return type of a base class)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member toString function of open class (Return type of a child override function is not a subtype of return type of a base class)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        }
+      ],
+      "2": [
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member equals function of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member hashCode function of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member custom function of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member custom properties of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member toString function of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member equals function of open class (Return type of a child override function is not a subtype of return type of a base class)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member hashCode function of open class (Return type of a child override function is not a subtype of return type of a base class)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member custom function of open class (Return type of a child override function is not a subtype of return type of a base class)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member custom properties of open class (Return type of a child override function is not a subtype of return type of a base class)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member toString function of open class (Return type of a child override function is not a subtype of return type of a base class)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        }
+      ]
+    }
+  },
+  "4": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member equals function of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member hashCode function of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member custom function of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member custom properties of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member toString function of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member equals function of open class (Return type of a child override function is not a subtype of return type of a base class)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member hashCode function of open class (Return type of a child override function is not a subtype of return type of a base class)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member custom function of open class (Return type of a child override function is not a subtype of return type of a base class)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member custom properties of open class (Return type of a child override function is not a subtype of return type of a base class)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member toString function of open class (Return type of a child override function is not a subtype of return type of a base class)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "secondary"
+        }
+      ]
+    }
+  },
+  "1": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 2,
+          "description": "overriding extension property of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-1/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 2,
+          "description": "overriding extension function of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-1/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    }
+  },
+  "8": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member equals function of open class (Return type of a child override function is not a subtype of return type of a base class)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member hashCode function of open class (Return type of a child override function is not a subtype of return type of a base class)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member custom function of open class (Return type of a child override function is not a subtype of return type of a base class)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member custom properties of open class (Return type of a child override function is not a subtype of return type of a base class)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member toString function of open class (Return type of a child override function is not a subtype of return type of a base class)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    }
+  },
+  "5": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member equals function of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-5/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member hashCode function of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-5/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member custom function of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-5/pos/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member custom properties of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-5/pos/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-591",
+          "casesNumber": 3,
+          "description": "overriding member toString function of open class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-5/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
         }
       ]
     }

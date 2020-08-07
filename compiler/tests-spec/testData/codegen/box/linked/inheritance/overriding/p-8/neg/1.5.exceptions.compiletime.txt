@@ -1,0 +1,1 @@
+java.lang.IllegalStateException: OVERRIDING_FINAL_MEMBER: 'a' in 'BaseCase1' is final and cannot be overridden (16,5) in /1.5.kt

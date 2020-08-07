@@ -1,0 +1,1 @@
+java.lang.IllegalStateException: VIRTUAL_MEMBER_HIDDEN: 'hashCode' hides member of supertype 'BaseCase1' and needs 'override' modifier (16,9) in /1.3.kt

@@ -1,0 +1,1 @@
+java.lang.IllegalStateException: VIRTUAL_MEMBER_HIDDEN: 'foo' hides member of supertype 'BaseCase1' and needs 'override' modifier (18,9) in /1.4.kt
