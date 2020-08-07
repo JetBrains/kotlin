@@ -9940,9 +9940,19 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/invertIfCondition/is.kt");
         }
 
+        @TestMetadata("isBlank.kt")
+        public void testIsBlank() throws Exception {
+            runTest("idea/testData/intentions/invertIfCondition/isBlank.kt");
+        }
+
         @TestMetadata("isEmpty.kt")
         public void testIsEmpty() throws Exception {
             runTest("idea/testData/intentions/invertIfCondition/isEmpty.kt");
+        }
+
+        @TestMetadata("isNotBlank.kt")
+        public void testIsNotBlank() throws Exception {
+            runTest("idea/testData/intentions/invertIfCondition/isNotBlank.kt");
         }
 
         @TestMetadata("isNotEmpty.kt")
@@ -10015,9 +10025,19 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/invertIfCondition/negatedExpression.kt");
         }
 
+        @TestMetadata("negatedIsBlank.kt")
+        public void testNegatedIsBlank() throws Exception {
+            runTest("idea/testData/intentions/invertIfCondition/negatedIsBlank.kt");
+        }
+
         @TestMetadata("negatedIsEmpty.kt")
         public void testNegatedIsEmpty() throws Exception {
             runTest("idea/testData/intentions/invertIfCondition/negatedIsEmpty.kt");
+        }
+
+        @TestMetadata("negatedIsNotBlank.kt")
+        public void testNegatedIsNotBlank() throws Exception {
+            runTest("idea/testData/intentions/invertIfCondition/negatedIsNotBlank.kt");
         }
 
         @TestMetadata("negatedIsNotEmpty.kt")
