@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.createTransformerBasedProcessorByPhase
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirIdeSessionProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.ThreadSafe
 
@@ -22,7 +23,8 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.ThreadSafe
 @ThreadSafe
 internal class FirFileBuilder(
     private val sessionProvider: FirIdeSessionProvider,
-    private val scopeProvider: FirScopeProvider
+    private val scopeProvider: FirScopeProvider,
+    private val firPhaseRunner: FirPhaseRunner
 ) {
     /**
      * Builds a [FirFile] by given [ktFile] and records it's parenting info if it not present in [cache]
@@ -70,8 +72,7 @@ internal class FirFileBuilder(
         var currentPhase = fromPhase
         while (currentPhase < toPhase) {
             currentPhase = currentPhase.next
-            val phaseProcessor = currentPhase.createTransformerBasedProcessorByPhase(firFile.session, scopeSession)
-            phaseProcessor.processFile(firFile)
+            firPhaseRunner.runPhase(firFile, currentPhase, scopeSession)
         }
     }
 }

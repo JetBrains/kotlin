@@ -46,10 +46,11 @@ internal class FirIdeJavaModuleBasedSession private constructor(
         fun create(
             project: Project,
             moduleInfo: ModuleSourceInfo,
+            firPhaseRunner: FirPhaseRunner,
             sessionProvider: FirSessionProvider,
         ): FirIdeJavaModuleBasedSession {
             val scopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
-            val firBuilder = FirFileBuilder(sessionProvider as FirIdeSessionProvider, scopeProvider)
+            val firBuilder = FirFileBuilder(sessionProvider as FirIdeSessionProvider, scopeProvider, firPhaseRunner)
             return FirIdeJavaModuleBasedSession(moduleInfo, sessionProvider, firBuilder).apply {
                 val cache = ModuleFileCacheImpl(this)
                 val phasedFirFileResolver = IdePhasedFirFileResolver(firBuilder, cache)
