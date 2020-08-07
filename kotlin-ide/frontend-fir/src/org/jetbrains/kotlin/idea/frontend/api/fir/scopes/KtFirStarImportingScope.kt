@@ -7,15 +7,21 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.scopes
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.fir.scopes.getContainingCallableNamesIfPresent
+import org.jetbrains.kotlin.fir.scopes.getContainingClassifierNamesIfPresent
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.scopes.Import
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtStarImportingScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.StarImport
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelClassByPackageIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionByPackageIndex
@@ -27,11 +33,11 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 
 internal class KtFirStarImportingScope(
     firScope: FirAbstractStarImportingScope,
-    builder: KtSymbolByFirBuilder,
+    private val builder: KtSymbolByFirBuilder,
     project: Project,
-    token: ValidityToken,
-) : KtFirDelegatingScope(builder, token), KtStarImportingScope, ValidityTokenOwner {
-    override val firScope: FirAbstractStarImportingScope = firScope
+    override val token: ValidityToken,
+) : KtStarImportingScope, ValidityTokenOwner {
+    private val firScope: FirAbstractStarImportingScope by weakRef(firScope)
     override val isDefaultImportingScope: Boolean = withValidityAssertion { firScope is FirDefaultStarImportingScope }
     private val packageHelper = PackageIndexHelper(project)
 
@@ -45,6 +51,14 @@ internal class KtFirStarImportingScope(
         }
     }
 
+    override fun getCallableSymbols(): Sequence<KtCallableSymbol> = withValidityAssertion {
+        firScope.getCallableSymbols(getCallableNames(), builder)
+    }
+
+    override fun getClassClassLikeSymbols(): Sequence<KtClassLikeSymbol> = withValidityAssertion {
+        firScope.getClassLikeSymbols(getClassLikeSymbolNames(), builder)
+    }
+
     // todo cache?
     @OptIn(ExperimentalStdlibApi::class)
     override fun getCallableNames(): Set<Name> = withValidityAssertion {
@@ -53,7 +67,7 @@ internal class KtFirStarImportingScope(
                 packageHelper.getPackageTopLevelCallables(import.packageFqName)
             } else { //member
                 val classId = import.resolvedClassId ?: error("Class id should not be null as relativeClassName is not null")
-                firScope.getStaticsScope(classId)?.getCallableNames().orEmpty()
+                firScope.getStaticsScope(classId)?.getContainingCallableNamesIfPresent().orEmpty()
             }
         }
     }
@@ -64,7 +78,7 @@ internal class KtFirStarImportingScope(
                 packageHelper.getPackageTopLevelClassifiers(import.packageFqName)
             } else {
                 val classId = import.resolvedClassId ?: error("Class id should not be null as relativeClassName is not null")
-                firScope.getStaticsScope(classId)?.getClassifierNames().orEmpty()
+                firScope.getStaticsScope(classId)?.getContainingClassifierNamesIfPresent().orEmpty()
             }
         }
     }
