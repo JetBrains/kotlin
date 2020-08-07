@@ -89,26 +89,26 @@ class NpmRangeTest {
 
     @Test
     fun unionTest() {
-        fun assertUnion(range1: NpmRange, range2: NpmRange, expected: List<NpmRange>) {
+        fun assertUnion(range1: NpmRange, range2: NpmRange, expected: Set<NpmRange>) {
             val union = (range1 union range2)
             assertTrue("Range $range1 and $range2 expected to have union $expected, but actual is $union") {
-                union.toSet() == expected.toSet()
+                union == expected
             }
 
             val symUnion = range2 union range1
             assertTrue("Range $range2 and $range1 expected to have union $expected, but actual is $symUnion") {
-                symUnion.toSet() == expected.toSet()
+                symUnion == expected
             }
         }
 
         val range1 = npmRange(startMajor = 1, endMajor = 2)
         val range2 = npmRange(startMajor = 3, endMajor = 4)
-        assertUnion(range1, range2, listOf(range1, range2))
+        assertUnion(range1, range2, setOf(range1, range2))
 
         assertUnion(
             npmRange(startMajor = 1, endMajor = 3),
             npmRange(startMajor = 2, endMajor = 4),
-            listOf(
+            setOf(
                 npmRange(
                     startMajor = 1,
                     endMajor = 4
@@ -119,7 +119,7 @@ class NpmRangeTest {
         assertUnion(
             npmRange(startMajor = 1, endMajor = 3),
             npmRange(startMajor = 2, endMajor = 4, startInclusive = true, endInclusive = true),
-            listOf(
+            setOf(
                 npmRange(
                     startMajor = 1,
                     endMajor = 4,
@@ -131,7 +131,7 @@ class NpmRangeTest {
         assertUnion(
             npmRange(startMajor = 1, endMajor = 3, startInclusive = true, endInclusive = true),
             npmRange(startMajor = 2, endMajor = 4, startInclusive = true, endInclusive = true),
-            listOf(
+            setOf(
                 npmRange(
                     startMajor = 1,
                     endMajor = 4,
@@ -144,7 +144,7 @@ class NpmRangeTest {
         assertUnion(
             npmRange(startMajor = 1, endMajor = 4, startInclusive = true, endInclusive = true),
             npmRange(startMajor = 2, endMajor = 3, startInclusive = true, endInclusive = true),
-            listOf(
+            setOf(
                 npmRange(
                     startMajor = 1,
                     endMajor = 4,
@@ -157,7 +157,7 @@ class NpmRangeTest {
         assertUnion(
             npmRange(startMajor = 1, endMajor = 2),
             npmRange(startMajor = 2, endMajor = 3),
-            listOf(
+            setOf(
                 npmRange(
                     startMajor = 1,
                     endMajor = 2
@@ -172,7 +172,7 @@ class NpmRangeTest {
         assertUnion(
             npmRange(startMajor = 1, endMajor = 2, endInclusive = true),
             npmRange(startMajor = 2, endMajor = 3, startInclusive = true),
-            listOf(
+            setOf(
                 npmRange(
                     startMajor = 1,
                     endMajor = 3
@@ -183,23 +183,23 @@ class NpmRangeTest {
 
     @Test
     fun rangeInvertTest() {
-        fun assertInvert(invertible: NpmRange, expected: List<NpmRange>) {
+        fun assertInvert(invertible: NpmRange, expected: Set<NpmRange>) {
             val invert = invertible.invert()
             assertTrue("Inverted $invertible should be $expected but found $invert") {
-                invert.toSet() == expected.toSet()
+                invert == expected
             }
         }
 
-        assertInvert(npmRange(), emptyList())
+        assertInvert(npmRange(), emptySet())
 
-        assertInvert(npmRange(endMajor = 1), listOf(npmRange(startMajor = 1, startInclusive = true)))
-        assertInvert(npmRange(startMajor = 1), listOf(npmRange(endMajor = 1, endInclusive = true)))
-        assertInvert(npmRange(endMajor = 1, endInclusive = true), listOf(npmRange(startMajor = 1)))
-        assertInvert(npmRange(startMajor = 1, startInclusive = true), listOf(npmRange(endMajor = 1)))
+        assertInvert(npmRange(endMajor = 1), setOf(npmRange(startMajor = 1, startInclusive = true)))
+        assertInvert(npmRange(startMajor = 1), setOf(npmRange(endMajor = 1, endInclusive = true)))
+        assertInvert(npmRange(endMajor = 1, endInclusive = true), setOf(npmRange(startMajor = 1)))
+        assertInvert(npmRange(startMajor = 1, startInclusive = true), setOf(npmRange(endMajor = 1)))
 
         assertInvert(
             npmRange(startMajor = 1, endMajor = 2),
-            listOf(
+            setOf(
                 npmRange(endMajor = 1, endInclusive = true),
                 npmRange(startMajor = 2, startInclusive = true)
             )

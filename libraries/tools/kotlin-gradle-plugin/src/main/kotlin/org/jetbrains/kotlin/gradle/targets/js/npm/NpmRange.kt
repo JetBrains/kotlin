@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmRangeVisitor.Companion.GT
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmRangeVisitor.Companion.GTEQ
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmRangeVisitor.Companion.LT
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmRangeVisitor.Companion.LTEQ
-import org.jetbrains.kotlin.gradle.utils.toListOrEmpty
+import org.jetbrains.kotlin.gradle.utils.toSetOrEmpty
 
 /**
 [startVersion] or [endVersion] equaling null means Infinite on appropriate edge,
@@ -47,8 +47,8 @@ data class NpmRange(
     }
 }
 
-infix fun NpmRange.union(other: NpmRange): List<NpmRange> {
-    if (!hasIntersection(other)) return listOf(this, other)
+infix fun NpmRange.union(other: NpmRange): Set<NpmRange> {
+    if (!hasIntersection(other)) return setOf(this, other)
 
     val startVersion = minStart(this, other)
 
@@ -59,13 +59,13 @@ infix fun NpmRange.union(other: NpmRange): List<NpmRange> {
         startInclusive = if (startVersion == other.startVersion) other.startInclusive else this.startInclusive,
         endVersion = endVersion,
         endInclusive = if (endVersion == other.endVersion) other.endInclusive else this.endInclusive
-    ).toListOrEmpty()
+    ).toSetOrEmpty()
 }
 
-fun NpmRange.invert(): List<NpmRange> {
-    if (startVersion == null && endVersion == null) return emptyList()
+fun NpmRange.invert(): Set<NpmRange> {
+    if (startVersion == null && endVersion == null) return emptySet()
 
-    val result = mutableListOf<NpmRange>()
+    val result = mutableSetOf<NpmRange>()
     if (startVersion != null || endVersion == null) {
         result.add(
             NpmRange(
@@ -84,10 +84,10 @@ fun NpmRange.invert(): List<NpmRange> {
         )
     }
 
-    return result.distinct()
+    return result
 }
 
-infix fun List<NpmRange>.intersect(others: List<NpmRange>): List<NpmRange> = flatMap { current ->
+infix fun Set<NpmRange>.intersect(others: Set<NpmRange>): Set<NpmRange> = flatMapTo(mutableSetOf()) { current ->
     others.mapNotNull { other ->
         current intersect other
     }

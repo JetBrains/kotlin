@@ -11,7 +11,7 @@ import org.antlr.v4.runtime.ANTLRInputStream
 import org.antlr.v4.runtime.CommonTokenStream
 import org.gradle.api.InvalidUserDataException
 
-fun versionToNpmRanges(version: String): List<NpmRange> {
+fun versionToNpmRanges(version: String): Set<NpmRange> {
     val lexer = NodeSemverExpressionLexer(ANTLRInputStream(version))
     val tokens = CommonTokenStream(lexer)
     val parser = NodeSemverExpressionParser(tokens)
@@ -43,7 +43,7 @@ fun buildNpmVersion(
 
     if (excludedVersions.isEmpty()) return includedRange.toString()
 
-    val excludedRanges: List<NpmRange> = try {
+    val excludedRanges: Set<NpmRange> = try {
         excludedVersions
             .flatMap { versionToNpmRanges(it) }
             .map { it.invert() }

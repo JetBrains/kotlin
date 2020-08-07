@@ -5,5 +5,5 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
-fun <T : Any> T?.toListOrEmpty(): List<T> =
-    if (this == null) emptyList() else listOf(this)
+fun <T : Any> T?.toSetOrEmpty(): Set<T> =
+    if (this == null) emptySet() else setOf(this)
