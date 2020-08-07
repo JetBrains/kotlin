@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 
 abstract class DeclarationCheckers {
@@ -16,6 +17,7 @@ abstract class DeclarationCheckers {
     open val memberDeclarationCheckers: List<FirMemberDeclarationChecker> = emptyList()
     open val constructorCheckers: List<FirConstructorChecker> = emptyList()
     open val controlFlowAnalyserCheckers: List<FirControlFlowChecker> = emptyList()
+    open val variableAssignmentCfaBasedCheckers: List<AbstractFirPropertyInitializationChecker> = emptyList()
 
     internal val allMemberDeclarationCheckers: List<FirMemberDeclarationChecker> get() = memberDeclarationCheckers + declarationCheckers
     internal val allConstructorCheckers: List<FirConstructorChecker> get() = constructorCheckers + allMemberDeclarationCheckers

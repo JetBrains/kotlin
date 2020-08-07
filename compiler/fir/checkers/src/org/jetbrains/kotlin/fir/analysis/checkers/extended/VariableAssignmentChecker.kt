@@ -23,15 +23,16 @@ import org.jetbrains.kotlin.psi.KtProperty
 
 
 object VariableAssignmentChecker : AbstractFirPropertyInitializationChecker() {
-    override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter) {
+    override fun analyze(
+        graph: ControlFlowGraph,
+        reporter: DiagnosticReporter,
+        data: Map<CFGNode<*>, PropertyInitializationInfo>,
+        properties: Set<FirPropertySymbol>
+    ) {
         val unprocessedProperties = mutableSetOf<FirPropertySymbol>()
         val propertiesCharacteristics = mutableMapOf<FirPropertySymbol, EventOccurrencesRange>()
 
-        val localProperties = LocalPropertyCollector.collect(graph)
-        if (localProperties.isEmpty()) return
-
-        val data = DataCollector(localProperties).getData(graph)
-        val reporterVisitor = UninitializedPropertyReporter(data, localProperties, unprocessedProperties, propertiesCharacteristics)
+        val reporterVisitor = UninitializedPropertyReporter(data, properties, unprocessedProperties, propertiesCharacteristics)
         graph.traverse(TraverseDirection.Forward, reporterVisitor)
 
         for (property in unprocessedProperties) {

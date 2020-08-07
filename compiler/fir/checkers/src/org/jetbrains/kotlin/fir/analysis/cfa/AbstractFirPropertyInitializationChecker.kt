@@ -8,14 +8,18 @@ package org.jetbrains.kotlin.fir.analysis.cfa
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
-import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
-abstract class AbstractFirPropertyInitializationChecker : FirControlFlowChecker() {
-    abstract override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter)
+abstract class AbstractFirPropertyInitializationChecker {
+    abstract fun analyze(
+        graph: ControlFlowGraph,
+        reporter: DiagnosticReporter,
+        data: Map<CFGNode<*>, PropertyInitializationInfo>,
+        properties: Set<FirPropertySymbol>
+    )
 
     class PropertyInitializationInfo(
         map: PersistentMap<FirPropertySymbol, EventOccurrencesRange> = persistentMapOf()
