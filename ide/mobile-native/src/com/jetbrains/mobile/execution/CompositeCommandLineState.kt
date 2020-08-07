@@ -26,7 +26,10 @@ class CompositeCommandLineState(
             handlers += result.processHandler
             consoles += result.executionConsole
         }
-        return DefaultExecutionResult(consoles.singleOrNull(), CompositeProcessHandler(handlers))
+        val compositeHandler = CompositeProcessHandler(handlers)
+        val console = consoles.singleOrNull()
+            ?: createConsole(executor)!!.also { it.attachToProcess(compositeHandler) }
+        return DefaultExecutionResult(console, compositeHandler)
     }
 
     override fun startProcess(): ProcessHandler = throw IllegalStateException()

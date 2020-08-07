@@ -18,7 +18,7 @@ class CompositeProcessHandler(val handlers: List<ProcessHandler>) : ProcessHandl
         }
 
         override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
-            // TODO
+            this@CompositeProcessHandler.notifyTextAvailable(event.text, outputType)
         }
 
         override fun processTerminated(event: ProcessEvent) {
