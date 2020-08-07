@@ -10558,9 +10558,14 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
-        @TestMetadata("notNegate.kt")
-        public void testNotNegate() throws Exception {
-            runTest("testData/inspectionsLocal/replaceNegatedIsEmptyWithIsNotEmpty/notNegate.kt");
+        @TestMetadata("notNegateBlank.kt")
+        public void testNotNegateBlank() throws Exception {
+            runTest("testData/inspectionsLocal/replaceNegatedIsEmptyWithIsNotEmpty/notNegateBlank.kt");
+        }
+
+        @TestMetadata("notNegateEmpty.kt")
+        public void testNotNegateEmpty() throws Exception {
+            runTest("testData/inspectionsLocal/replaceNegatedIsEmptyWithIsNotEmpty/notNegateEmpty.kt");
         }
 
         @TestMetadata("simple.kt")
@@ -10568,9 +10573,19 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
             runTest("testData/inspectionsLocal/replaceNegatedIsEmptyWithIsNotEmpty/simple.kt");
         }
 
+        @TestMetadata("stringIsBlank.kt")
+        public void testStringIsBlank() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceNegatedIsEmptyWithIsNotEmpty/stringIsBlank.kt");
+        }
+
         @TestMetadata("stringIsEmpty.kt")
         public void testStringIsEmpty() throws Exception {
             runTest("testData/inspectionsLocal/replaceNegatedIsEmptyWithIsNotEmpty/stringIsEmpty.kt");
+        }
+
+        @TestMetadata("stringIsNotBlank.kt")
+        public void testStringIsNotBlank() throws Exception {
+            runTest("idea/testData/inspectionsLocal/replaceNegatedIsEmptyWithIsNotEmpty/stringIsNotBlank.kt");
         }
 
         @TestMetadata("stringIsNotEmpty.kt")
