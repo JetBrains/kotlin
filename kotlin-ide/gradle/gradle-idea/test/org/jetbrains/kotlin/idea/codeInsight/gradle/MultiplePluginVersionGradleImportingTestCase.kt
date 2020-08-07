@@ -47,8 +47,8 @@ abstract class MultiplePluginVersionGradleImportingTestCase : GradleImportingTes
         const val LATEST_STABLE_VERSUON = "latest stable"
         const val LATEST_SUPPORTED_VERSION = "master"// gradle plugin from current build
 
-        //should be extended with LATEST_SUPPORTED_VERSION
-        private val KOTLIN_GRADLE_PLUGIN_VERSIONS = listOf(MINIMAL_SUPPORTED_VERSION, LATEST_STABLE_VERSUON, LATEST_SUPPORTED_VERSION)
+        //should be extended with LATEST_SUPPORTED_VERSION - KT-40899
+        private val KOTLIN_GRADLE_PLUGIN_VERSIONS = listOf(MINIMAL_SUPPORTED_VERSION, LATEST_STABLE_VERSUON)
         private val KOTLIN_GRADLE_PLUGIN_VERSION_DESCRIPTION_TO_VERSION = mapOf(
             MINIMAL_SUPPORTED_VERSION to MINIMAL_SUPPORTED_GRADLE_PLUGIN_VERSION,
             LATEST_STABLE_VERSUON to LATEST_STABLE_GRADLE_PLUGIN_VERSION,
