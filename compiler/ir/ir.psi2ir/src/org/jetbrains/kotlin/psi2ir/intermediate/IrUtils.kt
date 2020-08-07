@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 
-fun IrVariable.defaultLoad(): IrExpression =
+fun IrVariable.loadAt(startOffset: Int, endOffset: Int): IrExpression =
     IrGetValueImpl(startOffset, endOffset, type, symbol)
 
 fun CallReceiver.adjustForCallee(callee: CallableMemberDescriptor): CallReceiver =

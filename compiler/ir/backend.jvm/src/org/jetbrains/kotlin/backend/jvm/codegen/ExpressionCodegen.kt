@@ -532,10 +532,7 @@ class ExpressionCodegen(
     }
 
     override fun visitGetValue(expression: IrGetValue, data: BlockInfo): PromisedValue {
-        // Do not generate line number information for loads from compiler-generated
-        // temporary variables. They do not correspond to variable loads in user code.
-        if (expression.symbol.owner.origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE)
-            expression.markLineNumber(startOffset = true)
+        expression.markLineNumber(startOffset = true)
         val type = frameMap.typeOf(expression.symbol)
         mv.load(findLocalIndex(expression.symbol), type)
         return MaterialValue(this, type, expression.type)
@@ -858,6 +855,7 @@ class ExpressionCodegen(
             IrTypeOperator.INSTANCEOF -> {
                 expression.argument.accept(this, data).materializeAt(context.irBuiltIns.anyNType)
                 val type = typeMapper.boxType(typeOperand)
+
                 if (typeOperand.isReifiedTypeParameter) {
                     putReifiedOperationMarkerIfTypeIsReifiedParameter(typeOperand, ReifiedTypeInliner.OperationKind.IS)
                     v.instanceOf(type)

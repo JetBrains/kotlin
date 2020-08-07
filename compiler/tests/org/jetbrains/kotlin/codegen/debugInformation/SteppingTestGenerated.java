@@ -428,6 +428,12 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     }
 
     @Test
+    @TestMetadata("whenIsChecks.kt")
+    public void testWhenIsChecks() throws Exception {
+        runTest("compiler/testData/debug/stepping/whenIsChecks.kt");
+    }
+
+    @Test
     @TestMetadata("whenMultiLine.kt")
     public void testWhenMultiLine() throws Exception {
         runTest("compiler/testData/debug/stepping/whenMultiLine.kt");
@@ -437,6 +443,12 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     @TestMetadata("whenMultiLineSubject.kt")
     public void testWhenMultiLineSubject() throws Exception {
         runTest("compiler/testData/debug/stepping/whenMultiLineSubject.kt");
+    }
+
+    @Test
+    @TestMetadata("whenNullalbeSubject.kt")
+    public void testWhenNullalbeSubject() throws Exception {
+        runTest("compiler/testData/debug/stepping/whenNullalbeSubject.kt");
     }
 
     @Test
