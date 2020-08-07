@@ -71,7 +71,7 @@ class KotlinInlineValDialog(
         val isWhenSubjectVariable = (callable.parent as? KtWhenExpression)?.subjectVariable == callable
         val deleteAfter = !isInlineThisOnly && !isKeepTheDeclaration
         invokeRefactoring(
-            KotlinInlineCallableProcessor(
+            AbstractKotlinInlineDeclarationProcessor(
                 project, replacementStrategy, callable, reference,
                 inlineThisOnly = isInlineThisOnly,
                 deleteAfter = deleteAfter && !isWhenSubjectVariable,

@@ -30,7 +30,7 @@ class KotlinInlineFunctionDialog(
 
     public override fun doAction() {
         invokeRefactoring(
-            KotlinInlineCallableProcessor(
+          AbstractKotlinInlineDeclarationProcessor(
                 project, replacementStrategy, callable, reference,
                 inlineThisOnly = isInlineThisOnly || allowInlineThisOnly,
                 deleteAfter = !isInlineThisOnly && !isKeepTheDeclaration && !allowInlineThisOnly

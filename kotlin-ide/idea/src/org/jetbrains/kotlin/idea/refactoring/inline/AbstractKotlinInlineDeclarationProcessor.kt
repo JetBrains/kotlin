@@ -44,17 +44,17 @@ import org.jetbrains.kotlin.idea.search.declarationsSearch.findSuperMethodsNoWra
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingElement
 import org.jetbrains.kotlin.psi.*
 
-private val LOG = Logger.getInstance(KotlinInlineCallableProcessor::class.java)
+private val LOG = Logger.getInstance(AbstractKotlinInlineDeclarationProcessor::class.java)
 
-class KotlinInlineCallableProcessor(
+class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDeclaration>(
     project: Project,
     private val replacementStrategy: UsageReplacementStrategy,
-    private val declaration: KtCallableDeclaration,
+    private val declaration: TDeclaration,
     private val reference: KtSimpleNameReference?,
     private val inlineThisOnly: Boolean,
     private val deleteAfter: Boolean,
     private val statementToDelete: KtBinaryExpression? = null,
-    private val postAction: (KtCallableDeclaration) -> Unit = {}
+    private val postAction: (TDeclaration) -> Unit = {}
 ) : BaseRefactoringProcessor(project) {
     private lateinit var inliners: Map<Language, InlineHandler.Inliner>
 
@@ -156,7 +156,7 @@ class KotlinInlineCallableProcessor(
             UsageViewBundle.getReferencesString(usagesCount, filesCount),
         )
 
-        override fun getElements() = arrayOf(declaration)
+        override fun getElements() = arrayOf<KtNamedDeclaration>(declaration)
 
         override fun getProcessedElementsHeader() = KotlinBundle.message("text.0.to.inline", kind.capitalize())
     }
