@@ -105,6 +105,10 @@ class JavaClassMembersEnhancementScope(
         return useSiteMemberScope.getCallableNames()
     }
 
+    override fun getClassifierNames(): Set<Name> {
+        return useSiteMemberScope.getClassifierNames()
+    }
+
     override fun mayContainName(name: Name): Boolean {
         return useSiteMemberScope.mayContainName(name)
     }

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.scopes
 
-import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.idea.frontend.api.scopes.KtUnsubstitutedScope
 
 internal class KtFirMemberScope(
     override val owner: KtFirClassOrObjectSymbol,
-    firScope: FirScope,
+    firScope: FirTypeScope,
     token: ValidityToken,
     builder: KtSymbolByFirBuilder
-) : KtFirDelegatingScope(builder, token), KtMemberScope, KtUnsubstitutedScope<KtMemberScope>, ValidityTokenOwner {
-    override val firScope: FirScope by weakRef(firScope)
+) : KtFirDelegatingScope<FirTypeScope>(builder, token), KtMemberScope, KtUnsubstitutedScope<KtMemberScope>, ValidityTokenOwner {
+    override val firScope: FirTypeScope by weakRef(firScope)
 }
 

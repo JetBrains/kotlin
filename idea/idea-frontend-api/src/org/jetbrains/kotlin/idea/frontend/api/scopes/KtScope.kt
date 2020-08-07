@@ -7,21 +7,32 @@ package org.jetbrains.kotlin.idea.frontend.api.scopes
 
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 interface KtScope : ValidityTokenOwner {
     // TODO check that names are accessible
     // maybe return some kind of lazy set
-    fun getAllNames(): Set<Name>
+    fun getAllNames(): Set<Name> = withValidityAssertion { getCallableNames() + getClassLikeSymbolNames() }
+
     fun getCallableNames(): Set<Name>
     fun getClassLikeSymbolNames(): Set<Name>
 
 
-    fun getAllSymbols(): Sequence<KtSymbol>
+    fun getAllSymbols(): Sequence<KtSymbol> = withValidityAssertion {
+        sequence {
+            yieldAll(getCallableSymbols())
+            yieldAll(getClassClassLikeSymbols())
+        }
+    }
+
     fun getCallableSymbols(): Sequence<KtCallableSymbol>
     fun getClassClassLikeSymbols(): Sequence<KtClassLikeSymbol>
 
-    fun containsName(name: Name): Boolean
+    fun containsName(name: Name): Boolean = withValidityAssertion {
+        name in getCallableNames() || name in getClassLikeSymbolNames()
+    }
 }
 
 interface KtCompositeScope : KtScope {
@@ -37,7 +48,7 @@ interface KtDeclaredMemberScope : KtScope {
 }
 
 interface KtPackageScope : KtScope, KtSubstitutedScope<KtPackageScope> {
-    val owner: KtPackageSymbol
+    val fqName: FqName
 }
 
 interface KtUnsubstitutedScope<S : KtScope> : KtScope {

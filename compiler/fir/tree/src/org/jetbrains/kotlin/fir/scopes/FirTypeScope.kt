@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.fir.scopes
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.name.Name
 
-abstract class FirTypeScope : FirScope() {
+abstract class FirTypeScope : FirScope(), FirContainingNamesAwareScope {
     // Currently, this function and its property brother both have very weak guarantees
     // - It may silently do nothing on symbols originated from different scope instance
     // - It may return the same overridden symbols more then once in case of substitution
@@ -96,5 +97,9 @@ abstract class FirTypeScope : FirScope() {
             propertySymbol: FirPropertySymbol,
             processor: (FirPropertySymbol, Int) -> ProcessorAction
         ): ProcessorAction = ProcessorAction.NEXT
+
+        override fun getCallableNames(): Set<Name> = emptySet()
+
+        override fun getClassifierNames(): Set<Name> = emptySet()
     }
 }

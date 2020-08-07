@@ -70,7 +70,7 @@ class FirJavaModuleBasedSession private constructor(
 }
 
 class FirLibrarySession private constructor(
-    moduleInfo: ModuleInfo,
+    override val moduleInfo: ModuleInfo,
     sessionProvider: FirProjectSessionProvider,
 ) : FirSession(sessionProvider) {
     companion object {

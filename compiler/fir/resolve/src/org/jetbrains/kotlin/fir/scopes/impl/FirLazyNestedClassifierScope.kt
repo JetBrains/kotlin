@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -19,7 +20,7 @@ class FirLazyNestedClassifierScope(
     val classId: ClassId,
     private val existingNames: List<Name>,
     private val symbolProvider: FirSymbolProvider
-) : FirScope() {
+) : FirScope(), FirContainingNamesAwareScope {
     override fun processClassifiersByNameWithSubstitution(
         name: Name,
         processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
@@ -33,7 +34,7 @@ class FirLazyNestedClassifierScope(
         processor(symbol, ConeSubstitutor.Empty)
     }
 
-    override fun getClassifierNames(): Set<Name> {
-        return existingNames.toSet()
-    }
+    override fun getClassifierNames(): Set<Name> = existingNames.toSet()
+
+    override fun getCallableNames(): Set<Name> = emptySet()
 }

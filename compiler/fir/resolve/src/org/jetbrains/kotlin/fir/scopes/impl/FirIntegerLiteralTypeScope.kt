@@ -106,6 +106,10 @@ class FirIntegerLiteralTypeScope(private val session: FirSession, val isUnsigned
         propertySymbol: FirPropertySymbol,
         processor: (FirPropertySymbol, Int) -> ProcessorAction
     ): ProcessorAction = ProcessorAction.NEXT
+
+    override fun getCallableNames(): Set<Name> = ALL_OPERATORS.keys
+
+    override fun getClassifierNames(): Set<Name> = emptySet()
 }
 
 @OptIn(FirImplementationDetail::class)

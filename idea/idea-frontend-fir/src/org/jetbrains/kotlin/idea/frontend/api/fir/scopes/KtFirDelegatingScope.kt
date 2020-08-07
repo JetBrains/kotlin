@@ -9,13 +9,13 @@ import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
-import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScope
@@ -25,12 +25,12 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
 
-internal abstract class KtFirDelegatingScope(
+internal abstract class KtFirDelegatingScope<S>(
     private val builder: KtSymbolByFirBuilder,
     final override val token: ValidityToken
-) : KtScope {
+) : KtScope where S : FirContainingNamesAwareScope, S : FirScope {
 
-    abstract val firScope: FirScope
+    abstract val firScope: S
 
     private val allNamesCached by cached {
         getCallableNames() + getClassLikeSymbolNames()
@@ -46,62 +46,58 @@ internal abstract class KtFirDelegatingScope(
         firScope.getClassifierNames()
     }
 
-    override fun getAllSymbols(): Sequence<KtSymbol> = withValidityAssertion {
-        sequence {
-            yieldAll(getCallableSymbols())
-            yieldAll(getClassClassLikeSymbols())
-        }
-    }
-
     override fun getCallableSymbols(): Sequence<KtCallableSymbol> = withValidityAssertion {
-        sequence {
-            getCallableNames().forEach { name ->
-                val callables = mutableListOf<KtCallableSymbol>()
-                firScope.processFunctionsByName(name) { firSymbol ->
-                    (firSymbol.fir as? FirSimpleFunction)?.let { fir ->
-                        callables.add(builder.buildFunctionSymbol(fir, firSymbol.realDeclarationOrigin()))
-                    }
-                }
-                firScope.processPropertiesByName(name) { firSymbol ->
-                    val symbol = when {
-                        firSymbol is FirPropertySymbol && firSymbol.isFakeOverride -> {
-                            builder.buildVariableSymbol(firSymbol.fir, firSymbol.realDeclarationOrigin())
-                        }
-                        else -> builder.buildCallableSymbol(firSymbol.fir)
-                    }
-                    callables.add(symbol)
-                }
-                yieldAll(callables)
-            }
-        }
+        firScope.getCallableSymbols(getCallableNames(), builder)
     }
 
     override fun getClassClassLikeSymbols(): Sequence<KtClassLikeSymbol> = withValidityAssertion {
-        sequence {
-            getClassLikeSymbolNames().forEach { name ->
-                val classLikeSymbols = mutableListOf<KtClassLikeSymbol>()
-                firScope.processClassifiersByName(name) { firSymbol ->
-                    (firSymbol.fir as? FirClassLikeDeclaration<*>)?.let {
-                        classLikeSymbols.add(builder.buildClassLikeSymbol(it))
-                    }
-                }
-                yieldAll(classLikeSymbols)
-            }
-        }
+        firScope.getClassLikeSymbols(getClassLikeSymbolNames(), builder)
     }
 
     override fun containsName(name: Name): Boolean = withValidityAssertion {
         name in getAllNames()
     }
 
-    companion object {
-        private fun FirBasedSymbol<*>.realDeclarationOrigin(): FirDeclarationOrigin? {
-            if (this !is PossiblyFirFakeOverrideSymbol<*, *> || !isFakeOverride) return null
-            var current: FirBasedSymbol<*>? = this.overriddenSymbol
-            while (current is PossiblyFirFakeOverrideSymbol<*, *> && current.isFakeOverride) {
-                current = current.overriddenSymbol
+}
+
+private fun FirBasedSymbol<*>.realDeclarationOrigin(): FirDeclarationOrigin? {
+    if (this !is PossiblyFirFakeOverrideSymbol<*, *> || !isFakeOverride) return null
+    var current: FirBasedSymbol<*>? = this.overriddenSymbol
+    while (current is PossiblyFirFakeOverrideSymbol<*, *> && current.isFakeOverride) {
+        current = current.overriddenSymbol
+    }
+    return (current?.fir as? FirDeclaration)?.origin
+}
+
+internal fun FirScope.getCallableSymbols(callableNames: Collection<Name>, builder: KtSymbolByFirBuilder) = sequence {
+    callableNames.forEach { name ->
+        val callables = mutableListOf<KtCallableSymbol>()
+        processFunctionsByName(name) { firSymbol ->
+            (firSymbol.fir as? FirSimpleFunction)?.let { fir ->
+                callables.add(builder.buildFunctionSymbol(fir, firSymbol.realDeclarationOrigin()))
             }
-            return (current?.fir as? FirDeclaration)?.origin
         }
+        processPropertiesByName(name) { firSymbol ->
+            val symbol = when {
+                firSymbol is FirPropertySymbol && firSymbol.isFakeOverride -> {
+                    builder.buildVariableSymbol(firSymbol.fir, firSymbol.realDeclarationOrigin())
+                }
+                else -> builder.buildCallableSymbol(firSymbol.fir)
+            }
+            callables.add(symbol)
+        }
+        yieldAll(callables)
+    }
+}
+
+internal fun FirScope.getClassLikeSymbols(classLikeNames: Collection<Name>, builder: KtSymbolByFirBuilder) = sequence {
+    classLikeNames.forEach { name ->
+        val classLikeSymbols = mutableListOf<KtClassLikeSymbol>()
+        processClassifiersByName(name) { firSymbol ->
+            (firSymbol.fir as? FirClassLikeDeclaration<*>)?.let {
+                classLikeSymbols.add(builder.buildClassLikeSymbol(it))
+            }
+        }
+        yieldAll(classLikeSymbols)
     }
 }

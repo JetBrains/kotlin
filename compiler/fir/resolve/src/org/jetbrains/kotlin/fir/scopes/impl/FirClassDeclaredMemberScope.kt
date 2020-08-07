@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.getContainingClassifierNamesIfPresent
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
@@ -17,8 +19,8 @@ class FirClassDeclaredMemberScope(
     useLazyNestedClassifierScope: Boolean = false,
     existingNames: List<Name>? = null,
     symbolProvider: FirSymbolProvider? = null
-) : FirScope() {
-    private val nestedClassifierScope = if (useLazyNestedClassifierScope) {
+) : FirScope(), FirContainingNamesAwareScope {
+    private val nestedClassifierScope: FirScope? = if (useLazyNestedClassifierScope) {
         lazyNestedClassifierScope(klass.symbol.classId, existingNames!!, symbolProvider!!)
     } else {
         nestedClassifierScope(klass)
@@ -82,7 +84,7 @@ class FirClassDeclaredMemberScope(
     }
 
     override fun getClassifierNames(): Set<Name> {
-        return nestedClassifierScope?.getClassifierNames().orEmpty()
+        return nestedClassifierScope?.getContainingClassifierNamesIfPresent().orEmpty()
     }
 }
 

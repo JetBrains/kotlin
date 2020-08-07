@@ -9,12 +9,14 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.buildUseSiteMemberScope
 import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractSimpleImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractStarImportingScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.idea.fir.getOrBuildFirOfType
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
@@ -23,7 +25,6 @@ import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.fir.FirScopeRegistry
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymbol
-import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirPackageSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.scopes.*
@@ -57,7 +58,7 @@ internal class KtFirScopeProvider(
     override fun getMemberScope(classSymbol: KtClassOrObjectSymbol): KtMemberScope = withValidityAssertion {
         memberScopeCache.getOrPut(classSymbol) {
             check(classSymbol is KtFirClassOrObjectSymbol)
-            val firScope = classSymbol.fir.buildUseSiteMemberScope(classSymbol.fir.session, ScopeSession()).also(firScopeStorage::register)
+            val firScope = classSymbol.fir.unsubstitutedScope(classSymbol.fir.session, ScopeSession()).also(firScopeStorage::register)
             KtFirMemberScope(classSymbol, firScope, token, builder)
         }
     }
@@ -72,8 +73,9 @@ internal class KtFirScopeProvider(
 
     override fun getPackageScope(packageSymbol: KtPackageSymbol): KtPackageScope = withValidityAssertion {
         packageMemberScopeCache.getOrPut(packageSymbol) {
-            check(packageSymbol is KtFirPackageSymbol)
-            KtFirPackageScope(packageSymbol, token, builder, session)
+            val firPackageScope = FirPackageMemberScope(packageSymbol.fqName, session/*TODO use correct session here*/)
+                .also(firScopeStorage::register)
+            KtFirPackageScope(firPackageScope, builder, token)
         }
     }
 
@@ -123,15 +125,16 @@ internal class KtFirScopeProvider(
         return when (firScope) {
             is FirAbstractSimpleImportingScope -> KtFirNonStarImportingScope(firScope, builder, token)
             is FirAbstractStarImportingScope -> KtFirStarImportingScope(firScope, builder, project, token)
-            else -> {
-                // todo create concrete KtScope here instead of a generic one
-                KtFirDelegatingScopeImpl(firScope, builder, token)
-            }
+            is FirPackageMemberScope -> KtFirPackageScope(firScope, builder, token)
+            is FirContainingNamesAwareScope -> KtFirDelegatingScopeImpl(firScope, builder, token)
+            else -> TODO(firScope::class.toString())
         }
     }
 }
 
-private class KtFirDelegatingScopeImpl(firScope: FirScope, builder: KtSymbolByFirBuilder, token: ValidityToken) :
-    KtFirDelegatingScope(builder, token), ValidityTokenOwner {
-    override val firScope: FirScope by weakRef(firScope)
+private class KtFirDelegatingScopeImpl<S>(
+    firScope: S, builder: KtSymbolByFirBuilder,
+    token: ValidityToken
+) : KtFirDelegatingScope<S>(builder, token), ValidityTokenOwner where S : FirContainingNamesAwareScope, S : FirScope {
+    override val firScope: S by weakRef(firScope)
 }
