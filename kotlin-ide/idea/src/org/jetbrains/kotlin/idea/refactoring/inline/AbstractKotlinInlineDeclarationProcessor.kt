@@ -20,7 +20,7 @@ import com.intellij.lang.Language
 import com.intellij.lang.findUsages.DescriptiveNameUtil
 import com.intellij.lang.refactoring.InlineHandler
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.project.Project
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.BaseRefactoringProcessor
@@ -46,16 +46,13 @@ import org.jetbrains.kotlin.psi.*
 
 private val LOG = Logger.getInstance(AbstractKotlinInlineDeclarationProcessor::class.java)
 
-class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDeclaration>(
-    project: Project,
-    private val replacementStrategy: UsageReplacementStrategy,
+abstract class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDeclaration>(
     private val declaration: TDeclaration,
     private val reference: KtSimpleNameReference?,
     private val inlineThisOnly: Boolean,
     private val deleteAfter: Boolean,
-    private val statementToDelete: KtBinaryExpression? = null,
-    private val postAction: (TDeclaration) -> Unit = {}
-) : BaseRefactoringProcessor(project) {
+    private val editor: Editor?,
+) : BaseRefactoringProcessor(declaration.project) {
     private lateinit var inliners: Map<Language, InlineHandler.Inliner>
 
     private val kind = when (declaration) {
@@ -73,7 +70,32 @@ class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDeclaration
         DescriptiveNameUtil.getDescriptiveName(declaration)
     )
 
-    override fun preprocessUsages(refUsages: Ref<Array<UsageInfo>>): Boolean {
+    abstract fun createReplacementStrategy(declaration: TDeclaration, editor: Editor?): UsageReplacementStrategy?
+
+    open fun postAction(declaration: TDeclaration) = Unit
+    open fun postDeleteAction() = Unit
+
+    final override fun findUsages(): Array<UsageInfo> {
+        if (inlineThisOnly && reference != null) return arrayOf(UsageInfo(reference))
+        val usages = hashSetOf<UsageInfo>()
+        for (usage in ReferencesSearchScopeHelper.search(declaration, myRefactoringScope)) {
+            usages += UsageInfo(usage)
+        }
+
+        declaration.forEachOverridingElement(scope = myRefactoringScope) { _, overridingMember ->
+            val superMethods = findSuperMethodsNoWrapping(overridingMember)
+            if (superMethods.singleOrNull()?.unwrapped == declaration) {
+                usages += OverrideUsageInfo(overridingMember)
+                return@forEachOverridingElement true
+            }
+
+            true
+        }
+
+        return usages.toArray(UsageInfo.EMPTY_ARRAY)
+    }
+
+    final override fun preprocessUsages(refUsages: Ref<Array<UsageInfo>>): Boolean {
         val usagesInfo = refUsages.get()
         val conflicts = MultiMap<PsiElement, String>()
         if (!inlineThisOnly) {
@@ -95,27 +117,9 @@ class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDeclaration
         return showConflicts(conflicts, usagesInfo)
     }
 
-    override fun findUsages(): Array<UsageInfo> {
-        if (inlineThisOnly && reference != null) return arrayOf(UsageInfo(reference))
-        val usages = hashSetOf<UsageInfo>()
-        for (usage in ReferencesSearchScopeHelper.search(declaration, myRefactoringScope)) {
-            usages += UsageInfo(usage)
-        }
-
-        declaration.forEachOverridingElement(scope = myRefactoringScope) { _, overridingMember ->
-            val superMethods = findSuperMethodsNoWrapping(overridingMember)
-            if (superMethods.singleOrNull()?.unwrapped == declaration) {
-                usages += OverrideUsageInfo(overridingMember)
-                return@forEachOverridingElement true
-            }
-
-            true
-        }
-
-        return usages.toArray(UsageInfo.EMPTY_ARRAY)
-    }
-
     override fun performRefactoring(usages: Array<out UsageInfo>) {
+        val replacementStrategy = createReplacementStrategy(declaration, editor) ?: TODO()
+
         val (kotlinReferenceUsages, nonKotlinReferenceUsages) = usages.partition { it !is OverrideUsageInfo && it.element is KtReferenceExpression }
         for (usage in nonKotlinReferenceUsages) {
             val element = usage.element ?: continue
@@ -136,10 +140,10 @@ class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDeclaration
         ) {
             if (deleteAfter) {
                 declaration.deleteWithCompanion()
-                statementToDelete?.delete()
+                postDeleteAction()
+            } else {
+                postAction(declaration)
             }
-
-            postAction(declaration)
         }
     }
 

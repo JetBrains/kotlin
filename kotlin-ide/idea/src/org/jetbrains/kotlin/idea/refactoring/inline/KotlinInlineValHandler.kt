@@ -19,29 +19,13 @@ package org.jetbrains.kotlin.idea.refactoring.inline
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
-import com.intellij.refactoring.HelpID
-import com.intellij.refactoring.RefactoringBundle
-import com.intellij.refactoring.util.CommonRefactoringUtil
-import com.intellij.util.containers.MultiMap
-import org.jetbrains.annotations.Nls
-import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
-import org.jetbrains.kotlin.idea.codeInliner.CodeToInline
-import org.jetbrains.kotlin.idea.codeInliner.PropertyUsageReplacementStrategy
-import org.jetbrains.kotlin.idea.findUsages.ReferencesSearchScopeHelper
-import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
-import org.jetbrains.kotlin.idea.references.ReferenceAccess
-import org.jetbrains.kotlin.idea.references.readWriteAccess
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlinePropertyProcessor.Companion.extractInitialization
+import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlinePropertyProcessor.Companion.showErrorHint
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 
 class KotlinInlineValHandler(private val withPrompt: Boolean) : KotlinInlineActionHandler() {
     constructor() : this(withPrompt = true)
@@ -72,8 +56,7 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : KotlinInlineActi
             )
         }
 
-        val (referenceExpressions, conflicts) = findUsages(declaration)
-
+        val (referenceExpressions, conflicts) = KotlinInlinePropertyProcessor.findUsages(declaration)
         if (referenceExpressions.isEmpty() && conflicts.isEmpty) {
             val kind = if (declaration.isLocal)
                 KotlinBundle.message("text.variable")
@@ -82,27 +65,12 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : KotlinInlineActi
             return showErrorHint(project, editor, KotlinBundle.message("0.1.is.never.used", kind.capitalize(), name))
         }
 
-        val readReplacement: CodeToInline?
-        val writeReplacement: CodeToInline?
-        val assignmentToDelete: KtBinaryExpression?
-        val descriptor = declaration.unsafeResolveToDescriptor() as ValueDescriptor
-        val isTypeExplicit = declaration.typeReference != null
+        var assignmentToDelete: KtBinaryExpression? = null
         if (getter == null && setter == null) {
             val initialization = extractInitialization(declaration, referenceExpressions, project, editor) ?: return
-            readReplacement = buildCodeToInline(declaration, descriptor.type, isTypeExplicit, initialization.value, false, editor) ?: return
-            writeReplacement = null
             assignmentToDelete = initialization.assignment
-        } else {
-            readReplacement = getter?.let {
-                buildCodeToInline(getter, descriptor.type, isTypeExplicit, getter.bodyExpression!!, getter.hasBlockBody(), editor) ?: return
-            }
-            writeReplacement = setter?.let {
-                buildCodeToInline(setter, setter.builtIns.unitType, true, setter.bodyExpression!!, setter.hasBlockBody(), editor) ?: return
-            }
-            assignmentToDelete = null
         }
 
-        val replacementStrategy = PropertyUsageReplacementStrategy(readReplacement, writeReplacement)
         if (!conflicts.isEmpty) {
             val conflictsCopy = conflicts.copy()
             val allOrSome = if (referenceExpressions.isEmpty())
@@ -119,97 +87,24 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : KotlinInlineActi
             )
 
             project.checkConflictsInteractively(conflictsCopy) {
-                performRefactoring(declaration, replacementStrategy, assignmentToDelete, editor)
+                performRefactoring(declaration, assignmentToDelete, editor)
             }
         } else {
-            performRefactoring(declaration, replacementStrategy, assignmentToDelete, editor)
-        }
-    }
-
-    private data class Usages(val referenceExpressions: Collection<KtExpression>, val conflicts: MultiMap<PsiElement, String>)
-
-    private fun findUsages(declaration: KtProperty): Usages {
-        val references = ReferencesSearchScopeHelper.search(declaration)
-        val referenceExpressions = mutableListOf<KtExpression>()
-        val conflictUsages = MultiMap.create<PsiElement, String>()
-        for (ref in references) {
-            val refElement = ref.element
-            if (refElement !is KtElement) {
-                conflictUsages.putValue(refElement, KotlinBundle.message("non.kotlin.usage.0", refElement.text))
-                continue
-            }
-
-            val expression = (refElement as? KtExpression)?.getQualifiedExpressionForSelectorOrThis()
-            //TODO: what if null?
-            if (expression != null) {
-                if (expression.readWriteAccess(useResolveForReadWrite = true) == ReferenceAccess.READ_WRITE) {
-                    conflictUsages.putValue(expression, KotlinBundle.message("unsupported.usage.0", expression.parent.text))
-                }
-                referenceExpressions.add(expression)
-            }
-        }
-        return Usages(referenceExpressions, conflictUsages)
-    }
-
-    private data class Initialization(val value: KtExpression, val assignment: KtBinaryExpression?)
-
-    private fun extractInitialization(
-        declaration: KtProperty,
-        referenceExpressions: Collection<KtExpression>,
-        project: Project,
-        editor: Editor?
-    ): Initialization? {
-        val writeUsages = referenceExpressions.filter { it.readWriteAccess(useResolveForReadWrite = true) != ReferenceAccess.READ }
-
-        val initializerInDeclaration = declaration.initializer
-        if (initializerInDeclaration != null) {
-            if (writeUsages.isNotEmpty()) {
-                reportAmbiguousAssignment(project, editor, declaration.name!!, writeUsages)
-                return null
-            }
-            return Initialization(initializerInDeclaration, assignment = null)
-        } else {
-            val assignment = writeUsages.singleOrNull()
-                ?.getAssignmentByLHS()
-                ?.takeIf { it.operationToken == KtTokens.EQ }
-            val initializer = assignment?.right
-            if (initializer == null) {
-                reportAmbiguousAssignment(project, editor, declaration.name!!, writeUsages)
-                return null
-            }
-            return Initialization(initializer, assignment)
+            performRefactoring(declaration, assignmentToDelete, editor)
         }
     }
 
     private fun performRefactoring(
         declaration: KtProperty,
-        replacementStrategy: PropertyUsageReplacementStrategy,
         assignmentToDelete: KtBinaryExpression?,
         editor: Editor?
     ) {
         val reference = editor?.findSimpleNameReference()
-        val dialog = KotlinInlineValDialog(declaration, reference, replacementStrategy, assignmentToDelete, withPreview = withPrompt)
+        val dialog = KotlinInlineValDialog(declaration, reference, assignmentToDelete, withPreview = withPrompt, editor)
         if (withPrompt && !ApplicationManager.getApplication().isUnitTestMode && dialog.shouldBeShown()) {
             dialog.show()
         } else {
             dialog.doAction()
         }
     }
-
-    private fun reportAmbiguousAssignment(project: Project, editor: Editor?, name: String, assignments: Collection<PsiElement>) {
-        val key = if (assignments.isEmpty()) "variable.has.no.initializer" else "variable.has.no.dominating.definition"
-        val message = RefactoringBundle.getCannotRefactorMessage(RefactoringBundle.message(key, name))
-        showErrorHint(project, editor, message)
-    }
-
-    private fun showErrorHint(project: Project, editor: Editor?, @Nls message: String) {
-        CommonRefactoringUtil.showErrorHint(
-            project,
-            editor,
-            message,
-            RefactoringBundle.message("inline.variable.title"),
-            HelpID.INLINE_VARIABLE
-        )
-    }
-
 }

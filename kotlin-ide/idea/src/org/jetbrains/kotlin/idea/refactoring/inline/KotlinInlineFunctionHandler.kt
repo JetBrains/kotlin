@@ -43,11 +43,13 @@ class KotlinInlineFunctionHandler : KotlinInlineActionHandler() {
             return
         }
 
-        val replacementStrategy = createUsageReplacementStrategyForFunction(element, editor) ?: return
         val dialog = KotlinInlineFunctionDialog(
-            project, element, nameReference, replacementStrategy,
-            allowInlineThisOnly = recursive
+            element,
+            nameReference,
+            allowInlineThisOnly = recursive,
+            editor = editor,
         )
+
         if (!ApplicationManager.getApplication().isUnitTestMode) {
             dialog.show()
         } else {
@@ -66,18 +68,4 @@ class KotlinInlineFunctionHandler : KotlinInlineActionHandler() {
             it !== this && descriptor == it.getResolvedCall(context)?.resultingDescriptor
         }
     }
-}
-
-fun createUsageReplacementStrategyForFunction(function: KtNamedFunction, editor: Editor?): UsageReplacementStrategy? {
-    val returnType = function.unsafeResolveToDescriptor().safeAs<SimpleFunctionDescriptor>()?.returnType
-    val codeToInline = buildCodeToInline(
-        function,
-        returnType,
-        function.hasDeclaredReturnType() || (function.hasBlockBody() && returnType?.isUnit() == true),
-        function.bodyExpression!!,
-        function.hasBlockBody(),
-        editor
-    ) ?: return null
-
-    return CallableUsageReplacementStrategy(codeToInline, inlineSetter = false)
 }

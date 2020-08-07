@@ -5,23 +5,20 @@
 
 package org.jetbrains.kotlin.idea.refactoring.inline
 
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.help.HelpManager
-import com.intellij.openapi.project.Project
 import com.intellij.refactoring.HelpID
-import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
 class KotlinInlineFunctionDialog(
-    project: Project,
     function: KtNamedFunction,
     reference: KtSimpleNameReference?,
-    private val replacementStrategy: UsageReplacementStrategy,
-    private val allowInlineThisOnly: Boolean
-) : AbstractKotlinInlineDialog(function, reference, project) {
-
+    editor: Editor?,
+    private val allowInlineThisOnly: Boolean,
+) : AbstractKotlinInlineDialog<KtNamedFunction>(function, reference, editor) {
     init {
         init()
     }
@@ -30,10 +27,12 @@ class KotlinInlineFunctionDialog(
 
     public override fun doAction() {
         invokeRefactoring(
-          AbstractKotlinInlineDeclarationProcessor(
-                project, replacementStrategy, callable, reference,
+            KotlinInlineFunctionProcessor(
+                declaration = declaration,
+                reference = reference,
                 inlineThisOnly = isInlineThisOnly || allowInlineThisOnly,
-                deleteAfter = !isInlineThisOnly && !isKeepTheDeclaration && !allowInlineThisOnly
+                deleteAfter = !isInlineThisOnly && !isKeepTheDeclaration && !allowInlineThisOnly,
+                editor = editor
             )
         )
 
@@ -43,8 +42,9 @@ class KotlinInlineFunctionDialog(
         }
     }
 
-    override fun doHelpAction() =
-        HelpManager.getInstance().invokeHelp(if (callable is KtConstructor<*>) HelpID.INLINE_CONSTRUCTOR else HelpID.INLINE_METHOD)
+    override fun doHelpAction() = HelpManager.getInstance().invokeHelp(
+        if (declaration is KtConstructor<*>) HelpID.INLINE_CONSTRUCTOR else HelpID.INLINE_METHOD
+    )
 
     override fun canInlineThisOnly() = allowInlineThisOnly
 }

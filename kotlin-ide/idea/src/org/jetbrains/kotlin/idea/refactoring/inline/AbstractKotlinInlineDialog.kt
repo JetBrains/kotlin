@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.inline
 
-import com.intellij.openapi.project.Project
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.ElementDescriptionUtil
 import com.intellij.refactoring.inline.InlineOptionsDialog
@@ -13,23 +13,23 @@ import com.intellij.usageView.UsageViewTypeLocation
 import org.jetbrains.annotations.Nls
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
-abstract class AbstractKotlinInlineDialog(
-    protected val callable: KtCallableDeclaration,
+abstract class AbstractKotlinInlineDialog<TDeclaration : KtNamedDeclaration>(
+    protected val declaration: TDeclaration,
     protected val reference: KtSimpleNameReference?,
-    project: Project = callable.project
-) : InlineOptionsDialog(project, true, callable) {
+    protected val editor: Editor?,
+) : InlineOptionsDialog(declaration.project, true, declaration) {
 
     // NB: can be -1 in case of too expensive search!
-    protected val occurrencesNumber = initOccurrencesNumber(callable)
+    protected val occurrencesNumber = initOccurrencesNumber(declaration)
 
     private val occurrencesString
         get() = if (occurrencesNumber >= 0) {
             "" + occurrencesNumber + " " + StringUtil.pluralize("occurrence", occurrencesNumber)
         } else null
 
-    private val kind: String = ElementDescriptionUtil.getElementDescription(callable, UsageViewTypeLocation.INSTANCE)
+    private val kind: String = ElementDescriptionUtil.getElementDescription(declaration, UsageViewTypeLocation.INSTANCE)
 
     private val refactoringName get() = KotlinBundle.message("text.inline.0", StringUtil.capitalizeWords(kind, true))
 
@@ -53,7 +53,7 @@ abstract class AbstractKotlinInlineDialog(
 
     override fun getNameLabelText(): String {
         val occurrencesString = occurrencesString?.let { " - $it" } ?: ""
-        return "${kind.capitalize()} ${callable.nameAsSafeName} $occurrencesString"
+        return "${kind.capitalize()} ${declaration.nameAsSafeName} $occurrencesString"
     }
 
     @Nls
@@ -68,7 +68,7 @@ abstract class AbstractKotlinInlineDialog(
 
     override fun getKeepTheDeclarationText(): String? =
         // With non-writable callable refactoring does not work anyway (for both property or function)
-        if (callable.isWritable && (occurrencesNumber > 1 || !myInvokedOnReference)) {
+        if (declaration.isWritable && (occurrencesNumber > 1 || !myInvokedOnReference)) {
             getInlineText(KotlinBundle.message("text.keep"))
         } else {
             null

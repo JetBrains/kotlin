@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
+ * Copyright 2010-2020 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.idea.refactoring.inline
 
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
 import com.intellij.openapi.help.HelpManager
 import com.intellij.refactoring.HelpID
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.KtBinaryExpression
@@ -30,14 +30,12 @@ import org.jetbrains.kotlin.psi.KtWhenExpression
 class KotlinInlineValDialog(
     property: KtProperty,
     reference: KtSimpleNameReference?,
-    private val replacementStrategy: UsageReplacementStrategy,
     private val assignmentToDelete: KtBinaryExpression?,
-    withPreview: Boolean = true
-) : AbstractKotlinInlineDialog(property, reference) {
+    withPreview: Boolean = true,
+    editor: Editor?
+) : AbstractKotlinInlineDialog<KtProperty>(property, reference, editor) {
 
-    private val isLocal = (callable as KtProperty).isLocal
-
-    private val simpleLocal = isLocal && (reference == null || occurrencesNumber == 1)
+    private val simpleLocal = declaration.isLocal && (reference == null || occurrencesNumber == 1)
 
     init {
         setPreviewResults(withPreview && shouldBeShown())
@@ -68,20 +66,16 @@ class KotlinInlineValDialog(
     override fun isInlineThis() = KotlinRefactoringSettings.instance.INLINE_LOCAL_THIS
 
     public override fun doAction() {
-        val isWhenSubjectVariable = (callable.parent as? KtWhenExpression)?.subjectVariable == callable
+        val isWhenSubjectVariable = (declaration.parent as? KtWhenExpression)?.subjectVariable == declaration
         val deleteAfter = !isInlineThisOnly && !isKeepTheDeclaration
         invokeRefactoring(
-            AbstractKotlinInlineDeclarationProcessor(
-                project, replacementStrategy, callable, reference,
+            KotlinInlinePropertyProcessor(
+                declaration, reference,
                 inlineThisOnly = isInlineThisOnly,
-                deleteAfter = deleteAfter && !isWhenSubjectVariable,
+                deleteAfter = deleteAfter,
+                isWhenSubjectVariable = isWhenSubjectVariable,
+                editor = editor,
                 statementToDelete = assignmentToDelete,
-                postAction = { declaration ->
-                    if (deleteAfter && isWhenSubjectVariable) {
-                        val property = declaration as? KtProperty
-                        property?.initializer?.let { property.replace(it) }
-                    }
-                }
             )
         )
 
