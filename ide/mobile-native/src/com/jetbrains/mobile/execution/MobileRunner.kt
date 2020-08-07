@@ -15,7 +15,9 @@ class MobileRunner : CidrRunner() {
 
     override fun canRun(executorId: String, profile: RunProfile): Boolean =
         super.canRun(executorId, profile) &&
-                (executorId == DefaultRunExecutor.EXECUTOR_ID || executorId == DefaultDebugExecutor.EXECUTOR_ID)
+                (executorId == DefaultRunExecutor.EXECUTOR_ID ||
+                        executorId == DefaultDebugExecutor.EXECUTOR_ID &&
+                        (profile !is MobileRunConfigurationBase || profile.executionTargets.size <= 1))
 
     override fun doExecute(state: RunProfileState, environment: ExecutionEnvironment): RunContentDescriptor? {
         if (state is ImportedTestRunnableState) {
