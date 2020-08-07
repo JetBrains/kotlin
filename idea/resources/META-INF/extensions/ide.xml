@@ -3,7 +3,6 @@
 
     <extensionPoints>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.updater" beanClass="com.intellij.openapi.fileTypes.FileTypeExtensionPoint"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.projectConfigurator" interface="org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator"/>
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.declarationAttributeAltererExtension"
                         interface="org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension"
@@ -71,8 +70,6 @@
     </extensionPoints>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
-        <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator"/>
-        <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator"/>
 
         <scriptDefinitionContributor
             id="ScriptTemplatesFromCompilerSettingsProvider"
@@ -133,7 +130,6 @@
 
         <fileEditorProvider implementation="org.jetbrains.kotlin.idea.scratch.ui.KtScratchFileEditorProvider"/>
 
-        <moduleBuilder builderClass="org.jetbrains.kotlin.tools.projectWizard.wizard.NewProjectWizardModuleBuilder"/>
         <jbProtocolCommand implementation="org.jetbrains.kotlin.tools.projectWizard.wizard.OpenNewProjectWizardProtocolCommand"/>
     </extensions>
 </idea-plugin>
