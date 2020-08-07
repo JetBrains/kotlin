@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.deparenthesize
-import org.jetbrains.kotlin.psi2ir.intermediate.defaultLoad
+import org.jetbrains.kotlin.psi2ir.intermediate.loadAt
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.SmartList
 
@@ -206,12 +206,14 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
     private fun generateIsPatternCondition(irSubject: IrVariable, ktCondition: KtWhenConditionIsPattern): IrExpression {
         val typeOperand = getOrFail(BindingContext.TYPE, ktCondition.typeReference)
         val irTypeOperand = typeOperand.toIrType()
+        val startOffset = ktCondition.startOffsetSkippingComments
+        val endOffset = ktCondition.endOffset
         val irInstanceOf = IrTypeOperatorCallImpl(
-            ktCondition.startOffsetSkippingComments, ktCondition.endOffset,
+            startOffset, endOffset,
             context.irBuiltIns.booleanType,
             IrTypeOperator.INSTANCEOF,
             irTypeOperand,
-            irSubject.defaultLoad()
+            irSubject.loadAt(startOffset, startOffset)
         )
         return if (ktCondition.isNegated)
             primitiveOp1(
@@ -227,7 +229,9 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
 
     private fun generateInRangeCondition(irSubject: IrVariable, ktCondition: KtWhenConditionInRange): IrExpression {
         val inCall = statementGenerator.pregenerateCall(getResolvedCall(ktCondition.operationReference)!!)
-        inCall.irValueArgumentsByIndex[0] = irSubject.defaultLoad()
+        val startOffset = ktCondition.startOffsetSkippingComments
+        val endOffset = ktCondition.endOffset
+        inCall.irValueArgumentsByIndex[0] = irSubject.loadAt(startOffset, startOffset)
         val inOperator = getInfixOperator(ktCondition.operationReference.getReferencedNameElementType())
         val irInCall = CallGenerator(statementGenerator).generateCall(ktCondition, inCall, inOperator)
         return when (inOperator) {
@@ -235,7 +239,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
                 irInCall
             IrStatementOrigin.NOT_IN ->
                 primitiveOp1(
-                    ktCondition.startOffsetSkippingComments, ktCondition.endOffset,
+                    startOffset, endOffset,
                     context.irBuiltIns.booleanNotSymbol,
                     context.irBuiltIns.booleanType,
                     IrStatementOrigin.EXCL,
@@ -248,9 +252,11 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
     private fun generateEqualsCondition(irSubject: IrVariable, ktCondition: KtWhenConditionWithExpression): IrExpression {
         val ktExpression = ktCondition.expression
         val irExpression = ktExpression!!.genExpr()
+        val startOffset = ktCondition.startOffsetSkippingComments
+        val endOffset = ktCondition.endOffset
         return OperatorExpressionGenerator(statementGenerator).generateEquality(
-            ktCondition.startOffsetSkippingComments, ktCondition.endOffset, IrStatementOrigin.EQEQ,
-            irSubject.defaultLoad(), irExpression,
+            startOffset, endOffset, IrStatementOrigin.EQEQ,
+            irSubject.loadAt(startOffset, startOffset), irExpression,
             context.bindingContext[BindingContext.PRIMITIVE_NUMERIC_COMPARISON_INFO, ktExpression]
         )
     }
