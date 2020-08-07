@@ -286,6 +286,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context, va
 
         val methods = irClass.sortedOverridableOrOverridingMethods
         val newVtableSlots = mutableListOf<OverriddenFunctionInfo>()
+        val overridenVtableSlots = mutableMapOf<IrSimpleFunction, OverriddenFunctionInfo>()
 
         DEBUG_OUTPUT(0) {
             println()
@@ -300,19 +301,28 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context, va
             println("BUILDING INHERITED vTable")
         }
 
+        val superVtableMap = superVtableEntries.groupBy { it.function }
+        methods.forEach { overridingMethod ->
+            overridingMethod.allOverriddenFunctions.forEach {
+                val superMethods = superVtableMap[it]
+                if (superMethods?.isNotEmpty() == true) {
+                    newVtableSlots.add(OverriddenFunctionInfo(overridingMethod, it))
+                    superMethods.forEach { superMethod ->
+                        overridenVtableSlots[superMethod.overriddenFunction] =
+                                OverriddenFunctionInfo(overridingMethod, superMethod.overriddenFunction)
+                    }
+                }
+            }
+        }
         val inheritedVtableSlots = superVtableEntries.map { superMethod ->
-            val overridingMethod = methods.singleOrNull { it.overrides(superMethod.function) }
-            if (overridingMethod == null) {
-
-                DEBUG_OUTPUT(0) { println("Taking super ${superMethod.overriddenFunction.render()} -> ${superMethod.function.render()}") }
-
-                superMethod
-            } else {
-                newVtableSlots.add(OverriddenFunctionInfo(overridingMethod, superMethod.function))
-
-                DEBUG_OUTPUT(0) { println("Taking overridden ${superMethod.overriddenFunction.render()} -> ${overridingMethod.render()}") }
-
-                OverriddenFunctionInfo(overridingMethod, superMethod.overriddenFunction)
+            overridenVtableSlots[superMethod.overriddenFunction]?.also {
+                DEBUG_OUTPUT(0) {
+                    println("Taking overridden ${superMethod.overriddenFunction.render()} -> ${it.function.render()}")
+                }
+            } ?: superMethod.also {
+                DEBUG_OUTPUT(0) {
+                    println("Taking super ${superMethod.overriddenFunction.render()} -> ${superMethod.function.render()}")
+                }
             }
         }
 
