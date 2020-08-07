@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.name.FqName
 class IrCompileTimeChecker(
     containingDeclaration: IrElement? = null, private val mode: EvaluationMode = EvaluationMode.WITH_ANNOTATIONS
 ) : IrElementVisitor<Boolean, Nothing?> {
-    private val visitedStack = mutableListOf<IrElement>().apply { if (containingDeclaration != null) add(containingDeclaration) }
+    private val visitedStack = mutableListOf<IrElement?>().apply { if (containingDeclaration != null) add(containingDeclaration) }
 
     private fun IrElement.asVisited(block: () -> Boolean): Boolean {
         visitedStack += this
@@ -50,7 +50,7 @@ class IrCompileTimeChecker(
         val dispatchReceiverComputable = expression.dispatchReceiver?.accept(this, null) ?: true
         val extensionReceiverComputable = expression.extensionReceiver?.accept(this, null) ?: true
         if (!visitValueParameters(expression, null)) return false
-        val bodyComputable = if (mode.canEvaluateBody(owner)) owner.body?.accept(this, null) ?: true else true
+        val bodyComputable = owner.asVisited { if (mode.canEvaluateBody(owner)) owner.body?.accept(this, null) ?: true else true }
 
         return dispatchReceiverComputable && extensionReceiverComputable && bodyComputable
     }
@@ -123,6 +123,16 @@ class IrCompileTimeChecker(
     }
 
     override fun visitGetField(expression: IrGetField, data: Nothing?): Boolean {
+        // TODO fix later; used it here because java boolean resolves very strange,
+        //  its type is flexible (so its not primitive) and there is no initializer at backing field
+        val fqName = expression.symbol.owner.fqNameForIrSerialization
+        if (fqName.toString().let { it == "java.lang.Boolean.FALSE" || it == "java.lang.Boolean.TRUE" }) {
+            return true
+        }
+
+        if (expression.receiver == null) return expression.symbol.owner.correspondingPropertySymbol?.owner?.isConst == true
+
+        val property = expression.symbol.owner.correspondingPropertySymbol?.owner
         val owner = expression.symbol.owner
         if (owner.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD && owner.correspondingPropertySymbol?.owner?.isConst == true) {
             val receiverComputable = expression.receiver?.accept(this, null) ?: true
@@ -131,16 +141,20 @@ class IrCompileTimeChecker(
                 return true
             }
         }
-        val parent = owner.parent as IrSymbolOwner
+
+        val parent = owner.parent as IrDeclarationContainer
+        val getter = parent.declarations.filterIsInstance<IrProperty>().single { it == property }.getter
         val isJavaPrimitiveStatic = owner.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && owner.isStatic &&
                 (owner.type.isPrimitiveType() || owner.type.isStringClassType())
-        return visitedStack.contains(parent) || isJavaPrimitiveStatic
+        return visitedStack.contains(getter) || isJavaPrimitiveStatic
     }
 
     override fun visitSetField(expression: IrSetField, data: Nothing?): Boolean {
         //todo check receiver?
-        val parent = expression.symbol.owner.parent as IrSymbolOwner
-        return visitedStack.contains(parent) && expression.value.accept(this, data)
+        val property = expression.symbol.owner.correspondingPropertySymbol?.owner
+        val parent = expression.symbol.owner.parent as IrDeclarationContainer
+        val setter = parent.declarations.filterIsInstance<IrProperty>().single { it == property }.setter ?: return false
+        return visitedStack.contains(setter) && expression.value.accept(this, data)
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: Nothing?): Boolean {
