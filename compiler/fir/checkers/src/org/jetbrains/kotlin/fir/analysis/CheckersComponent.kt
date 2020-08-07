@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.analysis
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
-import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirCfaPropertyAssignmentChecker
+import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
@@ -71,7 +71,7 @@ private class ComposedDeclarationCheckers : DeclarationCheckers() {
         get() = _constructorCheckers
     override val controlFlowAnalyserCheckers: List<FirControlFlowChecker>
         get() = _controlFlowAnalyserCheckers
-    override val variableAssignmentCfaBasedCheckers: List<AbstractFirCfaPropertyAssignmentChecker>
+    override val variableAssignmentCfaBasedCheckers: List<AbstractFirPropertyInitializationChecker>
         get() = _variableAssignmentCfaBasedCheckers
 
     private val _fileCheckers: MutableList<FirFileChecker> = mutableListOf()
@@ -80,7 +80,7 @@ private class ComposedDeclarationCheckers : DeclarationCheckers() {
     private val _regularClassCheckers: MutableList<FirRegularClassChecker> = mutableListOf()
     private val _constructorCheckers: MutableList<FirConstructorChecker> = mutableListOf()
     private val _controlFlowAnalyserCheckers: MutableList<FirControlFlowChecker> = mutableListOf()
-    private val _variableAssignmentCfaBasedCheckers: MutableList<AbstractFirCfaPropertyAssignmentChecker> = mutableListOf()
+    private val _variableAssignmentCfaBasedCheckers: MutableList<AbstractFirPropertyInitializationChecker> = mutableListOf()
 
     fun register(checkers: DeclarationCheckers) {
         _fileCheckers += checkers.allFileCheckers
