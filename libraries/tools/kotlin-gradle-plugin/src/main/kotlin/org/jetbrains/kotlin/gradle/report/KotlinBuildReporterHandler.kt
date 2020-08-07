@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.report
 
-import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
 import java.io.File
 import java.util.*
 import kotlin.math.max
 
 class KotlinBuildReporterHandler {
-   fun buildFinished(
+    fun buildFinished(
         gradle: Gradle,
         perfReportFile: File,
         kotlinTaskTimeNs: Map<String, Long>,
@@ -71,14 +70,6 @@ class KotlinBuildReporterHandler {
         return sb.toString()
     }
 
-    private fun formatTime(ns: Long): String {
-        val seconds = ns.toDouble() / 1_000_000_000
-        return seconds.asString(2) + " s"
-    }
-
-    private fun Double.asString(decPoints: Int): String =
-        String.format("%.${decPoints}f", this)
-
     internal class TextTable(vararg columnNames: String) {
         private val rows = ArrayList<List<String>>()
         private val columnsCount = columnNames.size
@@ -109,3 +100,11 @@ class KotlinBuildReporterHandler {
         }
     }
 }
+
+internal fun formatTime(ns: Long): String {
+    val seconds = ns.toDouble() / 1_000_000_000
+    return seconds.asString(2) + " s"
+}
+
+internal fun Double.asString(decPoints: Int): String =
+    String.format("%.${decPoints}f", this)

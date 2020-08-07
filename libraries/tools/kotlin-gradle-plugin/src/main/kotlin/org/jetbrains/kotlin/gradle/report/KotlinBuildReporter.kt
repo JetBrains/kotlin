@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.report
 
-import com.intellij.util.text.DateFormatUtil.formatTime
 import org.gradle.BuildAdapter
 import org.gradle.BuildResult
 import org.gradle.api.Task
