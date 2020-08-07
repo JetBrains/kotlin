@@ -25,8 +25,7 @@
                         interface="org.jetbrains.kotlin.idea.facet.KotlinFacetValidatorCreator"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.clearBuildState"
                         interface="org.jetbrains.kotlin.idea.compiler.configuration.ClearBuildStateExtension"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.newFileHook"
-                        interface="org.jetbrains.kotlin.idea.actions.NewKotlinFileHook"/>
+
         <extensionPoint qualifiedName="org.jetbrains.kotlin.completionExtension"
                         interface="org.jetbrains.kotlin.idea.completion.KotlinCompletionExtension"/>
 
