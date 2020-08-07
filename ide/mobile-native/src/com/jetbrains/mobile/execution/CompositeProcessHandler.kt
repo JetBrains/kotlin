@@ -11,12 +11,6 @@ class CompositeProcessHandler(val handlers: List<ProcessHandler>) : ProcessHandl
     private val terminatedCount = AtomicInteger()
 
     inner class EachListener : ProcessAdapter() {
-        override fun startNotified(event: ProcessEvent) {
-            if (!this@CompositeProcessHandler.isStartNotified) {
-                this@CompositeProcessHandler.startNotify()
-            }
-        }
-
         override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
             this@CompositeProcessHandler.notifyTextAvailable(event.text, outputType)
         }
@@ -32,6 +26,7 @@ class CompositeProcessHandler(val handlers: List<ProcessHandler>) : ProcessHandl
     init {
         assert(handlers.isNotEmpty())
         handlers.forEach { it.addProcessListener(EachListener()) }
+        startNotify()
     }
 
     override fun destroyProcessImpl() {

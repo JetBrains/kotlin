@@ -39,6 +39,7 @@ open class AppleLauncher<T : MobileRunConfiguration>(
         val parameters = createRunParameters(state)
         val handler = SimulatorProcessHandler(parameters, null, device.id, false, false, true)
         configProcessHandler(handler, false, true, project)
+        handler.startNotify()
         return handler
     }
 
