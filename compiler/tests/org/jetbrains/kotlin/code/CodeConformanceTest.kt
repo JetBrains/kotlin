@@ -244,7 +244,8 @@ class CodeConformanceTest : TestCase() {
     fun testTemporaryRepositoriesAbuse() {
         val extensions = setOf("java", "kt", "gradle", "kts")
         val repositories = setOf(
-            "https://dl.bintray.com/kotlin/kotlin-dev"
+            "https://dl.bintray.com/kotlin/kotlin-dev",
+            "https://dl.bintray.com/kotlin/kotlin-eap"
         )
         val allowList = setOf(
             "libraries/tools/new-project-wizard/new-project-wizard-cli/testData",
@@ -264,7 +265,19 @@ class CodeConformanceTest : TestCase() {
             "idea/testData/gradle/packagePrefixImport/packagePrefixNonMPP/build.gradle",
             "idea/testData/gradle/gradleFacetImportTest/jvmImportWithCustomSourceSets_1_1_2/build.gradle",
             "idea/testData/gradle/gradleFacetImportTest/jvmImport_1_1_2/build.gradle",
-            "idea/idea-gradle/tests/org/jetbrains/kotlin/idea/codeInsight/gradle/MultiplePluginVersionGradleImportingTestCase.kt"
+            "idea/idea-gradle/tests/org/jetbrains/kotlin/idea/codeInsight/gradle/MultiplePluginVersionGradleImportingTestCase.kt",
+            "kotlin-ultimate/ide/android-studio-native/testData/wizard/expected/app/build.gradle.kts",
+            "kotlin-ultimate/ide/android-studio-native/testData/wizard/expected/shared/build.gradle.kts",
+            "kotlin-ultimate/ide/android-studio-native/testData/wizard/expected/build.gradle.kts",
+            "kotlin-ultimate/ide/android-studio-native/testData/wizard/expected/settings.gradle.kts",
+            "kotlin-ultimate/ide/android-studio-native/src/com/jetbrains/kmm/wizard/templates/buildFile.kt",
+            "libraries/scripting/dependencies-maven/test/kotlin/script/experimental/test/MavenResolverTest.kt",
+            "idea/testData/configuration/gradle/eapVersion/build_after.gradle",
+            "idea/testData/configuration/gradle/rcVersion/build_after.gradle",
+            "idea/testData/configuration/gradle/m04Version/build_after.gradle",
+            "idea/testData/configuration/gsk/eapVersion/build_after.gradle.kts",
+            "idea/testData/configuration/gsk/eap11Version/build_after.gradle.kts",
+            "idea/idea-jvm/src/org/jetbrains/kotlin/idea/configuration/ConfigureKotlinInProjectUtils.kt"
         ).map(::File)
         val fullIgnoreList = EXCLUDED_FILES_AND_DIRS + allowList
         val excludeFileNames = fullIgnoreList.filter { it.isFile }.map { it.name }.toSet()
