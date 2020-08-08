@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.code
 
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.systemIndependentPath
 import junit.framework.TestCase
 import java.io.File
 import java.util.*
@@ -236,6 +237,63 @@ class CodeConformanceTest : TestCase() {
             fail(
                 "The following files contain third-party copyrights and no license information. " +
                         "Please update license/README.md accordingly:\n${filesWithUnlistedCopyrights.joinToString("\n")}"
+            )
+        }
+    }
+
+    fun testTemporaryRepositoriesAbuse() {
+        val extensions = setOf("java", "kt", "gradle", "kts")
+        val repositories = setOf(
+            "https://dl.bintray.com/kotlin/kotlin-dev"
+        )
+        val allowList = setOf(
+            "libraries/tools/new-project-wizard/new-project-wizard-cli/testData",
+            "gradle/cacheRedirector.gradle.kts",
+            "kotlin-ultimate/prepare/mobile-plugin/build.gradle.kts",
+            "kotlin-ultimate/gradle/cidrPluginTools.gradle.kts",
+            "libraries/tools/kotlin-gradle-plugin-integration-tests/build/resources/test/testProject/new-mpp-fat-framework/smoke/build.gradle.kts",
+            "libraries/tools/kotlin-gradle-plugin-integration-tests/build/resources/test/testProject/kotlin2JsProjectWithSourceMapInline/build.gradle",
+            "libraries/tools/kotlin-gradle-plugin-integration-tests/build/resources/test/testProject/new-mpp-android/build.gradle",
+            "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/new-mpp-fat-framework/smoke/build.gradle.kts",
+            "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/kotlin2JsProjectWithSourceMapInline/build.gradle",
+            "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/new-mpp-android/build.gradle",
+            "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/VariantAwareDependenciesIT.kt",
+            "libraries/tools/new-project-wizard/src/org/jetbrains/kotlin/tools/projectWizard/core/service/KotlinVersionProviderService.kt",
+            "idea/testData/perfTest/native/_common/settings.gradle.kts",
+            "idea/testData/gradle/nativeLibraries/commonIOSWithDisabledPropagation/settings.gradle.kts",
+            "idea/testData/gradle/packagePrefixImport/packagePrefixNonMPP/build.gradle",
+            "idea/testData/gradle/gradleFacetImportTest/jvmImportWithCustomSourceSets_1_1_2/build.gradle",
+            "idea/testData/gradle/gradleFacetImportTest/jvmImport_1_1_2/build.gradle",
+            "idea/idea-gradle/tests/org/jetbrains/kotlin/idea/codeInsight/gradle/MultiplePluginVersionGradleImportingTestCase.kt"
+        ).map(::File)
+        val fullIgnoreList = EXCLUDED_FILES_AND_DIRS + allowList
+        val excludeFileNames = fullIgnoreList.filter { it.isFile }.map { it.name }.toSet()
+        val excludedDirNames = fullIgnoreList.filter { it.isDirectory }.map { it.name }.toSet()
+        val excludedPaths = fullIgnoreList.map { it.systemIndependentPath }.toSet()
+        val root = File(".")
+        val filesWithRepositories = root.walkTopDown()
+            .onEnter { dir ->
+                !(dir.name in excludedDirNames && dir.relativeTo(root).systemIndependentPath in excludedPaths)
+            }
+            .filter { file -> file.extension in extensions && file.isFile }
+            .filter { file -> !(file.name in excludeFileNames && file.isFile && file.relativeTo(root).systemIndependentPath in excludedPaths) }
+            .filter { file ->
+                file.useLines { lines ->
+                    lines.any { line ->
+                        repositories.any { repository -> line.contains(repository) }
+                    }
+                }
+            }
+            .toList()
+
+        if (filesWithRepositories.isNotEmpty()) {
+            fail(
+                buildString {
+                    appendLine("The following files use temporal repositories and not listed in the allowed list:")
+                    filesWithRepositories.forEach { appendLine("  ${it.relativeTo(root).systemIndependentPath}") }
+                    appendLine("List of monitored repositories:")
+                    repositories.forEach { appendLine("  $it") }
+                }
             )
         }
     }
