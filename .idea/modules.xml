@@ -911,10 +911,12 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/ij.connector/fleet.ij.connector.iml" filepath="$PROJECT_DIR$/intellij/fleet/ij.connector/fleet.ij.connector.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/jsitter/fleet.jsitter.iml" filepath="$PROJECT_DIR$/intellij/fleet/jsitter/fleet.jsitter.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/language/fleet.language.iml" filepath="$PROJECT_DIR$/intellij/fleet/language/fleet.language.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/language/go/fleet.language.go.iml" filepath="$PROJECT_DIR$/intellij/fleet/language/go/fleet.language.go.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/language/java/fleet.language.java.iml" filepath="$PROJECT_DIR$/intellij/fleet/language/java/fleet.language.java.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/language/json/fleet.language.json.iml" filepath="$PROJECT_DIR$/intellij/fleet/language/json/fleet.language.json.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/language/kotlin/fleet.language.kotlin.iml" filepath="$PROJECT_DIR$/intellij/fleet/language/kotlin/fleet.language.kotlin.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/language/markdown/fleet.language.markdown.iml" filepath="$PROJECT_DIR$/intellij/fleet/language/markdown/fleet.language.markdown.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/language/python/fleet.language.python.iml" filepath="$PROJECT_DIR$/intellij/fleet/language/python/fleet.language.python.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/language/rust/fleet.language.rust.iml" filepath="$PROJECT_DIR$/intellij/fleet/language/rust/fleet.language.rust.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/language/shell/fleet.language.shell.iml" filepath="$PROJECT_DIR$/intellij/fleet/language/shell/fleet.language.shell.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/noria/fleet.noria.iml" filepath="$PROJECT_DIR$/intellij/fleet/noria/fleet.noria.iml" />
