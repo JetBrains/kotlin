@@ -14,7 +14,6 @@ fun inDouble(x: Float): Boolean {
     return x in 1.0..2.0
 }
 
-// 2 I2L
 // 0 INVOKESPECIAL
 // 0 NEW
 // 0 rangeTo
@@ -25,7 +24,9 @@ fun inDouble(x: Float): Boolean {
 // 0 contains
 
 // JVM_TEMPLATES
+// 2 I2L
 // 3 F2D
 
 // JVM_IR_TEMPLATES
-// 2 F2D
+// 1 I2L
+// 1 F2D
