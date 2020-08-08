@@ -32,8 +32,6 @@ class GradleMigrateTest : GradleImportingTestCase() {
                 repositories {
                     jcenter()
                     mavenCentral()
-                    maven{ url 'https://dl.bintray.com/kotlin/kotlin-dev'}
-                    maven{ url 'http://dl.bintray.com/kotlin/kotlin-eap' }
                 }
                 dependencies {
                     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.40"
@@ -53,18 +51,16 @@ class GradleMigrateTest : GradleImportingTestCase() {
                 repositories {
                     jcenter()
                     mavenCentral()
-                    maven{ url 'https://dl.bintray.com/kotlin/kotlin-dev'}
-                    maven{ url 'http://dl.bintray.com/kotlin/kotlin-eap'}
                 }
                 dependencies {
-                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.4-M3"
+                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.0-rc"
                 }
             }
 
             apply plugin: 'kotlin'
 
             dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:1.4-M3"
+                compile "org.jetbrains.kotlin:kotlin-stdlib:1.4.0-rc"
             }
             """
         )
@@ -76,7 +72,7 @@ class GradleMigrateTest : GradleImportingTestCase() {
                 oldStdlibVersion = "1.3.40",
                 oldApiVersion = ApiVersion.KOTLIN_1_3,
                 oldLanguageVersion = LanguageVersion.KOTLIN_1_3,
-                newStdlibVersion = "1.4-M3",
+                newStdlibVersion = "1.4.0-rc",
                 newApiVersion = ApiVersion.KOTLIN_1_4,
                 newLanguageVersion = LanguageVersion.KOTLIN_1_4
             ),
