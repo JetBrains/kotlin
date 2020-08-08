@@ -1,9 +1,6 @@
 buildscript {
     repositories {
         mavenCentral()
-        maven {
-            url 'https://dl.bintray.com/kotlin/kotlin-dev'
-        }
     }
 
     dependencies {
@@ -19,9 +16,6 @@ apply plugin: 'kotlin'
 
 repositories {
     mavenCentral()
-    maven {
-        url 'https://dl.bintray.com/kotlin/kotlin-dev'
-    }
 }
 
 dependencies {
