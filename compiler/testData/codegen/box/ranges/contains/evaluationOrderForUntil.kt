@@ -25,6 +25,8 @@ fun x(i: Int): Int {
     return i
 }
 
+fun minValue() = Int.MIN_VALUE
+
 fun box(): String {
     expectOrder("x(0) in low(1) until high(3)", "LHX") { assertFalse(x(0) in low(1) until high(3)) }
     expectOrder("0 in low(1) until high(3)", "LH") { assertFalse(0 in low(1) until high(3)) }
@@ -52,6 +54,21 @@ fun box(): String {
     expectOrder("2 !in low(1) until high(3)", "LH") { assertFalse(2 !in low(1) until high(3)) }
     expectOrder("x(2) !in 1 until high(3)", "HX") { assertFalse(x(2) !in 1 until high(3)) }
     expectOrder("x(2) !in low(1) until 3", "LX") { assertFalse(x(2) !in low(1) until 3) }
+
+    // For IR backend, there is an additional condition for checking the upper bound == MIN_VALUE (empty range).
+    // These tests ensure all expressions are evaluated and in the correct order.
+    expectOrder("0 in low(1) until Int.MIN_VALUE", "L") { assertFalse(0 in low(1) until Int.MIN_VALUE) }
+    expectOrder("0 in low(1) until minValue()", "L") { assertFalse(0 in low(1) until minValue()) }
+    expectOrder("x(0) in 1 until Int.MIN_VALUE", "X") { assertFalse(x(0) in 1 until Int.MIN_VALUE) }
+    expectOrder("x(0) in 1 until minValue()", "X") { assertFalse(x(0) in 1 until minValue()) }
+    expectOrder("x(0) in low(1) until Int.MIN_VALUE", "LX") { assertFalse(x(0) in low(1) until Int.MIN_VALUE) }
+    expectOrder("x(0) in low(1) until minValue()", "LX") { assertFalse(x(0) in low(1) until minValue()) }
+    expectOrder("0 !in low(1) until Int.MIN_VALUE", "L") { assertTrue(0 !in low(1) until Int.MIN_VALUE) }
+    expectOrder("0 !in low(1) until minValue()", "L") { assertTrue(0 !in low(1) until minValue()) }
+    expectOrder("x(0) !in 1 until Int.MIN_VALUE", "X") { assertTrue(x(0) !in 1 until Int.MIN_VALUE) }
+    expectOrder("x(0) !in 1 until minValue()", "X") { assertTrue(x(0) !in 1 until minValue()) }
+    expectOrder("x(0) !in low(1) until Int.MIN_VALUE", "LX") { assertTrue(x(0) !in low(1) until Int.MIN_VALUE) }
+    expectOrder("x(0) !in low(1) until minValue()", "LX") { assertTrue(x(0) !in low(1) until minValue()) }
 
     return "OK"
 }

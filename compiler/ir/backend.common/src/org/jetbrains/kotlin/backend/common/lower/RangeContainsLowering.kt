@@ -336,7 +336,9 @@ private class Transformer(
         ).let {
             if (additionalNotEmptyCondition != null) {
                 // Add additional condition, currently used in `until` ranges (see UntilHandler.kt).
-                context.andand(additionalNotEmptyCondition, it)
+                // NOTE: The additional condition must be on the RIGHT side of the &&, to guarantee that the expressions for the bounds
+                // and argument are evaluated as designed. (See big comment above on expressions with side effects and temp variables.)
+                context.andand(it, additionalNotEmptyCondition)
             } else {
                 it
             }
