@@ -19,10 +19,10 @@ abstract class AbstractJoinListIntention<TList : KtElement, TElement : KtElement
     elementClass: Class<TElement>,
     textGetter: () -> String
 ) : AbstractChopListIntention<TList, TElement>(listClass, elementClass, textGetter) {
-    override fun isApplicableTo(element: TList): Boolean {
+    override fun isApplicableTo(element: TList, caretOffset: Int): Boolean {
         val elements = element.elements()
         if (elements.isEmpty()) return false
-        if (!isApplicableCaretPosition(element)) return false
+        if (!isApplicableCaretOffset(caretOffset, element)) return false
         return hasLineBreakBefore(elements.first()) || elements.any { hasLineBreakAfter(it) }
     }
 
@@ -50,9 +50,9 @@ class JoinParameterListIntention : AbstractJoinListIntention<KtParameterList, Kt
     KtParameter::class.java,
     KotlinBundle.lazyMessage("put.parameters.on.one.line")
 ) {
-    override fun isApplicableTo(element: KtParameterList): Boolean {
+    override fun isApplicableTo(element: KtParameterList, caretOffset: Int): Boolean {
         if (element.parent is KtFunctionLiteral) return false
-        return super.isApplicableTo(element)
+        return super.isApplicableTo(element, caretOffset)
     }
 }
 
