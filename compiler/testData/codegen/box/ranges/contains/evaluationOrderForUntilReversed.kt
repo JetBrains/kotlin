@@ -25,6 +25,8 @@ fun x(i: Int): Int {
     return i
 }
 
+fun minValue() = Int.MIN_VALUE
+
 fun box(): String {
     expectOrder("x(0) in (low(1) until high(3)).reversed()", "LHX") { assertFalse(x(0) in (low(1) until high(3)).reversed()) }
     expectOrder("0 in (low(1) until high(3)).reversed()", "LH") { assertFalse(0 in (low(1) until high(3)).reversed()) }
@@ -52,6 +54,21 @@ fun box(): String {
     expectOrder("2 !in (low(1) until high(3)).reversed()", "LH") { assertFalse(2 !in (low(1) until high(3)).reversed()) }
     expectOrder("x(2) !in 1 until high(3)", "HX") { assertFalse(x(2) !in 1 until high(3)) }
     expectOrder("x(2) !in low(1) until 3", "LX") { assertFalse(x(2) !in low(1) until 3) }
+
+    // For IR backend, there is an additional condition for checking the upper bound == MIN_VALUE (empty range).
+    // These tests ensure all expressions are evaluated and in the correct order.
+    expectOrder("0 in (low(1) until Int.MIN_VALUE).reversed()", "L") { assertFalse(0 in (low(1) until Int.MIN_VALUE).reversed()) }
+    expectOrder("0 in (low(1) until minValue()).reversed()", "L") { assertFalse(0 in (low(1) until minValue()).reversed()) }
+    expectOrder("x(0) in (1 until Int.MIN_VALUE).reversed()", "X") { assertFalse(x(0) in (1 until Int.MIN_VALUE).reversed()) }
+    expectOrder("x(0) in (1 until minValue()).reversed()", "X") { assertFalse(x(0) in (1 until minValue()).reversed()) }
+    expectOrder("x(0) in (low(1) until Int.MIN_VALUE).reversed()", "LX") { assertFalse(x(0) in (low(1) until Int.MIN_VALUE).reversed()) }
+    expectOrder("x(0) in (low(1) until minValue()).reversed()", "LX") { assertFalse(x(0) in (low(1) until minValue()).reversed()) }
+    expectOrder("0 !in (low(1) until Int.MIN_VALUE).reversed()", "L") { assertTrue(0 !in (low(1) until Int.MIN_VALUE).reversed()) }
+    expectOrder("0 !in (low(1) until minValue()).reversed()", "L") { assertTrue(0 !in (low(1) until minValue()).reversed()) }
+    expectOrder("x(0) !in (1 until Int.MIN_VALUE).reversed()", "X") { assertTrue(x(0) !in (1 until Int.MIN_VALUE).reversed()) }
+    expectOrder("x(0) !in (1 until minValue()).reversed()", "X") { assertTrue(x(0) !in (1 until minValue()).reversed()) }
+    expectOrder("x(0) !in (low(1) until Int.MIN_VALUE).reversed()", "LX") { assertTrue(x(0) !in (low(1) until Int.MIN_VALUE).reversed()) }
+    expectOrder("x(0) !in (low(1) until minValue()).reversed()", "LX") { assertTrue(x(0) !in (low(1) until minValue()).reversed()) }
 
     return "OK"
 }
