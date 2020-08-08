@@ -28,17 +28,12 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
-
-// TODO:
-// - Handle contains on ClosedFloatingPointRange non-literal expression (similar to DefaultProgressionHandler)
-// - Note for unsigned until, the decremented last is signed (see UntilHandler.kt:81). Rather than converting back to unsigned,
-//     should we remove the conversion call instead?
-// - Unsigned step has similar concerns as well. getProgressionLastElement return value is signed.
 
 val rangeContainsLoweringPhase = makeIrFilePhase(
     ::RangeContainsLowering,
@@ -235,7 +230,23 @@ private class Transformer(
         // **  - Bound with side effect is stored in a temp variable to ensure evaluation even if right side is short-circuited.
         // *** - Bound with side effect is on left side of && to make sure it always gets evaluated.
 
-        var (argVar, argExpression) = createTemporaryVariableIfNecessary(argument, "containsArg")
+        var arg = argument
+        val builtIns = context.irBuiltIns
+        val comparisonClass = if (isNumericRange) {
+            computeComparisonClass(this@Transformer.context.ir.symbols, lower.type, upper.type, arg.type) ?: return null
+        } else {
+            assert(headerInfo is ComparableRangeInfo)
+            this@Transformer.context.ir.symbols.comparable.owner
+        }
+
+        if (isNumericRange) {
+            // Convert argument to the "widest" common numeric type for comparisons.
+            // Note that we do the same for the bounds below. If it is necessary to convert the argument, it's better to do it once and
+            // store in a temp variable, since it is used twice in the transformed expression (bounds are only used once).
+            arg = arg.castIfNecessary(comparisonClass)
+        }
+
+        val (argVar, argExpression) = createTemporaryVariableIfNecessary(arg, "containsArg")
         var lowerExpression: IrExpression
         var upperExpression: IrExpression
         val useLowerClauseOnLeftSide: Boolean
@@ -273,27 +284,16 @@ private class Transformer(
         }
         additionalStatements.addIfNotNull(argVar)
 
-        // TODO: Handle unsigned (comparisonClass is currently null).
-        val builtIns = context.irBuiltIns
-        val comparisonClass = if (isNumericRange) {
-            computeComparisonClass(this@Transformer.context.ir.symbols, lowerExpression.type, upperExpression.type, argExpression.type)
-                ?: return null
-        } else {
-            assert(headerInfo is ComparableRangeInfo)
-            this@Transformer.context.ir.symbols.comparable.owner
-        }
-
         if (isNumericRange) {
             lowerExpression = lowerExpression.castIfNecessary(comparisonClass)
             upperExpression = upperExpression.castIfNecessary(comparisonClass)
-            argExpression = argExpression.castIfNecessary(comparisonClass)
         }
 
         val lessOrEqualFun = builtIns.lessOrEqualFunByOperandType.getValue(if (useCompareTo) builtIns.intClass else comparisonClass.symbol)
         val compareToFun = comparisonClass.functions.singleOrNull {
             it.name == OperatorNameConventions.COMPARE_TO &&
                     it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null &&
-                    it.valueParameters.size == 1 && (!isNumericRange || it.valueParameters[0].type == argument.type.makeNotNull())
+                    it.valueParameters.size == 1 && (!isNumericRange || it.valueParameters[0].type == comparisonClass.defaultType)
         } ?: return null
 
         // contains() function for ComparableRange is implemented as `value >= start && value <= endInclusive` (`value` is the argument).
@@ -355,7 +355,6 @@ private class Transformer(
         }
     }
 
-    // TODO: Handle unsigned.
     private fun computeComparisonClass(
         symbols: Symbols<CommonBackendContext>,
         lowerType: IrType,
@@ -373,25 +372,24 @@ private class Transformer(
         return when {
             pt1.isDouble() || pt2.isDouble() -> symbols.double
             pt1.isFloat() || pt2.isFloat() -> symbols.float
-//            pt1.isULong() || pt2.isULong() -> symbols.uLong!!
-//            pt1.isUInt() || pt2.isUInt() -> symbols.uInt!!
+            pt1.isULong() || pt2.isULong() -> symbols.uLong!!
+            pt1.isUInt() || pt2.isUInt() -> symbols.uInt!!
             pt1.isLong() || pt2.isLong() -> symbols.long
             pt1.isInt() || pt2.isInt() -> symbols.int
             pt1.isChar() || pt2.isChar() -> symbols.char
-            else -> return null
-            // error("Unexpected types: t1=${t1.classOrNull?.owner?.name}, t2=${t2.classOrNull?.owner?.name}")
+            else -> error("Unexpected types: t1=${t1.classOrNull?.owner?.name}, t2=${t2.classOrNull?.owner?.name}")
         }.defaultType
     }
 
     private fun IrType.promoteIntegerTypeToIntIfRequired(symbols: Symbols<CommonBackendContext>): IrType = when {
         isByte() || isShort() -> symbols.int.defaultType
-//        isUByte() || isUShort() -> symbols.uInt!!.defaultType
+        isUByte() || isUShort() -> symbols.uInt!!.defaultType
         else -> this
     }
 }
 
 internal open class RangeHeaderInfoBuilder(context: CommonBackendContext, scopeOwnerSymbol: () -> IrSymbol) :
-    HeaderInfoBuilder(context, scopeOwnerSymbol) {
+    HeaderInfoBuilder(context, scopeOwnerSymbol, allowUnsignedBounds = true) {
 
     override val progressionHandlers = listOf(
         CollectionIndicesHandler(context),
@@ -408,7 +406,7 @@ internal open class RangeHeaderInfoBuilder(context: CommonBackendContext, scopeO
         ReversedHandler(context, this)
     )
 
-    override val expressionHandlers = listOf(DefaultProgressionHandler(context))
+    override val expressionHandlers = listOf(DefaultProgressionHandler(context, allowUnsignedBounds = true))
 }
 
 /** Builds a [HeaderInfo] for closed floating-point ranges built using the `rangeTo` function. */

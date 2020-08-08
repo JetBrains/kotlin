@@ -255,7 +255,11 @@ internal interface HeaderInfoFromCallHandler<D> : HeaderInfoHandler<IrCall, D> {
 
 internal typealias ProgressionHandler = HeaderInfoFromCallHandler<ProgressionType>
 
-internal abstract class HeaderInfoBuilder(context: CommonBackendContext, private val scopeOwnerSymbol: () -> IrSymbol) :
+internal abstract class HeaderInfoBuilder(
+    context: CommonBackendContext,
+    private val scopeOwnerSymbol: () -> IrSymbol,
+    private val allowUnsignedBounds: Boolean = false
+) :
     IrElementVisitor<HeaderInfo?, IrCall?> {
 
     private val symbols = context.ir.symbols
@@ -284,7 +288,7 @@ internal abstract class HeaderInfoBuilder(context: CommonBackendContext, private
             return callHeaderInfo
 
         // Try to match a call to build a progression (e.g., `.indices`, `downTo`).
-        val progressionType = ProgressionType.fromIrType(expression.type, symbols)
+        val progressionType = ProgressionType.fromIrType(expression.type, symbols, allowUnsignedBounds)
         val progressionHeaderInfo =
             progressionType?.run { progressionHandlers.firstNotNullResult { it.handle(expression, data, this, scopeOwnerSymbol()) } }
 
