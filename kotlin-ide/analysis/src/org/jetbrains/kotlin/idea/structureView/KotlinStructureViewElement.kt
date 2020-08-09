@@ -44,6 +44,13 @@ class KotlinStructureViewElement(
                 KotlinStructureElementPresentation(isInherited, element, countDescriptor())
             }
 
+    @Deprecated("Use 'visibility' instead.", level = DeprecationLevel.ERROR)
+    var isPublic
+            by AssignableLazyProperty {
+                isPublic(countDescriptor())
+            }
+        private set
+
     var visibility
             by AssignableLazyProperty {
                 Visibility(countDescriptor())
@@ -102,6 +109,9 @@ class KotlinStructureViewElement(
 
         return result
     }
+
+    private fun isPublic(descriptor: DeclarationDescriptor?) =
+        (descriptor as? DeclarationDescriptorWithVisibility)?.visibility == Visibilities.PUBLIC
 
     private fun countDescriptor(): DeclarationDescriptor? {
         val element = element
