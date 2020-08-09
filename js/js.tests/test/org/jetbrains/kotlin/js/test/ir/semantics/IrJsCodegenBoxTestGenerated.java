@@ -5725,6 +5725,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendInTheMiddleOfObjectConstruction.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("suspendLambdaInInterface.kt")
+        public void testSuspendLambdaInInterface() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendLambdaInInterface.kt");
+        }
+
         @TestMetadata("suspendLambdaWithArgumentRearrangement.kt")
         public void testSuspendLambdaWithArgumentRearrangement_1_3() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendLambdaWithArgumentRearrangement.kt", "kotlin.coroutines");
@@ -13624,6 +13629,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         @TestMetadata("localExtendsInnerAndReferencesOuterMember.kt")
         public void testLocalExtendsInnerAndReferencesOuterMember() throws Exception {
             runTest("compiler/testData/codegen/box/localClasses/localExtendsInnerAndReferencesOuterMember.kt");
+        }
+
+        @TestMetadata("localGenericWithTypeParameters.kt")
+        public void testLocalGenericWithTypeParameters() throws Exception {
+            runTest("compiler/testData/codegen/box/localClasses/localGenericWithTypeParameters.kt");
         }
 
         @TestMetadata("nameWithWhitespace.kt")
