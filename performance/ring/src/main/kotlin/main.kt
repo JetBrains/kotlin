@@ -209,7 +209,8 @@ class RingLauncher : Launcher() {
                     "Casts.classCast" to BenchmarkEntryWithInit.create(::CastsBenchmark, { classCast() }),
                     "Casts.interfaceCast" to BenchmarkEntryWithInit.create(::CastsBenchmark, { interfaceCast() }),
                     "LocalObjects.localArray" to BenchmarkEntryWithInit.create(::LocalObjectsBenchmark, { localArray() }),
-                    "LinkedListWithAtomicsBenchmark" to BenchmarkEntryWithInit.create(::LinkedListWithAtomicsBenchmark, { ensureNext() })
+                    "LinkedListWithAtomicsBenchmark" to BenchmarkEntryWithInit.create(::LinkedListWithAtomicsBenchmark, { ensureNext() }),
+                    "Inheritance.baseCalls" to BenchmarkEntryWithInit.create(::InheritanceBenchmark, { baseCalls() })
             )
     )
 }
