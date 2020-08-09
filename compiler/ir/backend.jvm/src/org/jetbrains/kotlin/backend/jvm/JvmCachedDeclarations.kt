@@ -203,7 +203,7 @@ class JvmCachedDeclarations(
         defaultImplsRedirections.getOrPut(fakeOverride) {
             assert(fakeOverride.isFakeOverride)
             val irClass = fakeOverride.parentAsClass
-            context.irFactory.buildFun(fakeOverride.descriptor) {
+            context.irFactory.buildFun {
                 origin = JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE
                 name = fakeOverride.name
                 visibility = fakeOverride.visibility

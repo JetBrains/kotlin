@@ -237,8 +237,8 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
             return components.declarationStorage.declareIrSimpleFunction(signature, null) { symbol ->
                 components.irFactory.createFunction(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, symbol, name, Visibilities.PUBLIC, Modality.OPEN, returnType,
-                    isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isExpect = false,
-                    isFakeOverride = false, isOperator = false, isInfix = false,
+                    isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isOperator = false,
+                    isInfix = false, isExpect = false, isFakeOverride = false,
                 ).apply {
                     if (otherParameterNeeded) {
                         val irValueParameter = createSyntheticIrParameter(

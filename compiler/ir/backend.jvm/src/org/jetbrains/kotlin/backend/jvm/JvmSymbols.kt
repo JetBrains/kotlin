@@ -444,7 +444,7 @@ class JvmSymbols(
                 }
 
                 val receiverFieldName = Name.identifier("receiver")
-                klass.addProperty {
+                klass.addProperty() {
                     name = receiverFieldName
                 }.apply {
                     backingField = irFactory.buildField {
@@ -570,7 +570,7 @@ class JvmSymbols(
         collectionToArrayClass.functions.single { it.owner.name.asString() == "toArray" && it.owner.valueParameters.size == 2 }
 
     val kClassJava: IrPropertySymbol =
-        irFactory.buildProperty {
+        irFactory.buildProperty() {
             name = Name.identifier("java")
         }.apply {
             parent = kotlinJvmPackage

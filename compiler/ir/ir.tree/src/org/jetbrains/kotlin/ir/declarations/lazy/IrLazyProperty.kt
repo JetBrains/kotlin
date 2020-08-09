@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.hasBackingField
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 
 class IrLazyProperty(
     override val startOffset: Int,
@@ -69,6 +71,9 @@ class IrLazyProperty(
             correspondingPropertySymbol = this@IrLazyProperty.symbol
         }
     }
+
+    override val containerSource: DeserializedContainerSource?
+        get() = (descriptor as? DeserializedPropertyDescriptor)?.containerSource
 
     override var metadata: MetadataSource?
         get() = null

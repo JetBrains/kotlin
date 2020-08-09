@@ -75,7 +75,7 @@ class JsInnerClassesSupport(mapping: JsMapping, private val irFactory: IrFactory
         val irClass = oldConstructor.parent as IrClass
         val outerThisType = (irClass.parent as IrClass).defaultType
 
-        val newConstructor = irFactory.buildConstructor(oldConstructor.descriptor) {
+        val newConstructor = irFactory.buildConstructor {
             updateFrom(oldConstructor)
             returnType = oldConstructor.returnType
         }.also {

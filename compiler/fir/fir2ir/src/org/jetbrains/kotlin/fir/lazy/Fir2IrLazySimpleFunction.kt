@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class Fir2IrLazySimpleFunction(
     components: Fir2IrComponents,
@@ -137,4 +138,7 @@ class Fir2IrLazySimpleFunction(
     override var metadata: MetadataSource?
         get() = null
         set(_) = error("We should never need to store metadata of external declarations.")
+
+    override val containerSource: DeserializedContainerSource?
+        get() = fir.containerSource
 }

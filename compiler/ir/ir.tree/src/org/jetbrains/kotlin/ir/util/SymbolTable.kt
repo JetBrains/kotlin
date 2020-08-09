@@ -650,13 +650,13 @@ class SymbolTable(
         isDelegated: Boolean = descriptor.isDelegated,
         propertyFactory: (IrPropertySymbol) -> IrProperty = { symbol ->
             irFactory.createProperty(
-                startOffset, endOffset, origin, symbol, isDelegated = isDelegated,
-                name = nameProvider.nameForDeclaration(descriptor),
+                startOffset, endOffset, origin, symbol, name = nameProvider.nameForDeclaration(descriptor),
                 visibility = descriptor.visibility,
                 modality = descriptor.modality,
                 isVar = descriptor.isVar,
                 isConst = descriptor.isConst,
                 isLateinit = descriptor.isLateInit,
+                isDelegated = isDelegated,
                 isExternal = descriptor.isEffectivelyExternal(),
                 isExpect = descriptor.isExpect
             ).apply {

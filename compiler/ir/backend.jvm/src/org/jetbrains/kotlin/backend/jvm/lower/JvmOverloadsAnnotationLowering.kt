@@ -117,7 +117,7 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
     private fun IrFactory.generateWrapperHeader(oldFunction: IrFunction, numDefaultParametersToExpect: Int): IrFunction {
         val res = when (oldFunction) {
             is IrConstructor -> {
-                buildConstructor(oldFunction.descriptor) {
+                buildConstructor {
                     origin = JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER
                     name = oldFunction.name
                     visibility = oldFunction.visibility
@@ -125,7 +125,7 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
                     isInline = oldFunction.isInline
                 }
             }
-            is IrSimpleFunction -> buildFun(oldFunction.descriptor) {
+            is IrSimpleFunction -> buildFun {
                 origin = JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER
                 name = oldFunction.name
                 visibility = oldFunction.visibility

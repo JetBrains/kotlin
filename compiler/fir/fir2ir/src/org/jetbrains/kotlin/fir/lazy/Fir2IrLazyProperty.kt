@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class Fir2IrLazyProperty(
     components: Fir2IrComponents,
@@ -149,4 +150,7 @@ class Fir2IrLazyProperty(
     override var metadata: MetadataSource?
         get() = null
         set(_) = error("We should never need to store metadata of external declarations.")
+
+    override val containerSource: DeserializedContainerSource?
+        get() = fir.containerSource
 }

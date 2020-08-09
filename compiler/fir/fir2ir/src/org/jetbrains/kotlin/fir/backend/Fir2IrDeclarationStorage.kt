@@ -367,7 +367,7 @@ class Fir2IrDeclarationStorage(
     ): IrSimpleFunction {
         if (signature == null) {
             val descriptor =
-                if (containerSource != null) WrappedFunctionDescriptorWithContainerSource(containerSource)
+                if (containerSource != null) WrappedFunctionDescriptorWithContainerSource()
                 else WrappedSimpleFunctionDescriptor()
             return symbolTable.declareSimpleFunction(descriptor, factory).apply { descriptor.bind(this) }
         }
@@ -411,7 +411,8 @@ class Fir2IrDeclarationStorage(
                     isExpect = simpleFunction?.isExpect == true,
                     isFakeOverride = updatedOrigin == IrDeclarationOrigin.FAKE_OVERRIDE,
                     isOperator = simpleFunction?.isOperator == true,
-                    isInfix = simpleFunction?.isInfix == true
+                    isInfix = simpleFunction?.isInfix == true,
+                    containerSource = simpleFunction?.containerSource,
                 ).apply {
                     metadata = FirMetadataSource.Function(function)
                     convertAnnotationsFromLibrary(function)
@@ -522,9 +523,11 @@ class Fir2IrDeclarationStorage(
     ): IrSimpleFunction {
         val prefix = if (isSetter) "set" else "get"
         val signature = if (isLocal) null else signatureComposer.composeAccessorSignature(property, isSetter)
+        val containerSource =
+            (correspondingProperty.descriptor as? WrappedPropertyDescriptorWithContainerSource)?.containerSource
         return declareIrAccessor(
             signature,
-            (correspondingProperty.descriptor as? WrappedPropertyDescriptorWithContainerSource)?.containerSource,
+            containerSource,
             isGetter = !isSetter
         ) { symbol ->
             val accessorReturnType = if (isSetter) irBuiltIns.unitType else propertyType
@@ -535,9 +538,10 @@ class Fir2IrDeclarationStorage(
                 correspondingProperty.modality, accessorReturnType,
                 isInline = propertyAccessor?.isInline == true,
                 isExternal = propertyAccessor?.isExternal == true,
-                isTailrec = false, isSuspend = false, isExpect = false,
-                isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
-                isOperator = false, isInfix = false
+                isTailrec = false, isSuspend = false, isOperator = false,
+                isInfix = false,
+                isExpect = false, isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+                containerSource = containerSource,
             ).apply {
                 correspondingPropertySymbol = correspondingProperty.symbol
                 if (propertyAccessor != null) {
@@ -618,7 +622,7 @@ class Fir2IrDeclarationStorage(
     ): IrProperty {
         if (signature == null) {
             val descriptor =
-                if (containerSource != null) WrappedPropertyDescriptorWithContainerSource(containerSource)
+                if (containerSource != null) WrappedPropertyDescriptorWithContainerSource()
                 else WrappedPropertyDescriptor()
             return symbolTable.declareProperty(0, 0, IrDeclarationOrigin.DEFINED, descriptor, isDelegated = false, factory).apply {
                 descriptor.bind(this)
@@ -647,7 +651,8 @@ class Fir2IrDeclarationStorage(
                     isDelegated = property.delegate != null,
                     isExternal = property.isExternal,
                     isExpect = property.isExpect,
-                    isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+                    isFakeOverride = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+                    containerSource = property.containerSource,
                 ).apply {
                     metadata = FirMetadataSource.Variable(property)
                     convertAnnotationsFromLibrary(property)

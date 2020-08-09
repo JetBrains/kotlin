@@ -537,7 +537,7 @@ private fun IrFunction.generateDefaultsFunctionImpl(
                 visibility = newVisibility
             }
         is IrSimpleFunction ->
-            factory.buildFun(descriptor) {
+            factory.buildFun {
                 updateFrom(this@generateDefaultsFunctionImpl)
                 name = Name.identifier("${this@generateDefaultsFunctionImpl.name}\$default")
                 origin = newOrigin

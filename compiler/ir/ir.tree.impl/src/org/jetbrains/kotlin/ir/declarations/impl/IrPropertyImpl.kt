@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 abstract class IrPropertyCommonImpl(
     override val startOffset: Int,
@@ -38,6 +39,7 @@ abstract class IrPropertyCommonImpl(
     override val isDelegated: Boolean,
     override val isExternal: Boolean,
     override val isExpect: Boolean,
+    override val containerSource: DeserializedContainerSource?,
 ) : IrProperty() {
     override val factory: IrFactory
         get() = IrFactoryImpl
@@ -69,8 +71,10 @@ class IrPropertyImpl(
     isExternal: Boolean,
     isExpect: Boolean = false,
     override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+    containerSource: DeserializedContainerSource? = null,
 ) : IrPropertyCommonImpl(
     startOffset, endOffset, origin, name, visibility, isVar, isConst, isLateinit, isDelegated, isExternal, isExpect,
+    containerSource
 ) {
     init {
         symbol.bind(this)
@@ -96,6 +100,7 @@ class IrFakeOverridePropertyImpl(
     isExpect: Boolean,
 ) : IrPropertyCommonImpl(
     startOffset, endOffset, origin, name, visibility, isVar, isConst, isLateinit, isDelegated, isExternal, isExpect,
+    containerSource = null,
 ), IrFakeOverrideProperty {
     override val isFakeOverride: Boolean
         get() = true

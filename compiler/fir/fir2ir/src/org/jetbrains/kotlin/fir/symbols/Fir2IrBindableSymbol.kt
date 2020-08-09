@@ -45,7 +45,7 @@ abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolO
             is IrConstructor -> WrappedClassConstructorDescriptor().apply { bind(owner) }
             is IrSimpleFunction -> when {
                 containerSource != null ->
-                    WrappedFunctionDescriptorWithContainerSource(containerSource)
+                    WrappedFunctionDescriptorWithContainerSource()
                 owner.name.isSpecial && owner.name.asString().startsWith(GETTER_PREFIX) ->
                     WrappedPropertyGetterDescriptor(Annotations.EMPTY, SourceElement.NO_SOURCE)
                 owner.name.isSpecial && owner.name.asString().startsWith(SETTER_PREFIX) ->
@@ -57,7 +57,7 @@ abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolO
             is IrValueParameter -> WrappedValueParameterDescriptor().apply { bind(owner) }
             is IrTypeParameter -> WrappedTypeParameterDescriptor().apply { bind(owner) }
             is IrProperty -> if (containerSource != null) {
-                WrappedPropertyDescriptorWithContainerSource(containerSource)
+                WrappedPropertyDescriptorWithContainerSource()
             } else {
                 WrappedPropertyDescriptor()
             }.apply { bind(owner) }

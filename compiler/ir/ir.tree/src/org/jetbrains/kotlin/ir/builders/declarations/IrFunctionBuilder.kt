@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class IrFunctionBuilder : IrDeclarationBuilder() {
 
@@ -30,8 +31,13 @@ class IrFunctionBuilder : IrDeclarationBuilder() {
 
     var isFakeOverride: Boolean = false
 
+    var originalDeclaration: IrFunction? = null
+    var containerSource: DeserializedContainerSource? = null
+
     fun updateFrom(from: IrFunction) {
         super.updateFrom(from)
+
+        containerSource = from.containerSource
 
         isInline = from.isInline
         isExternal = from.isExternal

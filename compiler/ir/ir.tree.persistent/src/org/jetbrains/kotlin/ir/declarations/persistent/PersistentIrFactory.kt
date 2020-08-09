@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.persistent.PersistentIrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.Variance
 
 object PersistentIrFactory : IrFactory {
@@ -63,9 +64,11 @@ object PersistentIrFactory : IrFactory {
         isExternal: Boolean,
         isPrimary: Boolean,
         isExpect: Boolean,
+        containerSource: DeserializedContainerSource?,
     ): IrConstructor =
         PersistentIrConstructor(
-            startOffset, endOffset, origin, symbol, name, visibility, returnType, isInline, isExternal, isPrimary, isExpect
+            startOffset, endOffset, origin, symbol, name, visibility, returnType, isInline, isExternal, isPrimary, isExpect,
+            containerSource,
         )
 
     override fun createEnumEntry(
@@ -115,10 +118,12 @@ object PersistentIrFactory : IrFactory {
         isInfix: Boolean,
         isExpect: Boolean,
         isFakeOverride: Boolean,
+        containerSource: DeserializedContainerSource?,
     ): IrSimpleFunction =
         PersistentIrFunction(
             startOffset, endOffset, origin, symbol, name, visibility, modality, returnType,
             isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect, isFakeOverride,
+            containerSource
         )
 
     override fun createFakeOverrideFunction(
@@ -170,10 +175,12 @@ object PersistentIrFactory : IrFactory {
         isExternal: Boolean,
         isExpect: Boolean,
         isFakeOverride: Boolean,
+        containerSource: DeserializedContainerSource?,
     ): IrProperty =
         PersistentIrProperty(
             startOffset, endOffset, origin, symbol, name, visibility, modality,
             isVar, isConst, isLateinit, isDelegated, isExternal, isExpect, isFakeOverride,
+            containerSource
         )
 
     override fun createFakeOverrideProperty(

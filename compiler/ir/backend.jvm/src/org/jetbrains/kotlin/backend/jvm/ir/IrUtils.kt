@@ -320,7 +320,7 @@ fun IrSimpleFunction.copyCorrespondingPropertyFrom(source: IrSimpleFunction) {
     val property = source.correspondingPropertySymbol?.owner ?: return
     val target = this
 
-    correspondingPropertySymbol = factory.buildProperty(property.symbol.descriptor) {
+    correspondingPropertySymbol = factory.buildProperty() {
         name = property.name
         updateFrom(property)
     }.apply {

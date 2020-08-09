@@ -107,7 +107,7 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCon
         }
 
     private fun copyConstProperty(oldProperty: IrProperty, newParent: IrClass): IrProperty =
-        newParent.addProperty {
+        newParent.addProperty() {
             updateFrom(oldProperty)
             name = oldProperty.name
             isConst = true

@@ -130,7 +130,7 @@ class AndroidSymbols(
         }
     }.symbol
 
-    val kotlinKClassJava: IrPropertySymbol = irFactory.buildProperty {
+    val kotlinKClassJava: IrPropertySymbol = irFactory.buildProperty() {
         name = Name.identifier("java")
     }.apply {
         parent = kotlinJvm

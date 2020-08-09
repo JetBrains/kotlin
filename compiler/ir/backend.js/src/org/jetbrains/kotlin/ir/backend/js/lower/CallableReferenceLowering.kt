@@ -309,7 +309,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
             val superProperty = superFunctionInterface.declarations.filterIsInstance<IrProperty>().single()
             val supperGetter = superProperty.getter ?: error("Expected getter for KFunction.name property")
 
-            val nameProperty = clazz.addProperty {
+            val nameProperty = clazz.addProperty() {
                 visibility = superProperty.visibility
                 name = superProperty.name
                 origin = GENERATED_MEMBER_IN_CALLABLE_REFERENCE

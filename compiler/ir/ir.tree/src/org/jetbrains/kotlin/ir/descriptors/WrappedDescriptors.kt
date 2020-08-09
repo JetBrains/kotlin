@@ -463,9 +463,10 @@ open class WrappedSimpleFunctionDescriptor(
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-class WrappedFunctionDescriptorWithContainerSource(
-    override val containerSource: DeserializedContainerSource?
-) : WrappedSimpleFunctionDescriptor(), DescriptorWithContainerSource
+class WrappedFunctionDescriptorWithContainerSource : WrappedSimpleFunctionDescriptor(), DescriptorWithContainerSource {
+    override val containerSource
+        get() = owner.containerSource
+}
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedClassConstructorDescriptor(
@@ -883,9 +884,10 @@ open class WrappedPropertyDescriptor(
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 }
 
-class WrappedPropertyDescriptorWithContainerSource(
-    override var containerSource: DeserializedContainerSource?
-) : WrappedPropertyDescriptor(), DescriptorWithContainerSource
+class WrappedPropertyDescriptorWithContainerSource : WrappedPropertyDescriptor(), DescriptorWithContainerSource {
+    override val containerSource: DeserializedContainerSource?
+        get() = owner.containerSource
+}
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class WrappedPropertyAccessorDescriptor(annotations: Annotations, sourceElement: SourceElement) :
