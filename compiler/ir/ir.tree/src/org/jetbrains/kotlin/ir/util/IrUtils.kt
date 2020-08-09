@@ -547,3 +547,9 @@ fun IrExpression.isSafeToUseWithoutCopying() =
             this is IrGetEnumValue ||
             this is IrConst<*> ||
             this is IrGetValue && symbol.isBound && symbol.owner.isImmutable
+
+val IrFunction.originalFunction: IrFunction
+    get() = (this as? IrAttributeContainer)?.attributeOwnerId as? IrFunction ?: this
+
+val IrProperty.originalProperty: IrProperty
+    get() = attributeOwnerId as? IrProperty ?: this

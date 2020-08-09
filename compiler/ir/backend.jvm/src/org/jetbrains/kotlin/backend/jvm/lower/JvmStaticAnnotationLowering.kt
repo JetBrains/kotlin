@@ -202,6 +202,7 @@ private class MakeCallsStatic(
             it.annotations += annotations
             it.copyParameterDeclarationsFrom(this)
             it.dispatchReceiverParameter = null
+            it.copyAttributes(this)
         }
 }
 

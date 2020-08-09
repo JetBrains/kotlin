@@ -95,6 +95,17 @@ internal abstract class PersistentIrPropertyCommon(
                 setCarrier().metadataField = v
             }
         }
+
+    @Suppress("LeakingThis")
+    override var attributeOwnerIdField: IrAttributeContainer = this
+
+    override var attributeOwnerId: IrAttributeContainer
+        get() = getCarrier().attributeOwnerIdField
+        set(v) {
+            if (attributeOwnerId !== v) {
+                setCarrier().attributeOwnerIdField = v
+            }
+        }
 }
 
 internal class PersistentIrProperty(

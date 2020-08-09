@@ -572,6 +572,8 @@ fun IrFactory.createStaticFunctionWithReceivers(
                                        }
 
         if (copyMetadata) metadata = oldFunction.metadata
+
+        copyAttributes(oldFunction as? IrAttributeContainer)
     }
 }
 

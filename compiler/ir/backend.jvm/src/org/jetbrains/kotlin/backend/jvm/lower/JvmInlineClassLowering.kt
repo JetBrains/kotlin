@@ -121,7 +121,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
     private fun transformSimpleFunctionFlat(function: IrSimpleFunction, replacement: IrSimpleFunction): List<IrDeclaration> {
         replacement.valueParameters.forEach { it.transformChildrenVoid() }
         replacement.body = function.body?.transform(this, null)?.patchDeclarationParents(replacement)
-        (replacement as? IrAttributeContainer)?.copyAttributes(function)
+        replacement.copyAttributes(function)
 
         // Don't create a wrapper for functions which are only used in an unboxed context
         if (function.overriddenSymbols.isEmpty() || replacement.dispatchReceiverParameter != null)

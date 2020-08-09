@@ -153,4 +153,6 @@ class Fir2IrLazyProperty(
 
     override val containerSource: DeserializedContainerSource?
         get() = fir.containerSource
+
+    override var attributeOwnerId: IrAttributeContainer = this
 }

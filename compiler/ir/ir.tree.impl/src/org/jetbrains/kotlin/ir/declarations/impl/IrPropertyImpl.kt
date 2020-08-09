@@ -54,6 +54,8 @@ abstract class IrPropertyCommonImpl(
     override var setter: IrSimpleFunction? = null
 
     override var metadata: MetadataSource? = null
+
+    override var attributeOwnerId: IrAttributeContainer = this
 }
 
 class IrPropertyImpl(

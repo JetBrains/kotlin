@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.DFS
 
 internal val addContinuationPhase = makeIrFilePhase(
     ::AddContinuationLowering,
@@ -660,9 +661,34 @@ private fun IrFunction.suspendFunctionViewOrStub(context: JvmBackendContext): Ir
 }
 
 internal fun IrFunction.suspendFunctionOriginal(): IrFunction =
-    if (this is IrSimpleFunction && isSuspend && !isStaticInlineClassReplacement)
+    if (this is IrSimpleFunction && isSuspend &&
+        !isStaticInlineClassReplacement &&
+        !isOrOverridesDefaultParameterStub() &&
+        !isDefaultImplsFunction
+    )
         attributeOwnerId as IrFunction
     else this
+
+private fun IrSimpleFunction.isOrOverridesDefaultParameterStub(): Boolean =
+    // Cannot use resolveFakeOverride here because of KT-36188.
+    DFS.ifAny(
+        listOf(this),
+        { it.overriddenSymbols.map { it.owner } },
+        { it.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER }
+    )
+
+val defaultImplsOrigins = setOf(
+    IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
+    JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_WITH_MOVED_RECEIVERS,
+    JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_WITH_MOVED_RECEIVERS_SYNTHETIC,
+    JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE,
+    JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY,
+    JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC,
+    JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY_SYNTHETIC
+)
+
+private val IrSimpleFunction.isDefaultImplsFunction: Boolean
+    get() = origin in defaultImplsOrigins
 
 private fun IrFunction.createSuspendFunctionStub(context: JvmBackendContext): IrFunction {
     require(this.isSuspend && this is IrSimpleFunction)
@@ -737,7 +763,7 @@ private fun <T : IrMemberAccessExpression<IrFunctionSymbol>> T.retargetToSuspend
         }
         if (caller != null) {
             // At this point the only LOCAL_FUNCTION_FOR_LAMBDAs are inline and crossinline lambdas.
-            val continuation = if (caller.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA)
+            val continuation = if (caller.originalFunction.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA)
                 context.fakeContinuation
             else
                 IrGetValueImpl(
