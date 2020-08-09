@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -65,13 +65,16 @@ abstract class ClassCodegen protected constructor(
         // pass in a wrapped descriptor instead, except for lambdas where we use the descriptor
         // of the original function.
         // TODO: Migrate class builders away from descriptors
-        val descriptor = WrappedClassDescriptor().apply { bind(irClass) }
+        val descriptor = irClass.toIrBasedDescriptor()
         val psiElement = context.psiSourceManager.findPsiElement(irClass)
         when (irClass.origin) {
             IrDeclarationOrigin.FILE_CLASS ->
                 JvmDeclarationOrigin(JvmDeclarationOriginKind.PACKAGE_PART, psiElement, descriptor)
             JvmLoweredDeclarationOrigin.LAMBDA_IMPL, JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL ->
-                OtherOrigin(psiElement, irClass.attributeOwnerId.safeAs<IrFunctionReference>()?.symbol?.descriptor ?: descriptor)
+                OtherOrigin(
+                    psiElement,
+                    irClass.attributeOwnerId.safeAs<IrFunctionReference>()?.symbol?.owner?.toIrBasedDescriptor() ?: descriptor
+                )
             else ->
                 OtherOrigin(psiElement, descriptor)
         }
@@ -425,9 +428,9 @@ internal val IrDeclaration.OtherOrigin: JvmDeclarationOrigin
             // This is needed for plugins which check for lambdas inside of inline functions using the descriptor
             // contained in JvmDeclarationOrigin. This matches the behavior of the JVM backend.
             if (klass.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL || klass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA) {
-                klass.attributeOwnerId.safeAs<IrFunctionReference>()?.symbol?.descriptor ?: descriptor
+                klass.attributeOwnerId.safeAs<IrFunctionReference>()?.symbol?.owner?.toIrBasedDescriptor() ?: toIrBasedDescriptor()
             } else {
-                descriptor
+                toIrBasedDescriptor()
             }
         )
     }

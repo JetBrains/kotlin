@@ -28,11 +28,12 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -183,7 +184,7 @@ class ExpressionCodegen(
         } else {
             expression.accept(this, data).materializeAt(type, irType)
         }
-        return StackValue.onStack(type, irType.toKotlinType())
+        return StackValue.onStack(type, irType.toIrBasedKotlinType())
     }
 
     internal fun genOrGetLocal(expression: IrExpression, data: BlockInfo): StackValue {
@@ -198,7 +199,7 @@ class ExpressionCodegen(
         }
 
         return if (expression is IrGetValue)
-            StackValue.local(findLocalIndex(expression.symbol), frameMap.typeOf(expression.symbol), expression.type.toKotlinType())
+            StackValue.local(findLocalIndex(expression.symbol), frameMap.typeOf(expression.symbol), expression.type.toIrBasedKotlinType())
         else
             gen(expression, typeMapper.mapType(expression.type), expression.type, data)
     }
@@ -317,7 +318,7 @@ class ExpressionCodegen(
         // then generate name accordingly.
         val name = if (param.origin == BOUND_RECEIVER_PARAMETER || isReceiver) {
             getNameForReceiverParameter(
-                irFunction.descriptor,
+                irFunction.toIrBasedDescriptor(),
                 state.bindingContext,
                 context.configuration.languageVersionSettings
             )
@@ -428,8 +429,8 @@ class ExpressionCodegen(
                     }
                 }
             }
-            expression.symbol.descriptor is ConstructorDescriptor ->
-                throw AssertionError("IrCall with ConstructorDescriptor: ${expression.javaClass.simpleName}")
+            expression.symbol.owner is IrConstructor ->
+                throw AssertionError("IrCall to IrConstructor: ${expression.javaClass.simpleName}")
         }
 
         expression.dispatchReceiver?.let { receiver ->
@@ -831,7 +832,7 @@ class ExpressionCodegen(
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: BlockInfo): PromisedValue {
         val typeOperand = expression.typeOperand
-        val kotlinType = typeOperand.toKotlinType()
+        val kotlinType = typeOperand.toIrBasedKotlinType()
         return when (expression.operator) {
             IrTypeOperator.IMPLICIT_CAST ->
                 expression.argument.accept(this, data)
