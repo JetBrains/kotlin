@@ -852,6 +852,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/inlineTypeAlias/keepImports.kt");
         }
 
+        @TestMetadata("lambdaExpression.kt")
+        public void testLambdaExpression() throws Exception {
+            runTest("testData/refactoring/inline/inlineTypeAlias/lambdaExpression.kt");
+        }
+
         @TestMetadata("replaceImports.kt")
         public void testReplaceImports() throws Exception {
             runTest("testData/refactoring/inline/inlineTypeAlias/replaceImports.kt");

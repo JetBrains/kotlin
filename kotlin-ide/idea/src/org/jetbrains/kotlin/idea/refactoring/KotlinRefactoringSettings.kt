@@ -82,6 +82,8 @@ class KotlinRefactoringSettings : PersistentStateComponent<KotlinRefactoringSett
     @JvmField
     var INLINE_LOCAL_THIS: Boolean = false
 
+    @JvmField
+    var INLINE_TYPE_ALIAS_THIS: Boolean = false
 
     var renameInheritors = true
     var renameParameterInHierarchy = true

@@ -144,9 +144,9 @@ abstract class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDe
             if (deleteAfter) {
                 declaration.deleteWithCompanion()
                 postDeleteAction()
-            } else {
-                postAction()
             }
+
+            postAction()
         }
     }
 
