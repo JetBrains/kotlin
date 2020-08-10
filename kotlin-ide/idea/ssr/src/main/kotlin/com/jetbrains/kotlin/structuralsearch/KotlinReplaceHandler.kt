@@ -3,12 +3,12 @@ package com.jetbrains.kotlin.structuralsearch
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
-import com.intellij.psi.impl.DebugUtil
 import com.intellij.structuralsearch.StructuralReplaceHandler
 import com.intellij.structuralsearch.impl.matcher.MatcherImplUtil
 import com.intellij.structuralsearch.impl.matcher.PatternTreeContext
 import com.intellij.structuralsearch.plugin.replace.ReplaceOptions
 import com.intellij.structuralsearch.plugin.replace.ReplacementInfo
+import org.jetbrains.kotlin.idea.core.addTypeParameter
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -34,7 +34,7 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
             if(this is KtClassOrObject) replaceClassOrObject(searchTemplate, match)
             if(this is KtNamedFunction) replaceNamedFunction(searchTemplate, match)
         } else if (searchTemplate is KtExpression && this is KtExpression && match is KtExpression) {
-            if(this is KtNamedFunction) replaceNamedFunction(searchTemplate, match)
+            // TODO
         } else throw IllegalStateException(
             "Search template, replace template and match should either all be expressions or declarations."
         )
@@ -82,6 +82,15 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
     private fun KtNamedFunction.replaceNamedFunction(searchTemplate: PsiElement, match: PsiElement): PsiElement {
         check(match is KtDeclaration) {
             "Can't replace klass $text by ${match.text} because it is not a declaration."
+        }
+        if(searchTemplate is KtNamedFunction && match is KtNamedFunction) {
+            if(typeParameterList == null && searchTemplate.typeParameterList == null) match.typeParameters.forEach {
+                addTypeParameter(it)
+            }
+            if(valueParameterList == null && searchTemplate.valueParameterList == null) match.valueParameters.forEach {
+                match.valueParameters.add(it)
+            }
+            if(!hasBody() && !searchTemplate.hasBody()) match.bodyExpression?.let(this::add)
         }
         return this
     }
