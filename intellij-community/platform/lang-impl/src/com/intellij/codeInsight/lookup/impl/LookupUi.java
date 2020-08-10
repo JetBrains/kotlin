@@ -244,7 +244,7 @@ class LookupUi {
     ScreenUtil.cropRectangleToFitTheScreen(candidate);
 
     if (isPositionedAboveCaret()) {
-      // need to crop as well at bottom if lookup overlaps current line  
+      // need to crop as well at bottom if lookup overlaps current line
       Point caretLocation = editor.logicalPositionToXY(pos);
       SwingUtilities.convertPointToScreen(caretLocation, editor.getContentComponent());
       int offset = location.y + dim.height - caretLocation.y;
@@ -337,25 +337,21 @@ class LookupUi {
   }
 
   private class ChangeSortingAction extends DumbAwareAction implements HintManagerImpl.ActionToIgnore {
-    private boolean sortByName = UISettings.getInstance().getSortLookupElementsLexicographically();
     private ChangeSortingAction() {
       super(ActionsBundle.messagePointer("action.ChangeSortingAction.text"));
     }
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-      if (e.getPlace() == ActionPlaces.EDITOR_POPUP) {
-        sortByName = !sortByName;
-
-        FeatureUsageTracker.getInstance().triggerFeatureUsed(CodeCompletionFeatures.EDITING_COMPLETION_CHANGE_SORTING);
-        UISettings.getInstance().setSortLookupElementsLexicographically(sortByName);
-        myLookup.resort(false);
-      }
+      FeatureUsageTracker.getInstance().triggerFeatureUsed(CodeCompletionFeatures.EDITING_COMPLETION_CHANGE_SORTING);
+      UISettings settings = UISettings.getInstance();
+      settings.setSortLookupElementsLexicographically(!settings.getSortLookupElementsLexicographically());
+      myLookup.resort(false);
     }
 
     @Override
     public void update(@NotNull AnActionEvent e) {
-      e.getPresentation().setIcon(sortByName ? PlatformIcons.CHECK_ICON : null);
+      e.getPresentation().setIcon(UISettings.getInstance().getSortLookupElementsLexicographically() ? PlatformIcons.CHECK_ICON : null);
     }
   }
 
