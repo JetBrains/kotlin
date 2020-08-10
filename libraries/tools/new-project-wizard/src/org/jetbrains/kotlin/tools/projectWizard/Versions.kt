@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 object Versions {
     val KOTLIN = version("1.4.0") // used as fallback version
     val GRADLE = version("6.3")
-    val KTOR: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("1.3.2-$kotlinVersion") }
+    val KTOR: (kotlinVersion: Version) -> Version = { version("1.4.0") }
     val JUNIT = version("4.12")
 
     object ANDROID {
@@ -21,7 +21,7 @@ object Versions {
     }
 
     object KOTLINX {
-        val KOTLINX_HTML: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("0.7.1-$kotlinVersion") }
+        val KOTLINX_HTML: (kotlinVersion: Version) -> Version = { version("0.7.2") }
         val KOTLINX_NODEJS: Version = version("0.0.3")
     }
 
