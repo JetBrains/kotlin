@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.fir.highlighter.visitors.FirAfterResolveHighlightingVisitor
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.analyze
-import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.highlighter.AbstractKotlinPsiChecker
 import org.jetbrains.kotlin.idea.highlighter.Diagnostic2Annotation
 import org.jetbrains.kotlin.idea.highlighter.IdeErrorMessages

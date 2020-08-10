@@ -8,15 +8,18 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.getPrimaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.idea.fir.findPsi
+import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
@@ -24,29 +27,30 @@ import org.jetbrains.kotlin.name.ClassId
 
 internal class KtFirConstructorSymbol(
     fir: FirConstructor,
+    resolveState: FirModuleResolveState,
     override val token: ValidityToken,
     private val builder: KtSymbolByFirBuilder
 ) : KtConstructorSymbol(), KtFirSymbol<FirConstructor> {
-    override val fir: FirConstructor by weakRef(fir)
-    override val psi: PsiElement? by cached { fir.findPsi(fir.session) }
+    override val firRef = firRef(fir, resolveState)
+    override val psi: PsiElement? by firRef.withFirAndCache { it.findPsi(fir.session) }
 
-    override val type: KtType by cached { builder.buildKtType(fir.returnTypeRef) }
-    override val valueParameters: List<KtConstructorParameterSymbol> by cached {
+    override val type: KtType by firRef.withFirAndCache(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) { builder.buildKtType(it.returnTypeRef) }
+    override val valueParameters: List<KtConstructorParameterSymbol> by firRef.withFirAndCache { fir ->
         fir.valueParameters.map { valueParameter ->
             check(valueParameter is FirValueParameterImpl)
             builder.buildFirConstructorParameter(valueParameter)
         }
     }
 
-    override val isPrimary: Boolean get() = withValidityAssertion { fir.isPrimary }
+    override val isPrimary: Boolean get() = firRef.withFir { it.isPrimary }
     override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
 
     override val ownerClassId: ClassId
-        get() = withValidityAssertion {
-            fir.symbol.callableId.classId ?: error("ClassID should present for constructor")
+        get() = firRef.withFir {
+            it.symbol.callableId.classId ?: error("ClassID should present for constructor")
         }
 
-    override val owner: KtClassOrObjectSymbol by cached {
+    override val owner: KtClassOrObjectSymbol by firRef.withFirAndCache { fir ->
         val session = fir.session
         val classId = ownerClassId
         val firClass = session.firSymbolProvider.getClassLikeSymbolByFqName(classId)?.fir
@@ -64,7 +68,8 @@ internal class KtFirConstructorSymbol(
         return symbolPointer { session ->
             val ownerSymbol = session.symbolProvider.getClassOrObjectSymbolByClassId(ownerClassId) ?: return@symbolPointer null
             check(ownerSymbol is KtFirSymbol<*>)
-            val classFir = (ownerSymbol.fir as? FirRegularClass) ?: error("FirRegularClass expected but ${ownerSymbol.fir::class} found")
+            val classFir = ownerSymbol.firRef.withFir { (it as? FirRegularClass) }
+                ?: error("FirRegularClass expected")
             classFir.getPrimaryConstructorIfAny()?.let(builder::buildConstructorSymbol)
         }
     }

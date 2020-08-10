@@ -9,38 +9,37 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.idea.fir.findPsi
+import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
-import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.ReadOnlyWeakRef
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
-import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 internal class KtFirClassOrObjectSymbol(
     fir: FirRegularClass,
+    resolveState: FirModuleResolveState,
     override val token: ValidityToken,
     private val builder: KtSymbolByFirBuilder
 ) : KtClassOrObjectSymbol(), KtFirSymbol<FirRegularClass> {
-    override val fir: FirRegularClass by weakRef(fir)
-    override val psi: PsiElement? by cached { fir.findPsi(fir.session) }
-    override val name: Name get() = withValidityAssertion { fir.classId.shortClassName }
-    override val classId: ClassId get() = withValidityAssertion { fir.classId }
+    override val firRef = firRef(fir, resolveState)
+    override val psi: PsiElement? by firRef.withFirAndCache { it.findPsi(fir.session) }
+    override val name: Name get() = firRef.withFir { it.symbol.classId.shortClassName }
+    override val classId: ClassId get() = firRef.withFir { it.symbol.classId }
 
     override val modality: KtSymbolModality
-        get() = withValidityAssertion { fir.modality.getSymbolModality() }
+        get() = firRef.withFir { it.modality.getSymbolModality() }
 
-    override val typeParameters by cached {
+    override val typeParameters by firRef.withFirAndCache {
         fir.typeParameters.map { typeParameter ->
             builder.buildTypeParameterSymbol(typeParameter.symbol.fir)
         }
     }
 
     override val classKind: KtClassKind
-        get() = withValidityAssertion {
+        get() = firRef.withFir { fir ->
             when (fir.classKind) {
                 ClassKind.INTERFACE -> KtClassKind.INTERFACE
                 ClassKind.ENUM_CLASS -> KtClassKind.ENUM_CLASS
@@ -51,7 +50,7 @@ internal class KtFirClassOrObjectSymbol(
             }
         }
     override val symbolKind: KtSymbolKind
-        get() = withValidityAssertion {
+        get() = firRef.withFir { fir ->
             when {
                 fir.isLocal -> KtSymbolKind.LOCAL
                 fir.symbol.classId.isNestedClass -> KtSymbolKind.MEMBER

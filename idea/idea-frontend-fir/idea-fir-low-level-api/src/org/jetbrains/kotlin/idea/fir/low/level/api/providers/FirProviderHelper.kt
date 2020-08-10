@@ -72,11 +72,6 @@ internal class FirProviderHelper(
         }
     }
 
-    fun getContainingFirFile(symbol: FirBasedSymbol<*>): FirFile? {
-        val ktFile = symbol.fir.psi?.containingFile as? KtFile ?: return null
-        return cache.getCachedFirFile(ktFile)
-    }
-
     private fun FirFile.collectCallableDeclarationsTo(list: MutableList<FirCallableSymbol<*>>, name: Name) {
         declarations.mapNotNullTo(list) { declaration ->
             if (declaration is FirCallableDeclaration<*> && declaration.symbol.callableId.callableName == name) {

@@ -9,11 +9,13 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.idea.fir.findPsi
+import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCommonSymbolModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
@@ -25,38 +27,40 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KtFirFunctionSymbol(
     fir: FirSimpleFunction,
+    resolveState: FirModuleResolveState,
     override val token: ValidityToken,
     private val builder: KtSymbolByFirBuilder,
     private val forcedOrigin: FirDeclarationOrigin? = null
 ) : KtFunctionSymbol(), KtFirSymbol<FirSimpleFunction> {
-    override val fir: FirSimpleFunction by weakRef(fir)
-    override val psi: PsiElement? by cached { fir.findPsi(fir.session) }
-    override val name: Name get() = withValidityAssertion { fir.name }
-    override val type: KtType by cached { builder.buildKtType(fir.returnTypeRef) }
-    override val valueParameters: List<KtFirFunctionValueParameterSymbol> by cached {
+    override val firRef = firRef(fir, resolveState)
+    override val psi: PsiElement? by firRef.withFirAndCache { it.findPsi(fir.session) }
+    override val name: Name get() = firRef.withFir { it.name }
+    override val type: KtType by firRef.withFirAndCache(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) { fir -> builder.buildKtType(fir.returnTypeRef) }
+    override val valueParameters: List<KtFirFunctionValueParameterSymbol> by firRef.withFirAndCache { fir ->
         fir.valueParameters.map { valueParameter ->
             check(valueParameter is FirValueParameterImpl)
             builder.buildParameterSymbol(valueParameter)
         }
     }
-    override val typeParameters by cached {
+    override val typeParameters by firRef.withFirAndCache { fir ->
         fir.typeParameters.map { typeParameter ->
             builder.buildTypeParameterSymbol(typeParameter.symbol.fir)
         }
     }
+
     override val origin: KtSymbolOrigin get() = withValidityAssertion { forcedOrigin?.asKtSymbolOrigin() ?: super.origin }
-    override val isSuspend: Boolean get() = withValidityAssertion { fir.isSuspend }
-    override val receiverType: KtType? by cached { fir.receiverTypeRef?.let(builder::buildKtType) }
-    override val isOperator: Boolean get() = withValidityAssertion { fir.isOperator }
-    override val isExtension: Boolean get() = withValidityAssertion { fir.receiverTypeRef != null }
-    override val fqName: FqName? get() = withValidityAssertion { fir.symbol.callableId.asFqNameForDebugInfo() }
+    override val isSuspend: Boolean get() = firRef.withFir { it.isSuspend }
+    override val receiverType: KtType? by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir -> fir.receiverTypeRef?.let(builder::buildKtType) }
+    override val isOperator: Boolean get() = firRef.withFir { it.isOperator }
+    override val isExtension: Boolean get() = firRef.withFir { it.receiverTypeRef != null }
+    override val fqName: FqName? get() = firRef.withFir { it.symbol.callableId.asFqNameForDebugInfo() }
     override val symbolKind: KtSymbolKind
-        get() = withValidityAssertion {
+        get() = firRef.withFir { fir ->
             when {
                 fir.isLocal -> KtSymbolKind.LOCAL
                 fir.symbol.callableId.classId == null -> KtSymbolKind.TOP_LEVEL
                 else -> KtSymbolKind.MEMBER
             }
         }
-    override val modality: KtCommonSymbolModality get() = withValidityAssertion { fir.modality.getSymbolModality() }
+    override val modality: KtCommonSymbolModality get() = firRef.withFir { it.modality.getSymbolModality() }
 }

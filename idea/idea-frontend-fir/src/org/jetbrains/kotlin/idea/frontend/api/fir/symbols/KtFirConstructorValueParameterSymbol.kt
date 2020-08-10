@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.idea.fir.findPsi
+import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorParameterSymbolKind
@@ -21,23 +23,24 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KtFirConstructorValueParameterSymbol(
     fir: FirValueParameterImpl,
+    resolveState: FirModuleResolveState,
     override val token: ValidityToken,
     private val builder: KtSymbolByFirBuilder
 ) : KtConstructorParameterSymbol(), KtFirSymbol<FirValueParameterImpl> {
-    override val fir: FirValueParameterImpl by weakRef(fir)
-    override val psi: PsiElement? by cached { fir.findPsi(fir.session) }
+    override val firRef = firRef(fir, resolveState)
+    override val psi: PsiElement? by firRef.withFirAndCache { it.findPsi(fir.session) }
 
-    override val name: Name get() = withValidityAssertion { fir.name }
-    override val type: KtType by cached { builder.buildKtType(fir.returnTypeRef) }
+    override val name: Name get() = firRef.withFir { it.name }
+    override val type: KtType by firRef.withFirAndCache { builder.buildKtType(it.returnTypeRef) }
     override val symbolKind: KtSymbolKind
-        get() = withValidityAssertion {
+        get() = firRef.withFir { fir ->
             when {
                 fir.isVal || fir.isVal -> KtSymbolKind.MEMBER
                 else -> KtSymbolKind.LOCAL
             }
         }
     override val constructorParameterKind: KtConstructorParameterSymbolKind
-        get() = withValidityAssertion {
+        get() = firRef.withFir { fir ->
             when {
                 fir.isVal -> KtConstructorParameterSymbolKind.VAL_PROPERTY
                 fir.isVar -> KtConstructorParameterSymbolKind.VAR_PROPERTY

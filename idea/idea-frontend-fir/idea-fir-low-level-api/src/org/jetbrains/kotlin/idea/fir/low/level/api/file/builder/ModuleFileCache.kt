@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.file.builder
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -44,6 +46,8 @@ internal abstract class ModuleFileCache {
      */
     abstract fun fileCached(file: KtFile, createValue: () -> FirFile): FirFile
 
+    abstract fun getContainerFirFile(declaration: FirDeclaration): FirFile?
+
     abstract fun getCachedFirFile(ktFile: KtFile): FirFile?
 
     // todo make it ReadWriteLock and allow access fir elements only under read lock
@@ -65,6 +69,10 @@ internal class ModuleFileCacheImpl(override val session: FirSession) : ModuleFil
 
     override fun getCachedFirFile(ktFile: KtFile): FirFile? = ktFileToFirFile[ktFile]
 
+    override fun getContainerFirFile(declaration: FirDeclaration): FirFile? {
+        val ktFile = declaration.psi?.containingFile as? KtFile ?: return null
+        return getCachedFirFile(ktFile)
+    }
 
     override val firFileLockProvider: LockProvider<FirFile, ReentrantLock> = LockProvider { ReentrantLock() }
 }

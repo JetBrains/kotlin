@@ -76,7 +76,7 @@ internal class FirIdeProvider(
 
     override fun getFirClassifierContainerFileIfAny(fqName: ClassId): FirFile? {
         val fir = getFirClassifierByFqName(fqName) ?: return null // Necessary to ensure cacheProvider contains this classifier
-        return providerHelper.getContainingFirFile(fir.symbol)
+        return cache.getContainerFirFile(fir)
     }
 
     override fun getFirClassifierContainerFile(symbol: FirClassLikeSymbol<*>): FirFile {
@@ -85,7 +85,7 @@ internal class FirIdeProvider(
     }
 
     override fun getFirClassifierContainerFileIfAny(symbol: FirClassLikeSymbol<*>): FirFile? =
-        providerHelper.getContainingFirFile(symbol)
+        cache.getContainerFirFile(symbol.fir)
 
 
     override fun getFirCallableContainerFile(symbol: FirCallableSymbol<*>): FirFile? {
@@ -98,7 +98,7 @@ internal class FirIdeProvider(
                 return getFirCallableContainerFile(fir.getter.delegate.symbol)
             }
         }
-        return providerHelper.getContainingFirFile(symbol)
+        return cache.getContainerFirFile(symbol.fir)
     }
 
     override fun getFirFilesByPackage(fqName: FqName): List<FirFile> = error("Should not be called in FIR IDE")

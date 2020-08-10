@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
-class KtFirAnalysisSession
+internal class KtFirAnalysisSession
 private constructor(
     private val element: KtElement,
     val firSession: FirSession,
@@ -132,7 +132,7 @@ private constructor(
             element,
             firSession,
             contextResolveState,
-            firSymbolBuilder.createReadOnlyCopy(),
+            firSymbolBuilder.createReadOnlyCopy(contextResolveState),
             typeContext,
             token,
             isContextSession = true
@@ -211,6 +211,7 @@ private constructor(
             val firSymbolBuilder = KtSymbolByFirBuilder(
                 firSession.firSymbolProvider,
                 typeContext,
+                firResolveState,
                 project,
                 token
             )
