@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.code
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.systemIndependentPath
 import junit.framework.TestCase
+import org.jetbrains.kotlin.backend.common.pop
+import org.jetbrains.kotlin.backend.common.push
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
@@ -17,9 +19,9 @@ class CodeConformanceTest : TestCase() {
     companion object {
         private val JAVA_FILE_PATTERN = Pattern.compile(".+\\.java")
         private val SOURCES_FILE_PATTERN = Pattern.compile("(.+\\.java|.+\\.kt|.+\\.js)")
-        private val SOURCES_BUNCH_FILE_PATTERN = Pattern.compile("(.+\\.java|.+\\.kt|.+\\.js)(\\.\\w+)?")
         private const val MAX_STEPS_COUNT = 100
-        private val EXCLUDED_FILES_AND_DIRS = listOf(
+        private val NON_SOURCE_EXCLUDED_FILES_AND_DIRS = listOf(
+            ".git",
             "build/js",
             "buildSrc",
             "compiler/build",
@@ -122,24 +124,35 @@ class CodeConformanceTest : TestCase() {
     }
 
     fun testForgottenBunchDirectivesAndFiles() {
-        val root = File("").absoluteFile
+        val sourceBunchFilePattern = Pattern.compile("(.+\\.java|.+\\.kt|.+\\.js)(\\.\\w+)?")
+        val root = File(".")
+        val nonSourceMatcher = FileMatcher(root, NON_SOURCE_EXCLUDED_FILES_AND_DIRS)
         val extensions = File(root, ".bunch").readLines().map { it.split("_") }.flatten().toSet()
         val failBuilder = mutableListOf<String>()
-        for (sourceFile in FileUtil.findFilesByMask(SOURCES_BUNCH_FILE_PATTERN, root)) {
-            if (EXCLUDED_FILES_AND_DIRS.any { FileUtil.isAncestor(it, sourceFile, false) }) continue
+        root.walkTopDown()
+            .onEnter { dir ->
+                !nonSourceMatcher.matchExact(dir) // Don't enter to ignored dirs
+            }
+            .filter { file -> !nonSourceMatcher.matchExact(file) } // filter ignored files
+            .filter { file -> sourceBunchFilePattern.matcher(file.name).matches() }
+            .filter { file -> file.isFile }
+            .forEach { sourceFile ->
+                val matches = Regex("BUNCH (\\w+)")
+                    .findAll(sourceFile.readText())
+                    .map { it.groupValues[1] }
+                    .toSet()
+                    .filterNot { it in extensions }
+                for (bunch in matches) {
+                    val filename = FileUtil.toSystemIndependentName(sourceFile.toRelativeString(root))
+                    failBuilder.add("$filename has unregistered $bunch bunch directive")
+                }
 
-            val matches = Regex("BUNCH (\\w+)").findAll(sourceFile.readText())
-                .map { it.groupValues[1] }.toSet().filterNot { it in extensions }
-            for (bunch in matches) {
-                val filename = FileUtil.toSystemIndependentName(sourceFile.absoluteFile.toRelativeString(root))
-                failBuilder.add("$filename has unregistered $bunch bunch directive")
+                if (!isCorrectExtension(sourceFile.name, extensions)) {
+                    val filename = FileUtil.toSystemIndependentName(sourceFile.toRelativeString(root))
+                    failBuilder.add("$filename has unknown bunch extension")
+                }
             }
 
-            if (!isCorrectExtension(sourceFile.name, extensions)) {
-                val filename = FileUtil.toSystemIndependentName(sourceFile.absoluteFile.toRelativeString(root))
-                failBuilder.add("$filename has unknown bunch extension")
-            }
-        }
         if (failBuilder.isNotEmpty()) {
             fail("\n" + failBuilder.joinToString("\n"))
         }
@@ -200,7 +213,7 @@ class CodeConformanceTest : TestCase() {
         )
 
         for (sourceFile in FileUtil.findFilesByMask(SOURCES_FILE_PATTERN, File("."))) {
-            if (EXCLUDED_FILES_AND_DIRS.any { FileUtil.isAncestor(it, sourceFile, false) }) continue
+            if (NON_SOURCE_EXCLUDED_FILES_AND_DIRS.any { FileUtil.isAncestor(it, sourceFile, false) }) continue
 
             val source = sourceFile.readText()
             for (test in tests) {
@@ -331,9 +344,17 @@ class CodeConformanceTest : TestCase() {
         data class RepoOccurrences(val repo: String, val files: Collection<File>)
 
         val extensions = hashSetOf("java", "kt", "gradle", "kts", "xml", "after")
-        val nonSourceMatcher = FileMatcher(root, EXCLUDED_FILES_AND_DIRS)
+        val nonSourceMatcher = FileMatcher(root, NON_SOURCE_EXCLUDED_FILES_AND_DIRS)
+        val traceStack = mutableListOf<Long>()
         val repoOccurrences: List<RepoOccurrences> = root.walkTopDown()
-            .onEnter { dir -> !nonSourceMatcher.matchExact(dir) } // don't visit dirs
+            .onEnter { dir ->
+                traceStack.push(System.nanoTime())
+                !nonSourceMatcher.matchExact(dir)
+            } // don't visit dirs
+            .onLeave { dir ->
+                val start = traceStack.pop()
+                println("${dir.path} - ${(System.nanoTime() - start) / 1000}")
+            }
             .filter { file -> file.extension in extensions && file.isFile }
             .filter { file -> !nonSourceMatcher.matchExact(file) } // filter ignored files
             .flatMap { file ->
