@@ -1,0 +1,19 @@
+FILE: wrongArgument.kt
+    public final infix fun <T> R|kotlin/Any?|.calledOn(value: R|kotlin/Any?|): R|kotlin/Unit|
+    public final inline fun <T, R> test1(value: R|kotlin/String|, block: R|(kotlin/String) -> R|): R|R|
+        [R|Contract description]
+         <
+            block calledOn value
+            CallsInPlace(block, EXACTLY_ONCE)
+        >
+     {
+        [StubStatement]
+        lval a: R|kotlin/String| = String()
+        R|<local>/block|.R|FakeOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/value|)
+        R|<local>/block|.R|FakeOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/value|)
+        R|<local>/block|.R|FakeOverride<kotlin/Function1.invoke: R|R|>|(String(value))
+        R|<local>/block|.R|FakeOverride<kotlin/Function1.invoke: R|R|>|(String(value))
+        R|<local>/block|.R|FakeOverride<kotlin/Function1.invoke: R|R|>|(String(123))
+        R|<local>/block|.R|FakeOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/value|.R|kotlin/String.plus|(String()))
+        R|<local>/block|.R|FakeOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/a|)
+    }

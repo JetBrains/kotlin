@@ -68,6 +68,12 @@ class ConeEffectExtractor(
                 ConeCallsEffectDeclaration(reference, kind)
             }
 
+            FirContractsDslNames.CALLED_ON -> {
+                val lambda = functionCall.explicitReceiver?.accept(this, null) as? ConeValueParameterReference ?: return null
+                val value = functionCall.argument.accept(this, null) as? ConeValueParameterReference ?: return null
+                ConeCalledOnEffectDeclaration(lambda, value)
+            }
+
             BOOLEAN_AND, BOOLEAN_OR -> {
                 val left = functionCall.explicitReceiver?.accept(this, null) as? ConeBooleanExpression ?: return null
                 val right = functionCall.argument.accept(this, null) as? ConeBooleanExpression ?: return null

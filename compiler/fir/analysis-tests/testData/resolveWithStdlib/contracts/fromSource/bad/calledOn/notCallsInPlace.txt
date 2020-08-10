@@ -1,0 +1,11 @@
+FILE: notCallsInPlace.kt
+    public final infix fun <T> R|kotlin/Any?|.calledOn(value: R|kotlin/Any?|): R|kotlin/Unit|
+    public final inline fun <T, R> test1(value: R|kotlin/String|, block: R|(kotlin/String) -> R|): R|R|
+        [R|Contract description]
+         <
+            block calledOn value
+        >
+     {
+        [StubStatement]
+        R|<local>/block|.R|FakeOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/value|)
+    }

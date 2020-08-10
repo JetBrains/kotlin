@@ -45,3 +45,11 @@ class ConeCallsEffectDeclaration(val valueParameterReference: ConeValueParameter
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitCallsEffectDeclaration(this, data)
 }
+
+/**
+ * Effect which specifies, that [value] will be passed to [lambda] as argument or receiver.
+ */
+class ConeCalledOnEffectDeclaration(val lambda: ConeValueParameterReference, val value: ConeValueParameterReference) : ConeEffectDeclaration() {
+    override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
+        contractDescriptionVisitor.visitCalledOnEffectDeclaration(this, data)
+}

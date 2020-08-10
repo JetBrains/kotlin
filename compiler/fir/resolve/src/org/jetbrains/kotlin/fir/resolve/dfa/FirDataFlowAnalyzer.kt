@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
+import kotlinx.collections.immutable.toPersistentSet
+import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
-import org.jetbrains.kotlin.fir.contracts.description.ConeBooleanConstantReference
-import org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDeclaration
-import org.jetbrains.kotlin.fir.contracts.description.ConeConstantReference
-import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration
+import org.jetbrains.kotlin.fir.contracts.description.*
+import org.jetbrains.kotlin.fir.contracts.effects
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -740,6 +740,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             exitBooleanNot(functionCall, functionCallNode)
         }
         processConditionalContract(functionCall)
+        processCalledOnContract(functionCall)
     }
 
     fun exitDelegatedConstructorCall(call: FirDelegatedConstructorCall, callCompleted: Boolean) {
@@ -824,6 +825,43 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
         graphBuilder.exitContract(qualifiedAccess).mergeIncomingFlow(updateReceivers = true)
         contractDescriptionVisitingMode = false
+    }
+
+    private fun processCalledOnContract(functionCall: FirFunctionCall) {
+        val function = functionCall.toResolvedCallableSymbol()?.fir as? FirSimpleFunction ?: return
+        val effects = (function as? FirContractDescriptionOwner)?.contractDescription?.effects ?: return
+        if (effects.none { it is ConeCalledOnEffectDeclaration }) return
+        val argumentMapping = createArgumentsMapping(functionCall) ?: return
+
+        val lastNode = graphBuilder.lastNode
+
+        for (effect in effects) {
+            if (effect !is ConeCalledOnEffectDeclaration) continue
+            val anonymousFunction = argumentMapping[effect.lambda.parameterIndex] as? FirAnonymousFunction ?: continue
+            if (!anonymousFunction.isLambda || anonymousFunction.invocationKind?.isDefinitelyVisited() != true) continue
+            val argument = argumentMapping[effect.value.parameterIndex] ?: continue
+            val lambdaExitNode = anonymousFunction.controlFlowGraphReference.controlFlowGraph?.exitNode ?: continue
+            val lambdaExitFlow = lambdaExitNode.flow as PersistentFlow
+
+            // TODO: temp solution until new syntax for binding lambda arguments to parameters
+            val inLambdaSymbol = when(anonymousFunction.valueParameters.size) {
+                0 -> anonymousFunction.symbol
+                1 -> anonymousFunction.valueParameters[0].symbol
+                else -> continue
+            }
+
+            val inLambdaVariable = variableStorage.getRealVariable(inLambdaSymbol, anonymousFunction, lambdaExitFlow) ?: continue
+            val inLambdaTypeStatements = lambdaExitFlow.getTypeStatement(inLambdaVariable) ?: continue
+
+            val argumentVariable = variableStorage.getRealVariable(argument.symbol, argument, lastNode.flow) ?: continue
+            val argumentTypeStatement = PersistentTypeStatement(
+                argumentVariable,
+                inLambdaTypeStatements.exactType.toPersistentSet(),
+                inLambdaTypeStatements.exactNotType.toPersistentSet()
+            )
+
+            lastNode.flow.addTypeStatement(argumentTypeStatement)
+        }
     }
 
     fun exitConstExpresion(constExpression: FirConstExpression<*>) {

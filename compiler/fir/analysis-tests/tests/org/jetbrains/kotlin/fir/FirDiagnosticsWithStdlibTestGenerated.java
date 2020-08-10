@@ -546,6 +546,57 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
 
+            @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Bad extends AbstractFirDiagnosticsWithStdlibTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInBad() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                }
+
+                @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/calledOn")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class CalledOn extends AbstractFirDiagnosticsWithStdlibTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInCalledOn() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/calledOn"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                    }
+
+                    @TestMetadata("notCallsInPlace.kt")
+                    public void testNotCallsInPlace() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/calledOn/notCallsInPlace.kt");
+                    }
+
+                    @TestMetadata("notDefinitelyInvoked.kt")
+                    public void testNotDefinitelyInvoked() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/calledOn/notDefinitelyInvoked.kt");
+                    }
+
+                    @TestMetadata("wrongArgument.kt")
+                    public void testWrongArgument() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/calledOn/wrongArgument.kt");
+                    }
+
+                    @TestMetadata("wrongPass.kt")
+                    public void testWrongPass() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/calledOn/wrongPass.kt");
+                    }
+
+                    @TestMetadata("wrongReceiver.kt")
+                    public void testWrongReceiver() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/calledOn/wrongReceiver.kt");
+                    }
+                }
+            }
+
             @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -556,6 +607,29 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
 
                 public void testAllFilesPresentInGood() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                }
+
+                @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/calledOn")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class CalledOn extends AbstractFirDiagnosticsWithStdlibTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInCalledOn() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/calledOn"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                    }
+
+                    @TestMetadata("asArgument.kt")
+                    public void testAsArgument() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/calledOn/asArgument.kt");
+                    }
+
+                    @TestMetadata("asReceiver.kt")
+                    public void testAsReceiver() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/calledOn/asReceiver.kt");
+                    }
                 }
 
                 @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace")

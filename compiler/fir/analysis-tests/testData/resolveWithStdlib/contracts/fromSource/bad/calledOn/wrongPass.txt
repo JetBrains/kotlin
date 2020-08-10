@@ -1,0 +1,55 @@
+FILE: wrongPass.kt
+    public final infix fun <T> R|kotlin/Any?|.calledOn(value: R|kotlin/Any?|): R|kotlin/Unit|
+    public final inline fun <R> test1(value: R|kotlin/String|, block: R|(kotlin/String) -> R|): R|R|
+        [R|Contract description]
+         <
+            block calledOn value
+            CallsInPlace(block, EXACTLY_ONCE)
+        >
+     {
+        [StubStatement]
+        R|/foo|<R|R|>(R|<local>/value|, R|<local>/block|)
+        R|/bar|<R|R|>(String(value), R|<local>/value|, R|<local>/block|)
+        R|<local>/block|.R|/foo|<R|R|>(R|<local>/value|)
+        R|<local>/block|.R|/bar|<R|kotlin/Any?|, R|R|>(String(123), R|<local>/value|)
+    }
+    public final inline fun <R> foo(value: R|kotlin/String|, block: R|(kotlin/String) -> R|): R|R|
+        [R|Contract description]
+         <
+            block calledOn value
+            CallsInPlace(block, EXACTLY_ONCE)
+        >
+     {
+        [StubStatement]
+        R|<local>/block|.R|FakeOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/value|)
+    }
+    public final inline fun <R> bar(value1: R|kotlin/String|, value2: R|kotlin/String|, block: R|(kotlin/String) -> R|): R|R|
+        [R|Contract description]
+         <
+            block calledOn value1
+            CallsInPlace(block, EXACTLY_ONCE)
+        >
+     {
+        [StubStatement]
+        R|<local>/block|.R|FakeOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/value1|)
+    }
+    public final inline fun <R> R|(kotlin/String) -> R|.foo(value: R|kotlin/String|): R|R|
+        [R|Contract description]
+         <
+            this calledOn value
+            CallsInPlace(this, EXACTLY_ONCE)
+        >
+     {
+        [StubStatement]
+        this@R|/foo|.R|FakeOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/value|)
+    }
+    public final inline fun <T, R> R|(kotlin/String) -> R|.bar(value1: R|kotlin/String|, value2: R|kotlin/String|): R|R|
+        [R|Contract description]
+         <
+            this calledOn value1
+            CallsInPlace(this, EXACTLY_ONCE)
+        >
+     {
+        [StubStatement]
+        this@R|/bar|.R|FakeOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/value1|)
+    }
