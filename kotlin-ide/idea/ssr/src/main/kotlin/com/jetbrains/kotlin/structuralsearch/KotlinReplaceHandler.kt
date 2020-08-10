@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
+import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 
 class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHandler() {
     override fun replace(info: ReplacementInfo, options: ReplaceOptions) {
@@ -35,10 +36,16 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
     private fun PsiElement.structuralReplace(searchTemplate: PsiElement, match: PsiElement): PsiElement {
         if(searchTemplate is KtDeclaration && this is KtDeclaration && match is KtDeclaration) {
             replaceDeclaration(searchTemplate, match)
-            when(this) {
-                is KtClassOrObject -> replaceClassOrObject(searchTemplate, match)
-                is KtNamedFunction -> replaceNamedFunction(searchTemplate, match)
-                is KtProperty -> replaceProperty(searchTemplate, match)
+            if(this is KtCallableDeclaration && searchTemplate is KtCallableDeclaration && match is KtCallableDeclaration) {
+                replaceCallableDeclaration(searchTemplate, match)
+            }
+            when {
+                this is KtClassOrObject && searchTemplate is KtClassOrObject && match is KtClassOrObject ->
+                    replaceClassOrObject(searchTemplate, match)
+                this is KtNamedFunction && searchTemplate is KtNamedFunction && match is KtNamedFunction ->
+                    replaceNamedFunction(searchTemplate, match)
+                this is KtProperty && searchTemplate is KtProperty && match is KtProperty ->
+                    replaceProperty(searchTemplate, match)
             }
         }
         return this
@@ -63,41 +70,51 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         return this
     }
 
-    private fun KtClassOrObject.replaceClassOrObject(searchTemplate: KtDeclaration, match: KtDeclaration) : PsiElement {
-        if(searchTemplate is KtClassOrObject && match is KtClassOrObject) {
-            if(primaryConstructor == null && searchTemplate.primaryConstructor == null) match.primaryConstructor?.let(this::add)
-            if(getSuperTypeList() == null && searchTemplate.getSuperTypeList() == null) match.superTypeListEntries.forEach {
-                addSuperTypeListEntry(it)
-            }
-            if(body == null && searchTemplate.body == null) match.body?.let(this::add)
-            CLASS_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
+    private fun KtCallableDeclaration.replaceCallableDeclaration(
+        searchTemplate: KtCallableDeclaration,
+        match: KtCallableDeclaration
+    ): KtCallableDeclaration {
+        if(receiverTypeReference == null && searchTemplate.receiverTypeReference == null) {
+            match.receiverTypeReference?.let(this::setReceiverTypeReference)
+        }
+        if(typeReference == null || searchTemplate.typeReference == null) match.typeReference?.let(this::setTypeReference)
+        if(valueParameterList == null && searchTemplate.valueParameterList == null) match.valueParameters.forEach {
+            match.valueParameters.add(it)
+        }
+        if(typeParameterList == null && searchTemplate.typeParameterList == null) match.typeParameters.forEach {
+            addTypeParameter(it)
         }
         return this
     }
 
-    private fun KtNamedFunction.replaceNamedFunction(searchTemplate: PsiElement, match: PsiElement): PsiElement {
-        if(searchTemplate is KtNamedFunction && match is KtNamedFunction) {
-            if(typeParameterList == null && searchTemplate.typeParameterList == null) match.typeParameters.forEach {
-                addTypeParameter(it)
-            }
-            if(valueParameterList == null && searchTemplate.valueParameterList == null) match.valueParameters.forEach {
-                match.valueParameters.add(it)
-            }
-            if(!hasBody() && !searchTemplate.hasBody()) match.bodyExpression?.let(this::add)
-            FUN_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
+    private fun KtClassOrObject.replaceClassOrObject(searchTemplate: KtClassOrObject, match: KtClassOrObject) : PsiElement {
+        if(primaryConstructor == null && searchTemplate.primaryConstructor == null) match.primaryConstructor?.let(this::add)
+        if(getSuperTypeList() == null && searchTemplate.getSuperTypeList() == null) match.superTypeListEntries.forEach {
+            addSuperTypeListEntry(it)
         }
+        if(body == null && searchTemplate.body == null) match.body?.let(this::add)
+        CLASS_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
         return this
     }
 
-    private fun KtProperty.replaceProperty(searchTemplate: PsiElement, match: PsiElement): PsiElement {
-        if(searchTemplate is KtProperty && match is KtProperty) {
-            if(typeReference == null || searchTemplate.typeReference == null) match.typeReference?.let(this::setTypeReference)
-            if(!hasDelegate() && !hasInitializer()) {
-                if(!searchTemplate.hasInitializer()) initializer = match.initializer
-                if(!searchTemplate.hasDelegate()) match.delegate?.let(this::add)
-            }
-            PROPERTY_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
+    private fun KtNamedFunction.replaceNamedFunction(searchTemplate: KtNamedFunction, match: KtNamedFunction): PsiElement {
+        if(!hasBody() && !searchTemplate.hasBody()) {
+            match.bodyExpression?.let(this::add)
         }
+        FUN_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
+        return this
+    }
+
+    private fun KtProperty.replaceProperty(searchTemplate: KtProperty, match: KtProperty): PsiElement {
+        if(receiverTypeReference == null && searchTemplate.receiverTypeReference == null) {
+            match.receiverTypeReference?.let(this::setReceiverTypeReference)
+        }
+        if(typeReference == null || searchTemplate.typeReference == null) match.typeReference?.let(this::setTypeReference)
+        if(!hasDelegate() && !hasInitializer()) {
+            if(!searchTemplate.hasInitializer()) initializer = match.initializer
+            if(!searchTemplate.hasDelegate()) match.delegate?.let(this::add)
+        }
+        PROPERTY_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
         return this
     }
 
