@@ -16,6 +16,7 @@ class CompositeCommandLineState(
 ) : CommandLineState(environment) {
     init {
         assert(states.isNotEmpty())
+        assert(states.none { it is CompositeCommandLineState })
     }
 
     override fun execute(executor: Executor, runner: ProgramRunner<*>): ExecutionResult {

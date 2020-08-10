@@ -15,10 +15,11 @@ import java.nio.file.Paths
 
 class AppleXCTestCommandLineState(
     configuration: MobileTestRunConfiguration,
+    device: AppleDevice,
     env: ExecutionEnvironment,
     executor: Executor,
     failedTests: CidrTestScope?
-) : CidrTestCommandLineState<MobileTestRunConfiguration>(configuration, configuration.createLauncher(env, configuration.executionTargets.filterIsInstance<AppleDevice>().first()), env, executor, failedTests, EMPTY_TEST_SCOPE_PRODUCER) {
+) : CidrTestCommandLineState<MobileTestRunConfiguration>(configuration, configuration.createLauncher(env, device), env, executor, failedTests, EMPTY_TEST_SCOPE_PRODUCER) {
     init {
         consoleBuilder = object : CidrConsoleBuilder(configuration.project, null, configuration.project.basePath?.let { Paths.get(it) }) {
             override fun createConsole() = this@AppleXCTestCommandLineState.createConsole(this)

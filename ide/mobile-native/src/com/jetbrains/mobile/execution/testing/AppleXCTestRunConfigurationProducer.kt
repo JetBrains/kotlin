@@ -30,7 +30,6 @@ class AppleXCTestRunConfigurationProducer : CidrTestWithScopeElementsRunConfigur
         sourceElement: Ref<PsiElement>
     ): Boolean {
         configuration.module = configuration.project.allModules().find { it.isApple && it.isMobileAppTest }
-        configuration.recreateTestData()
         return super.setupConfigurationFromContext(configuration, context, sourceElement)
     }
 }

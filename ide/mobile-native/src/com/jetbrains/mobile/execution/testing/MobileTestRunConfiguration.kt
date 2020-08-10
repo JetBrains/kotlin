@@ -11,8 +11,6 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.cidr.execution.CidrLauncher
 import com.jetbrains.cidr.execution.testing.*
 import com.jetbrains.mobile.execution.*
-import com.jetbrains.mobile.isAndroid
-import com.jetbrains.mobile.isApple
 import com.jetbrains.mobile.isMobileAppTest
 import org.jdom.Element
 import java.io.File
@@ -31,30 +29,13 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
         }
     }
 
-    private lateinit var testData: CidrTestRunConfigurationData<MobileTestRunConfiguration>
-
-    fun recreateTestData() {
-        val module = module ?: return
-        testData = when {
-            module.isAndroid -> AndroidTestRunConfigurationData(this)
-            module.isApple -> AppleXCTestRunConfigurationData(this)
-            else -> throw IllegalStateException()
-        }
-    }
-
-    init {
-        recreateTestData()
-    }
-
+    private var testData = CompositeTestRunConfigurationData(this, listOf(AppleXCTestRunConfigurationData(this), AndroidTestRunConfigurationData(this)))
     override fun getTestData(): CidrTestRunConfigurationData<MobileTestRunConfiguration> = testData
 
     override fun isSuitable(module: Module): Boolean = module.isMobileAppTest
 
-    override fun createAppleState(environment: ExecutionEnvironment, executor: Executor, device: AppleDevice): CommandLineState =
-        getTestData().createState(environment, executor, null)!!
-
-    override fun createAndroidState(environment: ExecutionEnvironment, device: AndroidDevice): CommandLineState =
-        AndroidTestCommandLineState(this, device, environment)
+    override fun getState(executor: Executor, environment: ExecutionEnvironment): CommandLineState? =
+        testData.createState(environment, executor, null)
 
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> =
         MobileTestRunConfigurationEditor(project, ::isSuitable)
@@ -71,7 +52,6 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
 
     override fun readExternal(element: Element) {
         super<MobileRunConfigurationBase>.readExternal(element)
-        recreateTestData()
         testData.readExternal(element)
     }
 
@@ -82,7 +62,7 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
 
     override fun clone(): MobileTestRunConfiguration {
         val result = super.clone() as MobileTestRunConfiguration
-        result.testData = testData.cloneForConfiguration(result) as CidrTestRunConfigurationData<MobileTestRunConfiguration>
+        result.testData = testData.cloneForConfiguration(result)
         return result
     }
 }

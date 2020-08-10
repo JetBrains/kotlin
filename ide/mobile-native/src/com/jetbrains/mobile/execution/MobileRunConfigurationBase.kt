@@ -63,21 +63,6 @@ abstract class MobileRunConfigurationBase(project: Project, factory: Configurati
         }
     }
 
-    override fun getState(executor: Executor, environment: ExecutionEnvironment): CommandLineState {
-        val states = SmartList<CommandLineState>()
-        val appleDevice = executionTargets.filterIsInstance<AppleDevice>().singleOrNull()
-        if (appleDevice != null) {
-            states += createAppleState(environment, executor, appleDevice)
-        }
-        val androidDevice = executionTargets.filterIsInstance<AndroidDevice>().singleOrNull()
-        if (androidDevice != null) {
-            states += createAndroidState(environment, androidDevice)
-        }
-        return CompositeCommandLineState(environment, states)
-    }
-
-    abstract fun createAndroidState(environment: ExecutionEnvironment, device: AndroidDevice): CommandLineState
-
     private val helper = MobileBuildConfigurationHelper(project)
     override fun getHelper(): MobileBuildConfigurationHelper = helper
 
@@ -133,9 +118,19 @@ class MobileAppRunConfiguration(project: Project, factory: ConfigurationFactory,
 
     override fun isSuitable(module: Module): Boolean = module.isMobileAppMain
 
+    override fun getState(executor: Executor, environment: ExecutionEnvironment): CommandLineState {
+        val states = SmartList<CommandLineState>()
+        val appleDevice = executionTargets.filterIsInstance<AppleDevice>().singleOrNull()
+        if (appleDevice != null) {
+            states += createAppleState(environment, executor, appleDevice)
+        }
+        val androidDevice = executionTargets.filterIsInstance<AndroidDevice>().singleOrNull()
+        if (androidDevice != null) {
+            states += AndroidAppCommandLineState(this, androidDevice, environment)
+        }
+        return CompositeCommandLineState(environment, states)
+    }
+
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> =
         MobileRunConfigurationEditor(project, ::isSuitable)
-
-    override fun createAndroidState(environment: ExecutionEnvironment, device: AndroidDevice): CommandLineState =
-        AndroidAppCommandLineState(this, device, environment)
 }

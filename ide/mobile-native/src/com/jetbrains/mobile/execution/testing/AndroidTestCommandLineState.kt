@@ -19,7 +19,8 @@ class AndroidTestCommandLineState(
     environment: ExecutionEnvironment
 ) : AndroidCommandLineState(configuration, device, environment) {
     private val testRunnerApk = configuration.getTestRunnerBundle(device)
-    private val testData = configuration.testData as AndroidTestRunConfigurationData
+    private val testData = (configuration.testData as CompositeTestRunConfigurationData)
+        .testDatas.filterIsInstance<AndroidTestRunConfigurationData>().first()
     private val testInstrumentationRunner =
         try {
             @Suppress("UnstableApiUsage")
