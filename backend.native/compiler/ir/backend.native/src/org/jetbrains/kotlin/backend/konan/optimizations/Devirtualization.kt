@@ -1402,7 +1402,7 @@ internal object Devirtualization {
                                                    actualType: IrType,
                                                    devirtualizedCallee: DevirtualizedCallee,
                                                    arguments: List<IrExpression>): IrCall {
-            val actualCallee = devirtualizedCallee.callee.irFunction!!
+            val actualCallee = devirtualizedCallee.callee.irFunction as IrSimpleFunction
             val call = IrCallImpl(
                     callSite.startOffset, callSite.endOffset,
                     actualType,

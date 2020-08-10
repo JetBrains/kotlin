@@ -238,7 +238,7 @@ fun IrBuilderWithScope.irCall(symbol: IrFunctionSymbol, typeArguments: List<IrTy
 fun IrBuilderWithScope.irCall(irFunction: IrFunction, typeArguments: List<IrType> = emptyList()) =
         irCall(irFunction.symbol, typeArguments)
 
-internal fun irCall(startOffset: Int, endOffset: Int, irFunction: IrFunction, typeArguments: List<IrType>): IrCall =
+internal fun irCall(startOffset: Int, endOffset: Int, irFunction: IrSimpleFunction, typeArguments: List<IrType>): IrCall =
         IrCallImpl(
                 startOffset, endOffset, irFunction.substitutedReturnType(typeArguments),
                 irFunction.symbol, typeArguments.size

@@ -114,7 +114,7 @@ internal fun KotlinStubs.generateCCall(expression: IrCall, builder: IrBuilderWit
 
     val callBuilder = KotlinToCCallBuilder(builder, this, isObjCMethod = false)
 
-    val callee = expression.symbol.owner as IrSimpleFunction
+    val callee = expression.symbol.owner
 
     // TODO: consider computing all arguments before converting.
 

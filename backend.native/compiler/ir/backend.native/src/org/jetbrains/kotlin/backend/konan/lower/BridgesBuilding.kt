@@ -110,7 +110,7 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                         startOffset  = job.startOffset,
                         endOffset    = job.endOffset,
                         overriddenFunction = overriddenJobDescriptor,
-                        targetSymbol = job.symbol)
+                        targetSymbol = jobFunction.symbol)
                 bridges += bridge
                 expression.putValueArgument(3, IrFunctionReferenceImpl(
                         startOffset   = job.startOffset,
@@ -218,7 +218,7 @@ private fun IrBlockBodyBuilder.buildTypeSafeBarrier(function: IrFunction,
 }
 
 private fun Context.buildBridge(startOffset: Int, endOffset: Int,
-                                overriddenFunction: OverriddenFunctionInfo, targetSymbol: IrFunctionSymbol,
+                                overriddenFunction: OverriddenFunctionInfo, targetSymbol: IrSimpleFunctionSymbol,
                                 superQualifierSymbol: IrClassSymbol? = null): IrFunction {
 
     val bridge = specialDeclarationsFactory.getBridge(overriddenFunction)

@@ -715,7 +715,7 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
 
             return builder.at(expression).run {
                 val classPtr = getRawPtr(expression.extensionReceiver!!)
-                callAllocAndInit(classPtr, initMethodInfo, arguments, expression, callee as IrSimpleFunction)
+                callAllocAndInit(classPtr, initMethodInfo, arguments, expression, callee)
             }
         }
 
@@ -753,7 +753,7 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
                         receiver = expression.dispatchReceiver ?: expression.extensionReceiver!!,
                         arguments = arguments,
                         call = expression,
-                        method = callee as IrSimpleFunction
+                        method = callee
                 )
             }
         }

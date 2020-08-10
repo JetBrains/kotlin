@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -338,7 +339,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                         ?: error("A function reference expected")
                 val jobInvocation = IrCallImpl(expression.startOffset, expression.endOffset,
                         jobFunctionReference.symbol.owner.returnType,
-                        jobFunctionReference.symbol)
+                        jobFunctionReference.symbol as IrSimpleFunctionSymbol)
                 jobInvocation.putValueArgument(0, producerInvocation)
 
                 expressions += jobInvocation
@@ -665,7 +666,6 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                                     if (callee is IrConstructor) {
                                         error("Constructor call should be done with IrConstructorCall")
                                     } else {
-                                        callee as IrSimpleFunction
                                         if (callee.isOverridable && value.superQualifierSymbol == null) {
                                             val owner = callee.parentAsClass
                                             val actualReceiverType = value.dispatchReceiver!!.type
