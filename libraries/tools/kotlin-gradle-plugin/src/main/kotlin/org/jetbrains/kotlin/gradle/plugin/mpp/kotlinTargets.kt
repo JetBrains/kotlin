@@ -16,6 +16,8 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Usage.JAVA_RUNTIME_JARS
 import org.gradle.api.component.*
+import org.gradle.api.internal.component.IvyPublishingAwareContext
+import org.gradle.api.internal.component.MavenPublishingAwareContext
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.internal.project.ProjectInternal
@@ -151,11 +153,19 @@ abstract class AbstractKotlinTarget(
         component
             .usages
             .map { usageContext ->
-                object : UsageContext by usageContext {
+                object : UsageContext by usageContext,
+                    MavenPublishingAwareContext,
+                    IvyPublishingAwareContext {
                     override fun getDependencyConstraints(): MutableSet<out DependencyConstraint> =
                         usageContext.dependencyConstraints
-                            .filterNot { it is NpmDependencyConstraint }
+                            .filter { it !is NpmDependencyConstraint }
                             .toMutableSet()
+
+                    override fun getScopeMapping(): MavenPublishingAwareContext.ScopeMapping =
+                        (usageContext as MavenPublishingAwareContext).scopeMapping
+
+                    override fun isOptional(): Boolean =
+                        (usageContext as IvyPublishingAwareContext).isOptional
                 }
             }
             .toMutableSet()
