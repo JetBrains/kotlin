@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeContractDescriptionError
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.obtainResolvedContractDescription
-import org.jetbrains.kotlin.fir.resolve.transformers.wrapEffectsInContractCall
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.visitors.*
 
