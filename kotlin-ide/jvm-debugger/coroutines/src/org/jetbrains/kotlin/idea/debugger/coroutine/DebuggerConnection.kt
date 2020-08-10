@@ -7,14 +7,16 @@ package org.jetbrains.kotlin.idea.debugger.coroutine
 
 import com.intellij.debugger.DebuggerInvocationUtil
 import com.intellij.debugger.engine.JavaDebugProcess
-import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.execution.configurations.JavaParameters
 import com.intellij.execution.configurations.RunConfigurationBase
 import com.intellij.execution.ui.RunnerLayoutUi
 import com.intellij.execution.ui.layout.PlaceInGrid
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.JdkUtil
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.newvfs.ArchiveFileSystem
 import com.intellij.ui.content.Content
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.messages.MessageBusConnection
@@ -68,6 +70,17 @@ class DebuggerConnection(
 
     private fun initializeCoroutineAgent(params: JavaParameters, it: String?) {
         params.vmParametersList?.add("-javaagent:$it")
+        // Fix for NoClassDefFoundError: kotlin/collections/AbstractMutableMap via CommandLineWrapper.
+        if (params.isClasspathFile) {
+            params.classPath.rootDirs.filter { it.isKotlinStdlib() }.forEach {
+                val fs = it.fileSystem
+                val path = when (fs) {
+                    is ArchiveFileSystem -> fs.getLocalByEntry(it)?.path
+                    else -> it.path
+                }
+                it.putUserData(JdkUtil.AGENT_RUNTIME_CLASSPATH, path)
+            }
+        }
     }
 
     private fun connect() {
@@ -112,6 +125,9 @@ class DebuggerConnection(
         connection = null
     }
 }
+
+fun VirtualFile.isKotlinStdlib() =
+        this.path.contains("kotlin-stdlib")
 
 enum class CoroutineDebuggerMode {
     DISABLED,
