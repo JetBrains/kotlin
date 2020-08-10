@@ -5,6 +5,7 @@
     <file url="file://$PROJECT_DIR$/intellij/dbe" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/intellij/dbe/database/dialects/src/exasol" dialect="Exasol" />
     <file url="file://$PROJECT_DIR$/intellij/dbe/database/dialects/src/maria" dialect="MariaDB" />
+    <file url="file://$PROJECT_DIR$/intellij/dbe/database/dialects/src/mssql" dialect="TSQL" />
     <file url="file://$PROJECT_DIR$/intellij/dbe/database/dialects/src/mysql" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/intellij/dbe/database/dialects/src/mysqlbase" dialect="MySQL" />
     <file url="file://$PROJECT_DIR$/intellij/dbe/database/dialects/src/postgres" dialect="PostgreSQL" />
