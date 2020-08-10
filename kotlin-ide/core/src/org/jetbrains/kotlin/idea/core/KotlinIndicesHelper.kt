@@ -25,6 +25,7 @@ import com.intellij.psi.stubs.StringStubIndexExtension
 import com.intellij.util.indexing.IdFilter
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.KotlinShortNamesCache
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
@@ -71,6 +72,7 @@ class KotlinIndicesHelper(
     private val project = resolutionFacade.project
     private val scopeWithoutKotlin = scope.excludeKotlinSources() as GlobalSearchScope
 
+    @OptIn(FrontendInternals::class)
     private val descriptorFilter: (DeclarationDescriptor) -> Boolean = filter@{
         if (resolutionFacade.frontendService<DeprecationResolver>().isHiddenInResolution(it)) return@filter false
         if (!visibilityFilter(it)) return@filter false
@@ -470,6 +472,7 @@ class KotlinIndicesHelper(
                     processor(descriptor)
 
                     // SAM-adapter
+                    @OptIn(FrontendInternals::class)
                     val syntheticScopes = resolutionFacade.getFrontendService(SyntheticScopes::class.java).forceEnableSamAdapters()
                     val contributedFunctions = container.staticScope.getContributedFunctions(descriptor.name, NoLookupLocation.FROM_IDE)
 

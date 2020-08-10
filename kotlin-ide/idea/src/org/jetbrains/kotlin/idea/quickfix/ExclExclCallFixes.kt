@@ -35,14 +35,13 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
-import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.idea.resolve.getDataFlowValueFactory
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.types.TypeUtils
@@ -146,7 +145,7 @@ class AddExclExclCallFix(psiElement: PsiElement, val checkImplicitReceivers: Boo
                     context[BindingContext.EXPRESSION_TYPE_INFO, targetElement]?.let {
                         val type = it.type
 
-                        val dataFlowValueFactory = targetElement.getResolutionFacade().frontendService<DataFlowValueFactory>()
+                        val dataFlowValueFactory = targetElement.getResolutionFacade().getDataFlowValueFactory()
 
                         if (type != null) {
                             val nullability = it.dataFlowInfo.getStableNullability(

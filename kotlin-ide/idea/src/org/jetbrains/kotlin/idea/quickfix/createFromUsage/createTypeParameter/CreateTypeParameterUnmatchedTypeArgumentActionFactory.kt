@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createTypeParameter
 
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
@@ -42,6 +43,7 @@ object CreateTypeParameterUnmatchedTypeArgumentActionFactory :
     KotlinIntentionActionFactoryWithDelegate<KtTypeArgumentList, CreateTypeParameterData>() {
     override fun getElementOfInterest(diagnostic: Diagnostic) = diagnostic.psiElement as? KtTypeArgumentList
 
+    @OptIn(FrontendInternals::class)
     override fun extractFixData(element: KtTypeArgumentList, diagnostic: Diagnostic): CreateTypeParameterData? {
         val project = element.project
         val typeArguments = element.arguments

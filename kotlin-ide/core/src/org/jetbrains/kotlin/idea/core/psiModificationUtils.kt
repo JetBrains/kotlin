@@ -17,11 +17,13 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.idea.resolve.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
@@ -115,6 +117,7 @@ fun KtCallExpression.getLastLambdaExpression(): KtLambdaExpression? {
     return valueArguments.lastOrNull()?.getArgumentExpression()?.unpackFunctionLiteral()
 }
 
+@OptIn(FrontendInternals::class)
 fun KtCallExpression.canMoveLambdaOutsideParentheses(): Boolean {
     if (getStrictParentOfType<KtDelegatedSuperTypeEntry>() != null) return false
     if (getLastLambdaExpression() == null) return false
@@ -127,7 +130,7 @@ fun KtCallExpression.canMoveLambdaOutsideParentheses(): Boolean {
         val resolutionFacade = getResolutionFacade()
         val samConversionTransformer = resolutionFacade.frontendService<SamConversionResolver>()
         val samConversionOracle = resolutionFacade.frontendService<SamConversionOracle>()
-        val languageVersionSettings = resolutionFacade.frontendService<LanguageVersionSettings>()
+        val languageVersionSettings = resolutionFacade.getLanguageVersionSettings()
 
         val bindingContext = analyze(resolutionFacade, BodyResolveMode.PARTIAL)
         val targets = bindingContext[BindingContext.REFERENCE_TARGET, callee]?.let { listOf(it) }

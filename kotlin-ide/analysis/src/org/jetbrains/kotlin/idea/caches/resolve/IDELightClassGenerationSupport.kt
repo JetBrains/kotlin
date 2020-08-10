@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassContexts
 import org.jetbrains.kotlin.idea.caches.lightClasses.LazyLightClassDataHolder
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
@@ -90,7 +91,9 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             return null
         }
 
-        override val deprecationResolver: DeprecationResolver get() = resolutionFacade.getFrontendService(DeprecationResolver::class.java)
+        @OptIn(FrontendInternals::class)
+        override val deprecationResolver: DeprecationResolver
+            get() = resolutionFacade.getFrontendService(DeprecationResolver::class.java)
 
 
         override val typeMapper: KotlinTypeMapper by lazyPub {
@@ -205,6 +208,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         )
     }
 
+    @OptIn(FrontendInternals::class)
     private fun KtElement.getDiagnosticsHolder() =
         getResolutionFacade().frontendService<LazyLightClassDataHolder.DiagnosticsHolder>()
 
