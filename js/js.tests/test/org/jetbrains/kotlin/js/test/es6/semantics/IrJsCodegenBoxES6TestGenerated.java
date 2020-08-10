@@ -6407,6 +6407,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             public void testOverrideSuspendFun_Int_1_3() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/overrideSuspendFun_Int.kt", "kotlin.coroutines");
             }
+
+            @TestMetadata("returnResult.kt")
+            public void testReturnResult() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/inlineClasses/returnResult.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/coroutines/intLikeVarSpilling")
