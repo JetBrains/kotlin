@@ -22,7 +22,9 @@ class AppleXCTestLauncher(configuration: MobileTestRunConfiguration, environment
             arch: ArchitectureValue
         ): CidrCommandLineConfigurator {
             val testBundle = configuration.getTestRunnerBundle(device)
-            val testScope = (myEnvironment.state as AppleXCTestCommandLineState).testScope()
+            val testScope = (myEnvironment.state as CompositeCommandLineState)
+                .states.filterIsInstance<AppleXCTestCommandLineState>().first()
+                .testScope()
             val productFileName = bundle.nameWithoutExtension
             val sessionID = UUID.randomUUID()
             val appleDevice = device
