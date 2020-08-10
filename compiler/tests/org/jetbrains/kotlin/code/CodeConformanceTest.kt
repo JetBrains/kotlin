@@ -167,59 +167,62 @@ class CodeConformanceTest : TestCase() {
 
         val tests = listOf(
             TestData(
-                "%d source files contain @author javadoc tag.\nPlease remove them or exclude in this test:\n%s",
-                { source ->
-                    // substring check is an optimization
-                    "@author" in source && atAuthorPattern.matcher(source).find() &&
-                            "ASM: a very small and fast Java bytecode manipulation framework" !in source &&
-                            "package org.jetbrains.kotlin.tools.projectWizard.settings.version.maven" !in source
-                }
-            ),
+                "%d source files contain @author javadoc tag.\nPlease remove them or exclude in this test:\n%s"
+            ) { source ->
+                // substring check is an optimization
+                "@author" in source && atAuthorPattern.matcher(source).find() &&
+                        "ASM: a very small and fast Java bytecode manipulation framework" !in source &&
+                        "package org.jetbrains.kotlin.tools.projectWizard.settings.version.maven" !in source
+            },
             TestData(
                 "%d source files use something from com.beust.jcommander.internal package.\n" +
                         "This code won't work when there's no TestNG in the classpath of our IDEA plugin, " +
                         "because there's only an optional dependency on testng.jar.\n" +
                         "Most probably you meant to use Guava's Lists, Maps or Sets instead. " +
-                        "Please change references in these files to com.google.common.collect:\n%s",
-                { source ->
-                    "com.beust.jcommander.internal" in source
-                }
-            ),
+                        "Please change references in these files to com.google.common.collect:\n%s"
+            ) { source ->
+                "com.beust.jcommander.internal" in source
+            },
             TestData(
                 "%d source files contain references to package org.jetbrains.jet.\n" +
                         "Package org.jetbrains.jet is deprecated now in favor of org.jetbrains.kotlin. " +
-                        "Please consider changing the package in these files:\n%s",
-                { source ->
-                    "org.jetbrains.jet" in source
-                }
-            ),
+                        "Please consider changing the package in these files:\n%s"
+            ) { source ->
+                "org.jetbrains.jet" in source
+            },
             TestData(
                 "%d source files contain references to package kotlin.reflect.jvm.internal.impl.\n" +
                         "This package contains internal reflection implementation and is a result of a " +
                         "post-processing of kotlin-reflect.jar by jarjar.\n" +
                         "Most probably you meant to use classes from org.jetbrains.kotlin.**.\n" +
-                        "Please change references in these files or exclude them in this test:\n%s",
-                { source ->
-                    "kotlin.reflect.jvm.internal.impl" in source
-                }
-            ),
+                        "Please change references in these files or exclude them in this test:\n%s"
+            ) { source ->
+                "kotlin.reflect.jvm.internal.impl" in source
+            },
             TestData(
                 "%d source files contain references to package org.objectweb.asm.\n" +
                         "Package org.jetbrains.org.objectweb.asm should be used instead to avoid troubles with different asm versions in classpath. " +
-                        "Please consider changing the package in these files:\n%s",
-                { source ->
-                    " org.objectweb.asm" in source
-                })
+                        "Please consider changing the package in these files:\n%s"
+            ) { source ->
+                " org.objectweb.asm" in source
+            }
         )
 
-        for (sourceFile in FileUtil.findFilesByMask(SOURCES_FILE_PATTERN, File("."))) {
-            if (NON_SOURCE_EXCLUDED_FILES_AND_DIRS.any { FileUtil.isAncestor(it, sourceFile, false) }) continue
-
-            val source = sourceFile.readText()
-            for (test in tests) {
-                if (test.filter(source)) test.result.add(sourceFile)
+        val root = File(".")
+        val nonSourceMatcher = FileMatcher(root, NON_SOURCE_EXCLUDED_FILES_AND_DIRS)
+        root.walkTopDown()
+            .onEnter { dir ->
+                !nonSourceMatcher.matchExact(dir) // Don't enter to ignored dirs
             }
-        }
+            .filter { file -> !nonSourceMatcher.matchExact(file) } // filter ignored files
+            .filter { file -> SOURCES_FILE_PATTERN.matcher(file.name).matches() }
+            .filter { file -> file.isFile }
+            .forEach { sourceFile ->
+                val source = sourceFile.readText()
+                for (test in tests) {
+                    if (test.filter(source)) test.result.add(sourceFile)
+                }
+            }
 
         if (tests.flatMap { it.result }.isNotEmpty()) {
             fail(buildString {
