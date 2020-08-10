@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.explicitParameters
-import org.jetbrains.kotlin.ir.util.isSuspend
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -220,10 +217,30 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         private fun IrSimpleFunction.buildInvoke(): IrFunctionAccessExpression {
             val callee = function
             val irCall =  reference.run {
-                if (callee is IrConstructor) {
-                    IrConstructorCallImpl(startOffset, endOffset, callee.parentAsClass.defaultType, callee.symbol, callee.typeParameters.size, 0 /* TODO */, callee.valueParameters.size, CALLABLE_REFERENCE_INVOKE)
-                } else {
-                    IrCallImpl(startOffset, endOffset, callee.returnType, callee.symbol, callee.typeParameters.size, callee.valueParameters.size, CALLABLE_REFERENCE_INVOKE)
+                when (callee) {
+                    is IrConstructor ->
+                        IrConstructorCallImpl(
+                            startOffset,
+                            endOffset,
+                            callee.parentAsClass.defaultType,
+                            callee.symbol,
+                            callee.typeParameters.size,
+                            0 /* TODO */,
+                            callee.valueParameters.size,
+                            CALLABLE_REFERENCE_INVOKE
+                        )
+                    is IrSimpleFunction ->
+                        IrCallImpl(
+                            startOffset,
+                            endOffset,
+                            callee.returnType,
+                            callee.symbol,
+                            callee.typeParameters.size,
+                            callee.valueParameters.size,
+                            CALLABLE_REFERENCE_INVOKE
+                        )
+                    else ->
+                        error("unknown function kind: ${callee.render()}")
                 }
             }
 

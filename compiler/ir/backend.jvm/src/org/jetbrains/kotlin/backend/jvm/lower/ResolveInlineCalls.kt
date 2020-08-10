@@ -60,7 +60,7 @@ class ResolveInlineCalls(val context: JvmBackendContext) : IrElementTransformerV
         })
     }
 
-    private fun IrFunction.resolveMultiFileFacades(): IrFunction? =
+    private fun IrFunction.resolveMultiFileFacades(): IrSimpleFunction? =
         if (origin == JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE) {
             context.multifileFacadeMemberToPartMember[this]
         } else null

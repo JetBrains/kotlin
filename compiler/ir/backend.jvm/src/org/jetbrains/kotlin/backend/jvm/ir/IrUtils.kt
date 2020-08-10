@@ -268,7 +268,11 @@ fun IrBody.replaceThisByStaticReference(
 fun createPlaceholderAnyNType(irBuiltIns: IrBuiltIns): IrType =
     irBuiltIns.anyNType
 
-fun createDelegatingCallWithPlaceholderTypeArguments(existingCall: IrCall, redirectTarget: IrFunction, irBuiltIns: IrBuiltIns): IrCall =
+fun createDelegatingCallWithPlaceholderTypeArguments(
+    existingCall: IrCall,
+    redirectTarget: IrSimpleFunction,
+    irBuiltIns: IrBuiltIns
+): IrCall =
     IrCallImpl(
         existingCall.startOffset,
         existingCall.endOffset,

@@ -47,7 +47,7 @@ internal val generateMultifileFacadesPhase = makeCustomPhase<JvmBackendContext, 
     description = "Generate JvmMultifileClass facades, based on the information provided by FileClassLowering",
     prerequisite = setOf(fileClassPhase),
     op = { context, input ->
-        val functionDelegates = mutableMapOf<IrFunction, IrFunction>()
+        val functionDelegates = mutableMapOf<IrSimpleFunction, IrSimpleFunction>()
 
         // In -Xmultifile-parts-inherit mode, instead of generating "bridge" methods in the facade which call into parts,
         // we construct an inheritance chain such that all part members are present as fake overrides in the facade.
@@ -89,7 +89,7 @@ private fun generateMultifileFacades(
     module: ModuleDescriptor,
     context: JvmBackendContext,
     shouldGeneratePartHierarchy: Boolean,
-    functionDelegates: MutableMap<IrFunction, IrFunction>
+    functionDelegates: MutableMap<IrSimpleFunction, IrSimpleFunction>
 ): List<IrFile> =
     context.multifileFacadesToAdd.map { (jvmClassName, partClasses) ->
         val kotlinPackageFqName = partClasses.first().fqNameWhenAvailable!!.parent()
@@ -250,7 +250,7 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
 }
 
 private class UpdateFunctionCallSites(
-    private val functionDelegates: MutableMap<IrFunction, IrFunction>
+    private val functionDelegates: MutableMap<IrSimpleFunction, IrSimpleFunction>
 ) : FileLoweringPass, IrElementTransformer<IrFunction?> {
     override fun lower(irFile: IrFile) {
         irFile.transformChildren(this, null)

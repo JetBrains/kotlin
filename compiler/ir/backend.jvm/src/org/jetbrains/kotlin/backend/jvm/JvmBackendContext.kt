@@ -101,7 +101,7 @@ class JvmBackendContext(
     internal val multifileFacadesToAdd = mutableMapOf<JvmClassName, MutableList<IrClass>>()
     val multifileFacadeForPart = mutableMapOf<IrClass, JvmClassName>()
     internal val multifileFacadeClassForPart = mutableMapOf<IrClass, IrClass>()
-    internal val multifileFacadeMemberToPartMember = mutableMapOf<IrFunction, IrFunction>()
+    internal val multifileFacadeMemberToPartMember = mutableMapOf<IrSimpleFunction, IrSimpleFunction>()
 
     internal val hiddenConstructors = mutableMapOf<IrConstructor, IrConstructor>()
 
@@ -117,7 +117,7 @@ class JvmBackendContext(
     val suspendFunctionOriginalToView = mutableMapOf<IrFunction, IrFunction>()
     val fakeContinuation: IrExpression = createFakeContinuation(this)
 
-    val staticDefaultStubs = mutableMapOf<IrFunctionSymbol, IrFunction>()
+    val staticDefaultStubs = mutableMapOf<IrSimpleFunctionSymbol, IrSimpleFunction>()
 
     val inlineClassReplacements = MemoizedInlineClassReplacements(state.functionsWithInlineClassReturnTypesMangled, irFactory)
 

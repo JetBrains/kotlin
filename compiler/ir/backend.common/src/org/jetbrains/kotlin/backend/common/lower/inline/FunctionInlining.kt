@@ -234,17 +234,22 @@ class FunctionInlining(
                     }
 
                     val immediateCall = with(expression) {
-                        if (function is IrConstructor) {
-                            val classTypeParametersCount = function.parentAsClass.typeParameters.size
-                            IrConstructorCallImpl.fromSymbolOwner(
-                                startOffset,
-                                endOffset,
-                                function.returnType,
-                                function.symbol,
-                                classTypeParametersCount
-                            )
-                        } else
-                            IrCallImpl(startOffset, endOffset, function.returnType, functionArgument.symbol)
+                        when (function) {
+                            is IrConstructor -> {
+                                val classTypeParametersCount = function.parentAsClass.typeParameters.size
+                                IrConstructorCallImpl.fromSymbolOwner(
+                                    startOffset,
+                                    endOffset,
+                                    function.returnType,
+                                    function.symbol,
+                                    classTypeParametersCount
+                                )
+                            }
+                            is IrSimpleFunction ->
+                                IrCallImpl(startOffset, endOffset, function.returnType, function.symbol)
+                            else ->
+                                error("Unknown function kind : ${function.render()}")
+                        }
                     }.apply {
                         for (parameter in functionParameters) {
                             val argument =

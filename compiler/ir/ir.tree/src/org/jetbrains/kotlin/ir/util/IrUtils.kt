@@ -411,7 +411,7 @@ fun irConstructorCall(
 
 fun irCall(
     call: IrFunctionAccessExpression,
-    newFunction: IrFunction,
+    newFunction: IrSimpleFunction,
     receiversAsArguments: Boolean = false,
     argumentsAsReceivers: Boolean = false,
     newSuperQualifierSymbol: IrClassSymbol? = null
@@ -426,7 +426,7 @@ fun irCall(
 
 fun irCall(
     call: IrFunctionAccessExpression,
-    newSymbol: IrFunctionSymbol,
+    newSymbol: IrSimpleFunctionSymbol,
     receiversAsArguments: Boolean = false,
     argumentsAsReceivers: Boolean = false,
     newSuperQualifierSymbol: IrClassSymbol? = null

@@ -288,10 +288,10 @@ class CallAndReferenceGenerator(
         val startOffset = adapteeFunction.startOffset
         val endOffset = adapteeFunction.endOffset
         val type = adapteeFunction.returnType
-        val irCall =
-            if (adapteeSymbol is IrConstructorSymbol) {
+        val irCall = when (adapteeSymbol) {
+            is IrConstructorSymbol ->
                 IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, adapteeSymbol)
-            } else {
+            is IrSimpleFunctionSymbol ->
                 IrCallImpl(
                     startOffset,
                     endOffset,
@@ -302,7 +302,9 @@ class CallAndReferenceGenerator(
                     origin = null,
                     superQualifierSymbol = null
                 )
-            }
+            else ->
+                error("unknown callee kind: ${adapteeFunction.render()}")
+        }
 
         if (boundDispatchReceiver != null || boundExtensionReceiver != null) {
             val receiverValue = IrGetValueImpl(

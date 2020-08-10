@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.allTypeParameters
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_OVERLOADS_FQ_NAME
 
 internal val jvmOverloadsAnnotationPhase = makeIrFilePhase(
@@ -55,10 +56,14 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
     private fun generateWrapper(target: IrFunction, numDefaultParametersToExpect: Int): IrFunction {
         val wrapperIrFunction = context.irFactory.generateWrapperHeader(target, numDefaultParametersToExpect)
 
-        val call = if (target is IrConstructor)
-            IrDelegatingConstructorCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.unitType, target.symbol)
-        else
-            IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.returnType, target.symbol)
+        val call = when (target) {
+            is IrConstructor ->
+                IrDelegatingConstructorCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.unitType, target.symbol)
+            is IrSimpleFunction ->
+                IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.returnType, target.symbol)
+            else ->
+                error("unknown function kind: ${target.render()}")
+        }
         for (arg in wrapperIrFunction.allTypeParameters) {
             call.putTypeArgument(arg.index, arg.defaultType)
         }

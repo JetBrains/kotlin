@@ -519,7 +519,7 @@ open class DeepCopyIrTreeWithSymbols(
     }
 
     private fun shallowCopyCall(expression: IrCall): IrCall {
-        val newCallee = symbolRemapper.getReferencedFunction(expression.symbol)
+        val newCallee = symbolRemapper.getReferencedSimpleFunction(expression.symbol)
         return IrCallImpl(
             expression.startOffset, expression.endOffset,
             expression.type.remapType(),

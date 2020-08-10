@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -31,7 +31,7 @@ class IrCallImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override val type: IrType,
-    override val symbol: IrFunctionSymbol,
+    override val symbol: IrSimpleFunctionSymbol,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int,
     override val origin: IrStatementOrigin? = null,
@@ -48,7 +48,7 @@ class IrCallImpl(
         startOffset: Int,
         endOffset: Int,
         type: IrType,
-        symbol: IrFunctionSymbol,
+        symbol: IrSimpleFunctionSymbol,
         origin: IrStatementOrigin? = null,
         superQualifierSymbol: IrClassSymbol? = null
     ) : this(
@@ -61,7 +61,7 @@ class IrCallImpl(
         startOffset: Int,
         endOffset: Int,
         type: IrType,
-        symbol: IrFunctionSymbol,
+        symbol: IrSimpleFunctionSymbol,
         typeArgumentsCount: Int,
         origin: IrStatementOrigin? = null,
         superQualifierSymbol: IrClassSymbol? = null

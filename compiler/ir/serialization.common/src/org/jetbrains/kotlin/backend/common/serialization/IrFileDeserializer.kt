@@ -379,7 +379,7 @@ abstract class IrFileDeserializer(
     }
 
     private fun deserializeCall(proto: ProtoCall, start: Int, end: Int, type: IrType): IrCall {
-        val symbol = deserializeIrSymbolAndRemap(proto.symbol) as IrFunctionSymbol
+        val symbol = deserializeIrSymbolAndRemap(proto.symbol) as IrSimpleFunctionSymbol
 
         val superSymbol = if (proto.hasSuper()) {
             deserializeIrSymbolAndRemap(proto.`super`) as IrClassSymbol

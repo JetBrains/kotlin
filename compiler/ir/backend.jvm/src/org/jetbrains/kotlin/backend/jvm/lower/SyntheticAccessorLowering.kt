@@ -313,7 +313,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         }
     }
 
-    private fun createSimpleFunctionCall(accessor: IrFunction, targetSymbol: IrFunctionSymbol, superQualifierSymbol: IrClassSymbol?) =
+    private fun createSimpleFunctionCall(accessor: IrFunction, targetSymbol: IrSimpleFunctionSymbol, superQualifierSymbol: IrClassSymbol?) =
         IrCallImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             accessor.returnType,
@@ -410,7 +410,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
             is IrCall -> IrCallImpl(
                 oldExpression.startOffset, oldExpression.endOffset,
                 oldExpression.type,
-                accessorSymbol, oldExpression.typeArgumentsCount,
+                accessorSymbol as IrSimpleFunctionSymbol, oldExpression.typeArgumentsCount,
                 oldExpression.origin
             )
             is IrDelegatingConstructorCall -> IrDelegatingConstructorCallImpl(
@@ -447,7 +447,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
     private fun modifyGetterExpression(
         oldExpression: IrGetField,
-        accessorSymbol: IrFunctionSymbol
+        accessorSymbol: IrSimpleFunctionSymbol
     ): IrCall {
         val call = IrCallImpl(
             oldExpression.startOffset, oldExpression.endOffset,
@@ -463,7 +463,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
 
     private fun modifySetterExpression(
         oldExpression: IrSetField,
-        accessorSymbol: IrFunctionSymbol
+        accessorSymbol: IrSimpleFunctionSymbol
     ): IrCall {
         val call = IrCallImpl(
             oldExpression.startOffset, oldExpression.endOffset,
