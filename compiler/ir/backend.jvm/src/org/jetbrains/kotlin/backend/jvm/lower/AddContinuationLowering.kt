@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.org.objectweb.asm.Type
 
 internal val addContinuationPhase = makeIrFilePhase(
     ::AddContinuationLowering,
@@ -596,6 +597,16 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
 
                 val result = mutableListOf(view)
                 if (function.body == null || !function.hasContinuation()) return result
+
+                // This is a suspend function inside of SAM adapter.
+                // The attribute of function reference is used for the SAM adapter.
+                // So, we hack new attributes for continuation class.
+                if (function.parentAsClass.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL) {
+                    context.putLocalClassType(
+                        function.attributeOwnerId,
+                        Type.getObjectType("${context.getLocalClassType(function.parentAsClass)!!.internalName}$${function.name}$1")
+                    )
+                }
 
                 if (flag.capturesCrossinline || function.isInline) {
                     result += context.irFactory.buildFun {
