@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.di.configureModule
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassConstructionContext.Mode.EXACT
 import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassConstructionContext.Mode.LIGHT
 import org.jetbrains.kotlin.idea.caches.lightClasses.annotations.KOTLINX_SERIALIZABLE_FQ_NAME
@@ -91,6 +92,7 @@ internal object IDELightClassContexts {
         val bindingContext = if (classOrObject is KtClass && classOrObject.isAnnotation()) {
             // need to make sure default values for parameters are resolved
             // because java resolve depends on whether there is a default value for an annotation attribute
+            @OptIn(FrontendInternals::class)
             resolutionFacade.getFrontendService(ResolveElementCache::class.java)
                 .resolvePrimaryConstructorParametersDefaultValues(classOrObject)
         } else {
@@ -136,6 +138,7 @@ internal object IDELightClassContexts {
 
 
     fun contextForFacade(files: List<KtFile>): LightClassConstructionContext {
+        @OptIn(FrontendInternals::class)
         val resolveSession = files.first().getResolutionFacade().getFrontendService(ResolveSession::class.java)
 
         forceResolvePackageDeclarations(files, resolveSession)

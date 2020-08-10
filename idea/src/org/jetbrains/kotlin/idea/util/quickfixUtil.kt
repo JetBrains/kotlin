@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.idea.resolve.getDataFlowValueFactory
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoAfter
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.ifEmpty
 
@@ -58,7 +58,8 @@ fun getDataFlowAwareTypes(
 ): Collection<KotlinType> {
     if (originalType == null) return emptyList()
     val dataFlowInfo = bindingContext.getDataFlowInfoAfter(expression)
-    val dataFlowValueFactory = expression.getResolutionFacade().frontendService<DataFlowValueFactory>()
+
+    val dataFlowValueFactory = expression.getResolutionFacade().getDataFlowValueFactory()
     val expressionType = bindingContext.getType(expression) ?: return listOf(originalType)
     val dataFlowValue = dataFlowValueFactory.createDataFlowValue(
         expression, expressionType, bindingContext, expression.getResolutionFacade().moduleDescriptor

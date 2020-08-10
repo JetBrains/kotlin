@@ -16,7 +16,8 @@ import org.jetbrains.kotlin.checkers.utils.DiagnosticsRenderingConfiguration
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromTextFile
 import org.jetbrains.kotlin.idea.project.KotlinMultiplatformAnalysisModeComponent
-import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.idea.resolve.getDataFlowValueFactory
+import org.jetbrains.kotlin.idea.resolve.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.allKotlinFiles
@@ -85,9 +86,9 @@ abstract class AbstractMultiModuleIdeResolveTest : AbstractMultiModuleTest() {
             configuration = DiagnosticsRenderingConfiguration(
                 platform = null, // we don't need to attach platform-description string to diagnostic here
                 withNewInference = false,
-                languageVersionSettings = resolutionFacade.frontendService(),
+                languageVersionSettings = resolutionFacade.getLanguageVersionSettings(),
             ),
-            dataFlowValueFactory = resolutionFacade.frontendService(),
+            dataFlowValueFactory = resolutionFacade.getDataFlowValueFactory(),
             moduleDescriptor = moduleDescriptor as ModuleDescriptorImpl
         ).filter { diagnosticsFilter.value(it.diagnostic) }
 
