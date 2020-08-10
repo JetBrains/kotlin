@@ -238,7 +238,7 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
                 if (element is KtElement && !isOnlyKotlinSearch(options.searchScope)) {
                     // TODO: very bad code!! ReferencesSearch does not work correctly for constructors and annotation parameters
                     val psiMethodScopeSearch = when {
-                        element is KtNamedFunction || element is KtParameter && element.dataClassComponentFunction() != null ->
+                        element is KtParameter && element.dataClassComponentFunction() != null ->
                             options.searchScope.excludeKotlinSources()
                         else -> options.searchScope
                     }

@@ -7,3 +7,5 @@ fun foo(): String {
 }
 
 val x = bar
+
+// DISABLE-ERRORS

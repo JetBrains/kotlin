@@ -21,3 +21,4 @@ fun A.foo(s: String) {
 fun X.foo(n: Int) {
 
 }
+// DISABLE-ERRORS

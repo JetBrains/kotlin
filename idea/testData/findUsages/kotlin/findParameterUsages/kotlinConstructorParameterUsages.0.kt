@@ -15,3 +15,5 @@ open class A<T>(<caret>foo: T) {
 fun usage() {
     A(foo = ":)")
 }
+
+// DISABLE-ERRORS

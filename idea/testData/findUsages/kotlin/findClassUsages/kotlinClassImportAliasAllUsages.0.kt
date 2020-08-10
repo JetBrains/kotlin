@@ -55,3 +55,5 @@ fun Any.asServer(): Server? {
     }
     return if (this is Server) this as Server else this as? Server
 }
+
+// DISABLE-ERRORS
