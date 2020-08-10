@@ -3,6 +3,7 @@ package com.jetbrains.mobile.execution.testing
 import com.intellij.execution.Executor
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.testframework.sm.runner.ui.SMTRunnerConsoleView
+import com.intellij.execution.ui.ConsoleView
 import com.jetbrains.cidr.execution.CidrConsoleBuilder
 import com.jetbrains.cidr.execution.testing.CidrRerunFailedTestsAction
 import com.jetbrains.cidr.execution.testing.CidrTestCommandLineState
@@ -31,6 +32,9 @@ class AppleXCTestCommandLineState(
 
     override fun doCreateRerunFailedTestsAction(consoleView: SMTRunnerConsoleView): CidrRerunFailedTestsAction =
         OCRerunFailedTestsAction(consoleView, this)
+
+    override fun createConsole(builder: CidrConsoleBuilder): ConsoleView =
+        builder.createConsole(myConfiguration.type, AppleXCTestConsoleProperties(configuration, executor, environment.executionTarget))
 
     companion object {
         private val EMPTY_TEST_SCOPE_PRODUCER = {

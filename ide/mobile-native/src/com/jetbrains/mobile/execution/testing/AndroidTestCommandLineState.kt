@@ -35,7 +35,7 @@ class AndroidTestCommandLineState(
     init {
         consoleBuilder = object : TextConsoleBuilderImpl(project) {
             override fun createConsole() =
-                SMTestRunnerConnectionUtil.createConsole(configuration.createTestConsoleProperties(environment.executor)).also {
+                SMTestRunnerConnectionUtil.createConsole(AndroidTestConsoleProperties(configuration, environment.executor)).also {
                     Disposer.register(project, it)
                 }
         }
