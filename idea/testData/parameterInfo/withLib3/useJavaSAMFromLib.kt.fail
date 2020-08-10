@@ -1,1 +1,0 @@
-expected:<...ighlight>function: ([number: Int, ss:] String!) -> Unit</h...> but was:<...ighlight>function: ([Int,] String!) -> Unit</h...>
