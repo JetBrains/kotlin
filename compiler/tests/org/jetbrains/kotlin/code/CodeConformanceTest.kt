@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.code
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.systemIndependentPath
 import junit.framework.TestCase
-import org.jetbrains.kotlin.backend.common.pop
-import org.jetbrains.kotlin.backend.common.push
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
@@ -20,45 +18,48 @@ class CodeConformanceTest : TestCase() {
         private val JAVA_FILE_PATTERN = Pattern.compile(".+\\.java")
         private val SOURCES_FILE_PATTERN = Pattern.compile("(.+\\.java|.+\\.kt|.+\\.js)")
         private const val MAX_STEPS_COUNT = 100
-        private val NON_SOURCE_EXCLUDED_FILES_AND_DIRS = listOf(
-            ".git",
-            "build/js",
-            "buildSrc",
-            "compiler/build",
-            "compiler/fir/lightTree/testData",
-            "compiler/testData/psi/kdoc",
-            "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
-            "compiler/util/src/org/jetbrains/kotlin/config/MavenComparableVersion.java",
-            "core/reflection.jvm/src/kotlin/reflect/jvm/internal/pcollections",
-            "dependencies",
-            "dependencies/protobuf/protobuf-relocated/build",
-            "dist",
-            "idea/testData/codeInsight/renderingKDoc",
-            "js/js.tests/.gradle",
-            "js/js.translator/qunit/qunit.js",
-            "js/js.translator/testData/node_modules",
-            "libraries/kotlin.test/js/it/.gradle",
-            "libraries/kotlin.test/js/it/node_modules",
-            "libraries/reflect/api/src/java9/java/kotlin/reflect/jvm/internal/impl",
-            "libraries/reflect/build",
-            "libraries/stdlib/js-ir/.gradle",
-            "libraries/stdlib/js-ir/build",
-            "libraries/stdlib/js-ir-minimal-for-test/.gradle",
-            "libraries/stdlib/js-ir-minimal-for-test/build",
-            "libraries/stdlib/js-v1/.gradle",
-            "libraries/stdlib/js-v1/build",
-            "libraries/tools/binary-compatibility-validator/src/main/kotlin/org.jetbrains.kotlin.tools",
-            "libraries/tools/kotlin-gradle-plugin-core/gradle_api_jar/build/tmp",
-            "libraries/tools/kotlin-js-tests/src/test/web/qunit.js",
-            "libraries/tools/kotlin-maven-plugin/target",
-            "libraries/tools/kotlin-test-js-runner/.gradle",
-            "libraries/tools/kotlin-test-js-runner/lib",
-            "libraries/tools/kotlin-test-js-runner/node_modules",
-            "libraries/tools/kotlin-test-nodejs-runner/.gradle",
-            "libraries/tools/kotlin-test-nodejs-runner/node_modules",
-            "libraries/tools/kotlinp/src",
-            "out"
-        ).map(::File)
+        private val nonSourcesMatcher = FileMatcher(
+            File("."),
+            listOf(
+                ".git",
+                "build/js",
+                "buildSrc",
+                "compiler/build",
+                "compiler/fir/lightTree/testData",
+                "compiler/testData/psi/kdoc",
+                "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
+                "compiler/util/src/org/jetbrains/kotlin/config/MavenComparableVersion.java",
+                "core/reflection.jvm/src/kotlin/reflect/jvm/internal/pcollections",
+                "dependencies",
+                "dependencies/protobuf/protobuf-relocated/build",
+                "dist",
+                "idea/testData/codeInsight/renderingKDoc",
+                "js/js.tests/.gradle",
+                "js/js.translator/qunit/qunit.js",
+                "js/js.translator/testData/node_modules",
+                "libraries/kotlin.test/js/it/.gradle",
+                "libraries/kotlin.test/js/it/node_modules",
+                "libraries/reflect/api/src/java9/java/kotlin/reflect/jvm/internal/impl",
+                "libraries/reflect/build",
+                "libraries/stdlib/js-ir/.gradle",
+                "libraries/stdlib/js-ir/build",
+                "libraries/stdlib/js-ir-minimal-for-test/.gradle",
+                "libraries/stdlib/js-ir-minimal-for-test/build",
+                "libraries/stdlib/js-v1/.gradle",
+                "libraries/stdlib/js-v1/build",
+                "libraries/tools/binary-compatibility-validator/src/main/kotlin/org.jetbrains.kotlin.tools",
+                "libraries/tools/kotlin-gradle-plugin-core/gradle_api_jar/build/tmp",
+                "libraries/tools/kotlin-js-tests/src/test/web/qunit.js",
+                "libraries/tools/kotlin-maven-plugin/target",
+                "libraries/tools/kotlin-test-js-runner/.gradle",
+                "libraries/tools/kotlin-test-js-runner/lib",
+                "libraries/tools/kotlin-test-js-runner/node_modules",
+                "libraries/tools/kotlin-test-nodejs-runner/.gradle",
+                "libraries/tools/kotlin-test-nodejs-runner/node_modules",
+                "libraries/tools/kotlinp/src",
+                "out"
+            )
+        )
 
         private val COPYRIGHT_EXCLUDED_FILES_AND_DIRS = listOf(
             "build",
@@ -125,33 +126,25 @@ class CodeConformanceTest : TestCase() {
 
     fun testForgottenBunchDirectivesAndFiles() {
         val sourceBunchFilePattern = Pattern.compile("(.+\\.java|.+\\.kt|.+\\.js)(\\.\\w+)?")
-        val root = File(".")
-        val nonSourceMatcher = FileMatcher(root, NON_SOURCE_EXCLUDED_FILES_AND_DIRS)
+        val root = nonSourcesMatcher.root
         val extensions = File(root, ".bunch").readLines().map { it.split("_") }.flatten().toSet()
         val failBuilder = mutableListOf<String>()
-        root.walkTopDown()
-            .onEnter { dir ->
-                !nonSourceMatcher.matchExact(dir) // Don't enter to ignored dirs
+        nonSourcesMatcher.walkTopDown(sourceBunchFilePattern).forEach { sourceFile ->
+            val matches = Regex("BUNCH (\\w+)")
+                .findAll(sourceFile.readText())
+                .map { it.groupValues[1] }
+                .toSet()
+                .filterNot { it in extensions }
+            for (bunch in matches) {
+                val filename = FileUtil.toSystemIndependentName(sourceFile.toRelativeString(root))
+                failBuilder.add("$filename has unregistered $bunch bunch directive")
             }
-            .filter { file -> !nonSourceMatcher.matchExact(file) } // filter ignored files
-            .filter { file -> sourceBunchFilePattern.matcher(file.name).matches() }
-            .filter { file -> file.isFile }
-            .forEach { sourceFile ->
-                val matches = Regex("BUNCH (\\w+)")
-                    .findAll(sourceFile.readText())
-                    .map { it.groupValues[1] }
-                    .toSet()
-                    .filterNot { it in extensions }
-                for (bunch in matches) {
-                    val filename = FileUtil.toSystemIndependentName(sourceFile.toRelativeString(root))
-                    failBuilder.add("$filename has unregistered $bunch bunch directive")
-                }
 
-                if (!isCorrectExtension(sourceFile.name, extensions)) {
-                    val filename = FileUtil.toSystemIndependentName(sourceFile.toRelativeString(root))
-                    failBuilder.add("$filename has unknown bunch extension")
-                }
+            if (!isCorrectExtension(sourceFile.name, extensions)) {
+                val filename = FileUtil.toSystemIndependentName(sourceFile.toRelativeString(root))
+                failBuilder.add("$filename has unknown bunch extension")
             }
+        }
 
         if (failBuilder.isNotEmpty()) {
             fail("\n" + failBuilder.joinToString("\n"))
@@ -208,21 +201,12 @@ class CodeConformanceTest : TestCase() {
             }
         )
 
-        val root = File(".")
-        val nonSourceMatcher = FileMatcher(root, NON_SOURCE_EXCLUDED_FILES_AND_DIRS)
-        root.walkTopDown()
-            .onEnter { dir ->
-                !nonSourceMatcher.matchExact(dir) // Don't enter to ignored dirs
+        nonSourcesMatcher.walkTopDown(SOURCES_FILE_PATTERN).forEach { sourceFile ->
+            val source = sourceFile.readText()
+            for (test in tests) {
+                if (test.filter(source)) test.result.add(sourceFile)
             }
-            .filter { file -> !nonSourceMatcher.matchExact(file) } // filter ignored files
-            .filter { file -> SOURCES_FILE_PATTERN.matcher(file.name).matches() }
-            .filter { file -> file.isFile }
-            .forEach { sourceFile ->
-                val source = sourceFile.readText()
-                for (test in tests) {
-                    if (test.filter(source)) test.result.add(sourceFile)
-                }
-            }
+        }
 
         if (tests.flatMap { it.result }.isNotEmpty()) {
             fail(buildString {
@@ -263,7 +247,8 @@ class CodeConformanceTest : TestCase() {
         }
     }
 
-    private class FileMatcher(val root: File, files: Collection<File>) {
+    private class FileMatcher(val root: File, paths: Collection<String>) {
+        private val files = paths.filter { !it.startsWith("*/") }.map(::File)
         private val names = files.mapTo(HashSet()) { it.name }
         private val paths = files.mapTo(HashSet()) { it.systemIndependentPath }
         private val relativePaths = files.filter { it.isDirectory }.mapTo(HashSet()) { it.systemIndependentPath + "/" }
@@ -279,13 +264,22 @@ class CodeConformanceTest : TestCase() {
         }
     }
 
+    private fun FileMatcher.walkTopDown(filePattern: Pattern): Sequence<File> {
+        return root.walkTopDown()
+            .onEnter { dir ->
+                !matchExact(dir) // Don't enter to ignored dirs
+            }
+            .filter { file -> !matchExact(file) } // filter ignored files
+            .filter { file -> filePattern.matcher(file.name).matches() }
+            .filter { file -> file.isFile }
+    }
+
     fun testRepositoriesAbuse() {
         class RepoAllowList(val repo: String, root: File, allowList: Set<String>) {
-            val allowFiles = allowList.map(::File)
-            val matcher = FileMatcher(root, allowFiles)
+            val matcher = FileMatcher(root, allowList)
         }
 
-        val root = File(".")
+        val root = nonSourcesMatcher.root
 
         val repoCheckers = listOf(
             RepoAllowList(
@@ -307,7 +301,8 @@ class CodeConformanceTest : TestCase() {
                     "idea/testData/gradle/packagePrefixImport/packagePrefixNonMPP/build.gradle",
                     "idea/testData/gradle/gradleFacetImportTest/jvmImportWithCustomSourceSets_1_1_2/build.gradle",
                     "idea/testData/gradle/gradleFacetImportTest/jvmImport_1_1_2/build.gradle",
-                    "idea/idea-gradle/tests/org/jetbrains/kotlin/idea/codeInsight/gradle/MultiplePluginVersionGradleImportingTestCase.kt"
+                    "idea/idea-gradle/tests/org/jetbrains/kotlin/idea/codeInsight/gradle/MultiplePluginVersionGradleImportingTestCase.kt",
+                    "idea/testData/perfTest/native/_common/build.gradle.kts.header"
                 )
             ),
             RepoAllowList(
@@ -338,7 +333,8 @@ class CodeConformanceTest : TestCase() {
                     "idea/testData/gradle/configurator/configureJvmEAPWithBuildGradleKts/build.gradle.kts.after",
                     "idea/testData/perfTest/native/_common/settings.gradle.kts",
                     "kotlin-ultimate/gradle/cidrPluginTools.gradle.kts",
-                    "libraries/tools/new-project-wizard/src/org/jetbrains/kotlin/tools/projectWizard/core/service/KotlinVersionProviderService.kt"
+                    "libraries/tools/new-project-wizard/src/org/jetbrains/kotlin/tools/projectWizard/core/service/KotlinVersionProviderService.kt",
+                    "idea/testData/perfTest/native/_common/build.gradle.kts.header"
                 )
             )
         )
@@ -346,20 +342,8 @@ class CodeConformanceTest : TestCase() {
         data class RepoOccurance(val repo: String, val file: File)
         data class RepoOccurrences(val repo: String, val files: Collection<File>)
 
-        val extensions = hashSetOf("java", "kt", "gradle", "kts", "xml", "after")
-        val nonSourceMatcher = FileMatcher(root, NON_SOURCE_EXCLUDED_FILES_AND_DIRS)
-        val traceStack = mutableListOf<Long>()
-        val repoOccurrences: List<RepoOccurrences> = root.walkTopDown()
-            .onEnter { dir ->
-                traceStack.push(System.nanoTime())
-                !nonSourceMatcher.matchExact(dir)
-            } // don't visit dirs
-            .onLeave { dir ->
-                val start = traceStack.pop()
-                println("${dir.path} - ${(System.nanoTime() - start) / 1000}")
-            }
-            .filter { file -> file.extension in extensions && file.isFile }
-            .filter { file -> !nonSourceMatcher.matchExact(file) } // filter ignored files
+        val extensionsPattern = Pattern.compile(".+\\.(java|kt|gradle|kts|xml)(\\.\\w+)?")
+        val repoOccurrences: List<RepoOccurrences> = nonSourcesMatcher.walkTopDown(extensionsPattern)
             .flatMap { file ->
                 val checkers = repoCheckers.filter { checker ->
                     !checker.matcher.matchWithContains(file)
