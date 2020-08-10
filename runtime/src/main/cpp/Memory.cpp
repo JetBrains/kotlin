@@ -35,6 +35,7 @@
 #include "Natives.h"
 #include "Porting.h"
 #include "Runtime.h"
+#include "Utils.h"
 #include "WorkerBoundReference.h"
 
 // If garbage collection algorithm for cyclic garbage to be used.
@@ -131,6 +132,103 @@ volatile int aliveMemoryStatesCount = 0;
 #if USE_CYCLIC_GC
 KBoolean g_hasCyclicCollector = true;
 #endif  // USE_CYCLIC_GC
+
+// TODO: Consider using ObjHolder.
+class ScopedRefHolder {
+ public:
+  ScopedRefHolder() = default;
+
+  explicit ScopedRefHolder(KRef obj);
+
+  ScopedRefHolder(const ScopedRefHolder&) = delete;
+
+  ScopedRefHolder(ScopedRefHolder&& other) noexcept: obj_(other.obj_) {
+    other.obj_ = nullptr;
+  }
+
+  ScopedRefHolder& operator=(const ScopedRefHolder&) = delete;
+
+  ScopedRefHolder& operator=(ScopedRefHolder&& other) noexcept {
+    ScopedRefHolder tmp(std::move(other));
+    swap(tmp);
+    return *this;
+  }
+
+  ~ScopedRefHolder();
+
+  void swap(ScopedRefHolder& other) noexcept {
+    std::swap(obj_, other.obj_);
+  }
+
+ private:
+  KRef obj_ = nullptr;
+};
+
+struct CycleDetectorRootset {
+  // Orders roots.
+  KStdVector<KRef> roots;
+  // Pins a state of each root.
+  KStdUnorderedMap<KRef, KStdVector<KRef>> rootToFields;
+  // Holding roots and their fields to avoid GC-ing them.
+  KStdVector<ScopedRefHolder> heldRefs;
+};
+
+class CycleDetector {
+ public:
+  static void insertCandidateIfNeeded(KRef object) {
+    if (canBeACandidate(object))
+      instance().insertCandidate(object);
+  }
+
+  static void removeCandidateIfNeeded(KRef object) {
+    if (canBeACandidate(object))
+      instance().removeCandidate(object);
+  }
+
+  static CycleDetectorRootset collectRootset();
+
+ private:
+  CycleDetector() = default;
+  ~CycleDetector() = default;
+  CycleDetector(const CycleDetector&) = delete;
+  CycleDetector(CycleDetector&&) = delete;
+  CycleDetector& operator=(const CycleDetector&) = delete;
+  CycleDetector& operator=(CycleDetector&&) = delete;
+
+  static CycleDetector& instance() {
+    // Only store a pointer to CycleDetector in .bss
+    static CycleDetector* result = new CycleDetector();
+    return *result;
+  }
+
+  static bool canBeACandidate(KRef object) {
+    return KonanNeedDebugInfo &&
+        Kotlin_memoryLeakCheckerEnabled() &&
+        (object->type_info()->flags_ & TF_LEAK_DETECTOR_CANDIDATE) != 0;
+  }
+
+  void insertCandidate(KRef candidate) {
+    LockGuard<SimpleMutex> guard(lock_);
+
+    auto it = candidateList_.insert(candidateList_.begin(), candidate);
+    candidateInList_.emplace(candidate, it);
+  }
+
+  void removeCandidate(KRef candidate) {
+    LockGuard<SimpleMutex> guard(lock_);
+
+    auto it = candidateInList_.find(candidate);
+    if (it == candidateInList_.end())
+      return;
+    candidateList_.erase(it->second);
+    candidateInList_.erase(it);
+  }
+
+  SimpleMutex lock_;
+  using CandidateList = KStdList<KRef>;
+  CandidateList candidateList_;
+  KStdUnorderedMap<KRef, CandidateList::iterator> candidateInList_;
+};
 
 // TODO: can we pass this variable as an explicit argument?
 THREAD_LOCAL_VARIABLE MemoryState* memoryState = nullptr;
@@ -967,6 +1065,7 @@ ALWAYS_INLINE void runDeallocationHooks(ContainerHeader* container) {
       cyclicRemoveAtomicRoot(obj);
     }
 #endif  // USE_CYCLIC_GC
+    CycleDetector::removeCandidateIfNeeded(obj);
     if (obj->has_meta_object()) {
       ObjHeader::destroyMetaObject(&obj->typeInfoOrMeta_);
     }
@@ -2036,6 +2135,7 @@ OBJ_GETTER(allocInstance, const TypeInfo* type_info) {
     makeShareable(container.header());
   }
 #endif  // USE_GC
+  CycleDetector::insertCandidateIfNeeded(obj);
 #if USE_CYCLIC_GC
   if ((obj->type_info()->flags_ & TF_LEAK_DETECTOR_CANDIDATE) != 0) {
     // Note: this should be performed after [rememberNewContainer] (above).
@@ -2715,6 +2815,125 @@ void shareAny(ObjHeader* obj) {
   container->makeShared();
 }
 
+ScopedRefHolder::ScopedRefHolder(KRef obj): obj_(obj) {
+  if (obj_) {
+    addHeapRef(obj_);
+  }
+}
+
+ScopedRefHolder::~ScopedRefHolder() {
+  if (obj_) {
+    ReleaseHeapRef(obj_);
+  }
+}
+
+// static
+CycleDetectorRootset CycleDetector::collectRootset() {
+  auto& detector = instance();
+  CycleDetectorRootset rootset;
+  LockGuard<SimpleMutex> guard(detector.lock_);
+  for (auto* candidate: detector.candidateList_) {
+    // Only frozen candidates are to be analyzed.
+    if (!isPermanentOrFrozen(candidate))
+      continue;
+    rootset.roots.push_back(candidate);
+    rootset.heldRefs.emplace_back(candidate);
+    traverseReferredObjects(candidate, [&rootset, candidate](KRef field) {
+      rootset.rootToFields[candidate].push_back(field);
+      // TODO: There's currently a race here:
+      // some other thread might null this field and destroy it in GC before
+      // we put it in ScopedRefHolder.
+      rootset.heldRefs.emplace_back(field);
+    });
+  }
+  return rootset;
+}
+
+KStdVector<KRef> findCycleWithDFS(KRef root, const CycleDetectorRootset& rootset) {
+  auto traverseFields = [&rootset](KRef obj, auto process) {
+    auto it = rootset.rootToFields.find(obj);
+    // If obj is in the rootset, use it's pinned state.
+    if (it != rootset.rootToFields.end()) {
+      const auto& fields = it->second;
+      for (KRef field: fields) {
+        if (field != nullptr) {
+          process(field);
+        }
+      }
+      return;
+    }
+
+    traverseReferredObjects(obj, process);
+  };
+
+  KStdVector<KStdVector<KRef>> toVisit;
+  auto appendFieldsToVisit = [&toVisit, &traverseFields](KRef obj, const KStdVector<KRef>& currentPath) {
+    traverseFields(obj, [&toVisit, &currentPath](KRef field) {
+      auto path = currentPath;
+      path.push_back(field);
+      toVisit.emplace_back(std::move(path));
+    });
+  };
+
+  appendFieldsToVisit(root, KRefList(1, root));
+
+  KStdUnorderedSet<KRef> seen;
+  seen.insert(root);
+  while (!toVisit.empty()) {
+    KStdVector<KRef> currentPath = std::move(toVisit.back());
+    toVisit.pop_back();
+    KRef node = currentPath[currentPath.size() - 1];
+
+    if (node == root) {
+      // Found a cycle.
+      return currentPath;
+    }
+
+    // Already traversed this node.
+    if (seen.count(node) != 0)
+      continue;
+    seen.insert(node);
+
+    appendFieldsToVisit(node, currentPath);
+  }
+
+  return {};
+}
+
+template <typename C>
+OBJ_GETTER(createAndFillArray, const C& container) {
+  auto* result = AllocArrayInstance(theArrayTypeInfo, container.size(), OBJ_RESULT)->array();
+  KRef* place = ArrayAddressOfElementAt(result, 0);
+  for (KRef it: container) {
+    UpdateHeapRef(place++, it);
+  }
+  RETURN_OBJ(result->obj());
+}
+
+OBJ_GETTER0(detectCyclicReferences) {
+  auto rootset = CycleDetector::collectRootset();
+
+  KStdVector<KRef> cyclic;
+
+  for (KRef root: rootset.roots) {
+    if (!findCycleWithDFS(root, rootset).empty()) {
+      cyclic.push_back(root);
+    }
+  }
+
+  RETURN_RESULT_OF(createAndFillArray, cyclic);
+}
+
+OBJ_GETTER(findCycle, KRef root) {
+  auto rootset = CycleDetector::collectRootset();
+
+  auto cycle = findCycleWithDFS(root, rootset);
+  if (cycle.empty()) {
+    RETURN_OBJ(nullptr);
+  }
+  RETURN_RESULT_OF(createAndFillArray, cycle);
+}
+
 }  // namespace
 
 MetaObjHeader* ObjHeader::createMetaObject(TypeInfo** location) {
@@ -3140,6 +3359,15 @@ KBoolean Kotlin_native_internal_GC_getTuneThreshold(KRef) {
 #else
   return false;
 #endif
+}
+
+OBJ_GETTER(Kotlin_native_internal_GC_detectCycles, KRef) {
+  if (!KonanNeedDebugInfo || !Kotlin_memoryLeakCheckerEnabled()) RETURN_OBJ(nullptr);
+  RETURN_RESULT_OF0(detectCyclicReferences);
+}
+
+OBJ_GETTER(Kotlin_native_internal_GC_findCycle, KRef, KRef root) {
+  RETURN_RESULT_OF(findCycle, root);
 }
 
 KNativePtr CreateStablePointer(KRef any) {

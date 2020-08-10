@@ -100,6 +100,20 @@ object GC {
         get() = getCyclicCollectorEnabled()
         set(value) = setCyclicCollectorEnabled(value)
 
+    /**
+     * Detect cyclic references going via atomic references and return list of cycle-inducing objects
+     * or `null` if the leak detector is not available. Use [Platform.isMemoryLeakCheckerActive] to check
+     * leak detector availability.
+     */
+    @SymbolName("Kotlin_native_internal_GC_detectCycles")
+    external fun detectCycles(): Array<Any>?
+
+    /**
+     * Find a reference cycle including from the given object, `null` if no cycles detected.
+     */
+    @SymbolName("Kotlin_native_internal_GC_findCycle")
+    external fun findCycle(root: Any): Array<Any>?
+
     @SymbolName("Kotlin_native_internal_GC_getThreshold")
     private external fun getThreshold(): Int
 

@@ -2824,6 +2824,12 @@ task memory_stable_ref_cross_thread_check(type: KonanLocalTest) {
     source = "runtime/memory/stable_ref_cross_thread_check.kt"
 }
 
+standaloneTest("cycle_detector") {
+    disabled = project.globalTestArgs.contains('-opt') || (project.testTarget == 'wasm32') // Needs debug build.
+    flags = ['-tr', '-g']
+    source = "runtime/memory/cycle_detector.kt"
+}
+
 standaloneTest("cycle_collector") {
     disabled = true // Needs USE_CYCLIC_GC, which is disabled.
     flags = ['-g']
