@@ -7,8 +7,8 @@ import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.testframework.sm.runner.history.ImportedTestRunnableState
 import com.intellij.execution.ui.RunContentDescriptor
-import com.jetbrains.cidr.execution.CidrCommandLineState
 import com.jetbrains.cidr.execution.CidrRunner
+import com.jetbrains.mobile.execution.testing.AppleXCTestCommandLineState
 
 class MobileRunner : CidrRunner() {
     override fun getRunnerId(): String = "MobileRunner"
@@ -27,9 +27,13 @@ class MobileRunner : CidrRunner() {
         val devices = (environment.runProfile as MobileRunConfigurationBase).executionTargets
         val isDebug = environment.executor.id == DefaultDebugExecutor.EXECUTOR_ID
 
-        val device = devices.single()
-        if (device is AppleDevice && (isDebug || device is ApplePhysicalDevice)) {
-            return startDebugSession(state as CidrCommandLineState, environment, !isDebug).runContentDescriptor
+        if (isDebug) {
+            val device = devices.single()
+            if (device is AppleDevice) {
+                val commandLineState = (state as CompositeCommandLineState)
+                    .states.filterIsInstance<AppleXCTestCommandLineState>().first()
+                return startDebugSession(commandLineState, environment, false).runContentDescriptor
+            }
         }
         return super.doExecute(state, environment)
     }
