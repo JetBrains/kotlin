@@ -3,90 +3,85 @@ package com.jetbrains.kotlin.structuralsearch
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.psi.impl.DebugUtil
 import com.intellij.structuralsearch.StructuralReplaceHandler
 import com.intellij.structuralsearch.impl.matcher.MatcherImplUtil
 import com.intellij.structuralsearch.impl.matcher.PatternTreeContext
 import com.intellij.structuralsearch.plugin.replace.ReplaceOptions
 import com.intellij.structuralsearch.plugin.replace.ReplacementInfo
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.isAbstract
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 
 class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHandler() {
     override fun replace(info: ReplacementInfo, options: ReplaceOptions) {
+        val searchTemplate = MatcherImplUtil.createTreeFromText(
+            options.matchOptions.searchPattern, PatternTreeContext.Block, options.matchOptions.fileType, project
+        ).first()
         val replaceTemplate = MatcherImplUtil.createTreeFromText(
             info.replacement, PatternTreeContext.Block, options.matchOptions.fileType, project
         ).first()
-        val match = info.getMatch(0) ?: throw IllegalStateException(KSSRBundle.message("error.no.match.found"))
-        replaceTemplate.structuralReplace(match)
+        replaceTemplate.structuralReplace(searchTemplate, info.matchResult.match)
         CodeStyleManager.getInstance(project).reformat(replaceTemplate)
         (0 until info.matchesCount).mapNotNull(info::getMatch).forEach { it.replace(replaceTemplate) }
     }
 
     // TODO add more language constructs
-    private fun PsiElement.structuralReplace(match: PsiElement): PsiElement = when(this) {
-        is KtClass -> replaceClass(match)
-        is KtObjectDeclaration -> replaceObject(match)
-        else -> match
+    private fun PsiElement.structuralReplace(searchTemplate: PsiElement, match: PsiElement): PsiElement {
+        if(searchTemplate is KtDeclaration && this is KtDeclaration && match is KtDeclaration) {
+            replaceDeclaration(searchTemplate, match)
+            if(this is KtClassOrObject) replaceClassOrObject(searchTemplate, match)
+            if(this is KtNamedFunction) replaceNamedFunction(searchTemplate, match)
+        } else if (searchTemplate is KtExpression && this is KtExpression && match is KtExpression) {
+            if(this is KtNamedFunction) replaceNamedFunction(searchTemplate, match)
+        } else throw IllegalStateException(
+            "Search template, replace template and match should either all be expressions or declarations."
+        )
+        return this
     }
 
-    private fun KtClass.replaceClass(match: PsiElement): PsiElement {
+    private fun KtDeclaration.replaceDeclaration(searchTemplate: KtDeclaration, match: KtDeclaration): PsiElement {
+        fun KtDeclaration.replaceVisibilityModifiers(searchTemplate: KtDeclaration, match: KtDeclaration): PsiElement {
+            if(visibilityModifierType() == null && searchTemplate.visibilityModifierType() == null) {
+                match.visibilityModifierType()?.let(this::addModifier)
+            }
+            return this
+        }
+
+        fun KtModifierListOwner.replaceModifier(
+            searchTemplate: KtModifierListOwner,
+            match: KtModifierListOwner,
+            modifier: KtModifierKeywordToken
+        ) {
+            if(!hasModifier(modifier) && match.hasModifier(modifier) && !searchTemplate.hasModifier(modifier)) {
+                addModifier(modifier)
+            }
+        }
+
+        replaceVisibilityModifiers(searchTemplate, match)
+        replaceModifier(searchTemplate, match, KtTokens.DATA_KEYWORD)
+        replaceModifier(searchTemplate, match, KtTokens.ENUM_KEYWORD)
+        replaceModifier(searchTemplate, match, KtTokens.INNER_KEYWORD)
+        replaceModifier(searchTemplate, match, KtTokens.SEALED_KEYWORD)
+        replaceModifier(searchTemplate, match, KtTokens.ABSTRACT_KEYWORD)
+        return this
+    }
+
+    private fun KtClassOrObject.replaceClassOrObject(searchTemplate: KtDeclaration, match: KtDeclaration) : PsiElement {
+        if(searchTemplate is KtClassOrObject && match is KtClassOrObject) {
+            if(primaryConstructor == null && searchTemplate.primaryConstructor == null) match.primaryConstructor?.let(this::add)
+            if(getSuperTypeList() == null && searchTemplate.getSuperTypeList() == null) match.superTypeListEntries.forEach {
+                addSuperTypeListEntry(it)
+            }
+            if(body == null && searchTemplate.body == null) match.body?.let(this::add)
+        }
+        return this
+    }
+
+    private fun KtNamedFunction.replaceNamedFunction(searchTemplate: PsiElement, match: PsiElement): PsiElement {
         check(match is KtDeclaration) {
-            KSSRBundle.message("error.can.t.replace.klass.0.by.1.because.it.is.not.a.declaration", text, match.text)
-        }
-        if(match !is KtClass) return replaceDeclaration(match)
-
-        fun KtClass.replaceModifiers() {
-            if(!isData() && match.isData()) addModifier(KtTokens.DATA_KEYWORD)
-            if(!isEnum() && match.isEnum()) addModifier(KtTokens.ENUM_KEYWORD)
-            if(!isInner() && match.isInner()) addModifier(KtTokens.INNER_KEYWORD)
-            if(!isSealed() && match.isSealed()) addModifier(KtTokens.SEALED_KEYWORD)
-            if(!isAbstract() && match.isAbstract()) addModifier(KtTokens.ABSTRACT_KEYWORD)
-        }
-        replaceClassOrObject(match)
-        replaceModifiers()
-        return this
-    }
-
-    private fun KtObjectDeclaration.replaceObject(match: PsiElement): PsiElement {
-        replaceClassOrObject(match)
-        return this
-    }
-
-    private fun KtClassOrObject.replaceClassOrObject(match: PsiElement) : PsiElement {
-        check(match is KtDeclaration) {
-            KSSRBundle.message("error.can.t.replace.klass.0.by.1.because.it.is.not.a.declaration", text, match.text)
-        }
-        if(match !is KtClassOrObject) return replaceDeclaration(match)
-
-        fun KtClassOrObject.replacePrimaryConstructor() {
-            if(primaryConstructor == null) match.primaryConstructor?.let(this::add)
-        }
-
-        fun KtClassOrObject.replaceSuperTypeList() {
-            if(getSuperTypeList() == null) match.superTypeListEntries.forEach { addSuperTypeListEntry(it) }
-        }
-
-        fun KtClassOrObject.replaceBody() {
-            if(body == null) match.body?.let(this::add)
-        }
-
-        replaceDeclaration(match)
-        replacePrimaryConstructor()
-        replaceSuperTypeList()
-        replaceBody()
-        return this
-    }
-    
-    private fun KtDeclaration.replaceDeclaration(match: KtDeclaration): PsiElement {
-        replaceVisibilityModifiers(match)
-        return this
-    }
-    
-    private fun KtDeclaration.replaceVisibilityModifiers(match: KtDeclaration): PsiElement {
-        if(visibilityModifierType() == null) {
-            match.visibilityModifierType()?.let(this::addModifier)
+            "Can't replace klass $text by ${match.text} because it is not a declaration."
         }
         return this
     }
