@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
@@ -21,7 +20,7 @@ import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.getLeftMostReceiverExpression
 import org.jetbrains.kotlin.idea.intentions.replaceFirstReceiver
-import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler
+import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlinePropertyHandler
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.frontendService
@@ -153,7 +152,7 @@ fun KtNameReferenceExpression.inlineIfDeclaredLocallyAndOnlyUsedOnce(editor: Edi
     if (references.size == 1) {
         if (!ApplicationManager.getApplication().isUnitTestMode) {
             ApplicationManager.getApplication().invokeLater {
-                val handler = KotlinInlineValHandler(withPrompt)
+                val handler = KotlinInlinePropertyHandler(withPrompt)
                 if (declaration.isValid && handler.canInlineElement(declaration)) {
                     TransactionGuard.getInstance().submitTransactionAndWait {
                         handler.inlineElement(this.project, editor, declaration)
@@ -161,7 +160,7 @@ fun KtNameReferenceExpression.inlineIfDeclaredLocallyAndOnlyUsedOnce(editor: Edi
                 }
             }
         } else {
-            KotlinInlineValHandler(withPrompt).inlineElement(this.project, editor, declaration)
+            KotlinInlinePropertyHandler(withPrompt).inlineElement(this.project, editor, declaration)
         }
     }
 }

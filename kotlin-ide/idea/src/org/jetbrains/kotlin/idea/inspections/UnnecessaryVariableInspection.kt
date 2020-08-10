@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
-import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineValHandler
+import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlinePropertyHandler
 import org.jetbrains.kotlin.idea.util.nameIdentifierTextRangeInThis
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
@@ -56,7 +56,7 @@ class UnnecessaryVariableInspection : AbstractApplicabilityBasedInspection<KtPro
     override val startFixInWriteAction = false
 
     override fun applyTo(element: KtProperty, project: Project, editor: Editor?) {
-        KotlinInlineValHandler(withPrompt = false).inlineElement(project, editor, element)
+        KotlinInlinePropertyHandler(withPrompt = false).inlineElement(project, editor, element)
     }
 
     companion object {

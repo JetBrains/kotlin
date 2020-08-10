@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtWhenExpression
 
-class KotlinInlineValDialog(
+class KotlinInlinePropertyDialog(
     property: KtProperty,
     reference: KtSimpleNameReference?,
     private val assignmentToDelete: KtBinaryExpression?,
@@ -59,9 +59,7 @@ class KotlinInlineValDialog(
 
     fun shouldBeShown() = !simpleLocal || EditorSettingsExternalizable.getInstance().isShowInlineLocalDialog
 
-    override fun doHelpAction() =
-        HelpManager.getInstance().invokeHelp(HelpID.INLINE_VARIABLE)
-
+    override fun doHelpAction() = HelpManager.getInstance().invokeHelp(HelpID.INLINE_VARIABLE)
 
     override fun isInlineThis() = KotlinRefactoringSettings.instance.INLINE_LOCAL_THIS
 

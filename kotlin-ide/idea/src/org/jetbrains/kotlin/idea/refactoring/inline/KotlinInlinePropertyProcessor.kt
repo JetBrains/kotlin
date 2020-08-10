@@ -85,7 +85,7 @@ class KotlinInlinePropertyProcessor(
             val initializer = initializerOrNull
             if (initializer != null) return initializer
 
-            KotlinInlineValHandler.showErrorHint(project, editor, error)
+            KotlinInlinePropertyHandler.showErrorHint(project, editor, error)
             return null
         }
 
