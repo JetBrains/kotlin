@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.types
 
+import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.idea.frontend.api.*
@@ -45,6 +46,8 @@ internal interface KtFirType : KtType, ValidityTokenOwner {
         )
     }
 
+    override val isBuiltInFunctionalType: Boolean
+        get() = coneType.isBuiltinFunctionalType(typeCheckerContext.session)
 }
 
 internal class KtFirClassType(
