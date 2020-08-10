@@ -68,13 +68,26 @@ private class VariableLookupElementFactory {
 private class FunctionLookupElementFactory {
     fun createLookup(symbol: KtFunctionSymbol): LookupElementBuilder {
         return LookupElementBuilder.create(UniqueLookupObject(), symbol.name.asString())
-            .appendTailText(ShortNamesRenderer.renderFunctionParameters(symbol), true)
+            .withTailText(getTailText(symbol), true)
             .withTypeText(ShortNamesRenderer.renderType(symbol.type))
             .withInsertHandler(createInsertHandler(symbol))
     }
 
+    private fun getTailText(symbol: KtFunctionSymbol): String {
+        return if (insertLambdaBraces(symbol)) " {...}" else ShortNamesRenderer.renderFunctionParameters(symbol)
+    }
+
+    private fun insertLambdaBraces(symbol: KtFunctionSymbol): Boolean {
+        val singleParam = symbol.valueParameters.singleOrNull()
+        return singleParam != null && !singleParam.hasDefaultValue && singleParam.type.isBuiltInFunctionalType
+    }
+
     private fun createInsertHandler(symbol: KtFunctionSymbol): InsertHandler<LookupElement> {
-        return FunctionInsertionHandler(symbol.name, inputValueArguments = symbol.valueParameters.isNotEmpty())
+        return FunctionInsertionHandler(
+            symbol.name,
+            inputValueArguments = symbol.valueParameters.isNotEmpty(),
+            insertEmptyLambda = insertLambdaBraces(symbol)
+        )
     }
 }
 
@@ -83,7 +96,8 @@ private class FunctionLookupElementFactory {
  */
 private class FunctionInsertionHandler(
     name: Name,
-    private val inputValueArguments: Boolean
+    private val inputValueArguments: Boolean,
+    private val insertEmptyLambda: Boolean
 ) : QuotedNamesAwareInsertionHandler(name) {
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         super.handleInsert(context, item)
@@ -109,8 +123,7 @@ private class FunctionInsertionHandler(
         val isSmartEnterCompletion = completionChar == Lookup.COMPLETE_STATEMENT_SELECT_CHAR
         val isReplaceCompletion = completionChar == Lookup.REPLACE_SELECT_CHAR
 
-        val openingBracket = '('
-        val closingBracket = ')'
+        val (openingBracket, closingBracket) = if (insertEmptyLambda) '{' to '}' else '(' to ')'
 
         if (isReplaceCompletion) {
             val offset1 = chars.skipSpaces(offset)
@@ -132,10 +145,18 @@ private class FunctionInsertionHandler(
         var closeBracketOffset = openingBracketOffset?.let { chars.indexOfSkippingSpace(closingBracket, it + 1) }
 
         if (openingBracketOffset == null) {
-            if (isSmartEnterCompletion) {
-                document.insertString(offset, "(")
+            if (insertEmptyLambda) {
+                if (completionChar == ' ' || completionChar == '{') {
+                    context.setAddCompletionChar(false)
+                }
+
+                document.insertString(offset, " {}")
             } else {
-                document.insertString(offset, "()")
+                if (isSmartEnterCompletion) {
+                    document.insertString(offset, "(")
+                } else {
+                    document.insertString(offset, "()")
+                }
             }
             context.commitDocument()
 
@@ -154,7 +175,7 @@ private class FunctionInsertionHandler(
     private fun shouldPlaceCaretInBrackets(completionChar: Char): Boolean {
         if (completionChar == ',' || completionChar == '.' || completionChar == '=') return false
         if (completionChar == '(') return true
-        return inputValueArguments
+        return inputValueArguments || insertEmptyLambda
     }
 }
 
