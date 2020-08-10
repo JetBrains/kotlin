@@ -254,14 +254,14 @@ public class ClassFileFactory implements OutputFileCollection {
     public PackageCodegen forPackage(@NotNull FqName fqName, @NotNull Collection<KtFile> files) {
         assert !isDone : "Already done!";
         registerSourceFiles(files);
-        return state.getCodegenFactory().createPackageCodegen(state, files, fqName);
+        return new PackageCodegenImpl(state, files, fqName);
     }
 
     @NotNull
     public MultifileClassCodegen forMultifileClass(@NotNull FqName facadeFqName, @NotNull Collection<KtFile> files) {
         assert !isDone : "Already done!";
         registerSourceFiles(files);
-        return state.getCodegenFactory().createMultifileClassCodegen(state, files, facadeFqName);
+        return new MultifileClassCodegenImpl(state, files, facadeFqName);
     }
 
     private void registerSourceFiles(Collection<KtFile> files) {
