@@ -30,9 +30,7 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtProperty
 
-class KotlinInlineValHandler(private val withPrompt: Boolean) : KotlinInlineActionHandler() {
-    constructor() : this(withPrompt = true)
-
+class KotlinInlineValHandler(private val withPrompt: Boolean = true) : KotlinInlineActionHandler() {
     override fun canInlineKotlinElement(element: KtElement): Boolean = element is KtProperty && element.name != null
 
     @Nls
