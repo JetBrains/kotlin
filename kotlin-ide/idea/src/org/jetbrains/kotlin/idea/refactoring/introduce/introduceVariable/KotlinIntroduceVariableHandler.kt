@@ -14,6 +14,7 @@ import com.intellij.openapi.command.impl.StartMarkAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
@@ -391,7 +392,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
         return null
     }
 
-    private fun showErrorHint(project: Project, editor: Editor?, message: String) {
+    private fun showErrorHint(project: Project, editor: Editor?, @NlsContexts.DialogMessage message: String) {
         CommonRefactoringUtil.showErrorHint(project, editor, message, INTRODUCE_VARIABLE, HelpID.INTRODUCE_VARIABLE)
     }
 

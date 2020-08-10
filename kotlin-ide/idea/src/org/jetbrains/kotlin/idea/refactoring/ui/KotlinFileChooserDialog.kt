@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.refactoring.ui
 import com.intellij.ide.util.AbstractTreeClassChooserDialog
 import com.intellij.ide.util.gotoByName.GotoFileModel
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.projectView.KtClassOrObjectTreeNode
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import javax.swing.tree.DefaultMutableTreeNode
 
 class KotlinFileChooserDialog(
-    title: String,
+    @NlsContexts.DialogTitle title: String,
     project: Project
 ) : AbstractTreeClassChooserDialog<KtFile>(
     title,

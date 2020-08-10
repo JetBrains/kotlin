@@ -51,7 +51,7 @@ import org.jetbrains.kotlin.utils.ifEmpty
 class CopyKotlinDeclarationsHandler : CopyHandlerDelegateBase() {
     companion object {
 
-        private val commandName = RefactoringBundle.message("copy.handler.copy.files.directories")
+        private val commandName get() = RefactoringBundle.message("copy.handler.copy.files.directories")
 
         private val isUnitTestMode get() = ApplicationManager.getApplication().isUnitTestMode
 

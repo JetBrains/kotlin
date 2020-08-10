@@ -73,7 +73,7 @@ public class MoveKotlinNestedClassesDialog extends RefactoringDialog {
 
         init();
 
-        setTitle(MoveHandler.REFACTORING_NAME);
+        setTitle(MoveHandler.getRefactoringName());
 
         initClassChooser(targetClass);
 

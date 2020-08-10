@@ -14,6 +14,7 @@ import com.intellij.psi.PsiNamedElement
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
+import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor

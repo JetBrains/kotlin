@@ -10,11 +10,13 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementFactory
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiType
 import com.intellij.refactoring.BaseRefactoringProcessor
+import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.changeSignature.*
 import com.intellij.refactoring.util.CanonicalTypes
 import com.intellij.util.VisibilityUtil
@@ -68,16 +70,19 @@ class KotlinChangeSignature(
     callableDescriptor: CallableDescriptor,
     val configuration: KotlinChangeSignatureConfiguration,
     val defaultValueContext: PsiElement,
-    commandName: String?
-) : CallableRefactoring<CallableDescriptor>(project, callableDescriptor, commandName ?: ChangeSignatureHandler.REFACTORING_NAME) {
+    @NlsContexts.Command commandName: String?
+) : CallableRefactoring<CallableDescriptor>(
+    project,
+    callableDescriptor,
+    commandName ?: RefactoringBundle.message("changeSignature.refactoring.name")
+) {
 
     private val LOG = Logger.getInstance(KotlinChangeSignature::class.java)
 
     override fun forcePerformForSelectedFunctionOnly() = configuration.forcePerformForSelectedFunctionOnly()
 
     private fun runSilentRefactoring(descriptor: KotlinMethodDescriptor) {
-        val baseDeclaration = descriptor.baseDeclaration
-        val processor = when (baseDeclaration) {
+        val processor = when (val baseDeclaration = descriptor.baseDeclaration) {
             is KtFunction, is KtClass -> KotlinChangeSignatureDialog.createRefactoringProcessorForSilentChangeSignature(
                 project,
                 commandName,

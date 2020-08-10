@@ -12,6 +12,7 @@ import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.psi.*
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.move.moveMembers.MoveMemberHandler
@@ -714,7 +715,7 @@ internal fun logFusForMoveRefactoring(
 
 internal fun <T> List<KtNamedDeclaration>.mapWithReadActionInProcess(
     project: Project,
-    title: String,
+    @NlsContexts.DialogTitle title: String,
     body: (KtNamedDeclaration) -> T
 ): List<T> = let { declarations ->
     val result = mutableListOf<T>()

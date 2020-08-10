@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.memberInfo
 
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.refactoring.ui.AbstractMemberSelectionPanel
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.ui.SeparatorFactory
@@ -12,7 +13,7 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.awt.BorderLayout
 
 class KotlinMemberSelectionPanel(
-    title: String,
+    @NlsContexts.DialogTitle title: String,
     memberInfo: List<KotlinMemberInfo>,
     abstractColumnHeader: String?
 ) : AbstractMemberSelectionPanel<KtNamedDeclaration, KotlinMemberInfo>() {

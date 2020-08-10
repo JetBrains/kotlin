@@ -22,6 +22,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.searches.OverridingMethodsSearch
 import com.intellij.refactoring.RefactoringBundle
@@ -49,7 +50,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 abstract class CallableRefactoring<out T : CallableDescriptor>(
     val project: Project,
     val callableDescriptor: T,
-    val commandName: String
+    @NlsContexts.Command val commandName: String
 ) {
     private val LOG = Logger.getInstance(CallableRefactoring::class.java)
 
@@ -117,18 +118,18 @@ abstract class CallableRefactoring<out T : CallableDescriptor>(
         }
 
         fun performForWholeHierarchy(dialogButtons: List<String>, code: Int): Boolean {
-            return buttonPressed(code, dialogButtons, Messages.YES_BUTTON) || buttonPressed(code, dialogButtons, Messages.OK_BUTTON)
+            return buttonPressed(code, dialogButtons, Messages.getYesButton()) || buttonPressed(code, dialogButtons, Messages.getOkButton())
         }
 
         fun performForSelectedFunctionOnly(dialogButtons: List<String>, code: Int): Boolean {
-            return buttonPressed(code, dialogButtons, Messages.NO_BUTTON)
+            return buttonPressed(code, dialogButtons, Messages.getNoButton())
         }
 
         fun buildDialogOptions(isSingleFunctionSelected: Boolean): List<String> {
             return if (isSingleFunctionSelected) {
-                arrayListOf(Messages.YES_BUTTON, Messages.NO_BUTTON, Messages.CANCEL_BUTTON)
+                arrayListOf(Messages.getYesButton(), Messages.getNoButton(), Messages.getCancelButton())
             } else {
-                arrayListOf(Messages.OK_BUTTON, Messages.CANCEL_BUTTON)
+                arrayListOf(Messages.getOkButton(), Messages.getCancelButton())
             }
         }
 

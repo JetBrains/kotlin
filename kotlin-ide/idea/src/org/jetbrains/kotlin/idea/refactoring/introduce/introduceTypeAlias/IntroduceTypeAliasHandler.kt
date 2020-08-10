@@ -14,6 +14,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.refactoring.RefactoringActionHandler
+import org.jetbrains.annotations.Nls
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils.ElementKind.TYPE_CONSTRUCTOR
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils.ElementKind.TYPE_ELEMENT
@@ -32,8 +33,8 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 
 open class KotlinIntroduceTypeAliasHandler : RefactoringActionHandler {
     companion object {
-        @JvmField
-        val REFACTORING_NAME = KotlinBundle.message("name.introduce.type.alias")
+        @JvmStatic
+        val REFACTORING_NAME get() = KotlinBundle.message("name.introduce.type.alias")
 
         val INSTANCE = KotlinIntroduceTypeAliasHandler()
     }

@@ -75,7 +75,7 @@ public class KotlinIntroduceTypeAliasDialog extends DialogWrapper {
         this.onAccept = onAccept;
 
         setModal(true);
-        setTitle(KotlinIntroduceTypeAliasHandler.REFACTORING_NAME);
+        setTitle(KotlinIntroduceTypeAliasHandler.getREFACTORING_NAME());
         init();
         update();
     }

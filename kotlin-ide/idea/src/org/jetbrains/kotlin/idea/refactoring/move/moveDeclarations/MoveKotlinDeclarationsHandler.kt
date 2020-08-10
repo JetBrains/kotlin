@@ -22,6 +22,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.psi.*
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.move.MoveCallback
@@ -32,7 +33,6 @@ import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.getPackage
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
 import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinAwareMoveFilesOrDirectoriesDialog
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinSelectNestedClassRefactoringDialog
@@ -49,7 +49,13 @@ import java.util.*
 
 private val defaultHandlerActions = object : MoveKotlinDeclarationsHandlerActions {
 
-    override fun showErrorHint(project: Project, editor: Editor?, message: String, title: String, helpId: String?) {
+    override fun showErrorHint(
+        project: Project,
+        editor: Editor?,
+        @NlsContexts.DialogMessage message: String,
+        @NlsContexts.DialogTitle title: String,
+        helpId: String?
+    ) {
         CommonRefactoringUtil.showErrorHint(project, editor, message, title, helpId)
     }
 
@@ -175,8 +181,10 @@ class MoveKotlinDeclarationsHandler internal constructor(private val handlerActi
             if (!ApplicationManager.getApplication().isUnitTestMode &&
                 elementsToSearch.any { it.isExpectDeclaration() || it.isEffectivelyActual() }
             ) {
-                val message = RefactoringBundle.getCannotRefactorMessage(KotlinBundle.message("text.move.declaration.proceed.move.without.mpp.counterparts.text"))
-                val title = RefactoringBundle.getCannotRefactorMessage(KotlinBundle.message("text.move.declaration.proceed.move.without.mpp.counterparts.title"))
+                val message =
+                    RefactoringBundle.getCannotRefactorMessage(KotlinBundle.message("text.move.declaration.proceed.move.without.mpp.counterparts.text"))
+                val title =
+                    RefactoringBundle.getCannotRefactorMessage(KotlinBundle.message("text.move.declaration.proceed.move.without.mpp.counterparts.title"))
                 val proceedWithIncompleteRefactoring = Messages.showYesNoDialog(project, message, title, Messages.getWarningIcon())
                 if (proceedWithIncompleteRefactoring != Messages.YES) return true
             }

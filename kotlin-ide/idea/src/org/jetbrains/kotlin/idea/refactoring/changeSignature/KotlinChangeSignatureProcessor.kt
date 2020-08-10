@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.RefactoringBundle
@@ -44,7 +45,7 @@ import java.util.*
 class KotlinChangeSignatureProcessor(
     project: Project,
     changeInfo: KotlinChangeInfo,
-    private val commandName: String
+    @NlsContexts.Command private val commandName: String
 ) : ChangeSignatureProcessorBase(project, KotlinChangeInfoWrapper(changeInfo)) {
     init {
         // we must force collecting references to other parameters now before the signature is changed

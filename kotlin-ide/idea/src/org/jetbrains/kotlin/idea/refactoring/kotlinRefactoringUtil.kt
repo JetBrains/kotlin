@@ -29,6 +29,7 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.popup.*
 import com.intellij.openapi.util.Computable
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.openapi.util.Pass
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
@@ -682,7 +683,7 @@ internal abstract class CompositeRefactoringRunner(
 }
 
 @Throws(ConfigurationException::class)
-fun KtElement?.validateElement(errorMessage: String) {
+fun KtElement?.validateElement(@NlsContexts.DialogMessage errorMessage: String) {
     if (this == null) throw ConfigurationException(errorMessage)
 
     try {

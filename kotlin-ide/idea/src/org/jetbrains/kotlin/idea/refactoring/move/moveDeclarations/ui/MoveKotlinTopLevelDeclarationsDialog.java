@@ -119,7 +119,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         this.initialTargetDirectory = targetDirectory;
 
 
-        setTitle(MoveHandler.REFACTORING_NAME);
+        setTitle(MoveHandler.getRefactoringName());
 
         List<KtNamedDeclaration> allDeclarations = getAllDeclarations(sourceFiles);
 

@@ -18,6 +18,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.NlsContexts;
 import com.intellij.openapi.util.Pass;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDirectory;
@@ -78,7 +79,7 @@ public class CreateKotlinClassDialog extends DialogWrapper {
   @NonNls private static final String RECENTS_KEY = "CreateKotlinClassDialog.RecentsKey";
 
   public CreateKotlinClassDialog(@NotNull Project project,
-                           @NotNull String title,
+                           @NotNull @NlsContexts.DialogTitle String title,
                            @NotNull String targetClassName,
                            @NotNull String targetPackageName,
                            @NotNull ClassKind kind,

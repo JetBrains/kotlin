@@ -165,7 +165,7 @@ internal class MoveKotlinTopLevelDeclarationsModel(
         }
 
         val targetDirectoryPath = targetFile.toPath().parent
-            ?: throw ConfigurationException("Incorrect target path. Directory is not specified.")
+            ?: throw ConfigurationException(KotlinBundle.message("dialog.message.incorrect.target.path.directory.not.specified"))
 
         val projectBasePath = project.basePath
             ?: throw ConfigurationException(KotlinBundle.message("text.cannot.move.for.current.project"))
@@ -203,7 +203,7 @@ internal class MoveKotlinTopLevelDeclarationsModel(
 
         if (elementsToMove.isEmpty()) throw ConfigurationException(KotlinBundle.message("text.at.least.one.file.must.be.selected"))
 
-        if (sourceFiles.isEmpty()) throw ConfigurationException("None elements were selected")
+        if (sourceFiles.isEmpty()) throw ConfigurationException(KotlinBundle.message("dialog.message.none.elements.were.selected"))
         if (singleSourceFileMode && fileNameInPackage.isBlank()) throw ConfigurationException(KotlinBundle.message("text.file.name.cannot.be.empty"))
 
         if (isMoveToPackage) {
@@ -309,7 +309,7 @@ internal class MoveKotlinTopLevelDeclarationsModel(
         val target = if (isMoveToPackage) selectMoveTargetToPackage() else selectMoveTargetToFile()
 
         val elementsWithMPPIfNeeded = if (elementsToMoveHasMPP)
-            elementsToMove.mapWithReadActionInProcess(project, MoveHandler.REFACTORING_NAME) {
+            elementsToMove.mapWithReadActionInProcess(project, MoveHandler.getRefactoringName()) {
                 it.collectAllExpectAndActualDeclaration()
             }.flatten().filterIsInstance<KtNamedDeclaration>()
         else elementsToMove

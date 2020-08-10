@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.idea.refactoring.rename
 
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.rename.UnresolvableCollisionUsageInfo
 
 class BasicUnresolvableCollisionUsageInfo(
     element: PsiElement,
     referencedElement: PsiElement,
-    private val _description: String
+    @NlsContexts.DialogMessage private val _description: String
 ) : UnresolvableCollisionUsageInfo(element, referencedElement) {
     override fun getDescription() = _description
 }

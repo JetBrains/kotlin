@@ -12,6 +12,7 @@ import com.intellij.refactoring.RefactoringBundle
 import com.intellij.usageView.UsageViewBundle
 import com.intellij.usageView.UsageViewDescriptor
 import com.intellij.usageView.UsageViewUtil
+import org.jetbrains.annotations.Nls
 import org.jetbrains.kotlin.idea.KotlinBundle
 
 internal class MoveFilesWithDeclarationsViewDescriptor(
@@ -19,6 +20,7 @@ internal class MoveFilesWithDeclarationsViewDescriptor(
     newParent: PsiDirectory
 ) : UsageViewDescriptor {
     private var myProcessedElementsHeader: String? = null
+    @Nls
     private val myCodeReferencesText: String
 
     init {

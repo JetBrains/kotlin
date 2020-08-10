@@ -128,7 +128,8 @@ class KotlinChangeSignatureHandler : ChangeSignatureHandler {
                         project,
                         editor,
                         message,
-                        ChangeSignatureHandler.REFACTORING_NAME, "refactoring.changeSignature"
+                        RefactoringBundle.message("changeSignature.refactoring.name"),
+                        "refactoring.changeSignature",
                     )
                     return
                 }
@@ -177,7 +178,7 @@ class KotlinChangeSignatureHandler : ChangeSignatureHandler {
                             project,
                             editor,
                             message,
-                            ChangeSignatureHandler.REFACTORING_NAME,
+                            RefactoringBundle.message("changeSignature.refactoring.name"),
                             HelpID.CHANGE_SIGNATURE
                         )
                         return null
@@ -189,7 +190,7 @@ class KotlinChangeSignatureHandler : ChangeSignatureHandler {
                             project,
                             editor,
                             message,
-                            ChangeSignatureHandler.REFACTORING_NAME,
+                            RefactoringBundle.message("changeSignature.refactoring.name"),
                             HelpID.CHANGE_SIGNATURE
                         )
                         return null
@@ -208,7 +209,7 @@ class KotlinChangeSignatureHandler : ChangeSignatureHandler {
                         project,
                         editor,
                         message,
-                        ChangeSignatureHandler.REFACTORING_NAME,
+                        RefactoringBundle.message("changeSignature.refactoring.name"),
                         HelpID.CHANGE_SIGNATURE
                     )
                     null

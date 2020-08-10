@@ -10,12 +10,14 @@ import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.lang.ElementsHandler
 import com.intellij.refactoring.util.CommonRefactoringUtil
+import org.jetbrains.annotations.Nls
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -23,9 +25,9 @@ import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import java.util.*
 
 abstract class AbstractPullPushMembersHandler(
-    private val refactoringName: String,
+    @Nls private val refactoringName: String,
     private val helpId: String,
-    private val wrongPositionMessage: String
+    @NlsContexts.DialogMessage private val wrongPositionMessage: String
 ) : RefactoringActionHandler, ElementsHandler {
     private fun reportWrongPosition(project: Project, editor: Editor?) {
         val message = RefactoringBundle.getCannotRefactorMessage(wrongPositionMessage)

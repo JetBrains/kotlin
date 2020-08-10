@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.ui
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.psi.PsiClassOwner
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
@@ -40,7 +41,7 @@ import java.util.*
 class KotlinCallerChooser(
     declaration: PsiElement,
     project: Project,
-    title: String,
+    @NlsContexts.DialogTitle title: String,
     previousTree: Tree?,
     callback: Consumer<Set<PsiElement>>
 ) : CallerChooserBase<PsiElement>(declaration, project, title, previousTree, "dummy." + KotlinFileType.EXTENSION, callback) {
