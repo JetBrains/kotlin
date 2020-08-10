@@ -23,7 +23,7 @@ class AppleXCTestRunConfigurationData(configuration: MobileTestRunConfiguration)
     override fun createState(environment: ExecutionEnvironment, executor: Executor, failedTests: CidrTestScope?): CommandLineState? {
         val device = myConfiguration.executionTargets.filterIsInstance<AppleDevice>().firstOrNull()
             ?: return null
-        return AppleXCTestCommandLineState(myConfiguration, device, environment, environment.executor, failedTests)
+        return AppleXCTestCommandLineState(myConfiguration, device, environment, failedTests)
     }
 
     override fun formatTestMethod(): String = "$testSuite.$testName"
