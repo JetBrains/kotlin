@@ -28,7 +28,7 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         val codeStyleManager = CodeStyleManager.getInstance(project)
         (0 until info.matchesCount).mapNotNull(info::getMatch).forEach {
             val replacement = it.replace(replaceTemplate)
-            codeStyleManager.reformat(replacement)
+            if(options.isToReformatAccordingToStyle) codeStyleManager.reformat(replacement)
         }
     }
 
