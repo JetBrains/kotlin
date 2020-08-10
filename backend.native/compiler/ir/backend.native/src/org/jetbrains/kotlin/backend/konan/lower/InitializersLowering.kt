@@ -69,7 +69,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                     val initExpression = initializer.expression
                     initializers.add(IrBlockImpl(startOffset, endOffset,
                             context.irBuiltIns.unitType,
-                            STATEMENT_ORIGIN_ANONYMOUS_INITIALIZER,
+                            IrStatementOrigin.INITIALIZE_FIELD,
                             listOf(
                                     IrSetFieldImpl(startOffset, endOffset, declaration.symbol,
                                             IrGetValueImpl(
@@ -78,7 +78,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                                             ),
                                             initExpression,
                                             context.irBuiltIns.unitType,
-                                            STATEMENT_ORIGIN_ANONYMOUS_INITIALIZER)))
+                                            IrStatementOrigin.INITIALIZE_FIELD)))
                     )
 
                     // We shall keep initializer for constants for compile-time instantiation.
