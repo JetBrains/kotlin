@@ -7,25 +7,6 @@
 
 package org.jetbrains.kotlin.idea
 
-import com.intellij.featureStatistics.FeatureStatisticsBundleEP
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.extensions.Extensions
-import com.jetbrains.cidr.lang.OCBundle
-
 // Remove the function, when there's no dependency to cidr during running Kotlin tests.
 fun registerAdditionalResourceBundleInTests() {
-    if (!ApplicationManager.getApplication().isUnitTestMode) {
-        return
-    }
-
-    val extensionPoint = Extensions.getRootArea().getExtensionPoint(FeatureStatisticsBundleEP.EP_NAME)
-    if (extensionPoint.extensions.none { it.qualifiedName == TestOCBundleProvider.qualifiedName }) {
-        extensionPoint.registerExtension(TestOCBundleProvider)
-    }
-}
-
-object TestOCBundleProvider : FeatureStatisticsBundleEP() {
-    init {
-        qualifiedName = OCBundle.BUNDLE
-    }
 }
