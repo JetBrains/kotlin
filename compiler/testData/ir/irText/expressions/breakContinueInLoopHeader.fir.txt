@@ -115,7 +115,7 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
           VAR name:j type:kotlin.Int [var]
             CONST Int type=kotlin.Int value=0
           DO_WHILE label=Inner origin=DO_WHILE_LOOP
-            body: BLOCK type=kotlin.Int origin=null
+            body: COMPOSITE type=kotlin.Int origin=DO_WHILE_LOOP
               VAR IR_TEMPORARY_VARIABLE name:tmp_7 type:kotlin.Int [val]
                 GET_VAR 'var j: kotlin.Int [var] declared in <root>.test5' type=kotlin.Int origin=null
               SET_VAR 'var j: kotlin.Int [var] declared in <root>.test5' type=kotlin.Unit origin=EQ
