@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
-import org.jetbrains.kotlin.backend.jvm.ir.copyCorrespondingPropertyFrom
-import org.jetbrains.kotlin.backend.jvm.ir.eraseTypeParameters
-import org.jetbrains.kotlin.backend.jvm.ir.isFromJava
-import org.jetbrains.kotlin.backend.jvm.ir.isJvmAbstract
+import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
@@ -459,7 +456,8 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             modality = if (specialBridge.isFinal) Modality.FINAL else Modality.OPEN
             origin = if (specialBridge.isSynthetic) IrDeclarationOrigin.BRIDGE else IrDeclarationOrigin.BRIDGE_SPECIAL
             name = Name.identifier(specialBridge.signature.name)
-            returnType = specialBridge.substitutedReturnType ?: specialBridge.overridden.returnType.eraseTypeParameters()
+            returnType = specialBridge.substitutedReturnType?.eraseToScope(target.parentAsClass)
+                ?: specialBridge.overridden.returnType.eraseTypeParameters()
         }.apply {
             context.functionsWithSpecialBridges.add(target)
 
@@ -548,26 +546,30 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         from: IrSimpleFunction,
         substitutedParameterTypes: List<IrType>? = null
     ) {
+        val visibleTypeParameters = collectVisibleTypeParameters(this)
         // This is a workaround for a bug affecting fake overrides. Sometimes we encounter fake overrides
         // with dispatch receivers pointing at a superclass instead of the current class.
         dispatchReceiverParameter = irClass.thisReceiver?.copyTo(this, type = irClass.defaultType)
-        extensionReceiverParameter = from.extensionReceiverParameter?.copyWithTypeErasure(this)
+        extensionReceiverParameter = from.extensionReceiverParameter?.copyWithTypeErasure(this, visibleTypeParameters)
         valueParameters = if (substitutedParameterTypes != null) {
             from.valueParameters.zip(substitutedParameterTypes).map { (param, type) ->
-                param.copyWithTypeErasure(this, type)
+                param.copyWithTypeErasure(this, visibleTypeParameters, type)
             }
         } else {
-            from.valueParameters.map { it.copyWithTypeErasure(this) }
+            from.valueParameters.map { it.copyWithTypeErasure(this, visibleTypeParameters) }
         }
     }
 
-    private fun IrValueParameter.copyWithTypeErasure(target: IrSimpleFunction, substitutedType: IrType? = null): IrValueParameter =
-        copyTo(
-            target, IrDeclarationOrigin.BRIDGE,
-            type = (substitutedType ?: type.eraseTypeParameters()),
-            // Currently there are no special bridge methods with vararg parameters, so we don't track substituted vararg element types.
-            varargElementType = varargElementType?.eraseTypeParameters()
-        )
+    private fun IrValueParameter.copyWithTypeErasure(
+        target: IrSimpleFunction,
+        visibleTypeParameters: Set<IrTypeParameter>,
+        substitutedType: IrType? = null
+    ): IrValueParameter = copyTo(
+        target, IrDeclarationOrigin.BRIDGE,
+        type = (substitutedType?.eraseToScope(visibleTypeParameters) ?: type.eraseTypeParameters()),
+        // Currently there are no special bridge methods with vararg parameters, so we don't track substituted vararg element types.
+        varargElementType = varargElementType?.eraseToScope(visibleTypeParameters)
+    )
 
     private fun IrBuilderWithScope.delegatingCall(
         bridge: IrSimpleFunction,
@@ -576,10 +578,10 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
     ) = irCastIfNeeded(irCall(target, origin = IrStatementOrigin.BRIDGE_DELEGATION, superQualifierSymbol = superQualifierSymbol).apply {
         for ((param, targetParam) in bridge.explicitParameters.zip(target.explicitParameters)) {
             putArgument(targetParam, irGet(param).let { argument ->
-                if (param == bridge.dispatchReceiverParameter) argument else irCastIfNeeded(argument, targetParam.type)
+                if (param == bridge.dispatchReceiverParameter) argument else irCastIfNeeded(argument, targetParam.type.upperBound)
             })
         }
-    }, bridge.returnType)
+    }, bridge.returnType.upperBound)
 
     private fun IrBuilderWithScope.irCastIfNeeded(expression: IrExpression, to: IrType): IrExpression =
         if (expression.type == to || to.isAny() || to.isNullableAny()) expression else irImplicitCast(expression, to)
