@@ -86,7 +86,7 @@ internal class CEnumByValueFunctionGenerator(
                         )
                     }
                 }
-                +irCall(symbols.ThrowNullPointerException, irBuiltIns.nothingType)
+                +irCall(symbols.throwNullPointerException, irBuiltIns.nothingType)
             })
         }
         return byValueIrFunction

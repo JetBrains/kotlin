@@ -47,7 +47,7 @@ private class TypeOperatorTransformer(val context: CommonBackendContext, val fun
 
     private val builder = context.createIrBuilder(function)
 
-    val throwNullPointerException = context.ir.symbols.ThrowNullPointerException
+    val throwNullPointerException = context.ir.symbols.throwNullPointerException
 
     override fun visitFunction(declaration: IrFunction): IrStatement {
         // ignore inner functions during this pass

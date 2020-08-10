@@ -273,7 +273,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             IrBlockImpl(startOffset, endOffset, irBuiltIns.unitType).apply {
                 statements.addIfNotNull(expression.receiver)
                 statements += expression.value
-                statements += IrCallImpl(startOffset, endOffset, irBuiltIns.nothingType, symbols.ThrowNullPointerException)
+                statements += IrCallImpl(startOffset, endOffset, irBuiltIns.nothingType, symbols.throwNullPointerException)
                 statements += IrGetObjectValueImpl(startOffset, endOffset, irBuiltIns.unitType, irBuiltIns.unitClass)
             }
         } else {

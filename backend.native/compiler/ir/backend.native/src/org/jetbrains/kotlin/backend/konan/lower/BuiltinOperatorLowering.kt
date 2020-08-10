@@ -57,8 +57,8 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
             irBuiltins.checkNotNullSymbol -> lowerCheckNotNull(expression)
 
             irBuiltins.noWhenBranchMatchedExceptionSymbol -> IrCallImpl(expression.startOffset, expression.endOffset,
-                    context.ir.symbols.ThrowNoWhenBranchMatchedException.owner.returnType,
-                    context.ir.symbols.ThrowNoWhenBranchMatchedException)
+                    context.ir.symbols.throwNoWhenBranchMatchedException.owner.returnType,
+                    context.ir.symbols.throwNoWhenBranchMatchedException)
 
             else -> expression
         }
@@ -181,7 +181,7 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
 
     private fun lowerCheckNotNull(expression: IrCall) = builder.at(expression).irBlock(resultType = expression.type) {
         val temp = irTemporary(expression.getValueArgument(0)!!)
-        +irIfThen(context.irBuiltIns.unitType, irEqeqNull(irGet(temp)), irCall(symbols.ThrowNullPointerException))
+        +irIfThen(context.irBuiltIns.unitType, irEqeqNull(irGet(temp)), irCall(symbols.throwNullPointerException))
         +irGet(temp)
     }
 

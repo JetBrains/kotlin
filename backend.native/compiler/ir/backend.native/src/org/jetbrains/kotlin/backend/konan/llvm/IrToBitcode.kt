@@ -1405,7 +1405,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             ifThen(not(genInstanceOf(srcArg, dstClass))) {
                 if (dstClass.defaultType.isObjCObjectType()) {
                     callDirect(
-                            context.ir.symbols.ThrowTypeCastException.owner,
+                            context.ir.symbols.throwTypeCastException.owner,
                             emptyList(),
                             Lifetime.GLOBAL
                     )

@@ -47,7 +47,7 @@ internal class PostInlineLowering(val context: Context) : FileLoweringPass {
                     builder.irKClass(context, symbol)
                 } else {
                     // E.g. for `T::class` in a body of an inline function itself.
-                    builder.irCall(context.ir.symbols.ThrowNullPointerException.owner)
+                    builder.irCall(context.ir.symbols.throwNullPointerException.owner)
                 }
             }
 

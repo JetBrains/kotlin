@@ -698,7 +698,7 @@ private class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfor
                     +irIfThen(
                             context.irBuiltIns.unitType,
                             irEqeqeq(irGet(temp), irNull()),
-                            irCall(symbols.ThrowNullPointerException)
+                            irCall(symbols.throwNullPointerException)
                     )
                     +irGet(temp)
                 }
