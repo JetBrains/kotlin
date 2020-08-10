@@ -22,6 +22,7 @@ class CodeConformanceTest : TestCase() {
             File("."),
             listOf(
                 ".git",
+                ".idea",
                 "build/js",
                 "buildSrc",
                 "compiler/build",
@@ -290,6 +291,18 @@ class CodeConformanceTest : TestCase() {
 
         val repoCheckers = listOf(
             RepoAllowList(
+                "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root, setOf("gradle/cacheRedirector.gradle.kts")
+            ),
+            RepoAllowList(
+                "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root, setOf()
+            ),
+            RepoAllowList(
+                "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/eap", root, setOf("gradle/cacheRedirector.gradle.kts")
+            ),
+            RepoAllowList(
+                "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root, setOf()
+            ),
+            RepoAllowList(
                 "https://dl.bintray.com/kotlin/kotlin-dev", root, setOf(
                     "libraries/tools/new-project-wizard/new-project-wizard-cli/testData",
                     "gradle/cacheRedirector.gradle.kts",
@@ -312,6 +325,7 @@ class CodeConformanceTest : TestCase() {
                     "idea/testData/perfTest/native/_common/build.gradle.kts.header"
                 )
             ),
+            RepoAllowList("https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlin-dev", root, setOf()),
             RepoAllowList(
                 "https://dl.bintray.com/kotlin/kotlin-eap", root, setOf(
                     "kotlin-ultimate/ide/android-studio-native/testData/wizard/expected/app/build.gradle.kts",
@@ -343,7 +357,10 @@ class CodeConformanceTest : TestCase() {
                     "libraries/tools/new-project-wizard/src/org/jetbrains/kotlin/tools/projectWizard/core/service/KotlinVersionProviderService.kt",
                     "idea/testData/perfTest/native/_common/build.gradle.kts.header"
                 )
-            )
+            ),
+            RepoAllowList("https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlin-eap", root, setOf()),
+            RepoAllowList("https://dl.bintray.com/kotlin/kotlin-bootstrap", root, setOf()),
+            RepoAllowList("https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlin-bootstrap", root, setOf()),
         )
 
         data class RepoOccurance(val repo: String, val file: File)
