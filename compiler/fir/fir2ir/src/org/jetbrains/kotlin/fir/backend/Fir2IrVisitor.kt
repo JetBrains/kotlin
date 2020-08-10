@@ -604,10 +604,17 @@ class Fir2IrVisitor(
         val type =
             (statements.lastOrNull() as? FirExpression)?.typeRef?.toIrType() ?: irBuiltIns.unitType
         return convertWithOffsets { startOffset, endOffset ->
-            IrBlockImpl(
-                startOffset, endOffset, type, origin,
-                mapToIrStatements().filterNotNull()
-            )
+            if (origin == IrStatementOrigin.DO_WHILE_LOOP) {
+                IrCompositeImpl(
+                    startOffset, endOffset, type, origin,
+                    mapToIrStatements().filterNotNull()
+                )
+            } else {
+                IrBlockImpl(
+                    startOffset, endOffset, type, origin,
+                    mapToIrStatements().filterNotNull()
+                )
+            }
         }
     }
 
@@ -776,7 +783,7 @@ class Fir2IrVisitor(
             ).apply {
                 loopMap[doWhileLoop] = this
                 label = doWhileLoop.label?.name
-                body = doWhileLoop.block.convertToIrExpressionOrBlock()
+                body = doWhileLoop.block.convertToIrExpressionOrBlock(origin)
                 condition = convertToIrExpression(doWhileLoop.condition)
                 loopMap.remove(doWhileLoop)
             }
