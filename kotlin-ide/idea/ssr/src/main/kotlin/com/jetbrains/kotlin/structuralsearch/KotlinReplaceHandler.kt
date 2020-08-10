@@ -23,7 +23,7 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
             info.replacement, PatternTreeContext.Block, options.matchOptions.fileType, project
         ).first()
         replaceTemplate.structuralReplace(searchTemplate, info.matchResult.match)
-        CodeStyleManager.getInstance(project).reformat(replaceTemplate)
+        CodeStyleManager.getInstance(project).reformatNewlyAddedElement(info.matchResult.match.parent.node, replaceTemplate.node)
         (0 until info.matchesCount).mapNotNull(info::getMatch).forEach { it.replace(replaceTemplate) }
     }
 
