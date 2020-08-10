@@ -47,49 +47,7 @@ class KotlinInlinePropertyProcessor(
     editor = editor,
 ) {
     override fun createReplacementStrategy(): UsageReplacementStrategy? {
-        val getter = declaration.getter?.takeIf { it.hasBody() }
-        val setter = declaration.setter?.takeIf { it.hasBody() }
-
-        val readReplacement: CodeToInline?
-        val writeReplacement: CodeToInline?
-        val descriptor = declaration.unsafeResolveToDescriptor() as ValueDescriptor
-        val isTypeExplicit = declaration.typeReference != null
-        if (getter == null && setter == null) {
-            val initialization = extractInitialization(declaration, myProject, editor) ?: return null
-            readReplacement = buildCodeToInline(
-                declaration = declaration,
-                returnType = descriptor.type,
-                isReturnTypeExplicit = isTypeExplicit,
-                bodyOrInitializer = initialization.value,
-                isBlockBody = false,
-                editor = editor
-            ) ?: return null
-
-            writeReplacement = null
-        } else {
-            readReplacement = getter?.let {
-                buildCodeToInline(
-                    declaration = getter,
-                    returnType = descriptor.type,
-                    isReturnTypeExplicit = isTypeExplicit,
-                    bodyOrInitializer = getter.bodyExpression!!,
-                    isBlockBody = getter.hasBlockBody(),
-                    editor = editor
-                ) ?: return null
-            }
-            writeReplacement = setter?.let {
-                buildCodeToInline(
-                    declaration = setter,
-                    returnType = setter.builtIns.unitType,
-                    isReturnTypeExplicit = true,
-                    bodyOrInitializer = setter.bodyExpression!!,
-                    isBlockBody = setter.hasBlockBody(),
-                    editor = editor
-                ) ?: return null
-            }
-        }
-
-        return PropertyUsageReplacementStrategy(readReplacement, writeReplacement)
+        return createReplacementStrategyForProperty(declaration, editor, myProject)
     }
 
     override fun postAction() {
@@ -152,6 +110,52 @@ class KotlinInlinePropertyProcessor(
             return Initialization(initializer, assignment)
         }
     }
+}
+
+fun createReplacementStrategyForProperty(property: KtProperty, editor: Editor?, project: Project): UsageReplacementStrategy? {
+    val getter = property.getter?.takeIf { it.hasBody() }
+    val setter = property.setter?.takeIf { it.hasBody() }
+
+    val readReplacement: CodeToInline?
+    val writeReplacement: CodeToInline?
+    val descriptor = property.unsafeResolveToDescriptor() as ValueDescriptor
+    val isTypeExplicit = property.typeReference != null
+    if (getter == null && setter == null) {
+        val initialization = KotlinInlinePropertyProcessor.extractInitialization(property, project, editor) ?: return null
+        readReplacement = buildCodeToInline(
+            declaration = property,
+            returnType = descriptor.type,
+            isReturnTypeExplicit = isTypeExplicit,
+            bodyOrInitializer = initialization.value,
+            isBlockBody = false,
+            editor = editor
+        ) ?: return null
+
+        writeReplacement = null
+    } else {
+        readReplacement = getter?.let {
+            buildCodeToInline(
+                declaration = getter,
+                returnType = descriptor.type,
+                isReturnTypeExplicit = isTypeExplicit,
+                bodyOrInitializer = getter.bodyExpression!!,
+                isBlockBody = getter.hasBlockBody(),
+                editor = editor
+            ) ?: return null
+        }
+        writeReplacement = setter?.let {
+            buildCodeToInline(
+                declaration = setter,
+                returnType = setter.builtIns.unitType,
+                isReturnTypeExplicit = true,
+                bodyOrInitializer = setter.bodyExpression!!,
+                isBlockBody = setter.hasBlockBody(),
+                editor = editor
+            ) ?: return null
+        }
+    }
+
+    return PropertyUsageReplacementStrategy(readReplacement, writeReplacement)
 }
 
 private fun reportAmbiguousAssignment(project: Project, editor: Editor?, name: String, assignments: Collection<PsiElement>) {
