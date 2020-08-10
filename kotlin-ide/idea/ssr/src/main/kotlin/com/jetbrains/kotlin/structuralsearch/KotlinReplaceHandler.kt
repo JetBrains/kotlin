@@ -12,10 +12,7 @@ import com.intellij.structuralsearch.plugin.replace.ReplacementInfo
 import org.jetbrains.kotlin.idea.core.addTypeParameter
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtModifierListOwner
-import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 
 class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHandler() {
@@ -41,6 +38,7 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
             when(this) {
                 is KtClassOrObject -> replaceClassOrObject(searchTemplate, match)
                 is KtNamedFunction -> replaceNamedFunction(searchTemplate, match)
+                is KtProperty -> replaceProperty(searchTemplate, match)
             }
         }
         return this
@@ -91,6 +89,18 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         return this
     }
 
+    private fun KtProperty.replaceProperty(searchTemplate: PsiElement, match: PsiElement): PsiElement {
+        if(searchTemplate is KtProperty && match is KtProperty) {
+            if(typeReference == null || searchTemplate.typeReference == null) match.typeReference?.let(this::setTypeReference)
+            if(!hasDelegate() && !hasInitializer()) {
+                if(!searchTemplate.hasInitializer()) initializer = match.initializer
+                if(!searchTemplate.hasDelegate()) match.delegate?.let(this::add)
+            }
+            PROPERTY_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
+        }
+        return this
+    }
+
     companion object {
         private val CLASS_MODIFIERS = arrayOf(
             KtTokens.ABSTRACT_KEYWORD,
@@ -123,6 +133,20 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
             KtTokens.OPERATOR_KEYWORD,
             KtTokens.INFIX_KEYWORD,
             KtTokens.SUSPEND_KEYWORD,
+            KtTokens.HEADER_KEYWORD,
+            KtTokens.IMPL_KEYWORD,
+            KtTokens.EXPECT_KEYWORD,
+            KtTokens.ACTUAL_KEYWORD
+        )
+
+        private val PROPERTY_MODIFIERS = arrayOf(
+            KtTokens.ABSTRACT_KEYWORD,
+            KtTokens.OPEN_KEYWORD,
+            KtTokens.OVERRIDE_KEYWORD,
+            KtTokens.FINAL_KEYWORD,
+            KtTokens.LATEINIT_KEYWORD,
+            KtTokens.EXTERNAL_KEYWORD,
+            KtTokens.CONST_KEYWORD,
             KtTokens.HEADER_KEYWORD,
             KtTokens.IMPL_KEYWORD,
             KtTokens.EXPECT_KEYWORD,
