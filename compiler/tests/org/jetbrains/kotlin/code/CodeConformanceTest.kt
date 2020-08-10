@@ -11,6 +11,7 @@ import junit.framework.TestCase
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
+import kotlin.collections.HashSet
 
 class CodeConformanceTest : TestCase() {
     companion object {
@@ -21,6 +22,7 @@ class CodeConformanceTest : TestCase() {
         private val EXCLUDED_FILES_AND_DIRS = listOf(
             "build/js",
             "buildSrc",
+            "compiler/build",
             "compiler/fir/lightTree/testData",
             "compiler/testData/psi/kdoc",
             "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
@@ -245,71 +247,132 @@ class CodeConformanceTest : TestCase() {
         }
     }
 
-    fun testTemporaryRepositoriesAbuse() {
-        val extensions = setOf("java", "kt", "gradle", "kts")
-        val repositories = setOf(
-            "https://dl.bintray.com/kotlin/kotlin-dev",
-            "https://dl.bintray.com/kotlin/kotlin-eap"
-        )
-        val allowList = setOf(
-            "libraries/tools/new-project-wizard/new-project-wizard-cli/testData",
-            "gradle/cacheRedirector.gradle.kts",
-            "kotlin-ultimate/prepare/mobile-plugin/build.gradle.kts",
-            "kotlin-ultimate/gradle/cidrPluginTools.gradle.kts",
-            "libraries/tools/kotlin-gradle-plugin-integration-tests/build/resources/test/testProject/new-mpp-fat-framework/smoke/build.gradle.kts",
-            "libraries/tools/kotlin-gradle-plugin-integration-tests/build/resources/test/testProject/kotlin2JsProjectWithSourceMapInline/build.gradle",
-            "libraries/tools/kotlin-gradle-plugin-integration-tests/build/resources/test/testProject/new-mpp-android/build.gradle",
-            "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/new-mpp-fat-framework/smoke/build.gradle.kts",
-            "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/kotlin2JsProjectWithSourceMapInline/build.gradle",
-            "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/new-mpp-android/build.gradle",
-            "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/VariantAwareDependenciesIT.kt",
-            "libraries/tools/new-project-wizard/src/org/jetbrains/kotlin/tools/projectWizard/core/service/KotlinVersionProviderService.kt",
-            "idea/testData/perfTest/native/_common/settings.gradle.kts",
-            "idea/testData/gradle/nativeLibraries/commonIOSWithDisabledPropagation/settings.gradle.kts",
-            "idea/testData/gradle/packagePrefixImport/packagePrefixNonMPP/build.gradle",
-            "idea/testData/gradle/gradleFacetImportTest/jvmImportWithCustomSourceSets_1_1_2/build.gradle",
-            "idea/testData/gradle/gradleFacetImportTest/jvmImport_1_1_2/build.gradle",
-            "idea/idea-gradle/tests/org/jetbrains/kotlin/idea/codeInsight/gradle/MultiplePluginVersionGradleImportingTestCase.kt",
-            "kotlin-ultimate/ide/android-studio-native/testData/wizard/expected/app/build.gradle.kts",
-            "kotlin-ultimate/ide/android-studio-native/testData/wizard/expected/shared/build.gradle.kts",
-            "kotlin-ultimate/ide/android-studio-native/testData/wizard/expected/build.gradle.kts",
-            "kotlin-ultimate/ide/android-studio-native/testData/wizard/expected/settings.gradle.kts",
-            "kotlin-ultimate/ide/android-studio-native/src/com/jetbrains/kmm/wizard/templates/buildFile.kt",
-            "libraries/scripting/dependencies-maven/test/kotlin/script/experimental/test/MavenResolverTest.kt",
-            "idea/testData/configuration/gradle/eapVersion/build_after.gradle",
-            "idea/testData/configuration/gradle/rcVersion/build_after.gradle",
-            "idea/testData/configuration/gradle/m04Version/build_after.gradle",
-            "idea/testData/configuration/gsk/eapVersion/build_after.gradle.kts",
-            "idea/testData/configuration/gsk/eap11Version/build_after.gradle.kts",
-            "idea/idea-jvm/src/org/jetbrains/kotlin/idea/configuration/ConfigureKotlinInProjectUtils.kt"
-        ).map(::File)
-        val fullIgnoreList = EXCLUDED_FILES_AND_DIRS + allowList
-        val excludeFileNames = fullIgnoreList.filter { it.isFile }.map { it.name }.toSet()
-        val excludedDirNames = fullIgnoreList.filter { it.isDirectory }.map { it.name }.toSet()
-        val excludedPaths = fullIgnoreList.map { it.systemIndependentPath }.toSet()
+    private class FileMatcher(val root: File, files: Collection<File>) {
+        private val names = files.mapTo(HashSet()) { it.name }
+        private val paths = files.mapTo(HashSet()) { it.systemIndependentPath }
+        private val relativePaths = files.filter { it.isDirectory }.mapTo(HashSet()) { it.systemIndependentPath + "/" }
+
+        fun matchExact(file: File): Boolean {
+            return (file.name in names) && file.relativeTo(root).systemIndependentPath in paths
+        }
+
+        fun matchWithContains(file: File): Boolean {
+            if (matchExact(file)) return true
+            val relativePath = file.relativeTo(root).systemIndependentPath
+            return relativePaths.any { relativePath.startsWith(it) }
+        }
+    }
+
+    fun testRepositoriesAbuse() {
+        class RepoAllowList(val repo: String, root: File, allowList: Set<String>) {
+            val allowFiles = allowList.map(::File)
+            val matcher = FileMatcher(root, allowFiles)
+        }
+
         val root = File(".")
-        val filesWithRepositories = root.walkTopDown()
-            .onEnter { dir ->
-                !(dir.name in excludedDirNames && dir.relativeTo(root).systemIndependentPath in excludedPaths)
-            }
+
+        val repoCheckers = listOf(
+            RepoAllowList(
+                "https://dl.bintray.com/kotlin/kotlin-dev", root, setOf(
+                    "libraries/tools/new-project-wizard/new-project-wizard-cli/testData",
+                    "gradle/cacheRedirector.gradle.kts",
+                    "kotlin-ultimate/prepare/mobile-plugin/build.gradle.kts",
+                    "kotlin-ultimate/gradle/cidrPluginTools.gradle.kts",
+                    "libraries/tools/kotlin-gradle-plugin-integration-tests/build/resources/test/testProject/new-mpp-fat-framework/smoke/build.gradle.kts",
+                    "libraries/tools/kotlin-gradle-plugin-integration-tests/build/resources/test/testProject/kotlin2JsProjectWithSourceMapInline/build.gradle",
+                    "libraries/tools/kotlin-gradle-plugin-integration-tests/build/resources/test/testProject/new-mpp-android/build.gradle",
+                    "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/new-mpp-fat-framework/smoke/build.gradle.kts",
+                    "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/kotlin2JsProjectWithSourceMapInline/build.gradle",
+                    "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/new-mpp-android/build.gradle",
+                    "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/VariantAwareDependenciesIT.kt",
+                    "libraries/tools/new-project-wizard/src/org/jetbrains/kotlin/tools/projectWizard/core/service/KotlinVersionProviderService.kt",
+                    "idea/testData/perfTest/native/_common/settings.gradle.kts",
+                    "idea/testData/gradle/nativeLibraries/commonIOSWithDisabledPropagation/settings.gradle.kts",
+                    "idea/testData/gradle/packagePrefixImport/packagePrefixNonMPP/build.gradle",
+                    "idea/testData/gradle/gradleFacetImportTest/jvmImportWithCustomSourceSets_1_1_2/build.gradle",
+                    "idea/testData/gradle/gradleFacetImportTest/jvmImport_1_1_2/build.gradle",
+                    "idea/idea-gradle/tests/org/jetbrains/kotlin/idea/codeInsight/gradle/MultiplePluginVersionGradleImportingTestCase.kt"
+                )
+            ),
+            RepoAllowList(
+                "https://dl.bintray.com/kotlin/kotlin-eap", root, setOf(
+                    "kotlin-ultimate/ide/android-studio-native/testData/wizard/expected/app/build.gradle.kts",
+                    "kotlin-ultimate/ide/android-studio-native/testData/wizard/expected/shared/build.gradle.kts",
+                    "kotlin-ultimate/ide/android-studio-native/testData/wizard/expected/build.gradle.kts",
+                    "kotlin-ultimate/ide/android-studio-native/testData/wizard/expected/settings.gradle.kts",
+                    "kotlin-ultimate/ide/android-studio-native/src/com/jetbrains/kmm/wizard/templates/buildFile.kt",
+                    "libraries/scripting/dependencies-maven/test/kotlin/script/experimental/test/MavenResolverTest.kt",
+                    "idea/testData/configuration/gradle/eapVersion/build_after.gradle",
+                    "idea/testData/configuration/gradle/rcVersion/build_after.gradle",
+                    "idea/testData/configuration/gradle/m04Version/build_after.gradle",
+                    "idea/testData/configuration/gsk/eapVersion/build_after.gradle.kts",
+                    "idea/testData/configuration/gsk/eap11Version/build_after.gradle.kts",
+                    "idea/idea-jvm/src/org/jetbrains/kotlin/idea/configuration/ConfigureKotlinInProjectUtils.kt",
+                    "gradle/cacheRedirector.gradle.kts",
+                    "idea/idea-maven/testData/configurator/jvm/simpleProjectEAP/pom_after.xml",
+                    "idea/idea-maven/testData/configurator/jvm/simpleProjectRc/pom_after.xml",
+                    "idea/idea-maven/testData/maven-inspections/deprecatedJre.fixed.1.xml",
+                    "idea/idea-maven/testData/maven-inspections/deprecatedJre.xml",
+                    "idea/idea-maven/testData/maven-inspections/deprecatedKotlinxCoroutines.fixed.1.xml",
+                    "idea/idea-maven/testData/maven-inspections/deprecatedKotlinxCoroutines.xml",
+                    "idea/idea-maven/testData/maven-inspections/deprecatedKotlinxCoroutinesNoError.xml",
+                    "idea/testData/gradle/configurator/configureJsEAPWithBuildGradle/build.gradle.after",
+                    "idea/testData/gradle/configurator/configureJsEAPWithBuildGradleKts/build.gradle.kts.after",
+                    "idea/testData/gradle/configurator/configureJvmEAPWithBuildGradle/build.gradle.after",
+                    "idea/testData/gradle/configurator/configureJvmEAPWithBuildGradleKts/build.gradle.kts.after",
+                    "idea/testData/perfTest/native/_common/settings.gradle.kts",
+                    "kotlin-ultimate/gradle/cidrPluginTools.gradle.kts",
+                    "libraries/tools/new-project-wizard/src/org/jetbrains/kotlin/tools/projectWizard/core/service/KotlinVersionProviderService.kt"
+                )
+            )
+        )
+
+        data class RepoOccurance(val repo: String, val file: File)
+        data class RepoOccurrences(val repo: String, val files: Collection<File>)
+
+        val extensions = hashSetOf("java", "kt", "gradle", "kts", "xml", "after")
+        val nonSourceMatcher = FileMatcher(root, EXCLUDED_FILES_AND_DIRS)
+        val repoOccurrences: List<RepoOccurrences> = root.walkTopDown()
+            .onEnter { dir -> !nonSourceMatcher.matchExact(dir) } // don't visit dirs
             .filter { file -> file.extension in extensions && file.isFile }
-            .filter { file -> !(file.name in excludeFileNames && file.isFile && file.relativeTo(root).systemIndependentPath in excludedPaths) }
-            .filter { file ->
-                file.useLines { lines ->
-                    lines.any { line ->
-                        repositories.any { repository -> line.contains(repository) }
+            .filter { file -> !nonSourceMatcher.matchExact(file) } // filter ignored files
+            .flatMap { file ->
+                val checkers = repoCheckers.filter { checker ->
+                    !checker.matcher.matchWithContains(file)
+                }
+
+                if (checkers.isNotEmpty()) {
+                    val occurrences = ArrayList<RepoOccurance>()
+                    file.useLines { lines ->
+                        for (line in lines) {
+                            for (checker in checkers) {
+                                if (line.contains(checker.repo)) {
+                                    occurrences.add(RepoOccurance(checker.repo, file))
+                                }
+                            }
+                        }
                     }
+                    occurrences
+                } else {
+                    listOf()
                 }
             }
-            .toList()
+            .groupBy { it.repo }
+            .map { (repo, occurrences) -> RepoOccurrences(repo, occurrences.mapTo(HashSet()) { it.file }) }
 
-        if (filesWithRepositories.isNotEmpty()) {
+        if (repoOccurrences.isNotEmpty()) {
+            val repoOccurrencesStableOrder = repoOccurrences
+                .map { RepoOccurrences(it.repo, it.files.sortedBy { it.path }) }
+                .sortedBy { it.repo }
             fail(
                 buildString {
-                    appendLine("The following files use temporal repositories and not listed in the allowed list:")
-                    filesWithRepositories.forEach { appendLine("  ${it.relativeTo(root).systemIndependentPath}") }
-                    appendLine("List of monitored repositories:")
-                    repositories.forEach { appendLine("  $it") }
+                    appendLine("The following files use repositories and not listed in the correspondent allow lists")
+                    for ((repo, files) in repoOccurrencesStableOrder) {
+                        appendLine(repo)
+                        for (file in files) {
+                            appendLine("  ${file.relativeTo(root).systemIndependentPath}")
+                        }
+                    }
                 }
             )
         }
