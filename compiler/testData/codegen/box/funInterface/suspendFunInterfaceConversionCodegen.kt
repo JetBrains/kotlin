@@ -6,6 +6,7 @@ import helpers.*
 import kotlin.coroutines.*
 
 fun interface SuspendRunnable {
+    @Suppress("FUN_INTERFACE_WITH_SUSPEND_FUNCTION")
     suspend fun invoke()
 }
 
