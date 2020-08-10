@@ -16,6 +16,8 @@ interface KtType : ValidityTokenOwner {
     fun isEqualTo(other: KtType): Boolean
     fun isSubTypeOf(superType: KtType): Boolean
 
+    val isBuiltInFunctionalType: Boolean
+
     fun asStringForDebugging(): String
 }
 

@@ -13,7 +13,9 @@ abstract class KtEnumEntrySymbol : KtVariableLikeSymbol() {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
 }
 
-abstract class KtParameterSymbol : KtVariableLikeSymbol()
+abstract class KtParameterSymbol : KtVariableLikeSymbol() {
+    abstract val hasDefaultValue: Boolean
+}
 
 abstract class KtVariableSymbol : KtVariableLikeSymbol() {
     abstract val isVal: Boolean

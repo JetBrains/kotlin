@@ -9,12 +9,13 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
-import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
-import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
-import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorParameterSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorParameterSymbolKind
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolKind
+import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
 
@@ -43,4 +44,6 @@ internal class KtFirConstructorValueParameterSymbol(
                 else -> KtConstructorParameterSymbolKind.NON_PROPERTY
             }
         }
+
+    override val hasDefaultValue: Boolean get() = withValidityAssertion { fir.defaultValue != null }
 }
