@@ -9,9 +9,15 @@ import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.process.CapturingProcessHandler
 import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.util.concurrency.AppExecutorUtil
 import com.jetbrains.kmm.ios.XcFileExtensions.isXcFile
+import com.jetbrains.konan.KonanBundle
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -99,18 +105,33 @@ class XcProjectFile(
     companion object {
         private val DISPATCHER = AppExecutorUtil.createBoundedApplicationPoolExecutor(javaClass.simpleName, 1).asCoroutineDispatcher()
 
-        fun findXcProjectFile(location: File): XcProjectFile? {
-            if (location.isXcFile()) return XcProjectFile(location)
+        private const val PROPERTY_NAME = "xcodeproj"
+        val gradleProperty get() = KonanBundle.message("property.$PROPERTY_NAME")
+
+        fun findXcProjectFile(location: File): XcProjectFile? =
+            findXcFile(location, false)?.let { XcProjectFile(it) }
+
+        fun findXcFile(location: File, takeSubDir: Boolean = true): File? {
+            if (location.isXcFile()) return location
 
             val candidates = location.walk()
-                .maxDepth(1)
+                .maxDepth(if (takeSubDir) 2 else 1)
                 .filter { it.isXcFile() }
                 .toList()
 
-            val file = candidates.firstOrNull { it.extension == XcFileExtensions.workspace } // workspaces are preferable
+            return candidates.firstOrNull { it.extension == XcFileExtensions.workspace } // workspaces are preferable
                 ?: candidates.firstOrNull()
+        }
 
-            return file?.let { XcProjectFile(it) }
+        fun setupXcProjectPath(project: Project, xcFile: File) {
+            if (!xcFile.isXcFile()) error("$xcFile is not XcFile!")
+            val propFile = File(project.basePath, "gradle.properties")
+            LocalFileSystem.getInstance().findFileByIoFile(propFile)?.let { vf ->
+                WriteCommandAction.runWriteCommandAction(project) {
+                    val text = VfsUtilCore.loadText(vf) + "\n$PROPERTY_NAME=${xcFile.relativeTo(propFile.parentFile)}"
+                    VfsUtil.saveText(vf, text)
+                }
+            }
         }
     }
 }

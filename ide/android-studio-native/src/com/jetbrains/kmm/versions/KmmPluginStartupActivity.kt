@@ -6,13 +6,13 @@
 package com.jetbrains.kmm.versions
 
 import com.intellij.ide.plugins.PluginManagerCore
-import com.intellij.notification.Notification
-import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.util.text.StringUtilRt
 import com.jetbrains.kmm.KMM_LOG
+import com.jetbrains.kmm.KmmBundle
+import com.jetbrains.kmm.UserNotification
 import com.jetbrains.kmm.versions.KmmCompatibilityChecker.CompatibilityCheckResult.*
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.KotlinPluginVersion
@@ -64,13 +64,10 @@ object KmmCompatibilityChecker {
 
         if (errorText != null) {
             ApplicationManager.getApplication().invokeLater {
-                Notification(
-                    "Kotlin Multiplatform/Mobile Compatibility Issue",
-                    "Kotlin Multiplatform/Mobile Compatibility Issue",
-                    StringUtilRt.convertLineSeparators(errorText, "<br/>"),
-                    NotificationType.ERROR,
-                    null
-                ).notify(project)
+                UserNotification(project).showError(
+                    KmmBundle.message("startup.error.title"),
+                    StringUtilRt.convertLineSeparators(errorText, "<br/>")
+                )
 
                 PluginManagerCore.disablePlugin("com.jetbrains.kmm")
             }

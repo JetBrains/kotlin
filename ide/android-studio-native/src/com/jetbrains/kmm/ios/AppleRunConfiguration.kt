@@ -13,19 +13,14 @@ import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.execution.configurations.RuntimeConfigurationError
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.ide.actions.OpenFileAction
-import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.ui.ComponentUtil
 import com.jetbrains.cidr.execution.testing.CidrLauncher
 import com.jetbrains.kmm.KmmBundle
-import com.jetbrains.kmm.ios.XcFileExtensions.isXcFile
-import com.jetbrains.konan.KonanBundle
 import com.jetbrains.mobile.execution.*
 import org.jdom.Element
 import java.io.File
@@ -65,7 +60,7 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
         mutableListOf(BuildIOSAppTask())
 
     override fun checkConfiguration() {
-        val propertyKey = KonanBundle.message("property.xcodeproj")
+        val propertyKey = XcProjectFile.gradleProperty
         val status = workspace.xcProjectStatus
 
         when {
@@ -75,7 +70,9 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
             status == XcProjectStatus.NotLocated -> throwConfigurationError(
                 KmmBundle.message("apple.runconfig.error.xcodeNotLocated", propertyKey),
                 Runnable {
-                    fixXcProjectPath()
+                    XcProjectFile.findXcFile(File(projectPath))?.let {
+                        XcProjectFile.setupXcProjectPath(project, it)
+                    }
                     openGradlePropertiesFile()
                     closeSettingsDialog()
                 }
@@ -107,21 +104,6 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
             this.quickFix = quickFix
         }
     }
-
-    private fun fixXcProjectPath() {
-        findNearestXcProject()?.let { xcFile ->
-            val propFile = File(projectPath, "gradle.properties")
-            LocalFileSystem.getInstance().findFileByIoFile(propFile)?.let { vf ->
-                WriteCommandAction.runWriteCommandAction(project) {
-                    val text = VfsUtilCore.loadText(vf) + "\nxcodeproj=${xcFile.relativeTo(propFile.parentFile)}"
-                    VfsUtil.saveText(vf, text)
-                }
-            }
-        }
-    }
-
-    private fun findNearestXcProject(): File? =
-        File(projectPath).walk().maxDepth(2).firstOrNull { it.isXcFile() }
 
     private fun openGradlePropertiesFile() {
         val propFile = File(projectPath, "gradle.properties")
