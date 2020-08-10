@@ -108,7 +108,7 @@ class KotlinExprTypePredicate(
 
             val matchSpecific = when (typeElement) {
                 is KtFunctionType ->
-                    "$type".startsWith("Function${typeElement.typeArgumentsAsTypes.size - 1}")
+                    "${type.fqName}" =="kotlin.Function${typeElement.typeArgumentsAsTypes.size - 1}"
                             && matchTypeReference(
                         type.getReceiverTypeFromFunctionType(),
                         typeElement.receiverTypeReference,
