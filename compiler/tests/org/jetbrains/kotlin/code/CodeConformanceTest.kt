@@ -16,7 +16,7 @@ import kotlin.collections.HashSet
 class CodeConformanceTest : TestCase() {
     companion object {
         private val JAVA_FILE_PATTERN = Pattern.compile(".+\\.java")
-        private val SOURCES_FILE_PATTERN = Pattern.compile("(.+\\.java|.+\\.kt|.+\\.js)")
+        private val SOURCES_FILE_PATTERN = Pattern.compile(".+\\.(java|kt|js)")
         private const val MAX_STEPS_COUNT = 100
         private val nonSourcesMatcher = FileMatcher(
             File("."),
@@ -61,39 +61,42 @@ class CodeConformanceTest : TestCase() {
             )
         )
 
-        private val COPYRIGHT_EXCLUDED_FILES_AND_DIRS = listOf(
-            "build",
-            "buildSrc/prepare-deps/build",
-            "compiler/ir/serialization.js/build/fullRuntime",
-            "compiler/ir/serialization.js/build/reducedRuntime/src/libraries/stdlib/js-ir/runtime/longjs.kt",
-            "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
-            "dependencies",
-            "dependencies/android-sdk/build",
-            "dependencies/protobuf/protobuf-relocated/build",
-            "dist",
-            "idea/idea-jvm/src/org/jetbrains/kotlin/idea/copyright",
-            "js/js.tests/.gradle",
-            "js/js.translator/testData/node_modules",
-            "libraries/kotlin.test/js/it/.gradle",
-            "libraries/kotlin.test/js/it/node_modules",
-            "libraries/stdlib/common/build",
-            "libraries/stdlib/js-ir/.gradle",
-            "libraries/stdlib/js-ir/build",
-            "libraries/stdlib/js-ir/build/",
-            "libraries/stdlib/js-ir/runtime/longjs.kt",
-            "libraries/stdlib/js-ir-minimal-for-test/.gradle",
-            "libraries/stdlib/js-ir-minimal-for-test/build",
-            "libraries/stdlib/js-v1/.gradle",
-            "libraries/stdlib/js-v1/build",
-            "libraries/stdlib/js-v1/node_modules",
-            "libraries/tools/kotlin-gradle-plugin-integration-tests/build",
-            "libraries/tools/kotlin-maven-plugin-test/target",
-            "libraries/tools/kotlin-test-js-runner/.gradle",
-            "libraries/tools/kotlin-test-js-runner/lib",
-            "libraries/tools/kotlin-test-js-runner/node_modules",
-            "libraries/tools/kotlin-test-nodejs-runner/.gradle",
-            "libraries/tools/kotlin-test-nodejs-runner/node_modules",
-            "out"
+        private val COPYRIGHT_EXCLUDED_FILES_AND_DIRS_MATCHER = FileMatcher(
+            File("."),
+            listOf(
+                "build",
+                "buildSrc/prepare-deps/build",
+                "compiler/ir/serialization.js/build/fullRuntime",
+                "compiler/ir/serialization.js/build/reducedRuntime/src/libraries/stdlib/js-ir/runtime/longjs.kt",
+                "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
+                "dependencies",
+                "dependencies/android-sdk/build",
+                "dependencies/protobuf/protobuf-relocated/build",
+                "dist",
+                "idea/idea-jvm/src/org/jetbrains/kotlin/idea/copyright",
+                "js/js.tests/.gradle",
+                "js/js.translator/testData/node_modules",
+                "libraries/kotlin.test/js/it/.gradle",
+                "libraries/kotlin.test/js/it/node_modules",
+                "libraries/stdlib/common/build",
+                "libraries/stdlib/js-ir/.gradle",
+                "libraries/stdlib/js-ir/build",
+                "libraries/stdlib/js-ir/build/",
+                "libraries/stdlib/js-ir/runtime/longjs.kt",
+                "libraries/stdlib/js-ir-minimal-for-test/.gradle",
+                "libraries/stdlib/js-ir-minimal-for-test/build",
+                "libraries/stdlib/js-v1/.gradle",
+                "libraries/stdlib/js-v1/build",
+                "libraries/stdlib/js-v1/node_modules",
+                "libraries/tools/kotlin-gradle-plugin-integration-tests/build",
+                "libraries/tools/kotlin-maven-plugin-test/target",
+                "libraries/tools/kotlin-test-js-runner/.gradle",
+                "libraries/tools/kotlin-test-js-runner/lib",
+                "libraries/tools/kotlin-test-js-runner/node_modules",
+                "libraries/tools/kotlin-test-nodejs-runner/.gradle",
+                "libraries/tools/kotlin-test-nodejs-runner/node_modules",
+                "out"
+            )
         )
     }
 
@@ -223,22 +226,26 @@ class CodeConformanceTest : TestCase() {
 
     fun testThirdPartyCopyrights() {
         val filesWithUnlistedCopyrights = mutableListOf<String>()
-        val root = File(".").absoluteFile
         val knownThirdPartyCode = loadKnownThirdPartyCodeList()
         val copyrightRegex = Regex("""\bCopyright\b""")
-        for (sourceFile in FileUtil.findFilesByMask(SOURCES_FILE_PATTERN, root)) {
-            val relativePath = FileUtil.toSystemIndependentName(sourceFile.toRelativeString(root))
-            if (COPYRIGHT_EXCLUDED_FILES_AND_DIRS.any { relativePath.startsWith(it) } ||
-                knownThirdPartyCode.any { relativePath.startsWith(it) }) continue
+        val root = COPYRIGHT_EXCLUDED_FILES_AND_DIRS_MATCHER.root
 
-            sourceFile.useLines { lineSequence ->
-                for (line in lineSequence) {
-                    if (copyrightRegex in line && "JetBrains" !in line) {
-                        filesWithUnlistedCopyrights.add("$relativePath: $line")
+        COPYRIGHT_EXCLUDED_FILES_AND_DIRS_MATCHER.walkTopDown(SOURCES_FILE_PATTERN)
+            .filter { sourceFile ->
+                val relativePath = FileUtil.toSystemIndependentName(sourceFile.toRelativeString(root))
+                !knownThirdPartyCode.any { relativePath.startsWith(it) }
+            }
+            .forEach { sourceFile ->
+                sourceFile.useLines { lineSequence ->
+                    for (line in lineSequence) {
+                        if (copyrightRegex in line && "JetBrains" !in line) {
+                            val relativePath = FileUtil.toSystemIndependentName(sourceFile.toRelativeString(root))
+                            filesWithUnlistedCopyrights.add("$relativePath: $line")
+                        }
                     }
                 }
             }
-        }
+
         if (filesWithUnlistedCopyrights.isNotEmpty()) {
             fail(
                 "The following files contain third-party copyrights and no license information. " +
@@ -248,10 +255,10 @@ class CodeConformanceTest : TestCase() {
     }
 
     private class FileMatcher(val root: File, paths: Collection<String>) {
-        private val files = paths.filter { !it.startsWith("*/") }.map(::File)
+        private val files = paths.map { File(it) }
         private val names = files.mapTo(HashSet()) { it.name }
         private val paths = files.mapTo(HashSet()) { it.systemIndependentPath }
-        private val relativePaths = files.filter { it.isDirectory }.mapTo(HashSet()) { it.systemIndependentPath + "/" }
+        private val relativePaths = files.filterTo(ArrayList()) { it.isDirectory }.mapTo(HashSet()) { it.systemIndependentPath + "/" }
 
         fun matchExact(file: File): Boolean {
             return (file.name in names) && file.relativeTo(root).systemIndependentPath in paths
