@@ -12,6 +12,7 @@ import com.intellij.psi.search.LocalSearchScope
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.annotations.Nls
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
@@ -61,7 +62,7 @@ class KotlinInlinePropertyProcessor(
     }
 
     override fun additionalPreprocessUsages(usages: Array<out UsageInfo>, conflicts: MultiMap<PsiElement, String>) {
-        val initializer by lazy { extractInitialization(declaration, myProject, editor, withErrorMessage = false)?.assignment?.left }
+        val initializer by lazy { extractInitialization(declaration).initializerOrNull?.assignment?.left }
         for (usage in usages) {
             val expression = usage.element?.writeOrReadWriteExpression ?: continue
             if (expression != initializer) {
@@ -70,18 +71,43 @@ class KotlinInlinePropertyProcessor(
         }
     }
 
-    companion object {
-        class Initialization(val value: KtExpression, val assignment: KtBinaryExpression?)
+    class Initializer(val value: KtExpression, val assignment: KtBinaryExpression?)
 
-        fun extractInitialization(
-            property: KtProperty,
-            project: Project,
-            editor: Editor?,
-            withErrorMessage: Boolean = true,
-        ): Initialization? {
+    class Initialization private constructor(
+        private val value: KtExpression?,
+        private val assignment: KtBinaryExpression?,
+        @Nls private val error: String,
+    ) {
+        val initializerOrNull: Initializer?
+            get() = value?.let { Initializer(value, assignment) }
+
+        fun getInitializerOrShowErrorHint(project: Project, editor: Editor?): Initializer? {
+            val initializer = initializerOrNull
+            if (initializer != null) return initializer
+
+            KotlinInlineValHandler.showErrorHint(project, editor, error)
+            return null
+        }
+
+        companion object {
+            fun createError(@Nls error: String): Initialization = Initialization(
+                value = null,
+                assignment = null,
+                error = error,
+            )
+
+            fun createInitializer(value: KtExpression, assignment: KtBinaryExpression?): Initialization = Initialization(
+                value = value,
+                assignment = assignment,
+                error = "",
+            )
+        }
+    }
+
+    companion object {
+        fun extractInitialization(property: KtProperty): Initialization {
             val definitionScope = property.parent ?: kotlin.run {
-                if (withErrorMessage) reportAmbiguousAssignment(project, editor, property.name!!, emptyList())
-                return null
+                return createInitializationWithError(property.name!!, emptyList())
             }
 
             val writeUsages = mutableListOf<KtExpression>()
@@ -93,21 +119,25 @@ class KotlinInlinePropertyProcessor(
             val initializerInDeclaration = property.initializer
             if (initializerInDeclaration != null) {
                 if (writeUsages.isNotEmpty()) {
-                    if (withErrorMessage) reportAmbiguousAssignment(project, editor, property.name!!, writeUsages)
-                    return null
+                    return createInitializationWithError(property.name!!, writeUsages)
                 }
 
-                return Initialization(initializerInDeclaration, assignment = null)
+                return Initialization.createInitializer(initializerInDeclaration, assignment = null)
             }
 
             val assignment = writeUsages.singleOrNull()?.getAssignmentByLHS()?.takeIf { it.operationToken == KtTokens.EQ }
             val initializer = assignment?.right
             if (initializer == null) {
-                if (withErrorMessage) reportAmbiguousAssignment(project, editor, property.name!!, writeUsages)
-                return null
+                return createInitializationWithError(property.name!!, writeUsages)
             }
 
-            return Initialization(initializer, assignment)
+            return Initialization.createInitializer(initializer, assignment)
+        }
+
+        private fun createInitializationWithError(name: String, assignments: Collection<PsiElement>): Initialization {
+            val key = if (assignments.isEmpty()) "variable.has.no.initializer" else "variable.has.no.dominating.definition"
+            val message = RefactoringBundle.getCannotRefactorMessage(RefactoringBundle.message(key, name))
+            return Initialization.createError(message)
         }
     }
 }
@@ -121,12 +151,14 @@ fun createReplacementStrategyForProperty(property: KtProperty, editor: Editor?, 
     val descriptor = property.unsafeResolveToDescriptor() as ValueDescriptor
     val isTypeExplicit = property.typeReference != null
     if (getter == null && setter == null) {
-        val initialization = KotlinInlinePropertyProcessor.extractInitialization(property, project, editor) ?: return null
+        val value = KotlinInlinePropertyProcessor.extractInitialization(property).getInitializerOrShowErrorHint(project, editor)?.value
+            ?: return null
+
         readReplacement = buildCodeToInline(
             declaration = property,
             returnType = descriptor.type,
             isReturnTypeExplicit = isTypeExplicit,
-            bodyOrInitializer = initialization.value,
+            bodyOrInitializer = value,
             isBlockBody = false,
             editor = editor
         ) ?: return null
@@ -143,6 +175,7 @@ fun createReplacementStrategyForProperty(property: KtProperty, editor: Editor?, 
                 editor = editor
             ) ?: return null
         }
+
         writeReplacement = setter?.let {
             buildCodeToInline(
                 declaration = setter,
@@ -156,12 +189,6 @@ fun createReplacementStrategyForProperty(property: KtProperty, editor: Editor?, 
     }
 
     return PropertyUsageReplacementStrategy(readReplacement, writeReplacement)
-}
-
-private fun reportAmbiguousAssignment(project: Project, editor: Editor?, name: String, assignments: Collection<PsiElement>) {
-    val key = if (assignments.isEmpty()) "variable.has.no.initializer" else "variable.has.no.dominating.definition"
-    val message = RefactoringBundle.getCannotRefactorMessage(RefactoringBundle.message(key, name))
-    KotlinInlineValHandler.showErrorHint(project, editor, message)
 }
 
 private val PsiElement.writeOrReadWriteExpression: KtExpression?

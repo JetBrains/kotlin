@@ -70,8 +70,8 @@ class KotlinInlineValHandler(private val withPrompt: Boolean) : KotlinInlineActi
 
         var assignmentToDelete: KtBinaryExpression? = null
         if (getter == null && setter == null) {
-            val initialization = extractInitialization(declaration, project, editor) ?: return
-            assignmentToDelete = initialization.assignment
+            val initializer = extractInitialization(declaration).getInitializerOrShowErrorHint(project, editor) ?: return
+            assignmentToDelete = initializer.assignment
         }
 
         performRefactoring(declaration, assignmentToDelete, editor)
