@@ -1,4 +1,4 @@
-// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.actions;
 
@@ -72,23 +72,18 @@ public class OptimizeImportsProcessor extends AbstractLayoutCodeProcessor {
   @NotNull
   protected FutureTask<Boolean> prepareTask(@NotNull PsiFile file, boolean processChangedTextOnly) {
     if (DumbService.isDumb(file.getProject())) {
-      return new FutureTask<>(EmptyRunnable.INSTANCE, true);
+      return emptyTask();
     }
 
-    final Set<ImportOptimizer> optimizers = LanguageImportStatements.INSTANCE.forFile(file);
-    final List<Runnable> runnables = new ArrayList<>();
-    List<PsiFile> files = file.getViewProvider().getAllFiles();
-    for (ImportOptimizer optimizer : optimizers) {
-      for (PsiFile psiFile : files) {
-        if (optimizer.supports(psiFile)) {
-          runnables.add(optimizer.processFile(psiFile));
-        }
-      }
+    List<Runnable> runnables = collectOptimizers(file);
+
+    if (runnables.isEmpty()) {
+      return emptyTask();
     }
 
     List<HintAction> hints = ShowAutoImportPass.getImportHints(file);
 
-    Runnable writeTask = runnables.isEmpty() ? EmptyRunnable.getInstance() : () -> {
+    return new FutureTask<>(() -> {
       ApplicationManager.getApplication().assertIsDispatchThread();
       CodeStyleManagerImpl.setSequentialProcessingAllowed(false);
       try {
@@ -102,9 +97,25 @@ public class OptimizeImportsProcessor extends AbstractLayoutCodeProcessor {
       finally {
         CodeStyleManagerImpl.setSequentialProcessingAllowed(true);
       }
-    };
+    }, true);
+  }
 
-    return new FutureTask<>(writeTask, true);
+  private static @NotNull FutureTask<Boolean> emptyTask() {
+    return new FutureTask<>(EmptyRunnable.INSTANCE, true);
+  }
+
+  static @NotNull List<Runnable> collectOptimizers(@NotNull PsiFile file) {
+    Set<ImportOptimizer> optimizers = LanguageImportStatements.INSTANCE.forFile(file);
+    List<Runnable> runnables = new ArrayList<>();
+    List<PsiFile> files = file.getViewProvider().getAllFiles();
+    for (ImportOptimizer optimizer : optimizers) {
+      for (PsiFile psiFile : files) {
+        if (optimizer.supports(psiFile)) {
+          runnables.add(optimizer.processFile(psiFile));
+        }
+      }
+    }
+    return runnables;
   }
 
   @NotNull

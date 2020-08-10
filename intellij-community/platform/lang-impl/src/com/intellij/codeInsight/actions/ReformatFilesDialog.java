@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2012 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.actions;
 
@@ -24,12 +10,15 @@ import com.intellij.openapi.fileTypes.LanguageFileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.codeStyle.arrangement.Rearranger;
 import com.intellij.psi.search.SearchScope;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import static com.intellij.codeInsight.actions.TextRangeType.VCS_CHANGED_TEXT;
 import static com.intellij.codeInsight.actions.TextRangeType.WHOLE_FILE;
@@ -50,7 +39,11 @@ public class ReformatFilesDialog extends DialogWrapper implements ReformatFilesO
     boolean canTargetVcsChanges = VcsFacade.getInstance().hasChanges(files, project);
     myOnlyChangedText.setEnabled(canTargetVcsChanges);
     myOnlyChangedText.setSelected(canTargetVcsChanges && myLastRunSettings.getLastTextRangeType() == VCS_CHANGED_TEXT);
-    myOptimizeImports.setSelected(myLastRunSettings.getLastOptimizeImports());
+
+    boolean canOptimizeImports = areImportOptimizersAvailable(files, project);
+    myOptimizeImports.setEnabled(canOptimizeImports);
+    myOptimizeImports.setSelected(canOptimizeImports && myLastRunSettings.getLastOptimizeImports());
+
     myCleanupCode.setSelected(myLastRunSettings.getLastCodeCleanup());
     myRearrangeEntriesCb.setSelected(myLastRunSettings.getLastRearrangeCode());
     myRearrangeEntriesCb.setEnabled(containsAtLeastOneFileToRearrange(files));
@@ -58,7 +51,16 @@ public class ReformatFilesDialog extends DialogWrapper implements ReformatFilesO
     setTitle(CodeInsightBundle.message("dialog.reformat.files.title"));
     init();
   }
-  
+
+  private static boolean areImportOptimizersAvailable(VirtualFile @NotNull [] files, @NotNull Project project) {
+    PsiManager psiManager = PsiManager.getInstance(project);
+    return Stream.of(files)
+      .map(psiManager::findFile)
+      .filter(Objects::nonNull)
+      .flatMap(file -> OptimizeImportsProcessor.collectOptimizers(file).stream())
+      .findFirst().isPresent();
+  }
+
   private static boolean containsAtLeastOneFileToRearrange(VirtualFile @NotNull [] files) {
     for (VirtualFile file : files) {
       FileType fileType = file.getFileType();
@@ -68,7 +70,7 @@ public class ReformatFilesDialog extends DialogWrapper implements ReformatFilesO
           return true;
         }
       }
-      
+
     }
     return false;
   }
@@ -79,7 +81,7 @@ public class ReformatFilesDialog extends DialogWrapper implements ReformatFilesO
   }
 
   @Override
-  public boolean isOptimizeImports(){
+  public boolean isOptimizeImports() {
     return myOptimizeImports.isSelected();
   }
 
@@ -103,7 +105,10 @@ public class ReformatFilesDialog extends DialogWrapper implements ReformatFilesO
   @Override
   protected void doOKAction() {
     super.doOKAction();
-    myLastRunSettings.saveOptimizeImportsState(isOptimizeImports());
+    if (myOptimizeImports.isEnabled()) {
+      myLastRunSettings.saveOptimizeImportsState(isOptimizeImports());
+    }
+
     myLastRunSettings.saveCodeCleanupState(isCodeCleanup());
     if (myRearrangeEntriesCb.isEnabled()) {
       myLastRunSettings.saveRearrangeCodeState(isRearrangeCode());
