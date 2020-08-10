@@ -15432,6 +15432,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/jvm8/defaults/kt14243_prop.kt");
             }
 
+            @TestMetadata("kt40920.kt")
+            public void testKt40920() throws Exception {
+                runTest("compiler/testData/codegen/box/jvm8/defaults/kt40920.kt");
+            }
+
             @TestMetadata("oneImplementation.kt")
             public void testOneImplementation() throws Exception {
                 runTest("compiler/testData/codegen/box/jvm8/defaults/oneImplementation.kt");
@@ -15861,6 +15866,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                     runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/kt14243_2.kt");
                 }
 
+                @TestMetadata("kt40920.kt")
+                public void testKt40920() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/kt40920.kt");
+                }
+
                 @TestMetadata("privateFunInInterface.kt")
                 public void testPrivateFunInInterface() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/privateFunInInterface.kt");
@@ -16038,6 +16048,26 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("invokeDefaultViaSuper.kt")
             public void testInvokeDefaultViaSuper() throws Exception {
                 runTest("compiler/testData/codegen/box/jvm8/javaDefaults/invokeDefaultViaSuper.kt");
+            }
+
+            @TestMetadata("kt40920.kt")
+            public void testKt40920() throws Exception {
+                runTest("compiler/testData/codegen/box/jvm8/javaDefaults/kt40920.kt");
+            }
+
+            @TestMetadata("kt40920_java.kt")
+            public void testKt40920_java() throws Exception {
+                runTest("compiler/testData/codegen/box/jvm8/javaDefaults/kt40920_java.kt");
+            }
+
+            @TestMetadata("kt40920_java2.kt")
+            public void testKt40920_java2() throws Exception {
+                runTest("compiler/testData/codegen/box/jvm8/javaDefaults/kt40920_java2.kt");
+            }
+
+            @TestMetadata("kt40920_map.kt")
+            public void testKt40920_map() throws Exception {
+                runTest("compiler/testData/codegen/box/jvm8/javaDefaults/kt40920_map.kt");
             }
 
             @TestMetadata("longChainOfKotlinExtendsFromJavaWithDefault.kt")
