@@ -238,15 +238,12 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
             @NotNull GenerationState state,
             boolean isErasedInlineClass
     ) {
-        // Skip Java 8 default methods
-        if (CodegenUtilKt.isDefinitelyNotDefaultImplsMethod(interfaceFun)) {
-            return;
-        }
-
         CallableMemberDescriptor actualImplementation =
                 interfaceFun.getKind().isReal() ? interfaceFun : findImplementationFromInterface(interfaceFun);
         assert actualImplementation != null : "Can't find actual implementation for " + interfaceFun;
-        if (JvmAnnotationUtilKt.isCallableMemberCompiledToJvmDefault(actualImplementation, state.getJvmDefaultMode())) {
+        // Skip Java 8 default methods
+        if (CodegenUtilKt.isDefinitelyNotDefaultImplsMethod(actualImplementation) ||
+            JvmAnnotationUtilKt.isCallableMemberCompiledToJvmDefault(actualImplementation, state.getJvmDefaultMode())) {
             return;
         }
 
