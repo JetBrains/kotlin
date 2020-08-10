@@ -113,10 +113,7 @@ class FirEffectiveVisibilityResolverImpl(private val session: FirSession) : FirE
             val declaration = containingDeclarations[index]
             val declarationClassId = declaration.getClassId()
 
-            // because classId's we take from firs are
-            // not the same instances we find in containingDeclarations
-            // TODO: fix
-            if (this.asSingleFqName() == declarationClassId?.asSingleFqName()) {
+            if (this.relativeClassName == declarationClassId?.relativeClassName) {
                 return when (declaration) {
                     is FirRegularClass -> {
                         declaration.symbol to resolveFor(declaration, containingDeclarations.subList(0, index), scopeSession)
