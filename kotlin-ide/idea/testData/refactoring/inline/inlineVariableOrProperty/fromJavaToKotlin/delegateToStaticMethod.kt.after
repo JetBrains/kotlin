@@ -1,0 +1,103 @@
+import JavaClass.staticMethod
+
+fun a() {
+    JavaClass()
+    staticMethod()
+
+    val d = JavaClass()
+    staticMethod()
+
+    d.let {
+        staticMethod()
+    }
+
+    d.also {
+        staticMethod()
+    }
+
+    with(d) {
+        staticMethod()
+    }
+
+    with(d) out@{
+        with(4) {
+            staticMethod()
+        }
+    }
+}
+
+fun a2() {
+    val d: JavaClass? = null
+    d?.let { staticMethod() }
+
+    d?.let {
+        staticMethod()
+    }
+
+    d?.also {
+        staticMethod()
+    }
+
+    with(d) {
+        this?.let { staticMethod() }
+    }
+
+    with(d) out@{
+        with(4) {
+            this@out?.let { staticMethod() }
+        }
+    }
+}
+
+fun a3() {
+    val d: JavaClass? = null
+    val a1 = d?.let { staticMethod() }
+
+    val a2 = d?.let {
+        staticMethod()
+    }
+
+    val a3 = d?.also {
+        staticMethod()
+    }
+
+    val a4 = with(d) {
+        this?.let { staticMethod() }
+    }
+
+    val a5 = with(d) out@{
+        with(4) {
+            this@out?.let { staticMethod() }
+        }
+    }
+}
+
+fun a4() {
+    val d: JavaClass? = null
+    d?.let { staticMethod() }?.dec()
+
+    val a2 = d?.let {
+        staticMethod()
+    }
+    a2?.toLong()
+
+    d?.also {
+        staticMethod()
+    }?.let { staticMethod() }?.and(4)
+
+    val a4 = with(d) {
+        this?.let { staticMethod() }
+    }
+
+    val a5 = with(d) out@{
+        with(4) {
+            this@out?.let { staticMethod() }
+        }
+    }
+
+    val a6 = a4?.let { out -> a5?.let { out + it } }
+}
+
+fun JavaClass.b(): Int? = staticMethod()
+fun JavaClass.c(): Int = staticMethod()
+fun d(d: JavaClass) = staticMethod()

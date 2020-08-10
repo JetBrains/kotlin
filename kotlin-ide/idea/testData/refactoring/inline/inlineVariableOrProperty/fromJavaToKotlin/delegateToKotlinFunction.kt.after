@@ -1,0 +1,103 @@
+fun functionFromKotlin(): Int = 42
+
+fun a() {
+    JavaClass()
+    functionFromKotlin()
+
+    val d = JavaClass()
+    functionFromKotlin()
+
+    d.let {
+        functionFromKotlin()
+    }
+
+    d.also {
+        functionFromKotlin()
+    }
+
+    with(d) {
+        functionFromKotlin()
+    }
+
+    with(d) out@{
+        with(4) {
+            functionFromKotlin()
+        }
+    }
+}
+
+fun a2() {
+    val d: JavaClass? = null
+    d?.let { functionFromKotlin() }
+
+    d?.let {
+        functionFromKotlin()
+    }
+
+    d?.also {
+        functionFromKotlin()
+    }
+
+    with(d) {
+        this?.let { functionFromKotlin() }
+    }
+
+    with(d) out@{
+        with(4) {
+            this@out?.let { functionFromKotlin() }
+        }
+    }
+}
+
+fun a3() {
+    val d: JavaClass? = null
+    val a1 = d?.let { functionFromKotlin() }
+
+    val a2 = d?.let {
+        functionFromKotlin()
+    }
+
+    val a3 = d?.also {
+        functionFromKotlin()
+    }
+
+    val a4 = with(d) {
+        this?.let { functionFromKotlin() }
+    }
+
+    val a5 = with(d) out@{
+        with(4) {
+            this@out?.let { functionFromKotlin() }
+        }
+    }
+}
+
+fun a4() {
+    val d: JavaClass? = null
+    d?.let { functionFromKotlin() }?.dec()
+
+    val a2 = d?.let {
+        functionFromKotlin()
+    }
+    a2?.toLong()
+
+    d?.also {
+        functionFromKotlin()
+    }?.let { functionFromKotlin() }?.and(4)
+
+    val a4 = with(d) {
+        this?.let { functionFromKotlin() }
+    }
+
+    val a5 = with(d) out@{
+        with(4) {
+            this@out?.let { functionFromKotlin() }
+        }
+    }
+
+    val a6 = a4?.let { out -> a5?.let { out + it } }
+}
+
+fun JavaClass.b(): Int? = functionFromKotlin()
+fun JavaClass.c(): Int = functionFromKotlin()
+fun d(d: JavaClass) = functionFromKotlin()

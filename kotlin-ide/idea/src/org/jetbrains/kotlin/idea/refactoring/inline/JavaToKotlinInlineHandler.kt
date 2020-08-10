@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.idea.refactoring.inline
 
 import com.intellij.lang.java.JavaLanguage
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.Key
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
-import com.intellij.psi.PsiReference
+import com.intellij.psi.*
 import com.intellij.psi.util.findDescendantOfType
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.codeInliner.unwrapSpecialUsageOrNull
 import org.jetbrains.kotlin.idea.inspections.findExistingEditor
@@ -27,18 +27,23 @@ import org.jetbrains.kotlin.j2k.J2kConverterExtension
 import org.jetbrains.kotlin.j2k.JKMultipleFilesPostProcessingTarget
 import org.jetbrains.kotlin.nj2k.NewJavaToKotlinConverter
 import org.jetbrains.kotlin.nj2k.NewJavaToKotlinConverter.Companion.addImports
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtReferenceExpression
+import org.jetbrains.kotlin.psi.*
 
 private val LOG = Logger.getInstance(JavaToKotlinInlineHandler::class.java)
 
 class JavaToKotlinInlineHandler : AbstractCrossLanguageInlineHandler() {
     override fun prepareReference(reference: PsiReference, referenced: PsiElement): MultiMap<PsiElement, String> {
-        if (referenced.language != JavaLanguage.INSTANCE || referenced !is PsiMethod) return super.prepareReference(reference, referenced)
+        val javaMemberToInline = referenced.javaMemberToInline ?: return super.prepareReference(reference, referenced)
+        javaMemberToInline.validate()?.let { error ->
+            return createMultiMapWithSingleConflict(
+                reference.element,
+                error,
+            )
+        }
+
         try {
-            val strategy = findOrCreateUsageReplacementStrategy(referenced, reference.element)
-            "Failed to create usage strategy".takeIf { strategy == null }
+            val strategy = findOrCreateUsageReplacementStrategy(javaMemberToInline, reference.element)
+            if (strategy == null) KotlinBundle.message("failed.to.create.a.wrapper.for.inlining.to.kotlin") else null
         } catch (e: IllegalStateException) {
             LOG.error(e)
             e.message
@@ -53,12 +58,12 @@ class JavaToKotlinInlineHandler : AbstractCrossLanguageInlineHandler() {
     }
 
     override fun performInline(usage: UsageInfo, referenced: PsiElement) {
-        val unwrappedElement = unwrapUsage(usage) ?: run {
+        val unwrappedElement = unwrapUsage(usage) ?: kotlin.run {
             LOG.error("Kotlin usage in $usage not found (element ${usage.element}")
             return
         }
 
-        val replacementStrategy = referenced.findUsageReplacementStrategy(withValidation = false) ?: run {
+        val replacementStrategy = referenced.findUsageReplacementStrategy(withValidation = false) ?: kotlin.run {
             LOG.error("Can't find strategy for ${unwrappedElement.getKotlinFqName()} => ${unwrappedElement.text}")
             return
         }
@@ -67,10 +72,13 @@ class JavaToKotlinInlineHandler : AbstractCrossLanguageInlineHandler() {
     }
 }
 
-private fun NewJavaToKotlinConverter.convertToKotlinAndFindFunction(
-    referenced: PsiMethod,
+private val PsiElement.javaMemberToInline: PsiMember?
+    get() = if (language == JavaLanguage.INSTANCE && (this is PsiMethod || this is PsiField)) this as PsiMember else null
+
+private fun NewJavaToKotlinConverter.convertToKotlinNamedDeclaration(
+    referenced: PsiMember,
     context: PsiElement,
-): KtNamedFunction {
+): KtNamedDeclaration {
     val factory = KtPsiFactory(project)
     val className = referenced.containingClass?.qualifiedName
     val (j2kResults, _, j2kContext) = elementsToKotlin(listOf(referenced)) { it == referenced }
@@ -86,7 +94,7 @@ private fun NewJavaToKotlinConverter.convertToKotlinAndFindFunction(
 
     return fakeFile.findDescendantOfType {
         it.name == referenced.name
-    } ?: error("Can't find ${referenced.name} function in ${fakeFile.text}")
+    } ?: error("Can't find ${referenced.name} declaration in ${fakeFile.text}")
 }
 
 private fun unwrapUsage(usage: UsageInfo): KtReferenceExpression? {
@@ -111,25 +119,39 @@ internal class J2KInlineCache(private val strategy: UsageReplacementStrategy, pr
         internal fun PsiElement.setUsageReplacementStrategy(strategy: UsageReplacementStrategy): Unit =
             putUserData(JAVA_TO_KOTLIN_INLINE_CACHE_KEY, J2KInlineCache(strategy, text))
 
-        internal fun findOrCreateUsageReplacementStrategy(javaMethod: PsiMethod, context: PsiElement): UsageReplacementStrategy? {
-            javaMethod.findUsageReplacementStrategy(withValidation = true)?.let { return it }
+        internal fun findOrCreateUsageReplacementStrategy(javaMember: PsiMember, context: PsiElement): UsageReplacementStrategy? {
+            javaMember.findUsageReplacementStrategy(withValidation = true)?.let { return it }
 
             val converter = NewJavaToKotlinConverter(
-                javaMethod.project,
-                javaMethod.module,
+                javaMember.project,
+                javaMember.module,
                 ConverterSettings.defaultSettings,
                 IdeaJavaToKotlinServices
             )
 
-            val declaration = converter.convertToKotlinAndFindFunction(
-                referenced = javaMethod,
+            val declaration = converter.convertToKotlinNamedDeclaration(
+                referenced = javaMember,
                 context = context,
             )
 
-            return createUsageReplacementStrategyForFunction(
+            return createUsageReplacementStrategyForNamedDeclaration(
                 declaration,
-                javaMethod.findExistingEditor()
-            )?.also { javaMethod.setUsageReplacementStrategy(it) }
+                javaMember.findExistingEditor()
+            )?.also { javaMember.setUsageReplacementStrategy(it) }
         }
     }
+}
+
+private fun PsiMember.validate(): String? = when {
+    this is PsiField && !this.hasInitializer() -> KotlinBundle.message("a.field.without.an.initializer.is.not.yet.supported")
+    else -> null
+}
+
+private fun createUsageReplacementStrategyForNamedDeclaration(
+    namedDeclaration: KtNamedDeclaration,
+    editor: Editor?
+): UsageReplacementStrategy? = when (namedDeclaration) {
+    is KtNamedFunction -> createUsageReplacementStrategyForFunction(namedDeclaration, editor)
+    is KtProperty -> createReplacementStrategyForProperty(namedDeclaration, editor, namedDeclaration.project)
+    else -> null
 }

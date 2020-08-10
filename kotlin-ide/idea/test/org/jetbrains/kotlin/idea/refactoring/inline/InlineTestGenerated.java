@@ -497,6 +497,26 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
+            @TestMetadata("delegateStaticToStaticField.kt")
+            public void testDelegateStaticToStaticField() throws Exception {
+                runTest("testData/refactoring/inline/function/fromJavaToKotlin/delegateStaticToStaticField.kt");
+            }
+
+            @TestMetadata("delegateStaticToStaticFieldWithNameConflict.kt")
+            public void testDelegateStaticToStaticFieldWithNameConflict() throws Exception {
+                runTest("testData/refactoring/inline/function/fromJavaToKotlin/delegateStaticToStaticFieldWithNameConflict.kt");
+            }
+
+            @TestMetadata("delegateStaticToStaticMethod.kt")
+            public void testDelegateStaticToStaticMethod() throws Exception {
+                runTest("testData/refactoring/inline/function/fromJavaToKotlin/delegateStaticToStaticMethod.kt");
+            }
+
+            @TestMetadata("delegateStaticToStaticMethodWithNameConflict.kt")
+            public void testDelegateStaticToStaticMethodWithNameConflict() throws Exception {
+                runTest("testData/refactoring/inline/function/fromJavaToKotlin/delegateStaticToStaticMethodWithNameConflict.kt");
+            }
+
             @TestMetadata("delegateToField.kt")
             public void testDelegateToField() throws Exception {
                 runTest("testData/refactoring/inline/function/fromJavaToKotlin/delegateToField.kt");
@@ -510,6 +530,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             @TestMetadata("delegateToKotlinExtentionFunction.kt")
             public void testDelegateToKotlinExtentionFunction() throws Exception {
                 runTest("testData/refactoring/inline/function/fromJavaToKotlin/delegateToKotlinExtentionFunction.kt");
+            }
+
+            @TestMetadata("delegateToKotlinExtentionProperty.kt")
+            public void testDelegateToKotlinExtentionProperty() throws Exception {
+                runTest("testData/refactoring/inline/function/fromJavaToKotlin/delegateToKotlinExtentionProperty.kt");
             }
 
             @TestMetadata("delegateToKotlinFunction.kt")
@@ -1236,6 +1261,99 @@ public class InlineTestGenerated extends AbstractInlineTest {
             @TestMetadata("TrivialDontExplicate.kt")
             public void testTrivialDontExplicate() throws Exception {
                 runTest("testData/refactoring/inline/inlineVariableOrProperty/explicateTypeArgument/TrivialDontExplicate.kt");
+            }
+        }
+
+        @RunWith(JUnit3RunnerWithInners.class)
+        @TestMetadata("testData/refactoring/inline/inlineVariableOrProperty/fromJavaToKotlin")
+        public static class FromJavaToKotlin extends AbstractInlineTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            @TestMetadata("delegateStaticToStaticField.kt")
+            public void testDelegateStaticToStaticField() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/fromJavaToKotlin/delegateStaticToStaticField.kt");
+            }
+
+            @TestMetadata("delegateStaticToStaticFieldWithNameConflict.kt")
+            public void testDelegateStaticToStaticFieldWithNameConflict() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/fromJavaToKotlin/delegateStaticToStaticFieldWithNameConflict.kt");
+            }
+
+            @TestMetadata("delegateStaticToStaticMethod.kt")
+            public void testDelegateStaticToStaticMethod() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/fromJavaToKotlin/delegateStaticToStaticMethod.kt");
+            }
+
+            @TestMetadata("delegateStaticToStaticMethodWithNameConflict.kt")
+            public void testDelegateStaticToStaticMethodWithNameConflict() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/fromJavaToKotlin/delegateStaticToStaticMethodWithNameConflict.kt");
+            }
+
+            @TestMetadata("delegateToField.kt")
+            public void testDelegateToField() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/fromJavaToKotlin/delegateToField.kt");
+            }
+
+            @TestMetadata("delegateToField2.kt")
+            public void testDelegateToField2() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/fromJavaToKotlin/delegateToField2.kt");
+            }
+
+            @TestMetadata("delegateToKotlinExtentionFunction.kt")
+            public void testDelegateToKotlinExtentionFunction() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/fromJavaToKotlin/delegateToKotlinExtentionFunction.kt");
+            }
+
+            @TestMetadata("delegateToKotlinExtentionProperty.kt")
+            public void testDelegateToKotlinExtentionProperty() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/fromJavaToKotlin/delegateToKotlinExtentionProperty.kt");
+            }
+
+            @TestMetadata("delegateToKotlinFunction.kt")
+            public void testDelegateToKotlinFunction() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/fromJavaToKotlin/delegateToKotlinFunction.kt");
+            }
+
+            @TestMetadata("delegateToMethod.kt")
+            public void testDelegateToMethod() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/fromJavaToKotlin/delegateToMethod.kt");
+            }
+
+            @TestMetadata("delegateToMethod2.kt")
+            public void testDelegateToMethod2() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/fromJavaToKotlin/delegateToMethod2.kt");
+            }
+
+            @TestMetadata("delegateToStaticField.kt")
+            public void testDelegateToStaticField() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/fromJavaToKotlin/delegateToStaticField.kt");
+            }
+
+            @TestMetadata("delegateToStaticFieldWithNameConflict.kt")
+            public void testDelegateToStaticFieldWithNameConflict() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/fromJavaToKotlin/delegateToStaticFieldWithNameConflict.kt");
+            }
+
+            @TestMetadata("delegateToStaticMethod.kt")
+            public void testDelegateToStaticMethod() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/fromJavaToKotlin/delegateToStaticMethod.kt");
+            }
+
+            @TestMetadata("delegateToStaticMethodWithNameConflict.kt")
+            public void testDelegateToStaticMethodWithNameConflict() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/fromJavaToKotlin/delegateToStaticMethodWithNameConflict.kt");
+            }
+
+            @TestMetadata("fieldWithSeparateInitializer.kt")
+            public void testFieldWithSeparateInitializer() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/fromJavaToKotlin/fieldWithSeparateInitializer.kt");
+            }
+
+            @TestMetadata("fieldWithoutInitializer.kt")
+            public void testFieldWithoutInitializer() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/fromJavaToKotlin/fieldWithoutInitializer.kt");
             }
         }
 

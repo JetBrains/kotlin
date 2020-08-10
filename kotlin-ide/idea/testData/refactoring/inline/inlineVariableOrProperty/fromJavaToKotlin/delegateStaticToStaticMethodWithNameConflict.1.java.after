@@ -1,0 +1,6 @@
+public class JavaClass {
+
+    public static Integer staticMethod() {
+        return 42;
+    }
+}

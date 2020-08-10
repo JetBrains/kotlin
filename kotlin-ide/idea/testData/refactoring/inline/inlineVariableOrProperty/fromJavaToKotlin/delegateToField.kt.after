@@ -1,0 +1,95 @@
+fun a() {
+    JavaClass()
+
+    val d = JavaClass()
+
+    d.let {
+        it.otherFiled
+    }
+
+    d.also {
+    }
+
+    with(d) {
+        otherFiled
+    }
+
+    with(d) out@{
+        with(4) {
+            this@out.otherFiled
+        }
+    }
+}
+
+fun a2() {
+    val d: JavaClass? = null
+    d?.let {}
+
+    d?.let {
+        it.otherFiled
+    }
+
+    d?.also {
+    }
+
+    with(d) {
+        this?.otherFiled
+    }
+
+    with(d) out@{
+        with(4) {
+            this@out?.otherFiled
+        }
+    }
+}
+
+fun a3() {
+    val d: JavaClass? = null
+    val a1 = d?.otherFiled
+
+    val a2 = d?.let {
+        it.otherFiled
+    }
+
+    val a3 = d?.also {
+    }
+
+    val a4 = with(d) {
+        this?.otherFiled
+    }
+
+    val a5 = with(d) out@{
+        with(4) {
+            this@out?.otherFiled
+        }
+    }
+}
+
+fun a4() {
+    val d: JavaClass? = null
+    d?.otherFiled?.dec()
+
+    val a2 = d?.let {
+        it.otherFiled
+    }
+    a2?.toLong()
+
+    d?.also {
+    }?.otherFiled?.and(4)
+
+    val a4 = with(d) {
+        this?.otherFiled
+    }
+
+    val a5 = with(d) out@{
+        with(4) {
+            this@out?.otherFiled
+        }
+    }
+
+    val a6 = a4?.let { out -> a5?.let { out + it } }
+}
+
+fun JavaClass.b(): Int? = otherFiled
+fun JavaClass.c(): Int = this.otherFiled
+fun d(d: JavaClass) = d.otherFiled

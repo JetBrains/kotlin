@@ -1,0 +1,4 @@
+public class JavaClass {
+
+    public int otherFiled = 42;
+}
