@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.utils
 import kotlin.reflect.KProperty
 
 
-@Suppress("EXPERIMENTAL_FEATURE_WARNING")
-internal inline class ThreadLocalValue<V>(private val threadLocal: ThreadLocal<V>) {
+internal class ThreadLocalValue<V>(private val threadLocal: ThreadLocal<V>) {
     @Suppress("NOTHING_TO_INLINE")
     inline operator fun getValue(thisRef: Any?, property: KProperty<*>): V = threadLocal.get()
 }

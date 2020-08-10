@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.ThreadSafe
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.getContainingFile
 
 /**
  * Maps [KtElement] to [FirElement]
@@ -55,13 +58,26 @@ internal class FirElementBuilder(
         return psiToFirCache.getFir(element, containerFir, firFile)
     }
 
+    fun lazyResolveDeclaration(
+        declaration: FirDeclaration,
+        moduleFileCache: ModuleFileCache,
+        toPhase: FirResolvePhase
+    ) {
+        if (declaration.resolvePhase < toPhase) {
+            val firFile = declaration.getContainingFile() ?: error("FirFile was not found for\n${declaration.render()}")
+            firFileBuilder.runCustomResolve(firFile, moduleFileCache) {
+                runLazyResolveWithoutLock(declaration, firFile, declaration.session.firProvider, toPhase)
+            }
+        }
+    }
+
     /**
      * Should be invoked under lock
      */
     private fun runLazyResolveWithoutLock(
         firDeclarationToResolve: FirDeclaration,
         containerFirFile: FirFile,
-        firIdeProvider: FirIdeProvider,
+        provider: FirProvider,
         toPhase: FirResolvePhase,
         towerDataContextForStatement: MutableMap<FirStatement, FirTowerDataContext>? = null,
     ) {
@@ -72,6 +88,7 @@ internal class FirElementBuilder(
         if (toPhase <= nonLazyPhase) return
         val designation = mutableListOf<FirDeclaration>(containerFirFile)
         if (firDeclarationToResolve !is FirFile) {
+
             val id = when (firDeclarationToResolve) {
                 is FirCallableDeclaration<*> -> {
                     firDeclarationToResolve.symbol.callableId.classId
@@ -83,7 +100,7 @@ internal class FirElementBuilder(
             }
             val outerClasses = generateSequence(id) { classId ->
                 classId.outerClassId
-            }.mapTo(mutableListOf()) { firIdeProvider.getFirClassifierByFqName(it)!! }
+            }.mapTo(mutableListOf()) { provider.getFirClassifierByFqName(it)!! }
             designation += outerClasses.asReversed()
             if (firDeclarationToResolve is FirCallableDeclaration<*>) {
                 designation += firDeclarationToResolve
@@ -113,7 +130,6 @@ internal class FirElementBuilder(
         runLazyResolveWithoutLock(firFunction, containerFirFile, firIdeProvider, toPhase, towerDataContextForStatement)
     }
 }
-
 
 
 private fun KtElement.getNonLocalContainingDeclarationWithFqName(): KtDeclaration? {

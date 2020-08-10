@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.scopes
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
@@ -58,7 +59,10 @@ internal class KtFirScopeProvider(
     override fun getMemberScope(classSymbol: KtClassOrObjectSymbol): KtMemberScope = withValidityAssertion {
         memberScopeCache.getOrPut(classSymbol) {
             check(classSymbol is KtFirClassOrObjectSymbol)
-            val firScope = classSymbol.fir.unsubstitutedScope(classSymbol.fir.session, ScopeSession()).also(firScopeStorage::register)
+            val firScope =
+                classSymbol.firRef.withFir(FirResolvePhase.SUPER_TYPES) { fir ->
+                    fir.unsubstitutedScope(fir.session, ScopeSession())
+                }.also(firScopeStorage::register)
             KtFirMemberScope(classSymbol, firScope, token, builder)
         }
     }
@@ -66,7 +70,8 @@ internal class KtFirScopeProvider(
     override fun getDeclaredMemberScope(classSymbol: KtClassOrObjectSymbol): KtDeclaredMemberScope = withValidityAssertion {
         declaredMemberScopeCache.getOrPut(classSymbol) {
             check(classSymbol is KtFirClassOrObjectSymbol)
-            val firScope = declaredMemberScope(classSymbol.fir).also(firScopeStorage::register)
+            val firScope = classSymbol.firRef.withFir(FirResolvePhase.SUPER_TYPES) { declaredMemberScope(it) }
+                .also(firScopeStorage::register)
             KtFirDeclaredMemberScope(classSymbol, firScope, token, builder)
         }
     }

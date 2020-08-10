@@ -51,6 +51,10 @@ internal class FirModuleResolveStateForCompletion(
         return null
     }
 
+    override fun <D : FirDeclaration> resolvedFirToPhase(declaration: D, toPhase: FirResolvePhase): D {
+        return originalState.resolvedFirToPhase(declaration, toPhase)
+    }
+
     override fun lazyResolveFunctionForCompletion(
         firFunction: FirFunction<*>,
         containerFirFile: FirFile,
