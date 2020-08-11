@@ -192,17 +192,6 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
         }
     }
 
-    internal fun putNpmResolution(
-        path: String,
-        version: String
-    ) {
-        with(state) {
-            if (this is ResolutionState.Configuring) {
-                resolver.resolutions[path] = version
-            }
-        }
-    }
-
     internal fun getNpmDependencyResolvedCompilation(npmDependency: NpmDependency): KotlinCompilationNpmResolution? {
         val project = npmDependency.project
 

@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.RootResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
+import org.jetbrains.kotlin.gradle.targets.js.yarn.toVersionString
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 
 /**
@@ -49,7 +51,6 @@ internal class KotlinRootNpmResolver internal constructor(
     val compositeNodeModules = CompositeNodeModulesCache(nodeJs)
     val packageJsonUmbrella = rootProject.registerTask(PACKAGE_JSON_UMBRELLA_TASK_NAME, Task::class.java) {}
     val projectResolvers = mutableMapOf<Project, KotlinProjectNpmResolver>()
-    val resolutions = mutableMapOf<String, String>()
 
     fun alreadyResolvedMessage(action: String) = "Cannot $action. NodeJS projects already resolved."
 
@@ -109,10 +110,13 @@ internal class KotlinRootNpmResolver internal constructor(
 
             gradleNodeModules.close()
 
+            val yarn = YarnPlugin.apply(rootProject)
+
             nodeJs.packageManager.prepareRootProject(
                 rootProject,
                 allNpmPackages,
-                resolutions
+                yarn.resolutions
+                    .associate { it.path to it.toVersionString() }
             )
 
             return Installation(

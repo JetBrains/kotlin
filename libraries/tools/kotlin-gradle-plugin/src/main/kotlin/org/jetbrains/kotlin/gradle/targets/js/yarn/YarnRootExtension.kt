@@ -43,6 +43,8 @@ open class YarnRootExtension(val project: Project) : ConfigurationPhaseAware<Yar
             .withType(RootPackageJsonTask::class.java)
             .named(RootPackageJsonTask.NAME)
 
+    var resolutions: MutableList<YarnResolution> = mutableListOf()
+
     @Incubating
     fun disableGranularWorkspaces() {
         val packageJsonUmbrella = NodeJsRootPlugin.apply(project)
