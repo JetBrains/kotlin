@@ -64,13 +64,17 @@ class DokkaBase : DokkaPlugin() {
         CoreExtensions.preMergeDocumentableTransformer providing ::DeprecatedDocumentableFilterTransformer
     }
 
+    val suppressedDocumentableFilter by extending {
+        CoreExtensions.preMergeDocumentableTransformer providing ::SuppressedDocumentableFilterTransformer
+    }
+
     val documentableVisbilityFilter by extending {
         CoreExtensions.preMergeDocumentableTransformer providing ::DocumentableVisibilityFilterTransformer
     }
 
     val emptyPackagesFilter by extending {
         CoreExtensions.preMergeDocumentableTransformer providing ::EmptyPackagesFilterTransformer order {
-            after(deprecatedDocumentableFilter, documentableVisbilityFilter)
+            after(deprecatedDocumentableFilter, suppressedDocumentableFilter, documentableVisbilityFilter)
         }
     }
 
