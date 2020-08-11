@@ -37,6 +37,14 @@
   </component>
   <component name="JavacSettings">
     <option name="PREFER_TARGET_JDK_COMPILER" value="false" />
+    <option name="ADDITIONAL_OPTIONS_STRING" value="-Xlint:unchecked" />
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="intellij.android.adt.ui" options="-Xlint:unchecked --add-exports java.desktop/sun.swing=ALL-UNNAMED" />
+      <module name="intellij.android.core" options="-Xlint:unchecked --add-exports java.desktop/sun.awt.image=ALL-UNNAMED" />
+      <module name="intellij.platform.ide" options="-Xlint:unchecked --add-exports java.desktop/sun.swing=ALL-UNNAMED --add-exports java.desktop/sun.awt=ALL-UNNAMED" />
+      <module name="intellij.platform.ide.impl" options="-Xlint:unchecked --add-exports java.desktop/sun.awt=ALL-UNNAMED --add-exports java.desktop/sun.font=ALL-UNNAMED --add-exports java.desktop/java.awt.peer=ALL-UNNAMED --add-exports jdk.attach/sun.tools.attach=ALL-UNNAMED --add-exports java.desktop/sun.awt.image=ALL-UNNAMED --add-exports java.desktop/sun.awt.datatransfer=ALL-UNNAMED --add-exports java.desktop/sun.swing=ALL-UNNAMED" />
+      <module name="intellij.platform.lang.impl" options="-Xlint:unchecked --add-exports java.desktop/sun.awt.image=ALL-UNNAMED --add-exports java.desktop/sun.awt=ALL-UNNAMED" />
+    </option>
     <option name="MAXIMUM_HEAP_SIZE" value="400" />
   </component>
 </project>
