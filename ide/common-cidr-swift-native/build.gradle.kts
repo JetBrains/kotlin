@@ -80,4 +80,5 @@ tasks.withType<KotlinCompile> {
     kotlinOptions.freeCompilerArgs += "-Xjvm-default=enable"
     kotlinOptions.freeCompilerArgs += "-Xskip-metadata-version-check"
     kotlinOptions.freeCompilerArgs += "-Xno-optimized-callable-references"
+    kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.RequiresOptIn"
 }
