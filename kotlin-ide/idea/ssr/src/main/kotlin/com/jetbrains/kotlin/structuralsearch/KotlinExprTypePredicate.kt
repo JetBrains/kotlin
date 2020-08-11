@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlinx.serialization.compiler.resolve.toSimpleType
 
@@ -72,7 +73,11 @@ class KotlinExprTypePredicate(
         return searchedTypeNames
             .filter { it != "null" }
             .map(factory::createType)
-            .any { matchTypeReference(type, it, project, scope, withinHierarchy) }
+            .any { typeReference ->
+                matchTypeReference(type, typeReference, project, scope)
+                        || withinHierarchy
+                        && type.supertypes().any { superType -> matchTypeReference(superType, typeReference, project, scope) }
+            }
     }
 
     companion object {
@@ -80,20 +85,18 @@ class KotlinExprTypePredicate(
             type: KotlinType?,
             typeReference: KtTypeReference?,
             project: Project,
-            scope: GlobalSearchScope,
-            withinHierarchy: Boolean
+            scope: GlobalSearchScope
         ): Boolean {
             if (type == null || typeReference == null) return type == null && typeReference == null
             val element = typeReference.typeElement ?: return false
-            return matchTypeElement(type, element, project, scope, withinHierarchy)
+            return matchTypeElement(type, element, project, scope)
         }
 
         private fun matchTypeElement(
             type: KotlinType?,
             typeElement: KtTypeElement?,
             project: Project,
-            scope: GlobalSearchScope,
-            withinHierarchy: Boolean
+            scope: GlobalSearchScope
         ): Boolean {
             if (type == null || typeElement == null) return type == null && typeElement == null
 
@@ -104,8 +107,7 @@ class KotlinExprTypePredicate(
                     projection.type,
                     reference,
                     project,
-                    scope,
-                    withinHierarchy
+                    scope
                 )
             }
 
@@ -116,24 +118,22 @@ class KotlinExprTypePredicate(
                         type.getReceiverTypeFromFunctionType(),
                         typeElement.receiverTypeReference,
                         project,
-                        scope,
-                        withinHierarchy
-                    )
+                        scope
+                    ) && !type.isMarkedNullable
                 is KtUserType -> {
                     val className = typeElement.referencedName ?: return false
                     val index = if (className.contains(".")) KotlinFullClassNameIndex.getInstance()
                     else KotlinClassShortNameIndex.getInstance()
                     index.get(className, project, scope).any {
                         val searchedType = (it.descriptor as ClassDescriptor).toSimpleType(typeElement.parent is KtNullableType)
-                        searchedType.fqName == type.fqName || withinHierarchy && type.isSubtypeOf(searchedType)
-                    }
+                        searchedType.fqName == type.fqName
+                    } && !type.isMarkedNullable
                 }
                 is KtNullableType -> type.isMarkedNullable && matchTypeElement(
-                    type,
+                    type.makeNotNullable(),
                     typeElement.innerType,
                     project,
-                    scope,
-                    withinHierarchy
+                    scope
                 )
                 else -> throw Error("Malformed type: $typeElement")
             }
@@ -144,11 +144,13 @@ class KotlinExprTypePredicate(
 
         private fun matchNames(type: KotlinType, typeElement: KtTypeElement): Boolean {
             val parent = typeElement.parent
-            return "${type.fqName}" == when {
+            val typeArguments = typeElement.typeArgumentsAsTypes
+            return when {
                 parent is KtTypeReference &&
                         parent.modifierList?.allChildren?.any { it.elementType == KtTokens.SUSPEND_KEYWORD } == true
-                -> "kotlin.coroutines.SuspendFunction${typeElement.typeArgumentsAsTypes.size - 1}"
-                else -> "kotlin.Function${typeElement.typeArgumentsAsTypes.size - 1}"
+                -> "${type.fqName}" == "kotlin.coroutines.SuspendFunction${typeArguments.size - 1}"
+                else -> "${type.fqName}" == "kotlin.Function${typeArguments.size - 1}"
+                        || typeArguments.size == 1 && "${type.fqName}" == "kotlin.Function"
             }
         }
 

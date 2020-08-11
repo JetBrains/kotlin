@@ -4,6 +4,7 @@ import com.jetbrains.kotlin.structuralsearch.KotlinSSResourceInspectionTest
 import com.jetbrains.kotlin.structuralsearch.KotlinStructuralSearchProfile
 
 class KotlinSSTypeFilterTest : KotlinSSResourceInspectionTest() {
+
     override fun getBasePath(): String = "typeFilter"
 
     // Behavior
@@ -38,6 +39,8 @@ class KotlinSSTypeFilterTest : KotlinSSResourceInspectionTest() {
     
     fun testSuspendFunctionType() { doTest("val '_ = '_:[exprtype(suspend \\(\\) -> Unit)]") }
 
+    fun testFunctionTypeSupertype() { doTest("val '_:[exprtype(*\\(\\) -> Unit)]") }
+    
     // Elements where type filter is enabled
 
     fun testTypeValueArgument() { doTest("'_('_:[exprtype(String)])") }
