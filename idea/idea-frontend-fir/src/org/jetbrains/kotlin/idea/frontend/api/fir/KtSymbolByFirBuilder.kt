@@ -9,9 +9,11 @@ import com.google.common.collect.MapMaker
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.firProvider
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -32,10 +34,12 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirFlexibleType
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirIntersectionType
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirTypeArgumentWithVariance
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirTypeParameterType
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.threadLocal
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import java.util.concurrent.ConcurrentMap
 
@@ -43,8 +47,6 @@ import java.util.concurrent.ConcurrentMap
  * Maps FirElement to KtSymbol & ConeType to KtType, thread safe
  */
 internal class KtSymbolByFirBuilder private constructor(
-    firProvider: FirSymbolProvider,
-    typeCheckerContext: ConeTypeCheckerContext,
     private val project: Project,
     resolveState: FirModuleResolveState,
     override val token: ValidityToken,
@@ -52,16 +54,21 @@ internal class KtSymbolByFirBuilder private constructor(
     private val symbolsCache: BuilderCache<FirDeclaration, KtSymbol>,
     private val typesCache: BuilderCache<ConeKotlinType, KtType>
 ) : ValidityTokenOwner {
+    private val typeCheckerContext by threadLocal {
+        ConeTypeCheckerContext(
+            isErrorTypeEqualsToAnything = true,
+            isStubTypeEqualsToAnything = true,
+            resolveState.firIdeLibrariesSession
+        )
+    }
+
+    private val firProvider get() = resolveState.firIdeSourcesSession.firSymbolProvider
 
     constructor(
-        firProvider: FirSymbolProvider,
-        typeCheckerContext: ConeTypeCheckerContext,
         resolveState: FirModuleResolveState,
         project: Project,
         token: ValidityToken
     ) : this(
-        firProvider = firProvider,
-        typeCheckerContext = typeCheckerContext,
         project = project,
         token = token,
         resolveState = resolveState,
@@ -70,15 +77,11 @@ internal class KtSymbolByFirBuilder private constructor(
         typesCache = BuilderCache()
     )
 
-    private val firProvider by weakRef(firProvider)
     private val resolveState by weakRef(resolveState)
-    private val typeCheckerContext by weakRef(typeCheckerContext)
 
     fun createReadOnlyCopy(newResolveState: FirModuleResolveState): KtSymbolByFirBuilder {
         check(!withReadOnlyCaching) { "Cannot create readOnly KtSymbolByFirBuilder from a readonly one" }
         return KtSymbolByFirBuilder(
-            firProvider,
-            typeCheckerContext,
             project,
             token = token,
             resolveState = newResolveState,
@@ -126,8 +129,8 @@ internal class KtSymbolByFirBuilder private constructor(
     fun buildFirConstructorParameter(fir: FirValueParameterImpl) =
         symbolsCache.cache(fir) { KtFirConstructorValueParameterSymbol(fir, resolveState, token, this) }
 
-    fun buildFunctionSymbol(fir: FirSimpleFunction, forcedOrigin: FirDeclarationOrigin? = null) = symbolsCache.cache(fir) {
-        KtFirFunctionSymbol(fir, resolveState, token, this, forcedOrigin)
+    fun buildFunctionSymbol(fir: FirSimpleFunction) = symbolsCache.cache(fir) {
+        KtFirFunctionSymbol(fir, resolveState, token, this)
     }
 
     fun buildConstructorSymbol(fir: FirConstructor) = symbolsCache.cache(fir) { KtFirConstructorSymbol(fir, resolveState, token, this) }
@@ -139,10 +142,10 @@ internal class KtSymbolByFirBuilder private constructor(
     fun buildAnonymousFunctionSymbol(fir: FirAnonymousFunction) =
         symbolsCache.cache(fir) { KtFirAnonymousFunctionSymbol(fir, resolveState, token, this) }
 
-    fun buildVariableSymbol(fir: FirProperty, forcedOrigin: FirDeclarationOrigin? = null): KtVariableSymbol = symbolsCache.cache(fir) {
+    fun buildVariableSymbol(fir: FirProperty): KtVariableSymbol = symbolsCache.cache(fir) {
         when {
             fir.isLocal -> KtFirLocalVariableSymbol(fir, resolveState, token, this)
-            else -> KtFirPropertySymbol(fir, resolveState, token, this, forcedOrigin)
+            else -> KtFirPropertySymbol(fir, resolveState, token, this)
         }
     }
 
@@ -152,6 +155,10 @@ internal class KtSymbolByFirBuilder private constructor(
 
     fun buildTypeParameterSymbolByLookupTag(lookupTag: ConeTypeParameterLookupTag): KtTypeParameterSymbol? = withValidityAssertion {
         (firProvider.getSymbolByLookupTag(lookupTag) as? FirTypeParameterSymbol)?.fir?.let(::buildTypeParameterSymbol)
+    }
+
+    fun buildClassLikeSymbolByClassId(classId: ClassId, firSession: FirSession): FirRegularClass? = withValidityAssertion {
+        firSession.firProvider.getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass
     }
 
 
