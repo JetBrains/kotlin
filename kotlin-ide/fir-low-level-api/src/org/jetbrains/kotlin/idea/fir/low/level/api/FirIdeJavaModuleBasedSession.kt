@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import com.intellij.openapi.module.impl.scopes.ModuleWithDependentsScope
 import com.intellij.openapi.project.Project
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.registerCheckersComponent
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.registerExtensions
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.calls.jvm.registerJvmCallConflictResolverFactory
+import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -48,6 +48,7 @@ internal class FirIdeJavaModuleBasedSession private constructor(
             moduleInfo: ModuleSourceInfo,
             firPhaseRunner: FirPhaseRunner,
             sessionProvider: FirSessionProvider,
+            librariesSession: FirIdeModuleLibraryDependenciesSession,
         ): FirIdeJavaModuleBasedSession {
             val scopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
             val firBuilder = FirFileBuilder(sessionProvider as FirIdeSessionProvider, scopeProvider, firPhaseRunner)
@@ -83,7 +84,7 @@ internal class FirIdeJavaModuleBasedSession private constructor(
                         buildList {
                             add(provider)
                             add(JavaSymbolProvider(this@apply, sessionProvider.project, searchScope))
-                            add(FirIdeModuleLibraryDependenciesSession.create(moduleInfo, sessionProvider, project).firSymbolProvider)
+                            add(librariesSession.firSymbolProvider)
                         }
                     ) as FirSymbolProvider
                 )

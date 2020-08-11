@@ -11,14 +11,15 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
-import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirEnumEntrySymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.createSignature
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtEnumEntrySymbol
-import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 internal class KtFirEnumEntrySymbol(
@@ -32,4 +33,10 @@ internal class KtFirEnumEntrySymbol(
 
     override val name: Name get() = firRef.withFir { it.name }
     override val type: KtType by firRef.withFirAndCache(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) { fir -> builder.buildKtType(fir.returnTypeRef) }
+    override val enumClassId: ClassId = firRef.withFir { it.symbol.callableId.classId ?: error("ClassId should present for enum") }
+
+    override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol> {
+        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        return KtFirEnumEntrySymbolPointer(enumClassId, firRef.withFir { it.createSignature() })
+    }
 }

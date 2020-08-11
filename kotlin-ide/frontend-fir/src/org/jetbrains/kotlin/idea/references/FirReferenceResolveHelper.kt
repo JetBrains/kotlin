@@ -133,7 +133,7 @@ internal object FirReferenceResolveHelper {
         val expression = ref.expression
         val symbolBuilder = analysisSession.firSymbolBuilder
         val fir = expression.getOrBuildFir(analysisSession.firResolveState)
-        val session = analysisSession.firSession
+        val session = analysisSession.firResolveState.firIdeSourcesSession
         when (fir) {
             is FirResolvable -> {
                 val calleeReference =

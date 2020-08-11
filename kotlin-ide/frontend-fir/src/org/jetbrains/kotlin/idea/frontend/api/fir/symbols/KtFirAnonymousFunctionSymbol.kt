@@ -7,19 +7,17 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
-import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 
 internal class KtFirAnonymousFunctionSymbol(
     fir: FirAnonymousFunction,
@@ -38,5 +36,8 @@ internal class KtFirAnonymousFunctionSymbol(
         }
     }
 
-    override fun createPointer(): KtSymbolPointer<KtAnonymousFunctionSymbol> = NonRestorableKtSymbolPointer
+    override fun createPointer(): KtSymbolPointer<KtAnonymousFunctionSymbol> {
+        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        error("Could not create a pointer for anonymous function from library")
+    }
 }

@@ -9,10 +9,8 @@ import com.google.common.collect.MapMaker
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
-import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
@@ -157,8 +155,8 @@ internal class KtSymbolByFirBuilder private constructor(
         (firProvider.getSymbolByLookupTag(lookupTag) as? FirTypeParameterSymbol)?.fir?.let(::buildTypeParameterSymbol)
     }
 
-    fun buildClassLikeSymbolByClassId(classId: ClassId, firSession: FirSession): FirRegularClass? = withValidityAssertion {
-        firSession.firProvider.getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass
+    fun buildClassLikeSymbolByClassId(classId: ClassId): FirRegularClass? = withValidityAssertion {
+        firProvider.getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass
     }
 
 

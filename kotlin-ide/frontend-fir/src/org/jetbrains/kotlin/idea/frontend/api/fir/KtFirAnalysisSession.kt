@@ -42,10 +42,8 @@ import org.jetbrains.kotlin.psi.*
 internal class KtFirAnalysisSession
 private constructor(
     private val element: KtElement,
-    val firSession: FirSession,
     val firResolveState: FirModuleResolveState,
     internal val firSymbolBuilder: KtSymbolByFirBuilder,
-    private val typeContext: ConeTypeCheckerContext,
     token: ValidityToken,
     val isContextSession: Boolean,
 ) : KtAnalysisSession(token) {
@@ -54,7 +52,7 @@ private constructor(
     override val symbolProvider: KtSymbolProvider =
         KtFirSymbolProvider(
             token,
-            firSession.firSymbolProvider,
+            firResolveState.firIdeLibrariesSession.firSymbolProvider,
             firResolveState,
             firSymbolBuilder
         )
@@ -62,7 +60,7 @@ private constructor(
     private val firScopeStorage = FirScopeRegistry()
 
     override val scopeProvider: KtScopeProvider by threadLocal {
-        KtFirScopeProvider(token, firSymbolBuilder, project, firSession, firResolveState, firScopeStorage)
+        KtFirScopeProvider(token, firSymbolBuilder, project, firResolveState, firScopeStorage)
     }
 
     init {
@@ -111,7 +109,7 @@ private constructor(
         assertIsValid()
         var result = false
         forEachSuperClass(klass.getOrBuildFirSafe(firResolveState) ?: return false) { type ->
-            result = result || type.firClassLike(firSession)?.symbol?.classId == superClassId
+            result = result || type.firClassLike(firResolveState.firIdeSourcesSession)?.symbol?.classId == superClassId
         }
         return result
     }
@@ -130,10 +128,8 @@ private constructor(
         val contextResolveState = LowLevelFirApiFacade.getResolveStateForCompletion(element, firResolveState)
         return KtFirAnalysisSession(
             element,
-            firSession,
             contextResolveState,
             firSymbolBuilder.createReadOnlyCopy(contextResolveState),
-            typeContext,
             token,
             isContextSession = true
         )
@@ -149,7 +145,7 @@ private constructor(
     }
 
     private fun resolveCall(firCall: FirFunctionCall, callExpression: KtExpression): CallInfo? {
-        val session = firResolveState.firSession
+        val session = firResolveState.firIdeSourcesSession
         val resolvedFunctionSymbol = firCall.calleeReference.toTargetSymbol(session, firSymbolBuilder)
         val resolvedCalleeSymbol = (firCall.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol
         return when {
@@ -204,23 +200,17 @@ private constructor(
         @Deprecated("Please use org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProviderKt.analyze")
         internal fun createForElement(element: KtElement): KtFirAnalysisSession {
             val firResolveState = LowLevelFirApiFacade.getResolveStateFor(element)
-            val firSession = firResolveState.firSession
             val project = element.project
-            val typeContext = ConeTypeCheckerContext(isErrorTypeEqualsToAnything = true, isStubTypeEqualsToAnything = true, firSession)
             val token = ReadActionConfinementValidityToken(project)
             val firSymbolBuilder = KtSymbolByFirBuilder(
-                firSession.firSymbolProvider,
-                typeContext,
                 firResolveState,
                 project,
                 token
             )
             return KtFirAnalysisSession(
                 element,
-                firSession,
                 firResolveState,
                 firSymbolBuilder,
-                typeContext,
                 token,
                 isContextSession = false
             )

@@ -7,12 +7,13 @@ package org.jetbrains.kotlin.idea.frontend.api.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 
 interface KtSymbol : ValidityTokenOwner {
     val origin: KtSymbolOrigin
     val psi: PsiElement?
 
-    fun createPointer(): KtSymbolPointer<KtSymbol> = NonRestorableKtSymbolPointer
+    fun createPointer(): KtSymbolPointer<KtSymbol>
 }
 
 enum class KtSymbolOrigin {

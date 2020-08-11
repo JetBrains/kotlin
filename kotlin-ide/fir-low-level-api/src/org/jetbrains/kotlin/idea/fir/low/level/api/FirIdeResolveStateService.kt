@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.util.psiModificationTrackerBasedCachedValue
 import java.util.concurrent.ConcurrentHashMap
 import org.jetbrains.kotlin.idea.caches.project.*
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeModuleLibraryDependenciesSession
 
 internal class FirIdeResolveStateService(private val project: Project) {
     private val stateCache by psiModificationTrackerBasedCachedValue(project) {
@@ -19,14 +20,26 @@ internal class FirIdeResolveStateService(private val project: Project) {
     private fun createResolveStateFor(moduleInfo: IdeaModuleInfo): FirModuleResolveStateImpl {
         val sessionProvider = FirIdeSessionProvider(project)
         val firPhaseRunner = FirPhaseRunner()
-        val session = FirIdeJavaModuleBasedSession.create(
+
+        val librariesSession = FirIdeModuleLibraryDependenciesSession.create(moduleInfo as ModuleSourceInfo, sessionProvider, project)
+
+        val sourcesSession = FirIdeJavaModuleBasedSession.create(
             project,
-            moduleInfo as ModuleSourceInfo,
+            moduleInfo,
             firPhaseRunner,
             sessionProvider,
+            librariesSession,
         ).apply { sessionProvider.registerSession(moduleInfo, this) }
 
-        return FirModuleResolveStateImpl(moduleInfo, session, sessionProvider, session.firFileBuilder, session.cache)
+
+        return FirModuleResolveStateImpl(
+            moduleInfo,
+            sourcesSession,
+            librariesSession,
+            sessionProvider,
+            sourcesSession.firFileBuilder,
+            sourcesSession.cache
+        )
     }
 
     fun getResolveState(moduleInfo: IdeaModuleInfo): FirModuleResolveStateImpl =

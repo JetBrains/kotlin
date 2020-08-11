@@ -11,17 +11,15 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
-import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirMemberFunctionSymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.createSignature
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCommonSymbolModality
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolKind
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
+import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -29,8 +27,7 @@ internal class KtFirFunctionSymbol(
     fir: FirSimpleFunction,
     resolveState: FirModuleResolveState,
     override val token: ValidityToken,
-    private val builder: KtSymbolByFirBuilder,
-    private val forcedOrigin: FirDeclarationOrigin? = null
+    private val builder: KtSymbolByFirBuilder
 ) : KtFunctionSymbol(), KtFirSymbol<FirSimpleFunction> {
     override val firRef = firRef(fir, resolveState)
     override val psi: PsiElement? by firRef.withFirAndCache { it.findPsi(fir.session) }
@@ -48,7 +45,6 @@ internal class KtFirFunctionSymbol(
         }
     }
 
-    override val origin: KtSymbolOrigin get() = withValidityAssertion { forcedOrigin?.asKtSymbolOrigin() ?: super.origin }
     override val isSuspend: Boolean get() = firRef.withFir { it.isSuspend }
     override val receiverType: KtType? by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir -> fir.receiverTypeRef?.let(builder::buildKtType) }
     override val isOperator: Boolean get() = firRef.withFir { it.isOperator }
@@ -63,4 +59,16 @@ internal class KtFirFunctionSymbol(
             }
         }
     override val modality: KtCommonSymbolModality get() = firRef.withFir { it.modality.getSymbolModality() }
+
+    override fun createPointer(): KtSymbolPointer<KtFunctionSymbol> {
+        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        return when (symbolKind) {
+            KtSymbolKind.TOP_LEVEL -> TODO("Creating symbol for top level fun is not supported yet")
+            KtSymbolKind.MEMBER -> KtFirMemberFunctionSymbolPointer(
+                firRef.withFir { it.symbol.callableId.classId ?: error("ClassId should not be null for member function") },
+                firRef.withFir { it.createSignature() }
+            )
+            KtSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(fqName?.asString() ?: name.asString())
+        }
+    }
 }

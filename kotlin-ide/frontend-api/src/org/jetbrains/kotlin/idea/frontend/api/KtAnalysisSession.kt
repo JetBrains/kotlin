@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeProvider
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
-import org.jetbrains.kotlin.idea.frontend.api.types.KtTypeRenderer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
 

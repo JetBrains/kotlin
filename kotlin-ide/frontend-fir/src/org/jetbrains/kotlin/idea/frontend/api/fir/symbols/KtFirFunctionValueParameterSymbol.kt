@@ -11,14 +11,13 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolKind
-import org.jetbrains.kotlin.idea.frontend.api.types.KtType
-import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.Name
 
 internal class KtFirFunctionValueParameterSymbol(
@@ -34,5 +33,11 @@ internal class KtFirFunctionValueParameterSymbol(
     override val isVararg: Boolean get() = firRef.withFir { it.isVararg }
     override val type: KtType by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir -> builder.buildKtType(fir.returnTypeRef) }
     override val symbolKind: KtSymbolKind get() = KtSymbolKind.LOCAL
-    override val hasDefaultValue: Boolean get() = withValidityAssertion { fir.defaultValue != null }
+
+    override val hasDefaultValue: Boolean get() = firRef.withFir { it.defaultValue != null }
+
+    override fun createPointer(): KtSymbolPointer<KtFunctionParameterSymbol> {
+        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        TODO("Creating pointers for functions parameters from library is not supported yet")
+    }
 }

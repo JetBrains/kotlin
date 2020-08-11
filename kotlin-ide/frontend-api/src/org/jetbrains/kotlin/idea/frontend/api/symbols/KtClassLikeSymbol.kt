@@ -5,15 +5,18 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.symbols
 
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.ClassId
 
 
 abstract class KtClassLikeSymbol : KtSymbol, KtNamedSymbol, KtSymbolWithKind {
     abstract val classId: ClassId
+    abstract override fun createPointer(): KtSymbolPointer<KtClassLikeSymbol>
 }
 
 abstract class KtTypeAliasSymbol : KtClassLikeSymbol() {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.TOP_LEVEL
+    abstract override fun createPointer(): KtSymbolPointer<KtTypeAliasSymbol>
 }
 
 abstract class KtClassOrObjectSymbol : KtClassLikeSymbol(), KtSymbolWithTypeParameters, KtSymbolWithModality<KtSymbolModality> {

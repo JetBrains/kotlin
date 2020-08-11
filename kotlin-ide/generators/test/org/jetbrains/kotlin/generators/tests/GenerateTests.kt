@@ -907,8 +907,12 @@ private fun assembleWorkspace(): TWorkspace = workspace {
             model("memberScopeByFqName", extension = "txt")
         }
 
-        testClass<AbstractSymbolPointerTest> {
+        testClass<AbstractSymbolFromSourcePointerRestoreTest> {
             model("symbolPointer", pattern = KT)
+        }
+
+        testClass<AbstractSymbolFromLibraryPointerRestoreTest> {
+            model("resoreSymbolFromLibrary", extension = "txt")
         }
     }
 

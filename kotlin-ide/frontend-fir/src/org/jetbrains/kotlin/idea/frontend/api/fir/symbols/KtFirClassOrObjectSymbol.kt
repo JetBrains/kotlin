@@ -12,9 +12,12 @@ import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirClassOrObjectInLibrarySymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -59,7 +62,10 @@ internal class KtFirClassOrObjectSymbol(
         }
 
     override fun createPointer(): KtSymbolPointer<KtClassOrObjectSymbol> {
-        val classId = classId
-        return symbolPointer { session -> session.symbolProvider.getClassOrObjectSymbolByClassId(classId) }
+        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        if (symbolKind == KtSymbolKind.LOCAL) {
+            throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(classId.asString())
+        }
+        return KtFirClassOrObjectInLibrarySymbol(classId)
     }
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.symbols
 
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.FqName
 
 abstract class KtPackageSymbol : KtSymbol {

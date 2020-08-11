@@ -11,15 +11,15 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
-import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtLocalVariableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolKind
-import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.Name
 
 internal class KtFirLocalVariableSymbol(
@@ -40,4 +40,9 @@ internal class KtFirLocalVariableSymbol(
     override val name: Name get() = firRef.withFir { it.name }
     override val type: KtType by firRef.withFirAndCache(FirResolvePhase.BODY_RESOLVE) { fir -> builder.buildKtType(fir.returnTypeRef) }
     override val symbolKind: KtSymbolKind get() = KtSymbolKind.LOCAL
+
+    override fun createPointer(): KtSymbolPointer<KtLocalVariableSymbol> {
+        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(name.asString())
+    }
 }

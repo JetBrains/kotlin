@@ -5,4 +5,8 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.symbols
 
-abstract class KtCallableSymbol : KtSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
+
+abstract class KtCallableSymbol : KtSymbol {
+    abstract override fun createPointer(): KtSymbolPointer<KtCallableSymbol>
+}

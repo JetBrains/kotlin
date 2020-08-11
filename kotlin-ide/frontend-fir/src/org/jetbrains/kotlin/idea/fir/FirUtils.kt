@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.idea.fir
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSymbolOwner
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -58,3 +61,25 @@ fun FirFunctionCall.getCalleeSymbol(): FirBasedSymbol<*>? =
 
 fun FirReference.getResolvedSymbolOfNameReference(): FirBasedSymbol<*>? =
     (this as? FirResolvedNamedReference)?.resolvedSymbol
+
+internal fun FirReference.getResolvedKtSymbolOfNameReference(builder: KtSymbolByFirBuilder): KtSymbol? =
+    (getResolvedSymbolOfNameReference()?.fir as? FirDeclaration)?.let { firDeclaration ->
+        builder.buildSymbol(firDeclaration)
+    }
+
+internal inline fun <reified D> D.unrollFakeOverrides(): D where D : FirDeclaration, D : FirSymbolOwner<*> {
+    val symbol = symbol
+    if (symbol !is PossiblyFirFakeOverrideSymbol<*, *>) return this
+    if (!symbol.isFakeOrIntersectionOverride) return this
+    var current: FirBasedSymbol<*>? = symbol.overriddenSymbol
+    while (current is PossiblyFirFakeOverrideSymbol<*, *> && current.isFakeOrIntersectionOverride) {
+        current = current.overriddenSymbol
+    }
+    return current?.fir as D
+}
+
+private inline val FirBasedSymbol<*>.isFakeOrIntersectionOverride: Boolean
+    get() {
+        val origin = (fir as? FirDeclaration)?.origin ?: return false
+        return origin == FirDeclarationOrigin.FakeOverride || origin == FirDeclarationOrigin.IntersectionOverride
+    }
