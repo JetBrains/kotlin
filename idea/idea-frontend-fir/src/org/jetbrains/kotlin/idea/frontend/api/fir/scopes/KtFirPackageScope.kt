@@ -5,18 +5,15 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.scopes
 
-import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.fir.resolve.firProvider
+import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirPackageSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtPackageScope
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -28,7 +25,7 @@ internal class KtFirPackageScope(
 ) : KtPackageScope, ValidityTokenOwner {
     private val firScope by weakRef(firScope)
     override val fqName: FqName get() = firScope.fqName
-    private val provider get() = firScope.session.firProvider
+    private val provider get() = firScope.session.firSymbolProvider
 
     override fun getCallableNames(): Set<Name> = withValidityAssertion {
         provider.getAllCallableNamesInPackage(fqName)
