@@ -1,7 +1,7 @@
 @kotlin.Metadata
 final class LambdaWithLongReceiverKt$box$1$1 {
     // source: 'lambdaWithLongReceiver.kt'
-    private synthetic field p$: long
+    private synthetic field J$0: long
     inner (anonymous) class LambdaWithLongReceiverKt$box$1
     inner (anonymous) class LambdaWithLongReceiverKt$box$1$1
     method <init>(p0: kotlin.coroutines.experimental.Continuation): void

@@ -2,9 +2,9 @@
 @kotlin.Metadata
 final class LambdaKt$test$1 {
     // source: 'lambda.kt'
+    private synthetic field D$0: double
+    private synthetic field L$0: java.lang.Object
     field label: int
-    private synthetic field p$0: double
-    private synthetic field p$1: java.lang.String
     inner (anonymous) class LambdaKt$test$1
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
@@ -16,9 +16,9 @@ final class LambdaKt$test$1 {
 @kotlin.Metadata
 final class LambdaKt$test$10 {
     // source: 'lambda.kt'
+    private synthetic field J$0: long
+    private synthetic field L$0: java.lang.Object
     field label: int
-    private synthetic field p$1: java.lang.String
-    private synthetic field p$: long
     inner (anonymous) class LambdaKt$test$10
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
@@ -30,8 +30,8 @@ final class LambdaKt$test$10 {
 @kotlin.Metadata
 final class LambdaKt$test$11 {
     // source: 'lambda.kt'
+    private synthetic field J$0: long
     field label: int
-    private synthetic field p$: long
     inner (anonymous) class LambdaKt$test$11
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
@@ -55,9 +55,9 @@ final class LambdaKt$test$12 {
 @kotlin.Metadata
 final class LambdaKt$test$13 {
     // source: 'lambda.kt'
+    private synthetic field J$0: long
+    private synthetic field L$0: java.lang.Object
     field label: int
-    private synthetic field p$0: java.lang.String
-    private synthetic field p$: long
     inner (anonymous) class LambdaKt$test$13
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(p0: long, @org.jetbrains.annotations.NotNull p1: java.lang.String, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
@@ -69,8 +69,8 @@ final class LambdaKt$test$13 {
 @kotlin.Metadata
 final class LambdaKt$test$14 {
     // source: 'lambda.kt'
+    private synthetic field J$0: long
     field label: int
-    private synthetic field p$: long
     inner (anonymous) class LambdaKt$test$14
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(p0: long, @org.jetbrains.annotations.NotNull p1: java.lang.String, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
@@ -82,8 +82,8 @@ final class LambdaKt$test$14 {
 @kotlin.Metadata
 final class LambdaKt$test$15 {
     // source: 'lambda.kt'
+    private synthetic field L$0: java.lang.Object
     field label: int
-    private synthetic field p$0: java.lang.String
     inner (anonymous) class LambdaKt$test$15
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(p0: long, @org.jetbrains.annotations.NotNull p1: java.lang.String, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
@@ -107,8 +107,8 @@ final class LambdaKt$test$16 {
 @kotlin.Metadata
 final class LambdaKt$test$17 {
     // source: 'lambda.kt'
+    private synthetic field J$0: long
     field label: int
-    private synthetic field p$: long
     inner (anonymous) class LambdaKt$test$17
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(p0: long, @org.jetbrains.annotations.NotNull p1: java.lang.String, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
@@ -120,8 +120,8 @@ final class LambdaKt$test$17 {
 @kotlin.Metadata
 final class LambdaKt$test$2 {
     // source: 'lambda.kt'
+    private synthetic field D$0: double
     field label: int
-    private synthetic field p$0: double
     inner (anonymous) class LambdaKt$test$2
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
@@ -133,8 +133,8 @@ final class LambdaKt$test$2 {
 @kotlin.Metadata
 final class LambdaKt$test$3 {
     // source: 'lambda.kt'
+    private synthetic field L$0: java.lang.Object
     field label: int
-    private synthetic field p$1: java.lang.String
     inner (anonymous) class LambdaKt$test$3
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
@@ -146,8 +146,8 @@ final class LambdaKt$test$3 {
 @kotlin.Metadata
 final class LambdaKt$test$4 {
     // source: 'lambda.kt'
+    private synthetic field D$0: double
     field label: int
-    private synthetic field p$0: double
     inner (anonymous) class LambdaKt$test$4
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
@@ -159,8 +159,8 @@ final class LambdaKt$test$4 {
 @kotlin.Metadata
 final class LambdaKt$test$5 {
     // source: 'lambda.kt'
+    private synthetic field L$0: java.lang.Object
     field label: int
-    private synthetic field p$1: java.lang.String
     inner (anonymous) class LambdaKt$test$5
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
@@ -172,10 +172,10 @@ final class LambdaKt$test$5 {
 @kotlin.Metadata
 final class LambdaKt$test$6 {
     // source: 'lambda.kt'
+    private synthetic field D$0: double
+    private synthetic field J$0: long
+    private synthetic field L$0: java.lang.Object
     field label: int
-    private synthetic field p$0: double
-    private synthetic field p$1: java.lang.String
-    private synthetic field p$: long
     inner (anonymous) class LambdaKt$test$6
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
@@ -187,9 +187,9 @@ final class LambdaKt$test$6 {
 @kotlin.Metadata
 final class LambdaKt$test$7 {
     // source: 'lambda.kt'
+    private synthetic field D$0: double
+    private synthetic field J$0: long
     field label: int
-    private synthetic field p$0: double
-    private synthetic field p$: long
     inner (anonymous) class LambdaKt$test$7
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
@@ -201,9 +201,9 @@ final class LambdaKt$test$7 {
 @kotlin.Metadata
 final class LambdaKt$test$8 {
     // source: 'lambda.kt'
+    private synthetic field J$0: long
+    private synthetic field L$0: java.lang.Object
     field label: int
-    private synthetic field p$1: java.lang.String
-    private synthetic field p$: long
     inner (anonymous) class LambdaKt$test$8
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
@@ -215,9 +215,9 @@ final class LambdaKt$test$8 {
 @kotlin.Metadata
 final class LambdaKt$test$9 {
     // source: 'lambda.kt'
+    private synthetic field D$0: double
+    private synthetic field J$0: long
     field label: int
-    private synthetic field p$0: double
-    private synthetic field p$: long
     inner (anonymous) class LambdaKt$test$9
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(p0: long, p1: double, @org.jetbrains.annotations.NotNull p2: java.lang.String, @org.jetbrains.annotations.NotNull p3: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
