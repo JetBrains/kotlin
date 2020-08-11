@@ -77,9 +77,9 @@ internal class KotlinGradleBuildServices private constructor(
                 listenerRegistryHolder.listenerRegistry!!.onTaskCompletion(kotlinGradleListenerProvider)
             } else {
                 gradle.addBuildListener(services)
-                instance = services
                 log.kotlinDebug(INIT_MESSAGE)
             }
+            instance = services
 
             services.buildStarted()
             return services
