@@ -69,9 +69,9 @@ class LinkableContentTest : AbstractCoreTest() {
                     sourceRoots = listOf("$testDataDir/jsMain/kotlin")
                     sourceLinks = listOf(
                         SourceLinkDefinitionImpl(
-                            path = "jsMain/kotlin",
-                            url = "https://github.com/user/repo/tree/master/src/jsMain/kotlin",
-                            lineSuffix = "#L"
+                            localDirectory = "jsMain/kotlin",
+                            remoteUrl = "https://github.com/user/repo/tree/master/src/jsMain/kotlin",
+                            remoteLineSuffix = "#L"
                         )
                     )
                     name = "js"
@@ -82,9 +82,9 @@ class LinkableContentTest : AbstractCoreTest() {
                     sourceRoots = listOf("$testDataDir/jvmMain/kotlin")
                     sourceLinks = listOf(
                         SourceLinkDefinitionImpl(
-                            path = "jvmMain/kotlin",
-                            url = "https://github.com/user/repo/tree/master/src/jvmMain/kotlin",
-                            lineSuffix = "#L"
+                            localDirectory = "jvmMain/kotlin",
+                            remoteUrl = "https://github.com/user/repo/tree/master/src/jvmMain/kotlin",
+                            remoteLineSuffix = "#L"
                         )
                     )
                     name = "jvm"
