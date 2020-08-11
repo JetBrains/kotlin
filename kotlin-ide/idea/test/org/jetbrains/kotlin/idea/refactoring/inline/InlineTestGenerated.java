@@ -361,6 +361,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 runTest("testData/refactoring/inline/function/expressionBody/Recursive.kt");
             }
 
+            @TestMetadata("returnNull.kt")
+            public void testReturnNull() throws Exception {
+                runTest("testData/refactoring/inline/function/expressionBody/returnNull.kt");
+            }
+
             @TestMetadata("SafeCall.kt")
             public void testSafeCall() throws Exception {
                 runTest("testData/refactoring/inline/function/expressionBody/SafeCall.kt");
@@ -761,6 +766,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             @TestMetadata("ReturnFromLambda.kt")
             public void testReturnFromLambda() throws Exception {
                 runTest("testData/refactoring/inline/function/returnAtEnd/ReturnFromLambda.kt");
+            }
+
+            @TestMetadata("returnNull.kt")
+            public void testReturnNull() throws Exception {
+                runTest("testData/refactoring/inline/function/returnAtEnd/returnNull.kt");
             }
 
             @TestMetadata("SafeCall.kt")
@@ -1435,6 +1445,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             @TestMetadata("removeImport.kt")
             public void testRemoveImport() throws Exception {
                 runTest("testData/refactoring/inline/inlineVariableOrProperty/property/removeImport.kt");
+            }
+
+            @TestMetadata("returnNull.kt")
+            public void testReturnNull() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/property/returnNull.kt");
             }
 
             @RunWith(JUnit3RunnerWithInners.class)

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.checkers.ExplicitApiDeclarationChecker
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
@@ -172,7 +173,7 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingRangeIntention<KtCallableDec
             override fun getResult(element: KotlinType): String {
                 val renderType = IdeDescriptorRenderers.FQ_NAMES_IN_TYPES_WITH_NORMALIZER.renderType(element)
                 val descriptor = element.constructor.declarationDescriptor
-                if (descriptor?.name?.asString() == renderType) {
+                if (descriptor?.fqNameOrNull()?.asString() == renderType) {
                     val className = (DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? KtClass)?.nameIdentifier?.text
                     if (className != null && className != className.unquote()) {
                         return className

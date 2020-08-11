@@ -69,6 +69,7 @@ object IdeDescriptorRenderers {
 
     @JvmField
     val FQ_NAMES_IN_TYPES_WITH_NORMALIZER: DescriptorRenderer = FQ_NAMES_IN_TYPES.withOptions {
+        classifierNamePolicy = ClassifierNamePolicy.SOURCE_CODE_QUALIFIED
         typeNormalizer = { APPROXIMATE_FLEXIBLE_TYPES(unwrapAnonymousType(it)) }
     }
 

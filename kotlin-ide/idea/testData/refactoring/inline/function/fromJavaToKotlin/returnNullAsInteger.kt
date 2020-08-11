@@ -71,14 +71,14 @@ fun a3() {
 
 fun a4() {
     val d: JavaClass? = null
-    // KT-40777
+
     d?.a()?.dec()
 
     val a2 = d?.let {
         it.a()
     }
     a2?.toLong()
-    // KT-40777
+
     d?.also {
         it.a()
     }?.a()?.and(4)
@@ -92,10 +92,10 @@ fun a4() {
             this@out?.a()
         }
     }
-    // KT-40777
+
     val a6 = a4?.let { out -> a5?.let { out + it } }
 }
-// KT-40777
+
 fun JavaClass.b() = a()
 fun JavaClass.c() = this.a()
 fun d(d: JavaClass) = d.a()

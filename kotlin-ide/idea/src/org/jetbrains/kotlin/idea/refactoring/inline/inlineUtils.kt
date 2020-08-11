@@ -86,6 +86,7 @@ internal fun buildCodeToInline(
             ::analyzeExpressionInContext,
             reformat = true,
             declaration,
+            returnType,
         )
     } else {
         return builder.prepareCodeToInline(
@@ -94,6 +95,7 @@ internal fun buildCodeToInline(
             ::analyzeExpressionInContext,
             reformat = true,
             declaration,
+            returnType,
         )
     }
 }

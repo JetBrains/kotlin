@@ -4,19 +4,19 @@ fun a() {
     val d = JavaClass()
 
     d.let {
-        null
+        null as Int?
     }
 
     d.also {
     }
 
     with(d) {
-        null
+        null as Int?
     }
 
     with(d) out@{
         with(4) {
-            null
+            null as Int?
         }
     }
 }
@@ -26,71 +26,71 @@ fun a2() {
     d?.let {}
 
     d?.let {
-        null
+        null as Int?
     }
 
     d?.also {
     }
 
     with(d) {
-        this?.let { null }
+        this?.let { null as Int? }
     }
 
     with(d) out@{
         with(4) {
-            this@out?.let { null }
+            this@out?.let { null as Int? }
         }
     }
 }
 
 fun a3() {
     val d: JavaClass? = null
-    val a1 = d?.let { null }
+    val a1 = d?.let { null as Int? }
 
     val a2 = d?.let {
-        null
+        null as Int?
     }
 
     val a3 = d?.also {
     }
 
     val a4 = with(d) {
-        this?.let { null }
+        this?.let { null as Int? }
     }
 
     val a5 = with(d) out@{
         with(4) {
-            this@out?.let { null }
+            this@out?.let { null as Int? }
         }
     }
 }
 
 fun a4() {
     val d: JavaClass? = null
-    // KT-40777
-    d?.let { null }?.dec()
+
+    d?.let { null as Int? }?.dec()
 
     val a2 = d?.let {
-        null
+        null as Int?
     }
     a2?.toLong()
-    // KT-40777
+
     d?.also {
-    }?.let { null }?.and(4)
+    }?.let { null as Int? }?.and(4)
 
     val a4 = with(d) {
-        this?.let { null }
+        this?.let { null as Int? }
     }
 
     val a5 = with(d) out@{
         with(4) {
-            this@out?.let { null }
+            this@out?.let { null as Int? }
         }
     }
-    // KT-40777
+
     val a6 = a4?.let { out -> a5?.let { out + it } }
 }
-// KT-40777
-fun JavaClass.b() = null
-fun JavaClass.c() = null
-fun d(d: JavaClass) = null
+
+fun JavaClass.b() = null as Int?
+fun JavaClass.c() = null as Int?
+fun d(d: JavaClass) = null as Int?
