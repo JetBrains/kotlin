@@ -165,7 +165,7 @@
       ],
       "1": [
         {
-          "specVersion": "0.1-387",
+          "specVersion": "1.4-rfc%2B0.3-603",
           "casesNumber": 1,
           "description": "If both X_k and Y_k are built-in integer types, a type constraint Widen(X_k) \u003c:Widen(Y_k) is built",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.2.kt",
@@ -173,7 +173,7 @@
           "linkType": "primary"
         },
         {
-          "specVersion": "0.1-387",
+          "specVersion": "1.4-rfc%2B0.3-603",
           "casesNumber": 4,
           "description": "for every non-default argument of the call a type constraint is built unless both are built-in integer types (Companion property-like callable)",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.4.kt",
@@ -181,7 +181,7 @@
           "linkType": "primary"
         },
         {
-          "specVersion": "0.1-387",
+          "specVersion": "1.4-rfc%2B0.3-603",
           "casesNumber": 3,
           "description": "for every non-default argument of the call a type constraint is built unless both are built-in integer types",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.1.kt",
@@ -613,7 +613,7 @@
           "linkType": "primary"
         },
         {
-          "specVersion": "0.1-387",
+          "specVersion": "1.4-rfc%2B0.3-603",
           "casesNumber": 1,
           "description": "If both X_k and Y_k are built-in integer types, a type constraint Widen(X_k) \u003c:Widen(Y_k) is built",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.2.kt",
@@ -621,7 +621,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "0.1-387",
+          "specVersion": "1.4-rfc%2B0.3-603",
           "casesNumber": 4,
           "description": "prefer kotlin.Short to kotlin.Byte.",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.3.kt",
@@ -629,7 +629,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "0.1-387",
+          "specVersion": "1.4-rfc%2B0.3-603",
           "casesNumber": 4,
           "description": "for every non-default argument of the call a type constraint is built unless both are built-in integer types (Companion property-like callable)",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.4.kt",
@@ -637,7 +637,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "0.1-387",
+          "specVersion": "1.4-rfc%2B0.3-603",
           "casesNumber": 3,
           "description": "for every non-default argument of the call a type constraint is built unless both are built-in integer types",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.1.kt",
@@ -793,7 +793,7 @@
       ],
       "4": [
         {
-          "specVersion": "0.1-387",
+          "specVersion": "1.4-rfc%2B0.3-603",
           "casesNumber": 1,
           "description": "If both X_k and Y_k are built-in integer types, a type constraint Widen(X_k) \u003c:Widen(Y_k) is built",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.2.kt",
@@ -801,7 +801,7 @@
           "linkType": "primary"
         },
         {
-          "specVersion": "0.1-387",
+          "specVersion": "1.4-rfc%2B0.3-603",
           "casesNumber": 4,
           "description": "for every non-default argument of the call a type constraint is built unless both are built-in integer types (Companion property-like callable)",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.4.kt",
@@ -809,7 +809,7 @@
           "linkType": "primary"
         },
         {
-          "specVersion": "0.1-387",
+          "specVersion": "1.4-rfc%2B0.3-603",
           "casesNumber": 3,
           "description": "for every non-default argument of the call a type constraint is built unless both are built-in integer types",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.1.kt",
@@ -949,7 +949,7 @@
           "linkType": "primary"
         },
         {
-          "specVersion": "0.1-387",
+          "specVersion": "1.4-rfc%2B0.3-603",
           "casesNumber": 4,
           "description": "for every non-default argument of the call a type constraint is built unless both are built-in integer types (Companion property-like callable)",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.4.kt",
@@ -967,7 +967,7 @@
           "linkType": "primary"
         },
         {
-          "specVersion": "0.1-387",
+          "specVersion": "1.4-rfc%2B0.3-603",
           "casesNumber": 4,
           "description": "for every non-default argument of the call a type constraint is built unless both are built-in integer types (Companion property-like callable)",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.4.kt",
@@ -1009,7 +1009,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "0.1-464",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 1,
           "description": "receiver of intersection type ambuguity",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-9/neg/2.3.kt",
@@ -1043,7 +1043,7 @@
     "pos": {
       "1": [
         {
-          "specVersion": "0.1-387",
+          "specVersion": "1.4-rfc%2B0.3-603",
           "casesNumber": 1,
           "description": "If both X_k and Y_k are built-in integer types, a type constraint Widen(X_k) \u003c:Widen(Y_k) is built",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.2.kt",
@@ -1051,7 +1051,7 @@
           "linkType": "primary"
         },
         {
-          "specVersion": "0.1-387",
+          "specVersion": "1.4-rfc%2B0.3-603",
           "casesNumber": 4,
           "description": "for every non-default argument of the call a type constraint is built unless both are built-in integer types (Companion property-like callable)",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.4.kt",
@@ -1059,7 +1059,7 @@
           "linkType": "primary"
         },
         {
-          "specVersion": "0.1-387",
+          "specVersion": "1.4-rfc%2B0.3-603",
           "casesNumber": 3,
           "description": "for every non-default argument of the call a type constraint is built unless both are built-in integer types",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection/p-3/pos/1.1.kt",

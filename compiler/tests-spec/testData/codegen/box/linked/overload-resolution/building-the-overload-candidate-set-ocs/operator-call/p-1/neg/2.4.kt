@@ -3,7 +3,7 @@
 /*
  * KOTLIN CODEGEN BOX SPEC TEST (NEGATIVE)
  *
- * SPEC VERSION: 0.1-488
+ * SPEC VERSION: 1.4-rfc+0.3-603
  * MAIN LINK: overload-resolution, building-the-overload-candidate-set-ocs, operator-call -> paragraph 1 -> sentence 2
  * SECONDARY LINKS: statements, assignments, operator-assignments -> paragraph 2 -> sentence 1
  * statements, assignments, operator-assignments -> paragraph 2 -> sentence 2

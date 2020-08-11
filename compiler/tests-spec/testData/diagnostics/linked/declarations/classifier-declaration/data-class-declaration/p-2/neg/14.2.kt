@@ -5,7 +5,7 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
- * SPEC VERSION: 1.4-rfc+0.3-591
+ * SPEC VERSION: 1.4-rfc+0.3-603
  * MAIN LINK: declarations, classifier-declaration, data-class-declaration -> paragraph 2 -> sentence 14
  * declarations, classifier-declaration, data-class-declaration -> paragraph 3 -> sentence 1
  * NUMBER: 2

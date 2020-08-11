@@ -6,7 +6,7 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SPEC VERSION: 0.1-268
+ * SPEC VERSION: 1.4-rfc%2B0.3-603
  * MAIN LINK: overload-resolution, callables-and-invoke-convention -> paragraph 2 -> sentence 9
  * PRIMARY LINKS: overload-resolution, callables-and-invoke-convention -> paragraph 2 -> sentence 10
  * NUMBER: 1

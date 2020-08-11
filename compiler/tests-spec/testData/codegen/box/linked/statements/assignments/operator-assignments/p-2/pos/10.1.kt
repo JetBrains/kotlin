@@ -3,7 +3,7 @@
 /*
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)
  *
- * SPEC VERSION: 0.1-222
+ * SPEC VERSION: 1.4-rfc%2B0.3-603
  * MAIN LINK: statements, assignments, operator-assignments -> paragraph 2 -> sentence 10
  * PRIMARY LINKS: statements, assignments, operator-assignments -> paragraph 2 -> sentence 11
  * NUMBER: 1

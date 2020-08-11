@@ -5,7 +5,7 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SPEC VERSION: 1.4-rfc+0.3-591
+ * SPEC VERSION: 1.4-rfc+0.3-603
  * MAIN LINK: declarations, classifier-declaration, class-declaration, abstract-classes-declarations -> paragraph 2 -> sentence 1
  * PRIMARY LINKS: declarations, classifier-declaration, class-declaration, abstract-classes-declarations -> paragraph 1 -> sentence 2
  * NUMBER: 1

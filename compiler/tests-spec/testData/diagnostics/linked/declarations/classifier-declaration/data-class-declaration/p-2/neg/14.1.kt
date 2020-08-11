@@ -5,7 +5,7 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
- * SPEC VERSION: 1.4-rfc+0.3-591
+ * SPEC VERSION: 1.4-rfc+0.3-603
  * MAIN LINK: declarations, classifier-declaration, data-class-declaration -> paragraph 2 -> sentence 14
  * NUMBER: 1
  * DESCRIPTION: The number of functions is MORE as the number of data propertie

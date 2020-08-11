@@ -3,7 +3,7 @@
     "neg": {
       "2": [
         {
-          "specVersion": "0.1-464",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 1,
           "description": "type context for a nested type declaration of a parent type declaration does not include the type parameters of PD",
           "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/neg/2.1.kt",
@@ -11,7 +11,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "0.1-544",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 1,
           "description": "Primary constructor for nested class with mutable property constructor parameter",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/2.1.kt",
@@ -19,7 +19,7 @@
           "linkType": "primary"
         },
         {
-          "specVersion": "0.1-544",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 2,
           "description": "Primary constructor for nested class with regular constructor parameter",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/1.2.kt",
@@ -27,7 +27,7 @@
           "linkType": "primary"
         },
         {
-          "specVersion": "0.1-544",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 1,
           "description": "Primary constructor for nested class with mutable property constructor parameter",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/3.1.kt",
@@ -35,7 +35,7 @@
           "linkType": "primary"
         },
         {
-          "specVersion": "0.1-544",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 3,
           "description": "Primary constructor for nested class with regular constructor parameter",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/1.1.kt",
@@ -45,7 +45,7 @@
       ],
       "1": [
         {
-          "specVersion": "0.1-464",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 2,
           "description": "type context for a nested type declaration of a parent type declaration does not include the type parameters of PD",
           "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/neg/1.2.kt",
@@ -54,7 +54,7 @@
           "helpers": "checkType"
         },
         {
-          "specVersion": "0.1-464",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 1,
           "description": "type context for a nested type declaration of a parent type declaration does not include the type parameters of PD",
           "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/neg/1.1.kt",
@@ -67,7 +67,7 @@
     "pos": {
       "1": [
         {
-          "specVersion": "0.1-464",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 2,
           "description": "type context for a nested type declaration of a parent type declaration does not include the type parameters of PD",
           "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/pos/1.2.kt",
@@ -76,7 +76,7 @@
           "helpers": "checkType"
         },
         {
-          "specVersion": "0.1-464",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 1,
           "description": "type context for a nested type declaration of a parent type declaration does not include the type parameters of PD",
           "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/type-contexts-and-scopes/inner-and-nested-type-contexts/p-1/pos/1.1.kt",

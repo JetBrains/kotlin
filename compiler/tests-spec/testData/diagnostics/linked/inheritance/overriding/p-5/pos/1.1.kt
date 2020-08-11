@@ -4,7 +4,7 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SPEC VERSION: 1.4-rfc+0.3-591
+ * SPEC VERSION: 1.4-rfc+0.3-603
  * MAIN LINK: inheritance, overriding -> paragraph 5 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: overriding member toString function of open class

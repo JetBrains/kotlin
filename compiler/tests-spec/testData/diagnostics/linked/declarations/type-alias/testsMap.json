@@ -3,7 +3,7 @@
     "pos": {
       "1": [
         {
-          "specVersion": "0.1-464",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 3,
           "description": "Top-level non-extension functions named f: callables explicitly imported into the current file;",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.5.kt",
@@ -11,7 +11,7 @@
           "linkType": "primary"
         },
         {
-          "specVersion": "0.1-464",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 3,
           "description": "Top-level non-extension functions named f: callables explicitly imported into the current file;",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/call-without-an-explicit-receiver/p-5/pos/4.6.kt",

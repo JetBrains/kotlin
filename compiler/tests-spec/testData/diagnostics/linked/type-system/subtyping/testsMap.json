@@ -3,7 +3,7 @@
     "pos": {
       "1": [
         {
-          "specVersion": "0.1-464",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 4,
           "description": "type T is subtype of Any and Noting is subtype of T",
           "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules/p-2/pos/1.1.kt",
@@ -14,7 +14,7 @@
       ],
       "2": [
         {
-          "specVersion": "0.1-464",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 4,
           "description": "type T is subtype of Any and Noting is subtype of T",
           "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-rules/p-2/pos/1.1.kt",

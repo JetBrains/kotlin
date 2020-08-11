@@ -3,7 +3,7 @@
     "neg": {
       "3": [
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 5,
           "description": "data property at position N starting from 0",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-2/neg/12.1.kt",
@@ -11,7 +11,7 @@
           "linkType": "primary"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 5,
           "description": "data property at position N starting from 0. Class includes regular property declarations in its body",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-2/neg/12.2.kt",

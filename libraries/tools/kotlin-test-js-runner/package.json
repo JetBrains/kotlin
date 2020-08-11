@@ -13,8 +13,7 @@
   "scripts": {
     "build": "rimraf lib/* && rollup -c rollup.config.js"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/node": "^12.12.14",
     "rimraf": "^3.0.0",

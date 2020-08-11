@@ -5,7 +5,7 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
- * SPEC VERSION: 1.4-rfc+0.3-591
+ * SPEC VERSION: 1.4-rfc+0.3-603
  * MAIN LINK: declarations, classifier-declaration, data-class-declaration -> paragraph 1 -> sentence 2
  * NUMBER: 2
  * DESCRIPTION: Non-property constructor parameters with default value in the primary constructor

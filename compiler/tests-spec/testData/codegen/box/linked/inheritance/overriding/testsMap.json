@@ -3,7 +3,7 @@
     "neg": {
       "1": [
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 0,
           "description": "custom variable: return type of a child override prop is not a subtype of return type of a base class",
           "path": "compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-9/neg/1.6.kt",
@@ -11,7 +11,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 0,
           "description": "equals(): return type of a child override function is not a subtype of return type of a base class",
           "path": "compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-9/neg/1.2.kt",
@@ -19,7 +19,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 0,
           "description": "hashCode(): return type of a child override function is not a subtype of return type of a base class",
           "path": "compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-9/neg/1.3.kt",
@@ -27,7 +27,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 0,
           "description": "custom function: return type of a child override prop is not a subtype of return type of a base class",
           "path": "compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-9/neg/1.4.kt",
@@ -35,7 +35,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 0,
           "description": "custom value: return type of a child override prop is not a subtype of return type of a base class",
           "path": "compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-9/neg/1.5.kt",
@@ -43,7 +43,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 0,
           "description": "toString(): return type of a child override function is not a subtype of return type of a base class",
           "path": "compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-9/neg/1.1.kt",
@@ -57,7 +57,7 @@
     "neg": {
       "1": [
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 0,
           "description": "custom variable: return type of a child override prop is not a subtype of return type of a base class",
           "path": "compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-8/neg/1.6.kt",
@@ -65,7 +65,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 0,
           "description": "equals(): return type of a child override function is not a subtype of return type of a base class",
           "path": "compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-8/neg/1.2.kt",
@@ -73,7 +73,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 0,
           "description": "hashCode(): return type of a child override function is not a subtype of return type of a base class",
           "path": "compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-8/neg/1.3.kt",
@@ -81,7 +81,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 0,
           "description": "custom function: return type of a child override prop is not a subtype of return type of a base class",
           "path": "compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-8/neg/1.4.kt",
@@ -89,7 +89,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 0,
           "description": "custom value: return type of a child override prop is not a subtype of return type of a base class",
           "path": "compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-8/neg/1.5.kt",
@@ -97,7 +97,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 0,
           "description": "toString(): return type of a child override function is not a subtype of return type of a base class",
           "path": "compiler/tests-spec/testData/codegen/box/linked/inheritance/overriding/p-8/neg/1.1.kt",

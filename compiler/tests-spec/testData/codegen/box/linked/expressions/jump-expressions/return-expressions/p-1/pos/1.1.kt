@@ -5,7 +5,6 @@
  *
  * SPEC VERSION: 0.1-222
  * MAIN LINK: expressions, jump-expressions, return-expressions -> paragraph 1 -> sentence 1
- * PRIMARY LINKS: expressions, jump-expressions, return-expressions -> paragraph 5 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION:
  */

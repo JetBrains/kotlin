@@ -7,7 +7,6 @@
  * MAIN LINK: expressions, jump-expressions, return-expressions -> paragraph 3 -> sentence 2
  * PRIMARY LINKS: expressions, jump-expressions, return-expressions -> paragraph 2 -> sentence 1
  * expressions, jump-expressions, return-expressions -> paragraph 3 -> sentence 3
- * expressions, jump-expressions, return-expressions -> paragraph 5 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: If several declarations match one name, the return is considered to be from the nearest matching function;
  */

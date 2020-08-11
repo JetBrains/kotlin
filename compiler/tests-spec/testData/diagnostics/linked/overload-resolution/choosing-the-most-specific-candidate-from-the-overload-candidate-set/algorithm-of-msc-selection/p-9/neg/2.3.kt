@@ -5,7 +5,7 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
- * SPEC VERSION: 0.1-464
+ * SPEC VERSION: 1.4-rfc+0.3-603
  * MAIN LINK: overload-resolution, choosing-the-most-specific-candidate-from-the-overload-candidate-set, algorithm-of-msc-selection -> paragraph 9 -> sentence 2
  * NUMBER: 3
  * DESCRIPTION: receiver of intersection type ambuguity

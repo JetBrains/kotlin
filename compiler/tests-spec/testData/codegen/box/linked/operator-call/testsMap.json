@@ -3,7 +3,7 @@
     "neg": {
       "2": [
         {
-          "specVersion": "0.1-488",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 0,
           "description": "nullable receiver and infix functions",
           "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.5.kt",
@@ -11,7 +11,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "0.1-488",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 0,
           "description": "nullable receiver and infix functions",
           "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.6.kt",
@@ -23,7 +23,7 @@
     "pos": {
       "2": [
         {
-          "specVersion": "0.1-488",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 0,
           "description": "nullable receiver and infix functions",
           "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.5.kt",
@@ -31,7 +31,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "0.1-488",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 0,
           "description": "nullable receiver and infix functions",
           "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.6.kt",

@@ -16,7 +16,7 @@
     "pos": {
       "1": [
         {
-          "specVersion": "0.1-464",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 2,
           "description": "Check of Nothing as a subtype of any type",
           "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos/1.2.kt",

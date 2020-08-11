@@ -5,7 +5,7 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SPEC VERSION: 0.1-464
+ * SPEC VERSION: 1.4-rfc+0.3-603
  * MAIN LINK: type-system, subtyping, subtyping-rules -> paragraph 2 -> sentence 1
  * SECONDARY LINKS: type-system, subtyping -> paragraph 2 -> sentence 1
  * type-system, subtyping -> paragraph 2 -> sentence 2

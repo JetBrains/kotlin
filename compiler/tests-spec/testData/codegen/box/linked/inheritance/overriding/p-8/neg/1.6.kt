@@ -3,7 +3,7 @@
 /*
  * KOTLIN CODEGEN BOX SPEC TEST (NEGATIVE)
  *
- * SPEC VERSION: 1.4-rfc+0.3-591
+ * SPEC VERSION: 1.4-rfc+0.3-603
  * MAIN LINK: inheritance, overriding -> paragraph 8 -> sentence 1
  * NUMBER: 6
  * DESCRIPTION: custom variable: return type of a child override prop is not a subtype of return type of a base class

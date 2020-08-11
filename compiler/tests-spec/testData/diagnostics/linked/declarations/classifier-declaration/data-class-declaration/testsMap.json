@@ -3,7 +3,7 @@
     "neg": {
       "2": [
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 4,
           "description": " correct explicit implementation is not available in open class",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-7/neg/2.1.kt",
@@ -13,7 +13,7 @@
       ],
       "3": [
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 5,
           "description": "copy, componentN cannot be inherited ( in open class)",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-7/neg/3.1.kt",
@@ -25,7 +25,7 @@
     "pos": {
       "2": [
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 2,
           "description": " correct explicit implementation is not available (not final fun in open class)",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-7/pos/2.1.kt",
@@ -33,7 +33,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 2,
           "description": " correct explicit implementation is available ( final fun in open class)",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-7/pos/2.2.kt",
@@ -41,7 +41,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 2,
           "description": "equals, hashCode and toString is not inherited (open function modifier in open class)",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-7/pos/1.1.kt",
@@ -51,7 +51,7 @@
       ],
       "1": [
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 2,
           "description": "equals, hashCode and toString is not inherited (open function modifier in open class)",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-7/pos/1.1.kt",
@@ -65,7 +65,7 @@
     "neg": {
       "2": [
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 4,
           "description": " correct explicit implementation is not available in open class",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-7/neg/2.1.kt",
@@ -73,7 +73,7 @@
           "linkType": "secondary"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 5,
           "description": "copy, componentN cannot be inherited ( in open class)",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-7/neg/3.1.kt",
@@ -83,7 +83,7 @@
       ],
       "1": [
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 3,
           "description": "componentN functions cannot be explicified",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-6/neg/3.4.kt",
@@ -91,7 +91,7 @@
           "linkType": "secondary"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 2,
           "description": "copy function cannot be explicified",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-6/neg/3.5.kt",
@@ -99,7 +99,7 @@
           "linkType": "secondary"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 3,
           "description": "componentN functions cannot be explicified",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-6/neg/3.1.kt",
@@ -107,7 +107,7 @@
           "linkType": "secondary"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 3,
           "description": "componentN functions cannot be explicified",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-6/neg/3.2.kt",
@@ -115,7 +115,7 @@
           "linkType": "secondary"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 3,
           "description": "componentN functions cannot be explicified",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-6/neg/3.3.kt",
@@ -123,7 +123,7 @@
           "linkType": "secondary"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 3,
           "description": "data class functions overriding without override modifier",
           "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.6.kt",
@@ -131,7 +131,7 @@
           "linkType": "secondary"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 3,
           "description": "Return type of a data overriden functions is not a subtype of return type of a generated functions",
           "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.6.kt",
@@ -143,7 +143,7 @@
     "pos": {
       "2": [
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 2,
           "description": " correct explicit implementation is not available (not final fun in open class)",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-7/pos/2.1.kt",
@@ -151,7 +151,7 @@
           "linkType": "secondary"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 2,
           "description": " correct explicit implementation is available ( final fun in open class)",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-7/pos/2.2.kt",
@@ -159,7 +159,7 @@
           "linkType": "secondary"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 2,
           "description": "equals, hashCode and toString is not inherited (open function modifier in open class)",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-7/pos/1.1.kt",
@@ -169,7 +169,7 @@
       ],
       "1": [
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 2,
           "description": "overriding member toString function of data class",
           "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-5/pos/1.6.kt",
@@ -183,7 +183,7 @@
     "neg": {
       "3": [
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 3,
           "description": "componentN functions cannot be explicified",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-6/neg/3.4.kt",
@@ -191,7 +191,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 2,
           "description": "copy function cannot be explicified",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-6/neg/3.5.kt",
@@ -199,7 +199,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 3,
           "description": "componentN functions cannot be explicified",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-6/neg/3.1.kt",
@@ -207,7 +207,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 3,
           "description": "componentN functions cannot be explicified",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-6/neg/3.2.kt",
@@ -215,7 +215,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 3,
           "description": "componentN functions cannot be explicified",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-6/neg/3.3.kt",
@@ -225,7 +225,7 @@
       ],
       "1": [
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 3,
           "description": "data class functions overriding without override modifier",
           "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-9/neg/1.6.kt",
@@ -233,7 +233,7 @@
           "linkType": "primary"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 3,
           "description": "Return type of a data overriden functions is not a subtype of return type of a generated functions",
           "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-8/neg/1.6.kt",
@@ -245,7 +245,7 @@
     "pos": {
       "1": [
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 2,
           "description": "overriding member toString function of data class",
           "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-5/pos/1.6.kt",
@@ -255,7 +255,7 @@
       ],
       "2": [
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 2,
           "description": "overriding member toString function of data class",
           "path": "compiler/tests-spec/testData/diagnostics/linked/inheritance/overriding/p-5/pos/1.6.kt",
@@ -269,7 +269,7 @@
     "neg": {
       "2": [
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 8,
           "description": "Non-property constructor parameters in the primary constructor",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-1/neg/2.1.kt",
@@ -277,7 +277,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 4,
           "description": "Non-property constructor parameters in the primary constructor after unreachable code",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-1/neg/2.3.kt",
@@ -285,7 +285,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 4,
           "description": "Non-property constructor parameters with default value in the primary constructor",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-1/neg/2.2.kt",
@@ -293,7 +293,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "0.1-544",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 2,
           "description": "Primary constructor for nested class with regular constructor parameter",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/1.2.kt",
@@ -307,7 +307,7 @@
     "neg": {
       "12": [
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 5,
           "description": "data property at position N starting from 0",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-2/neg/12.1.kt",
@@ -315,7 +315,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 5,
           "description": "data property at position N starting from 0. Class includes regular property declarations in its body",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-2/neg/12.2.kt",
@@ -325,7 +325,7 @@
       ],
       "14": [
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 5,
           "description": "The number of functions is MORE as the number of data propertie",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-2/neg/14.1.kt",
@@ -333,7 +333,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 5,
           "description": "The number of functions is MORE as the number of data propertie. Class includes regular property declarations in its body",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-2/neg/14.2.kt",
@@ -347,7 +347,7 @@
     "neg": {
       "1": [
         {
-          "specVersion": "1.4-rfc+0.3-591",
+          "specVersion": "1.4-rfc+0.3-603",
           "casesNumber": 5,
           "description": "data property at position N starting from 0. Class includes regular property declarations in its body",
           "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/data-class-declaration/p-2/neg/12.2.kt",

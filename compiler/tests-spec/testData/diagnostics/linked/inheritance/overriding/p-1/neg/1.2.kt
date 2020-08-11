@@ -5,7 +5,7 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
- * SPEC VERSION: 1.4-rfc+0.3-591
+ * SPEC VERSION: 1.4-rfc+0.3-603
  * MAIN LINK: inheritance, overriding -> paragraph 1 -> sentence 1
  * NUMBER: 2
  * DESCRIPTION: overriding extension property of open class

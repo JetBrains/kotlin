@@ -3,7 +3,7 @@
     "pos": {
       "8": [
         {
-          "specVersion": "0.1-268",
+          "specVersion": "1.4-rfc%2B0.3-603",
           "casesNumber": 2,
           "description": "A companion object of a classifier type named foo at its declaration site",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2/pos/8.1.kt",
@@ -13,7 +13,7 @@
       ],
       "9": [
         {
-          "specVersion": "0.1-268",
+          "specVersion": "1.4-rfc%2B0.3-603",
           "casesNumber": 2,
           "description": "A companion object of a classifier type named foo at its declaration site",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2/pos/8.1.kt",
@@ -21,7 +21,7 @@
           "linkType": "primary"
         },
         {
-          "specVersion": "0.1-268",
+          "specVersion": "1.4-rfc%2B0.3-603",
           "casesNumber": 2,
           "description": "An enum entry named foo at its declaration site prio",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2/pos/9.1.kt",
@@ -31,7 +31,7 @@
       ],
       "10": [
         {
-          "specVersion": "0.1-268",
+          "specVersion": "1.4-rfc%2B0.3-603",
           "casesNumber": 2,
           "description": "A companion object of a classifier type named foo at its declaration site",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2/pos/8.1.kt",
@@ -39,7 +39,7 @@
           "linkType": "primary"
         },
         {
-          "specVersion": "0.1-268",
+          "specVersion": "1.4-rfc%2B0.3-603",
           "casesNumber": 2,
           "description": "An enum entry named foo at its declaration site prio",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2/pos/9.1.kt",
@@ -47,7 +47,7 @@
           "linkType": "primary"
         },
         {
-          "specVersion": "0.1-268",
+          "specVersion": "1.4-rfc%2B0.3-603",
           "casesNumber": 2,
           "description": "An enum entry named foo at its declaration site prio",
           "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/callables-and-invoke-convention/p-2/pos/10.1.kt",

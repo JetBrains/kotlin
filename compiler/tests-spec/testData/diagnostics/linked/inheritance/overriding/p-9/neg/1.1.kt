@@ -4,7 +4,7 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
- * SPEC VERSION: 1.4-rfc+0.3-591
+ * SPEC VERSION: 1.4-rfc+0.3-603
  * MAIN LINK: inheritance, overriding -> paragraph 9 -> sentence 1
  * PRIMARY LINKS: inheritance, overriding -> paragraph 7 -> sentence 1
  * inheritance, overriding -> paragraph 2 -> sentence 1

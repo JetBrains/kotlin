@@ -5,7 +5,7 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
- * SPEC VERSION: 1.4-rfc+0.3-591
+ * SPEC VERSION: 1.4-rfc+0.3-603
  * MAIN LINK: declarations, classifier-declaration, class-declaration, abstract-classes-declarations -> paragraph 2 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: abstract members should be implemented in a subtype of the abstract class
