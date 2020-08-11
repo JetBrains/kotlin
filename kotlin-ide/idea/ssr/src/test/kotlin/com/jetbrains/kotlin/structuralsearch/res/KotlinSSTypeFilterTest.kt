@@ -18,6 +18,8 @@ class KotlinSSTypeFilterTest : KotlinSSResourceInspectionTest() {
 
     fun testNullableTypeHierarchy() { doTest("val '_:[exprtype(*A)]") }
     
+    fun testNullableFunctionType() { doTest("'_('_:[exprtype(\\(\\(\\) -> Unit\\)?)])") }
+    
     fun testNull() { doTest("'_('_:[exprtype(null)])") }
 
     fun testArgs() { doTest("val '_:[exprtype(List<Int>)]") }
