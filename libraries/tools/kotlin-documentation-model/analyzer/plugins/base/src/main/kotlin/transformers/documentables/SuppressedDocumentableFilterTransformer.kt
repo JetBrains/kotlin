@@ -48,21 +48,4 @@ class SuppressedDocumentableFilterTransformer(val context: DokkaContext) : PreMe
         }
     }
 
-    /**
-     * A [PreMergeDocumentableTransformer] can safely assume that documentables are not merged and therefore
-     * only belong to a single source set
-     */
-    private val Documentable.sourceSet: DokkaSourceSet get() = sourceSets.single()
-
-    private val Documentable.perPackageOptions: DokkaConfiguration.PackageOptions?
-        get() {
-            val packageName = dri.packageName ?: return null
-            return sourceSet.perPackageOptions
-                .sortedByDescending { packageOptions -> packageOptions.prefix.length }
-                .firstOrNull { packageOptions -> packageName.startsWith(packageOptions.prefix) }
-        }
-
-    private val <T> T.source: DocumentableSource where T : Documentable, T : WithExpectActual
-        get() = checkNotNull(sources[sourceSet])
-
 }
