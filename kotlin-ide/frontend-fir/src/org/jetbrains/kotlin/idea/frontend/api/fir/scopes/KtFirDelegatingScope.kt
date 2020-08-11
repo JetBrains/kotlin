@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScope
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
 
@@ -60,27 +59,18 @@ internal abstract class KtFirDelegatingScope<S>(
 
 }
 
-private fun FirBasedSymbol<*>.realDeclarationOrigin(): FirDeclarationOrigin? {
-    if (this !is PossiblyFirFakeOverrideSymbol<*, *> || !isFakeOverride) return null
-    var current: FirBasedSymbol<*>? = this.overriddenSymbol
-    while (current is PossiblyFirFakeOverrideSymbol<*, *> && current.isFakeOverride) {
-        current = current.overriddenSymbol
-    }
-    return (current?.fir as? FirDeclaration)?.origin
-}
-
 internal fun FirScope.getCallableSymbols(callableNames: Collection<Name>, builder: KtSymbolByFirBuilder) = sequence {
     callableNames.forEach { name ->
         val callables = mutableListOf<KtCallableSymbol>()
         processFunctionsByName(name) { firSymbol ->
             (firSymbol.fir as? FirSimpleFunction)?.let { fir ->
-                callables.add(builder.buildFunctionSymbol(fir, firSymbol.realDeclarationOrigin()))
+                callables.add(builder.buildFunctionSymbol(fir))
             }
         }
         processPropertiesByName(name) { firSymbol ->
             val symbol = when {
                 firSymbol is FirPropertySymbol && firSymbol.isFakeOverride -> {
-                    builder.buildVariableSymbol(firSymbol.fir, firSymbol.realDeclarationOrigin())
+                    builder.buildVariableSymbol(firSymbol.fir)
                 }
                 else -> builder.buildCallableSymbol(firSymbol.fir)
             }
