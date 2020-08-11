@@ -49,8 +49,9 @@ internal abstract class Complex(override val irClass: IrClass, override val fiel
 
     private fun getIrFunction(symbol: IrFunctionSymbol): IrFunction? {
         val propertyGetters = irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.getter }
+        val propertySetters = irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.setter }
         val functions = irClass.declarations.filterIsInstance<IrFunction>()
-        return (propertyGetters + functions).firstOrNull {
+        return (propertyGetters + propertySetters + functions).firstOrNull {
             if (it is IrSimpleFunction) it.overrides(symbol.owner as IrSimpleFunction) else it == symbol.owner
         }
     }
