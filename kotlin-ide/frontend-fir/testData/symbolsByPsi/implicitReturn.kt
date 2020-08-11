@@ -10,6 +10,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
+  receiverType: null
   symbolKind: TOP_LEVEL
   type: kotlin/Int
   typeParameters: []

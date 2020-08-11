@@ -9,6 +9,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: listOf
   origin: LIBRARY
+  receiverType: null
   symbolKind: TOP_LEVEL
   type: kotlin/collections/List<T>
   typeParameters: [KtFirTypeParameterSymbol(T)]
@@ -22,6 +23,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: listOf
   origin: LIBRARY
+  receiverType: null
   symbolKind: TOP_LEVEL
   type: kotlin/collections/List<T>
   typeParameters: [KtFirTypeParameterSymbol(T)]
@@ -35,6 +37,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: listOf
   origin: LIBRARY
+  receiverType: null
   symbolKind: TOP_LEVEL
   type: kotlin/collections/List<T>
   typeParameters: [KtFirTypeParameterSymbol(T)]

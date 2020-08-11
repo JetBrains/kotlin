@@ -9,6 +9,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: and
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -22,6 +23,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: compareTo
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -35,6 +37,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: compareTo
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -48,6 +51,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: compareTo
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -61,6 +65,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: compareTo
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -74,6 +79,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: compareTo
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -87,6 +93,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: compareTo
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -100,6 +107,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: dec
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -113,6 +121,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: div
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -126,6 +135,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: div
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Double
   typeParameters: []
@@ -139,6 +149,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: div
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Float
   typeParameters: []
@@ -152,6 +163,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: div
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -165,6 +177,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: div
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Long
   typeParameters: []
@@ -178,6 +191,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: div
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -191,6 +205,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: inc
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -204,6 +219,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: inv
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -217,6 +233,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: minus
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -230,6 +247,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: minus
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Double
   typeParameters: []
@@ -243,6 +261,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: minus
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Float
   typeParameters: []
@@ -256,6 +275,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: minus
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -269,6 +289,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: minus
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Long
   typeParameters: []
@@ -282,6 +303,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: minus
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -295,6 +317,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: or
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -308,6 +331,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: plus
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -321,6 +345,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: plus
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Double
   typeParameters: []
@@ -334,6 +359,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: plus
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Float
   typeParameters: []
@@ -347,6 +373,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: plus
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -360,6 +387,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: plus
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Long
   typeParameters: []
@@ -373,6 +401,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: plus
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -386,6 +415,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: rangeTo
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/ranges/IntRange
   typeParameters: []
@@ -399,6 +429,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: rangeTo
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/ranges/IntRange
   typeParameters: []
@@ -412,6 +443,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: rangeTo
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/ranges/LongRange
   typeParameters: []
@@ -425,6 +457,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: rangeTo
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/ranges/IntRange
   typeParameters: []
@@ -438,6 +471,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: rem
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -451,6 +485,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: rem
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Double
   typeParameters: []
@@ -464,6 +499,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: rem
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Float
   typeParameters: []
@@ -477,6 +513,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: rem
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -490,6 +527,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: rem
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Long
   typeParameters: []
@@ -503,6 +541,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: rem
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -516,6 +555,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: shl
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -529,6 +569,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: shr
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -542,6 +583,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: times
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -555,6 +597,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: times
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Double
   typeParameters: []
@@ -568,6 +611,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: times
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Float
   typeParameters: []
@@ -581,6 +625,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: times
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -594,6 +639,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: times
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Long
   typeParameters: []
@@ -607,6 +653,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: times
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -620,6 +667,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: toByte
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Byte
   typeParameters: []
@@ -633,6 +681,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: toChar
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Char
   typeParameters: []
@@ -646,6 +695,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: toDouble
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Double
   typeParameters: []
@@ -659,6 +709,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: toFloat
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Float
   typeParameters: []
@@ -672,6 +723,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: toInt
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -685,6 +737,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: toLong
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Long
   typeParameters: []
@@ -698,6 +751,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: toShort
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Short
   typeParameters: []
@@ -711,6 +765,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: unaryMinus
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -724,6 +779,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: unaryPlus
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -737,6 +793,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: ushr
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -750,6 +807,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: xor
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -763,6 +821,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Boolean
   typeParameters: []
@@ -776,6 +835,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -789,7 +849,17 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/String
   typeParameters: []
   valueParameters: []
+
+KtFirClassOrObjectSymbol:
+  classId: kotlin/Int.Companion
+  classKind: COMPANION_OBJECT
+  modality: FINAL
+  name: Companion
+  origin: LIBRARY
+  symbolKind: MEMBER
+  typeParameters: []
