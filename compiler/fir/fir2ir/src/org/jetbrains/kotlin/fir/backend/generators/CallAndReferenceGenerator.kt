@@ -362,6 +362,30 @@ class CallAndReferenceGenerator(
         return null
     }
 
+    private fun FirExpression.superQualifierSymbol(callSymbol: IrSymbol?): IrClassSymbol? {
+        if (this !is FirQualifiedAccess) {
+            return null
+        }
+        val dispatchReceiverReference = calleeReference
+        if (dispatchReceiverReference !is FirSuperReference) {
+            return null
+        }
+        val superTypeRef = dispatchReceiverReference.superTypeRef
+        val coneSuperType = superTypeRef.coneTypeSafe<ConeClassLikeType>()
+        if (coneSuperType != null) {
+            val firClassSymbol = coneSuperType.lookupTag.toSymbol(session) as? FirClassSymbol<*>
+            if (firClassSymbol != null) {
+                return classifierStorage.getIrClassSymbol(firClassSymbol)
+            }
+        } else if (superTypeRef is FirComposedSuperTypeRef) {
+            val owner = callSymbol?.owner
+            if (owner != null && owner is IrDeclaration) {
+                return owner.parentClassOrNull?.symbol
+            }
+        }
+        return null
+    }
+
     fun convertToIrCall(
         qualifiedAccess: FirQualifiedAccess,
         typeRef: FirTypeRef,
@@ -385,25 +409,6 @@ class CallAndReferenceGenerator(
                     return@convertWithOffsets visitor.convertToIrExpression(dispatchReceiver)
                 }
             }
-            var superQualifierSymbol: IrClassSymbol? = null
-            if (dispatchReceiver is FirQualifiedAccess) {
-                val dispatchReceiverReference = dispatchReceiver.calleeReference
-                if (dispatchReceiverReference is FirSuperReference) {
-                    val superTypeRef = dispatchReceiverReference.superTypeRef
-                    val coneSuperType = superTypeRef.coneTypeSafe<ConeClassLikeType>()
-                    if (coneSuperType != null) {
-                        val firClassSymbol = coneSuperType.lookupTag.toSymbol(session) as? FirClassSymbol<*>
-                        if (firClassSymbol != null) {
-                            superQualifierSymbol = classifierStorage.getIrClassSymbol(firClassSymbol)
-                        }
-                    } else if (superTypeRef is FirComposedSuperTypeRef) {
-                        val owner = symbol?.owner
-                        if (owner != null && owner is IrDeclaration) {
-                            superQualifierSymbol = owner.parentClassOrNull?.symbol
-                        }
-                    }
-                }
-            }
             when (symbol) {
                 is IrConstructorSymbol -> IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, symbol)
                 is IrSimpleFunctionSymbol -> {
@@ -412,7 +417,7 @@ class CallAndReferenceGenerator(
                         typeArgumentsCount = symbol.owner.typeParameters.size,
                         valueArgumentsCount = symbol.owner.valueParameters.size,
                         origin = qualifiedAccess.calleeReference.statementOrigin(),
-                        superQualifierSymbol = superQualifierSymbol
+                        superQualifierSymbol = dispatchReceiver.superQualifierSymbol(symbol)
                     )
                 }
                 is IrPropertySymbol -> {
@@ -424,11 +429,11 @@ class CallAndReferenceGenerator(
                             typeArgumentsCount = getter.typeParameters.size,
                             valueArgumentsCount = 0,
                             origin = IrStatementOrigin.GET_PROPERTY,
-                            superQualifierSymbol = superQualifierSymbol
+                            superQualifierSymbol = dispatchReceiver.superQualifierSymbol(symbol)
                         )
                         backingField != null -> IrGetFieldImpl(
                             startOffset, endOffset, backingField.symbol, type,
-                            superQualifierSymbol = superQualifierSymbol
+                            superQualifierSymbol = dispatchReceiver.superQualifierSymbol(symbol)
                         )
                         else -> IrErrorCallExpressionImpl(
                             startOffset, endOffset, type,
@@ -439,7 +444,7 @@ class CallAndReferenceGenerator(
                 is IrFieldSymbol -> IrGetFieldImpl(
                     startOffset, endOffset, symbol, type,
                     origin = IrStatementOrigin.GET_PROPERTY.takeIf { qualifiedAccess.calleeReference !is FirDelegateFieldReference },
-                    superQualifierSymbol = superQualifierSymbol
+                    superQualifierSymbol = dispatchReceiver.superQualifierSymbol(symbol)
                 )
                 is IrValueSymbol -> IrGetValueImpl(
                     startOffset, endOffset, type, symbol,
@@ -472,12 +477,16 @@ class CallAndReferenceGenerator(
                             startOffset, endOffset, type, setter.symbol,
                             typeArgumentsCount = setter.typeParameters.size,
                             valueArgumentsCount = 1,
-                            origin = origin
+                            origin = origin,
+                            superQualifierSymbol = variableAssignment.dispatchReceiver.superQualifierSymbol(symbol)
                         ).apply {
                             putValueArgument(0, assignedValue)
                         }
-                        backingField != null -> IrSetFieldImpl(startOffset, endOffset, backingField.symbol, type).apply {
-                            // NB: to be consistent with FIR2IR, origin should be null here
+                        backingField != null -> IrSetFieldImpl(
+                            startOffset, endOffset, backingField.symbol, type,
+                            origin = null, // NB: to be consistent with PSI2IR, origin should be null here
+                            superQualifierSymbol = variableAssignment.dispatchReceiver.superQualifierSymbol(symbol)
+                        ).apply {
                             value = assignedValue
                         }
                         else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
