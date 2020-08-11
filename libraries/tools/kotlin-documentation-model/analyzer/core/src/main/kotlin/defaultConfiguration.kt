@@ -48,9 +48,9 @@ data class DokkaModuleDescriptionImpl(
 ) : DokkaConfiguration.DokkaModuleDescription
 
 data class SourceLinkDefinitionImpl(
-    override val path: String,
-    override val url: String,
-    override val lineSuffix: String?
+    override val localDirectory: String,
+    override val remoteUrl: String,
+    override val remoteLineSuffix: String?
 ) : DokkaConfiguration.SourceLinkDefinition {
     companion object {
         fun parseSourceLinkDefinition(srcLink: String): SourceLinkDefinitionImpl {
