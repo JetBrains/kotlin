@@ -13729,6 +13729,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inference/kt36446.kt");
         }
 
+        @TestMetadata("kt38664.kt")
+        public void testKt38664() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/kt38664.kt");
+        }
+
         @TestMetadata("kt39824.kt")
         public void testKt39824() throws Exception {
             runTest("compiler/testData/codegen/box/inference/kt39824.kt");
@@ -29939,6 +29944,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("notInLastPosition.kt")
         public void testNotInLastPosition() throws Exception {
             runTest("compiler/testData/codegen/box/vararg/notInLastPosition.kt");
+        }
+
+        @TestMetadata("referenceToContainsFromVarargParameter.kt")
+        public void testReferenceToContainsFromVarargParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/vararg/referenceToContainsFromVarargParameter.kt");
         }
 
         @TestMetadata("singleAssignmentToVarargsInFunction.kt")

@@ -10764,6 +10764,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inference/kt36446.kt");
         }
 
+        @TestMetadata("kt38664.kt")
+        public void testKt38664() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/kt38664.kt");
+        }
+
         @TestMetadata("kt39824.kt")
         public void testKt39824() throws Exception {
             runTest("compiler/testData/codegen/box/inference/kt39824.kt");
@@ -25005,6 +25010,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         @TestMetadata("kt796_797.kt")
         public void testKt796_797() throws Exception {
             runTest("compiler/testData/codegen/box/vararg/kt796_797.kt");
+        }
+
+        @TestMetadata("referenceToContainsFromVarargParameter.kt")
+        public void testReferenceToContainsFromVarargParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/vararg/referenceToContainsFromVarargParameter.kt");
         }
 
         @TestMetadata("singleAssignmentToVarargsInFunction.kt")
