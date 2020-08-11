@@ -25,6 +25,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: hash32
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -46,6 +47,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: length
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -70,6 +72,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: isEmpty
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Boolean
   typeParameters: []
@@ -83,6 +86,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: charAt
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Char
   typeParameters: []
@@ -96,6 +100,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: codePointAt
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -109,6 +114,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: codePointBefore
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -122,6 +128,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: codePointCount
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -135,6 +142,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: offsetByCodePoints
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -148,6 +156,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: getChars
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Unit
   typeParameters: []
@@ -161,6 +170,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: getChars
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Unit
   typeParameters: []
@@ -174,6 +184,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: getBytes
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Unit
   typeParameters: []
@@ -187,6 +198,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: getBytes
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/ByteArray
   typeParameters: []
@@ -200,6 +212,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: getBytes
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/ByteArray
   typeParameters: []
@@ -213,6 +226,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: getBytes
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/ByteArray
   typeParameters: []
@@ -226,6 +240,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: equals
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Boolean
   typeParameters: []
@@ -239,6 +254,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: contentEquals
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Boolean
   typeParameters: []
@@ -252,6 +268,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: contentEquals
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Boolean
   typeParameters: []
@@ -265,6 +282,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: equalsIgnoreCase
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Boolean
   typeParameters: []
@@ -278,6 +296,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: compareTo
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -291,6 +310,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: compareToIgnoreCase
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -304,6 +324,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: regionMatches
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Boolean
   typeParameters: []
@@ -317,6 +338,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: regionMatches
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Boolean
   typeParameters: []
@@ -330,6 +352,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: startsWith
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Boolean
   typeParameters: []
@@ -343,6 +366,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: startsWith
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Boolean
   typeParameters: []
@@ -356,6 +380,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: endsWith
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Boolean
   typeParameters: []
@@ -369,6 +394,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -382,6 +408,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: indexOf
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -395,6 +422,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: indexOf
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -408,6 +436,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: indexOf
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -421,6 +450,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: indexOf
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -434,6 +464,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: indexOfSupplementary
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -447,6 +478,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: lastIndexOf
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -460,6 +492,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: lastIndexOf
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -473,6 +506,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: lastIndexOf
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -486,6 +520,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: lastIndexOf
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -499,6 +534,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: lastIndexOfSupplementary
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -512,6 +548,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: substring
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/String
   typeParameters: []
@@ -525,6 +562,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: substring
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/String
   typeParameters: []
@@ -538,6 +576,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: subSequence
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/CharSequence
   typeParameters: []
@@ -551,6 +590,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: concat
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/String
   typeParameters: []
@@ -564,6 +604,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: replace
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/String
   typeParameters: []
@@ -577,6 +618,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: replace
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/String
   typeParameters: []
@@ -590,6 +632,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: matches
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Boolean
   typeParameters: []
@@ -603,6 +646,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: contains
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Boolean
   typeParameters: []
@@ -616,6 +660,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: replaceFirst
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/String
   typeParameters: []
@@ -629,6 +674,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: replaceAll
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/String
   typeParameters: []
@@ -642,6 +688,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: split
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<kotlin/String, kotlin/String?>!>>
   typeParameters: []
@@ -655,6 +702,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: split
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<kotlin/String, kotlin/String?>!>>
   typeParameters: []
@@ -668,6 +716,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: toLowerCase
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/String
   typeParameters: []
@@ -681,6 +730,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: toLowerCase
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/String
   typeParameters: []
@@ -694,6 +744,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: toUpperCase
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/String
   typeParameters: []
@@ -707,6 +758,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: toUpperCase
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/String
   typeParameters: []
@@ -720,6 +772,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: trim
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/String
   typeParameters: []
@@ -733,6 +786,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: toString
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/String
   typeParameters: []
@@ -746,6 +800,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: toCharArray
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/CharArray
   typeParameters: []
@@ -759,6 +814,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: intern
   origin: JAVA
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/String
   typeParameters: []
@@ -772,7 +828,17 @@ KtFirFunctionSymbol:
   modality: ABSTRACT
   name: get
   origin: LIBRARY
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Char
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(index)]
+
+KtFirClassOrObjectSymbol:
+  classId: java/lang/String.CaseInsensitiveComparator
+  classKind: CLASS
+  modality: OPEN
+  name: CaseInsensitiveComparator
+  origin: JAVA
+  symbolKind: MEMBER
+  typeParameters: []

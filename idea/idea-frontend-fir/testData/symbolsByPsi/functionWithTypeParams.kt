@@ -21,6 +21,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
+  receiverType: null
   symbolKind: TOP_LEVEL
   type: kotlin/Unit
   typeParameters: [KtFirTypeParameterSymbol(X)]
