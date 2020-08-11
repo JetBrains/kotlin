@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnResolution
+
 plugins {
     kotlin("js").version("<pluginMarkerVersion>")
 }
@@ -10,13 +12,14 @@ repositories {
     jcenter()
 }
 
-dependencies {
-    constraints {
-        implementation(org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependencyConstraint(project, "lodash", "^1.0.0")) {
-            version {
-                reject("~1.2.1", "1.3.0 - 1.4.0")
+rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
+    rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().apply {
+        resolutions.add(
+            YarnResolution("lodash").apply {
+                include("^1.0.0")
+                exclude("~1.2.1", "1.3.0 - 1.4.0")
             }
-        }
+        )
     }
 }
 
