@@ -59,7 +59,8 @@ abstract class ProjectDataServiceBase : AbstractProjectDataService<KotlinTargetD
             val target: KonanTarget,
             val targetName: String,
             val execName: String,
-            val projectName: String
+            val projectName: String,
+            val isTest: Boolean
         )
 
         data class ImportedVariant(
@@ -79,7 +80,8 @@ abstract class ProjectDataServiceBase : AbstractProjectDataService<KotlinTargetD
                     konanTarget,
                     artifact.targetName,
                     artifact.executableName,
-                    projectPrefix
+                    projectPrefix,
+                    artifact.isTests
                 )
                 val params = ImportedVariant(
                     artifact.buildTaskPath,
@@ -100,6 +102,7 @@ abstract class ProjectDataServiceBase : AbstractProjectDataService<KotlinTargetD
                 exec.targetName,
                 exec.execName,
                 exec.projectName,
+                exec.isTest,
                 variants.map { importedVariant ->
                     if (importedVariant.gradleTask.contains("debug", true)) {
                         BinaryExecutable.Variant.Debug(
@@ -120,7 +123,6 @@ abstract class ProjectDataServiceBase : AbstractProjectDataService<KotlinTargetD
     }
 
     private fun KonanArtifactModel.getSupportedTargetOrNull(): KonanTarget? {
-        if (isTests) return null
         if (type != CompilerOutputKind.PROGRAM.name) return null
         return KonanTarget.predefinedTargets[targetPlatform]
     }
@@ -157,6 +159,7 @@ abstract class ProjectDataServiceBase : AbstractProjectDataService<KotlinTargetD
         val type = workspace.binaryRunConfigurationType
 
         workspace.allAvailableExecutables
+            .filter { !it.isTest }
             .sortedBy { it.targetName }
             .forEach { exec ->
                 val new = runManager.createConfiguration(exec.name, type)
@@ -177,12 +180,7 @@ abstract class ProjectDataServiceBase : AbstractProjectDataService<KotlinTargetD
             programParameters = old.programParameters
             envs = old.envs
         } else {
-            val variant = imported.variants.firstOrNull { it is BinaryExecutable.Variant.Debug } ?: imported.variants.firstOrNull()
-            executable = imported
-            this.variant = variant
-            workingDirectory = variant?.params?.workingDirectory
-            programParameters = variant?.params?.programParameters ?: ""
-            envs = variant?.params?.environmentVariables ?: emptyMap()
+            setupFrom(imported)
         }
     }
 }

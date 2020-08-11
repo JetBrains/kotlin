@@ -24,7 +24,9 @@ class BinaryRunConfigurationSettingsEditor(
     availableExecutables: Set<BinaryExecutable>
 ) : SettingsEditor<BinaryRunConfiguration>(),
     PanelWithAnchor {
-    private val availableExecutableItems = availableExecutables.map { BinaryExecutableItem(it) }
+    private val availableExecutableItems = availableExecutables
+        .filter { !it.isTest }
+        .map { BinaryExecutableItem(it) }
 
     private val commonProgramParameters = CommonProgramParametersPanel()
 

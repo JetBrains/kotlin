@@ -13,6 +13,7 @@ data class BinaryExecutable(
     val targetName: String,
     val execName: String,
     val projectPrefix: String,
+    val isTest: Boolean,
     val variants: List<Variant>
 ) {
     val name: String

@@ -11,6 +11,7 @@ import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.openapi.externalSystem.debugger.DebuggerBackendExtension
 import com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerHelper
 import com.intellij.openapi.project.Project
+import com.jetbrains.mpp.BinaryExecutable
 import com.jetbrains.mpp.runconfig.AttachmentStrategy
 import com.jetbrains.mpp.runconfig.BinaryRunConfiguration
 import com.jetbrains.mpp.workspace.WorkspaceBase
@@ -75,9 +76,7 @@ abstract class LLDBBackendBase : DebuggerBackendExtension {
         processName: String,
         processParameters: String
     ): RunnerAndConfigurationSettings {
-        val isTest = processName.endsWith("Test")
         val params = splitParameters(processParameters)
-        val runConfigForProcess = findRunConfiguration(project, processName)
 
         val settings = RunManager.getInstance(project).createConfiguration(
             processName,
@@ -85,16 +84,9 @@ abstract class LLDBBackendBase : DebuggerBackendExtension {
         )
 
         with(settings.configuration as BinaryRunConfiguration) {
-            //setup
-            executable = runConfigForProcess.executable
-            variant = runConfigForProcess.variant
-            workingDirectory = runConfigForProcess.workingDirectory
-            programParameters = runConfigForProcess.programParameters
-            envs = runConfigForProcess.envs
+            setupFrom(findExecutable(project, processName))
 
-            if (isTest) {
-                programParameters = "$processParameters --ktest_no_exit_code"
-            }
+            beforeRunTasks = emptyList() // incompatible with ExternalSystemTaskDebugRunner
 
             attachmentStrategy = AttachmentStrategy.ByName
             if (params[ATTACH_BY_NAME_KEY]?.toBoolean() == false) {
@@ -108,12 +100,12 @@ abstract class LLDBBackendBase : DebuggerBackendExtension {
         return settings
     }
 
-    private fun findRunConfiguration(project: Project, processName: String): BinaryRunConfiguration {
+    private fun findExecutable(project: Project, processName: String): BinaryExecutable {
         val allAvailableExecutables = getWorkspace(project).allAvailableExecutables
         val taskName = processName.substring(processName.lastIndexOf(':') + 1)
         val projectPrefix = processName.substring(0, processName.lastIndexOf(':') + 1)
 
-        val executable = when {
+        return when {
             taskName.startsWith("run") -> {
                 val executableId = taskName.removePrefix("run")
                 allAvailableExecutables.find { exec ->
@@ -131,11 +123,6 @@ abstract class LLDBBackendBase : DebuggerBackendExtension {
             }
             else -> null
         } ?: throw ExecutionException("No executable for processName=$processName")
-
-        return RunManager.getInstance(project).allSettings
-            .firstOrNull { (it.configuration as? BinaryRunConfiguration)?.executable == executable }
-            ?.configuration as? BinaryRunConfiguration
-            ?: throw ExecutionException("No configuration for executable=$executable")
     }
 
     companion object {

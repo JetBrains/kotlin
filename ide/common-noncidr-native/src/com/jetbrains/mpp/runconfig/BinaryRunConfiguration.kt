@@ -60,6 +60,14 @@ class BinaryRunConfiguration(
         parameters = newParameters
     }
 
+    fun setupFrom(exec: BinaryExecutable) {
+        executable = exec
+        variant = exec.variants.firstOrNull { it is BinaryExecutable.Variant.Debug } ?: exec.variants.firstOrNull()
+        workingDirectory = variant?.params?.workingDirectory
+        programParameters = variant?.params?.programParameters ?: ""
+        envs = variant?.params?.environmentVariables ?: emptyMap()
+    }
+
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> =
         BinaryRunConfigurationSettingsEditor(workspace.allAvailableExecutables)
 
@@ -68,16 +76,16 @@ class BinaryRunConfiguration(
         val selectedVariant = variant
         when {
             selectedExecutable == null -> {
-                throw RuntimeConfigurationError("There is no executable!")
+                throw RuntimeConfigurationError("There is no executable.")
             }
             !workspace.allAvailableExecutables.contains(selectedExecutable) -> {
-                throw RuntimeConfigurationError("${selectedExecutable.name} was not found in project!")
+                throw RuntimeConfigurationError("${selectedExecutable.name} was not found in project.")
             }
             selectedVariant == null -> {
-                throw RuntimeConfigurationError("There is no variant for launch!")
+                throw RuntimeConfigurationError("There is no variant for launch.")
             }
             !selectedExecutable.variants.contains(selectedVariant) -> {
-                throw RuntimeConfigurationError("Selected variant ${selectedVariant.name} is incompatible with executable!")
+                throw RuntimeConfigurationError("Selected variant ${selectedVariant.name} is incompatible with executable.")
             }
         }
     }

@@ -37,6 +37,7 @@ internal object State {
             const val targetName = "targetName"
             const val execName = "execName"
             const val projectPrefix = "projectPrefix"
+            const val isTest = "isTest"
 
             const val variants = "variants"
         }
@@ -104,6 +105,7 @@ internal object State {
         element.setAttribute(XML.BinaryExecutable.targetName, targetName)
         element.setAttribute(XML.BinaryExecutable.execName, execName)
         element.setAttribute(XML.BinaryExecutable.projectPrefix, projectPrefix)
+        element.setAttribute(XML.BinaryExecutable.isTest, isTest.toString())
 
         val variantsElement = Element(XML.BinaryExecutable.variants)
         variants.forEach { variant ->
@@ -159,6 +161,7 @@ internal object State {
         getAttributeValue(XML.BinaryExecutable.targetName),
         getAttributeValue(XML.BinaryExecutable.execName),
         getAttributeValue(XML.BinaryExecutable.projectPrefix),
+        getAttributeValue(XML.BinaryExecutable.isTest).toBoolean(),
         getChild(XML.BinaryExecutable.variants).getChildren(XML.Variant.node).map { it.readVariantFromXml(projectDir) }
     )
 
