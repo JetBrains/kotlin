@@ -3,6 +3,7 @@ package com.jetbrains.kotlin.structuralsearch
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.util.elementType
 import com.intellij.structuralsearch.StructuralSearchUtil
 import com.intellij.structuralsearch.impl.matcher.MatchContext
 import com.intellij.structuralsearch.impl.matcher.predicates.MatchPredicate
@@ -15,8 +16,10 @@ import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.stubindex.KotlinClassShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.nj2k.postProcessing.type
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.isNull
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.KotlinType
@@ -108,7 +111,7 @@ class KotlinExprTypePredicate(
 
             val matchSpecific = when (typeElement) {
                 is KtFunctionType ->
-                    "${type.fqName}" =="kotlin.Function${typeElement.typeArgumentsAsTypes.size - 1}"
+                    matchNames(type, typeElement)
                             && matchTypeReference(
                         type.getReceiverTypeFromFunctionType(),
                         typeElement.receiverTypeReference,
@@ -137,6 +140,16 @@ class KotlinExprTypePredicate(
 
             return matchArguments
                     && matchSpecific
+        }
+
+        private fun matchNames(type: KotlinType, typeElement: KtTypeElement): Boolean {
+            val parent = typeElement.parent
+            return "${type.fqName}" == when {
+                parent is KtTypeReference &&
+                        parent.modifierList?.allChildren?.any { it.elementType == KtTokens.SUSPEND_KEYWORD } == true
+                -> "kotlin.coroutines.SuspendFunction${typeElement.typeArgumentsAsTypes.size - 1}"
+                else -> "kotlin.Function${typeElement.typeArgumentsAsTypes.size - 1}"
+            }
         }
 
         private fun compareProjections(projection: TypeProjection, typeReference: KtTypeReference?): Boolean {
