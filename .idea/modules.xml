@@ -934,10 +934,6 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/server/build/fleet.server.build.iml" filepath="$PROJECT_DIR$/intellij/fleet/server/build/fleet.server.build.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/space/fleet.space.iml" filepath="$PROJECT_DIR$/intellij/fleet/space/fleet.space.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/util/fleet.util.iml" filepath="$PROJECT_DIR$/intellij/fleet/util/fleet.util.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/akka/akka-core/intellij.akka.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/akka/akka-core/intellij.akka.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/akka/akka-java-tests/intellij.akka.java.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/akka/akka-java-tests/intellij.akka.java.tests.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/akka/akka-kotlin-tests/intellij.akka.kotlin.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/akka/akka-kotlin-tests/intellij.akka.kotlin.tests.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/akka/akka-tests-api/intellij.akka.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/akka/akka-tests-api/intellij.akka.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/android-adb/intellij.android.adb.iml" filepath="$PROJECT_DIR$/intellij/community/android/android-adb/intellij.android.adb.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/android-adb/intellij.android.adb.tests.iml" filepath="$PROJECT_DIR$/intellij/community/android/android-adb/intellij.android.adb.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/android/adt-branding/intellij.android.adt.branding.iml" filepath="$PROJECT_DIR$/intellij/community/android/adt-branding/intellij.android.adt.branding.iml" />
