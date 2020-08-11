@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.codeInliner.CallableUsageReplacementStrategy
 import org.jetbrains.kotlin.idea.codeInliner.ClassUsageReplacementStrategy
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.core.OptionalParametersHelper
+import org.jetbrains.kotlin.idea.intentions.isInvokeOperator
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
@@ -47,7 +48,6 @@ import org.jetbrains.kotlin.resolve.constants.AnnotationValue
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.constructors
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -195,9 +195,9 @@ abstract class DeprecatedSymbolUsageFixBase(
             val resolutionFacade = element.getResolutionFacade()
             val bindingContext = resolutionFacade.analyze(element, BodyResolveMode.PARTIAL)
             val resolvedCall = element.getResolvedCall(bindingContext)
-            var target = resolvedCall?.resultingDescriptor.takeIf {
-                it is FunctionDescriptor && it.isOperator && it.name == OperatorNameConventions.INVOKE
-            } ?: element.mainReference.resolveToDescriptors(bindingContext).singleOrNull() ?: return null
+            var target = resolvedCall?.resultingDescriptor?.takeIf { it.isInvokeOperator }
+                ?: element.mainReference.resolveToDescriptors(bindingContext).singleOrNull()
+                ?: return null
 
             var replacePatternFromSymbol =
                 fetchReplaceWithPattern(target, resolutionFacade.project, element, replaceWith.replaceInWholeProject)

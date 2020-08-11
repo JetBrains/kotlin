@@ -7071,6 +7071,16 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/operatorCalls/invoke2.kt");
             }
 
+            @TestMetadata("invoke3.kt")
+            public void testInvoke3() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/operatorCalls/invoke3.kt");
+            }
+
+            @TestMetadata("invoke4.kt")
+            public void testInvoke4() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/operatorCalls/invoke4.kt");
+            }
+
             @TestMetadata("plusAssign.kt")
             public void testPlusAssign() throws Exception {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/operatorCalls/plusAssign.kt");

@@ -5,10 +5,10 @@ class Executor {
     operator fun invoke(action: () -> Unit) {}
 
     fun execute(action: () -> Unit) {}
-}
 
-fun usage(executor: Executor) {
-    <caret>executor {
-        // do something
+    fun usage(executor: Executor) {
+        <caret>invoke {
+            // do something
+        }
     }
 }

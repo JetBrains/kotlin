@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.inspections.RedundantUnitExpressionInspection
 import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
+import org.jetbrains.kotlin.idea.intentions.isInvokeOperator
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
@@ -136,15 +137,23 @@ class CodeInliner<TCallElement : KtElement>(
             .forEach { ImportInsertHelper.getInstance(project).importDescriptor(file, it) }
 
         val replacementPerformer = when (elementToBeReplaced) {
-            is KtCallExpression -> {
-                if (descriptor is FunctionDescriptor && descriptor.isOperator && descriptor.name == OperatorNameConventions.INVOKE) {
-                    val calleeExpression = elementToBeReplaced.calleeExpression
-                    val receiverExpression = (codeToInline.mainExpression as? KtQualifiedExpression)?.receiverExpression
-                    if (calleeExpression != null && receiverExpression is KtThisExpression) receiverExpression.replace(calleeExpression)
+            is KtExpression -> {
+                if (descriptor.isInvokeOperator) {
+                    val call = elementToBeReplaced as? KtCallExpression
+                        ?: (elementToBeReplaced as? KtDotQualifiedExpression)?.selectorExpression as? KtCallExpression
+                    val callee = call?.calleeExpression
+                    if (callee != null && callee.text != OperatorNameConventions.INVOKE.asString()) {
+                        val receiverExpression = (codeToInline.mainExpression as? KtQualifiedExpression)?.receiverExpression
+                        when {
+                            elementToBeReplaced is KtCallExpression && receiverExpression is KtThisExpression ->
+                                receiverExpression.replace(callee)
+                            elementToBeReplaced is KtDotQualifiedExpression ->
+                                receiverExpression?.replace(psiFactory.createExpressionByPattern("$0.$1", receiverExpression, callee))
+                        }
+                    }
                 }
                 ExpressionReplacementPerformer(codeToInline, elementToBeReplaced)
             }
-            is KtExpression -> ExpressionReplacementPerformer(codeToInline, elementToBeReplaced)
             is KtAnnotationEntry -> AnnotationEntryReplacementPerformer(codeToInline, elementToBeReplaced)
             is KtSuperTypeCallEntry -> SuperTypeCallEntryReplacementPerformer(codeToInline, elementToBeReplaced)
             else -> {

@@ -1,9 +1,9 @@
 // "Replace with 'Foo.execute(action)'" "true"
 
-@Deprecated("Use Executor.execute(Runnable) instead.", ReplaceWith("Foo.execute(action)"))
-public operator fun Executor.invoke(action: () -> Unit) {}
-
 class Executor {
+    @Deprecated("Use Executor.execute(Runnable) instead.", ReplaceWith("Foo.execute(action)"))
+    operator fun invoke(action: () -> Unit) {}
+
     fun execute(action: () -> Unit) {}
 }
 
