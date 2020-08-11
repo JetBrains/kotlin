@@ -27,7 +27,8 @@ import org.jetbrains.kotlin.psi.KtFile
 
 abstract class FirModuleResolveState {
     abstract val moduleInfo: IdeaModuleInfo
-    abstract val firSession: FirSession
+    abstract val firIdeSourcesSession: FirSession
+    abstract val firIdeLibrariesSession: FirSession
 
     abstract fun getSessionFor(moduleInfo: IdeaModuleInfo): FirSession
 
@@ -57,7 +58,8 @@ abstract class FirModuleResolveState {
 
 internal open class FirModuleResolveStateImpl(
     override val moduleInfo: IdeaModuleInfo,
-    override val firSession: FirSession,
+    override val firIdeSourcesSession: FirSession,
+    override val firIdeLibrariesSession: FirSession,
     private val sessionProvider: FirIdeSessionProvider,
     val firFileBuilder: FirFileBuilder,
     val fileCache: ModuleFileCache,

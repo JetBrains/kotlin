@@ -9,19 +9,20 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.getPrimaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
-import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirConstructorSymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.createSignature
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.ClassId
 
@@ -60,17 +61,10 @@ internal class KtFirConstructorSymbol(
     }
 
     override fun createPointer(): KtSymbolPointer<KtConstructorSymbol> = withValidityAssertion {
-        if (!isPrimary) {
-            // TODO for now we can not find symbol for member function :(
-            return NonRestorableKtSymbolPointer
+        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        if (symbolKind == KtSymbolKind.LOCAL) {
+            throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException("${ownerClassId.asString()}.constructor")
         }
-        val ownerClassId = owner.classId
-        return symbolPointer { session ->
-            val ownerSymbol = session.symbolProvider.getClassOrObjectSymbolByClassId(ownerClassId) ?: return@symbolPointer null
-            check(ownerSymbol is KtFirSymbol<*>)
-            val classFir = ownerSymbol.firRef.withFir { (it as? FirRegularClass) }
-                ?: error("FirRegularClass expected")
-            classFir.getPrimaryConstructorIfAny()?.let(builder::buildConstructorSymbol)
-        }
+        return KtFirConstructorSymbolPointer(ownerClassId, isPrimary, firRef.withFir { it.createSignature() })
     }
 }

@@ -6,24 +6,23 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.modality
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
-import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirMemberPropertySymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.createSignature
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCommonSymbolModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolKind
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -31,8 +30,7 @@ internal class KtFirPropertySymbol(
     fir: FirProperty,
     resolveState: FirModuleResolveState,
     override val token: ValidityToken,
-    private val builder: KtSymbolByFirBuilder,
-    private val forcedOrigin: FirDeclarationOrigin?
+    private val builder: KtSymbolByFirBuilder
 ) : KtPropertySymbol(), KtFirSymbol<FirProperty> {
     init {
         assert(!fir.isLocal)
@@ -41,7 +39,6 @@ internal class KtFirPropertySymbol(
     override val firRef = firRef(fir, resolveState)
     override val psi: PsiElement? by firRef.withFirAndCache { it.findPsi(fir.session) }
 
-    override val origin: KtSymbolOrigin get() = withValidityAssertion { forcedOrigin?.asKtSymbolOrigin() ?: super.origin }
 
     override val fqName: FqName get() = firRef.withFir { it.symbol.callableId.asFqNameForDebugInfo() }
     override val isVal: Boolean get() = firRef.withFir { it.isVal }
@@ -57,4 +54,16 @@ internal class KtFirPropertySymbol(
             }
         }
     override val modality: KtCommonSymbolModality get() = firRef.withFir { it.modality.getSymbolModality() }
+
+    override fun createPointer(): KtSymbolPointer<KtPropertySymbol> {
+        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        return when (symbolKind) {
+            KtSymbolKind.TOP_LEVEL -> TODO("Creating symbol for top level fun is not supported yet")
+            KtSymbolKind.MEMBER -> KtFirMemberPropertySymbolPointer(
+                firRef.withFir { it.symbol.callableId.classId ?: error("ClassId should not be null for member property") },
+                firRef.withFir { it.createSignature() }
+            )
+            KtSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(fqName.asString())
+        }
+    }
 }

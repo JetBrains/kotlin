@@ -1,0 +1,13 @@
+// RUNTIME
+
+class: java.lang.String
+
+// SYMBOLS:
+KtFirClassOrObjectSymbol:
+  classId: java.lang.String
+  classKind: CLASS
+  modality: FINAL
+  name: String
+  origin: JAVA
+  symbolKind: MEMBER
+  typeParameters: []

@@ -24,7 +24,8 @@ internal class FirModuleResolveStateForCompletion(
     private val originalState: FirModuleResolveStateImpl
 ) : FirModuleResolveState() {
     override val moduleInfo: IdeaModuleInfo get() = originalState.moduleInfo
-    override val firSession: FirSession get() = originalState.firSession
+    override val firIdeSourcesSession: FirSession get() = originalState.firIdeSourcesSession
+    override val firIdeLibrariesSession: FirSession get() = originalState.firIdeSourcesSession
 
     private val psiToFirCache = PsiToFirCache(originalState.fileCache)
 

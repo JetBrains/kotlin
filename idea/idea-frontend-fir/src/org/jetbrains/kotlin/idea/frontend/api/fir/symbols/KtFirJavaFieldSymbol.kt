@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCommonSymbolModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtJavaFieldSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
 
@@ -37,4 +38,8 @@ internal class KtFirJavaFieldSymbol(
     override val name: Name get() = firRef.withFir { it.name }
 
     override val modality: KtCommonSymbolModality get() = firRef.withFir { it.modality.getSymbolModality() }
+
+    override fun createPointer(): KtSymbolPointer<KtJavaFieldSymbol> {
+        TODO("Creating pointers for java fields is not supported yet")
+    }
 }

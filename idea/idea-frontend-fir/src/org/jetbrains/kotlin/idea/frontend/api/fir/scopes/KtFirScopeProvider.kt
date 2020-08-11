@@ -44,11 +44,9 @@ internal class KtFirScopeProvider(
     override val token: ValidityToken,
     private val builder: KtSymbolByFirBuilder,
     private val project: Project,
-    session: FirSession,
     firResolveState: FirModuleResolveState,
     firScopeRegistry: FirScopeRegistry,
 ) : KtScopeProvider(), ValidityTokenOwner {
-    private val session by weakRef(session)
     private val firResolveState by weakRef(firResolveState)
     private val firScopeStorage by weakRef(firScopeRegistry)
 
@@ -78,8 +76,11 @@ internal class KtFirScopeProvider(
 
     override fun getPackageScope(packageSymbol: KtPackageSymbol): KtPackageScope = withValidityAssertion {
         packageMemberScopeCache.getOrPut(packageSymbol) {
-            val firPackageScope = FirPackageMemberScope(packageSymbol.fqName, session/*TODO use correct session here*/)
-                .also(firScopeStorage::register)
+            val firPackageScope =
+                FirPackageMemberScope(
+                    packageSymbol.fqName,
+                    firResolveState.firIdeSourcesSession/*TODO use correct session here*/
+                ).also(firScopeStorage::register)
             KtFirPackageScope(firPackageScope, builder, token)
         }
     }
@@ -89,9 +90,9 @@ internal class KtFirScopeProvider(
     }
 
     override fun getScopeForType(type: KtType): KtScope? {
-        check(type is KtFirType) { "KtFirScopePriovider can only work with KtFirType, but ${type::class} was provided" }
+        check(type is KtFirType) { "KtFirScopeProvider can only work with KtFirType, but ${type::class} was provided" }
 
-        val firTypeScope = type.coneType.scope(session, ScopeSession()) ?: return null
+        val firTypeScope = type.coneType.scope(firResolveState.firIdeSourcesSession, ScopeSession()) ?: return null
         return convertToKtScope(firTypeScope)
     }
 

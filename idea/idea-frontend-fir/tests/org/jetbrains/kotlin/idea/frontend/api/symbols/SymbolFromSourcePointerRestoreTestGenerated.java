@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @TestMetadata("idea/idea-frontend-fir/testData/symbolPointer")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class SymbolPointerTestGenerated extends AbstractSymbolPointerTest {
+public class SymbolFromSourcePointerRestoreTestGenerated extends AbstractSymbolFromSourcePointerRestoreTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
@@ -36,5 +36,35 @@ public class SymbolPointerTestGenerated extends AbstractSymbolPointerTest {
     @TestMetadata("classPrimaryConstructor.kt")
     public void testClassPrimaryConstructor() throws Exception {
         runTest("idea/idea-frontend-fir/testData/symbolPointer/classPrimaryConstructor.kt");
+    }
+
+    @TestMetadata("classSecondaryConstructors.kt")
+    public void testClassSecondaryConstructors() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/symbolPointer/classSecondaryConstructors.kt");
+    }
+
+    @TestMetadata("enum.kt")
+    public void testEnum() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/symbolPointer/enum.kt");
+    }
+
+    @TestMetadata("memberFunctions.kt")
+    public void testMemberFunctions() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/symbolPointer/memberFunctions.kt");
+    }
+
+    @TestMetadata("memberProperties.kt")
+    public void testMemberProperties() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/symbolPointer/memberProperties.kt");
+    }
+
+    @TestMetadata("topLevelFunctions.kt")
+    public void testTopLevelFunctions() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/symbolPointer/topLevelFunctions.kt");
+    }
+
+    @TestMetadata("topLevelProperties.kt")
+    public void testTopLevelProperties() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/symbolPointer/topLevelProperties.kt");
     }
 }
