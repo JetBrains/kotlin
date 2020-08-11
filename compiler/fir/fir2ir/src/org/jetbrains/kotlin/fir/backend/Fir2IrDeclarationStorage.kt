@@ -748,7 +748,7 @@ class Fir2IrDeclarationStorage(
     }
 
     private fun getFirClassByFqName(classId: ClassId): FirClass<*>? {
-        val declaration = firProvider.getClassLikeSymbolByFqName(classId) ?: firSymbolProvider.getClassLikeSymbolByFqName(classId)
+        val declaration = firSymbolProvider.getClassLikeSymbolByFqName(classId)
         return declaration?.fir as? FirClass<*>
     }
 

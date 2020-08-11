@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProviderInternals
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
@@ -23,6 +24,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinScopeProvider) : FirProvider() {
+    override val symbolProvider: FirSymbolProvider = SymbolProvider()
+
     override fun getFirCallableContainerFile(symbol: FirCallableSymbol<*>): FirFile? {
         symbol.overriddenSymbol?.let {
             return getFirCallableContainerFile(it)
@@ -36,20 +39,6 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
         return state.callableContainerMap[symbol]
     }
 
-    override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
-        return getFirClassifierByFqName(classId)?.symbol
-    }
-
-    override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
-        return (state.callableMap[CallableId(packageFqName, null, name)] ?: emptyList())
-    }
-
-    override fun getNestedClassifierScope(classId: ClassId): FirScope? {
-        return (getFirClassifierByFqName(classId) as? FirRegularClass)?.let {
-            nestedClassifierScope(it)
-        }
-    }
-
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile {
         return state.classifierContainerFileMap[fqName] ?: error("Couldn't find container for $fqName")
     }
@@ -58,12 +47,33 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
         return state.classifierContainerFileMap[fqName]
     }
 
-    override fun getClassNamesInPackage(fqName: FqName): Set<Name> {
-        return state.classesInPackage[fqName] ?: emptySet()
-    }
-
     fun recordFile(file: FirFile) {
         recordFile(file, state)
+    }
+
+    private inner class SymbolProvider : FirSymbolProvider() {
+        override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
+            return getFirClassifierByFqName(classId)?.symbol
+        }
+
+        override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
+            return (state.callableMap[CallableId(packageFqName, null, name)] ?: emptyList())
+        }
+
+        override fun getNestedClassifierScope(classId: ClassId): FirScope? {
+            return (getFirClassifierByFqName(classId) as? FirRegularClass)?.let {
+                nestedClassifierScope(it)
+            }
+        }
+
+        override fun getPackage(fqName: FqName): FqName? {
+            if (getFirFilesByPackage(fqName).isNotEmpty()) return fqName
+            return null
+        }
+
+        override fun getClassNamesInPackage(fqName: FqName): Set<Name> {
+            return state.classesInPackage[fqName] ?: emptySet()
+        }
     }
 
     @FirProviderInternals

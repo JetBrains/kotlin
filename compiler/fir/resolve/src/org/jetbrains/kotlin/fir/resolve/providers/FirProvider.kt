@@ -5,30 +5,25 @@
 
 package org.jetbrains.kotlin.fir.resolve.providers
 
+import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 
 @RequiresOptIn
 annotation class FirProviderInternals
 
-abstract class FirProvider : FirSymbolProvider() {
+abstract class FirProvider : FirSessionComponent {
+    /**
+     * [symbolProvider] for [FirProvider] may provide only symbols from sources of current module
+     */
+    abstract val symbolProvider: FirSymbolProvider
 
     open val isPhasedFirAllowed: Boolean get() = false
 
     abstract fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration<*>?
-
-    abstract override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>?
-
-    abstract override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>>
-
-    override fun getPackage(fqName: FqName): FqName? {
-        if (getFirFilesByPackage(fqName).isNotEmpty()) return fqName
-        return null
-    }
 
     abstract fun getFirClassifierContainerFile(fqName: ClassId): FirFile
 
