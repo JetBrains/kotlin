@@ -523,8 +523,7 @@ class Fir2IrDeclarationStorage(
     ): IrSimpleFunction {
         val prefix = if (isSetter) "set" else "get"
         val signature = if (isLocal) null else signatureComposer.composeAccessorSignature(property, isSetter)
-        val containerSource =
-            (correspondingProperty.descriptor as? WrappedPropertyDescriptorWithContainerSource)?.containerSource
+        val containerSource = correspondingProperty.containerSource
         return declareIrAccessor(
             signature,
             containerSource,
