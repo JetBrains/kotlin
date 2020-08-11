@@ -7,6 +7,7 @@
 import helpers.*
 import kotlin.coroutines.*
 
+@Suppress("FUN_INTERFACE_WITH_SUSPEND_FUNCTION")
 fun interface Action {
     suspend fun run()
 }
