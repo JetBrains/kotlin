@@ -471,11 +471,16 @@ class CoroutineCodegenForLambda private constructor(
             val fieldStackValue = StackValue.field(fieldForParameter, generateThisOrOuter(context.thisDescriptor, false))
 
             val originalType = typeMapper.mapType(parameter.type)
+            // If a parameter has reference type, it has prefix L$,
+            // however, when the type is primitive, its prefix is ${type.descriptor}$.
+            // In other words, it the type is Boolean, the prefix is Z$.
+            // This is different from spilled variables, where all int-like primitives have prefix I$.
+            // This is not a problem, since we do not clean spilled primitives up
+            // and we do not coerce Int to Boolean, which takes quite a bit of bytecode (see coerceInt).
             val normalizedType = originalType.normalize()
             fieldStackValue.put(normalizedType, v)
 
             val newIndex = myFrameMap.enter(parameter, originalType)
-            // FIXME: Coerce int
             StackValue.coerce(normalizedType, originalType, v)
             v.store(newIndex, originalType)
 

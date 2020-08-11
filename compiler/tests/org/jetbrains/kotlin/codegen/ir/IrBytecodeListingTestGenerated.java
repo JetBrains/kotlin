@@ -323,6 +323,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/coroutines/spilling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
+            @TestMetadata("booleanParameter.kt")
+            public void testBooleanParameter() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/coroutines/spilling/booleanParameter.kt");
+            }
+
             @TestMetadata("component1.kt")
             public void testComponent1() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeListing/coroutines/spilling/component1.kt");
