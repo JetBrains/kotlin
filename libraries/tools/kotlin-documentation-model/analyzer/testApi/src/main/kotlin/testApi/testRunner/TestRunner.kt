@@ -63,9 +63,16 @@ abstract class AbstractCoreTest {
         val newConfiguration =
             configuration.copy(
                 outputDir = testDirPath.toAbsolutePath().toString(),
-                sourceSets = configuration.sourceSets.map {
-                    it.copy(sourceRoots = it.sourceRoots.map { it.copy(path = "${testDirPath.toAbsolutePath()}/${it.path}") })
-                }
+                sourceSets = configuration.sourceSets.map { sourceSet ->
+                    sourceSet.copy(
+                        sourceRoots = sourceSet.sourceRoots.map { sourceRoot ->
+                            sourceRoot.copy(path = "${testDirPath.toAbsolutePath()}/${sourceRoot.path}")
+                        },
+                        suppressedFiles = sourceSet.suppressedFiles.map { suppressedFile ->
+                            testDirPath.toAbsolutePath().toFile().resolve(suppressedFile).absolutePath
+                        }
+                    )
+                },
             )
         DokkaTestGenerator(
             newConfiguration,
