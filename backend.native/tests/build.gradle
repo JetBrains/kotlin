@@ -2825,7 +2825,8 @@ task memory_stable_ref_cross_thread_check(type: KonanLocalTest) {
 }
 
 standaloneTest("cycle_detector") {
-    disabled = project.globalTestArgs.contains('-opt') || (project.testTarget == 'wasm32') // Needs debug build.
+    disabled = project.globalTestArgs.contains('-opt') || // Needs debug build.
+               (project.testTarget == 'wasm32') // CycleDetector is disabled on WASM.
     flags = ['-tr', '-g']
     source = "runtime/memory/cycle_detector.kt"
 }
