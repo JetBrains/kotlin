@@ -148,7 +148,6 @@ public final class ListOfUsers$$serializer : java/lang/Object, kotlinx/serializa
           ALOAD (6)
           CHECKCAST
           ACONST_NULL
-          CHECKCAST
           INVOKESPECIAL (ListOfUsers, <init>, (ILjava/util/List;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V)
           ARETURN
         LABEL (L7)
@@ -435,7 +434,6 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           ALOAD (6)
           CHECKCAST
           ACONST_NULL
-          CHECKCAST
           INVOKESPECIAL (OptionalUser, <init>, (ILUser;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V)
           ARETURN
         LABEL (L7)
@@ -805,7 +803,6 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
           ALOAD (6)
           ALOAD (7)
           ACONST_NULL
-          CHECKCAST
           INVOKESPECIAL (User, <init>, (ILjava/lang/String;Ljava/lang/String;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V)
           ARETURN
         LABEL (L8)
