@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.interpreter.exceptions.throwAsUserException
+import org.jetbrains.kotlin.ir.interpreter.isFunction
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -53,6 +54,13 @@ internal fun State.isSubtypeOf(other: IrType): Boolean {
         val otherArgument = (other as IrSimpleType).arguments.single()
         if (otherArgument is IrStarProjection) return true
         return thisClass.isSubtypeOfClass(otherArgument.typeOrNull!!.classOrNull!!)
+    }
+
+    if (this is Lambda) {
+        if (!other.isFunction()) return false
+        val typeArgumentsCount = (other as? IrSimpleType)?.arguments?.size ?: return false
+        val lambdaArgumentCount = this.irFunction.valueParameters.size + 1 // +1 for return type
+        return typeArgumentsCount == lambdaArgumentCount
     }
 
     return this.irClass.defaultType.isSubtypeOfClass(other.classOrNull!!)
