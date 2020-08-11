@@ -10720,6 +10720,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inference/lastExpressionOfLambdaWithNothingConstraint.kt");
         }
 
+        @TestMetadata("noCoercionToUniForNullableLambdaReturnType.kt")
+        public void testNoCoercionToUniForNullableLambdaReturnType() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/noCoercionToUniForNullableLambdaReturnType.kt");
+        }
+
         @TestMetadata("plusAssignInsideLambda.kt")
         public void testPlusAssignInsideLambda() throws Exception {
             runTest("compiler/testData/codegen/box/inference/plusAssignInsideLambda.kt");
