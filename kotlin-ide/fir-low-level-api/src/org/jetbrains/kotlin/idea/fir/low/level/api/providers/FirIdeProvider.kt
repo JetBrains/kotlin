@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProviderInternals
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
@@ -38,6 +39,8 @@ internal class FirIdeProvider(
     val cache: ModuleFileCache,
     searchScope: GlobalSearchScope,
 ) : FirProvider() {
+    override val symbolProvider: FirSymbolProvider = SymbolProvider()
+
     private val indexHelper = IndexHelper(project, searchScope)
     private val packageExistenceChecker = PackageExistenceCheckerForMultipleModules(
         project,
@@ -55,19 +58,6 @@ internal class FirIdeProvider(
 
     override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration<*>? =
         providerHelper.getFirClassifierByFqName(classId)
-
-    override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> =
-        providerHelper.getTopLevelCallableSymbols(packageFqName, name)
-
-    override fun getPackage(fqName: FqName): FqName? =
-        providerHelper.getPackage(fqName)
-
-    override fun getNestedClassifierScope(classId: ClassId): FirScope? =
-        providerHelper.getNestedClassifierScope(classId)
-
-    override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
-        return getFirClassifierByFqName(classId)?.symbol
-    }
 
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile {
         return getFirClassifierContainerFileIfAny(fqName)
@@ -121,12 +111,27 @@ internal class FirIdeProvider(
         TODO()
     }
 
-    // TODO this should be reworked because [FirIdeProvider] should not have such method
-    // used only in completion
-    override fun getAllCallableNamesInPackage(fqName: FqName): Set<Name> {
-        return hashSetOf<Name>().apply {
-            indexHelper.getTopLevelPropertiesInPackage(fqName).mapNotNullTo(this) { it.nameAsName }
-            indexHelper.getTopLevelFunctionsInPackage(fqName).mapNotNullTo(this) { it.nameAsName }
+    private inner class SymbolProvider : FirSymbolProvider() {
+        override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> =
+            providerHelper.getTopLevelCallableSymbols(packageFqName, name)
+
+        override fun getPackage(fqName: FqName): FqName? =
+            providerHelper.getPackage(fqName)
+
+        override fun getNestedClassifierScope(classId: ClassId): FirScope? =
+            providerHelper.getNestedClassifierScope(classId)
+
+        override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
+            return getFirClassifierByFqName(classId)?.symbol
+        }
+
+        // TODO this should be reworked because [FirIdeProvider] should not have such method
+        // used only in completion
+        override fun getAllCallableNamesInPackage(fqName: FqName): Set<Name> {
+            return hashSetOf<Name>().apply {
+                indexHelper.getTopLevelPropertiesInPackage(fqName).mapNotNullTo(this) { it.nameAsName }
+                indexHelper.getTopLevelFunctionsInPackage(fqName).mapNotNullTo(this) { it.nameAsName }
+            }
         }
     }
 }
