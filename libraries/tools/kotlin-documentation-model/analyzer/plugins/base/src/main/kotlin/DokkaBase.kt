@@ -7,15 +7,15 @@ import org.jetbrains.dokka.analysis.KotlinAnalysis
 import org.jetbrains.dokka.base.allModulePage.MultimodulePageCreator
 import org.jetbrains.dokka.base.renderers.*
 import org.jetbrains.dokka.base.renderers.html.*
+import org.jetbrains.dokka.base.resolvers.external.ExternalLocationProviderFactory
+import org.jetbrains.dokka.base.resolvers.external.DefaultExternalLocationProviderFactory
+import org.jetbrains.dokka.base.resolvers.external.javadoc.JavadocExternalLocationProviderFactory
+import org.jetbrains.dokka.base.resolvers.local.DokkaLocationProviderFactory
+import org.jetbrains.dokka.base.resolvers.local.LocationProviderFactory
+import org.jetbrains.dokka.base.resolvers.shared.RecognizedLinkFormat
 import org.jetbrains.dokka.base.signatures.KotlinSignatureProvider
 import org.jetbrains.dokka.base.signatures.SignatureProvider
-import org.jetbrains.dokka.base.resolvers.external.*
-import org.jetbrains.dokka.base.resolvers.local.DefaultLocationProviderFactory
-import org.jetbrains.dokka.base.resolvers.local.LocationProviderFactory
 import org.jetbrains.dokka.base.transformers.documentables.*
-import org.jetbrains.dokka.base.transformers.documentables.DefaultDocumentableMerger
-import org.jetbrains.dokka.base.transformers.documentables.ModuleAndPackageDocumentationTransformer
-import org.jetbrains.dokka.base.transformers.documentables.ReportUndocumentedTransformer
 import org.jetbrains.dokka.base.transformers.pages.annotations.SinceKotlinTransformer
 import org.jetbrains.dokka.base.transformers.pages.comments.CommentsToContentConverter
 import org.jetbrains.dokka.base.transformers.pages.comments.DocTagToContentConverter
@@ -154,15 +154,15 @@ class DokkaBase : DokkaPlugin() {
     }
 
     val locationProvider by extending {
-        locationProviderFactory providing ::DefaultLocationProviderFactory
+        locationProviderFactory providing ::DokkaLocationProviderFactory
     }
 
     val javadocLocationProvider by extending {
-        externalLocationProviderFactory with JavadocExternalLocationProviderFactory()
+        externalLocationProviderFactory providing ::JavadocExternalLocationProviderFactory
     }
 
     val dokkaLocationProvider by extending {
-        externalLocationProviderFactory with DokkaExternalLocationProviderFactory()
+        externalLocationProviderFactory providing ::DefaultExternalLocationProviderFactory
     }
 
     val fileWriter by extending {
@@ -210,11 +210,7 @@ class DokkaBase : DokkaPlugin() {
 
     val packageListCreator by extending {
         htmlPreprocessors providing {
-            PackageListCreator(
-                it,
-                "html",
-                "html"
-            )
+            PackageListCreator(it, RecognizedLinkFormat.DokkaHtml)
         } order { after(rootCreator) }
     }
 
