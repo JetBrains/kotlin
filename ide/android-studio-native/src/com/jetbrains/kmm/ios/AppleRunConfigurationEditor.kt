@@ -42,7 +42,7 @@ class AppleRunConfigurationEditor(
 
         with(targetCombo) {
             removeAllItems()
-            DeviceService.getInstance(project).getAppleDevices()
+            DeviceService.getInstance(project).getIosDevices()
                 .map { AppleDeviceItem(it) }
                 .forEach { addItem(it) }
             selectedItem = AppleDeviceItem(configuration.executionTarget)

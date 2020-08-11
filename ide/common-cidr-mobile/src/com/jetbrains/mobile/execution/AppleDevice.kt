@@ -48,6 +48,11 @@ class AppleSimulator(val raw: SimulatorConfiguration) : AppleDevice(
     override val arch: ArchitectureValue
         get() = raw.launchArchitecture
 
-    override val platformType: ApplePlatform.Type
-        get() = ApplePlatform.Type.IOS_SIMULATOR
+    override val platformType = when (raw.launchDeviceFamily) {
+        SimulatorConfiguration.IPHONE_FAMILY -> ApplePlatform.Type.IOS_SIMULATOR
+        SimulatorConfiguration.IPAD_FAMILY -> ApplePlatform.Type.IOS_SIMULATOR
+        SimulatorConfiguration.TV_FAMILY -> ApplePlatform.Type.TVOS_SIMULATOR
+        SimulatorConfiguration.WATCH_FAMILY -> ApplePlatform.Type.WATCH_SIMULATOR
+        else -> error("Unknown SimulatorConfiguration.launchDeviceFamily=${raw.launchDeviceFamily}")
+    }
 }

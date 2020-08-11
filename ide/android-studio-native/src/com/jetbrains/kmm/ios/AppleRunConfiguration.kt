@@ -35,7 +35,7 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
     val iosBuildDirectory = "build/ios" // this directory is removed by Gradle clean command
 
     var executionTarget: AppleDevice =
-        DeviceService.getInstance(project).getAppleDevices().first()
+        DeviceService.getInstance(project).getIosDevices().first()
 
     val xcodeSdk: String
         get() = if (executionTarget is ApplePhysicalDevice) "iphoneos" else "iphonesimulator"
@@ -139,7 +139,7 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
         xcodeScheme = element.getAttributeValue(attributeXcodeScheme)
 
         element.getAttributeValue(attributeExecutionTargetId)?.let { deviceId ->
-            DeviceService.getInstance(project).getAppleDevices()
+            DeviceService.getInstance(project).getIosDevices()
                 .firstOrNull { it.id == deviceId }
                 ?.let { executionTarget = it }
         }
