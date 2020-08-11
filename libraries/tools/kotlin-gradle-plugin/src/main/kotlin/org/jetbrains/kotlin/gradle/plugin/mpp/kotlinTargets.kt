@@ -10,24 +10,24 @@ import org.gradle.api.DomainObjectSet
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
-import org.gradle.api.artifacts.DependencyConstraint
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Usage.JAVA_RUNTIME_JARS
-import org.gradle.api.component.*
-import org.gradle.api.internal.component.IvyPublishingAwareContext
-import org.gradle.api.internal.component.MavenPublishingAwareContext
+import org.gradle.api.component.ComponentWithCoordinates
+import org.gradle.api.component.ComponentWithVariants
+import org.gradle.api.component.SoftwareComponent
+import org.gradle.api.component.SoftwareComponentFactory
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.provider.Provider
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.util.ConfigureUtil
 import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependencyConstraint
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
@@ -125,50 +125,22 @@ abstract class AbstractKotlinTarget(
 
             adhocVariant as SoftwareComponent
 
-            creatAdHocComponent(kotlinVariant, adhocVariant)
-        }.toSet()
-    }
-
-    private fun creatAdHocComponent(
-        kotlinVariant: KotlinTargetComponent,
-        adhocVariant: AdhocComponentWithVariants
-    ) = if (kotlinVariant is KotlinVariantWithMetadataVariant) {
-        object : ComponentWithVariants, ComponentWithCoordinates, SoftwareComponentInternal {
-            override fun getCoordinates() = kotlinVariant.coordinates
-            override fun getVariants(): Set<out SoftwareComponent> = kotlinVariant.variants
-            override fun getName(): String = adhocVariant.name
-            override fun getUsages(): MutableSet<out UsageContext> =
-                getUsages(adhocVariant as SoftwareComponentInternal)
-        }
-    } else {
-        object : ComponentWithCoordinates, SoftwareComponentInternal {
-            override fun getCoordinates() = (kotlinVariant as? ComponentWithCoordinates)?.coordinates
-            override fun getName(): String = adhocVariant.name
-            override fun getUsages(): MutableSet<out UsageContext> =
-                getUsages(adhocVariant as SoftwareComponentInternal)
-        }
-    }
-
-    private fun getUsages(component: SoftwareComponentInternal): MutableSet<out UsageContext> =
-        component
-            .usages
-            .map { usageContext ->
-                object : UsageContext by usageContext,
-                    MavenPublishingAwareContext,
-                    IvyPublishingAwareContext {
-                    override fun getDependencyConstraints(): MutableSet<out DependencyConstraint> =
-                        usageContext.dependencyConstraints
-                            .filter { it !is NpmDependencyConstraint }
-                            .toMutableSet()
-
-                    override fun getScopeMapping(): MavenPublishingAwareContext.ScopeMapping =
-                        (usageContext as MavenPublishingAwareContext).scopeMapping
-
-                    override fun isOptional(): Boolean =
-                        (usageContext as IvyPublishingAwareContext).isOptional
+            if (kotlinVariant is KotlinVariantWithMetadataVariant) {
+                object : ComponentWithVariants, ComponentWithCoordinates, SoftwareComponentInternal {
+                    override fun getCoordinates() = kotlinVariant.coordinates
+                    override fun getVariants(): Set<out SoftwareComponent> = kotlinVariant.variants
+                    override fun getName(): String = adhocVariant.name
+                    override fun getUsages(): MutableSet<out UsageContext> = (adhocVariant as SoftwareComponentInternal).usages
+                }
+            } else {
+                object : ComponentWithCoordinates, SoftwareComponentInternal {
+                    override fun getCoordinates() = (kotlinVariant as? ComponentWithCoordinates)?.coordinates
+                    override fun getName(): String = adhocVariant.name
+                    override fun getUsages(): MutableSet<out UsageContext> = (adhocVariant as SoftwareComponentInternal).usages
                 }
             }
-            .toMutableSet()
+        }.toSet()
+    }
 
     protected open fun createKotlinVariant(
         componentName: String,
