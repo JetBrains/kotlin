@@ -121,13 +121,11 @@ projectTest {
     useAndroidSdk()
 }
 
-fun replaceVersion(file: File, versionPrefix: String, replacement: (MatchResult) -> String) {
+fun updateTextInFile(file: File, regex: Regex, insertion: String) {
     check(file.isFile) { "$file is not found" }
     val text = file.readText()
-    val pattern = Regex("$versionPrefix\"([^\"]+)\"")
-    val match = pattern.find(text) ?: error("Version prefix \"$versionPrefix\" is missing in file $file")
-    val newValue = replacement(match)
-    file.writeText(text.replaceRange(match.groups[1]!!.range, newValue))
+    val match = regex.find(text) ?: error("Pattern(${regex.pattern}) is not found in file $file")
+    file.writeText(text.replaceRange(match.range, insertion))
 }
 
 val writePluginVersion by tasks.creating {
@@ -142,17 +140,34 @@ val writePluginVersion by tasks.creating {
     outputs.file(versionFile)
     outputs.files(pluginXmlFiles)
 
-    replaceVersion(versionFile, "const val pluginVersion: String = ") {
-        kmmPluginVersion
-    }
+    updateTextInFile(
+        versionFile,
+        Regex("const val pluginVersion: String = \"([^\"]+)\""),
+        "const val pluginVersion: String = \"$kmmPluginVersion\""
+    )
+    updateTextInFile(
+        versionFile,
+        Regex("const val compiledAgainstKotlin: String = \"([^\"]+)\""),
+        "const val compiledAgainstKotlin: String = \"$kotlinPluginVersion\""
+    )
 
-    replaceVersion(versionFile, "const val compiledAgainstKotlin: String = ") {
-        kotlinPluginVersion
-    }
+    val kmmPluginVersionNumber = kmmPluginVersion.split("-").first()
     pluginXmlFiles.forEach { f ->
-        replaceVersion(f, "This version requires Kotlin Plugin: ") {
-            kotlinPluginVersion
-        }
+        updateTextInFile(
+            f,
+            Regex("This version requires Kotlin Plugin: .+"),
+            "This version requires Kotlin Plugin: $kotlinPluginVersion"
+        )
+        updateTextInFile(
+            f,
+            Regex("<version>.+</version>"),
+            "<version>$kmmPluginVersion</version>"
+        )
+        updateTextInFile(
+            f,
+            Regex("Learn more about KMM: <a href=\".+\">"),
+            "Learn more about KMM: <a href=\"https://kotlinlang.org/lp/mobile/?utm_medium=link&utm_source=product&utm_campaign=ASKMMI&utm_content=$kmmPluginVersionNumber\">"
+        )
     }
 }
 

@@ -9,7 +9,12 @@ package com.jetbrains.kmm.versions
 // DON'T MODIFY MANUALLY!
 object MobileMultiplatformPluginVersionsInfo {
     const val compiledAgainstKotlin: String = "1.4.255-SNAPSHOT"
+
+    //dev version x.y.z-SNAPSHOT-{build number}-{ide name}
+    //prod version x.y.z-release-{ide name}
     const val pluginVersion: String = "0.1-SNAPSHOT"
+
+    fun getPluginVersionNumber() = pluginVersion.split("-").first()
 
     private const val SNAPSHOT_SUFFIX = "-SNAPSHOT"
     fun isDevelopment() =

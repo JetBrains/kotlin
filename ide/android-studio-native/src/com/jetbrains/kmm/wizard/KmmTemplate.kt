@@ -7,6 +7,7 @@ package com.jetbrains.kmm.wizard
 
 import com.android.tools.idea.wizard.template.*
 import com.jetbrains.kmm.KmmBundle
+import com.jetbrains.kmm.versions.MobileMultiplatformPluginVersionsInfo
 
 object KmmTemplate : RecipeHolder(), Template {
     override val category = Category.Application
@@ -18,7 +19,10 @@ object KmmTemplate : RecipeHolder(), Template {
 
     override val name: String = KmmBundle.message("wizard.project.title")
     override val description: String = KmmBundle.message("wizard.project.description")
-    override val documentationUrl = KmmBundle.message("wizard.project.documentationUrl")
+    override val documentationUrl = KmmBundle.message(
+        "wizard.project.documentationUrl",
+        MobileMultiplatformPluginVersionsInfo.getPluginVersionNumber()
+    )
 
     override val recipe: Recipe = { data -> recipeImpl(data) }
 

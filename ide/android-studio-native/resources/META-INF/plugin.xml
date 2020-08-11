@@ -1,15 +1,19 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
   <id>com.jetbrains.kmm</id>
 
+  <!--WARNING: some of this content can be updated during the build (see 'writePluginVersion' in ide/android-studio-native/build.gradle.kts)-->
+
   <name>Kotlin Multiplatform Mobile</name>
   <description><![CDATA[
     Kotlin Multiplatform Mobile (KMM) plugin helps you develop applications that work both on Android and iOS.
     With KMM, you can write business logic only once and share code on both platforms.
     Write, run, test and debug shared code in Android Studio, without switching to other IDEs.<br>
-    Learn more about KMM: <a href="https://kotlinlang.org/lp/mobile/">https://kotlinlang.org/lp/mobile/</a>
+    Learn more about KMM: <a href="https://kotlinlang.org/lp/mobile/?utm_medium=link&utm_source=product&utm_campaign=ASKMMI&utm_content=0.1">
+      https://kotlinlang.org/lp/mobile/
+    </a>
     ]]>
   </description>
-  <version>0.1</version>
+  <version>0.1-SNAPSHOT</version>
   <vendor url="http://jetbrains.com">JetBrains</vendor>
   <idea-version since-build="201.0" until-build="201.*"/>
 
@@ -18,7 +22,7 @@
     Kotlin Multiplatform Mobile (KMM) plugin is out!<br>
     It is still in preview but we are working hard on stabilizing it.
     We'll be very thankful if you report any bugs you faced and feature requests to <a href="https://youtrack.jetbrains.com/newIssue?project=KT">our issue tracker</a>.<br>
-    This version requires Kotlin Plugin: "1.4.255-SNAPSHOT"
+    This version requires Kotlin Plugin: 1.4.255-SNAPSHOT
     ]]>
   </change-notes>
 
