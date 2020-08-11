@@ -65,12 +65,4 @@ open class FirDependenciesSymbolProviderImpl(val session: FirSession) : Abstract
     override fun getClassNamesInPackage(fqName: FqName): Set<Name> {
         return dependencyProviders.flatMapTo(mutableSetOf()) { it.getClassNamesInPackage(fqName) }
     }
-
-    override fun getAllCallableNamesInClass(classId: ClassId): Set<Name> {
-        return dependencyProviders.flatMapTo(mutableSetOf()) { it.getAllCallableNamesInClass(classId) }
-    }
-
-    override fun getNestedClassesNamesInClass(classId: ClassId): Set<Name> {
-        return dependencyProviders.flatMapTo(mutableSetOf()) { it.getNestedClassesNamesInClass(classId) }
-    }
 }

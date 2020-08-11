@@ -417,26 +417,8 @@ class KotlinDeserializedJvmSymbolsProvider(
             ?.getClasses { true }.orEmpty()
             .mapTo(sortedSetOf(), JavaClass::name)
 
-    private fun getClassDeclarations(classId: ClassId): List<FirDeclaration> {
-        return findRegularClass(classId)?.declarations ?: emptyList()
-    }
-
-
     private fun findRegularClass(classId: ClassId): FirRegularClass? =
         getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass
-
-    override fun getAllCallableNamesInClass(classId: ClassId): Set<Name> =
-        getClassDeclarations(classId).mapNotNullTo(mutableSetOf()) {
-            when (it) {
-                is FirSimpleFunction -> it.name
-                is FirVariable<*> -> it.name
-                else -> null
-            }
-        }
-
-    override fun getNestedClassesNamesInClass(classId: ClassId): Set<Name> {
-        return getClassDeclarations(classId).filterIsInstance<FirRegularClass>().mapTo(mutableSetOf()) { it.name }
-    }
 
     override fun getPackage(fqName: FqName): FqName? = null
 }

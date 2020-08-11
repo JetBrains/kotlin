@@ -51,9 +51,6 @@ abstract class FirSymbolProvider : FirSessionComponent {
     open fun getAllCallableNamesInPackage(fqName: FqName): Set<Name> = emptySet()
     open fun getClassNamesInPackage(fqName: FqName): Set<Name> = emptySet()
 
-    open fun getAllCallableNamesInClass(classId: ClassId): Set<Name> = emptySet()
-    open fun getNestedClassesNamesInClass(classId: ClassId): Set<Name> = emptySet()
-
     abstract fun getPackage(fqName: FqName): FqName? // TODO: Replace to symbol sometime
 }
 
