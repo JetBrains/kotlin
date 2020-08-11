@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
 
-abstract class ThrowException(val exceptionClass: Type) : IntrinsicMethod() {
+class ThrowException(val exceptionClass: Type) : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
         with(codegen) {
             mv.anew(exceptionClass)
@@ -24,8 +24,4 @@ abstract class ThrowException(val exceptionClass: Type) : IntrinsicMethod() {
         }
     }
 }
-
-object ThrowNullPointerException : ThrowException(Type.getObjectType("java/lang/NullPointerException"))
-object ThrowTypeCastException : ThrowException(Type.getObjectType("kotlin/TypeCastException"))
-object ThrowUnsupportedOperationException : ThrowException(Type.getObjectType("java/lang/UnsupportedOperationException"))
 
