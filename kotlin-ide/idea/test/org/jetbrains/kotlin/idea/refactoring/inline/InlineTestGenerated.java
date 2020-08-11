@@ -119,6 +119,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/function/methodFunction2.kt");
         }
 
+        @TestMetadata("methodReference.kt")
+        public void testMethodReference() throws Exception {
+            runTest("testData/refactoring/inline/function/methodReference.kt");
+        }
+
         @TestMetadata("MethodReferenceAsParameter.kt")
         public void testMethodReferenceAsParameter() throws Exception {
             runTest("testData/refactoring/inline/function/MethodReferenceAsParameter.kt");
@@ -1420,6 +1425,16 @@ public class InlineTestGenerated extends AbstractInlineTest {
             @TestMetadata("Library.kt")
             public void testLibrary() throws Exception {
                 runTest("testData/refactoring/inline/inlineVariableOrProperty/property/Library.kt");
+            }
+
+            @TestMetadata("methodReference.kt")
+            public void testMethodReference() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/property/methodReference.kt");
+            }
+
+            @TestMetadata("methodReference2.kt")
+            public void testMethodReference2() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/property/methodReference2.kt");
             }
 
             @TestMetadata("multiplePackages.kt")

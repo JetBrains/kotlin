@@ -269,7 +269,8 @@ class CodeToInlineBuilder(
         val targetExtensionReceiverType = targetCallable.extensionReceiverParameter?.value?.type
 
         codeToInline.forEachDescendantOfType<KtSimpleNameExpression> { expression ->
-            if (expression.parent is KtValueArgumentName) return@forEachDescendantOfType
+            val parent = expression.parent
+            if (parent is KtValueArgumentName || parent is KtCallableReferenceExpression) return@forEachDescendantOfType
             val (bindingContext, target) = findDescriptorAndContext(expression, analyze) ?: return@forEachDescendantOfType
 
             //TODO: other types of references ('[]' etc)
