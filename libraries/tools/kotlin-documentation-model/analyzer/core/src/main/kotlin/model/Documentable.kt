@@ -113,7 +113,7 @@ data class DPackage(
 ) : Documentable(), WithScope, WithExtraProperties<DPackage> {
     override val name = dri.packageName.orEmpty()
     override val children: List<Documentable>
-        get() = (properties + functions + classlikes)
+        get() = (properties + functions + classlikes + typealiases)
 
     override fun withNewExtras(newExtras: PropertyContainer<DPackage>) = copy(extra = newExtras)
 }

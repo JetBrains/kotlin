@@ -53,10 +53,12 @@ class EmptyPackagesFilterTest : AbstractCoreTest() {
         """.trimMargin(),
             configuration
         ) {
-            documentablesFirstTransformationStep = {
-                Assertions.assertTrue(
-                    it.component2().packages.isEmpty()
-                )
+            documentablesFirstTransformationStep = { modules ->
+                modules.forEach { module ->
+                    Assertions.assertTrue(
+                        module.packages.isEmpty()
+                    )
+                }
             }
         }
     }
