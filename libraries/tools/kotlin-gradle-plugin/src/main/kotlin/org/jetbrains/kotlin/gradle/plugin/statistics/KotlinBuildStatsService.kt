@@ -113,9 +113,10 @@ internal abstract class KotlinBuildStatsService internal constructor() : BuildAd
                             log.debug("Instantiated ${KotlinBuildStatsService::class.java}: new instance $instance")
                             mbs.registerMBean(StandardMBean(newInstance, KotlinBuildStatsMXBean::class.java), beanName)
                         }
-                    }
-                    if (!isConfigurationCacheAvailable(gradle)) {
-                        gradle.addBuildListener(instance)
+
+                        if (!isConfigurationCacheAvailable(gradle)) {
+                            gradle.addBuildListener(instance)
+                        }
                     }
                     instance
                 }
