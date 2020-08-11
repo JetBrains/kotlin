@@ -17,27 +17,27 @@ fun case_1(value_1: Int?): Boolean? {
 
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Int?): Boolean {
-    contract {
+    <!WRONG_IMPLIES_CONDITION!>contract {
         returns(false) implies (value_1 != null)
-    }
+    }<!>
 
     return value_1 != null
 }
 
 // TESTCASE NUMBER: 3
 fun case_3(value_1: Int?): Boolean? {
-    contract {
+    <!WRONG_IMPLIES_CONDITION!>contract {
         returnsNotNull() implies (value_1 != null)
-    }
+    }<!>
 
     return value_1 != null
 }
 
 // TESTCASE NUMBER: 4
 fun case_4(value_1: Any?): Boolean {
-    contract {
+    <!WRONG_IMPLIES_CONDITION!>contract {
         returnsNotNull() implies (value_1 is Number)
-    }
+    }<!>
 
     return value_1 is Number
 }
@@ -70,6 +70,6 @@ fun case_3(value_1: Int?) {
 // TESTCASE NUMBER: 4
 fun case_4(value_1: Any?) {
     if (contracts.case_4(value_1) != null) {
-        value_1.<!UNRESOLVED_REFERENCE!>toByte<!>()
+        value_1.toByte()
     }
 }
