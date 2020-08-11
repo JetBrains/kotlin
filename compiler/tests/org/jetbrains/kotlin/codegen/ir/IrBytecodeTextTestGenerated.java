@@ -1431,6 +1431,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/coroutines/nonLocalReturn.kt");
         }
 
+        @TestMetadata("returnResult.kt")
+        public void testReturnResult() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/coroutines/returnResult.kt");
+        }
+
         @TestMetadata("returnUnitInLambda.kt")
         public void testReturnUnitInLambda_1_3() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/returnUnitInLambda.kt", "kotlin.coroutines");
