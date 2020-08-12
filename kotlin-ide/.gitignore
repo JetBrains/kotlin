@@ -1,0 +1,12 @@
+# IDEA project model
+.idea/shelf
+.idea/workspace.xml
+
+# IntelliJ sources
+/intellij
+
+# Compiler output
+/out
+
+# Other
+.DS_Store
