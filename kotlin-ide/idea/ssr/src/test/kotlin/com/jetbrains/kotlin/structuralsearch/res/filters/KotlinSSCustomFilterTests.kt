@@ -7,7 +7,7 @@ import com.jetbrains.kotlin.structuralsearch.filters.VarOnlyFilter
 
 class KotlinSSCustomFilterTests: KotlinSSResourceInspectionTest() {
     override fun getBasePath(): String = "customFilter"
-    
+
     private val enabled = OneStateFilter.ENABLED
 
     fun testVarOnlyFilter() { doTest("var '_:[_${VarOnlyFilter.CONSTRAINT_NAME}($enabled)]") }

@@ -1,7 +1,7 @@
 fun main() {
     <warning descr="SSR">val foo = 1</warning>
     val foo2: Int
-    var bar: Int = 1
+    <warning descr="SSR">var bar: Int = 1</warning>
     foo2 = 1
     <warning descr="SSR">val bar2: Int = 1</warning>
     <warning descr="SSR">val bar3: Int = (1)</warning>

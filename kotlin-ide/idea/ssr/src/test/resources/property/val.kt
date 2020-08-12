@@ -1,5 +1,5 @@
 fun main() {
     <warning descr="SSR">val foo = 1</warning>
-    var bar: Int = 1
+    <warning descr="SSR">var bar: Int = 1</warning>
     print(foo + bar)
 }
