@@ -239,6 +239,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/function/UnitReturnType4.kt");
         }
 
+        @TestMetadata("withoutUsage.kt")
+        public void testWithoutUsage() throws Exception {
+            runTest("testData/refactoring/inline/function/withoutUsage.kt");
+        }
+
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/inline/function/expressionBody")
         public static class ExpressionBody extends AbstractInlineTest {

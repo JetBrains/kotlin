@@ -27,10 +27,12 @@ import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.OverrideMethodsProcessor
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.inline.GenericInlineHandler
+import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.usageView.UsageInfo
 import com.intellij.usageView.UsageViewBundle
 import com.intellij.usageView.UsageViewDescriptor
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.annotations.Nls
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -61,9 +63,11 @@ abstract class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDe
             KotlinBundle.message("text.local.variable")
         else
             KotlinBundle.message("text.local.property")
+        is KtTypeAlias -> KotlinBundle.message("text.type.alias")
         else -> KotlinBundle.message("text.declaration")
     }
 
+    @Nls
     private val commandName = KotlinBundle.message(
         "text.inlining.0.1",
         kind,
@@ -97,12 +101,12 @@ abstract class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDe
         return usages.toArray(UsageInfo.EMPTY_ARRAY)
     }
 
-    open fun additionalPreprocessUsages(usages: Array<out UsageInfo>, conflicts: MultiMap<PsiElement, String>): Boolean = true
+    open fun additionalPreprocessUsages(usages: Array<out UsageInfo>, conflicts: MultiMap<PsiElement, String>) = Unit
 
     final override fun preprocessUsages(refUsages: Ref<Array<UsageInfo>>): Boolean {
         val usagesInfo = refUsages.get()
         val conflicts = MultiMap<PsiElement, String>()
-        if (!additionalPreprocessUsages(usagesInfo, conflicts)) return false
+        additionalPreprocessUsages(usagesInfo, conflicts)
 
         if (deleteAfter) {
             for (superDeclaration in findSuperMethodsNoWrapping(declaration)) {
@@ -123,7 +127,27 @@ abstract class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDe
         return showConflicts(conflicts, usagesInfo)
     }
 
+    private fun postActions() {
+        if (deleteAfter) {
+            declaration.deleteWithCompanion()
+            postDeleteAction()
+        }
+
+        postAction()
+    }
+
     override fun performRefactoring(usages: Array<out UsageInfo>) {
+        if (usages.isEmpty()) {
+            if (!deleteAfter) {
+                val message = KotlinBundle.message("0.1.is.never.used", kind.capitalize(), declaration.name.toString())
+                CommonRefactoringUtil.showErrorHint(myProject, editor, message, commandName, null)
+            } else {
+                postActions()
+            }
+
+            return
+        }
+
         val replacementStrategy = createReplacementStrategy() ?: return
 
         val (kotlinReferenceUsages, nonKotlinReferenceUsages) = usages.partition { it !is OverrideUsageInfo && it.element is KtReferenceExpression }
@@ -144,12 +168,7 @@ abstract class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDe
             myProject,
             commandName
         ) {
-            if (deleteAfter) {
-                declaration.deleteWithCompanion()
-                postDeleteAction()
-            }
-
-            postAction()
+            postActions()
         }
     }
 

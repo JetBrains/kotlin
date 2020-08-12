@@ -61,13 +61,7 @@ class KotlinInlinePropertyProcessor(
         statementToDelete?.delete()
     }
 
-    override fun additionalPreprocessUsages(usages: Array<out UsageInfo>, conflicts: MultiMap<PsiElement, String>): Boolean {
-        if (usages.isEmpty()) {
-            val message = KotlinBundle.message("0.1.is.never.used", kind.capitalize(), declaration.name.toString())
-            KotlinInlinePropertyHandler.showErrorHint(myProject, editor, message)
-            return false
-        }
-
+    override fun additionalPreprocessUsages(usages: Array<out UsageInfo>, conflicts: MultiMap<PsiElement, String>) {
         val initializer by lazy { extractInitialization(declaration).initializerOrNull?.assignment?.left }
         for (usage in usages) {
             val expression = usage.element?.writeOrReadWriteExpression ?: continue
@@ -75,8 +69,6 @@ class KotlinInlinePropertyProcessor(
                 conflicts.putValue(expression, KotlinBundle.message("unsupported.usage.0", expression.parent.text))
             }
         }
-
-        return true
     }
 
     class Initializer(val value: KtExpression, val assignment: KtBinaryExpression?)
