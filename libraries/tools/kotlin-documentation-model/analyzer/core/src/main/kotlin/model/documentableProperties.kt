@@ -17,7 +17,7 @@ data class InheritedFunction(val inheritedFrom: SourceSetDependent<DRI?>) : Extr
     override val key: ExtraProperty.Key<DFunction, *> = InheritedFunction
 }
 
-data class ImplementedInterfaces(val interfaces: SourceSetDependent<List<DRI>>) : ExtraProperty<Documentable> {
+data class ImplementedInterfaces(val interfaces: SourceSetDependent<List<TypeConstructor>>) : ExtraProperty<Documentable> {
     companion object : ExtraProperty.Key<Documentable, ImplementedInterfaces> {
         override fun mergeStrategyFor(left: ImplementedInterfaces, right: ImplementedInterfaces) =
             MergeStrategy.Replace(ImplementedInterfaces(left.interfaces + right.interfaces))

@@ -35,7 +35,7 @@ object KotlinSignatureUtils : JvmSignatureUtils {
     val Bound.driOrNull: DRI?
         get() {
             return when (this) {
-                is OtherParameter -> this.declarationDRI
+                is TypeParameter -> this.declarationDRI
                 is TypeConstructor -> this.dri
                 is Nullable -> this.inner.driOrNull
                 is PrimitiveJavaType -> this.dri
