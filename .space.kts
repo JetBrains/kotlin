@@ -9,8 +9,8 @@ job("GitHub PRs => Space MRs") {
           .single()
         val pullRequestUrl = "https://github.com/JetBrains/intellij-kotlin/pull/$pullRequestNumber"
         val project = api.projectIdentifier()
-        val sourceBranch = api.gitBranch()
-        val targetBranch = "refs/heads/master"
+        val sourceBranch = api.gitBranch().removePrefix("refs/heads/")
+        val targetBranch = "master"
         val repository = "space.system.repository".parameterValue()
         println("""
           Creating Merge Request for $pullRequestUrl:
