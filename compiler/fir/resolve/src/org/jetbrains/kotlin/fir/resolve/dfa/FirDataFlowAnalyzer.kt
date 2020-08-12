@@ -22,11 +22,15 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBod
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -65,6 +69,12 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 ) {
     companion object {
         internal val KOTLIN_BOOLEAN_NOT = CallableId(FqName("kotlin"), FqName("Boolean"), Name.identifier("not"))
+
+        internal val ITERABLE_TYPE = ConeClassLikeTypeImpl(
+            ConeClassLikeLookupTagImpl(StandardClassIds.Iterable),
+            arrayOf(ConeStarProjection),
+            true
+        )
 
         fun createFirDataFlowAnalyzer(
             components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
@@ -713,7 +723,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     fun exitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
         graphBuilder.exitQualifiedAccessExpression(qualifiedAccessExpression).mergeIncomingFlow()
-        processConditionalContract(qualifiedAccessExpression)
+        processContracts(qualifiedAccessExpression)
     }
 
     fun enterSafeCallAfterNullCheck(safeCall: FirSafeCallExpression) {
@@ -787,7 +797,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         if (functionCall.isBooleanNot()) {
             exitBooleanNot(functionCall, functionCallNode)
         }
-        processConditionalContract(functionCall)
+        processContracts(functionCall)
     }
 
     fun exitDelegatedConstructorCall(call: FirDelegatedConstructorCall, callCompleted: Boolean) {
@@ -803,15 +813,64 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
     }
 
-    private fun processConditionalContract(qualifiedAccess: FirQualifiedAccess) {
+    private fun processContracts(qualifiedAccess: FirQualifiedAccess) {
         val owner: FirContractDescriptionOwner? = qualifiedAccess.toContractDescriptionOwner()
         val contractDescription = owner?.contractDescription as? FirResolvedContractDescription ?: return
+
+        if (contractDescription.effects.isNotEmpty()) {
+            val argumentsMapping = lazy { createArgumentsMapping(qualifiedAccess) }
+
+            processConditionalContract(qualifiedAccess, contractDescription, argumentsMapping)
+            processReturnsForEachContract(contractDescription, argumentsMapping)
+        }
+    }
+
+    private fun processReturnsForEachContract(
+        contractDescription: FirResolvedContractDescription,
+        lazyArgumentsMapping: Lazy<Map<Int, FirExpression>?>
+    ) {
+        if (contractDescription.effects.none { it is ConeReturnsForEachEffectDeclaration }) return
+        val effects = contractDescription.effects.filterIsInstance<ConeReturnsForEachEffectDeclaration>()
+        val argumentsMapping = lazyArgumentsMapping.value ?: return
+        val lastFlow = graphBuilder.lastNode.flow
+        val typeContext = components.session.typeContext
+
+        for (effect in effects) {
+            val lambda = argumentsMapping[effect.lambda.parameterIndex]?.toInPlaceLambda() ?: continue
+            val iterable = argumentsMapping[effect.iterable.parameterIndex] ?: continue
+            val lambdaExitFlow = lambda.controlFlowGraphReference?.controlFlowGraph?.exitNode?.flow ?: continue
+
+            val iterableType = iterable.typeRef.coneType
+            if (!AbstractTypeChecker.isSubtypeOf(typeContext, iterableType, ITERABLE_TYPE)) continue
+            val iterableVariable = variableStorage.getOrCreateRealVariable(lastFlow, iterable.symbol, iterable) ?: continue
+
+            val lambdaArgumentSymbol = if (lambda.valueParameters.isEmpty()) lambda.symbol else lambda.valueParameters[0].symbol
+            val lambdaArgumentVariable = variableStorage.getRealVariable(lambdaArgumentSymbol, lambda, lambdaExitFlow) ?: continue
+            val lambdaArgumentTypeStatement = lambdaExitFlow.getTypeStatement(lambdaArgumentVariable) ?: continue
+
+            if (lambdaArgumentTypeStatement.exactType.isNotEmpty()) {
+                val newArgumentType = ConeTypeIntersector.intersectTypes(typeContext, mutableListOf<ConeKotlinType>().apply {
+                    addAll(lambdaArgumentTypeStatement.exactType)
+                    addIfNotNull((iterableType.typeArguments.getOrNull(0) as? ConeKotlinTypeProjection)?.type)
+                })
+                val newIterableType = iterableType.withArguments(arrayOf(newArgumentType.toTypeProjection(Variance.OUT_VARIANCE)))
+                lastFlow.addTypeStatement(MutableTypeStatement(iterableVariable, linkedSetOf(newIterableType)))
+            }
+        }
+    }
+
+    private fun processConditionalContract(
+        qualifiedAccess: FirQualifiedAccess,
+        contractDescription: FirResolvedContractDescription,
+        lazyArgumentsMapping: Lazy<Map<Int, FirExpression>?>
+    ) {
+        if (contractDescription.effects.none { it is ConeConditionalEffectDeclaration }) return
         val conditionalEffects = contractDescription.effects.filterIsInstance<ConeConditionalEffectDeclaration>()
-        if (conditionalEffects.isEmpty()) return
-        val argumentsMapping = createArgumentsMapping(qualifiedAccess) ?: return
+        val argumentsMapping = lazyArgumentsMapping.value ?: return
 
         contractDescriptionVisitingMode = true
         graphBuilder.enterContract(qualifiedAccess).mergeIncomingFlow()
+
         val lastFlow = graphBuilder.lastNode.flow
         val functionCallVariable = variableStorage.getOrCreateVariable(lastFlow, qualifiedAccess)
         for (conditionalEffect in conditionalEffects) {
@@ -859,6 +918,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 else -> throw IllegalArgumentException("Unsupported constant reference: $value")
             }
         }
+
         graphBuilder.exitContract(qualifiedAccess).mergeIncomingFlow(updateReceivers = true)
         contractDescriptionVisitingMode = false
     }
@@ -881,7 +941,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         if (property.isLocal || !property.isVar) {
             exitVariableInitialization(node, assignment.rValue, property, assignment)
         }
-        processConditionalContract(assignment)
+        processContracts(assignment)
     }
 
     private fun exitVariableInitialization(

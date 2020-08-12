@@ -12,9 +12,16 @@ import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.withArguments
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 class ConeEffectExtractor(
     private val session: FirSession,
@@ -25,6 +32,12 @@ class ConeEffectExtractor(
         private val BOOLEAN_AND = FirContractsDslNames.id("kotlin", "Boolean", "and")
         private val BOOLEAN_OR = FirContractsDslNames.id("kotlin", "Boolean", "or")
         private val BOOLEAN_NOT = FirContractsDslNames.id("kotlin", "Boolean", "not")
+
+        private val ITERABLE_TYPE = ConeClassLikeTypeImpl(
+            ConeClassLikeLookupTagImpl(StandardClassIds.Iterable),
+            arrayOf(ConeStarProjection),
+            true
+        )
     }
 
     override fun visitElement(element: FirElement, data: Nothing?): ConeContractDescriptionElement? {
@@ -70,6 +83,18 @@ class ConeEffectExtractor(
                     ?: return null
                 val kind = functionCall.arguments.getOrNull(1)?.parseInvocationKind() ?: EventOccurrencesRange.UNKNOWN
                 ConeCallsEffectDeclaration(reference, kind)
+            }
+
+            FirContractsDslNames.RETURNS_FOR_EACH -> {
+                val lambda = functionCall.explicitReceiver?.accept(this, null) as? ConeValueParameterReference ?: return null
+
+                val argument = functionCall.argument
+                val collection = argument.accept(this, null) as? ConeValueParameterReference ?: return null
+                if (!AbstractTypeChecker.isSubtypeOf(session.typeContext, argument.typeRef.coneType, ITERABLE_TYPE)) return null
+
+                listOf<String>().forEach {  }
+
+                ConeReturnsForEachEffectDeclaration(lambda, collection)
             }
 
             FirContractsDslNames.RETURN_VALUE -> {

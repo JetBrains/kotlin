@@ -56,6 +56,8 @@ object StandardClassIds {
 
     val Function = "Function".baseId()
 
+    val Iterable = "kotlin.collections.Iterable".baseId()
+
     fun byName(name: String) = name.baseId()
     fun reflectByName(name: String) = name.reflectId()
 

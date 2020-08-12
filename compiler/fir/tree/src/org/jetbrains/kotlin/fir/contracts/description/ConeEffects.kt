@@ -53,3 +53,11 @@ class ConeCallsEffectDeclaration(val valueParameterReference: ConeValueParameter
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitCallsEffectDeclaration(this, data)
 }
+
+/**
+ * Effect which specifies, that [lambda] returns for each element of [iterable]
+ */
+class ConeReturnsForEachEffectDeclaration(val lambda: ConeValueParameterReference, val iterable: ConeValueParameterReference) : ConeEffectDeclaration() {
+    override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
+        contractDescriptionVisitor.visitReturnsForEachEffectDeclaration(this, data)
+}

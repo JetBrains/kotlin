@@ -32,6 +32,7 @@ object FirContractsDslNames {
     val CALLS_IN_PLACE = contractBuilder("callsInPlace")
     val ALWAYS = id("", null, "always")
     val RETURN_VALUE = id("", null, "returnValue")
+    val RETURNS_FOR_EACH = id("", "returnsForEachOf")
 
     // enum class InvocationKind
     val INVOCATION_KIND_ENUM = id("InvocationKind")

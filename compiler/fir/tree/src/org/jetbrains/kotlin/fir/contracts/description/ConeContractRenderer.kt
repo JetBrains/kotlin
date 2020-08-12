@@ -34,6 +34,12 @@ class ConeContractRenderer(private val builder: StringBuilder) : ConeContractDes
         builder.append(", ${callsEffect.kind})")
     }
 
+    override fun visitReturnsForEachEffectDeclaration(returnsForEachEffect: ConeReturnsForEachEffectDeclaration, data: Nothing?) {
+        returnsForEachEffect.lambda.accept(this, data)
+        builder.append(" returnsForEachOf ")
+        returnsForEachEffect.iterable.accept(this, data)
+    }
+
     override fun visitLogicalBinaryOperationContractExpression(binaryLogicExpression: ConeBinaryLogicExpression, data: Nothing?) {
         inBracketsIfNecessary(binaryLogicExpression, binaryLogicExpression.left) { binaryLogicExpression.left.accept(this, data) }
         builder.append(" ${binaryLogicExpression.kind.token} ")

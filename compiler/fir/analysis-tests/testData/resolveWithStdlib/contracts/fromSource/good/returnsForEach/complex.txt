@@ -1,0 +1,60 @@
+FILE: complex.kt
+    public final infix fun <E, R> R|(E) -> R|.returnsForEachOf(collection: R|kotlin/collections/Collection<E>|): R|kotlin/Unit|
+    public final inline fun <E, R> R|kotlin/collections/Collection<E>|.forEach(block: R|E.() -> R|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            block returnsForEachOf this
+        >
+     {
+        [StubStatement]
+        lval <iterator>: R|kotlin/collections/Iterator<E>| = this@R|/forEach|.R|FakeOverride<kotlin/collections/Collection.iterator: R|kotlin/collections/Iterator<E>|>|()
+        while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+            lval element: R|E| = R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|E|>|()
+            R|<local>/block|.R|FakeOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/element|)
+        }
+
+    }
+    public final fun requireInt(value: R|kotlin/Any?|): R|kotlin/Int?|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> value is kotlin/Int?
+        >
+     {
+        [StubStatement]
+        ^requireInt (R|<local>/value| as R|kotlin/Int?|)
+    }
+    public final fun test1(set: R|kotlin/collections/Set<kotlin/Any?>|): R|kotlin/Unit| {
+        R|<local>/set|.R|/forEach|<R|kotlin/Any?|, R|kotlin/Int?|>(<L> = forEach@fun R|kotlin/Any?|.<anonymous>(): R|kotlin/Int?| <kind=UNKNOWN>  {
+            this@R|special/anonymous|!!.R|kotlin/Any.hashCode|()
+            ^ R|/requireInt|(this@R|special/anonymous|)
+        }
+        )
+        R|<local>/set|.R|kotlin/collections/first|<R|kotlin/Int|>().R|kotlin/Int.dec|()
+    }
+    public final fun test2(list: R|kotlin/collections/List<kotlin/Any?>|): R|kotlin/Unit| {
+        R|<local>/list|.R|/forEach|<R|kotlin/Any?|, R|kotlin/Int?|>(<L> = forEach@fun R|kotlin/Any?|.<anonymous>(): R|kotlin/Int?| <kind=UNKNOWN>  {
+            this@R|special/anonymous|!!.R|kotlin/Any.hashCode|()
+            ^ R|/requireInt|(this@R|special/anonymous|)
+        }
+        )
+        R|<local>/list|.R|kotlin/collections/first|<R|kotlin/Int|>().R|kotlin/Int.dec|()
+        R|<local>/list|.R|FakeOverride<kotlin/collections/List.get: R|kotlin/Int|>|(Int(0)).R|kotlin/Int.dec|()
+    }
+    public final fun test3(list: R|kotlin/collections/MutableList<kotlin/Any?>|): R|kotlin/Unit| {
+        R|<local>/list|.R|/forEach|<R|kotlin/Any?|, R|kotlin/Int?|>(<L> = forEach@fun R|kotlin/Any?|.<anonymous>(): R|kotlin/Int?| <kind=UNKNOWN>  {
+            this@R|special/anonymous|!!.R|kotlin/Any.hashCode|()
+            ^ R|/requireInt|(this@R|special/anonymous|)
+        }
+        )
+        R|<local>/list|.R|kotlin/collections/first|<R|kotlin/Int|>().R|kotlin/Int.dec|()
+        R|<local>/list|.R|FakeOverride<kotlin/collections/MutableList.get: R|kotlin/Int|>|(Int(0)).R|kotlin/Int.dec|()
+    }
+    public final fun test4(list: R|kotlin/collections/ArrayList<kotlin/Number?>|): R|kotlin/Unit| {
+        R|<local>/list|.R|/forEach|<R|ft<kotlin/Number?, kotlin/Number?>?|, R|kotlin/Int?|>(<L> = forEach@fun R|ft<kotlin/Number?, kotlin/Number?>?|.<anonymous>(): R|kotlin/Int?| <kind=UNKNOWN>  {
+            this@R|special/anonymous|!!.R|kotlin/Any.hashCode|()
+            ^ R|/requireInt|(this@R|special/anonymous|)
+        }
+        )
+        R|<local>/list|.R|kotlin/collections/first|<R|kotlin/Int|>().R|kotlin/Int.dec|()
+        R|<local>/list|.R|FakeOverride<java/util/ArrayList.get: R|ft<kotlin/Int, kotlin/Int?>!|>|(Int(0)).R|kotlin/Int.dec|()
+    }

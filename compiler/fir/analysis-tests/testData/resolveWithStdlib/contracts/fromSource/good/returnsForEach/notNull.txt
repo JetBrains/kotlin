@@ -1,0 +1,47 @@
+FILE: notNull.kt
+    public final infix fun <E, R> R|(E) -> R|.returnsForEachOf(collection: R|kotlin/collections/Collection<E>|): R|kotlin/Unit|
+    public final inline fun <E, R> R|kotlin/collections/Collection<E>|.forEach(block: R|(E) -> R|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            block returnsForEachOf this
+        >
+     {
+        [StubStatement]
+        lval <iterator>: R|kotlin/collections/Iterator<E>| = this@R|/forEach|.R|FakeOverride<kotlin/collections/Collection.iterator: R|kotlin/collections/Iterator<E>|>|()
+        while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+            lval element: R|E| = R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|E|>|()
+            R|<local>/block|.R|FakeOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/element|)
+        }
+
+    }
+    public final fun test1(set: R|kotlin/collections/Set<kotlin/String?>|): R|kotlin/Unit| {
+        R|<local>/set|.R|/forEach|<R|kotlin/String?|, R|kotlin/String|>(<L> = forEach@fun <anonymous>(it: R|kotlin/String?|): R|kotlin/String| <kind=UNKNOWN>  {
+            ^ R|<local>/it|!!
+        }
+        )
+        R|<local>/set|.R|kotlin/collections/first|<R|kotlin/String|>().R|kotlin/String.length|
+    }
+    public final fun test2(list: R|kotlin/collections/List<kotlin/String?>|): R|kotlin/Unit| {
+        R|<local>/list|.R|/forEach|<R|kotlin/String?|, R|kotlin/String|>(<L> = forEach@fun <anonymous>(it: R|kotlin/String?|): R|kotlin/String| <kind=UNKNOWN>  {
+            ^ R|<local>/it|!!
+        }
+        )
+        R|<local>/list|.R|kotlin/collections/first|<R|kotlin/String|>().R|kotlin/String.length|
+        R|<local>/list|.R|FakeOverride<kotlin/collections/List.get: R|kotlin/String|>|(Int(0)).R|kotlin/String.length|
+    }
+    public final fun test3(list: R|kotlin/collections/MutableList<kotlin/String?>|): R|kotlin/Unit| {
+        R|<local>/list|.R|/forEach|<R|kotlin/String?|, R|kotlin/String|>(<L> = forEach@fun <anonymous>(it: R|kotlin/String?|): R|kotlin/String| <kind=UNKNOWN>  {
+            ^ R|<local>/it|!!
+        }
+        )
+        R|<local>/list|.R|kotlin/collections/first|<R|kotlin/String|>().R|kotlin/String.length|
+        R|<local>/list|.R|FakeOverride<kotlin/collections/MutableList.get: R|kotlin/String|>|(Int(0)).R|kotlin/String.length|
+    }
+    public final fun test4(list: R|kotlin/collections/ArrayList<kotlin/String?>|): R|kotlin/Unit| {
+        R|<local>/list|.R|/forEach|<R|ft<kotlin/String?, kotlin/String?>?|, R|kotlin/String|>(<L> = forEach@fun <anonymous>(it: R|ft<kotlin/String?, kotlin/String?>?|): R|kotlin/String| <kind=UNKNOWN>  {
+            ^ R|<local>/it|!!
+        }
+        )
+        R|<local>/list|.R|kotlin/collections/first|<R|kotlin/String|>().R|kotlin/String.length|
+        R|<local>/list|.R|FakeOverride<java/util/ArrayList.get: R|ft<kotlin/String, kotlin/String?>!|>|(Int(0)).R|kotlin/String.length|
+    }

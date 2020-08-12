@@ -728,6 +728,34 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
                     }
                 }
 
+                @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsForEach")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class ReturnsForEach extends AbstractFirDiagnosticsWithStdlibTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInReturnsForEach() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsForEach"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                    }
+
+                    @TestMetadata("complex.kt")
+                    public void testComplex() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsForEach/complex.kt");
+                    }
+
+                    @TestMetadata("isInstance.kt")
+                    public void testIsInstance() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsForEach/isInstance.kt");
+                    }
+
+                    @TestMetadata("notNull.kt")
+                    public void testNotNull() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsForEach/notNull.kt");
+                    }
+                }
+
                 @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies")
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)
