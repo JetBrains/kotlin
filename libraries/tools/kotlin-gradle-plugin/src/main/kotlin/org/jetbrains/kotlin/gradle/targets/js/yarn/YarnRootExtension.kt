@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
+import org.gradle.api.Action
 import org.gradle.api.Incubating
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
@@ -44,6 +45,13 @@ open class YarnRootExtension(val project: Project) : ConfigurationPhaseAware<Yar
             .named(RootPackageJsonTask.NAME)
 
     var resolutions: MutableList<YarnResolution> = mutableListOf()
+
+    fun resolution(path: String, configure: Action<YarnResolution>) {
+        resolutions.add(
+            YarnResolution(path)
+                .apply { configure.execute(this) }
+        )
+    }
 
     @Incubating
     fun disableGranularWorkspaces() {

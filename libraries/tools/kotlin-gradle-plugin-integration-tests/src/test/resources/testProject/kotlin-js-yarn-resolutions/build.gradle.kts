@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnResolution
-
 plugins {
     kotlin("js").version("<pluginMarkerVersion>")
 }
@@ -14,12 +12,10 @@ repositories {
 
 rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
     rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().apply {
-        resolutions.add(
-            YarnResolution("lodash").apply {
-                include("^1.0.0")
-                exclude("~1.2.1", "1.3.0 - 1.4.0")
-            }
-        )
+        resolution("lodash") {
+            include("^1.0.0")
+            exclude("~1.2.1", "1.3.0 - 1.4.0")
+        }
     }
 }
 
