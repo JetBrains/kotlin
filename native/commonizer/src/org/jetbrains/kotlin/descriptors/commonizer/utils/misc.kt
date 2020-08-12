@@ -32,4 +32,10 @@ internal fun Any?.isNull(): Boolean = this == null
 inline fun hashCode(value: Any?): Int = value.hashCode()
 
 @Suppress("NOTHING_TO_INLINE")
+inline fun hashCode(array: Array<*>?): Int = array?.contentHashCode() ?: 0
+
+@Suppress("NOTHING_TO_INLINE")
 inline fun Int.appendHashCode(value: Any?): Int = 31 * this + hashCode(value)
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun Int.appendHashCode(array: Array<*>?): Int = 31 * this + hashCode(array)
