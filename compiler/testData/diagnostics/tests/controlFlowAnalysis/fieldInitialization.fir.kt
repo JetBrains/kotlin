@@ -68,16 +68,16 @@ class Test1 {
 
     init {
         inlineMe {
-            a += "allowed"
+            <!VARIABLE_EXPECTED!>a<!> += "allowed"
         }
         crossinlineMe {
-            b += "not allowed"
+            <!VARIABLE_EXPECTED!>b<!> += "not allowed"
         }
         noinlineMe {
-            c += "not allowed"
+            <!VARIABLE_EXPECTED!>c<!> += "not allowed"
         }
         notinline {
-            d += "not allowed"
+            <!VARIABLE_EXPECTED!>d<!> += "not allowed"
         }
     }
 }

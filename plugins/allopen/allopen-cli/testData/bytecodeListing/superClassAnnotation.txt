@@ -26,7 +26,7 @@ public abstract class Base_ShouldBeOpen {
 @kotlin.Metadata
 public final class Intf$DefaultImpls {
     inner class Intf$DefaultImpls
-    public static method intfMethod(p0: Intf): void
+    public static method intfMethod(@org.jetbrains.annotations.NotNull p0: Intf): void
 }
 
 @AllOpen
