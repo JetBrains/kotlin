@@ -3,8 +3,10 @@ package com.jetbrains.mobile.execution.testing
 import com.android.ddmlib.testrunner.ITestRunListener
 import com.android.ddmlib.testrunner.TestIdentifier
 import com.intellij.execution.process.ProcessOutputType
+import com.intellij.execution.testframework.JavaTestLocator
 import com.intellij.execution.testframework.sm.ServiceMessageBuilder
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.io.URLUtil
 import com.jetbrains.mobile.execution.AndroidProcessHandler
 
 class AndroidTestListener(private val handler: AndroidProcessHandler) : ITestRunListener {
@@ -33,11 +35,15 @@ class AndroidTestListener(private val handler: AndroidProcessHandler) : ITestRun
         if (testSuite?.first != fqClassName) {
             suiteFinished()
             ServiceMessageBuilder.testSuiteStarted(StringUtil.getShortName(fqClassName))
+                .addAttribute("locationHint", JavaTestLocator.SUITE_PROTOCOL + URLUtil.SCHEME_SEPARATOR + fqClassName)
                 .send()
             testSuite = fqClassName to System.currentTimeMillis()
         }
         testStartedTime = System.currentTimeMillis()
-        ServiceMessageBuilder.testStarted(test.testName).send()
+        val fqTestName = StringUtil.getQualifiedName(fqClassName, test.testName)
+        ServiceMessageBuilder.testStarted(test.testName)
+            .addAttribute("locationHint", JavaTestLocator.TEST_PROTOCOL + URLUtil.SCHEME_SEPARATOR + fqTestName)
+            .send()
     }
 
     override fun testFailed(test: TestIdentifier, trace: String) {
