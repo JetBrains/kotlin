@@ -1,6 +1,15 @@
-# v1.4.0-M3 (Jun 2020)
-  * Tune GC to improve execution time performance ([`KT-19076`](https://youtrack.jetbrains.com/issue/KT-19076)).
-  * Handle variadic block types in ObjC interop ([`KT-36766`](https://youtrack.jetbrains.com/issue/KT-36766))
+# v1.4.0 (Aug 2020)
+  * Objective-C/Swift interop:
+    * Reworked exception handling ([GH-3822](https://github.com/JetBrains/kotlin-native/pull/3822), [GH-3842](https://github.com/JetBrains/kotlin-native/pull/3842))
+    * Enabled support for Objective-C generics by default ([GH-3778](https://github.com/JetBrains/kotlin-native/pull/3778))
+    * Support for Kotlin’s suspending functions ([GH-3915](https://github.com/JetBrains/kotlin-native/pull/3915))
+    * Handle variadic block types in ObjC interop ([`KT-36766`](https://youtrack.jetbrains.com/issue/KT-36766))
+  * Added native-specific frontend checkers (implemented in the main Kotlin repository: [GH-3293](https://github.com/JetBrains/kotlin/pull/3293), [GH-3091](https://github.com/JetBrains/kotlin/pull/3091), [GH-3172](https://github.com/JetBrains/kotlin/pull/3172))
+  * .dSYMs for release binaries on Apple platforms ([GH-4085](https://github.com/JetBrains/kotlin-native/pull/4085))
+  * Improved compilation time of builds with interop libraries by reworking cinterop under the hood.
+  * Experimental mimalloc allocator support (-Xallocator=mimalloc) to improve execution time performance. ([GH-3704](https://github.com/JetBrains/kotlin-native/pull/3704))
+  * Tune GC to improve execution time performance
+  * Various fixes to compiler caches and Gradle daemon usage
 
 # v1.3.72 (April 2020)
   * Fix ios_x64 platform libs cache for iOS 11 and 12 (GH-4071)
@@ -8,11 +17,6 @@
 # v1.3.71 (March 2020)
   * Fix `lazy {}` memory leak regression ([`KT-37232`](https://youtrack.jetbrains.com/issue/KT-37232), GH-3944)
   * Fix using cached Kotlin subclasses of Objective-C classes (GH-3986)
-  
-# v1.4.0-M1 (Mar 2020) milestone
-  * Experimental mimalloc allocator support (-Xallocator=mimalloc) to improve execution time performance.
-  * Improved support for -Xobjc-generics and enabled by default (GH-3778).
-  * Reworked exception handling in ObjC/Swift interop.
 
 # v1.3.70 (Dec 2019)
   * Support compiler caches for debug mode (GH-3650)
