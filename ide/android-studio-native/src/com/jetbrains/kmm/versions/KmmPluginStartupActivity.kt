@@ -5,8 +5,13 @@
 
 package com.jetbrains.kmm.versions
 
+import com.intellij.ide.plugins.PluginManagerConfigurable
 import com.intellij.ide.plugins.PluginManagerCore
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationAction
+import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.util.text.StringUtilRt
@@ -66,7 +71,13 @@ object KmmCompatibilityChecker {
             ApplicationManager.getApplication().invokeLater {
                 UserNotification(project).showError(
                     KmmBundle.message("startup.error.title"),
-                    StringUtilRt.convertLineSeparators(errorText, "<br/>")
+                    StringUtilRt.convertLineSeparators(errorText, "<br/>"),
+                    object : NotificationAction(KmmBundle.message("startup.error.suggestion.action")) {
+                        override fun actionPerformed(action: AnActionEvent, notification: Notification) {
+                            ShowSettingsUtil.getInstance().showSettingsDialog(null, PluginManagerConfigurable::class.java)
+                            notification.hideBalloon()
+                        }
+                    }
                 )
 
                 PluginManagerCore.disablePlugin("com.jetbrains.kmm")
