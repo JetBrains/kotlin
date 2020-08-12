@@ -2,6 +2,7 @@ job("GitHub PRs => Space MRs") {
   container("openjdk:11.0.3-jdk") {
     kotlinScript { api ->
       if (api.gitBranch().startsWith("refs/heads/pull/")) {
+        fun String.parameterValue() = api.parameters[this] ?: error("Parameter $this is undefined")
         val pullRequestNumber = api.gitBranch()
           .splitToSequence("/")
           .mapNotNull { it.toIntOrNull() }
@@ -13,9 +14,9 @@ job("GitHub PRs => Space MRs") {
           .createMergeRequest(
             title = pullRequestUrl,
             sourceBranch = api.gitBranch(),
-            targetBranch = "refs/heads/master",
+            targetBranch = "space.system.branch".parameterValue(),
             project = api.projectIdentifier(),
-            repository = "kotlin-ide"
+            repository = "space.system.repository".parameterValue()
           )
       }
     }
