@@ -82,14 +82,16 @@ abstract class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDe
             usages += UsageInfo(usage)
         }
 
-        declaration.forEachOverridingElement(scope = myRefactoringScope) { _, overridingMember ->
-            val superMethods = findSuperMethodsNoWrapping(overridingMember)
-            if (superMethods.singleOrNull()?.unwrapped == declaration) {
-                usages += OverrideUsageInfo(overridingMember)
-                return@forEachOverridingElement true
-            }
+        if (deleteAfter) {
+            declaration.forEachOverridingElement(scope = myRefactoringScope) { _, overridingMember ->
+                val superMethods = findSuperMethodsNoWrapping(overridingMember)
+                if (superMethods.singleOrNull()?.unwrapped == declaration) {
+                    usages += OverrideUsageInfo(overridingMember)
+                    return@forEachOverridingElement true
+                }
 
-            true
+                true
+            }
         }
 
         return usages.toArray(UsageInfo.EMPTY_ARRAY)
@@ -102,7 +104,7 @@ abstract class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDe
         val conflicts = MultiMap<PsiElement, String>()
         if (!additionalPreprocessUsages(usagesInfo, conflicts)) return false
 
-        if (!inlineThisOnly) {
+        if (deleteAfter) {
             for (superDeclaration in findSuperMethodsNoWrapping(declaration)) {
                 val fqName = superDeclaration.getKotlinFqName()?.asString() ?: KotlinBundle.message("fix.change.signature.error")
                 val message = KotlinBundle.message("text.inlined.0.overrides.0.1", kind, fqName)
