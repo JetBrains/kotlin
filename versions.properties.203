@@ -5,7 +5,7 @@ versions.ideaPluginForCidr.repo=Kotlin_KotlinDev_Aggregate
 
 # Used for dependencies in shared modules when syncing to IDE
 # During build this value is substituted with the actual dependency
-versions.cidrPlatform=203.2161
+versions.cidrPlatform=203.2355
 
 versions.appcode=203.1219
 versions.appcode.strict=true

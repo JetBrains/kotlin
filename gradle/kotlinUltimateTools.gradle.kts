@@ -169,6 +169,9 @@ fun addIdeaNativeModuleDepsStandalone(project: Project) = with(project) {
         add("implementation", "com.jetbrains.intellij.java:java-psi-impl:$version")
         add("implementation", "com.jetbrains.intellij.java:java-compiler-impl:$version")
         add("implementation", "com.jetbrains.intellij.java:java-execution:$version")
+        if (ijProductBranch(version) >= 203) {
+            add("implementation", "com.jetbrains.intellij.java:java-execution-impl:$version")
+        }
 
         // use bootstrap version of Kotlin stdlib
         val bootstrapKotlinVersion: String by rootProject
