@@ -55,7 +55,7 @@ abstract class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDe
 ) : BaseRefactoringProcessor(declaration.project) {
     private lateinit var inliners: Map<Language, InlineHandler.Inliner>
 
-    private val kind = when (declaration) {
+    protected val kind = when (declaration) {
         is KtNamedFunction -> KotlinBundle.message("text.function")
         is KtProperty -> if (declaration.isLocal)
             KotlinBundle.message("text.local.variable")
@@ -95,11 +95,13 @@ abstract class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDe
         return usages.toArray(UsageInfo.EMPTY_ARRAY)
     }
 
-    open fun additionalPreprocessUsages(usages: Array<out UsageInfo>, conflicts: MultiMap<PsiElement, String>) = Unit
+    open fun additionalPreprocessUsages(usages: Array<out UsageInfo>, conflicts: MultiMap<PsiElement, String>): Boolean = true
 
     final override fun preprocessUsages(refUsages: Ref<Array<UsageInfo>>): Boolean {
         val usagesInfo = refUsages.get()
         val conflicts = MultiMap<PsiElement, String>()
+        if (!additionalPreprocessUsages(usagesInfo, conflicts)) return false
+
         if (!inlineThisOnly) {
             for (superDeclaration in findSuperMethodsNoWrapping(declaration)) {
                 val fqName = superDeclaration.getKotlinFqName()?.asString() ?: KotlinBundle.message("fix.change.signature.error")
@@ -108,7 +110,6 @@ abstract class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDe
             }
         }
 
-        additionalPreprocessUsages(usagesInfo, conflicts)
         inliners = GenericInlineHandler.initInliners(
             declaration,
             usagesInfo,

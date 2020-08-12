@@ -13,7 +13,6 @@ import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.annotations.Nls
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.findUsages.ReferencesSearchScopeHelper
 import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlinePropertyProcessor.Companion.extractInitialization
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtElement
@@ -21,12 +20,6 @@ import org.jetbrains.kotlin.psi.KtProperty
 
 class KotlinInlinePropertyHandler(private val withPrompt: Boolean = true) : KotlinInlineActionHandler() {
     override fun canInlineKotlinElement(element: KtElement): Boolean = element is KtProperty && element.name != null
-
-    @Nls
-    private fun getKind(declaration: KtProperty): String = if (declaration.isLocal)
-        KotlinBundle.message("text.variable")
-    else
-        KotlinBundle.message("text.property")
 
     override fun inlineKotlinElement(project: Project, editor: Editor?, element: KtElement) {
         val declaration = element as KtProperty
@@ -49,10 +42,6 @@ class KotlinInlinePropertyHandler(private val withPrompt: Boolean = true) : Kotl
                 editor,
                 KotlinBundle.message("cannot.inline.property.with.accessor.s.and.backing.field")
             )
-        }
-
-        if (ReferencesSearchScopeHelper.search(declaration).findFirst() == null) {
-            return showErrorHint(project, editor, KotlinBundle.message("0.1.is.never.used", getKind(declaration).capitalize(), name))
         }
 
         var assignmentToDelete: KtBinaryExpression? = null
