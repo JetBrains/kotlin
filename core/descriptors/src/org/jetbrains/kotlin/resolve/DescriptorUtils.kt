@@ -436,8 +436,6 @@ fun MemberDescriptor.isEffectivelyExternal(): Boolean {
     return containingClass != null && containingClass.isEffectivelyExternal()
 }
 
-fun DeclarationDescriptor.isEffectivelyExternal() = this is MemberDescriptor && this.isEffectivelyExternal()
-
 fun isParameterOfAnnotation(parameterDescriptor: ParameterDescriptor): Boolean =
     parameterDescriptor.containingDeclaration.isAnnotationConstructor()
 
