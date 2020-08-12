@@ -15,10 +15,12 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirClassOrObjectInLibrarySymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 internal class KtFirClassOrObjectSymbol(
@@ -30,10 +32,12 @@ internal class KtFirClassOrObjectSymbol(
     override val firRef = firRef(fir, resolveState)
     override val psi: PsiElement? by firRef.withFirAndCache { it.findPsi(fir.session) }
     override val name: Name get() = firRef.withFir { it.symbol.classId.shortClassName }
-    override val classId: ClassId get() = firRef.withFir { it.symbol.classId }
+    override val classIdIfNonLocal: ClassId?
+        get() = firRef.withFir { fir ->
+            fir.symbol.classId.takeUnless { it.isLocal }
+        }
 
-    override val modality: KtSymbolModality
-        get() = firRef.withFir { it.modality.getSymbolModality() }
+    override val modality: KtSymbolModality get() = firRef.withFir { it.modality.getSymbolModality() }
 
     override val typeParameters by firRef.withFirAndCache {
         fir.typeParameters.map { typeParameter ->
@@ -61,11 +65,21 @@ internal class KtFirClassOrObjectSymbol(
             }
         }
 
+    override val containingNonLocalClassIdIfMember: ClassId?
+        get() = firRef.withFir { fir ->
+            fir.classId.outerClassId?.takeUnless { it.isLocal }
+        }
+
+    override val containingPackageFqNameIfTopLevel: FqName?
+        get() = firRef.withFir { fir ->
+            fir.classId.packageFqName.takeIf { fir.classId.outerClassId == null }
+        }
+
     override fun createPointer(): KtSymbolPointer<KtClassOrObjectSymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         if (symbolKind == KtSymbolKind.LOCAL) {
-            throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(classId.asString())
+            throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(classIdIfNonLocal?.asString().orEmpty())
         }
-        return KtFirClassOrObjectInLibrarySymbol(classId)
+        return KtFirClassOrObjectInLibrarySymbol(classIdIfNonLocal!!)
     }
 }

@@ -17,9 +17,11 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirMemberFu
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.createSignature
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -49,7 +51,10 @@ internal class KtFirFunctionSymbol(
     override val receiverType: KtType? by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir -> fir.receiverTypeRef?.let(builder::buildKtType) }
     override val isOperator: Boolean get() = firRef.withFir { it.isOperator }
     override val isExtension: Boolean get() = firRef.withFir { it.receiverTypeRef != null }
-    override val fqName: FqName? get() = firRef.withFir { it.symbol.callableId.asFqNameForDebugInfo() }
+    override val fqNameIfNonLocal: FqName?
+        get() = firRef.withFir { fir ->
+            fir.symbol.callableId.takeUnless { fir.isLocal }?.asFqNameForDebugInfo()
+        }
     override val symbolKind: KtSymbolKind
         get() = firRef.withFir { fir ->
             when {
@@ -60,6 +65,16 @@ internal class KtFirFunctionSymbol(
         }
     override val modality: KtCommonSymbolModality get() = firRef.withFir { it.modality.getSymbolModality() }
 
+    override val containingNonLocalClassIdIfMember: ClassId?
+        get() = firRef.withFir { fir ->
+            fir.symbol.callableId.classId?.takeUnless { it.isLocal }
+        }
+
+    override val containingPackageFqNameIfTopLevel: FqName?
+        get() = firRef.withFir { fir ->
+            fir.symbol.callableId.takeIf { !fir.isLocal && it.className == null }?.packageName
+        }
+
     override fun createPointer(): KtSymbolPointer<KtFunctionSymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         return when (symbolKind) {
@@ -68,7 +83,10 @@ internal class KtFirFunctionSymbol(
                 firRef.withFir { it.symbol.callableId.classId ?: error("ClassId should not be null for member function") },
                 firRef.withFir { it.createSignature() }
             )
-            KtSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(fqName?.asString() ?: name.asString())
+            KtSymbolKind.NON_PROPERTY_PARAMETER -> error("KtFunction could not be a parameter")
+            KtSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(
+                fqNameIfNonLocal?.asString() ?: name.asString()
+            )
         }
     }
 }

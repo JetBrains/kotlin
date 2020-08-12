@@ -33,10 +33,12 @@ internal class KtFirEnumEntrySymbol(
 
     override val name: Name get() = firRef.withFir { it.name }
     override val type: KtType by firRef.withFirAndCache(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) { fir -> builder.buildKtType(fir.returnTypeRef) }
-    override val enumClassId: ClassId = firRef.withFir { it.symbol.callableId.classId ?: error("ClassId should present for enum") }
+
+    override val containingNonLocalClassIdIfMember: ClassId?
+        get() = firRef.withFir { it.symbol.callableId.classId?.takeUnless { it.isLocal } }
 
     override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
-        return KtFirEnumEntrySymbolPointer(enumClassId, firRef.withFir { it.createSignature() })
+        return KtFirEnumEntrySymbolPointer(containingNonLocalClassIdIfMember!!, firRef.withFir { it.createSignature() })
     }
 }

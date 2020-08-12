@@ -25,13 +25,11 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.idea.frontend.api.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.scopes.KtFirScopeProvider
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbolContainingDeclarationProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbolProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.*
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeProvider
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolProvider
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtVariableLikeSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.references.FirReferenceResolveHelper
 import org.jetbrains.kotlin.idea.references.FirReferenceResolveHelper.toTargetSymbol
@@ -62,6 +60,9 @@ private constructor(
     override val scopeProvider: KtScopeProvider by threadLocal {
         KtFirScopeProvider(token, firSymbolBuilder, project, firResolveState, firScopeStorage)
     }
+
+    override val containingDeclarationProvider: KtSymbolContainingDeclarationProvider =
+        KtFirSymbolContainingDeclarationProvider(this)
 
     init {
         assertIsValid()

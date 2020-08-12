@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.symbols
 
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -17,6 +19,8 @@ sealed class KtFunctionLikeSymbol : KtCallableSymbol(), KtTypedSymbol, KtSymbolW
 
 abstract class KtAnonymousFunctionSymbol : KtFunctionLikeSymbol() {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.LOCAL
+    final override val containingNonLocalClassIdIfMember: ClassId? get() = null
+    final override val containingPackageFqNameIfTopLevel: FqName? get() = null
 
     abstract override fun createPointer(): KtSymbolPointer<KtAnonymousFunctionSymbol>
 }
@@ -26,10 +30,10 @@ abstract class KtFunctionSymbol : KtFunctionLikeSymbol(),
     KtPossibleExtensionSymbol,
     KtSymbolWithTypeParameters,
     KtSymbolWithModality<KtCommonSymbolModality> {
+    abstract val fqNameIfNonLocal: FqName?
 
     abstract val isSuspend: Boolean
     abstract val isOperator: Boolean
-    abstract val fqName: FqName?
 
     abstract override val valueParameters: List<KtFunctionParameterSymbol>
 
@@ -37,10 +41,12 @@ abstract class KtFunctionSymbol : KtFunctionLikeSymbol(),
 }
 
 abstract class KtConstructorSymbol : KtFunctionLikeSymbol() {
-    abstract override val valueParameters: List<KtConstructorParameterSymbol>
     abstract val isPrimary: Boolean
-    abstract val owner: KtClassOrObjectSymbol
-    abstract val ownerClassId: ClassId
+
+    abstract override val valueParameters: List<KtConstructorParameterSymbol>
+
+    final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
+    final override val containingPackageFqNameIfTopLevel: FqName? get() = null
 
     abstract override fun createPointer(): KtSymbolPointer<KtConstructorSymbol>
 }

@@ -19,10 +19,11 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.createSignatu
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCommonSymbolModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolKind
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -39,8 +40,6 @@ internal class KtFirPropertySymbol(
     override val firRef = firRef(fir, resolveState)
     override val psi: PsiElement? by firRef.withFirAndCache { it.findPsi(fir.session) }
 
-
-    override val fqName: FqName get() = firRef.withFir { it.symbol.callableId.asFqNameForDebugInfo() }
     override val isVal: Boolean get() = firRef.withFir { it.isVal }
     override val name: Name get() = firRef.withFir { it.name }
     override val type: KtType by firRef.withFirAndCache(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) { fir -> builder.buildKtType(fir.returnTypeRef) }
@@ -55,15 +54,26 @@ internal class KtFirPropertySymbol(
         }
     override val modality: KtCommonSymbolModality get() = firRef.withFir { it.modality.getSymbolModality() }
 
+    override val containingNonLocalClassIdIfMember: ClassId?
+        get() = firRef.withFir { fir ->
+            fir.symbol.callableId.classId
+        }
+
+    override val containingPackageFqNameIfTopLevel: FqName?
+        get() = firRef.withFir { fir ->
+            fir.symbol.callableId.packageName.takeIf { fir.symbol.callableId.className == null }
+        }
+
     override fun createPointer(): KtSymbolPointer<KtPropertySymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         return when (symbolKind) {
             KtSymbolKind.TOP_LEVEL -> TODO("Creating symbol for top level fun is not supported yet")
+            KtSymbolKind.NON_PROPERTY_PARAMETER -> TODO("Creating symbol for top level parameters is not supported yet")
             KtSymbolKind.MEMBER -> KtFirMemberPropertySymbolPointer(
                 firRef.withFir { it.symbol.callableId.classId ?: error("ClassId should not be null for member property") },
                 firRef.withFir { it.createSignature() }
             )
-            KtSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(fqName.asString())
+            KtSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(name.asString())
         }
     }
 }

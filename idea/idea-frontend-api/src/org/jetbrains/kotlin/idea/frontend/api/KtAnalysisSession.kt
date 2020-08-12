@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.psi.*
 abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTokenOwner {
     abstract val symbolProvider: KtSymbolProvider
     abstract val scopeProvider: KtScopeProvider
+    abstract val containingDeclarationProvider: KtSymbolContainingDeclarationProvider
 
     abstract fun getSmartCastedToTypes(expression: KtExpression): Collection<KtType>?
 

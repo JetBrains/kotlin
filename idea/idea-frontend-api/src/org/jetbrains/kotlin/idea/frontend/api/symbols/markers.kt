@@ -12,14 +12,6 @@ interface KtNamedSymbol : KtSymbol {
     val name: Name
 }
 
-interface KtSymbolWithKind : KtSymbol {
-    val symbolKind: KtSymbolKind
-}
-
-enum class KtSymbolKind {
-    TOP_LEVEL, MEMBER, LOCAL
-}
-
 interface KtTypedSymbol : KtSymbol {
     val type: KtType
 }
