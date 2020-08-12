@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="testrail-integration" type="repository">
-    <properties maven-id="com.jetbrains.test.integrations:testrail:0.6.1369">
+    <properties maven-id="com.jetbrains.test.integrations:testrail:0.6.1377">
       <exclude>
         <dependency maven-id="com.jetbrains.rd:rd-framework" />
         <dependency maven-id="org.kodein.di:kodein-di-generic-jvm" />
         <dependency maven-id="de.jensd:fontawesomefx" />
         <dependency maven-id="com.jetbrains.test.design:tsf.processing" />
         <dependency maven-id="com.vladsch.flexmark:flexmark" />
+        <dependency maven-id="org.jetbrains.kotlin:kotlin-stdlib-jdk8" />
         <dependency maven-id="org.jetbrains.kotlinx:kotlinx-coroutines-core" />
         <dependency maven-id="org.jetbrains.kotlinx:kotlinx-serialization-runtime" />
         <dependency maven-id="com.fasterxml.jackson.module:jackson-module-jsonSchema" />
@@ -22,19 +23,19 @@
       </exclude>
     </properties>
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/integrations/testrail/0.6.1369/testrail-0.6.1369.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/integrations/integrations-core/0.6.1369/integrations-core-0.6.1369.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/assist/assist-core/0.6.1369/assist-core-0.6.1369.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/assist/results/0.6.1369/results-0.6.1369.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/integrations/import/integrations-import-core/0.6.1369/integrations-import-core-0.6.1369.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/integrations/testrail/0.6.1377/testrail-0.6.1377.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/integrations/integrations-core/0.6.1377/integrations-core-0.6.1377.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/assist/assist-core/0.6.1377/assist-core-0.6.1377.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/assist/results/0.6.1377/results-0.6.1377.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/integrations/import/integrations-import-core/0.6.1377/integrations-import-core-0.6.1377.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/integrations/testrail/0.6.1369/testrail-0.6.1369-sources.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/integrations/integrations-core/0.6.1369/integrations-core-0.6.1369-sources.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/assist/assist-core/0.6.1369/assist-core-0.6.1369-sources.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/assist/results/0.6.1369/results-0.6.1369-sources.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/integrations/import/integrations-import-core/0.6.1369/integrations-import-core-0.6.1369-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/integrations/testrail/0.6.1377/testrail-0.6.1377-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/integrations/integrations-core/0.6.1377/integrations-core-0.6.1377-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/assist/assist-core/0.6.1377/assist-core-0.6.1377-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/assist/results/0.6.1377/results-0.6.1377-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/integrations/import/integrations-import-core/0.6.1377/integrations-import-core-0.6.1377-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

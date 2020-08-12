@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="tsf" type="repository">
-    <properties maven-id="com.jetbrains.test.design:tsf.processing:0.6.1369">
+    <properties maven-id="com.jetbrains.test.design:tsf.processing:0.6.1377">
       <exclude>
         <dependency maven-id="org.jetbrains.kotlin:kotlin-stdlib" />
         <dependency maven-id="org.jetbrains.kotlin:kotlin-reflect" />
@@ -12,15 +12,15 @@
       </exclude>
     </properties>
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/design/tsf.processing/0.6.1369/tsf.processing-0.6.1369.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/common/0.6.1369/common-0.6.1369.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/design/tsf/0.6.1369/tsf-0.6.1369.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/design/tsf.processing/0.6.1377/tsf.processing-0.6.1377.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/common/0.6.1377/common-0.6.1377.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/design/tsf/0.6.1377/tsf-0.6.1377.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/design/tsf.processing/0.6.1369/tsf.processing-0.6.1369-sources.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/common/0.6.1369/common-0.6.1369-sources.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/design/tsf/0.6.1369/tsf-0.6.1369-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/design/tsf.processing/0.6.1377/tsf.processing-0.6.1377-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/common/0.6.1377/common-0.6.1377-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/test/design/tsf/0.6.1377/tsf-0.6.1377-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
