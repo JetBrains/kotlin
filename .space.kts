@@ -13,9 +13,9 @@ job("GitHub PRs => Space MRs") {
           .createMergeRequest(
             title = pullRequestUrl,
             sourceBranch = api.gitBranch(),
-            targetBranch = System.getProperty("space.system.branch"),
+            targetBranch = System.getProperty("branch"),
             project = api.projectIdentifier(),
-            repository = System.getProperty("space.system.repository")
+            repository = System.getProperty("repository")
           )
       }
     }
