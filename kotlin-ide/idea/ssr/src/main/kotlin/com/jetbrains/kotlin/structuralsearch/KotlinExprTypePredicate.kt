@@ -2,6 +2,8 @@ package com.jetbrains.kotlin.structuralsearch
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex
+import com.intellij.psi.impl.java.stubs.index.JavaShortClassNameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.elementType
 import com.intellij.structuralsearch.StructuralSearchUtil
@@ -9,11 +11,10 @@ import com.intellij.structuralsearch.impl.matcher.MatchContext
 import com.intellij.structuralsearch.impl.matcher.predicates.MatchPredicate
 import com.intellij.structuralsearch.impl.matcher.predicates.RegExpPredicate
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.resolveType
 import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
+import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.search.allScope
-import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.stubindex.KotlinClassShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -25,10 +26,8 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.supertypes
-import org.jetbrains.kotlinx.serialization.compiler.resolve.toSimpleType
 
 class KotlinExprTypePredicate(
     private val search: String,
@@ -122,12 +121,7 @@ class KotlinExprTypePredicate(
                     ) && !type.isMarkedNullable
                 is KtUserType -> {
                     val className = typeElement.referencedName ?: return false
-                    val index = if (className.contains(".")) KotlinFullClassNameIndex.getInstance()
-                    else KotlinClassShortNameIndex.getInstance()
-                    index.get(className, project, scope).any {
-                        val searchedType = (it.descriptor as ClassDescriptor).toSimpleType(typeElement.parent is KtNullableType)
-                        searchedType.fqName == type.fqName
-                    } && !type.isMarkedNullable
+                    matchTypeWithString(type, className, project, scope) && !type.isMarkedNullable
                 }
                 is KtNullableType -> type.isMarkedNullable && matchTypeElement(
                     type.makeNotNullable(),
@@ -152,6 +146,32 @@ class KotlinExprTypePredicate(
                 else -> "${type.fqName}" == "kotlin.Function${typeArguments.size - 1}"
                         || typeArguments.size == 1 && "${type.fqName}" == "kotlin.Function"
             }
+        }
+
+        private fun matchTypeWithString(type: KotlinType, className: String, project: Project, scope: GlobalSearchScope): Boolean {
+            val fq = className.contains(".")
+
+            // Kotlin indexes
+            when {
+                fq -> if (KotlinFullClassNameIndex.getInstance()[className, project, scope].any {
+                        it.getKotlinFqName() == type.fqName
+                    }) return true
+                else -> if (KotlinClassShortNameIndex.getInstance()[className, project, scope].any {
+                        it.getKotlinFqName() == type.fqName
+                    }) return true
+            }
+
+            // Java indexes
+            when {
+                fq -> if (JavaFullClassNameIndex.getInstance()[className.hashCode(), project, scope].any {
+                        it.getKotlinFqName() == type.fqName
+                    }) return true
+                else -> if (JavaShortClassNameIndex.getInstance()[className, project, scope].any {
+                        it.getKotlinFqName() == type.fqName
+                    }) return true
+            }
+
+            return false
         }
 
         private fun compareProjections(projection: TypeProjection, typeReference: KtTypeReference?): Boolean {
