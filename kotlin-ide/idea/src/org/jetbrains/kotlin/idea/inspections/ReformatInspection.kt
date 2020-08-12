@@ -32,12 +32,8 @@ import org.jetbrains.kotlin.idea.formatter.collectFormattingChanges
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.KtFile
 import javax.swing.JComponent
-import javax.xml.bind.annotation.XmlAttribute
 
-class ReformatInspection : LocalInspectionTool() {
-    @XmlAttribute
-    var processChangedFilesOnly: Boolean = false
-
+class ReformatInspection(@JvmField var processChangedFilesOnly: Boolean = false) : LocalInspectionTool() {
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<out ProblemDescriptor>? {
         return checkFile(file, isOnTheFly)?.toTypedArray()
     }
