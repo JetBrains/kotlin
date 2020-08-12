@@ -317,9 +317,14 @@ private class CommonizedCommonDependenciesContainer(
     override val refinesModuleInfos: List<ModuleInfo> get() = listOf(commonModuleInfo)
 }
 
-private fun Map<InputTarget, ModuleDescriptor>.toCommonizationParameters(): Parameters = Parameters().also {
+private fun Map<InputTarget, ModuleDescriptor>.toCommonizationParameters(): Parameters = Parameters().also { parameters ->
     forEach { (target, moduleDescriptor) ->
-        it.addTarget(
+        if (!parameters.extendedLookupForBuiltInsClassifiers) {
+            if (moduleDescriptor.hasSomethingUnderStandardKotlinPackages)
+                parameters.extendedLookupForBuiltInsClassifiers = true
+        }
+
+        parameters.addTarget(
             TargetProvider(
                 target = target,
                 builtInsClass = moduleDescriptor.builtIns::class.java,

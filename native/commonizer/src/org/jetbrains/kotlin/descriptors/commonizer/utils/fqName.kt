@@ -13,12 +13,14 @@ import org.jetbrains.kotlin.serialization.konan.impl.ForwardDeclarationsFqNames
 internal val DEPRECATED_ANNOTATION_FQN: FqName = FqName(Deprecated::class.java.name).intern()
 internal val DEPRECATED_ANNOTATION_CID: ClassId = internedClassId(DEPRECATED_ANNOTATION_FQN)
 
-private val STANDARD_KOTLIN_PACKAGE_PREFIXES = listOf(
-    KotlinBuiltIns.BUILT_INS_PACKAGE_NAME.asString(),
-    "kotlinx"
+internal val STANDARD_KOTLIN_PACKAGE_FQNS: List<FqName> = listOf(
+    KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.intern(),
+    FqName("kotlinx").intern()
 )
 
-private val KOTLIN_NATIVE_SYNTHETIC_PACKAGES_PREFIXES = ForwardDeclarationsFqNames.syntheticPackages
+private val STANDARD_KOTLIN_PACKAGES = STANDARD_KOTLIN_PACKAGE_FQNS.map { it.asString() }
+
+private val KOTLIN_NATIVE_SYNTHETIC_PACKAGES = ForwardDeclarationsFqNames.syntheticPackages
     .map { fqName ->
         check(!fqName.isRoot)
         fqName.asString()
@@ -27,10 +29,10 @@ private val KOTLIN_NATIVE_SYNTHETIC_PACKAGES_PREFIXES = ForwardDeclarationsFqNam
 private const val DARWIN_PACKAGE_PREFIX = "platform.darwin"
 
 internal val FqName.isUnderStandardKotlinPackages: Boolean
-    get() = hasAnyPrefix(STANDARD_KOTLIN_PACKAGE_PREFIXES)
+    get() = hasAnyPrefix(STANDARD_KOTLIN_PACKAGES)
 
 internal val FqName.isUnderKotlinNativeSyntheticPackages: Boolean
-    get() = hasAnyPrefix(KOTLIN_NATIVE_SYNTHETIC_PACKAGES_PREFIXES)
+    get() = hasAnyPrefix(KOTLIN_NATIVE_SYNTHETIC_PACKAGES)
 
 internal val FqName.isUnderDarwinPackage: Boolean
     get() = asString().hasPrefix(DARWIN_PACKAGE_PREFIX)

@@ -138,6 +138,9 @@ class TargetDeclarationsBuilderComponents(
     val index: Int,
     private val cache: DeclarationsBuilderCache
 ) {
+    // only for test purposes
+    internal var extendedLookupForBuiltInsClassifiers: Boolean = false
+
     // N.B. this function may create new classifiers for types from Kotlin/Native forward declarations packages
     fun findClassOrTypeAlias(classId: ClassId): ClassifierDescriptorWithTypeParameters {
         return when {
@@ -146,8 +149,16 @@ class TargetDeclarationsBuilderComponents(
                 val builtInsModule = builtIns.builtInsModule
 
                 // TODO: this works fine for Native as far as built-ins module contains full Native stdlib, but this is not enough for JVM and JS
-                builtInsModule.resolveClassOrTypeAlias(classId)
-                    ?: error("Classifier ${classId.asString()} not found in built-ins module $builtInsModule for $target")
+                val classifier = builtInsModule.resolveClassOrTypeAlias(classId)
+                if (classifier != null)
+                    return classifier
+
+                if (extendedLookupForBuiltInsClassifiers) {
+                    return findOriginalClassOrTypeAlias(classId)
+                        ?: error("Classifier ${classId.asString()} not found neither in built-ins module $builtInsModule nor in original modules for $target")
+                }
+
+                error("Classifier ${classId.asString()} not found in built-ins module $builtInsModule for $target")
             }
             classId.packageFqName.isUnderKotlinNativeSyntheticPackages -> {
                 // that's a synthetic Kotlin/Native classifier that was exported as forward declaration in one or more modules,
@@ -162,28 +173,28 @@ class TargetDeclarationsBuilderComponents(
                     ?: error("Classifier ${classId.asString()} not found for $target")
             }
             else -> {
-                // look up in created descriptors cache
-                val fromCache = cache.getCachedClassifier(classId, index)
-                fromCache
-                    ?: run {
-                        // attempt to load the original classifier
-                        if (!classId.packageFqName.isRoot) {
-                            // first, guess containing module and look up in it
-                            val classifier = lazyModulesLookupTable()
-                                .guessModuleByPackageFqName(classId.packageFqName)
-                                ?.resolveClassOrTypeAlias(classId)
-
-                            // if failed, then look up though all modules
-                            classifier
-                                ?: lazyModulesLookupTable().values
-                                    .asSequence()
-                                    .mapNotNull { it?.resolveClassOrTypeAlias(classId) }
-                                    .firstOrNull()
-                        } else null
-                    }
+                cache.getCachedClassifier(classId, index) // first, look up in created descriptors cache
+                    ?: findOriginalClassOrTypeAlias(classId) // then, attempt to load the original classifier
                     ?: error("Classifier ${classId.asString()} not found for $target")
             }
         }
+    }
+
+    private fun findOriginalClassOrTypeAlias(classId: ClassId): ClassifierDescriptorWithTypeParameters? {
+        if (classId.packageFqName.isRoot)
+            return null
+
+        // first, guess containing module and look up in it
+        val classifier = lazyModulesLookupTable()
+            .guessModuleByPackageFqName(classId.packageFqName)
+            ?.resolveClassOrTypeAlias(classId)
+
+        // if failed, then look up though all modules
+        return classifier
+            ?: lazyModulesLookupTable().values
+                .asSequence()
+                .mapNotNull { it?.resolveClassOrTypeAlias(classId) }
+                .firstOrNull()
     }
 }
 
@@ -217,7 +228,9 @@ fun CirRootNode.createGlobalBuilderComponents(
             isCommon = isCommon,
             index = index,
             cache = cache
-        )
+        ).also {
+            it.extendedLookupForBuiltInsClassifiers = parameters.extendedLookupForBuiltInsClassifiers
+        }
     }
 
     return GlobalDeclarationsBuilderComponents(storageManager, targetContexts, cache, parameters.statsCollector)
