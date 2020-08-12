@@ -150,6 +150,7 @@
 - [`KT-39808`](https://youtrack.jetbrains.com/issue/KT-39808) (CoroutineDebugger) Doesn't start with kotlinx-coroutines-core >= 1.3.6
 - [`KT-40073`](https://youtrack.jetbrains.com/issue/KT-40073) (CoroutineDebugger) Change minimum supported kotlinx.coroutines version to 1.3.8*
 - [`KT-40172`](https://youtrack.jetbrains.com/issue/KT-40172) Restored frame variables isn't shown for suspended coroutines
+- [`KT-40635`](https://youtrack.jetbrains.com/issue/KT-40635) Coroutines Debugger: make IDE plugin accept coroutines 1.3.8-rc* versions as well
 
 ### IDE. Gradle Integration
 
