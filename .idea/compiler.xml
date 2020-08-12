@@ -14,6 +14,8 @@
       <file url="file://$PROJECT_DIR$/intellij/community/android/android-uitests/testSrc/com/android/tools/idea/tests/gui/espresso/EspressoRecorderTest.java" />
       <file url="file://$PROJECT_DIR$/intellij/community/android/tools-base/sdk-common/src/test/java/com/android/ide/common/blame/parser/SourceFragmentPositionRangeJsonTest.java" />
       <file url="file://$PROJECT_DIR$/intellij/community/plugins/javaFX/javaFX-CE/testSrc/org/jetbrains/plugins/javaFX/fxml/JavaFxGenerateDefaultPropertyValuesScript.java" />
+      <file url="file://$PROJECT_DIR$/intellij/community/plugins/groovy/test/org/jetbrains/plugins/groovy/compiler/DebuggerMethods.groovy" />
+      <file url="file://$PROJECT_DIR$/intellij/community/plugins/groovy/test/org/jetbrains/plugins/groovy/compiler/GroovyDebuggerTest.groovy" />
     </excludeFromCompile>
     <resourceExtensions>
       <entry name=".+\.(properties|gif|png|jpeg|jpg|xml|dtd|tld|xsd|ft|html|template)" />
