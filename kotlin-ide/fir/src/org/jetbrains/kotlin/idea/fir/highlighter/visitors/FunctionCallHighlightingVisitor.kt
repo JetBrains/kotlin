@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.idea.frontend.api.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtAnonymousFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbolKind
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.serialization.deserialization.KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME
@@ -61,7 +61,7 @@ internal class FunctionCallHighlightingVisitor(
             is KtConstructorSymbol -> Colors.CONSTRUCTOR_CALL
             is KtAnonymousFunctionSymbol -> null
             is KtFunctionSymbol -> when {
-                function.fqName == KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME -> Colors.KEYWORD
+                function.fqNameIfNonLocal == KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME -> Colors.KEYWORD
                 function.isExtension -> Colors.EXTENSION_FUNCTION_CALL
                 function.symbolKind == KtSymbolKind.TOP_LEVEL -> Colors.PACKAGE_FUNCTION_CALL
                 else -> Colors.FUNCTION_CALL

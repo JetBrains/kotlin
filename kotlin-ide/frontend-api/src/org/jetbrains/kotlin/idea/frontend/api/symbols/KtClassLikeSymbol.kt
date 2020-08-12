@@ -5,21 +5,33 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.symbols
 
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 
 
 abstract class KtClassLikeSymbol : KtSymbol, KtNamedSymbol, KtSymbolWithKind {
-    abstract val classId: ClassId
+    abstract val classIdIfNonLocal: ClassId?
+
     abstract override fun createPointer(): KtSymbolPointer<KtClassLikeSymbol>
 }
 
 abstract class KtTypeAliasSymbol : KtClassLikeSymbol() {
+    abstract override val classIdIfNonLocal: ClassId
+
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.TOP_LEVEL
+    final override val containingNonLocalClassIdIfMember: ClassId? get() = null
+
+    abstract override val containingPackageFqNameIfTopLevel: FqName
+
     abstract override fun createPointer(): KtSymbolPointer<KtTypeAliasSymbol>
 }
 
-abstract class KtClassOrObjectSymbol : KtClassLikeSymbol(), KtSymbolWithTypeParameters, KtSymbolWithModality<KtSymbolModality> {
+abstract class KtClassOrObjectSymbol : KtClassLikeSymbol(),
+    KtSymbolWithTypeParameters,
+    KtSymbolWithModality<KtSymbolModality> {
     abstract val classKind: KtClassKind
 
     abstract override fun createPointer(): KtSymbolPointer<KtClassOrObjectSymbol>

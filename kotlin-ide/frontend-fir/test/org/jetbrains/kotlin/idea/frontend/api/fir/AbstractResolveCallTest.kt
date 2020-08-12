@@ -87,7 +87,7 @@ private fun CallInfo.stringRepresentation(): String {
     fun KtType.render() = asStringForDebugging().replace('/', '.')
     fun Any.stringValue(): String? = when (this) {
         is KtFunctionLikeSymbol -> buildString {
-            append(if (this@stringValue is KtFunctionSymbol) fqName else "<constructor>")
+            append(if (this@stringValue is KtFunctionSymbol) fqNameIfNonLocal ?: name else "<constructor>")
             append("(")
             (this@stringValue as? KtFunctionSymbol)?.receiverType?.let { receiver ->
                 append("<receiver>: ${receiver.render()}")

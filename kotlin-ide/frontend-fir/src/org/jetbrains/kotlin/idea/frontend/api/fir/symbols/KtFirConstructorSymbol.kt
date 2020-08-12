@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
@@ -20,6 +18,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirConstruc
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.createSignature
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
@@ -44,27 +43,19 @@ internal class KtFirConstructorSymbol(
     }
 
     override val isPrimary: Boolean get() = firRef.withFir { it.isPrimary }
-    override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
 
-    override val ownerClassId: ClassId
-        get() = firRef.withFir {
-            it.symbol.callableId.classId ?: error("ClassID should present for constructor")
+    override val containingNonLocalClassIdIfMember: ClassId?
+        get() = firRef.withFir { fir ->
+            fir.symbol.callableId.classId?.takeUnless { it.isLocal }
         }
-
-    override val owner: KtClassOrObjectSymbol by firRef.withFirAndCache { fir ->
-        val session = fir.session
-        val classId = ownerClassId
-        val firClass = session.firSymbolProvider.getClassLikeSymbolByFqName(classId)?.fir
-            ?: error("Class with id $classId id was not found")
-        check(firClass is FirRegularClass) { "Owner class for constructor should be FirRegularClass, but ${firClass::class} was met" }
-        builder.buildClassSymbol(firClass)
-    }
 
     override fun createPointer(): KtSymbolPointer<KtConstructorSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         if (symbolKind == KtSymbolKind.LOCAL) {
-            throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException("${ownerClassId.asString()}.constructor")
+            throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException("constructor")
         }
+        val ownerClassId = containingNonLocalClassIdIfMember
+            ?: error("ClassId should present for member declaration")
         return KtFirConstructorSymbolPointer(ownerClassId, isPrimary, firRef.withFir { it.createSignature() })
     }
 }

@@ -46,8 +46,8 @@ object DebugSymbolRenderer {
         is KtType -> value.asStringForDebugging()
         is KtSymbol -> {
             val symbolTag = when (value) {
-                is KtClassLikeSymbol -> renderValue(value.classId)
-                is KtFunctionSymbol -> renderValue(value.fqName)
+                is KtClassLikeSymbol -> renderValue(value.classIdIfNonLocal ?: "<local>/${value.name}")
+                is KtFunctionSymbol -> renderValue(value.fqNameIfNonLocal ?: "<local>/${value.name}")
                 is KtConstructorSymbol -> "<constructor>"
                 is KtNamedSymbol -> renderValue(value.name)
                 else -> TODO(value::class.toString())
