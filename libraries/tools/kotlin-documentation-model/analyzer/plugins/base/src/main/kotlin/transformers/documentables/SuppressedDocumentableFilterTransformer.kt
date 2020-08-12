@@ -10,7 +10,7 @@ import java.io.File
 
 class SuppressedDocumentableFilterTransformer(val context: DokkaContext) : PreMergeDocumentableTransformer {
     override fun invoke(modules: List<DModule>): List<DModule> {
-        return modules.mapNotNull { module -> filterModule(module) }
+        return modules.mapNotNull(::filterModule)
     }
 
     private fun filterModule(module: DModule): DModule? {
@@ -28,7 +28,7 @@ class SuppressedDocumentableFilterTransformer(val context: DokkaContext) : PreMe
             return null
         }
 
-        val filteredChildren = pkg.children.filter { child -> !isSuppressed(child) }
+        val filteredChildren = pkg.children.filterNot(::isSuppressed)
         return when {
             filteredChildren == pkg.children -> pkg
             filteredChildren.isEmpty() -> null
