@@ -42,7 +42,6 @@ org.jetbrains.kotlin.idea.maven.MavenMigrateTest.testMigrateApiAndLanguageVersio
 org.jetbrains.kotlin.idea.maven.configuration.MavenConfigureProjectByChangingFileTestGenerated.Jvm.testWithJava9ModuleInfo, Probably test data should be updated,,
 org.jetbrains.kotlin.idea.quickfix.DeprecatedSymbolUsageFixSpecialTest.testDefaultParameterValuesFromLibrary, Always red because of additional import,, FLAKY
 org.jetbrains.kotlin.idea.quickfix.QuickFixMultiModuleTestGenerated.CreateActual.testWithTestDummy, Very flaky on teamcity,, FLAKY
-org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.CreateFromUsage.CreateClass.CallExpression.testCallInWhenEntry, KT-35728,,
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.ObsoleteKotlinJsPackages.testKotlinDomAndBrowserImport, Always red because UAST does not work with JS,,
 org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveFromJvmModuleToJsModule_MoveFromJvmModuleToJsModule, KT-34106,,
 org.jetbrains.kotlin.idea.refactoring.move.MultiModuleMoveTestGenerated.testMoveJdkDependentToJsModule_MoveJdkDependentToJsModule, KT-34106,,
