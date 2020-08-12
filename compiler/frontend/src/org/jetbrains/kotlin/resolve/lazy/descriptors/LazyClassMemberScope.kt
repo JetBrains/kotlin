@@ -90,6 +90,7 @@ open class LazyClassMemberScope(
 
         addDataClassMethods(result, location)
         addSyntheticFunctions(result, location)
+        addSyntheticVariables(result, location)
         addSyntheticCompanionObject(result, location)
         addSyntheticNestedClasses(result, location)
 
@@ -106,6 +107,7 @@ open class LazyClassMemberScope(
             by storageManager.createLazyValue {
                 mutableSetOf<Name>().apply {
                     addAll(declarationProvider.getDeclarationNames())
+                    addAll(c.syntheticResolveExtension.getSyntheticPropertiesNames(thisDescriptor))
                     supertypes.flatMapTo(this) {
                         it.memberScope.getVariableNames()
                     }
@@ -338,6 +340,15 @@ open class LazyClassMemberScope(
     private fun addSyntheticFunctions(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {
         result.addAll(c.syntheticResolveExtension.getSyntheticFunctionNames(thisDescriptor).flatMap {
             getContributedFunctions(
+                it,
+                location
+            )
+        }.toList())
+    }
+
+    private fun addSyntheticVariables(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {
+        result.addAll(c.syntheticResolveExtension.getSyntheticPropertiesNames(thisDescriptor).flatMap {
+            getContributedVariables(
                 it,
                 location
             )

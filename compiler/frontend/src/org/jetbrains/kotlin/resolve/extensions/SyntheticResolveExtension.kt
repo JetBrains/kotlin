@@ -54,6 +54,9 @@ interface SyntheticResolveExtension {
                 override fun getSyntheticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> =
                     instances.flatMap { withLinkageErrorLogger(it) { getSyntheticFunctionNames(thisDescriptor) } }
 
+                override fun getSyntheticPropertiesNames(thisDescriptor: ClassDescriptor): List<Name> =
+                    instances.flatMap { withLinkageErrorLogger(it) { getSyntheticPropertiesNames(thisDescriptor) } }
+
                 override fun generateSyntheticClasses(
                     thisDescriptor: ClassDescriptor, name: Name,
                     ctx: LazyClassContext, declarationProvider: ClassMemberDeclarationProvider,
@@ -141,6 +144,9 @@ interface SyntheticResolveExtension {
     fun getSyntheticCompanionObjectNameIfNeeded(thisDescriptor: ClassDescriptor): Name? = null
 
     fun getSyntheticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> = emptyList()
+
+    @JvmDefault
+    fun getSyntheticPropertiesNames(thisDescriptor: ClassDescriptor): List<Name> = emptyList()
 
     fun getSyntheticNestedClassNames(thisDescriptor: ClassDescriptor): List<Name> = emptyList()
 
