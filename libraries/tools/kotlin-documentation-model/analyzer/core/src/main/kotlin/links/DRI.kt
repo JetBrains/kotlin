@@ -101,5 +101,3 @@ fun DriTarget.nextTarget(): DriTarget = when (this) {
     is PointingToCallableParameters -> PointingToCallableParameters(this.parameterIndex + 1)
     else -> this
 }
-
-data class DriWithKind(val dri: DRI, val kind: ClassKind)

@@ -221,7 +221,7 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
                 with((this / "f").cast<DFunction>()) {
                     modifier.values.forEach { it equals Open }
                 }
-                D.supertypes.flatMap { it.component2() }.firstOrNull()?.dri equals C.dri
+                D.supertypes.flatMap { it.component2() }.firstOrNull()?.typeConstructor?.dri equals C.dri
             }
         }
     }
@@ -258,8 +258,8 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
                 modifier.values.forEach { it equals Final }
 
             }
-            D.supers.single().dri equals C.dri
-            E.supers.single().dri equals D.dri
+            D.supers.single().typeConstructor.dri equals C.dri
+            E.supers.single().typeConstructor.dri equals D.dri
         }
     }
 
@@ -496,7 +496,7 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
             """.trimIndent()
         ){
             with((this / "classes" / "Tested").cast<DClass>()){
-                extra[ImplementedInterfaces]?.interfaces?.entries?.single()?.value?.map { it.sureClassNames }?.sorted() equals listOf("Highest", "Lower", "LowerImplInterface").sorted()
+                extra[ImplementedInterfaces]?.interfaces?.entries?.single()?.value?.map { it.dri.sureClassNames }?.sorted() equals listOf("Highest", "Lower", "LowerImplInterface").sorted()
             }
         }
     }
@@ -510,7 +510,7 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
             """.trimIndent()
         ) {
             with((this / "classes" / "Tested").cast<DClass>()) {
-                supertypes.entries.single().value.map { it.dri.sureClassNames }.single() equals "B"
+                supertypes.entries.single().value.map { it.typeConstructor.dri.sureClassNames }.single() equals "B"
             }
         }
     }
@@ -526,7 +526,7 @@ class ClassesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "class
             """.trimIndent()
         ){
             with((this / "classes" / "Tested").cast<DClass>()) {
-                supertypes.entries.single().value.map { it.dri.sureClassNames to it.kind }.sortedBy { it.first } equals listOf("B" to KotlinClassKindTypes.CLASS, "Y" to KotlinClassKindTypes.INTERFACE)
+                supertypes.entries.single().value.map { it.typeConstructor.dri.sureClassNames to it.kind }.sortedBy { it.first } equals listOf("B" to KotlinClassKindTypes.CLASS, "Y" to KotlinClassKindTypes.INTERFACE)
             }
         }
     }
