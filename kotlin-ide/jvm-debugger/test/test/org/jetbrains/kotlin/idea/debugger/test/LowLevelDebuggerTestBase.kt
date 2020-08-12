@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.idea.debugger.test
 
 import com.intellij.util.PathUtil
 import com.intellij.util.SystemProperties
+import com.jetbrains.jdi.SocketAttachingConnector
 import com.sun.jdi.ThreadReference
 import com.sun.jdi.VirtualMachine
-import com.sun.tools.jdi.SocketAttachingConnector
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState

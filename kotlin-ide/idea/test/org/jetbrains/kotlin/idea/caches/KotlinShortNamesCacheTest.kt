@@ -13,7 +13,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.psi.util.PsiUtil
 import com.intellij.testFramework.LightProjectDescriptor
-import com.sun.tools.javac.util.Convert.shortName
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
@@ -263,5 +262,9 @@ class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
         checkIsSingleFieldFound(scope, "B1.objectVar", true)
         checkIsSingleFieldFound(scope, "C1.classVar", false)
         checkIsSingleFieldFound(scope, "C1.companionVar", true)
+    }
+
+    private fun shortName(fqName: String): String {
+        return FqName(fqName).shortName().asString()
     }
 }

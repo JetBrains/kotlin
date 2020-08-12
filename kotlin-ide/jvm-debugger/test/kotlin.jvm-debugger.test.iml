@@ -26,6 +26,7 @@
     <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
     <orderEntry type="library" scope="TEST" name="ASM" level="project" />
     <orderEntry type="library" scope="TEST" name="Guava" level="project" />
+    <orderEntry type="library" scope="TEST" name="jb-jdi" level="project" />
     <orderEntry type="library" scope="TEST" name="kotlinc.kotlin-compiler" level="project" />
     <orderEntry type="module" module-name="kotlin.common" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.core" scope="TEST" />
