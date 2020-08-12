@@ -49,6 +49,12 @@ open class KonanCacheTask: DefaultTask() {
 
     @TaskAction
     fun compile() {
+        // Compiler doesn't create a cache if the cacheFile already exists. So we need to remove it manually.
+        if (cacheFile.exists()) {
+            val deleted = cacheFile.deleteRecursively()
+            check(deleted) { "Cannot delete stale cache: ${cacheFile.absolutePath}" }
+        }
+
         val args = listOf(
             "-g",
             "-target", target,
