@@ -539,6 +539,26 @@ static convertReferenceToObjC findConverterFromInterfaces(const TypeInfo* typeIn
 
   for (int i = 0; i < typeInfo->implementedInterfacesCount_; ++i) {
     const TypeInfo* interfaceTypeInfo = typeInfo->implementedInterfaces_[i];
+    if ((interfaceTypeInfo->flags_ & TF_SUSPEND_FUNCTION) != 0) {
+      // interfaceTypeInfo is a SuspendFunction$N interface.
+      // So any instance of typeInfo is a suspend lambda or a suspend callable reference
+      // (user-defined Kotlin classes implementing SuspendFunction$N are prohibited by the compiler).
+      //
+      // Such types also actually implement Function${N+1} interface as an optimization
+      // (see e.g. [startCoroutineUninterceptedOrReturn implementation).
+      // This fact is not user-visible, so ignoring Function${N+1} interface here
+      // (and thus not converting such objects to Obj-C blocks) should be safe enough
+      // (because such objects aren't expected to be passed from Kotlin to Swift
+      // under formal Function${N+1} type).
+      //
+      // On the other hand, this fixes support for SuspendFunction$N type: it is mapped as
+      // regular Kotlin interface, so its instances should be converted on a general basis
+      // (i.e. to objects implementing Obj-C representation of SuspendFunction$N, not to Obj-C blocks).
+      //
+      // "If typeInfo is a suspend lambda or callable reference type, convert its instances on a regular basis":
+      return nullptr;
+    }
+
     if (interfaceTypeInfo->writableInfo_->objCExport.convert != nullptr) {
       if (foundTypeInfo == nullptr || IsSubInterface(interfaceTypeInfo, foundTypeInfo)) {
         foundTypeInfo = interfaceTypeInfo;

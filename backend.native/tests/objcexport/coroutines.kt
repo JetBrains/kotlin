@@ -164,3 +164,15 @@ class ThrowCancellationExceptionImpl : ThrowCancellationException() {
         throw CancellationException()
     }
 }
+
+fun getSuspendLambda0(): suspend () -> String = { "lambda 0" }
+
+private suspend fun suspendCallableReference0Target(): String = "callable reference 0"
+fun getSuspendCallableReference0(): suspend () -> String = ::suspendCallableReference0Target
+
+fun getSuspendLambda1(): suspend (String) -> String = { "$it 1" }
+
+private suspend fun suspendCallableReference1Target(str: String): String = "$str 1"
+fun getSuspendCallableReference1(): suspend (String) -> String = ::suspendCallableReference1Target
+
+suspend fun invoke1(block: suspend (Any?) -> Any?, argument: Any?): Any? = block(argument)

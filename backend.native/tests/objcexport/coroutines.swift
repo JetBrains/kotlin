@@ -253,6 +253,71 @@ private func testImplicitThrows2() throws {
     try assertTrue(error?.kotlinException is KotlinCancellationException)
 }
 
+private func testSuspendFunctionType0(f: KotlinSuspendFunction0, expectedResult: String) throws {
+    try assertTrue((f as AnyObject) is KotlinSuspendFunction0)
+
+    var result: String? = nil
+    var error: Error? = nil
+    var completionCalled = 0
+
+    f.invoke { _result, _error in
+        completionCalled += 1
+        result = _result as? String
+        error = _error
+    }
+
+    try assertEquals(actual: completionCalled, expected: 1)
+    try assertEquals(actual: result, expected: expectedResult)
+    try assertNil(error)
+}
+
+private func testSuspendFunctionType1(f: KotlinSuspendFunction1) throws {
+    try assertTrue((f as AnyObject) is KotlinSuspendFunction1)
+
+    var result: String? = nil
+    var error: Error? = nil
+    var completionCalled = 0
+
+    f.invoke(p1: "suspend function type") { _result, _error in
+        completionCalled += 1
+        result = _result as? String
+        error = _error
+    }
+
+    try assertEquals(actual: completionCalled, expected: 1)
+    try assertEquals(actual: result, expected: "suspend function type 1")
+    try assertNil(error)
+}
+
+private func testSuspendFunctionType() throws {
+    try testSuspendFunctionType0(f: CoroutinesKt.getSuspendLambda0(), expectedResult: "lambda 0")
+    try testSuspendFunctionType0(f: CoroutinesKt.getSuspendCallableReference0(), expectedResult: "callable reference 0")
+    try testSuspendFunctionType1(f: CoroutinesKt.getSuspendLambda1())
+    try testSuspendFunctionType1(f: CoroutinesKt.getSuspendCallableReference1())
+}
+
+private func testSuspendFunctionSwiftImpl() throws {
+    var result: String? = nil
+    var error: Error? = nil
+    var completionCalled = 0
+
+    CoroutinesKt.invoke1(block: SuspendFunction1SwiftImpl(), argument: "suspend function") { _result, _error in
+        completionCalled += 1
+        result = _result as? String
+        error = _error
+    }
+
+    try assertEquals(actual: completionCalled, expected: 1)
+    try assertEquals(actual: result, expected: "suspend function Swift")
+    try assertNil(error)
+}
+
+private class SuspendFunction1SwiftImpl : KotlinSuspendFunction1 {
+    func invoke(p1: Any?, completionHandler: (Any?, Error?) -> Void) {
+        completionHandler("\(p1 ?? "nil") Swift", nil)
+    }
+}
+
 class CoroutinesTests : SimpleTestProvider {
     override init() {
         super.init()
@@ -263,5 +328,7 @@ class CoroutinesTests : SimpleTestProvider {
         test("TestBridges", testBridges)
         test("TestImplicitThrows1", testImplicitThrows1)
         test("TestImplicitThrows2", testImplicitThrows2)
+        test("TestSuspendFunctionType", testSuspendFunctionType)
+        test("TestSuspendFunctionSwiftImpl", testSuspendFunctionSwiftImpl)
     }
 }
