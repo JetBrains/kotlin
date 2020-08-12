@@ -365,9 +365,7 @@ class LookupUi {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-      if (e.getPlace() == ActionPlaces.EDITOR_POPUP) {
-        delegateAction.actionPerformed(e);
-      }
+      delegateAction.actionPerformed(e);
     }
   }
 
