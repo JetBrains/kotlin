@@ -1,10 +1,11 @@
 package org.jetbrains.dokka.base.transformers.documentables
 
-import org.jetbrains.dokka.DokkaConfiguration
-import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
+import org.jetbrains.dokka.transformers.documentation.perPackageOptions
+import org.jetbrains.dokka.transformers.documentation.source
+import org.jetbrains.dokka.transformers.documentation.sourceSet
 import java.io.File
 
 class SuppressedDocumentableFilterTransformer(val context: DokkaContext) : PreMergeDocumentableTransformer {
@@ -22,7 +23,7 @@ class SuppressedDocumentableFilterTransformer(val context: DokkaContext) : PreMe
     }
 
     private fun filterPackage(pkg: DPackage): DPackage? {
-        val options = pkg.perPackageOptions
+        val options = perPackageOptions(pkg)
         if (options?.suppress == true) {
             return null
         }
@@ -42,10 +43,9 @@ class SuppressedDocumentableFilterTransformer(val context: DokkaContext) : PreMe
 
     private fun isSuppressed(documentable: Documentable): Boolean {
         if (documentable !is WithExpectActual) return false
-        val sourceFile = File(documentable.source.path).absoluteFile
-        return documentable.sourceSet.suppressedFiles.any { suppressedFile ->
+        val sourceFile = File(source(documentable).path).absoluteFile
+        return sourceSet(documentable).suppressedFiles.any { suppressedFile ->
             sourceFile.startsWith(File(suppressedFile).absoluteFile)
         }
     }
-
 }

@@ -3,6 +3,7 @@ package org.jetbrains.dokka.base.transformers.documentables
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
+import org.jetbrains.dokka.transformers.documentation.sourceSet
 
 class EmptyPackagesFilterTransformer(val context: DokkaContext) : PreMergeDocumentableTransformer {
     override fun invoke(modules: List<DModule>): List<DModule> {
@@ -11,7 +12,7 @@ class EmptyPackagesFilterTransformer(val context: DokkaContext) : PreMergeDocume
 
     private fun filterModule(module: DModule): DModule? {
         val nonEmptyPackages = module.packages.filterNot { pkg ->
-            pkg.sourceSet.skipEmptyPackages && pkg.children.isEmpty()
+            sourceSet(pkg).skipEmptyPackages && pkg.children.isEmpty()
         }
 
         return when {
