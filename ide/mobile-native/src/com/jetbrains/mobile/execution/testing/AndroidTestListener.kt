@@ -4,6 +4,7 @@ import com.android.ddmlib.testrunner.ITestRunListener
 import com.android.ddmlib.testrunner.TestIdentifier
 import com.intellij.execution.process.ProcessOutputType
 import com.intellij.execution.testframework.sm.ServiceMessageBuilder
+import com.intellij.openapi.util.text.StringUtil
 import com.jetbrains.mobile.execution.AndroidProcessHandler
 
 class AndroidTestListener(private val handler: AndroidProcessHandler) : ITestRunListener {
@@ -16,7 +17,8 @@ class AndroidTestListener(private val handler: AndroidProcessHandler) : ITestRun
 
     private fun suiteFinished() {
         testSuite?.let {
-            ServiceMessageBuilder.testSuiteFinished(it.first)
+            val fqClassName = it.first
+            ServiceMessageBuilder.testSuiteFinished(StringUtil.getShortName(fqClassName))
                 .addAttribute("duration", (System.currentTimeMillis() - it.second).toString())
                 .send()
         }
@@ -27,10 +29,12 @@ class AndroidTestListener(private val handler: AndroidProcessHandler) : ITestRun
     }
 
     override fun testStarted(test: TestIdentifier) {
-        if (testSuite?.first != test.className) {
+        val fqClassName = test.className
+        if (testSuite?.first != fqClassName) {
             suiteFinished()
-            ServiceMessageBuilder.testSuiteStarted(test.className).send()
-            testSuite = test.className to System.currentTimeMillis()
+            ServiceMessageBuilder.testSuiteStarted(StringUtil.getShortName(fqClassName))
+                .send()
+            testSuite = fqClassName to System.currentTimeMillis()
         }
         testStartedTime = System.currentTimeMillis()
         ServiceMessageBuilder.testStarted(test.testName).send()
