@@ -149,7 +149,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     private var contractDescriptionVisitingMode = false
 
-    protected val any = components.session.builtinTypes.anyType.type
+    private val any = components.session.builtinTypes.anyType.type
     private val nullableNothing = components.session.builtinTypes.nullableNothingType.type
 
     @PrivateForInline
@@ -472,11 +472,18 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
     ) {
         val leftIsNullable = leftOperand.coneType.isMarkedNullable
         val rightIsNullable = rightOperand.coneType.isMarkedNullable
+
         // left == right && right not null -> left != null
+        // [processEqNull] adds both implications: operator call could be true or false. We definitely need the matched case only.
+        fun shouldAddImplicationForStatement(operationStatement: OperationStatement): Boolean {
+            // Only if operation statement is == True, i.e., left == right
+            return (operation.isEq() && operationStatement.operation == Operation.EqTrue) ||
+                    (!operation.isEq() && operationStatement.operation == Operation.EqFalse)
+        }
         when {
             leftIsNullable && rightIsNullable -> return
-            leftIsNullable -> processEqNull(node, leftOperand, operation.invert())
-            rightIsNullable -> processEqNull(node, rightOperand, operation.invert())
+            leftIsNullable -> processEqNull(node, leftOperand, operation.invert(), ::shouldAddImplicationForStatement)
+            rightIsNullable -> processEqNull(node, rightOperand, operation.invert(), ::shouldAddImplicationForStatement)
         }
 
         if (operation == FirOperation.IDENTITY || operation == FirOperation.NOT_IDENTITY) {
@@ -484,7 +491,25 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
     }
 
-    private fun processEqNull(node: EqualityOperatorCallNode, operand: FirExpression, operation: FirOperation) {
+    /*
+     * Process x == null in general: add implications for both cases.
+     * E.g., say d1 is an eq operator call node, d2 represents `x`, the variable inside the operator call. So, d1: x == null
+     * This util adds: "d1 == True -> d2 == null" and "d1 == False -> d2 != null"
+     * so that both branches after the operator call can infer the type of x.
+     *
+     * However, users can specify what conditions are of interest.
+     * E.g., say left == right _and_ right != null, then we can conclude left != null.
+     * In this example, say d1 is an eq operator call (left == right), and d2 is left.
+     * Unlike general cases, we want to add: "d1 == True -> d2 != null", and nothing more because the counter part,
+     * "d1 == False -> d2 == null" doesn't hold. That is, left != right and right != null don't mean left == null. It just means, left is
+     * something different from right, including null. By filtering "d1 == True" condition only, all the remaining logic can be shared.
+     */
+    private fun processEqNull(
+        node: EqualityOperatorCallNode,
+        operand: FirExpression,
+        operation: FirOperation,
+        shouldAddImplicationForStatement: (OperationStatement) -> Boolean = { true }
+    ) {
         val flow = node.flow
         val expressionVariable = variableStorage.createSyntheticVariable(node.fir)
         val operandVariable = variableStorage.getOrCreateVariable(node.previousFlow, operand)
@@ -497,16 +522,28 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         }
 
         logicSystem.approveOperationStatement(flow, predicate).forEach { effect ->
-            flow.addImplication((expressionVariable eq true) implies effect)
-            flow.addImplication((expressionVariable eq false) implies effect.invert())
+            if (shouldAddImplicationForStatement(expressionVariable eq true)) {
+                flow.addImplication((expressionVariable eq true) implies effect)
+            }
+            if (shouldAddImplicationForStatement(expressionVariable eq false)) {
+                flow.addImplication((expressionVariable eq false) implies effect.invert())
+            }
         }
 
-        flow.addImplication((expressionVariable eq isEq) implies (operandVariable eq null))
-        flow.addImplication((expressionVariable notEq isEq) implies (operandVariable notEq null))
+        if (shouldAddImplicationForStatement(expressionVariable eq isEq)) {
+            flow.addImplication((expressionVariable eq isEq) implies (operandVariable eq null))
+        }
+        if (shouldAddImplicationForStatement(expressionVariable notEq isEq)) {
+            flow.addImplication((expressionVariable notEq isEq) implies (operandVariable notEq null))
+        }
 
-        if (operandVariable is RealVariable) {
-            flow.addImplication((expressionVariable eq isEq) implies (operandVariable typeNotEq any))
-            flow.addImplication((expressionVariable notEq isEq) implies (operandVariable typeEq any))
+        if (operandVariable.isReal()) {
+            if (shouldAddImplicationForStatement(expressionVariable eq isEq)) {
+                flow.addImplication((expressionVariable eq isEq) implies (operandVariable typeNotEq any))
+            }
+            if (shouldAddImplicationForStatement(expressionVariable notEq isEq)) {
+                flow.addImplication((expressionVariable notEq isEq) implies (operandVariable typeEq any))
+            }
 
 //            TODO: design do we need casts to Nothing?
 //            flow.addImplication((expressionVariable eq !isEq) implies (operandVariable typeEq nullableNothing))
