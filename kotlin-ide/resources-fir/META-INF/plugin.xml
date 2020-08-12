@@ -201,5 +201,11 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
               implementationClass="org.jetbrains.kotlin.idea.KotlinModuleFileType"
               fieldName="INSTANCE"
               extensions="kotlin_module"/>
+
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.fir.inspections.AddFunctionReturnTypeIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
   </extensions>
 </idea-plugin>
