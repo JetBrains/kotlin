@@ -161,15 +161,20 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         val isSynthetic: Boolean = false,
     )
 
-    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
+    private val potentialBridgeTargets = mutableListOf<IrSimpleFunction>()
+
+    override fun lower(irFile: IrFile) {
+        irFile.transformChildrenVoid()
+        generateBridges()
+        potentialBridgeTargets.clear()
+    }
 
     override fun visitClass(declaration: IrClass): IrStatement {
         // Bridges in DefaultImpl classes are handled in InterfaceLowering.
         if (declaration.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS || declaration.isAnnotationClass)
             return super.visitClass(declaration)
 
-        // We generate bridges directly in the class, so we make a copy of the list of relevant members.
-        val potentialBridgeTargets = declaration.functions.filterTo(mutableListOf(), fun(irFunction: IrSimpleFunction): Boolean {
+        declaration.functions.filterTo(potentialBridgeTargets, fun(irFunction: IrSimpleFunction): Boolean {
             // Only overrides may need bridges and so in particular, private and static functions do not.
             // Note that this includes the static replacements for inline class functions (which are static, but have
             // overriddenSymbols in order to produce correct signatures in the type mapper).
@@ -190,21 +195,25 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             return !irFunction.isFakeOverride || irFunction.resolvesToClass()
         })
 
+        return super.visitClass(declaration)
+    }
+
+    private fun generateBridges() {
         for (member in potentialBridgeTargets) {
-            createBridges(declaration, member)
+            val parent = member.parentAsClass
+            createBridges(parent, member)
 
             // For lambda classes, we move overrides from the `invoke` function to its bridge. This will allow us to avoid boxing
             // the return type of `invoke` in codegen for lambdas with primitive return type. This does not apply to lambdas returning
             // inline class types erasing to Any, which we need to box.
             if (member.name == OperatorNameConventions.INVOKE
-                && (declaration.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL || declaration.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL)
+                && (parent.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL ||
+                        parent.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL)
                 && !member.returnType.isInlineClassErasingToAny
             ) {
-                member.overriddenSymbols = listOf()
+                member.overriddenSymbols = emptyList()
             }
         }
-
-        return super.visitClass(declaration)
     }
 
     private fun createBridges(irClass: IrClass, irFunction: IrSimpleFunction) {
