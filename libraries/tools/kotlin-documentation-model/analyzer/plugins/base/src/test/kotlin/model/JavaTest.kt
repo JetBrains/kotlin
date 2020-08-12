@@ -49,7 +49,7 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
             |class Tested extends Extendable implements Lower { }
         """){
             with((this / "java" / "Tested").cast<DClass>()){
-                extra[ImplementedInterfaces]?.interfaces?.entries?.single()?.value?.map { it.sureClassNames }?.sorted() equals listOf("Highest", "Lower").sorted()
+                extra[ImplementedInterfaces]?.interfaces?.entries?.single()?.value?.map { it.dri.sureClassNames }?.sorted() equals listOf("Highest", "Lower").sorted()
             }
         }
     }
@@ -63,7 +63,7 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
             |class Tested extends Extendable implements Lower { }
         """){
             with((this / "java" / "Tested").cast<DClass>()) {
-                supertypes.entries.single().value.map { it.dri.sureClassNames to it.kind }.sortedBy { it.first } equals listOf("Extendable" to JavaClassKindTypes.CLASS, "Lower" to JavaClassKindTypes.INTERFACE)
+                supertypes.entries.single().value.map { it.typeConstructor.dri.sureClassNames to it.kind }.sortedBy { it.first } equals listOf("Extendable" to JavaClassKindTypes.CLASS, "Lower" to JavaClassKindTypes.INTERFACE)
             }
         }
     }
@@ -98,7 +98,7 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
             with((this / "java" / "Foo").cast<DClass>()) {
                 val sups = listOf("Exception", "Cloneable")
                 assertTrue(
-                    sups.all { s -> supertypes.values.flatten().any { it.dri.classNames == s } })
+                    sups.all { s -> supertypes.values.flatten().any { it.typeConstructor.dri.classNames == s } })
                 "Foo must extend ${sups.joinToString(", ")}"
             }
         }

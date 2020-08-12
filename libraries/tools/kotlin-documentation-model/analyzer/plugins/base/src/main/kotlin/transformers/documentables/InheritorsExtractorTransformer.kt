@@ -63,7 +63,7 @@ class InheritorsExtractorTransformer : DocumentableTransformer {
 
     private fun <T : Documentable> T.toInheritanceEntries() =
         (this as? WithSupertypes)?.let {
-            it.supertypes.map { (k, v) -> k to v.map { it.dri to dri } }
+            it.supertypes.map { (k, v) -> k to v.map { it.typeConstructor.dri to dri } }
         }.orEmpty()
 
 }
