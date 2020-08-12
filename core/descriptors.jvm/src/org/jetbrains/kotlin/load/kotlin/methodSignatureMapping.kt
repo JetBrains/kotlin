@@ -50,7 +50,7 @@ fun FunctionDescriptor.computeJvmDescriptor(withReturnType: Boolean = true, with
 fun forceSingleValueParameterBoxing(f: CallableDescriptor): Boolean {
     if (f !is FunctionDescriptor) return false
 
-    if (f.valueParameters.size != 1 || f.isFromJavaOrBuiltins() || f.name.asString() != "remove") return false
+    if (f.name.asString() != "remove" || f.valueParameters.size != 1 || f.isFromJavaOrBuiltins()) return false
     if ((f.original.valueParameters.single().type.mapToJvmType() as? JvmType.Primitive)?.jvmPrimitiveType != JvmPrimitiveType.INT) return false
 
     val overridden =

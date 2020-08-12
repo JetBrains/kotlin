@@ -228,7 +228,9 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
                 else -> JvmMethodParameterKind.VALUE
             }
             val type =
-                if (forceSingleValueParameterBoxing(function.toIrBasedDescriptor())) parameter.type.makeNullable() else parameter.type
+                if (function.name.asString() == "remove" && forceSingleValueParameterBoxing(function.toIrBasedDescriptor()))
+                    parameter.type.makeNullable()
+                else parameter.type
             writeParameter(sw, kind, type, function)
         }
 
