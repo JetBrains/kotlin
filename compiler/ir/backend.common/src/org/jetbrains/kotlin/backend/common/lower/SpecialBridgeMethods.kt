@@ -60,7 +60,7 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
     private fun getSecondArg(bridge: IrSimpleFunction) =
         IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, bridge.valueParameters[1].symbol)
 
-    private val SPECIAL_METHODS_WITH_DEFAULTS_MAP = mapOf(
+    private val specialMethodsWithDefaults = mapOf(
         makeDescription(KotlinBuiltIns.FQ_NAMES.collection, "contains", 1) to
                 SpecialMethodWithDefaultInfo(::constFalse, 1),
         makeDescription(KotlinBuiltIns.FQ_NAMES.mutableCollection, "remove", 1) to
@@ -83,7 +83,7 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
                 SpecialMethodWithDefaultInfo(::constNull, 1, needsGenericSignature = true)
     )
 
-    private val SPECIAL_PROPERTIES_SET = mapOf(
+    private val specialProperties = mapOf(
         makeDescription(KotlinBuiltIns.FQ_NAMES.collection, "size") to BuiltInWithDifferentJvmName(),
         makeDescription(KotlinBuiltIns.FQ_NAMES.map, "size") to BuiltInWithDifferentJvmName(),
         makeDescription(KotlinBuiltIns.FQ_NAMES.charSequence.toSafe(), "length") to BuiltInWithDifferentJvmName(),
@@ -92,7 +92,7 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
         makeDescription(KotlinBuiltIns.FQ_NAMES.map, "entries") to BuiltInWithDifferentJvmName(needsGenericSignature = true)
     )
 
-    private val SPECIAL_METHODS_SETS = mapOf(
+    private val specialMethods = mapOf(
         makeDescription(KotlinBuiltIns.FQ_NAMES.number.toSafe(), "toByte") to BuiltInWithDifferentJvmName(),
         makeDescription(KotlinBuiltIns.FQ_NAMES.number.toSafe(), "toShort") to BuiltInWithDifferentJvmName(),
         makeDescription(KotlinBuiltIns.FQ_NAMES.number.toSafe(), "toInt") to BuiltInWithDifferentJvmName(),
@@ -103,10 +103,13 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
         makeDescription(KotlinBuiltIns.FQ_NAMES.mutableList, "removeAt", 1) to BuiltInWithDifferentJvmName(needsGenericSignature = true)
     )
 
+    val specialMethodNames = (specialMethodsWithDefaults + specialMethods).map { (description) -> description.name }.toHashSet()
+    val specialPropertyNames = specialProperties.map { (description) -> description.name }.toHashSet()
+
     fun findSpecialWithOverride(irFunction: IrSimpleFunction): Pair<IrSimpleFunction, SpecialMethodWithDefaultInfo>? {
         irFunction.allOverridden().forEach { overridden ->
             val description = overridden.toDescription()
-            SPECIAL_METHODS_WITH_DEFAULTS_MAP[description]?.let {
+            specialMethodsWithDefaults[description]?.let {
                 return Pair(overridden, it)
             }
         }
@@ -115,7 +118,7 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
 
     fun getSpecialMethodInfo(irFunction: IrSimpleFunction): SpecialMethodWithDefaultInfo? {
         val description = irFunction.toDescription()
-        return SPECIAL_METHODS_WITH_DEFAULTS_MAP[description]
+        return specialMethodsWithDefaults[description]
     }
 
     fun getBuiltInWithDifferentJvmName(irFunction: IrSimpleFunction): BuiltInWithDifferentJvmName? {
@@ -123,10 +126,10 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
             val classFqName = irFunction.parentAsClass.fqNameWhenAvailable
                 ?: return null
 
-            return SPECIAL_PROPERTIES_SET[makeDescription(classFqName, it.owner.name.asString())]
+            return specialProperties[makeDescription(classFqName, it.owner.name.asString())]
         }
 
-        return SPECIAL_METHODS_SETS[irFunction.toDescription()]
+        return specialMethods[irFunction.toDescription()]
     }
 }
 
