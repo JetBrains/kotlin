@@ -13,10 +13,9 @@ job("GitHub PRs => Space MRs") {
           .createMergeRequest(
             title = pullRequestUrl,
             sourceBranch = api.gitBranch(),
-            targetBranch = "master",
+            targetBranch = System.getProperty("space.system.branch"),
             project = api.projectIdentifier(),
-            // TODO: SPACE-10321
-            repository = "kotlin-ide"
+            repository = System.getProperty("space.system.repository")
           )
       }
     }
