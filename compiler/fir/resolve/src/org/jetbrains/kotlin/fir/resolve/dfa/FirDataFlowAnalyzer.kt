@@ -835,7 +835,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         contractDescriptionVisitingMode = false
     }
 
-    fun exitConstExpresion(constExpression: FirConstExpression<*>) {
+    fun exitConstExpression(constExpression: FirConstExpression<*>) {
         if (constExpression.resultType is FirResolvedTypeRef && !contractDescriptionVisitingMode) return
         graphBuilder.exitConstExpresion(constExpression).mergeIncomingFlow()
     }

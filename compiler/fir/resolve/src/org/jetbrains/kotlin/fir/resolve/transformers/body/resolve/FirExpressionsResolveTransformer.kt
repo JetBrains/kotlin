@@ -702,7 +702,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     if (newConstKind == null) {
                         @Suppress("UNCHECKED_CAST")
                         constExpression.replaceKind(FirConstKind.Int as FirConstKind<T>)
-                        dataFlowAnalyzer.exitConstExpresion(constExpression as FirConstExpression<*>)
+                        dataFlowAnalyzer.exitConstExpression(constExpression as FirConstExpression<*>)
                         constExpression.resultType = buildErrorTypeRef {
                             source = constExpression.source
                             diagnostic = ConeTypeMismatchError(expectedType, integerLiteralType.getApproximatedType())
@@ -719,7 +719,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             else -> kind.expectedConeType()
         }
 
-        dataFlowAnalyzer.exitConstExpresion(constExpression as FirConstExpression<*>)
+        dataFlowAnalyzer.exitConstExpression(constExpression as FirConstExpression<*>)
         constExpression.resultType = constExpression.resultType.resolvedTypeFromPrototype(type)
         return constExpression.compose()
     }
