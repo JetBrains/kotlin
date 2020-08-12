@@ -53,7 +53,6 @@ class CodeToInlineBuilder(
         analyze: (KtExpression) -> BindingContext,
         reformat: Boolean,
         contextDeclaration: KtDeclaration? = null,
-        returnType: KotlinType? = null,
     ): CodeToInline {
         val alwaysKeepMainExpression =
             when (val descriptor = mainExpression?.getResolvedCall(analyze(mainExpression))?.resultingDescriptor) {
@@ -79,14 +78,16 @@ class CodeToInlineBuilder(
 
         when {
             mainExpression == null -> Unit
-            mainExpression.isNull() && returnType != null -> codeToInline.replaceExpression(
-                mainExpression,
-                KtPsiFactory(mainExpression).createExpression(
-                    "null as ${
-                        IdeDescriptorRenderers.FQ_NAMES_IN_TYPES_WITH_NORMALIZER.renderType(returnType)
-                    }"
-                ),
-            )
+            mainExpression.isNull() -> targetCallable.returnType?.let { returnType ->
+                codeToInline.replaceExpression(
+                    mainExpression,
+                    KtPsiFactory(mainExpression).createExpression(
+                        "null as ${
+                            IdeDescriptorRenderers.FQ_NAMES_IN_TYPES_WITH_NORMALIZER.renderType(returnType)
+                        }"
+                    ),
+                )
+            }
 
             else -> {
                 val functionLiteralExpression = mainExpression.unpackFunctionLiteral(true)

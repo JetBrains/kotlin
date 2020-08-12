@@ -85,8 +85,7 @@ internal fun buildCodeToInline(
             statements.dropLast(returnStatements.size),
             ::analyzeExpressionInContext,
             reformat = true,
-            declaration,
-            returnType,
+            contextDeclaration = declaration,
         )
     } else {
         return builder.prepareCodeToInline(
@@ -94,8 +93,7 @@ internal fun buildCodeToInline(
             emptyList(),
             ::analyzeExpressionInContext,
             reformat = true,
-            declaration,
-            returnType,
+            contextDeclaration = declaration,
         )
     }
 }
