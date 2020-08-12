@@ -14,7 +14,7 @@
       </configuration>
     </facet>
   </component>
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8" inherit-compiler-output="true">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$/../completion">
       <sourceFolder url="file://$MODULE_DIR$/../completion/resources" type="java-resource" />
@@ -34,7 +34,7 @@
     <content url="file://$MODULE_DIR$/../resources-descriptors">
       <sourceFolder url="file://$MODULE_DIR$/../resources-descriptors" type="java-resource" />
     </content>
-    <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="kotlinc.kotlin-compiler" level="project" />
     <orderEntry type="library" name="kotlinc.kotlin-stdlib-jdk8" level="project" />
