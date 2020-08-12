@@ -1,0 +1,16 @@
+class Chain
+
+fun complicate(chain: Chain) {
+    val fn = fun Chain.(): Chain {
+        return this
+    }
+    println(fn(chain))
+    print(fn(chain))
+    val vra = chain
+    val fn1 = fun Chain.(): Chain {
+        return Chain()
+    }
+    println(fn1(chain))
+    print(fn1(chain))
+    val vrb = chain
+}

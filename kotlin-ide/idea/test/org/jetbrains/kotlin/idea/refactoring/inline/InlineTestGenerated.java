@@ -351,6 +351,21 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 runTest("testData/refactoring/inline/function/expressionBody/LambdaGeneric.kt");
             }
 
+            @TestMetadata("LambdaWithReceiverAsParameter.kt")
+            public void testLambdaWithReceiverAsParameter() throws Exception {
+                runTest("testData/refactoring/inline/function/expressionBody/LambdaWithReceiverAsParameter.kt");
+            }
+
+            @TestMetadata("LambdaWithReceiverAsParameter2.kt")
+            public void testLambdaWithReceiverAsParameter2() throws Exception {
+                runTest("testData/refactoring/inline/function/expressionBody/LambdaWithReceiverAsParameter2.kt");
+            }
+
+            @TestMetadata("LambdaWithReceiverAsParameter3.kt")
+            public void testLambdaWithReceiverAsParameter3() throws Exception {
+                runTest("testData/refactoring/inline/function/expressionBody/LambdaWithReceiverAsParameter3.kt");
+            }
+
             @TestMetadata("ManyParams.kt")
             public void testManyParams() throws Exception {
                 runTest("testData/refactoring/inline/function/expressionBody/ManyParams.kt");

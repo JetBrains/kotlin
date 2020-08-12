@@ -9,6 +9,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.rename.RenameProcessor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
@@ -17,7 +18,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.inspections.RedundantUnitExpressionInspection
 import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArgumentsIntention
+import org.jetbrains.kotlin.idea.intentions.LambdaToAnonymousFunctionIntention
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
@@ -381,10 +384,18 @@ class CodeInliner<TCallElement : KtElement>(
                 val valueArgument = resolvedArgument.valueArgument
                 val expression = valueArgument?.getArgumentExpression()
                 expression?.mark(USER_CODE_KEY) ?: return null
-                if (valueArgument is LambdaArgument) {
+                val expressionType = bindingContext.getType(expression)
+                val resultExpression = kotlin.run {
+                    if (valueArgument !is LambdaArgument) return@run null
                     expression.mark(WAS_FUNCTION_LITERAL_ARGUMENT_KEY)
-                }
-                return Argument(expression, bindingContext.getType(expression), isNamed = valueArgument.isNamed())
+
+                    if (expression !is KtLambdaExpression || !parameter.type.isExtensionFunctionType) return@run null
+                    expression.functionLiteral.descriptor?.safeAs<FunctionDescriptor>()?.let { descriptor ->
+                        LambdaToAnonymousFunctionIntention.convertLambdaToFunction(expression, descriptor)
+                    }
+                } ?: expression
+
+                return Argument(resultExpression, expressionType, isNamed = valueArgument.isNamed())
             }
 
             is DefaultValueArgument -> {
