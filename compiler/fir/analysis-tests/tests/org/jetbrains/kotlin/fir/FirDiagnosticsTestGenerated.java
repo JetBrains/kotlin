@@ -1021,6 +1021,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/projectionsOnNonClassTypeArguments.kt");
         }
 
+        @TestMetadata("propertyTypeMismatchOnOverride.kt")
+        public void testPropertyTypeMismatchOnOverride() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/propertyTypeMismatchOnOverride.kt");
+        }
+
         @TestMetadata("qualifiedSupertypeExtendedByOtherSupertype.kt")
         public void testQualifiedSupertypeExtendedByOtherSupertype() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/qualifiedSupertypeExtendedByOtherSupertype.kt");
@@ -1044,6 +1049,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         @TestMetadata("sealedSupertype.kt")
         public void testSealedSupertype() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/sealedSupertype.kt");
+        }
+
+        @TestMetadata("returnTypeMismatchOnOverride.kt")
+        public void testReturnTypeMismatchOnOverride() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/returnTypeMismatchOnOverride.kt");
         }
 
         @TestMetadata("superIsNotAnExpression.kt")

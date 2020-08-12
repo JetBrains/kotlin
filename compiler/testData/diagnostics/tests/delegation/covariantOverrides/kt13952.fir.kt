@@ -13,5 +13,5 @@ object AImpl : IA {
 open class C : IA by AImpl, IB
 
 class D : C() {
-    override fun foo(): Double = 3.14
+    override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Double<!> = 3.14
 }
