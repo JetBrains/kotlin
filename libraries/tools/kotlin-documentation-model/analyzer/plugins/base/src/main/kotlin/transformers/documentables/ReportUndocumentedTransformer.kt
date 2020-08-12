@@ -19,14 +19,14 @@ internal class ReportUndocumentedTransformer : DocumentableTransformer {
 
     private fun invoke(documentable: Documentable, context: DokkaContext) {
         documentable.sourceSets.forEach { sourceSet ->
-            if (shouldBeReportedIfNotDocumented(documentable, sourceSet, context)) {
+            if (shouldBeReportedIfNotDocumented(documentable, sourceSet)) {
                 reportIfUndocumented(context, documentable, sourceSet)
             }
         }
     }
 
     private fun shouldBeReportedIfNotDocumented(
-        documentable: Documentable, sourceSet: DokkaSourceSet, context: DokkaContext
+        documentable: Documentable, sourceSet: DokkaSourceSet
     ): Boolean {
         val packageOptionsOrNull = packageOptionsOrNull(sourceSet, documentable)
 
