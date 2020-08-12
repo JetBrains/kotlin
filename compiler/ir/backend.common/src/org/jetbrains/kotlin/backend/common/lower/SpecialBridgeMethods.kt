@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.ir.allOverridden
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -107,7 +108,7 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
     val specialPropertyNames = specialProperties.map { (description) -> description.name }.toHashSet()
 
     fun findSpecialWithOverride(irFunction: IrSimpleFunction): Pair<IrSimpleFunction, SpecialMethodWithDefaultInfo>? {
-        irFunction.allOverridden().forEach { overridden ->
+        for (overridden in irFunction.allOverridden()) {
             val description = overridden.toDescription()
             specialMethodsWithDefaults[description]?.let {
                 return Pair(overridden, it)
@@ -131,19 +132,4 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
 
         return specialMethods[irFunction.toDescription()]
     }
-}
-
-fun IrSimpleFunction.allOverridden(includeSelf: Boolean = false): Sequence<IrSimpleFunction> {
-    val visited = mutableSetOf<IrSimpleFunction>()
-
-    fun IrSimpleFunction.search(): Sequence<IrSimpleFunction> {
-        if (this in visited) return emptySequence()
-        return sequence {
-            yield(this@search)
-            visited.add(this@search)
-            overriddenSymbols.forEach { yieldAll(it.owner.search()) }
-        }
-    }
-
-    return if (includeSelf) search() else search().drop(1)
 }

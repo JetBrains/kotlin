@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.allOverridden
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.backend.common.ir.isStatic
@@ -294,7 +295,9 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         // Generate common bridges
         val generated = mutableMapOf<Method, Bridge>()
 
-        irFunction.allOverridden().filter { !it.isFakeOverride }.forEach { override ->
+        for (override in irFunction.allOverridden()) {
+            if (override.isFakeOverride) continue
+
             val signature = override.jvmMethod
             if (targetMethod != signature && signature !in blacklist) {
                 generated.getOrPut(signature) {
@@ -338,8 +341,8 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             it.specialBridgeOrNull?.signature?.takeIf { bridgeSignature -> bridgeSignature != it.jvmMethod }
     }
 
-    // Sequence of special bridge methods which were not implemented in Kotlin superclasses.
-    private fun IrSimpleFunction.overriddenSpecialBridges(): Sequence<SpecialBridge> = allOverridden().mapNotNull {
+    // List of special bridge methods which were not implemented in Kotlin superclasses.
+    private fun IrSimpleFunction.overriddenSpecialBridges(): List<SpecialBridge> = allOverridden().mapNotNull {
         if (it.parentAsClass.isInterface || it.comesFromJava())
             it.specialBridgeOrNull?.takeIf { bridge -> bridge.signature != jvmMethod }
                 ?.copy(isFinal = false, isSynthetic = true, methodInfo = null)
@@ -386,7 +389,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                 function.owner.safeAs<IrSimpleFunction>()?.overriddenSymbols ?: emptyList()
             }
             val redundantOverrides = inheritedOverrides.flatMapTo(mutableSetOf()) {
-                it.owner.allOverridden().map { override -> override.symbol }.asIterable()
+                it.owner.allOverridden().map { override -> override.symbol }
             }
             overriddenSymbols = inheritedOverrides.filter { it !in redundantOverrides }
         }
