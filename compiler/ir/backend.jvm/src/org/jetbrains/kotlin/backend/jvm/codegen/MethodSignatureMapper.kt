@@ -33,9 +33,7 @@ import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.descriptors.IrBasedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.*
@@ -300,26 +298,15 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
             if (valueArgumentsCount > 0) (getValueArgument(0) as? IrConst<*>)?.value as? Boolean ?: true else null
         }
 
-    private fun IrFunctionAccessExpression.computeCalleeParent(): IrClass {
-        if (this is IrCall) {
-            superQualifierSymbol?.let { return it.owner }
-        }
-        return dispatchReceiver?.type?.classOrNull?.owner
-            ?: symbol.owner.parentAsClass // Static call or type parameter
-    }
-
-    fun mapToCallableMethod(caller: IrFunction, expression: IrFunctionAccessExpression): IrCallableMethod {
+    fun mapToCallableMethod(caller: IrFunction, expression: IrCall): IrCallableMethod {
         val callee = expression.symbol.owner
-        val calleeParent = expression.computeCalleeParent()
+        val calleeParent = expression.superQualifierSymbol?.owner
+            ?: expression.dispatchReceiver?.type?.classOrNull?.owner
+            ?: callee.parentAsClass // Static call or type parameter
         val owner = typeMapper.mapOwner(calleeParent)
 
-        if (callee !is IrSimpleFunction) {
-            check(callee is IrConstructor) { "Function must be a simple function or a constructor: ${callee.render()}" }
-            return IrCallableMethod(owner, Opcodes.INVOKESPECIAL, mapSignatureSkipGeneric(callee), false)
-        }
-
         val isInterface = calleeParent.isJvmInterface
-        val isSuperCall = (expression as? IrCall)?.superQualifierSymbol != null
+        val isSuperCall = expression.superQualifierSymbol != null
 
         val invokeOpcode = when {
             callee.dispatchReceiverParameter == null -> Opcodes.INVOKESTATIC

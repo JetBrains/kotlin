@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -66,9 +65,6 @@ abstract class PromisedValue(val codegen: ExpressionCodegen, val type: Type, val
 
     val typeMapper: IrTypeMapper
         get() = codegen.typeMapper
-
-    val kotlinType: KotlinType
-        get() = irType.toKotlinType()
 }
 
 // A value that *has* been fully constructed.
