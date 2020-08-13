@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.frontend.api.components.*
 import org.jetbrains.kotlin.idea.frontend.api.scopes.*
@@ -68,7 +69,8 @@ abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTo
 
     fun KtType.getTypeScope(): KtScope? = scopeProvider.getTypeScope(this)
 
-    fun KtFile.getScopeContextForPosition(positionInFakeFile: KtElement): KtScopeContext = scopeProvider.getScopeContextForPosition(this, positionInFakeFile)
+    fun KtFile.getScopeContextForPosition(originalPosition: PsiElement?, positionInFakeFile: KtElement): KtScopeContext =
+        scopeProvider.getScopeContextForPosition(this, originalPosition, positionInFakeFile)
 
     fun KtDeclaration.getSymbol(): KtSymbol = symbolProvider.getSymbol(this)
 

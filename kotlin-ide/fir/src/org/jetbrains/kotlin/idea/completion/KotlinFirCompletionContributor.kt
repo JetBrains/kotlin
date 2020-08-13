@@ -43,7 +43,7 @@ private object KotlinHighLevelApiContributor : CompletionProvider<CompletionPara
         val possibleReceiver = nameExpression.getQualifiedExpressionForSelector()?.receiverExpression
 
         with(getAnalysisSessionFor(originalFile).createContextDependentCopy()) {
-            val (implicitScopes, implicitReceivers) = originalFile.getScopeContextForPosition(nameExpression)
+            val (implicitScopes, implicitReceivers) = originalFile.getScopeContextForPosition(parameters.originalPosition, nameExpression)
 
             val typeOfPossibleReceiver = possibleReceiver?.getKtType()
             val possibleReceiverScope = typeOfPossibleReceiver?.let { it.getTypeScope() }
