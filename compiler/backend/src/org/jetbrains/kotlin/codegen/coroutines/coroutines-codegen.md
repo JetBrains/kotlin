@@ -286,3 +286,79 @@ generate state machine during a lowering, there are suspend inline functions in 
 Well, we can, if the function does not inline other functions. Nevertheless, there is much work to do in the new back-end, and generating a 
 state-machine during the lowering is a part of it.
 
+### Continuation Passing Style
+The section about state-machines touched upon the `COROUTINE_SUSPENDED` marker and said that suspending functions and lambdas return the 
+marker when they suspend. Consequently, every suspend function return `returnType | COROUTINE_SUSPENDED`
+union type. However, since neither Kotlin nor JVM support union types, every coroutine's return type is `Any?` (also known as 
+`java.lang.Object`) at runtime.
+
+Let's now look to resume process closely. Suppose we have a couple of coroutines, one of them calls the other:
+```kotlin
+fun main() {
+    val a: suspend () -> Unit = { suspendMe() }
+    val b: suspend () -> Unit = { a() }
+    builder { b() }
+    c?.resume(Unit)
+}
+```
+`suspendMe` here, as in the previous example, suspends. Stack trace inside `suspendMe` look like (skipping non-relevant parts)
+```text
+suspendMe
+main$a$1.invokeSuspend
+main$a$1.invoke
+main$b$1.invokeSuspend
+main$b$1.invoke
+// ...
+builder
+main
+```
+as one can see, everything is as expected. `main` calls `builder`, which in turns calls `b.invoke`, and so on until `suspendMe`. Since
+ `suspendMe` suspends, it returns `COROUTINE_SUSPENDED` to `a`'s `invokeSuspend`. As explained in the state-machine section checks, the 
+ caller checks that `suspendMe` returns `COROUTINE_SUSPENDED` and, in turn, returns `COROUTINE_SUSPENDED`. The same happens in all functions 
+ in call-stack in reverse order.
+
+With the suspension process explained and out of the way, its counterpart - resumption - is next. When we call `c?.resume(Unit)`. `c` is, 
+technically, `a`, since `suspendMe` is a tail-call function (more on that in the relevant section). `resume` calls 
+`BaseContinuationImpl.resumeWith`. `BaseContinuationImpl` is a superclass of all coroutines, not user-accessible, but used for almost 
+everything coroutines-related that requires a class. It is the core of coroutine machinery, responsible for the resumption process. 
+`BaseContinuationImpl`, in turn, calls `a`'s `invokeSuspend`.
+
+So, when we call `c?.resume(Unit)`, the stacktrace becomes
+```text
+main$a$1.invokeSuspend
+BaseContinuationImpl.resumeWith
+main
+```
+
+Now `a` continues its execution and returns `Unit`. But the execution returns to `BaseContinuationImpl.resumeWith`. However, we need to 
+continue the execution of `b` since `b` called `a`. In other words, we need to store a link to `b` somewhere in `a`, so then, inside 
+`BaseContinuationImpl.resumeWith`, we can call `b`'s `resumeWith`, which then resumes the execution of `b`. Remember, `b` is a coroutine, 
+and all coroutines inherit `BaseContinuationImpl`, which has the method `resumeWith`. Thus, we need to pass `b` to `a`. The only place where 
+we can pass `b` to `a` is the `invoke` function call. So, we add a parameter to `invoke`. `a.invoke`'s signature becomes
+```kotlin
+fun invoke(c: Continuation<Unit>): Any?
+```
+
+`Continuation` is a superinterface of all coroutines (unlike `BaseContinuationImpl`, it is user-accessible), in this case, suspend lambdas. 
+It is at the top of the inheritance chain. The type parameter of continuation is the old return type of suspending lambda.
+The type parameter is the same as the type parameter of
+`resumeWith`'s `Result` parameter: `resumeWith(result: Result<Unit>)`. One might recall from the `builder` example in the suspending lambda 
+section, where we create a continuation object. The object overrides `resumeWith` with the same signature.
+
+Adding the `continuation` parameter to suspend lambdas and functions is known as Continuation-Passing Style, the style actively used in 
+lisps. For example, in Scheme, if a function returns a value in a continuation-passing style, it passes the value to the continuation 
+parameter. So, a function accepts the continuation parameter, and the caller passes the continuation by calling `call/cc` intrinsic. The
+ same happens in Kotlin with passing return value to caller's continuation's `resumeWith`. However, unlike Scheme, Kotlin does not use 
+ something like `call/cc`. Every coroutine already has a continuation. The caller passes it to the callee as an argument. Since the 
+ coroutine passes the return value to `resumeWith`, its parameter has the same type as the return type of the coroutine. Technically, the 
+ type is `Result<T>`, but it is just a union `T | Throwable`; in this case, `T` is `Unit`. The next section uses return types other than 
+ `Unit` to illustrate how to resume a coroutine with a value. The other part, `Throwable`, is for resuming a coroutine with an exception 
+ and is explained in the relevant section.
+
+After we passed parent coroutine's continuation to a child coroutine, we need to store it somewhere. Since "parent coroutine's 
+continuation" is quite long and mouthful for a name, we call it 'completion'. We chose this name because the coroutine calls it upon the 
+completion.
+
+Since we add a continuation parameter to each suspend function and lambda, we cannot call suspending functions or lambdas
+from ordinary functions, and we cannot call them by passing null as the parameter since the coroutine call `resumeWith` on it. Instead, we 
+should use coroutine builders, which provide root continuation and start the coroutine. That is the reason for the two worlds model.
