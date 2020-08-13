@@ -460,7 +460,7 @@ public class KotlinTestUtils {
         }
         assert lastChild != null;
 
-        List<String> comments = ContainerUtil.newArrayList();
+        List<String> comments = new ArrayList<>();
 
         while (true) {
             if (lastChild.getNode().getElementType().equals(KtTokens.BLOCK_COMMENT)) {
