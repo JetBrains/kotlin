@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 
 abstract class AbstractMemberScopeByFqNameTest : AbstractSymbolsByFqNameBuildingTest() {
-    override fun createSymbols(symbolData: SymbolData, analysisSession: KtAnalysisSession): List<KtSymbol> {
-        val symbols = symbolData.toSymbols(analysisSession)
+    override fun KtAnalysisSession.createSymbols(symbolData: SymbolData): List<KtSymbol> {
+        val symbols = with(symbolData) { toSymbols() }
         val classSymbol = symbols.singleOrNull() as? KtClassOrObjectSymbol ?: error("Should be a single class symbol, but $symbols found")
-        return analysisSession.scopeProvider.getMemberScope(classSymbol).getAllSymbols().toList()
+        return classSymbol.getMemberScope().getAllSymbols().toList()
     }
 }

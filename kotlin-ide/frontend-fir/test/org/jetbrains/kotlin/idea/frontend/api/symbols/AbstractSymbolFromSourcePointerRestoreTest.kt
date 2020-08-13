@@ -13,6 +13,6 @@ import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 abstract class AbstractSymbolFromSourcePointerRestoreTest : AbstractSymbolPointerRestoreTest() {
     override fun KtAnalysisSession.collectSymbols(filePath: String, ktFile: KtFile): List<KtSymbol> =
         ktFile.collectDescendantsOfType<KtDeclaration>().map { declaration ->
-            symbolProvider.getSymbol(declaration)
+            declaration.getSymbol()
         }
 }

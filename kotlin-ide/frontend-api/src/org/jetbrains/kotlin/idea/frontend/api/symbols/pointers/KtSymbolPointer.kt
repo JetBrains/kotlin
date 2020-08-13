@@ -26,7 +26,10 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 abstract class KtSymbolPointer<out S : KtSymbol> {
     /**
      * @return restored symbol (possibly the new symbol instance) if one is still valid, `null` otherwise
+     *
+     * Consider using [org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession.restoreSymbol]
      */
+    @Deprecated("Consider using org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession.restoreSymbol")
     abstract fun restoreSymbol(analysisSession: KtAnalysisSession): S?
 }
 

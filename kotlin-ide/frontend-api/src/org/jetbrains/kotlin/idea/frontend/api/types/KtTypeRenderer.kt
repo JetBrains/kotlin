@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.types
 import org.jetbrains.kotlin.idea.frontend.api.*
 import org.jetbrains.kotlin.name.ClassId
 
-object KtTypeRenderer {
+private object KtTypeRenderer {
     fun render(type: KtType, options: KtTypeRendererOptions = KtTypeRendererOptions.DEFAULT): String = type.withValidityAssertion {
         buildString { render(type, options) }
     }
@@ -109,3 +109,7 @@ data class KtTypeRendererOptions(
         )
     }
 }
+
+fun KtType.render(options: KtTypeRendererOptions = KtTypeRendererOptions.DEFAULT): String =
+    KtTypeRenderer.render(this, options)
+

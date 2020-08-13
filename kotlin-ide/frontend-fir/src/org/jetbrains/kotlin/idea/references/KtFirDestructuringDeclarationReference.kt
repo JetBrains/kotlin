@@ -20,10 +20,10 @@ class KtFirDestructuringDeclarationReference(
 ) : KtDestructuringDeclarationReference(element), KtFirReference {
     override fun canRename(): Boolean = false //todo
 
-    override fun resolveToSymbols(analysisSession: KtAnalysisSession): Collection<KtSymbol> {
-        check(analysisSession is KtFirAnalysisSession)
-        val fir = expression.getOrBuildFirSafe<FirProperty>(analysisSession.firResolveState) ?: return emptyList()
+    override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
+        check(this is KtFirAnalysisSession)
+        val fir = expression.getOrBuildFirSafe<FirProperty>(firResolveState) ?: return emptyList()
         val componentFunctionSymbol = (fir.initializer as? FirComponentCall)?.getCalleeSymbol() ?: return emptyList()
-        return listOfNotNull(componentFunctionSymbol.fir.buildSymbol(analysisSession.firSymbolBuilder))
+        return listOfNotNull(componentFunctionSymbol.fir.buildSymbol(firSymbolBuilder))
     }
 }

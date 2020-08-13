@@ -17,7 +17,7 @@ class KtPsiBasedSymbolPointer<S : KtSymbol>(private val psiPointer: SmartPsiElem
         val psi = psiPointer.element ?: return null
 
         @Suppress("UNCHECKED_CAST")
-        return analysisSession.symbolProvider.getSymbol(psi) as S?
+        return with(analysisSession) { psi.getSymbol() } as S?
     }
 
     companion object {

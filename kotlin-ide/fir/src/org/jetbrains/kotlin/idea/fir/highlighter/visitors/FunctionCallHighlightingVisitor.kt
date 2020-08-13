@@ -21,13 +21,13 @@ internal class FunctionCallHighlightingVisitor(
     analysisSession: KtAnalysisSession,
     holder: AnnotationHolder
 ) : FirAfterResolveHighlightingVisitor(analysisSession, holder) {
-    override fun visitBinaryExpression(expression: KtBinaryExpression) {
+    override fun visitBinaryExpression(expression: KtBinaryExpression) = with(analysisSession) {
         (expression.operationReference as? KtReferenceExpression)
             ?.takeIf {
                 // do not highlight assignment statement
                 (it as? KtOperationReferenceExpression)?.operationSignTokenType != KtTokens.EQ
             }?.let { callee ->
-                analysisSession.resolveCall(expression)
+                expression.resolveCall()
                     ?.takeIf { callInfo ->
                         // ignore arithmetic-like operator calls
                         (callInfo.targetFunction as? KtFunctionSymbol)?.isOperator != true
@@ -41,12 +41,12 @@ internal class FunctionCallHighlightingVisitor(
         super.visitBinaryExpression(expression)
     }
 
-    override fun visitCallExpression(expression: KtCallExpression) {
+    override fun visitCallExpression(expression: KtCallExpression) = with(analysisSession) {
         expression.calleeExpression
             ?.takeUnless { it is KtLambdaExpression }
-            ?.takeUnless { it is KtCallExpression /* KT-16159 */}
+            ?.takeUnless { it is KtCallExpression /* KT-16159 */ }
             ?.let { callee ->
-                analysisSession.resolveCall(expression)?.let { callInfo ->
+                expression.resolveCall()?.let { callInfo ->
                     getTextAttributesForCal(callInfo)?.let { attributes ->
                         highlightName(callee, attributes)
                     }

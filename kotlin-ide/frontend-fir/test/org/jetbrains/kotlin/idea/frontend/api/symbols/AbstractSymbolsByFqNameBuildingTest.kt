@@ -10,6 +10,6 @@ import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.SymbolData
 
 abstract class AbstractSymbolsByFqNameBuildingTest : AbstractSymbolByFqNameTest() {
-    override fun createSymbols(symbolData: SymbolData, analysisSession: KtAnalysisSession): List<KtSymbol> =
-        symbolData.toSymbols(analysisSession)
+    override fun KtAnalysisSession.createSymbols(symbolData: SymbolData): List<KtSymbol> =
+        with(symbolData) { toSymbols() }
 }

@@ -3,10 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.frontend.api.fir.scopes
+package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -21,10 +20,20 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.idea.fir.getOrBuildFirOfType
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
+import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
+import org.jetbrains.kotlin.idea.frontend.api.components.KtScopeContext
+import org.jetbrains.kotlin.idea.frontend.api.components.KtScopeProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.FirScopeRegistry
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.idea.frontend.api.fir.scopes.*
+import org.jetbrains.kotlin.idea.frontend.api.fir.scopes.KtFirDeclaredMemberScope
+import org.jetbrains.kotlin.idea.frontend.api.fir.scopes.KtFirDelegatingScope
+import org.jetbrains.kotlin.idea.frontend.api.fir.scopes.KtFirMemberScope
+import org.jetbrains.kotlin.idea.frontend.api.fir.scopes.KtFirNonStarImportingScope
+import org.jetbrains.kotlin.idea.frontend.api.fir.scopes.KtFirPackageScope
+import org.jetbrains.kotlin.idea.frontend.api.fir.scopes.KtFirStarImportingScope
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
@@ -41,7 +50,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import java.util.*
 
 internal class KtFirScopeProvider(
-    override val token: ValidityToken,
+    override val analysisSession: KtAnalysisSession,
     private val builder: KtSymbolByFirBuilder,
     private val project: Project,
     firResolveState: FirModuleResolveState,
@@ -89,7 +98,7 @@ internal class KtFirScopeProvider(
         KtFirCompositeScope(subScopes, token)
     }
 
-    override fun getScopeForType(type: KtType): KtScope? {
+    override fun getTypeScope(type: KtType): KtScope? {
         check(type is KtFirType) { "KtFirScopeProvider can only work with KtFirType, but ${type::class} was provided" }
 
         val firTypeScope = type.coneType.scope(firResolveState.firIdeSourcesSession, ScopeSession()) ?: return null

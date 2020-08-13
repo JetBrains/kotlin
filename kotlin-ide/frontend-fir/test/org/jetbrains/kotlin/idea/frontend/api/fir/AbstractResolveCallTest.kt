@@ -40,8 +40,8 @@ abstract class AbstractResolveCallTest : @Suppress("DEPRECATION") KotlinLightCod
             val callInfos = analyze(file as KtFile) {
                 elements.map { element ->
                     when (element) {
-                        is KtCallExpression -> resolveCall(element)
-                        is KtBinaryExpression -> resolveCall(element)
+                        is KtCallExpression -> element.resolveCall()
+                        is KtBinaryExpression -> element.resolveCall()
                         else -> error("Selected should be either KtCallExpression or KtBinaryExpression but was $element")
                     }
                 }

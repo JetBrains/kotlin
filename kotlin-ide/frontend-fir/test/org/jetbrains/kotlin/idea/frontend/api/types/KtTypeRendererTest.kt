@@ -30,8 +30,8 @@ class KtTypeRendererTest : KotlinLightCodeInsightFixtureTestCase() {
         val property = fakeKtFile.declarations.single() as KtFunction
         val renderedType = executeOnPooledThreadInReadAction {
             analyze(fakeKtFile) {
-                val ktType = getReturnTypeForKtDeclaration(property)
-                KtTypeRenderer.render(ktType, rendererOptions)
+                val ktType = property.getReturnKtType()
+                ktType.render(rendererOptions)
             }
         }
         assertEquals(expected, renderedType)
@@ -46,8 +46,8 @@ class KtTypeRendererTest : KotlinLightCodeInsightFixtureTestCase() {
         val property = fakeKtFile.declarations.single() as KtProperty
         val renderedType = executeOnPooledThreadInReadAction {
             analyze(fakeKtFile) {
-                val ktType = getReturnTypeForKtDeclaration(property)
-                KtTypeRenderer.render(ktType, rendererOptions)
+                val ktType = property.getReturnKtType()
+                ktType.render(rendererOptions)
             }
         }
         assertEquals(expected, renderedType)

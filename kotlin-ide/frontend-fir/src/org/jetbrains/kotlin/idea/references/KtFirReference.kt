@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 
 interface KtFirReference : KtReference, KtSymbolBasedReference {
     fun getResolvedToPsi(analysisSession: KtAnalysisSession): Collection<PsiElement> =
-        resolveToSymbols(analysisSession).mapNotNull(KtSymbol::psi)
+        analysisSession.resolveToSymbols().mapNotNull(KtSymbol::psi)
 
     override val resolver get() = KtFirReferenceResolver
 }
