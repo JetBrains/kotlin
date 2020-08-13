@@ -24,7 +24,6 @@
 
   <extensions defaultExtensionNs="cidr.debugger">
     <languageSupport language="kotlin" implementationClass="com.jetbrains.mpp.debugger.MPPDebuggerLanguageSupport"/>
-    <editorsExtension default="true" implementation="com.jetbrains.mpp.debugger.MPPDebuggerEditorsExtension" />
     <valueRendererFactory implementation="com.jetbrains.mpp.debugger.MPPValueRendererFactory"/>
   </extensions>
 
