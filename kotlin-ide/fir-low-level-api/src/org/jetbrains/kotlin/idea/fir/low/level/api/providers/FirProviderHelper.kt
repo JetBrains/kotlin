@@ -9,19 +9,14 @@ import com.google.common.collect.Sets
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.FirElementFinder
 import org.jetbrains.kotlin.idea.fir.low.level.api.IndexHelper
 import org.jetbrains.kotlin.idea.fir.low.level.api.PackageExistenceChecker
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.executeOrReturnDefaultValueOnPCE
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.FirElementFinder
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.executeOrReturnDefaultValueOnPCE
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -79,11 +74,6 @@ internal class FirProviderHelper(
             } else null
         }
     }
-
-    fun getNestedClassifierScope(classId: ClassId): FirScope? =
-        (getFirClassifierByFqName(classId) as? FirRegularClass)?.let {
-            nestedClassifierScope(it)
-        }
 
     fun getPackage(fqName: FqName): FqName? =
         fqName.takeIf(packageExistenceChecker::isPackageExists)
