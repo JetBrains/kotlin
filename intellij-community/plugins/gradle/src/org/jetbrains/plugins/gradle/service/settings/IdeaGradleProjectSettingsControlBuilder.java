@@ -102,6 +102,8 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
   private boolean myShowBalloonIfNecessary;
   @Nullable
   private TextFieldWithBrowseButton myGradleHomePathField;
+  @SuppressWarnings({"unused", "RedundantSuppression"}) // used by ExternalSystemUiUtil.showUi to show/hide the component via reflection
+  private JPanel myGradlePanel;
   @Nullable
   private JLabel myGradleJdkLabel;
   @Nullable
@@ -112,6 +114,8 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
   private boolean dropCustomizableWrapperButton;
   private boolean dropUseLocalDistributionButton;
   private boolean dropUseBundledDistributionButton;
+  @SuppressWarnings({"unused", "RedundantSuppression"}) // used by ExternalSystemUiUtil.showUi to show/hide the component via reflection
+  private JPanel myImportPanel;
   private JPanel myModulePerSourceSetPanel;
   @Nullable
   private JBCheckBox myResolveModulePerSourceSetCheckBox;
@@ -260,7 +264,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
   }
 
   private void addImportComponents(PaintAwarePanel content, int indentLevel) {
-    addComponentsGroup(null, content, indentLevel, panel -> {
+    myImportPanel = addComponentsGroup(null, content, indentLevel, panel -> {
       if (!dropResolveModulePerSourceSetCheckBox) {
         myModulePerSourceSetPanel = new JPanel(new GridBagLayout());
         panel.add(myModulePerSourceSetPanel, ExternalSystemUiUtil.getFillLineConstraints(0).insets(0, 0, 0, 0));
@@ -315,7 +319,7 @@ public class IdeaGradleProjectSettingsControlBuilder implements GradleProjectSet
   }
 
   private void addGradleComponents(PaintAwarePanel content, int indentLevel) {
-    addComponentsGroup("Gradle", content, indentLevel, panel -> {
+    myGradlePanel = addComponentsGroup("Gradle", content, indentLevel, panel -> {
       addGradleChooserComponents(panel, indentLevel + 1);
       addGradleJdkComponents(panel, indentLevel + 1);
     });
