@@ -187,7 +187,7 @@ dependencies {
     testRuntime(intellijPluginDep("smali"))
     testRuntime(intellijPluginDep("testng"))
 
-    testRuntime(project(":idea:idea-fir"))
+    testRuntime(project(":idea:idea-frontend-fir"))
 
     if (Ide.AS36.orHigher()) {
         testRuntime(intellijPluginDep("android-layoutlib"))
