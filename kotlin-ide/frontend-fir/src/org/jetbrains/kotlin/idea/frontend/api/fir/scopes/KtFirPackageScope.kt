@@ -28,7 +28,8 @@ internal class KtFirPackageScope(
     private val provider get() = firScope.session.firSymbolProvider
 
     override fun getCallableNames(): Set<Name> = withValidityAssertion {
-        provider.getAllCallableNamesInPackage(fqName)
+        // TODO: KT-41048
+        emptySet()
     }
 
     override fun getClassLikeSymbolNames(): Set<Name> = withValidityAssertion {
