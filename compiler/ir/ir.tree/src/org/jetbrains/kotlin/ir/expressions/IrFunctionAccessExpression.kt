@@ -12,9 +12,12 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 abstract class IrFunctionAccessExpression(
     typeArgumentsCount: Int,
-    final override val valueArgumentsCount: Int,
+    valueArgumentsCount: Int,
 ) : IrMemberAccessExpression<IrFunctionSymbol>(typeArgumentsCount) {
     private val argumentsByParameterIndex: Array<IrExpression?> = arrayOfNulls(valueArgumentsCount)
+
+    final override val valueArgumentsCount: Int
+        get() = argumentsByParameterIndex.size
 
     override fun getValueArgument(index: Int): IrExpression? {
         if (index >= valueArgumentsCount) {

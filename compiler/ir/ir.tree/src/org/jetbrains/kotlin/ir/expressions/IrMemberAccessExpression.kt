@@ -20,9 +20,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-abstract class IrMemberAccessExpression<S : IrSymbol>(
-    val typeArgumentsCount: Int
-) : IrDeclarationReference() {
+abstract class IrMemberAccessExpression<S : IrSymbol>(typeArgumentsCount: Int) : IrDeclarationReference() {
     var dispatchReceiver: IrExpression? = null
     var extensionReceiver: IrExpression? = null
 
@@ -36,6 +34,8 @@ abstract class IrMemberAccessExpression<S : IrSymbol>(
     abstract fun removeValueArgument(index: Int)
 
     private val typeArgumentsByIndex = arrayOfNulls<IrType>(typeArgumentsCount)
+
+    val typeArgumentsCount: Int get() = typeArgumentsByIndex.size
 
     fun getTypeArgument(index: Int): IrType? {
         if (index >= typeArgumentsCount) {

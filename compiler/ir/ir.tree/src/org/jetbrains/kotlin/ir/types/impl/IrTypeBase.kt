@@ -11,32 +11,28 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-abstract class IrTypeBase(
-    val kotlinType: KotlinType?,
-    override val annotations: List<IrConstructorCall>,
-    override val variance: Variance
-) : IrType, IrTypeProjection {
+abstract class IrTypeBase(val kotlinType: KotlinType?) : IrType, IrTypeProjection {
     override val type: IrType get() = this
 }
 
 class IrErrorTypeImpl(
     kotlinType: KotlinType?,
-    annotations: List<IrConstructorCall>,
-    variance: Variance
-) : IrTypeBase(kotlinType, annotations, variance), IrErrorType {
+    override val annotations: List<IrConstructorCall>,
+    override val variance: Variance,
+) : IrTypeBase(kotlinType), IrErrorType {
     override fun equals(other: Any?): Boolean = other is IrErrorTypeImpl
 
-    override fun hashCode(): Int = IrErrorTypeImpl::class.java.name.hashCode()
+    override fun hashCode(): Int = IrErrorTypeImpl::class.java.hashCode()
 }
 
 class IrDynamicTypeImpl(
     kotlinType: KotlinType?,
-    annotations: List<IrConstructorCall>,
-    variance: Variance
-) : IrTypeBase(kotlinType, annotations, variance), IrDynamicType, IrTypeProjection {
+    override val annotations: List<IrConstructorCall>,
+    override val variance: Variance,
+) : IrTypeBase(kotlinType), IrDynamicType {
     override fun equals(other: Any?): Boolean = other is IrDynamicTypeImpl
 
-    override fun hashCode(): Int = IrDynamicTypeImpl::class.java.name.hashCode()
+    override fun hashCode(): Int = IrDynamicTypeImpl::class.java.hashCode()
 }
 
 
