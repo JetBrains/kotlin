@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 @RequiresOptIn
 annotation class FirProviderInternals
@@ -44,4 +45,6 @@ abstract class FirProvider : FirSessionComponent {
 
     @FirProviderInternals
     abstract fun recordGeneratedMember(owner: FirAnnotatedDeclaration, klass: FirDeclaration)
+
+    abstract fun getClassNamesInPackage(fqName: FqName): Set<Name>
 }

@@ -18,7 +18,9 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -75,10 +77,6 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
         override fun getPackage(fqName: FqName): FqName? {
             if (getFirFilesByPackage(fqName).isNotEmpty()) return fqName
             return null
-        }
-
-        override fun getClassNamesInPackage(fqName: FqName): Set<Name> {
-            return state.classesInPackage[fqName] ?: emptySet()
         }
     }
 
@@ -258,6 +256,10 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
         } else {
             state.setFrom(newState)
         }
+    }
+
+    override fun getClassNamesInPackage(fqName: FqName): Set<Name> {
+        return state.classesInPackage[fqName] ?: emptySet()
     }
 }
 

@@ -257,12 +257,6 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
         }
     }
 
-    override fun getClassNamesInPackage(fqName: FqName): Set<Name> {
-        return allPackageFragments[fqName]?.flatMapTo(mutableSetOf()) {
-            it.getAllClassNames()
-        } ?: emptySet()
-    }
-
     private fun findRegularClass(classId: ClassId): FirRegularClass? =
         getClassLikeSymbolByFqName(classId)?.fir
 

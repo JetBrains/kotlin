@@ -36,8 +36,4 @@ class FirCompositeSymbolProvider(val providers: List<FirSymbolProvider>) : FirSy
     override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
         return providers.firstNotNullResult { it.getClassLikeSymbolByFqName(classId) }
     }
-
-    override fun getClassNamesInPackage(fqName: FqName): Set<Name> {
-        return providers.flatMapTo(mutableSetOf()) { it.getClassNamesInPackage(fqName) }
-    }
 }

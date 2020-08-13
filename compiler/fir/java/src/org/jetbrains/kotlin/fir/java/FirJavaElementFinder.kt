@@ -43,13 +43,12 @@ class FirJavaElementFinder(
     private val firProvider = session.firProvider
 
     override fun findPackage(qualifiedName: String): PsiPackage? {
-        if (firProvider.symbolProvider.getClassNamesInPackage(FqName(qualifiedName)).isEmpty()) return null
+        if (firProvider.symbolProvider.getPackage(FqName(qualifiedName)) == null) return null
         return PsiPackageImpl(psiManager, qualifiedName)
     }
 
     override fun getClasses(psiPackage: PsiPackage, scope: GlobalSearchScope): Array<PsiClass> {
-        return firProvider.symbolProvider
-            .getClassNamesInPackage(FqName(psiPackage.qualifiedName))
+        return firProvider.getClassNamesInPackage(FqName(psiPackage.qualifiedName))
             .mapNotNull { findClass(psiPackage.qualifiedName + "." + it.identifier, scope) }
             .toTypedArray()
     }

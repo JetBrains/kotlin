@@ -408,11 +408,6 @@ class KotlinDeserializedJvmSymbolsProvider(
         }
     }
 
-    override fun getClassNamesInPackage(fqName: FqName): Set<Name> =
-        javaClassFinder.findPackage(fqName)
-            ?.getClasses { true }.orEmpty()
-            .mapTo(sortedSetOf(), JavaClass::name)
-
     private fun findRegularClass(classId: ClassId): FirRegularClass? =
         getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass
 
