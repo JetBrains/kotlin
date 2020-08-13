@@ -177,6 +177,60 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
     }
 
     @Test
+    fun testUnboundSymbolIssue(): Unit = ensureSetup {
+        codegenNoImports(
+            """
+            import androidx.compose.runtime.Composable
+            import androidx.compose.ui.graphics.vector.VectorAsset
+            import androidx.compose.ui.Modifier
+            import androidx.compose.foundation.layout.Row
+
+            class TodoItem
+
+            @Composable
+            fun TodoItemInlineEditor(
+                item: TodoItem,
+                onEditItemChange: (TodoItem) -> Unit,
+                onEditDone: () -> Unit,
+                buttonSlot: @Composable() () -> Unit
+            ) {}
+
+            @Composable
+            fun TodoItemInput(
+                text: String,
+                onTextChange: (String) -> Unit,
+                icon: VectorAsset,
+                onIconChange: (VectorAsset) -> Unit,
+                primaryAction: () -> Unit,
+                iconsVisible: Boolean,
+                modifier: Modifier = Modifier,
+                buttonSlot: @Composable() () -> Unit,
+            ) {}
+
+            @Composable
+            private fun InputTextAndButton(
+                text: String,
+                onTextChange: (String) -> Unit,
+                primaryAction: () -> Unit,
+                buttonSlot: @Composable() () -> Unit,
+                modifier: Modifier = Modifier
+            ) {
+                val currentlyEditing = TodoItem()
+                TodoItemInlineEditor(
+                    item = currentlyEditing,
+                    onEditItemChange = {},
+                    onEditDone = {},
+                    buttonSlot = {
+                        Row {
+                        }
+                    }
+                )
+            }
+            """
+        )
+    }
+
+    @Test
     fun testPropertyValues(): Unit = ensureSetup {
         compose("""
             @Composable val foo get() = "123"
