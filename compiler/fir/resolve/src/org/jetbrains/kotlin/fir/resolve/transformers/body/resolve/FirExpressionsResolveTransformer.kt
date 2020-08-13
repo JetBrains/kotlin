@@ -287,7 +287,8 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 }
             }
         }
-        val result = components.transformQualifiedAccessUsingConditionalContracts(completeInference)
+        var result = components.transformQualifiedAccessUsingConditionalContracts(completeInference)
+        result = components.transformQualifiedAccessUsingContractsForCollections(result)
         return result.compose()
     }
 

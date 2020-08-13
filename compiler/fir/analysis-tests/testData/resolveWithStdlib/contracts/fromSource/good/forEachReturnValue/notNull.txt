@@ -1,0 +1,39 @@
+FILE: notNull.kt
+    public final fun returnValue(): R|kotlin/Any?| {
+        ^returnValue Null(null)
+    }
+    public final operator fun <E> R|(E) -> kotlin/Boolean|.not(): R|(E) -> kotlin/Boolean| {
+        ^not fun <anonymous>(it: R|E|): R|kotlin/Boolean| {
+            ^ this@R|/not|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Boolean|>|(R|<local>/it|).R|kotlin/Boolean.not|()
+        }
+
+    }
+    public final infix fun <E> R|(E) -> kotlin/Boolean|.forEachOf(returnValue: R|kotlin/Any?|): R|kotlin/Unit|
+    public final inline fun <T> R|kotlin/collections/List<T>|.filter(predicate: R|(T) -> kotlin/Boolean|): R|kotlin/collections/List<T>|
+        [R|Contract description]
+         <
+            predicate forEachOf returnValue()
+        >
+     {
+        [StubStatement]
+        ^filter this@R|/filter|
+    }
+    public final inline fun <T> R|kotlin/collections/List<T>|.filterNot(predicate: R|(T) -> kotlin/Boolean|): R|kotlin/collections/List<T>|
+        [R|Contract description]
+         <
+            !predicate forEachOf returnValue()
+        >
+     {
+        [StubStatement]
+        ^filterNot this@R|/filterNot|
+    }
+    public final fun test1(list: R|kotlin/collections/List<kotlin/String?>|): R|kotlin/Unit| {
+        lval filtered: R|kotlin/collections/List<out kotlin/String>| = R|<local>/list|.R|/filter|<R|kotlin/String?|>
+        R|<local>/filtered|.R|kotlin/collections/first|<R|kotlin/String|>().R|kotlin/String.length|
+        R|<local>/filtered|.R|FakeOverride<kotlin/collections/List.get: R|kotlin/String|>|(Int(0)).R|kotlin/String.length|
+    }
+    public final fun test2(list: R|kotlin/collections/List<kotlin/String?>|): R|kotlin/Unit| {
+        lval filtered: R|kotlin/collections/List<out kotlin/String>| = R|<local>/list|.R|/filterNot|<R|kotlin/String?|>
+        R|<local>/filtered|.R|kotlin/collections/first|<R|kotlin/String|>().R|kotlin/String.length|
+        R|<local>/filtered|.R|FakeOverride<kotlin/collections/List.get: R|kotlin/String|>|(Int(0)).R|kotlin/String.length|
+    }

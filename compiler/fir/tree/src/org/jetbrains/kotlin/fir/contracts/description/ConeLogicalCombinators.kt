@@ -17,3 +17,8 @@ class ConeLogicalNot(val arg: ConeBooleanExpression) : ConeBooleanExpression {
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitLogicalNot(this, data)
 }
+
+class ConePredicateNot(val arg: ConeValueParameterReference) : ConeContractDescriptionElement {
+    override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
+        contractDescriptionVisitor.visitPredicateNot(this, data)
+}

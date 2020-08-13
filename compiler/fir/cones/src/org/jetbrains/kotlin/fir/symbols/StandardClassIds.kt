@@ -13,9 +13,11 @@ object StandardClassIds {
 
     private val BASE_KOTLIN_PACKAGE = FqName("kotlin")
     private val BASE_REFLECT_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("reflect"))
+    private val BASE_COLLECTIONS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("collections"))
     private fun String.baseId() = ClassId(BASE_KOTLIN_PACKAGE, Name.identifier(this))
     private fun ClassId.unsignedId() = ClassId(BASE_KOTLIN_PACKAGE, Name.identifier("U" + shortClassName.identifier))
     private fun String.reflectId() = ClassId(BASE_REFLECT_PACKAGE, Name.identifier(this))
+    private fun String.collectionsId() = ClassId(BASE_COLLECTIONS_PACKAGE, Name.identifier(this))
     private fun Name.primitiveArrayId() = ClassId(Array.packageFqName, Name.identifier(identifier + Array.shortClassName.identifier))
 
     val Nothing = "Nothing".baseId()
@@ -55,6 +57,8 @@ object StandardClassIds {
     val Number = "Number".baseId()
 
     val Function = "Function".baseId()
+
+    val Iterable = "Iterable".collectionsId()
 
     fun byName(name: String) = name.baseId()
     fun reflectByName(name: String) = name.reflectId()

@@ -122,7 +122,7 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
         return result
     }
 
-    protected fun or(statements: Collection<TypeStatement>): MutableTypeStatement {
+    fun or(statements: Collection<TypeStatement>): MutableTypeStatement {
         require(statements.isNotEmpty())
         statements.singleOrNull()?.let { return it as MutableTypeStatement }
         val variable = statements.first().variable

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 
 class ConeEffectExtractor(
@@ -72,6 +73,15 @@ class ConeEffectExtractor(
                 ConeCallsEffectDeclaration(reference, kind)
             }
 
+            FirContractsDslNames.FOR_EACH -> {
+                if (functionCall.argument.accept(this, null) !is ConeReturnValue) return null
+                return when (val predicate = functionCall.explicitReceiver?.accept(this, null)) {
+                    is ConeValueParameterReference -> ConeForEachReturnValueEffectDeclaration(predicate, false)
+                    is ConePredicateNot -> ConeForEachReturnValueEffectDeclaration(predicate.arg, true)
+                    else -> null
+                }
+            }
+
             FirContractsDslNames.RETURN_VALUE -> {
                 ConeReturnValue()
             }
@@ -95,6 +105,12 @@ class ConeEffectExtractor(
                 val arg = functionCall.explicitReceiver?.accept(this, null) as? ConeBooleanExpression ?: return null
                 ConeLogicalNot(arg)
             }
+
+            FirContractsDslNames.PREDICATE_NOT -> {
+                val arg = functionCall.explicitReceiver?.accept(this, null) as? ConeValueParameterReference ?: return null
+                ConePredicateNot(arg)
+            }
+
             else -> null
         }
     }

@@ -27,6 +27,9 @@ abstract class ConeContractDescriptionVisitor<out R, in D> {
     open fun visitCallsEffectDeclaration(callsEffect: ConeCallsEffectDeclaration, data: D): R =
         visitEffectDeclaration(callsEffect, data)
 
+    open fun visitForEachReturnValueEffectDeclaration(forEachEffect: ConeForEachReturnValueEffectDeclaration, data: D): R =
+        visitEffectDeclaration(forEachEffect, data)
+
     // Expressions
     open fun visitBooleanExpression(booleanExpression: ConeBooleanExpression, data: D): R =
         visitContractDescriptionElement(booleanExpression, data)
@@ -35,6 +38,8 @@ abstract class ConeContractDescriptionVisitor<out R, in D> {
         visitBooleanExpression(binaryLogicExpression, data)
 
     open fun visitLogicalNot(logicalNot: ConeLogicalNot, data: D): R = visitBooleanExpression(logicalNot, data)
+
+    open fun visitPredicateNot(predicateNot: ConePredicateNot, data: D): R = visitContractDescriptionElement(predicateNot, data)
 
     open fun visitIsInstancePredicate(isInstancePredicate: ConeIsInstancePredicate, data: D): R =
         visitBooleanExpression(isInstancePredicate, data)

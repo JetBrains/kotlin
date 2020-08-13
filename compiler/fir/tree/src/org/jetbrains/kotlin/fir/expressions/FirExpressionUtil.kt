@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
@@ -89,6 +86,13 @@ fun <D> FirBlock.transformStatementsIndexed(transformer: FirTransformer<D>, data
         }
     }
     return this
+}
+
+val FirAnonymousFunction.isInPlaceLambda: Boolean get() = isLambda && invocationKind != null
+
+fun FirExpression.toInPlaceLambda(): FirAnonymousFunction? {
+    val anonymousFunction = this as? FirAnonymousFunction ?: return null
+    return if (anonymousFunction.isInPlaceLambda) anonymousFunction else null
 }
 
 fun <D> FirBlock.transformAllStatementsExceptLast(transformer: FirTransformer<D>, data: D): FirBlock {

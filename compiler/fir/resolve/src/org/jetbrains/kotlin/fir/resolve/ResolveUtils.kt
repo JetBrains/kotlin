@@ -246,6 +246,11 @@ fun BodyResolveComponents.transformQualifiedAccessUsingConditionalContracts(qual
     return transformQualifiedAccessUsingNewTypes(qualifiedAccess, typesFromContracts)
 }
 
+fun BodyResolveComponents.transformQualifiedAccessUsingContractsForCollections(qualifiedAccess: FirQualifiedAccessExpression): FirQualifiedAccessExpression {
+    val typesFromContracts = dataFlowAnalyzer.getTypeUsingContractsForCollections(qualifiedAccess) ?: return qualifiedAccess
+    return transformQualifiedAccessUsingNewTypes(qualifiedAccess, typesFromContracts)
+}
+
 fun BodyResolveComponents.transformQualifiedAccessUsingNewTypes(
     qualifiedAccess: FirQualifiedAccessExpression,
     newTypes: MutableList<ConeKotlinType>

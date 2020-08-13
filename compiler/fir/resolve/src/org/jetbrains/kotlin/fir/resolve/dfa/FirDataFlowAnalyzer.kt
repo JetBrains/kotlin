@@ -19,15 +19,20 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.buildContractFir
 import org.jetbrains.kotlin.fir.resolve.dfa.contracts.createArgumentsMapping
+import org.jetbrains.kotlin.fir.resolve.inference.returnType
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -66,6 +71,12 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 ) {
     companion object {
         internal val KOTLIN_BOOLEAN_NOT = CallableId(FqName("kotlin"), FqName("Boolean"), Name.identifier("not"))
+
+        private val ITERABLE_TYPE = ConeClassLikeTypeImpl(
+            ConeClassLikeLookupTagImpl(StandardClassIds.Iterable),
+            arrayOf(ConeStarProjection),
+            true
+        )
 
         fun createFirDataFlowAnalyzer(
             components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
@@ -153,6 +164,76 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         } finally {
             ignoreFunctionCalls = oldValue
         }
+    }
+
+    fun getTypeUsingContractsForCollections(
+        qualifiedAccess: FirQualifiedAccess,
+    ): MutableList<ConeKotlinType>? {
+        if (qualifiedAccess !is FirFunctionCall) return null
+        val owner: FirContractDescriptionOwner? = qualifiedAccess.toContractDescriptionOwner()
+        val contractDescription = owner?.contractDescription as? FirResolvedContractDescription ?: return null
+        if (contractDescription.resolvedConeEffects.none { it is ConeForEachReturnValueEffectDeclaration }) return null
+
+        val returnType = qualifiedAccess.typeRef.coneType
+        if (!AbstractTypeChecker.isSubtypeOf(components.session.typeContext, returnType, ITERABLE_TYPE)) return null
+
+        val argumentsMapping = createArgumentsMapping(qualifiedAccess) ?: return null
+        val effects = contractDescription.resolvedConeEffects.filterIsInstance<ConeForEachReturnValueEffectDeclaration>()
+        val elementTypes = mutableListOf<ConeKotlinType>()
+
+        for (effect in effects) {
+            val lambda = argumentsMapping[effect.predicate.parameterIndex]?.toInPlaceLambda() ?: continue
+            if (lambda.returnType != components.session.builtinTypes.booleanType.type) continue
+            val lambdaExitNode = lambda.controlFlowGraphReference?.controlFlowGraph?.exitNode ?: continue
+            val argumentSymbol = if (lambda.valueParameters.isEmpty()) lambda.symbol else lambda.valueParameters[0].symbol
+
+            val exitNodes = lambdaExitNode.collectExits()
+            val possibleElementTypeStatements = mutableListOf<MutableTypeStatement>()
+
+            for (exitNode in exitNodes) {
+                val returnExpression = exitNode.fir as? FirExpression ?: continue
+                if (returnExpression.typeRef.isNothing) continue
+                val expressionVariable = variableStorage.getOrCreateVariable(exitNode.flow, returnExpression)
+
+                // Check for more optimized way without creating new flow
+                val newFlow = logicSystem.approveStatementsInsideFlow(
+                    exitNode.flow,
+                    OperationStatement(expressionVariable, if (effect.isNegate) Operation.EqFalse else Operation.EqTrue),
+                    shouldRemoveSynthetics = true,
+                    shouldForkFlow = true
+                )
+
+                val argumentVariable = variableStorage.getRealVariable(argumentSymbol, lambda, newFlow) ?: continue
+                val argumentTypeStatement = newFlow.getTypeStatement(argumentVariable) ?: continue
+
+                if (argumentTypeStatement.exactType.isNotEmpty()) {
+                    possibleElementTypeStatements.add(argumentTypeStatement.asMutableStatement())
+                }
+            }
+
+            if (possibleElementTypeStatements.isNotEmpty()) {
+                elementTypes += logicSystem.or(possibleElementTypeStatements).exactType
+            }
+        }
+
+        return if (elementTypes.isNotEmpty()) {
+            elementTypes.addIfNotNull((returnType.typeArguments.getOrNull(0) as? ConeKotlinTypeProjection)?.type)
+            val newElementType = ConeTypeIntersector.intersectTypes(components.session.typeContext, elementTypes)
+            val newReturnType = returnType.withArguments(arrayOf(newElementType.toTypeProjection(Variance.OUT_VARIANCE)))
+            mutableListOf(newReturnType)
+        } else null
+    }
+
+    private fun CFGNode<*>.collectExits(nodes: MutableList<CFGNode<*>> = mutableListOf()): List<CFGNode<*>> {
+        previousNodes.forEach { prev ->
+            val kind = this.incomingEdges.getValue(prev)
+            if (kind.usedInCfa && (this.isDead || !kind.isDead) && prev !is EnterNodeMarker) {
+                if (this is BlockExitNode && prev !is WhenExitNode) {
+                    nodes += prev
+                } else prev.collectExits(nodes)
+            }
+        }
+        return nodes
     }
 
     fun getTypeUsingConditionalContracts(
