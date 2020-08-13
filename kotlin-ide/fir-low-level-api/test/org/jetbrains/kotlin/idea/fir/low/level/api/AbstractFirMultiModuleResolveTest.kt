@@ -22,16 +22,10 @@ import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.registerExtensions
 import org.jetbrains.kotlin.fir.java.*
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.buildUseSiteMemberScope
 import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.createAllTransformerBasedResolveProcessors
@@ -147,22 +141,27 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
             KotlinTestUtils.assertEqualsToFile(File(expectedPath), firFileDump)
         }
 
-        val processedJavaClasses = mutableSetOf<FirJavaClass>()
-        val javaFirDump = StringBuilder().also { builder ->
-            val renderer = FirRenderer(builder)
-            for (session in sessions) {
-                val symbolProvider = session.firSymbolProvider as FirCompositeSymbolProvider
-                val javaProvider = symbolProvider.providers.filterIsInstance<JavaSymbolProvider>().first()
-                for (javaClass in javaProvider.getJavaTopLevelClasses().sortedBy { it.name }) {
-                    if (javaClass !is FirJavaClass || javaClass in processedJavaClasses) continue
-                    renderJavaClass(renderer, javaClass, session)
-                    processedJavaClasses += javaClass
-                }
-            }
-        }.toString()
-        if (javaFirDump.isNotEmpty()) {
-            KotlinTestUtils.assertEqualsToFile(File("$dirPath/extraDump.java.txt"), javaFirDump)
-        }
+        /*
+         * This code is commented due to deleted JavaSymbolProvider.getJavaTopLevelClasses() method
+         * There is no replace for this code because of there are no tests for this test runner, so
+         *   it is questionable, do we need java class check (or that test runner at all)
+         */
+//        val processedJavaClasses = mutableSetOf<FirJavaClass>()
+//        val javaFirDump = StringBuilder().also { builder ->
+//            val renderer = FirRenderer(builder)
+//            for (session in sessions) {
+//                val symbolProvider = session.firSymbolProvider as FirCompositeSymbolProvider
+//                val javaProvider = symbolProvider.providers.filterIsInstance<JavaSymbolProvider>().first()
+//                for (javaClass in javaProvider.getJavaTopLevelClasses().sortedBy { it.name }) {
+//                    if (javaClass !is FirJavaClass || javaClass in processedJavaClasses) continue
+//                    renderJavaClass(renderer, javaClass, session)
+//                    processedJavaClasses += javaClass
+//                }
+//            }
+//        }.toString()
+//        if (javaFirDump.isNotEmpty()) {
+//            KotlinTestUtils.assertEqualsToFile(File("$dirPath/extraDump.java.txt"), javaFirDump)
+//        }
     }
 }
 
