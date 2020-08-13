@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.idea.references.SyntheticPropertyAccessorReferenceDe
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
-import org.jetbrains.kotlin.utils.ifEmpty
+import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
 
 class KotlinAwareJavaGetterRenameProcessor : RenameJavaMethodProcessor() {
     override fun canProcessElement(element: PsiElement) =
@@ -39,7 +39,7 @@ class KotlinAwareJavaGetterRenameProcessor : RenameJavaMethodProcessor() {
             .filter { it.parameters.size == 1 && it.returnType == PsiType.VOID }
             .flatMap {
                 super.findReferences(it, searchScope, searchInCommentsAndStrings)
-                    .filterIsInstanceWithChecker<SyntheticPropertyAccessorReference> { !it.getter }
+                    .filterIsInstanceWithChecker<SyntheticPropertyAccessorReference> { accessor -> !accessor.getter }
             }
             .ifEmpty { return getterReferences }
         return ArrayList<PsiReference>(getterReferences.size + setterReferences.size).apply {
@@ -47,14 +47,4 @@ class KotlinAwareJavaGetterRenameProcessor : RenameJavaMethodProcessor() {
             setterReferences.mapTo(this) { SyntheticPropertyAccessorReferenceDescriptorImpl(it.expression, getter = true) }
         }
     }
-}
-
-private inline fun <reified T> Iterable<*>.filterIsInstanceWithChecker(additionalChecker: (T) -> Boolean): List<T> {
-    val result = arrayListOf<T>()
-    for (element in this) {
-        if (element is T && additionalChecker(element)) {
-            result += element
-        }
-    }
-    return result
 }
