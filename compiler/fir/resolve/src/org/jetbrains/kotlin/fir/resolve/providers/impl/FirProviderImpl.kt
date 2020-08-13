@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
@@ -58,6 +59,11 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
 
         override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
             return (state.callableMap[CallableId(packageFqName, null, name)] ?: emptyList())
+        }
+
+        @FirSymbolProviderInternals
+        override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
+            destination += getTopLevelCallableSymbols(packageFqName, name)
         }
 
         override fun getNestedClassifierScope(classId: ClassId): FirScope? {

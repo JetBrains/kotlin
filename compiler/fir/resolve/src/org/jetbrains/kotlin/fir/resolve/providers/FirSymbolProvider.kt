@@ -23,8 +23,10 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-abstract class FirSymbolProvider : FirSessionComponent {
+@RequiresOptIn
+annotation class FirSymbolProviderInternals
 
+abstract class FirSymbolProvider : FirSessionComponent {
     abstract fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>?
 
     fun getSymbolByLookupTag(lookupTag: ConeClassLikeLookupTag): FirClassLikeSymbol<*>? {
@@ -44,7 +46,13 @@ abstract class FirSymbolProvider : FirSessionComponent {
         }
     }
 
-    abstract fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>>
+    @OptIn(ExperimentalStdlibApi::class, FirSymbolProviderInternals::class)
+    open fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
+        return buildList { getTopLevelCallableSymbolsTo(this, packageFqName, name) }
+    }
+
+    @FirSymbolProviderInternals
+    abstract fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name)
 
     abstract fun getNestedClassifierScope(classId: ClassId): FirScope?
 
