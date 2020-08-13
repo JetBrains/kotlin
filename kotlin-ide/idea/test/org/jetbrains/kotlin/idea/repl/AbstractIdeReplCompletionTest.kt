@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.idea.completion.test.KotlinFixtureCompletionBaseTest
 import org.jetbrains.kotlin.idea.completion.test.testCompletion
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -70,9 +69,5 @@ abstract class AbstractIdeReplCompletionTest : KotlinFixtureCompletionBaseTestCa
 
     private fun List<String>.prefixedWith(prefix: String) = filter { it.startsWith(prefix) }.map { it.removePrefix(prefix) }
 
-    override fun getProjectDescriptor(): LightProjectDescriptor = FullJdkProjectDescriptor
-}
-
-private object FullJdkProjectDescriptor : KotlinWithJdkAndRuntimeLightProjectDescriptor() {
-    override fun getSdk() = PluginTestCaseBase.fullJdk()
+    override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK
 }

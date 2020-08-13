@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
-import com.google.common.collect.Lists
 import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeHighlighting.Pass
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType
@@ -46,7 +45,7 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
         get() = "FIX"
 
     private fun createInspection(testDataFile: File): AbstractKotlinInspection {
-        val candidateFiles = Lists.newArrayList<File>()
+        val candidateFiles = mutableListOf<File>()
 
         var current: File? = testDataFile.parentFile
         while (current != null) {
@@ -71,7 +70,7 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
         }
 
         val className = FileUtil.loadFile(candidateFiles[0]).trim { it <= ' ' }
-        return Class.forName(className).newInstance() as AbstractKotlinInspection
+        return Class.forName(className).getDeclaredConstructor().newInstance() as AbstractKotlinInspection
     }
 
     protected open fun doTest(path: String) {
@@ -82,12 +81,12 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
         TestCase.assertTrue("\"<caret>\" is missing in file \"$mainFile\"", fileText.contains("<caret>"))
 
         withCustomCompilerOptions(fileText, project, module) {
-            val minJavaVersion = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// MIN_JAVA_VERSION: ")
-            if (minJavaVersion != null && !SystemInfo.isJavaVersionAtLeast(minJavaVersion)) return@withCustomCompilerOptions
-
-            if (file is KtFile && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_ERRORS_BEFORE")) {
-                DirectiveBasedActionUtils.checkForUnexpectedErrors(file as KtFile)
+            val minJavaVersion = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// MIN_JAVA_VERSION: ")?.toInt()
+            if (minJavaVersion != null && !SystemInfo.isJavaVersionAtLeast(minJavaVersion, 0, 0)) {
+                return@withCustomCompilerOptions
             }
+
+            checkForUnexpectedErrors()
 
             var i = 1
             val extraFileNames = mutableListOf<String>()
@@ -119,9 +118,15 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
 
             doTestFor(mainFile.name, inspection, fileText)
 
-            if (file is KtFile && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_ERRORS_AFTER")) {
-                DirectiveBasedActionUtils.checkForUnexpectedErrors(file as KtFile)
-            }
+            checkForUnexpectedErrors()
+        }
+    }
+
+    private fun checkForUnexpectedErrors() {
+        val ktFile = file as? KtFile ?: return
+        val fileText = ktFile.text
+        if (!InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_ERRORS_AFTER")) {
+            DirectiveBasedActionUtils.checkForUnexpectedErrors(file as KtFile)
         }
     }
 

@@ -22,12 +22,13 @@ import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.OrderRootType
 import java.io.File
 
-open class KotlinJdkAndLibraryProjectDescriptor(private val libraryFiles: List<File>) : KotlinLightProjectDescriptor() {
+open class KotlinJdkAndLibraryProjectDescriptor(val libraryFiles: List<File>, val librarySourceFiles: List<File> = emptyList()) :
+    KotlinLightProjectDescriptor() {
 
     constructor(libraryFile: File) : this(listOf(libraryFile))
 
     init {
-        for (libraryFile in libraryFiles) {
+        for (libraryFile in libraryFiles + librarySourceFiles) {
             assert(libraryFile.exists()) { "Library file doesn't exist: " + libraryFile.absolutePath }
         }
     }
@@ -38,6 +39,9 @@ open class KotlinJdkAndLibraryProjectDescriptor(private val libraryFiles: List<F
         ConfigLibraryUtil.addLibrary(model, LIBRARY_NAME) {
             for (libraryFile in libraryFiles) {
                 addRoot(libraryFile, OrderRootType.CLASSES)
+            }
+            for (librarySrcFile in librarySourceFiles) {
+                addRoot(librarySrcFile, OrderRootType.SOURCES)
             }
         }
     }

@@ -39,7 +39,6 @@ import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.CodeInsightTestUtil
 import org.jetbrains.kotlin.asJava.finder.KtLightPackage
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
@@ -56,7 +55,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import java.io.File
 
@@ -90,7 +88,7 @@ abstract class AbstractRenameTest : KotlinLightCodeInsightFixtureTestCase() {
             val jarPaths = listOf(KotlinArtifacts.instance.kotlinStdlib) + libraryInfos.map {
                 File(PlatformTestUtil.getCommunityPath(), it.substringAfter("@"))
             }
-            return KotlinWithJdkAndRuntimeLightProjectDescriptor(jarPaths)
+            return KotlinWithJdkAndRuntimeLightProjectDescriptor(jarPaths, listOf(KotlinArtifacts.instance.kotlinStdlibSources))
         }
 
         if (withRuntime != null) {

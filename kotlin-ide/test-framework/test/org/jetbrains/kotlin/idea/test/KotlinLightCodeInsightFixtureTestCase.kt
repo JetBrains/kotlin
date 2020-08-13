@@ -17,6 +17,8 @@ import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.Sdk
+import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.StringUtil
@@ -175,6 +177,12 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
             val fileText = FileUtil.loadFile(file, true)
 
             val withLibraryDirective = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, "WITH_LIBRARY:")
+            val minJavaVersion = InTextDirectivesUtils.findStringWithPrefixes(fileText, "MIN_JAVA_VERSION:")?.toInt()
+
+            if (minJavaVersion != null && !(InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME") ||
+                        InTextDirectivesUtils.isDirectiveDefined(fileText, "WITH_RUNTIME"))) {
+                error("MIN_JAVA_VERSION so far is supported for RUNTIME/WITH_RUNTIME only")
+            }
             return when {
                 withLibraryDirective.isNotEmpty() ->
                     SdkAndMockLibraryProjectDescriptor(PluginTestCaseBase.IDEA_TEST_DATA_DIR.resolve(withLibraryDirective[0]).path, true)
@@ -199,7 +207,14 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
                 InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME") ||
                         InTextDirectivesUtils.isDirectiveDefined(fileText, "WITH_RUNTIME") ->
-                    KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+                    if (minJavaVersion != null) {
+                        val sdk = sdk(minJavaVersion)
+                        object: KotlinWithJdkAndRuntimeLightProjectDescriptor(INSTANCE.libraryFiles, INSTANCE.librarySourceFiles) {
+                            override fun getSdk(): Sdk? = sdk
+                        }
+                    } else {
+                        KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+                    }
 
                 InTextDirectivesUtils.isDirectiveDefined(fileText, "JS") ->
                     KotlinStdJSProjectDescriptor
@@ -213,6 +228,22 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
             throw rethrow(e)
         }
     }
+
+    private fun sdk(javaVersion: Int): Sdk =
+        when (javaVersion) {
+            6 -> PluginTestCaseBase.mockJdk6()
+            8 -> PluginTestCaseBase.mockJdk8()
+            9 -> PluginTestCaseBase.mockJdk9()
+            11 -> {
+                if (SystemInfo.isJavaVersionAtLeast(javaVersion, 0, 0)) {
+                    PluginTestCaseBase.fullJdk()
+                } else {
+                    error("JAVA_HOME have to point at least to JDK 11")
+                }
+
+            }
+            else -> error("Unsupported JDK version $javaVersion")
+        }
 
     protected open fun getDefaultProjectDescriptor(): KotlinLightProjectDescriptor = KotlinLightProjectDescriptor.INSTANCE
 

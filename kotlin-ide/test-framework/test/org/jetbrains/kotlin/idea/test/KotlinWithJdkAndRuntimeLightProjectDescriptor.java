@@ -22,25 +22,31 @@ import com.intellij.openapi.roots.LanguageLevelModuleExtension;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.pom.java.LanguageLevel;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class KotlinWithJdkAndRuntimeLightProjectDescriptor extends KotlinJdkAndLibraryProjectDescriptor {
     protected KotlinWithJdkAndRuntimeLightProjectDescriptor() {
-        super(KotlinArtifacts.getInstance().getKotlinStdlib());
+        super(Collections.singletonList(KotlinArtifacts.getInstance().getKotlinStdlib()),
+              Collections.singletonList(KotlinArtifacts.getInstance().getKotlinStdlibSources()));
     }
 
-    public KotlinWithJdkAndRuntimeLightProjectDescriptor(@NotNull List<? extends File> libraryFiles) {
-        super(libraryFiles);
+    public KotlinWithJdkAndRuntimeLightProjectDescriptor(
+            @NotNull List<? extends File> libraryFiles,
+            @NotNull List<? extends File> librarySourceFiles
+    ) {
+        super(libraryFiles, librarySourceFiles);
     }
 
     @NotNull
     public static final KotlinWithJdkAndRuntimeLightProjectDescriptor INSTANCE = new KotlinWithJdkAndRuntimeLightProjectDescriptor(
-            Arrays.asList(KotlinArtifacts.getInstance().getKotlinStdlib(), KotlinArtifacts.getInstance().getKotlinCoroutinesExperimentalCompat())
+            Arrays.asList(KotlinArtifacts.getInstance().getKotlinStdlib(),
+                          KotlinArtifacts.getInstance().getKotlinCoroutinesExperimentalCompat()),
+            Collections.singletonList(KotlinArtifacts.getInstance().getKotlinStdlibSources())
     );
 
     public static KotlinWithJdkAndRuntimeLightProjectDescriptor getInstance(LanguageLevel level) {
@@ -58,19 +64,22 @@ public class KotlinWithJdkAndRuntimeLightProjectDescriptor extends KotlinJdkAndL
     @NotNull
     public static final KotlinWithJdkAndRuntimeLightProjectDescriptor INSTANCE_WITH_KOTLIN_TEST = new KotlinWithJdkAndRuntimeLightProjectDescriptor(
             Arrays.asList(KotlinArtifacts.getInstance().getKotlinStdlib(),
-                          KotlinArtifacts.getInstance().getKotlinTest())
+                          KotlinArtifacts.getInstance().getKotlinTest()),
+            Collections.singletonList(KotlinArtifacts.getInstance().getKotlinStdlibSources())
     );
 
     @NotNull
     public static final KotlinWithJdkAndRuntimeLightProjectDescriptor INSTANCE_WITH_SCRIPT_RUNTIME = new KotlinWithJdkAndRuntimeLightProjectDescriptor(
             Arrays.asList(KotlinArtifacts.getInstance().getKotlinStdlib(),
-                          KotlinArtifacts.getInstance().getKotlinScriptRuntime())
+                          KotlinArtifacts.getInstance().getKotlinScriptRuntime()),
+            Collections.singletonList(KotlinArtifacts.getInstance().getKotlinStdlibSources())
     );
 
     @NotNull
     public static final KotlinWithJdkAndRuntimeLightProjectDescriptor INSTANCE_WITH_REFLECT = new KotlinWithJdkAndRuntimeLightProjectDescriptor(
             Arrays.asList(KotlinArtifacts.getInstance().getKotlinStdlib(),
-                          KotlinArtifacts.getInstance().getKotlinReflect())
+                          KotlinArtifacts.getInstance().getKotlinReflect()),
+            Collections.singletonList(KotlinArtifacts.getInstance().getKotlinStdlibSources())
     );
 
     @NotNull
