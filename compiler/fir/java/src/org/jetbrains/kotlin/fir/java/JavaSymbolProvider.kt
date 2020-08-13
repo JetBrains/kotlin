@@ -9,7 +9,6 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -21,8 +20,9 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.resolve.constructType
-import org.jetbrains.kotlin.fir.resolve.providers.AbstractFirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.AbstractFirSymbolProviderWithCache
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
+import org.jetbrains.kotlin.fir.resolve.providers.SymbolProviderCache
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.lazyNestedClassifierScope
@@ -48,7 +48,7 @@ class JavaSymbolProvider(
     val session: FirSession,
     val project: Project,
     private val searchScope: GlobalSearchScope,
-) : AbstractFirSymbolProvider<FirRegularClassSymbol>() {
+) : AbstractFirSymbolProviderWithCache<FirRegularClassSymbol>() {
     companion object {
         private val VALUE_METHOD_NAME = Name.identifier("value")
     }
@@ -56,7 +56,7 @@ class JavaSymbolProvider(
     private val scopeProvider = JavaScopeProvider(::wrapScopeWithJvmMapped, this)
 
     private val facade: KotlinJavaPsiFacade get() = KotlinJavaPsiFacade.getInstance(project)
-    private val parentClassTypeParameterStackCache: MutableMap<FirRegularClassSymbol, JavaTypeParameterStack> = mutableMapOf()
+    private val parentClassTypeParameterStackCache: SymbolProviderCache<FirRegularClassSymbol, JavaTypeParameterStack> = SymbolProviderCache()
 
     private fun findClass(
         classId: ClassId,

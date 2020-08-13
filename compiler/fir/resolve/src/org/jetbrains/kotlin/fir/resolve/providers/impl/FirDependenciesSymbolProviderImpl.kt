@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.providers.impl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.dependenciesWithoutSelf
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.AbstractFirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.AbstractFirSymbolProviderWithCache
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
-open class FirDependenciesSymbolProviderImpl(val session: FirSession) : AbstractFirSymbolProvider<FirClassLikeSymbol<*>>() {
+open class FirDependenciesSymbolProviderImpl(val session: FirSession) : AbstractFirSymbolProviderWithCache<FirClassLikeSymbol<*>>() {
     protected open val dependencyProviders by lazy {
         val moduleInfo = session.moduleInfo ?: return@lazy emptyList()
         moduleInfo.dependenciesWithoutSelf().mapNotNull {

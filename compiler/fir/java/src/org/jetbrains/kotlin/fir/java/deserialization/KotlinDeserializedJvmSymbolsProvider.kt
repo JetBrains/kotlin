@@ -25,8 +25,9 @@ import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.AbstractFirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.AbstractFirSymbolProviderWithCache
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
+import org.jetbrains.kotlin.fir.resolve.providers.SymbolProviderCache
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredCallableSymbols
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
@@ -37,7 +38,6 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.constructClassType
 import org.jetbrains.kotlin.load.java.JavaClassFinder
-import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -54,7 +54,6 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
-import org.jetbrains.kotlin.utils.getOrPutNullable
 
 class KotlinDeserializedJvmSymbolsProvider(
     val session: FirSession,
@@ -64,11 +63,11 @@ class KotlinDeserializedJvmSymbolsProvider(
     private val kotlinClassFinder: KotlinClassFinder,
     private val javaClassFinder: JavaClassFinder,
     private val kotlinScopeProvider: KotlinScopeProvider,
-) : AbstractFirSymbolProvider<FirClassLikeSymbol<*>>() {
-    private val classesCache = HashMap<ClassId, FirRegularClassSymbol>()
-    private val typeAliasCache = HashMap<ClassId, FirTypeAliasSymbol?>()
-    private val packagePartsCache = HashMap<FqName, Collection<PackagePartsCacheData>>()
+) : AbstractFirSymbolProviderWithCache<FirRegularClassSymbol>() {
+    private val typeAliasCache = SymbolProviderCache<ClassId, FirTypeAliasSymbol>()
+    private val packagePartsCache = SymbolProviderCache<FqName, Collection<PackagePartsCacheData>>()
 
+    // TODO: implement thread safety for this property
     private val handledByJava = HashSet<ClassId>()
 
     private class PackagePartsCacheData(
@@ -154,7 +153,7 @@ class KotlinDeserializedJvmSymbolsProvider(
         classId: ClassId,
     ): FirTypeAliasSymbol? {
         if (!classId.relativeClassName.isOneSegmentFQN()) return null
-        return typeAliasCache.getOrPutNullable(classId) {
+        return typeAliasCache.lookupCacheOrCalculate(classId) {
             getPackageParts(classId.packageFqName).firstNotNullResult { part ->
                 val ids = part.typeAliasNameIndex[classId.shortClassName]
                 if (ids == null || ids.isEmpty()) return@firstNotNullResult null
@@ -307,7 +306,7 @@ class KotlinDeserializedJvmSymbolsProvider(
         parentContext: FirDeserializationContext? = null
     ): FirRegularClassSymbol? {
         if (hasNoTopLevelClassOf(classId)) return null
-        if (classesCache.containsKey(classId)) return classesCache[classId]
+        if (classId in classCache) return classCache[classId]
 
         if (classId in handledByJava) return null
 
@@ -346,7 +345,7 @@ class KotlinDeserializedJvmSymbolsProvider(
                 this::findAndDeserializeClass
             )
 
-            classesCache[classId] = symbol
+            classCache[classId] = symbol
             val annotations = mutableListOf<FirAnnotationCall>()
             kotlinJvmBinaryClass.loadClassAnnotations(
                 object : KotlinJvmBinaryClass.AnnotationVisitor {
@@ -364,7 +363,7 @@ class KotlinDeserializedJvmSymbolsProvider(
             (symbol.fir.annotations as MutableList<FirAnnotationCall>) += annotations
         }
 
-        return classesCache[classId]
+        return classCache[classId]
     }
 
     private fun loadFunctionsByName(part: PackagePartsCacheData, name: Name): List<FirCallableSymbol<*>> {
@@ -399,13 +398,13 @@ class KotlinDeserializedJvmSymbolsProvider(
     }
 
     private fun getPackageParts(packageFqName: FqName): Collection<PackagePartsCacheData> {
-        return packagePartsCache.getOrPut(packageFqName) {
+        return packagePartsCache.lookupCacheOrCalculate(packageFqName) {
             try {
                 computePackagePartsInfos(packageFqName)
             } catch (e: ProcessCanceledException) {
                 emptyList()
             }
-        }
+        }!!
     }
 
     private fun findRegularClass(classId: ClassId): FirRegularClass? =
