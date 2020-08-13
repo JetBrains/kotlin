@@ -80,14 +80,14 @@ interface DokkaConfiguration : Serializable {
     val failOnWarning: Boolean
     val sourceSets: List<DokkaSourceSet>
     val modules: List<DokkaModuleDescription>
-    val pluginsClasspath: Set<File>
+    val pluginsClasspath: List<File>
     val pluginsConfiguration: Map<String, String>
 
     interface DokkaSourceSet : Serializable {
         val sourceSetID: DokkaSourceSetID
         val displayName: String
         val moduleDisplayName: String
-        val classpath: Set<File>
+        val classpath: List<File>
         val sourceRoots: Set<File>
         val dependentSourceSets: Set<DokkaSourceSetID>
         val samples: Set<File>
