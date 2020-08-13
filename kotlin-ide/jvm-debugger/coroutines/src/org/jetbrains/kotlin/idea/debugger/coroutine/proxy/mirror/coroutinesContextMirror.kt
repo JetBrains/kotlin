@@ -9,7 +9,7 @@ import com.sun.jdi.ObjectReference
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 
 class CoroutineContext(context: DefaultExecutionContext) :
-    BaseMirror<MirrorOfCoroutineContext>("kotlin.coroutines.CombinedContext", context) {
+    BaseMirror<ObjectReference, MirrorOfCoroutineContext>("kotlin.coroutines.CombinedContext", context) {
     private val coroutineNameRef = CoroutineName(context)
     private val coroutineIdRef = CoroutineId(context)
     private val jobRef = Job(context)
@@ -31,7 +31,7 @@ class CoroutineContext(context: DefaultExecutionContext) :
     }
 }
 
-abstract class ContextKey<T>(name: String, context: DefaultExecutionContext) : BaseMirror<T>(name, context) {
+abstract class ContextKey<T>(name: String, context: DefaultExecutionContext) : BaseMirror<ObjectReference, T>(name, context) {
     abstract fun key(): ObjectReference?
 }
 

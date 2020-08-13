@@ -59,7 +59,7 @@ class JavaLangMirror(context: DefaultExecutionContext) {
 }
 
 class JavaUtilAbstractCollection(context: DefaultExecutionContext) :
-    BaseMirror<MirrorOfJavaLangAbstractCollection>("java.util.AbstractCollection", context) {
+    BaseMirror<ObjectReference, MirrorOfJavaLangAbstractCollection>("java.util.AbstractCollection", context) {
     private val abstractList = JavaUtilAbstractList(context)
     private val sizeMethod = makeMethod("size")
 
@@ -75,7 +75,7 @@ class JavaUtilAbstractCollection(context: DefaultExecutionContext) :
 }
 
 class JavaUtilAbstractList(context: DefaultExecutionContext) :
-    BaseMirror<ObjectReference>("java.util.AbstractList", context) {
+    BaseMirror<ObjectReference, ObjectReference>("java.util.AbstractList", context) {
     val getMethod = makeMethod("get")
 
     override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): Nothing? =
@@ -86,7 +86,7 @@ class JavaUtilAbstractList(context: DefaultExecutionContext) :
 }
 
 class WeakReference constructor(context: DefaultExecutionContext) :
-        BaseMirror<MirrorOfWeakReference>("java.lang.ref.WeakReference", context)  {
+        BaseMirror<ObjectReference, MirrorOfWeakReference>("java.lang.ref.WeakReference", context)  {
     val get by MethodDelegate<ObjectReference>("get")
 
     override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): MirrorOfWeakReference? {

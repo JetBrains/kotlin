@@ -111,7 +111,7 @@ abstract class BaseDynamicMirror<T>(val value: ObjectReference, val name: String
     protected abstract fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): T?
 }
 
-abstract class BaseMirror<T>(val name: String, context: DefaultExecutionContext) : ReferenceTypeProvider {
+abstract class BaseMirror<T: ObjectReference, F>(val name: String, context: DefaultExecutionContext) : ReferenceTypeProvider, MirrorProvider<T, F> {
     val log by logger
     private val cls = context.findClassSafe(name) ?: throw IllegalStateException("coroutine-debugger: class $name not found.")
 
@@ -129,7 +129,7 @@ abstract class BaseMirror<T>(val name: String, context: DefaultExecutionContext)
     fun isCompatible(value: ObjectReference?) =
             value?.referenceType()?.isSubTypeOrSame(name) ?: false
 
-    fun mirror(value: ObjectReference?, context: DefaultExecutionContext): T? {
+    override fun mirror(value: T?, context: DefaultExecutionContext): F? {
         value ?: return null
         return if (!isCompatible(value)) {
             log.trace("Value ${value.referenceType()} is not compatible with $name.")
@@ -208,5 +208,5 @@ abstract class BaseMirror<T>(val name: String, context: DefaultExecutionContext)
     fun booleanValue(value: ObjectReference?, field: Field?) =
             field?.let { (value?.getValue(field) as? BooleanValue)?.booleanValue() }
 
-    protected abstract fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): T?
+    protected abstract fun fetchMirror(value: T, context: DefaultExecutionContext): F?
 }
