@@ -22,11 +22,11 @@ static void writeStackTraceToBuffer(KRef throwable, char* buffer, unsigned long 
   *(bufferPointer++) = '(';
   --remainingBytes;
 
-  for (int index = 0; index < stackTrace->count_; ++index) {
+  for (uint32_t index = 0; index < stackTrace->count_; ++index) {
     KNativePtr ptr = *PrimitiveArrayAddressOfElementAt<KNativePtr>(stackTrace, index);
     int bytes = snprintf(bufferPointer, remainingBytes, "0x%" PRIxPTR " ", reinterpret_cast<uintptr_t>(ptr));
 
-    if (bytes >= remainingBytes) {
+    if (bytes < 0 || static_cast<unsigned long>(bytes) >= remainingBytes) {
       break;
     }
 

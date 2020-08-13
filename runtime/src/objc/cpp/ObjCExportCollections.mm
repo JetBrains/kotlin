@@ -69,7 +69,7 @@ void Kotlin_MutableList_setObject(KRef list, KInt index, KRef obj);
 } // extern "C"
 
 static inline KInt objCCapacityToKotlin(NSUInteger capacity) {
-  KInt max = std::numeric_limits<KInt>::max();
+  NSUInteger max = std::numeric_limits<KInt>::max();
   return capacity > max ? max : capacity;
 }
 

@@ -607,7 +607,7 @@ KInt Kotlin_text_regex_decomposeString(ArrayHeader* inputCodePoints, KInt inputL
 
 KInt Kotlin_text_regex_decomposeCodePoint(KInt codePoint, ArrayHeader* outputCodePoints, KInt fromIndex) {
   RuntimeAssert(outputCodePoints->type_info() == theIntArrayTypeInfo, "Must be an Int array");
-  RuntimeAssert(fromIndex >= 0 && fromIndex < outputCodePoints->count_, "Start index must be >= 0 and < array size");
+  RuntimeAssert(fromIndex >= 0 && static_cast<uint32_t>(fromIndex) < outputCodePoints->count_, "Start index must be >= 0 and < array size");
   KInt* rawResult = IntArrayAddressOfElementAt(outputCodePoints, fromIndex);
   const Decomposition* decomposition = getDecomposition(codePoint);
   if (decomposition == nullptr) {

@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+#include <limits>
 #include <string.h>
 
 #include "KAssert.h"
@@ -734,12 +736,12 @@ OBJ_GETTER(Kotlin_String_replace, KString thiz, KChar oldChar, KChar newChar, KB
   KChar* resultRaw = CharArrayAddressOfElementAt(result, 0);
   if (ignoreCase) {
     KChar oldCharLower = towlower_Konan(oldChar);
-    for (KInt index = 0; index < count; ++index) {
+    for (uint32_t index = 0; index < count; ++index) {
       KChar thizChar = *thizRaw++;
       *resultRaw++ = towlower_Konan(thizChar) == oldCharLower ? newChar : thizChar;
     }
   } else {
-    for (KInt index = 0; index < count; ++index) {
+    for (uint32_t index = 0; index < count; ++index) {
       KChar thizChar = *thizRaw++;
       *resultRaw++ = thizChar == oldChar ? newChar : thizChar;
     }
@@ -752,8 +754,11 @@ OBJ_GETTER(Kotlin_String_plusImpl, KString thiz, KString other) {
   RuntimeAssert(other != nullptr, "other cannot be null");
   RuntimeAssert(thiz->type_info() == theStringTypeInfo, "Must be a string");
   RuntimeAssert(other->type_info() == theStringTypeInfo, "Must be a string");
-  KInt result_length = thiz->count_ + other->count_;
-  if (result_length < thiz->count_ || result_length < other->count_) {
+  RuntimeAssert(thiz->count_ <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()), "this cannot be this large");
+  RuntimeAssert(other->count_ <= static_cast<uint32_t>(std::numeric_limits<int32_t>::max()), "other cannot be this large");
+  // Since thiz and other sizes are bounded by int32_t max value, their sum cannot exceed uint32_t max value - 1.
+  uint32_t result_length = thiz->count_ + other->count_;
+  if (result_length > static_cast<uint32_t>(std::numeric_limits<int32_t>::max())) {
     ThrowArrayIndexOutOfBoundsException();
   }
   ArrayHeader* result = AllocArrayInstance(theStringTypeInfo, result_length, OBJ_RESULT)->array();
@@ -773,7 +778,7 @@ OBJ_GETTER(Kotlin_String_toUpperCase, KString thiz) {
   ArrayHeader* result = AllocArrayInstance(theStringTypeInfo, count, OBJ_RESULT)->array();
   const KChar* thizRaw = CharArrayAddressOfElementAt(thiz, 0);
   KChar* resultRaw = CharArrayAddressOfElementAt(result, 0);
-  for (KInt index = 0; index < count; ++index) {
+  for (uint32_t index = 0; index < count; ++index) {
     *resultRaw++ = towupper_Konan(*thizRaw++);
   }
   RETURN_OBJ(result->obj());
@@ -784,7 +789,7 @@ OBJ_GETTER(Kotlin_String_toLowerCase, KString thiz) {
   ArrayHeader* result = AllocArrayInstance(theStringTypeInfo, count, OBJ_RESULT)->array();
   const KChar* thizRaw = CharArrayAddressOfElementAt(thiz, 0);
   KChar* resultRaw = CharArrayAddressOfElementAt(result, 0);
-  for (KInt index = 0; index < count; ++index) {
+  for (uint32_t index = 0; index < count; ++index) {
     *resultRaw++ = towlower_Konan(*thizRaw++);
   }
   RETURN_OBJ(result->obj());
@@ -814,7 +819,7 @@ OBJ_GETTER(Kotlin_String_toCharArray, KString string, KInt start, KInt size) {
 }
 
 OBJ_GETTER(Kotlin_String_subSequence, KString thiz, KInt startIndex, KInt endIndex) {
-  if (startIndex < 0 || endIndex > thiz->count_ || startIndex > endIndex) {
+  if (startIndex < 0 || static_cast<uint32_t>(endIndex) > thiz->count_ || startIndex > endIndex) {
     // TODO: is it correct exception?
     ThrowArrayIndexOutOfBoundsException();
   }
@@ -849,7 +854,7 @@ KInt Kotlin_String_compareToIgnoreCase(KString thiz, KConstRef other) {
   auto count = thiz->count_ < otherString->count_ ? thiz->count_ : otherString->count_;
   const KChar* thizRaw = CharArrayAddressOfElementAt(thiz, 0);
   const KChar* otherRaw = CharArrayAddressOfElementAt(otherString, 0);
-  for (KInt index = 0; index < count; ++index) {
+  for (uint32_t index = 0; index < count; ++index) {
     int diff = towlower_Konan(*thizRaw++) - towlower_Konan(*otherRaw++);
     if (diff != 0)
       return diff < 0 ? -1 : 1;
@@ -864,6 +869,9 @@ KInt Kotlin_String_compareToIgnoreCase(KString thiz, KConstRef other) {
 
 
 KChar Kotlin_String_get(KString thiz, KInt index) {
+  // We couldn't have created a string bigger than max KInt value.
+  // So if index is < 0, conversion to an unsigned value would make it bigger
+  // than the array size.
   if (static_cast<uint32_t>(index) >= thiz->count_) {
     ThrowArrayIndexOutOfBoundsException();
   }
@@ -906,8 +914,8 @@ OBJ_GETTER(Kotlin_String_unsafeStringToUtf8OrThrow, KString thiz, KInt start, KI
 
 KInt Kotlin_StringBuilder_insertString(KRef builder, KInt distIndex, KString fromString, KInt sourceIndex, KInt count) {
   auto toArray = builder->array();
-  RuntimeAssert(sourceIndex >= 0 && sourceIndex + count <= fromString->count_, "must be true");
-  RuntimeAssert(distIndex >= 0 && distIndex + count <= toArray->count_, "must be true");
+  RuntimeAssert(sourceIndex >= 0 && static_cast<uint32_t>(sourceIndex + count) <= fromString->count_, "must be true");
+  RuntimeAssert(distIndex >= 0 && static_cast<uint32_t>(distIndex + count) <= toArray->count_, "must be true");
   memcpy(CharArrayAddressOfElementAt(toArray, distIndex),
          CharArrayAddressOfElementAt(fromString, sourceIndex),
          count * sizeof(KChar));
@@ -916,11 +924,11 @@ KInt Kotlin_StringBuilder_insertString(KRef builder, KInt distIndex, KString fro
 
 KInt Kotlin_StringBuilder_insertInt(KRef builder, KInt position, KInt value) {
   auto toArray = builder->array();
-  RuntimeAssert(toArray->count_ >= 11 + position, "must be true");
+  RuntimeAssert(toArray->count_ >= static_cast<uint32_t>(11 + position), "must be true");
   char cstring[12];
   auto length = konan::snprintf(cstring, sizeof(cstring), "%d", value);
   RuntimeAssert(length >= 0, "This should never happen"); // may be overkill
-  RuntimeAssert(length < sizeof(cstring), "Unexpectedly large value"); // Can't be, but this is what sNprintf for
+  RuntimeAssert(static_cast<size_t>(length) < sizeof(cstring), "Unexpectedly large value"); // Can't be, but this is what sNprintf for
   auto* from = &cstring[0];
   auto* to = CharArrayAddressOfElementAt(toArray, position);
   while (*from) {
@@ -951,7 +959,7 @@ KBoolean Kotlin_String_equalsIgnoreCase(KString thiz, KConstRef other) {
   auto count = thiz->count_;
   const KChar* thizRaw = CharArrayAddressOfElementAt(thiz, 0);
   const KChar* otherRaw = CharArrayAddressOfElementAt(otherString, 0);
-  for (KInt index = 0; index < count; ++index) {
+  for (uint32_t index = 0; index < count; ++index) {
     if (towlower_Konan(*thizRaw++) != towlower_Konan(*otherRaw++)) return false;
   }
   return true;
@@ -1072,7 +1080,7 @@ KInt Kotlin_String_indexOfChar(KString thiz, KChar ch, KInt fromIndex) {
   if (fromIndex < 0) {
     fromIndex = 0;
   }
-  if (fromIndex > thiz->count_) {
+  if (static_cast<uint32_t>(fromIndex) > thiz->count_) {
     return -1;
   }
   KInt count = thiz->count_;
@@ -1088,7 +1096,7 @@ KInt Kotlin_String_lastIndexOfChar(KString thiz, KChar ch, KInt fromIndex) {
   if (fromIndex < 0 || thiz->count_ == 0) {
     return -1;
   }
-  if (fromIndex >= thiz->count_) {
+  if (static_cast<uint32_t>(fromIndex) >= thiz->count_) {
     fromIndex = thiz->count_ - 1;
   }
   KInt index = fromIndex;
@@ -1105,10 +1113,10 @@ KInt Kotlin_String_indexOfString(KString thiz, KString other, KInt fromIndex) {
   if (fromIndex < 0) {
     fromIndex = 0;
   }
-  if (fromIndex >= thiz->count_) {
+  if (static_cast<uint32_t>(fromIndex) >= thiz->count_) {
     return (other->count_ == 0) ? thiz->count_ : -1;
   }
-  if (other->count_ > static_cast<KInt>(thiz->count_) - fromIndex) {
+  if (static_cast<KInt>(other->count_) > static_cast<KInt>(thiz->count_) - fromIndex) {
     return -1;
   }
   // An empty string can be always found.

@@ -1884,6 +1884,11 @@ task array4(type: KonanLocalTest) {
     source = "runtime/collections/array4.kt"
 }
 
+task array5(type: KonanLocalTest) {
+    disabled = (project.testTarget == 'wasm32') // Uses exceptions.
+    source = "runtime/collections/array5.kt"
+}
+
 task typed_array0(type: KonanLocalTest) {
     goldValue = "OK\n"
     source = "runtime/collections/typed_array0.kt"
@@ -3858,6 +3863,12 @@ interopTest("interop_array_pointers") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     interop = 'carrayPointers'
     source = "interop/basics/arrayPointers.kt"
+}
+
+standaloneTest("interop_pinning") {
+    disabled = (project.testTarget == 'wasm32') // Uses exceptions.
+    source = "interop/basics/pinning.kt"
+    flags = [ "-tr" ]
 }
 
 task interop_convert(type: KonanLocalTest) {

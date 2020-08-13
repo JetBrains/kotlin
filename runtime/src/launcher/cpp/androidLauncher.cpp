@@ -143,13 +143,13 @@ void onStart(ANativeActivity* activity) {
 
 void onResume(ANativeActivity* activity) {
   LOGV("onResume called");
-  NativeActivitySaveStateEvent event = { RESUME };
+  NativeActivitySaveStateEvent event = { RESUME, nullptr, 0 };
   putEventSynchronously(&event);
 }
 
 void* onSaveInstanceState(ANativeActivity* activity, size_t* outLen) {
   LOGV("onSaveInstanceState called");
-  NativeActivitySaveStateEvent event = { SAVE_INSTANCE_STATE };
+  NativeActivitySaveStateEvent event = { SAVE_INSTANCE_STATE, nullptr, 0 };
   putEventSynchronously(&event);
   *outLen = event.savedStateSize;
   return event.savedState;

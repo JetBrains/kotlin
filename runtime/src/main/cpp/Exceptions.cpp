@@ -161,7 +161,7 @@ OBJ_GETTER(GetStackTraceStrings, KConstRef stackTrace) {
   ObjHolder resultHolder;
   ObjHeader* strings = AllocArrayInstance(theArrayTypeInfo, size, resultHolder.slot());
 #if USE_GCC_UNWIND
-  for (int index = 0; index < size; ++index) {
+  for (uint32_t index = 0; index < size; ++index) {
     KNativePtr address = Kotlin_NativePtrArray_get(stackTrace, index);
     char symbol[512];
     if (!AddressToSymbol((const void*) address, symbol, sizeof(symbol))) {
@@ -179,7 +179,7 @@ OBJ_GETTER(GetStackTraceStrings, KConstRef stackTrace) {
     char **symbols = backtrace_symbols(PrimitiveArrayAddressOfElementAt<KNativePtr>(stackTrace->array(), 0), size);
     RuntimeCheck(symbols != nullptr, "Not enough memory to retrieve the stacktrace");
 
-    for (int index = 0; index < size; ++index) {
+    for (uint32_t index = 0; index < size; ++index) {
       auto sourceInfo = getSourceInfo(stackTrace, index);
       const char* symbol = symbols[index];
       const char* result;

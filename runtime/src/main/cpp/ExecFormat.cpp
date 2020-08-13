@@ -153,7 +153,7 @@ extern "C" bool AddressToSymbol(const void* address, char* resultBuffer, size_t 
 namespace {
 
 static void* mapModuleFile(HMODULE hModule) {
-  int bufferLength = 64;
+  DWORD bufferLength = 64;
   wchar_t* buffer = nullptr;
   for (;;) {
     auto newBuffer = (wchar_t*)konanAllocMemory(sizeof(wchar_t) * bufferLength);

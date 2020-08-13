@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-#include <limits.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <limits>
+#include <type_traits>
 
 #include "KAssert.h"
 #include "Exceptions.h"
@@ -49,7 +50,7 @@ OBJ_GETTER0(Kotlin_native_internal_undefined) {
 }
 
 void* Kotlin_interop_malloc(KLong size, KInt align) {
-  if (size > SIZE_MAX) {
+  if (size < 0 || static_cast<std::make_unsigned<decltype(size)>::type>(size) > std::numeric_limits<size_t>::max()) {
     return nullptr;
   }
   RuntimeAssert(align > 0, "Unsupported alignment");

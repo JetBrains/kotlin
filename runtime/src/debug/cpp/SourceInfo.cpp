@@ -18,11 +18,11 @@
 
 #ifdef KONAN_CORE_SYMBOLICATION
 #include <KAssert.h>
+#include <cstdint>
 #include <dlfcn.h>
-#include <limits.h>
-#include <stdint.h>
-#include <unistd.h>
+#include <limits>
 #include <string.h>
+#include <unistd.h>
 
 #define TRACE_SYMBOLICATION 0
 #if TRACE_SYMBOLICATION
@@ -51,7 +51,7 @@ typedef struct _CSRange {
 
 typedef unsigned long long CSArchitecture;
 
-#define kCSNow LLONG_MAX
+constexpr auto kCSNow = std::numeric_limits<long long>::max();
 
 namespace {
 
@@ -153,7 +153,8 @@ extern "C" struct SourceInfo Kotlin_getSourceInfo(void* addr) {
      */
     CSSymbolForeachSourceInfo(symbol,
       ^(CSSourceInfoRef ref) {
-        uint32_t lineNumber = CSSourceInfoGetLineNumber(ref);
+        // Expecting CSSourceInfoGetLineNumber not to overflow int32_t max value.
+        int32_t lineNumber = CSSourceInfoGetLineNumber(ref);
         if (lineNumber == 0)
           return 0;
         if (limits.start == -1) {
@@ -170,7 +171,8 @@ extern "C" struct SourceInfo Kotlin_getSourceInfo(void* addr) {
 
     CSSymbolForeachSourceInfo(symbol,
       ^(CSSourceInfoRef ref) {
-          uint32_t lineNumber = CSSourceInfoGetLineNumber(ref);
+          // Expecting CSSourceInfoGetLineNumber not to overflow int32_t max value.
+          int32_t lineNumber = CSSourceInfoGetLineNumber(ref);
           if (lineNumber == 0)
             return 0;
           SYM_DUMP(ref);

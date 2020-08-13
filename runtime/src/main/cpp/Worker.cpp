@@ -93,7 +93,7 @@ struct Job {
 
     struct {
       KNativePtr operation;
-      KLong whenExecute;
+      uint64_t whenExecute;
     } executeAfter;
   };
 };
@@ -338,6 +338,8 @@ class State {
   bool executeJobAfterInWorkerUnlocked(KInt id, KRef operation, KLong afterMicroseconds) {
     Worker* worker = nullptr;
     Locker locker(&lock_);
+
+    RuntimeAssert(afterMicroseconds >= 0, "afterMicroseconds cannot be negative");
 
     auto it = workers_.find(id);
     if (it == workers_.end()) {

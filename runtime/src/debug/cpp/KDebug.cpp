@@ -113,7 +113,8 @@ int32_t Konan_DebugObjectToUtf8ArrayImpl(KRef obj, char* buffer, int32_t bufferS
   ObjHolder stringHolder;
   auto data = KonanObjectToUtf8Array(obj, stringHolder.slot())->array();
   if (data == nullptr) return 0;
-  KInt toCopy = data->count_ > bufferSize - 1 ? bufferSize - 1 : data->count_;
+  if (bufferSize < 1) return 0;
+  KInt toCopy = data->count_ > static_cast<uint32_t>(bufferSize - 1) ? bufferSize - 1 : data->count_;
   ::memcpy(buffer, ByteArrayAddressOfElementAt(data, 0), toCopy);
   buffer[toCopy] = '\0';
   return toCopy + 1;
@@ -176,7 +177,7 @@ void* Konan_DebugGetFieldAddressImpl(KRef obj, int32_t index) {
     return nullptr;
 
    if (extendedTypeInfo->fieldsCount_ < 0) {
-     if (index > obj->array()->count_)
+     if (static_cast<uint32_t>(index) > obj->array()->count_)
         return nullptr;
 
       int32_t typeIndex = -extendedTypeInfo->fieldsCount_;

@@ -96,7 +96,7 @@ inline void traverseObjectFields(ObjHeader* obj, func process) {
     }
   } else {
     ArrayHeader* array = obj->array();
-    for (int index = 0; index < array->count_; index++) {
+    for (uint32_t index = 0; index < array->count_; index++) {
       process(ArrayAddressOfElementAt(array, index));
     }
   }
@@ -242,7 +242,7 @@ class CyclicCollector {
              RuntimeAssert(objContainer->frozen(), "Must be frozen aggregate");
              ContainerHeader** subContainer = reinterpret_cast<ContainerHeader**>(objContainer + 1);
              refCount = 0;
-             for (int i = 0; i < objContainer->objectCount(); ++i) {
+             for (uint32_t i = 0; i < objContainer->objectCount(); ++i) {
                  auto* componentObj = reinterpret_cast<ObjHeader*>((*subContainer) + 1);
                  refCount += sideRefCounts[componentObj];
                  subContainer++;
