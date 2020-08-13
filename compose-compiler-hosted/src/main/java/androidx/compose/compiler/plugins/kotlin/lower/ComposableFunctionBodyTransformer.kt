@@ -112,6 +112,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNothing
@@ -3202,7 +3203,7 @@ class ComposableFunctionBodyTransformer(
         class RootScope : Scope("<root>")
         class FunctionScope(
             val function: IrFunction,
-            transformer: ComposableFunctionBodyTransformer
+            private val transformer: ComposableFunctionBodyTransformer
         ) : BlockScope("fun ${function.name.asString()}") {
             val remappedParams = mutableMapOf<IrValueDeclaration, IrValueDeclaration>()
             val paramsToSlots = mutableMapOf<IrValueDeclaration, Int>()
@@ -3312,6 +3313,9 @@ class ComposableFunctionBodyTransformer(
                 }
 
                 parameters.forEachIndexed { originalIndex, parameter ->
+                    with(transformer) {
+                        parameter.type.classifierOrNull?.bindIfNecessary()
+                    }
                     if (expectedIndexes.first() == sortIndex[originalIndex] &&
                             !parameter.type.isInlined()) {
                         run++
