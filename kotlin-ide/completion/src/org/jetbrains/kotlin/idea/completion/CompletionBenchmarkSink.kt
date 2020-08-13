@@ -65,8 +65,8 @@ interface CompletionBenchmarkSink {
             pendingSessions -= completionSession
             perSessionResults[completionSession]?.onEnd(canceled)
             if (pendingSessions.isEmpty()) {
-                val firstFlush = perSessionResults.values.filterNot { results -> results.canceled }.map { it.firstFlush }.min() ?: 0
-                val full = perSessionResults.values.map { it.full }.max() ?: 0
+                val firstFlush = perSessionResults.values.filterNot { results -> results.canceled }.minOfOrNull { it.firstFlush } ?: 0
+                val full = perSessionResults.values.maxOfOrNull { it.full } ?: 0
                 channel.offer(CompletionBenchmarkResults(firstFlush, full))
                 reset()
             }

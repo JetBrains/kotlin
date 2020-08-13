@@ -160,11 +160,11 @@ class StringInjectionHostTest : KotlinLightCodeInsightFixtureTestCase() {
             assertEquals(decoded, chars.substring(prefix.length))
 
             val extendedOffsets = HashMap(targetToSourceOffsets)
-            val beforeStart = targetToSourceOffsets.keys.min()!! - 1
+            val beforeStart = targetToSourceOffsets.keys.minOrNull()!! - 1
             if (beforeStart >= 0) {
                 extendedOffsets[beforeStart] = -1
             }
-            extendedOffsets[targetToSourceOffsets.keys.max()!! + 1] = -1
+            extendedOffsets[targetToSourceOffsets.keys.maxOrNull()!! + 1] = -1
             for ((target, source) in extendedOffsets) {
                 assertEquals("Wrong source offset for $target", source, escaper.getOffsetInHost(target, range))
             }

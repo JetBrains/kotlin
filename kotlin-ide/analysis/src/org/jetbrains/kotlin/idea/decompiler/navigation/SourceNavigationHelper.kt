@@ -197,7 +197,7 @@ object SourceNavigationHelper {
     ): T? {
         val classFqName = entity.fqName ?: return null
         return targetScopes(entity, navigationKind).firstNotNullResult { scope ->
-            index.get(classFqName.asString(), entity.project, scope).minBy { it.isExpectDeclaration() }
+            index.get(classFqName.asString(), entity.project, scope).minByOrNull { it.isExpectDeclaration() }
         }
     }
 

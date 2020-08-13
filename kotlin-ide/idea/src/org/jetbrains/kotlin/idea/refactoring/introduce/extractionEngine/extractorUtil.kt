@@ -642,9 +642,9 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         }
 
         val marginalCandidate = if (insertBefore) {
-            anchorCandidates.minBy { it.startOffset }!!
+            anchorCandidates.minByOrNull { it.startOffset }!!
         } else {
-            anchorCandidates.maxBy { it.startOffset }!!
+            anchorCandidates.maxByOrNull { it.startOffset }!!
         }
 
         // Ascend to the level of targetSibling
