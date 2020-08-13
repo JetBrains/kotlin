@@ -14,6 +14,7 @@ abstract class Documentable : WithChildren<Documentable> {
     abstract val documentation: SourceSetDependent<DocumentationNode>
     abstract val sourceSets: Set<DokkaSourceSet>
     abstract val expectPresentInSet: DokkaSourceSet?
+    abstract override val children: List<Documentable>
 
     override fun toString(): String =
         "${javaClass.simpleName}($dri)"
