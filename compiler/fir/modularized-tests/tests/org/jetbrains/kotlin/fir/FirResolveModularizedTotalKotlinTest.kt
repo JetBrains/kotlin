@@ -10,6 +10,7 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
+import com.sun.management.HotSpotDiagnosticMXBean
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.common.profiling.AsyncProfilerHelper
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
+import java.lang.management.ManagementFactory
 
 
 private const val FAIL_FAST = true
@@ -36,6 +38,7 @@ private const val FAIL_FAST = true
 private const val FIR_DUMP_PATH = "tmp/firDump"
 private const val FIR_HTML_DUMP_PATH = "tmp/firDump-html"
 const val FIR_LOGS_PATH = "tmp/fir-logs"
+private const val FIR_MEMORY_DUMPS_PATH = "tmp/memory-dumps"
 
 private val DUMP_FIR = System.getProperty("fir.bench.dump", "true").toBooleanLenient()!!
 internal val PASSES = System.getProperty("fir.bench.passes")?.toInt() ?: 3
@@ -43,6 +46,7 @@ internal val SEPARATE_PASS_DUMP = System.getProperty("fir.bench.dump.separate_pa
 private val APPEND_ERROR_REPORTS = System.getProperty("fir.bench.report.errors.append", "false").toBooleanLenient()!!
 private val RUN_CHECKERS = System.getProperty("fir.bench.run.checkers", "false").toBooleanLenient()!!
 private val USE_LIGHT_TREE = System.getProperty("fir.bench.use.light.tree", "false").toBooleanLenient()!!
+private val DUMP_MEMORY = System.getProperty("fir.bench.dump.memory", "false").toBooleanLenient()!!
 
 private val ASYNC_PROFILER_LIB = System.getProperty("fir.bench.use.async.profiler.lib")
 private val ASYNC_PROFILER_START_CMD = System.getProperty("fir.bench.use.async.profiler.cmd.start")
@@ -125,6 +129,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         //println("Raw FIR up, files: ${firFiles.size}")
 
         bench.processFiles(firFiles, processors)
+        createMemoryDump(moduleData)
 
         val disambiguatedName = moduleData.disambiguatedName()
         dumpFir(disambiguatedName, moduleData, firFiles)
@@ -244,5 +249,23 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
             runTestOnce(i)
         }
         afterAllPasses()
+    }
+
+    private fun createMemoryDump(moduleData: ModuleData) {
+        if (!DUMP_MEMORY) return
+        val name = "module_${moduleData.name}.hprof"
+        val dir = File(FIR_MEMORY_DUMPS_PATH).also {
+            it.mkdirs()
+        }
+        val filePath = dir.resolve(name).absolutePath
+        createMemoryDump(filePath)
+    }
+
+    private fun createMemoryDump(filePath: String) {
+        val server = ManagementFactory.getPlatformMBeanServer()
+        val mxBean = ManagementFactory.newPlatformMXBeanProxy(
+            server, "com.sun.management:type=HotSpotDiagnostic", HotSpotDiagnosticMXBean::class.java
+        )
+        mxBean.dumpHeap(filePath, true)
     }
 }
