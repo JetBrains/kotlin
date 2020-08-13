@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.symbols
 
-import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.SymbolByFqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -13,6 +12,6 @@ import org.jetbrains.kotlin.psi.KtFile
 abstract class AbstractSymbolFromLibraryPointerRestoreTest : AbstractSymbolPointerRestoreTest() {
     override fun KtAnalysisSession.collectSymbols(filePath: String, ktFile: KtFile): List<KtSymbol> {
         val symbolData = SymbolByFqName.getSymbolDataFromFile(filePath)
-        return symbolData.toSymbols(this)
+        return with(symbolData) { toSymbols() }
     }
 }

@@ -20,9 +20,9 @@ class AddFunctionReturnTypeIntention :
         element.typeReference == null && !element.hasBlockBody()
 
     override fun KtAnalysisSession.analyzeAndGetData(element: KtNamedFunction): TypeCandidate? {
-        val returnType = getReturnTypeForKtDeclaration(element)
+        val returnType = element.getReturnKtType()
         val approximated = approximateTypeToUpperDenotable(returnType) ?: return null
-        return TypeCandidate(KtTypeRenderer.render(approximated))
+        return TypeCandidate(approximated.render())
     }
 
     private tailrec fun approximateTypeToUpperDenotable(type: KtType): KtDenotableType? = when (type) {

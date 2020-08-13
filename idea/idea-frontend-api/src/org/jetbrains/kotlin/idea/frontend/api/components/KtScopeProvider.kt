@@ -3,22 +3,22 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.frontend.api.scopes
+package org.jetbrains.kotlin.idea.frontend.api.components
 
-import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
+import org.jetbrains.kotlin.idea.frontend.api.scopes.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
-abstract class KtScopeProvider : ValidityTokenOwner {
+abstract class KtScopeProvider : KtAnalysisSessionComponent() {
     abstract fun getMemberScope(classSymbol: KtClassOrObjectSymbol): KtMemberScope
     abstract fun getDeclaredMemberScope(classSymbol: KtClassOrObjectSymbol): KtDeclaredMemberScope
     abstract fun getPackageScope(packageSymbol: KtPackageSymbol): KtPackageScope
     abstract fun getCompositeScope(subScopes: List<KtScope>): KtCompositeScope
 
-    abstract fun getScopeForType(type: KtType): KtScope?
+    abstract fun getTypeScope(type: KtType): KtScope?
 
     abstract fun getScopeContextForPosition(originalFile: KtFile, positionInFakeFile: KtElement): KtScopeContext
 }

@@ -16,9 +16,9 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 internal class KtFirSimpleNameReference(
     expression: KtSimpleNameExpression
 ) : KtSimpleNameReference(expression), KtFirReference {
-    override fun resolveToSymbols(analysisSession: KtAnalysisSession): Collection<KtSymbol> {
-        check(analysisSession is KtFirAnalysisSession)
-        return FirReferenceResolveHelper.resolveSimpleNameReference(this, analysisSession)
+    override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
+        check(this is KtFirAnalysisSession)
+        return FirReferenceResolveHelper.resolveSimpleNameReference(this@KtFirSimpleNameReference, this)
     }
 
     override fun doCanBeReferenceTo(candidateTarget: PsiElement): Boolean {

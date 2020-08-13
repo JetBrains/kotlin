@@ -21,15 +21,15 @@ import org.jetbrains.kotlin.psi.KtPropertyDelegate
 class KtFirPropertyDelegationMethodsReference(
     element: KtPropertyDelegate
 ) : KtPropertyDelegationMethodsReference(element), KtFirReference {
-    override fun resolveToSymbols(analysisSession: KtAnalysisSession): Collection<KtSymbol> {
-        check(analysisSession is KtFirAnalysisSession)
-        val property = (expression.parent as? KtElement)?.getOrBuildFirSafe<FirProperty>(analysisSession.firResolveState) ?: return emptyList()
+    override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
+        check(this is KtFirAnalysisSession)
+        val property = (expression.parent as? KtElement)?.getOrBuildFirSafe<FirProperty>(firResolveState) ?: return emptyList()
         if (property.delegate == null) return emptyList()
         val getValueSymbol = (property.getter?.singleStatementOfType<FirReturnExpression>()?.result as? FirFunctionCall)?.getCalleeSymbol()
         val setValueSymbol = property.setter?.singleStatementOfType<FirFunctionCall>()?.getCalleeSymbol()
         return listOfNotNull(
-            getValueSymbol?.fir?.buildSymbol(analysisSession.firSymbolBuilder),
-            setValueSymbol?.fir?.buildSymbol(analysisSession.firSymbolBuilder)
+            getValueSymbol?.fir?.buildSymbol(firSymbolBuilder),
+            setValueSymbol?.fir?.buildSymbol(firSymbolBuilder)
         )
     }
 

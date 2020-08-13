@@ -10,15 +10,5 @@ import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.KtSimpleReference
 
 interface KtSymbolBasedReference : KtReference {
-    fun resolveToSymbols(analysisSession: KtAnalysisSession): Collection<KtSymbol>
-}
-
-fun KtReference.resolveToSymbols(analysisSession: KtAnalysisSession): Collection<KtSymbol> {
-    check(this is KtSymbolBasedReference) { "To get reference symbol the one should be KtSymbolBasedReference" }
-    return resolveToSymbols(analysisSession)
-}
-
-fun KtSimpleReference<*>.resolveToSymbol(analysisSession: KtAnalysisSession): KtSymbol? {
-    check(this is KtSymbolBasedReference) { "To get reference symbol the one should be KtSymbolBasedReference but was ${this::class}" }
-    return resolveToSymbols(analysisSession).singleOrNull()
+    fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol>
 }

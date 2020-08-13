@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
 
 object SymbolByFqName {
@@ -36,25 +35,25 @@ object SymbolByFqName {
 }
 
 sealed class SymbolData {
-    abstract fun toSymbols(analysisSession: KtAnalysisSession): List<KtSymbol>
+    abstract fun KtAnalysisSession.toSymbols(): List<KtSymbol>
 
     data class ClassData(val classId: ClassId) : SymbolData() {
-        override fun toSymbols(analysisSession: KtAnalysisSession): List<KtSymbol> {
-            val symbol = analysisSession.symbolProvider.getClassOrObjectSymbolByClassId(classId) ?: error("Class $classId is not found")
+        override fun KtAnalysisSession.toSymbols(): List<KtSymbol> {
+            val symbol = classId.getCorrespondingToplevelClassOrObjectSymbol() ?: error("Class $classId is not found")
             return listOf(symbol)
         }
     }
 
     data class CallableData(val callableId: CallableId) : SymbolData() {
-        override fun toSymbols(analysisSession: KtAnalysisSession): List<KtSymbol> {
+        override fun KtAnalysisSession.toSymbols(): List<KtSymbol> {
             val classId = callableId.classId
             val symbols = if (classId == null) {
-                analysisSession.symbolProvider.getTopLevelCallableSymbols(callableId.packageName, callableId.callableName).toList()
+                callableId.packageName.getContainingCallableSymbolsWithName(callableId.callableName).toList()
             } else {
                 val classSymbol =
-                    analysisSession.symbolProvider.getClassOrObjectSymbolByClassId(classId)
+                    classId.getCorrespondingToplevelClassOrObjectSymbol()
                         ?: error("Class $classId is not found")
-                analysisSession.scopeProvider.getDeclaredMemberScope(classSymbol).getCallableSymbols()
+                classSymbol.getDeclaredMemberScope().getCallableSymbols()
                     .filter { (it as? KtNamedSymbol)?.name == callableId.callableName }
                     .toList()
             }

@@ -19,10 +19,10 @@ import org.jetbrains.kotlin.psi.KtExpression
 class KtFirArrayAccessReference(
     expression: KtArrayAccessExpression
 ) : KtArrayAccessReference(expression), KtFirReference {
-    override fun resolveToSymbols(analysisSession: KtAnalysisSession): Collection<KtSymbol> {
-        check(analysisSession is KtFirAnalysisSession)
-        val fir = element.getOrBuildFirSafe<FirFunctionCall>(analysisSession.firResolveState) ?: return emptyList()
-        return listOfNotNull(fir.getCalleeSymbol()?.fir?.buildSymbol(analysisSession.firSymbolBuilder))
+    override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
+        check(this is KtFirAnalysisSession)
+        val fir = element.getOrBuildFirSafe<FirFunctionCall>(firResolveState) ?: return emptyList()
+        return listOfNotNull(fir.getCalleeSymbol()?.fir?.buildSymbol(firSymbolBuilder))
     }
 
     override fun moveFunctionLiteralOutsideParentheses(callExpression: KtCallExpression) {

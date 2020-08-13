@@ -64,7 +64,7 @@ abstract class AbstractSymbolPointerRestoreTest : KotlinLightCodeInsightFixtureT
         executeOnPooledThreadInReadAction {
             analyze(ktFile) {
                 val restored = pointersWithRendered.map { (pointer, expectedRender) ->
-                    val restored = pointer.restoreSymbol(this) ?: error("Symbol $expectedRender was not not restored correctly")
+                    val restored = pointer.restoreSymbol() ?: error("Symbol $expectedRender was not not restored correctly")
                     DebugSymbolRenderer.render(restored)
                 }
                 val actualRestored = SymbolByFqName.textWithRenderedSymbolData(

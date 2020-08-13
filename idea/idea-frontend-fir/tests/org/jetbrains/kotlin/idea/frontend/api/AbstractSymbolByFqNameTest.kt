@@ -23,7 +23,7 @@ abstract class AbstractSymbolByFqNameTest : KotlinLightCodeInsightFixtureTestCas
 
         val renderedSymbols = executeOnPooledThreadInReadAction {
             analyze(fakeKtFile) {
-                val symbols = createSymbols(symbolData, this)
+                val symbols = createSymbols(symbolData)
                 symbols.map { DebugSymbolRenderer.render(it) }
             }
         }
@@ -32,7 +32,7 @@ abstract class AbstractSymbolByFqNameTest : KotlinLightCodeInsightFixtureTestCas
         KotlinTestUtils.assertEqualsToFile(File(path), actual)
     }
 
-    protected abstract fun createSymbols(symbolData: SymbolData, analysisSession: KtAnalysisSession): List<KtSymbol>
+    protected abstract fun KtAnalysisSession.createSymbols(symbolData: SymbolData): List<KtSymbol>
 
     override fun getDefaultProjectDescriptor(): KotlinLightProjectDescriptor =
         KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE

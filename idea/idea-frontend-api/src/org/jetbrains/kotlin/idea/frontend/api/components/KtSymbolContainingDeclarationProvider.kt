@@ -3,11 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.frontend.api.symbols
+package org.jetbrains.kotlin.idea.frontend.api.components
 
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithKind
 
-abstract class KtSymbolContainingDeclarationProvider {
+abstract class KtSymbolContainingDeclarationProvider : KtAnalysisSessionComponent() {
     /**
      * Returns containing declaration for symbol:
      *   for top-level declarations returns null

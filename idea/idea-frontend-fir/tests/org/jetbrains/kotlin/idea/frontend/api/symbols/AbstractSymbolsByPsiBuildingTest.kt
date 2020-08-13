@@ -27,7 +27,7 @@ abstract class AbstractSymbolsByPsiBuildingTest : KotlinLightCodeInsightFixtureT
         val renderedSymbols = executeOnPooledThreadInReadAction {
             analyze(ktFile) {
                 val declarationSymbols = ktFile.collectDescendantsOfType<KtDeclaration>().map { declaration ->
-                    symbolProvider.getSymbol(declaration)
+                    declaration.getSymbol()
                 }
                 declarationSymbols.map(DebugSymbolRenderer::render)
             }

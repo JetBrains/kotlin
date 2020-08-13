@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.PlatformPatterns
-import com.intellij.patterns.PsiJavaPatterns
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.idea.frontend.api.getAnalysisSessionFor
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtLabelReferenceExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
@@ -38,40 +37,38 @@ private object KotlinHighLevelApiContributor : CompletionProvider<CompletionPara
 
         val possibleReceiver = nameExpression.getQualifiedExpressionForSelector()?.receiverExpression
 
-        val originalSession = getAnalysisSessionFor(originalFile)
-        val sessionForCompletion = originalSession.createContextDependentCopy()
-        val scopeProvider = sessionForCompletion.scopeProvider
+        with(getAnalysisSessionFor(originalFile).createContextDependentCopy()) {
+            val (implicitScopes, implicitReceivers) = originalFile.getScopeContextForPosition(nameExpression)
 
-        val (implicitScopes, implicitReceivers) = scopeProvider.getScopeContextForPosition(originalFile, nameExpression)
+            val typeOfPossibleReceiver = possibleReceiver?.getKtType()
+            val possibleReceiverScope = typeOfPossibleReceiver?.let { it.getTypeScope() }
 
-        val typeOfPossibleReceiver = possibleReceiver?.let { sessionForCompletion.getKtExpressionType(it) }
-        val possibleReceiverScope = typeOfPossibleReceiver?.let { sessionForCompletion.scopeProvider.getScopeForType(it) }
+            fun addToCompletion(symbol: KtSymbol) {
+                if (symbol !is KtNamedSymbol) return
+                result.addElement(lookupElementFactory.createLookupElement(symbol))
+            }
 
-        fun addToCompletion(symbol: KtSymbol) {
-            if (symbol !is KtNamedSymbol) return
-            result.addElement(lookupElementFactory.createLookupElement(symbol))
-        }
+            if (possibleReceiverScope != null) {
+                val nonExtensionMembers = possibleReceiverScope
+                    .getCallableSymbols()
+                    .filterNot { it.isExtension }
 
-        if (possibleReceiverScope != null) {
-            val nonExtensionMembers = possibleReceiverScope
-                .getCallableSymbols()
-                .filterNot { it.isExtension }
+                val extensionNonMembers = implicitScopes
+                    .getCallableSymbols()
+                    .filter { it.isExtension && it.canBeCalledWith(listOf(typeOfPossibleReceiver)) }
 
-            val extensionNonMembers = implicitScopes
-                .getCallableSymbols()
-                .filter { it.isExtension && it.canBeCalledWith(listOf(typeOfPossibleReceiver)) }
+                nonExtensionMembers.forEach(::addToCompletion)
+                extensionNonMembers.forEach(::addToCompletion)
+            } else {
+                val extensionNonMembers = implicitScopes
+                    .getCallableSymbols()
+                    .filter { !it.isExtension || it.canBeCalledWith(implicitReceivers) }
 
-            nonExtensionMembers.forEach(::addToCompletion)
-            extensionNonMembers.forEach(::addToCompletion)
-        } else {
-            val extensionNonMembers = implicitScopes
-                .getCallableSymbols()
-                .filter { !it.isExtension || it.canBeCalledWith(implicitReceivers) }
+                extensionNonMembers.forEach(::addToCompletion)
 
-            extensionNonMembers.forEach(::addToCompletion)
-
-            val availableClasses = implicitScopes.getClassClassLikeSymbols()
-            availableClasses.forEach(::addToCompletion)
+                val availableClasses = implicitScopes.getClassClassLikeSymbols()
+                availableClasses.forEach(::addToCompletion)
+            }
         }
     }
 
