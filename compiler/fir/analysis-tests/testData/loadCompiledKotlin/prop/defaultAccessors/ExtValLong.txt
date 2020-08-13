@@ -1,1 +1,12 @@
+public final val R|kotlin/Long|.date1: R|kotlin/Any|
+    public get(): R|kotlin/Any|
+
+internal final val R|kotlin/Long|.date12: R|kotlin/Any|
+    internal get(): R|kotlin/Any|
+
+private final val R|kotlin/Long|.date3: R|java/util/Date|
+    private get(): R|java/util/Date|
+
+public final val R|kotlin/Long|.date4: R|java/util/Date|
+    public get(): R|java/util/Date|
 

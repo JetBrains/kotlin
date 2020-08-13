@@ -5,9 +5,12 @@ public final fun typeAnnotation(): R|kotlin/Unit|
 
 }
 
+public final typealias TypeAliasAnnotation<X> = R|kotlin/collections/List<X>|
+
 public final class TypeParameterAnnotation : R|kotlin/Any| {
     public final fun <T> foo(x: R|T|): R|kotlin/Unit|
 
     public constructor(): R|test/TypeParameterAnnotation|
 
 }
+

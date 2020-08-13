@@ -1,1 +1,4 @@
+public final var nsVal: R|kotlin/Int|
+    public get(): R|kotlin/Int|
+    public set(value: R|kotlin/Int|): R|kotlin/Unit|
 

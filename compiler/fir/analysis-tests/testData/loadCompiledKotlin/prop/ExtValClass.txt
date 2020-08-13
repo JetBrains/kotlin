@@ -1,1 +1,3 @@
+public final val <P> R|P|.anotherJavaClass: R|java/lang/Class<P>|
+    public get(): R|java/lang/Class<P>|
 

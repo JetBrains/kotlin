@@ -1,3 +1,6 @@
+private final const val topLevel: R|kotlin/Int| = Int(1)
+    private get(): R|kotlin/Int|
+
 public final object A : R|kotlin/Any| {
     internal final const val inObject: R|kotlin/Int| = Int(2)
         internal get(): R|kotlin/Int|
@@ -18,3 +21,4 @@ public final class B : R|kotlin/Any| {
     }
 
 }
+
