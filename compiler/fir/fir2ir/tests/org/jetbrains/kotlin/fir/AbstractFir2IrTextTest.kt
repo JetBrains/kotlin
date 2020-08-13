@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir
 
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
@@ -20,9 +19,7 @@ import java.io.File
 abstract class AbstractFir2IrTextTest : AbstractIrTextTestCase() {
 
     private fun prepareProjectExtensions(project: Project) {
-        Extensions.getArea(project)
-            .getExtensionPoint(PsiElementFinder.EP_NAME)
-            .unregisterExtension(JavaElementFinder::class.java)
+        PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
     }
 
     override fun doTest(wholeFile: File, testFiles: List<TestFile>) {

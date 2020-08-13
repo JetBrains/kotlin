@@ -208,7 +208,7 @@ public class KotlinJavaPsiFacade {
         );
 
         List<PsiElementFinder> nonKotlinFinders = ArraysKt.filter(
-                getProject().getExtensions(PsiElementFinder.EP_NAME),
+                PsiElementFinder.EP.getPoint(getProject()).getExtensions(),
                 finder -> (finder instanceof KotlinSafeClassFinder) ||
                           !(finder instanceof NonClasspathClassFinder ||
                             finder instanceof KotlinFinderMarker ||

@@ -18,14 +18,13 @@ package org.jetbrains.kotlin.extensions
 
 import com.intellij.openapi.extensions.ExtensionPoint
 import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 
 open class ProjectExtensionDescriptor<T : Any>(name: String, private val extensionClass: Class<T>) {
     val extensionPointName: ExtensionPointName<T> = ExtensionPointName.create(name)
 
     fun registerExtensionPoint(project: Project) {
-        Extensions.getArea(project).registerExtensionPoint(
+        project.extensionArea.registerExtensionPoint(
             extensionPointName.name,
             extensionClass.name,
             ExtensionPoint.Kind.INTERFACE
@@ -33,11 +32,11 @@ open class ProjectExtensionDescriptor<T : Any>(name: String, private val extensi
     }
 
     fun registerExtension(project: Project, extension: T) {
-        Extensions.getArea(project).getExtensionPoint(extensionPointName).registerExtension(extension)
+        project.extensionArea.getExtensionPoint(extensionPointName).registerExtension(extension, project)
     }
 
     fun getInstances(project: Project): List<T> {
-        val projectArea = Extensions.getArea(project)
+        val projectArea = project.extensionArea
         if (!projectArea.hasExtensionPoint(extensionPointName.name)) return listOf()
 
         return projectArea.getExtensionPoint(extensionPointName).extensions.toList()

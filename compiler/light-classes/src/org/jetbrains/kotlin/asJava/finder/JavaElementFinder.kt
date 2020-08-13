@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.asJava.finder
 
 import com.google.common.collect.Sets
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Condition
 import com.intellij.psi.*
@@ -36,6 +35,7 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.KotlinFinderMarker
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
 class JavaElementFinder(
@@ -172,16 +172,9 @@ class JavaElementFinder(
     }
 
     companion object {
-
-        fun getInstance(project: Project): JavaElementFinder {
-            val extensions = Extensions.getArea(project).getExtensionPoint(PsiElementFinder.EP_NAME).extensions
-            for (extension in extensions) {
-                if (extension is JavaElementFinder) {
-                    return extension
-                }
-            }
-            throw IllegalStateException(JavaElementFinder::class.java.simpleName + " is not found for project " + project)
-        }
+        fun getInstance(project: Project): JavaElementFinder =
+            EP.getPoint(project).extensions.firstIsInstanceOrNull()
+                ?: error(JavaElementFinder::class.java.simpleName + " is not found for project " + project)
 
         fun byClasspathComparator(searchScope: GlobalSearchScope): Comparator<PsiElement> {
             return Comparator { o1, o2 ->
