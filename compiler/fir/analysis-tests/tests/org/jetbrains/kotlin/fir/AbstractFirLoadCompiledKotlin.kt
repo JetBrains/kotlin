@@ -9,19 +9,15 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.compileKotlinToDirAndGetModule
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils.newConfiguration
 import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
 
-abstract class AbstractFirLoadCompiledKotlin : AbstractFirResolveWithSessionTestCase() {
+abstract class AbstractFirLoadCompiledKotlin : AbstractFirLoadBinariesTest() {
     protected lateinit var tmpdir: File
 
     override fun setUp() {
@@ -37,8 +33,6 @@ abstract class AbstractFirLoadCompiledKotlin : AbstractFirResolveWithSessionTest
         val moduleDescriptor = compileKtFileToTmpDir(path)
 
         val packageFqName = FqName("test")
-        val allCompiledNames = DescriptorUtils.getAllDescriptors(moduleDescriptor.getPackage(packageFqName).memberScope)
-            .mapTo(sortedSetOf()) { it.name }
 
         val configuration = newConfiguration(ConfigurationKind.JDK_ONLY, TestJdkKind.MOCK_JDK, listOf(tmpdir), emptyList<File>())
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
@@ -46,7 +40,14 @@ abstract class AbstractFirLoadCompiledKotlin : AbstractFirResolveWithSessionTest
         prepareProjectExtensions(environment.project)
         val sessionWithDependency = createSession(environment, GlobalSearchScope.EMPTY_SCOPE)
 
-        checkPackageContent(sessionWithDependency, packageFqName, allCompiledNames, path)
+        val testDataDirectoryPath =
+            "compiler/fir/analysis-tests/testData/loadCompiledKotlin/" +
+                    path
+                        .removePrefix("compiler/testData/loadJava/compiledKotlin/")
+                        .removeSuffix(File(path).name)
+        File(testDataDirectoryPath).mkdirs()
+
+        checkPackageContent(sessionWithDependency, packageFqName, moduleDescriptor, "$testDataDirectoryPath${getTestName(false)}.txt")
     }
 
     private fun compileKtFileToTmpDir(path: String): ModuleDescriptor {
@@ -57,42 +58,4 @@ abstract class AbstractFirLoadCompiledKotlin : AbstractFirResolveWithSessionTest
 
         return compileKotlinToDirAndGetModule(listOf(file), tmpdir, environment)
     }
-
-    private fun checkPackageContent(
-        session: FirSession,
-        packageFqName: FqName,
-        declarationNames: Set<Name>,
-        testDataPath: String
-    ) {
-        val provider = session.firSymbolProvider
-
-        val builder = StringBuilder()
-        val firRenderer = FirRenderer(builder)
-
-        for (name in declarationNames) {
-            for (symbol in provider.getTopLevelCallableSymbols(packageFqName, name)) {
-                symbol.fir.accept(firRenderer)
-                builder.appendLine()
-            }
-        }
-
-        for (name in declarationNames) {
-            val classLikeSymbol = provider.getClassLikeSymbolByFqName(ClassId.topLevel(packageFqName.child(name))) ?: continue
-            classLikeSymbol.fir.accept(firRenderer)
-            builder.appendLine()
-        }
-
-        val testDataDirectoryPath =
-            "compiler/fir/analysis-tests/testData/loadCompiledKotlin/" +
-                    testDataPath
-                        .removePrefix("compiler/testData/loadJava/compiledKotlin/")
-                        .removeSuffix(File(testDataPath).name)
-        File(testDataDirectoryPath).mkdirs()
-
-        KotlinTestUtils.assertEqualsToFile(
-            File(testDataDirectoryPath + getTestName(false) + ".txt"),
-            builder.toString()
-        )
-    }
-
 }
