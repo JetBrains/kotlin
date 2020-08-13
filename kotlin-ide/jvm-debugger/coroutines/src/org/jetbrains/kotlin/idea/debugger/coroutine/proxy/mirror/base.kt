@@ -110,3 +110,103 @@ abstract class BaseDynamicMirror<T>(val value: ObjectReference, val name: String
 
     protected abstract fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): T?
 }
+
+abstract class BaseMirror<T>(val name: String, context: DefaultExecutionContext) : ReferenceTypeProvider {
+    val log by logger
+    private val cls = context.findClassSafe(name) ?: throw IllegalStateException("coroutine-debugger: class $name not found.")
+
+    override fun getCls(): ClassType = cls
+
+    fun makeField(fieldName: String): Field? =
+            cls.fieldByName(fieldName)
+
+    fun makeMethod(methodName: String): Method? =
+            cls.methodsByName(methodName).singleOrNull()
+
+    fun makeMethod(methodName: String, signature: String): Method? =
+            cls.methodsByName(methodName, signature).singleOrNull()
+
+    fun isCompatible(value: ObjectReference?) =
+            value?.referenceType()?.isSubTypeOrSame(name) ?: false
+
+    fun mirror(value: ObjectReference?, context: DefaultExecutionContext): T? {
+        value ?: return null
+        return if (!isCompatible(value)) {
+            log.trace("Value ${value.referenceType()} is not compatible with $name.")
+            null
+        } else
+            fetchMirror(value, context)
+    }
+
+    fun staticObjectValue(fieldName: String): ObjectReference? {
+        val keyFieldRef = makeField(fieldName)
+        return cls.let { it.getValue(keyFieldRef) as? ObjectReference }
+    }
+
+    fun staticMethodValue(instance: ObjectReference?, method: Method?, context: DefaultExecutionContext, vararg values: Value?) =
+            instance?.let {
+                method?.let { m ->
+                    context.invokeMethod(it, m, values.asList()) as? ObjectReference
+                }
+            }
+
+    fun staticMethodValue(method: Method?, context: DefaultExecutionContext, vararg values: Value?) =
+            cls.let {
+                method?.let {
+                    context.invokeMethodSafe(cls, method, values.asList()) as? ObjectReference
+                }
+            }
+
+    fun stringValue(value: ObjectReference, field: Field?) =
+            field?.let {
+                (value.getValue(it) as? StringReference)?.value()
+            }
+
+    fun byteValue(value: ObjectReference, field: Field?) =
+            field?.let {
+                (value.getValue(it) as? ByteValue)?.value()
+            }
+
+    fun threadValue(value: ObjectReference, field: Field?) =
+            field?.let {
+                value.getValue(it) as? ThreadReference
+            }
+
+    fun stringValue(value: ObjectReference, method: Method?, context: DefaultExecutionContext) =
+            method?.let {
+                (context.invokeMethod(value, it, emptyList()) as? StringReference)?.value()
+            }
+
+    fun objectValue(value: ObjectReference?, method: Method?, context: DefaultExecutionContext, vararg values: Value) =
+            value?.let {
+                method?.let {
+                    context.invokeMethodAsObject(value, method, *values)
+                }
+            }
+
+    fun longValue(value: ObjectReference, method: Method?, context: DefaultExecutionContext, vararg values: Value) =
+            method?.let { (context.invokeMethod(value, it, values.asList()) as? LongValue)?.longValue() }
+
+    fun intValue(value: ObjectReference, method: Method?, context: DefaultExecutionContext, vararg values: Value) =
+            method?.let { (context.invokeMethod(value, it, values.asList()) as? IntegerValue)?.intValue() }
+
+    fun booleanValue(value: ObjectReference?, method: Method?, context: DefaultExecutionContext, vararg values: Value): Boolean? {
+        value ?: return null
+        method ?: return null
+        return (context.invokeMethod(value, method, values.asList()) as? BooleanValue)?.booleanValue()
+    }
+
+    fun objectValue(value: ObjectReference, field: Field?) =
+            field?.let { value.getValue(it) as ObjectReference? }
+
+    fun intValue(value: ObjectReference, field: Field?) =
+            field?.let { (value.getValue(it) as? IntegerValue)?.intValue() }
+
+    fun longValue(value: ObjectReference, field: Field?) =
+            field?.let { (value.getValue(it) as? LongValue)?.longValue() }
+
+    fun booleanValue(value: ObjectReference?, field: Field?) =
+            field?.let { (value?.getValue(field) as? BooleanValue)?.booleanValue() }
+
+    protected abstract fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): T?
+}

@@ -85,6 +85,12 @@ class JavaUtilAbstractList(context: DefaultExecutionContext) :
         objectValue(value, getMethod, context, context.vm.mirrorOf(index))
 }
 
+class WeakReference constructor(context: DefaultExecutionContext) :
+        BaseMirror<MirrorOfWeakReference>("java.lang.ref.WeakReference", context)  {
+    val get by MethodDelegate<ObjectReference>("get")
 
-data class MirrorOfJavaLangAbstractCollection(val that: ObjectReference, val values: List<ObjectReference>)
+    override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): MirrorOfWeakReference? {
+        return MirrorOfWeakReference(value, get.value(value, context))
+    }
+}
 

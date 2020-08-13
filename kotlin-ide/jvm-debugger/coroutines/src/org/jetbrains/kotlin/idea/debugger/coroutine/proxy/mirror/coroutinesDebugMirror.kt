@@ -86,10 +86,6 @@ class DebugProbesImplCoroutineOwner(private val coroutineInfo: CoroutineInfo, co
     }
 }
 
-data class MirrorOfCoroutineOwner(val that: ObjectReference, val coroutineInfo: MirrorOfCoroutineInfo?)
-
-data class MirrorOfDebugProbesImpl(val that: ObjectReference, val instance: ObjectReference?, val isInstalled: Boolean?)
-
 class DebugCoroutineInfoImpl constructor(context: DefaultExecutionContext) :
     BaseMirror<MirrorOfCoroutineInfo>("kotlinx.coroutines.debug.internal.DebugCoroutineInfoImpl", context) {
     private val coroutineContextMirror = CoroutineContext(context)
@@ -131,17 +127,6 @@ class DebugCoroutineInfoImpl constructor(context: DefaultExecutionContext) :
         )
     }
 }
-
-class WeakReference constructor(context: DefaultExecutionContext) :
-    BaseMirror<MirrorOfWeakReference>("java.lang.ref.WeakReference", context)  {
-    val get by MethodDelegate<ObjectReference>("get")
-
-    override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): MirrorOfWeakReference? {
-        return MirrorOfWeakReference(value, get.value(value, context))
-    }
-}
-
-data class MirrorOfWeakReference(val that: ObjectReference, val reference: ObjectReference?)
 
 class CoroutineInfo private constructor(
     private val debugProbesImplMirror: DebugProbesImpl,
@@ -213,18 +198,6 @@ class CoroutineInfo private constructor(
     }
 }
 
-data class MirrorOfCoroutineInfo(
-    val that: ObjectReference,
-    val context: MirrorOfCoroutineContext?,
-    val creationStackBottom: MirrorOfCoroutineStackFrame?,
-    val sequenceNumber: Long?,
-    val enhancedStackTrace: List<MirrorOfStackTraceElement>?,
-    val creationStackTrace: List<MirrorOfStackTraceElement>?,
-    val state: String?,
-    val lastObservedThread: ThreadReference?,
-    val lastObservedFrame: ObjectReference?
-)
-
 class CoroutineStackFrame(value: ObjectReference, context: DefaultExecutionContext) :
     BaseDynamicMirror<MirrorOfCoroutineStackFrame>(value, "kotlin.coroutines.jvm.internal.CoroutineStackFrame", context) {
     private val stackTraceElementMirror = StackTraceElement(context)
@@ -243,12 +216,6 @@ class CoroutineStackFrame(value: ObjectReference, context: DefaultExecutionConte
         return MirrorOfCoroutineStackFrame(value, callerFrame, stackTraceElement)
     }
 }
-
-data class MirrorOfCoroutineStackFrame(
-    val that: ObjectReference,
-    val callerFrame: MirrorOfCoroutineStackFrame?,
-    val stackTraceElement: MirrorOfStackTraceElement?
-)
 
 class StackTraceElement(context: DefaultExecutionContext) :
     BaseMirror<MirrorOfStackTraceElement>("java.lang.StackTraceElement", context) {
@@ -282,24 +249,4 @@ class StackTraceElement(context: DefaultExecutionContext) :
             format
         )
     }
-}
-
-data class MirrorOfStackTraceElement(
-    val that: ObjectReference,
-    val declaringClassObject: ObjectReference?,
-    val moduleName: String?,
-    val moduleVersion: String?,
-    val declaringClass: String?,
-    val methodName: String?,
-    val fileName: String?,
-    val lineNumber: Int?,
-    val format: Byte?
-) {
-    fun stackTraceElement() =
-        StackTraceElement(
-            declaringClass,
-            methodName,
-            fileName,
-            lineNumber ?: -1
-        )
 }

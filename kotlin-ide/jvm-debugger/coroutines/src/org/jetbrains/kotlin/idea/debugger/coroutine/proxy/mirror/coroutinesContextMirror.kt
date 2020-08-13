@@ -31,14 +31,6 @@ class CoroutineContext(context: DefaultExecutionContext) :
     }
 }
 
-data class MirrorOfCoroutineContext(
-    val that: ObjectReference,
-    val name: String?,
-    val id: Long?,
-    val dispatcher: String?,
-    val job: ObjectReference?
-)
-
 abstract class ContextKey<T>(name: String, context: DefaultExecutionContext) : BaseMirror<T>(name, context) {
     abstract fun key(): ObjectReference?
 }

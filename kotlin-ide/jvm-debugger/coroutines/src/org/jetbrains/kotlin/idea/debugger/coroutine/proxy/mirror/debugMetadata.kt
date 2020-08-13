@@ -52,15 +52,6 @@ class DebugMetadata private constructor(context: DefaultExecutionContext) :
     }
 }
 
-data class MirrorOfContinuationStack(val that: ObjectReference, val coroutineStack: List<MirrorOfStackFrame>)
-
-data class MirrorOfStackFrame(
-    val that: ObjectReference,
-    val baseContinuationImpl: MirrorOfBaseContinuationImpl
-)
-
-data class FieldVariable(val fieldName: String, val variableName: String)
-
 class BaseContinuationImpl(context: DefaultExecutionContext, private val debugMetadata: DebugMetadata) :
     BaseMirror<MirrorOfBaseContinuationImpl>("kotlin.coroutines.jvm.internal.BaseContinuationImpl", context) {
 
@@ -97,11 +88,3 @@ class BaseContinuationImpl(context: DefaultExecutionContext, private val debugMe
         return FieldVariable(fieldName, variableName)
     }
 }
-
-data class MirrorOfBaseContinuationImpl(
-    val that: ObjectReference,
-    val stackTraceElement: MirrorOfStackTraceElement?,
-    val fieldVariables: List<FieldVariable>,
-    val nextContinuation: ObjectReference?,
-    val coroutineOwner: ObjectReference?
-)
