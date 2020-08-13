@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.model.DiagnosticReporter
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.*
-import org.jetbrains.kotlin.resolve.scopes.*
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
+import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.types.KotlinType
@@ -86,8 +89,7 @@ class CandidateWithBoundDispatchReceiver(
 )
 
 fun getResultApplicability(diagnostics: Collection<KotlinCallDiagnostic>) =
-    diagnostics.maxBy { it.candidateApplicability }?.candidateApplicability
-            ?: RESOLVED
+    diagnostics.maxOfOrNull { it.candidateApplicability } ?: RESOLVED
 
 enum class ResolutionCandidateApplicability {
     RESOLVED, // call success or has uncompleted inference or in other words possible successful candidate

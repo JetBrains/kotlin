@@ -1006,7 +1006,7 @@ class CompileServiceImpl(
             val comparator =
                 compareByDescending<DaemonWithMetadata, DaemonJVMOptions>(DaemonJVMOptionsMemoryComparator(), { it.jvmOptions })
                     .thenBy(FileAgeComparator()) { it.runFile }
-            aliveWithOpts.maxWith(comparator)?.let { bestDaemonWithMetadata ->
+            aliveWithOpts.maxWithOrNull(comparator)?.let { bestDaemonWithMetadata ->
                 val fattestOpts = bestDaemonWithMetadata.jvmOptions
                 if (fattestOpts memorywiseFitsInto daemonJVMOptions && FileAgeComparator().compare(
                         bestDaemonWithMetadata.runFile,

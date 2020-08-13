@@ -118,7 +118,7 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
             totalTime = 0L
         }
 
-        val bestTime = times.min()!!
+        val bestTime = times.minOrNull()!!
         val bestPass = times.indexOf(bestTime)
         dumpTime("Best pass: $bestPass", bestTime)
     }

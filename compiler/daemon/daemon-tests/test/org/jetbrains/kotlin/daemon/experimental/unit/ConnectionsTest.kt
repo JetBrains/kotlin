@@ -229,7 +229,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
 
     private fun expectNewDaemon(serverType: ServerType, extraAction: (CompileServiceAsync) -> Unit = {}) = expectDaemon(
         getDaemons = ::getNewDaemonsOrAsyncWrappers,
-        chooseDaemon = { daemons -> daemons.maxWith(comparator)!!.daemon },
+        chooseDaemon = { daemons -> daemons.maxWithOrNull(comparator)!!.daemon },
         getInfo = { d -> runBlocking { d.getDaemonInfo() } },
         registerClient = { d -> runBlocking { d.registerClient(generateClient()) } },
         port = { d -> d.serverPort },

@@ -291,9 +291,9 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         require(this is SimpleType, this::errorMessage)
         if (this is TypeUtils.SpecialType) return 0
 
-        val maxInArguments = arguments.asSequence().map {
+        val maxInArguments = arguments.maxOfOrNull {
             if (it.isStarProjection) 1 else it.type.unwrap().typeDepth()
-        }.max() ?: 0
+        } ?: 0
 
         return maxInArguments + 1
     }

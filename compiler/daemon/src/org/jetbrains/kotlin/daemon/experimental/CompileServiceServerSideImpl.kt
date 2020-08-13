@@ -496,7 +496,7 @@ class CompileServiceServerSideImpl(
                     }
                     .thenBy(FileAgeComparator()) { it.runFile }
                     .thenBy { it.daemon.serverPort }
-                aliveWithOpts.maxWith(comparator)?.let { bestDaemonWithMetadata ->
+                aliveWithOpts.maxWithOrNull(comparator)?.let { bestDaemonWithMetadata ->
                     val fattestOpts = bestDaemonWithMetadata.jvmOptions
                     if (fattestOpts memorywiseFitsInto daemonJVMOptions && FileAgeComparator().compare(
                             bestDaemonWithMetadata.runFile,

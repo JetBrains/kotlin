@@ -335,7 +335,7 @@ class LookupElementFactory(
         if (descriptor.overriddenDescriptors.isNotEmpty()) {
             // Optimization: when one of direct overridden fits, then nothing can fit better
             descriptor.overriddenDescriptors.mapNotNull { it.callableWeightBasedOnReceiver(receiverTypes, onReceiverTypeMismatch = null) }
-                .minBy { it.enum }?.let { return it }
+                .minByOrNull { it.enum }?.let { return it }
 
             val overridden = descriptor.overriddenTreeUniqueAsSequence(useOriginal = false)
             return overridden.map { callableWeightBasic(it, receiverTypes)!! }.minBy { it.enum }!!
@@ -397,7 +397,7 @@ class LookupElementFactory(
         val receiverIndex = bestReceiverType!!.receiverIndex
 
         var receiverIndexToUse: Int? = receiverIndex
-        val maxReceiverIndex = receiverTypes.map { it.receiverIndex }.max()!!
+        val maxReceiverIndex = receiverTypes.maxOf { it.receiverIndex }
         if (maxReceiverIndex > 0) {
             val matchesAllReceivers = (0..maxReceiverIndex).all { it in matchingReceiverIndices }
             if (matchesAllReceivers) { // if descriptor is matching all receivers then use null as receiverIndex - otherwise e.g. all members of Any would have too high priority
