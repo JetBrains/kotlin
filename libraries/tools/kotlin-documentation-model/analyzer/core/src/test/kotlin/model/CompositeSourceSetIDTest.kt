@@ -1,7 +1,7 @@
 package model
 
 import org.jetbrains.dokka.DokkaSourceSetID
-import org.jetbrains.dokka.pages.CompositeSourceSetID
+import org.jetbrains.dokka.model.CompositeSourceSetID
 import kotlin.test.*
 
 class CompositeSourceSetIDTest {
