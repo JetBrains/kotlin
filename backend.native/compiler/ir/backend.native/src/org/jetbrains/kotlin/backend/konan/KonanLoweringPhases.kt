@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFr
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
+import org.jetbrains.kotlin.backend.common.lower.optimizations.FoldConstantLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.FinallyBlocksLowering
@@ -352,4 +353,10 @@ internal val ifNullExpressionsFusionPhase = makeKonanFileLoweringPhase(
         ::IfNullExpressionsFusionLowering,
         name = "IfNullExpressionsFusionLowering",
         description = "Simplify '?.' and '?:' operator chains"
+)
+
+internal val foldConstantLoweringPhase = makeKonanFileOpPhase(
+        { context, irFile -> FoldConstantLowering(context).lower(irFile) },
+        name = "FoldConstantLowering",
+        description = "Constant Folding"
 )

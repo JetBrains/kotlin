@@ -363,6 +363,7 @@ internal val allLoweringsPhase = NamedCompilerPhase(
                             enumConstructorsPhase,
                             initializersPhase,
                             localFunctionsPhase,
+                            foldConstantLoweringPhase,
                             tailrecPhase,
                             defaultParameterExtentPhase,
                             innerClassPhase,
