@@ -50,6 +50,7 @@ internal constructor(@PublishedApi internal val storage: ShortArray) : Collectio
     override fun contains(element: UShort): Boolean {
         // TODO: Eliminate this check after KT-30016 gets fixed.
         // Currently JS BE does not generate special bridge method for this method.
+        @Suppress("USELESS_CAST")
         if ((element as Any?) !is UShort) return false
 
         return storage.contains(element.toShort())

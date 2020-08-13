@@ -676,6 +676,7 @@ public class Int private constructor() : Number(), Comparable<Int> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `float`.
  */
 public class Float private constructor() : Number(), Comparable<Float> {
+    @Suppress("DIVISION_BY_ZERO")
     companion object {
         /**
          * A constant holding the smallest *positive* nonzero value of Float.
@@ -893,6 +894,7 @@ public class Float private constructor() : Number(), Comparable<Float> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `double`.
  */
 public class Double private constructor() : Number(), Comparable<Double> {
+    @Suppress("DIVISION_BY_ZERO")
     companion object {
         /**
          * A constant holding the smallest *positive* nonzero value of Double.

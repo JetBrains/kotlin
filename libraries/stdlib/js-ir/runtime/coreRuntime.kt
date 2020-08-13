@@ -117,5 +117,5 @@ internal external class JsObject {
     }
 }
 
-internal fun <T, R> boxIntrinsic(x: T): R = error("Should be lowered")
-internal fun <T, R> unboxIntrinsic(x: T): R = error("Should be lowered")
+internal fun <T, R> boxIntrinsic(@Suppress("UNUSED_PARAMETER") x: T): R = error("Should be lowered")
+internal fun <T, R> unboxIntrinsic(@Suppress("UNUSED_PARAMETER") x: T): R = error("Should be lowered")

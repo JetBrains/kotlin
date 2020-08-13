@@ -6,7 +6,7 @@
 import kotlin.reflect.KClass
 
 @PublishedApi
-internal fun <T : Annotation> KClass<*>.findAssociatedObject(annotationClass: KClass<T>): Any? {
+internal fun <T : Annotation> KClass<*>.findAssociatedObject(@Suppress("UNUSED_PARAMETER") annotationClass: KClass<T>): Any? {
     // This API is not supported in js-v1. Return `null` to be source-compatible with js-ir.
     return null
 }
