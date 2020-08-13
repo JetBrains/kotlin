@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*

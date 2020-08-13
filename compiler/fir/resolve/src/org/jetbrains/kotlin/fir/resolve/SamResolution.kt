@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
+import org.jetbrains.kotlin.fir.resolve.providers.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl

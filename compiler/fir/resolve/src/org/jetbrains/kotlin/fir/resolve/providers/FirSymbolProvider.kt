@@ -23,25 +23,8 @@ import org.jetbrains.kotlin.name.Name
 @RequiresOptIn
 annotation class FirSymbolProviderInternals
 
-abstract class FirSymbolProvider(protected val session: FirSession) : FirSessionComponent {
+abstract class FirSymbolProvider(val session: FirSession) : FirSessionComponent {
     abstract fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>?
-
-    fun getSymbolByLookupTag(lookupTag: ConeClassLikeLookupTag): FirClassLikeSymbol<*>? {
-        (lookupTag as? ConeClassLikeLookupTagImpl)
-            ?.boundSymbol?.takeIf { it.first === this }?.let { return it.second }
-
-        return getClassLikeSymbolByFqName(lookupTag.classId).also {
-            (lookupTag as? ConeClassLikeLookupTagImpl)?.bindSymbolToLookupTag(this, it)
-        }
-    }
-
-    fun getSymbolByLookupTag(lookupTag: ConeClassifierLookupTag): FirClassifierSymbol<*>? {
-        return when (lookupTag) {
-            is ConeClassLikeLookupTag -> getSymbolByLookupTag(lookupTag)
-            is ConeClassifierLookupTagWithFixedSymbol -> lookupTag.symbol
-            else -> error("Unknown lookupTag type: ${lookupTag::class}")
-        }
-    }
 
     @OptIn(ExperimentalStdlibApi::class, FirSymbolProviderInternals::class)
     open fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
@@ -70,6 +53,26 @@ inline fun <reified T : AbstractFirBasedSymbol<*>> FirSymbolProvider.getSymbolBy
     return getSymbolByLookupTag(lookupTag) as? T
 }
 
-fun ConeClassLikeLookupTagImpl.bindSymbolToLookupTag(provider: FirSymbolProvider, symbol: FirClassLikeSymbol<*>?) {
-    boundSymbol = Pair(provider, symbol)
+@OptIn(LookupTagInternals::class)
+fun ConeClassLikeLookupTagImpl.bindSymbolToLookupTag(session: FirSession, symbol: FirClassLikeSymbol<*>?) {
+    boundSymbol = OneElementWeakMap(session, symbol)
+}
+
+fun FirSymbolProvider.getSymbolByLookupTag(lookupTag: ConeClassifierLookupTag): FirClassifierSymbol<*>? {
+    return when (lookupTag) {
+        is ConeClassLikeLookupTag -> getSymbolByLookupTag(lookupTag)
+        is ConeClassifierLookupTagWithFixedSymbol -> lookupTag.symbol
+        else -> error("Unknown lookupTag type: ${lookupTag::class}")
+    }
+}
+
+@OptIn(LookupTagInternals::class)
+fun FirSymbolProvider.getSymbolByLookupTag(lookupTag: ConeClassLikeLookupTag): FirClassLikeSymbol<*>? {
+    (lookupTag as? ConeClassLikeLookupTagImpl)
+        ?.boundSymbol?.takeIf { it.key === this.session }?.let { return it.value }
+
+    return getClassLikeSymbolByFqName(lookupTag.classId)
+        .also {
+            (lookupTag as? ConeClassLikeLookupTagImpl)?.bindSymbolToLookupTag(session, it)
+        }
 }

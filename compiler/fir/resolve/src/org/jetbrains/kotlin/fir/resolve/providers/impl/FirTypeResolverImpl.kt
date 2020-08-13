@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeWrongNumberOfTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.providers.bindSymbolToLookupTag
+import org.jetbrains.kotlin.fir.resolve.providers.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
@@ -136,7 +137,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
             .also {
                 val lookupTag = it.lookupTag
                 if (lookupTag is ConeClassLikeLookupTagImpl && symbol is FirClassLikeSymbol<*>) {
-                    lookupTag.bindSymbolToLookupTag(session.firSymbolProvider, symbol)
+                    lookupTag.bindSymbolToLookupTag(session, symbol)
                 }
             }
     }
