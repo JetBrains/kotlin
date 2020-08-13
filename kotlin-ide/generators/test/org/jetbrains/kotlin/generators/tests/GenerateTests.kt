@@ -68,6 +68,7 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractJvmDecompiledTex
 import org.jetbrains.kotlin.idea.editor.AbstractMultiLineStringIndentTest
 import org.jetbrains.kotlin.idea.editor.backspaceHandler.AbstractBackspaceHandlerTest
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractQuickDocProviderTest
+import org.jetbrains.kotlin.idea.externalAnnotations.AbstractExternalAnnotationTest
 import org.jetbrains.kotlin.idea.filters.AbstractKotlinExceptionFilterTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
@@ -332,6 +333,10 @@ private fun assembleWorkspace(): TWorkspace = workspace {
 
         testClass<AbstractAnnotatedMembersSearchTest> {
             model("search/annotations")
+        }
+
+        testClass<AbstractExternalAnnotationTest> {
+            model("externalAnnotations")
         }
 
         testClass<AbstractQuickFixMultiFileTest> {

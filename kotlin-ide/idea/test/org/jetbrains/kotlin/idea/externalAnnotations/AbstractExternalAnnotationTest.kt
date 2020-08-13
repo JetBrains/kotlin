@@ -1,8 +1,3 @@
-/*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
-
 package org.jetbrains.kotlin.idea.externalAnnotations
 
 import com.intellij.openapi.module.Module
@@ -12,42 +7,17 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.codeStyle.JavaCodeStyleSettings
 import com.intellij.testFramework.LightPlatformTestCase
-import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.test.*
-import org.junit.internal.runners.JUnit38ClassRunner
-import org.junit.runner.RunWith
 import java.io.File
 
-@TestRoot("idea/testData/externalAnnotations/")
-@TestDataPath("\$CONTENT_ROOT")
-@RunWith(JUnit38ClassRunner::class)
-class ExternalAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
-
-    override fun getTestDataDirectory() = KotlinRoot.DIR
-
-    fun testNotNullMethod() {
-        KotlinTestUtils.runTest(::doTest, this, TargetBackend.ANY, "notNullMethod.kt")
-    }
-
-    fun testNullableMethod() {
-        KotlinTestUtils.runTest(::doTest, this, TargetBackend.ANY, "nullableMethod.kt")
-    }
-
-    fun testNullableField() {
-        KotlinTestUtils.runTest(::doTest, this, TargetBackend.ANY, "nullableField.kt")
-    }
-
-    fun testNullableMethodParameter() {
-        KotlinTestUtils.runTest(::doTest, this, TargetBackend.ANY, "nullableMethodParameter.kt")
-    }
+abstract class AbstractExternalAnnotationTest: KotlinLightCodeInsightFixtureTestCase()  {
 
     override fun setUp() {
         super.setUp()
         JavaCodeStyleSettings.getInstance(project).USE_EXTERNAL_ANNOTATIONS = true
-        addFile(classWithExternalAnnotatedMembers)
+        addFile(testPath(classWithExternalAnnotatedMembers))
     }
 
     override fun tearDown() {
@@ -56,7 +26,7 @@ class ExternalAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     private fun addFile(path: String) {
-        val file = File(getTestDataDirectory(), path)
+        val file = File(path)
         val root = LightPlatformTestCase.getSourceRoot()
         runWriteAction {
             val virtualFile = root.createChildData(null, file.name)
@@ -64,7 +34,7 @@ class ExternalAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         }
     }
 
-    private fun doTest(kotlinFilePath: String) {
+    protected fun doTest(kotlinFilePath: String) {
         myFixture.configureByFiles(kotlinFilePath, testPath(externalAnnotationsFile), testPath(classWithExternalAnnotatedMembers))
         myFixture.checkHighlighting()
     }
@@ -78,8 +48,8 @@ class ExternalAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     companion object {
-        private const val externalAnnotationsPath = "idea/testData/externalAnnotations/annotations/"
-        private const val classWithExternalAnnotatedMembers = "idea/testData/externalAnnotations/ClassWithExternalAnnotatedMembers.java"
+        private const val externalAnnotationsPath = "annotations/"
+        private const val classWithExternalAnnotatedMembers = "ClassWithExternalAnnotatedMembers.java"
         private const val externalAnnotationsFile = "$externalAnnotationsPath/annotations.xml"
     }
 }
