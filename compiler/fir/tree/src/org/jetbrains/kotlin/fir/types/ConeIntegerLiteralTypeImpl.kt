@@ -71,6 +71,7 @@ class ConeIntegerLiteralTypeImpl : ConeIntegerLiteralType {
         return approximatedType.withNullability(nullability)
     }
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     companion object {
         fun createType(classId: ClassId): ConeClassLikeType {
             return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(classId), emptyArray(), false)

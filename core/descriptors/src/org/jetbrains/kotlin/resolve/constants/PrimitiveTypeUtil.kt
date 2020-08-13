@@ -23,7 +23,7 @@ internal fun KotlinType.minValue(): Long {
     }
 }
 
-@ExperimentalUnsignedTypes
+@OptIn(ExperimentalUnsignedTypes::class)
 internal fun KotlinType.maxValue(): Long {
     return when {
         KotlinBuiltIns.isByte(this) -> Byte.MAX_VALUE.toLong()

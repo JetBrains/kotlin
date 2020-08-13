@@ -10,15 +10,13 @@ package org.jetbrains.kotlin.daemon.experimental
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
+import io.ktor.network.sockets.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.channels.consumeEach
 import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
@@ -29,7 +27,10 @@ import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.CompileServiceImplBase
 import org.jetbrains.kotlin.daemon.CompilerSelector
+import org.jetbrains.kotlin.daemon.EventManager
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.common.experimental.*
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.*
 import org.jetbrains.kotlin.daemon.experimental.CompileServiceTaskScheduler.*
 import org.jetbrains.kotlin.daemon.nowSeconds
 import org.jetbrains.kotlin.daemon.report.experimental.CompileServicesFacadeMessageCollector
@@ -45,12 +46,6 @@ import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
 import kotlin.concurrent.schedule
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.*
-import org.jetbrains.kotlin.daemon.common.experimental.*
-import io.ktor.network.sockets.*
-import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
-import org.jetbrains.kotlin.daemon.EventManager
-import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
 
 // TODO: this classes should replace their non-experimental versions eventually.
 
@@ -79,6 +74,7 @@ private class CompileServiceTaskScheduler(log: Logger) {
 
     fun isShutdownActionInProgress() = shutdownActionInProgress
 
+    @OptIn(ObsoleteCoroutinesApi::class, ExperimentalCoroutinesApi::class)
     private val queriesActor = GlobalScope.actor<CompileServiceTask>(capacity = Channel.UNLIMITED) {
         var currentTaskId = 0
         var shutdownTask: ExclusiveTask? = null

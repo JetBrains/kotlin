@@ -201,6 +201,7 @@ internal class UIntProgressionType(symbols: Symbols<CommonBackendContext>) :
         unsignedType = symbols.uInt!!.defaultType,
         unsignedConversionFunction = symbols.toUIntByExtensionReceiver.getValue(symbols.int)
     ) {
+    @OptIn(ExperimentalUnsignedTypes::class)
     override fun DeclarationIrBuilder.minValueExpression() = irInt(UInt.MIN_VALUE.toInt())
 
     override fun DeclarationIrBuilder.zeroStepExpression() = irInt(0)
@@ -218,6 +219,7 @@ internal class ULongProgressionType(symbols: Symbols<CommonBackendContext>) :
         unsignedType = symbols.uLong!!.defaultType,
         unsignedConversionFunction = symbols.toULongByExtensionReceiver.getValue(symbols.long)
     ) {
+    @OptIn(ExperimentalUnsignedTypes::class)
     override fun DeclarationIrBuilder.minValueExpression() = irLong(ULong.MIN_VALUE.toLong())
 
     override fun DeclarationIrBuilder.zeroStepExpression() = irLong(0)

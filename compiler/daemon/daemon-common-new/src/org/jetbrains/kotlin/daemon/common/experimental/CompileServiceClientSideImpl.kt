@@ -48,6 +48,7 @@ class CompileServiceClientSideImpl(
 
         override fun startKeepAlives() {
             val keepAliveMessage = Server.KeepAliveMessage<CompileServiceServerSide>()
+            @OptIn(ObsoleteCoroutinesApi::class)
             GlobalScope.async(newSingleThreadContext("keepAliveThread")) {
                 delay(KEEPALIVE_PERIOD * 4)
                 while (true) {

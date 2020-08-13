@@ -5,24 +5,25 @@
 
 package org.jetbrains.kotlin.daemon.common.experimental
 
-import io.ktor.network.selector.ActorSelectorManager
-import io.ktor.network.sockets.aSocket
-import kotlinx.coroutines.*
+import io.ktor.network.selector.*
+import io.ktor.network.sockets.*
+import io.ktor.util.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
 import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.ServerSocketWrapper
-import org.jetbrains.kotlin.daemon.common.*
 import java.io.IOException
 import java.io.Serializable
-import java.net.*
-import java.rmi.server.RMIClientSocketFactory
-import java.rmi.server.RMIServerSocketFactory
+import java.net.InetAddress
+import java.net.InetSocketAddress
 import java.util.*
-
 
 object LoopbackNetworkInterfaceKtor {
 
     val serverLoopbackSocketFactoryKtor by lazy { ServerLoopbackSocketFactoryKtor() }
     val clientLoopbackSocketFactoryKtor by lazy { ClientLoopbackSocketFactoryKtor() }
 
+    @KtorExperimentalAPI
     val selectorMgr = ActorSelectorManager(Dispatchers.IO)
 
     class ServerLoopbackSocketFactoryKtor : Serializable {
@@ -30,6 +31,7 @@ object LoopbackNetworkInterfaceKtor {
         override fun hashCode(): Int = super.hashCode()
 
         @Throws(IOException::class)
+        @OptIn(KtorExperimentalAPI::class)
         fun createServerSocket(port: Int) =
             aSocket(selectorMgr)
                 .tcp()
@@ -37,6 +39,7 @@ object LoopbackNetworkInterfaceKtor {
     }
 
     class ClientLoopbackSocketFactoryKtor : LoopbackNetworkInterface.AbstractClientLoopbackSocketFactory<io.ktor.network.sockets.Socket>() {
+        @OptIn(KtorExperimentalAPI::class)
         override fun socketCreate(host: String, port: Int): io.ktor.network.sockets.Socket =
             runBlocking { aSocket(selectorMgr).tcp().connect(InetSocketAddress(host, port)) }
     }

@@ -210,5 +210,6 @@ public fun cityHash64(s: ByteArray, pos: Int = 0, len: Int = s.size): ULong {
     )
 }
 
-fun String.cityHash64() = cityHash64(this.toByteArray()).toLong()
-
+@OptIn(ExperimentalUnsignedTypes::class)
+fun String.cityHash64(): Long =
+    cityHash64(this.toByteArray()).toLong()
