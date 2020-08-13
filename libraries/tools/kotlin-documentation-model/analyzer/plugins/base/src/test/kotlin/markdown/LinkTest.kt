@@ -1,9 +1,9 @@
 package markdown
 
+import org.jetbrains.dokka.model.dfs
 import org.jetbrains.dokka.pages.ClasslikePageNode
 import org.jetbrains.dokka.pages.ContentDRILink
 import org.jetbrains.dokka.pages.MemberPageNode
-import org.jetbrains.dokka.pages.dfs
 import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull

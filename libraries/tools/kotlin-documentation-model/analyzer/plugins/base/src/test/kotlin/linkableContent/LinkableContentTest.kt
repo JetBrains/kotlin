@@ -5,6 +5,7 @@ import org.jetbrains.dokka.base.DokkaBase
 import org.jetbrains.dokka.base.transformers.pages.samples.DefaultSamplesTransformer
 import org.jetbrains.dokka.base.transformers.pages.sourcelinks.SourceLinksTransformer
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
+import org.jetbrains.dokka.model.dfs
 import org.jetbrains.dokka.pages.*
 import org.jetbrains.dokka.plugability.plugin
 import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
