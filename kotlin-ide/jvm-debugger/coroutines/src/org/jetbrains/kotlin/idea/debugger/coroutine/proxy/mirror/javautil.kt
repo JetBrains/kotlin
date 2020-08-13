@@ -94,3 +94,39 @@ class WeakReference constructor(context: DefaultExecutionContext) :
     }
 }
 
+
+class StackTraceElement(context: DefaultExecutionContext) :
+        BaseMirror<ObjectReference, MirrorOfStackTraceElement>("java.lang.StackTraceElement", context) {
+    private val declaringClassObjectField = makeField("declaringClass")
+    private val moduleNameField = makeField("moduleName")
+    private val moduleVersionField = makeField("moduleVersion")
+    private val declaringClassField = makeField("declaringClass")
+    private val methodNameField = makeField("methodName")
+    private val fileNameField = makeField("fileName")
+    private val lineNumberField = makeField("lineNumber")
+    private val formatField = makeField("format")
+
+    override fun fetchMirror(value: ObjectReference, context: DefaultExecutionContext): MirrorOfStackTraceElement? {
+        val declaringClassObject = objectValue(value, declaringClassObjectField)
+        val moduleName = stringValue(value, moduleNameField)
+        val moduleVersion = stringValue(value, moduleVersionField)
+        val declaringClass = stringValue(value, declaringClassField)
+        val methodName = stringValue(value, methodNameField)
+        val fileName = stringValue(value, fileNameField)
+        val lineNumber = intValue(value, lineNumberField)
+        val format = byteValue(value, formatField)
+        return MirrorOfStackTraceElement(
+                value,
+                declaringClassObject,
+                moduleName,
+                moduleVersion,
+                declaringClass,
+                methodName,
+                fileName,
+                lineNumber,
+                format
+        )
+    }
+}
+
+
