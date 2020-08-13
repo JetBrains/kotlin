@@ -175,7 +175,7 @@ abstract class AbstractCoreTest(
             cacheRoot = cacheRoot?.let(::File),
             offlineMode = offlineMode,
             sourceSets = sourceSets.toList(),
-            pluginsClasspath = pluginsClasspath.toSet(),
+            pluginsClasspath = pluginsClasspath,
             pluginsConfiguration = pluginsConfigurations,
             modules = emptyList(),
             failOnWarning = failOnWarning
@@ -223,7 +223,7 @@ abstract class AbstractCoreTest(
             moduleDisplayName = moduleDisplayName ?: moduleName,
             displayName = displayName,
             sourceSetID = DokkaSourceSetID(moduleName, name),
-            classpath = classpath.map(::File).toSet(),
+            classpath = classpath.map(::File),
             sourceRoots = sourceRoots.map(::File).toSet(),
             dependentSourceSets = dependentSourceSets,
             samples = samples.map(::File).toSet(),

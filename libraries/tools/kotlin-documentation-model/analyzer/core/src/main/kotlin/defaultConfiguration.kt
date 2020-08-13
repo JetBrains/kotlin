@@ -9,7 +9,7 @@ data class DokkaConfigurationImpl(
     override val cacheRoot: File? = DokkaDefaults.cacheRoot,
     override val offlineMode: Boolean = DokkaDefaults.offlineMode,
     override val sourceSets: List<DokkaSourceSetImpl> = emptyList(),
-    override val pluginsClasspath: Set<File> = emptySet(),
+    override val pluginsClasspath: List<File> = emptyList(),
     override val pluginsConfiguration: Map<String, String> = emptyMap(),
     override val modules: List<DokkaModuleDescriptionImpl> = emptyList(),
     override val failOnWarning: Boolean = DokkaDefaults.failOnWarning
@@ -20,7 +20,7 @@ data class DokkaSourceSetImpl(
     override val moduleDisplayName: String,
     override val displayName: String = DokkaDefaults.sourceSetDisplayName,
     override val sourceSetID: DokkaSourceSetID,
-    override val classpath: Set<File> = emptySet(),
+    override val classpath: List<File> = emptyList(),
     override val sourceRoots: Set<File> = emptySet(),
     override val dependentSourceSets: Set<DokkaSourceSetID> = emptySet(),
     override val samples: Set<File> = emptySet(),
