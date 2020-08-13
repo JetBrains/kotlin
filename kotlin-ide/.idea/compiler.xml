@@ -5,6 +5,7 @@
   </component>
   <component name="CompilerConfiguration">
     <option name="BUILD_PROCESS_HEAP_SIZE" value="4000" />
+    <option name="BUILD_PROCESS_ADDITIONAL_VM_OPTIONS" value="-Dgroovyc.in.process=true -Dgroovyc.asm.resolving.only=false" />
     <excludeFromCompile>
       <file url="file://$PROJECT_DIR$/intellij/java/execution/jshell-frontend/src/com/intellij/execution/jshell/frontend/Main.java" />
       <file url="file://$PROJECT_DIR$/intellij/android/tools-base/sdk-common/src/test/java/com/android/ide/common/blame/parser/SourceFragmentPositionRangeJsonTest.java" />
