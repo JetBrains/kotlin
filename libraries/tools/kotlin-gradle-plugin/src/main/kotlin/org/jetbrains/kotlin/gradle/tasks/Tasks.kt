@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner.Companion.normal
 import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.incremental.ChangedFiles
+import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoBuildService
+import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoProvider
 import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
@@ -37,12 +39,11 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithTransitiveClosure
 import org.jetbrains.kotlin.gradle.plugin.mpp.ownModuleName
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
-import org.jetbrains.kotlin.gradle.utils.getValue
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
 import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
 import org.jetbrains.kotlin.incremental.ChangedFiles
-import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
 import org.jetbrains.kotlin.utils.JsLibraryUtils
 import java.io.File
@@ -127,10 +128,22 @@ public class GradleCompileTaskProvider {
         rootDir = task.project.rootProject.rootDir
         sessionsDir = GradleCompilerRunner.sessionsDir(task.project)
         projectName = task.project.rootProject.name.normalizeForFlagFile()
-        buildModulesInfo = GradleCompilerRunner.buildModulesInfo(task.project.gradle)
+        val modulesInfo = GradleCompilerRunner.buildModulesInfo(task.project.gradle)
+        buildModulesInfo = if (!isConfigurationCacheAvailable(task.project.gradle)) {
+            task.project.provider {
+                object : IncrementalModuleInfoProvider {
+                    override val info = modulesInfo
+                }
+            }
+        } else {
+            task.project.gradle.sharedServices.registerIfAbsent(
+                IncrementalModuleInfoBuildService.getServiceName(), IncrementalModuleInfoBuildService::class.java
+            ) {
+                it.parameters.info.set(modulesInfo)
+            }
+        }
         path = task.path
         logger = task.logger
-
     }
 
     val path: String
@@ -140,7 +153,7 @@ public class GradleCompileTaskProvider {
     val rootDir: File /*= project.rootProject.rootDir*/
     val sessionsDir: File/* = GradleCompilerRunner.sessionsDir(project)*/
     val projectName: String /*= project.rootProject.name.normalizeForFlagFile()*/
-    val buildModulesInfo: IncrementalModuleInfo /*= GradleCompilerRunner.buildModulesInfo(project.gradle)*/
+    val buildModulesInfo: Provider<out IncrementalModuleInfoProvider> /*= GradleCompilerRunner.buildModulesInfo(project.gradle)*/
 }
 
 abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKotlinCompileTool<T>() {
