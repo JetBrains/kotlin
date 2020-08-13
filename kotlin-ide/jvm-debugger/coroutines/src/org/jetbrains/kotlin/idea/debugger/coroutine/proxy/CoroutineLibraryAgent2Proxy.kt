@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.debugger.coroutine.proxy
 
-import com.intellij.xdebugger.frame.XNamedValue
 import com.sun.jdi.ObjectReference
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineInfoData
 import org.jetbrains.kotlin.idea.debugger.coroutine.data.CoroutineNameIdState
@@ -65,7 +64,7 @@ class CoroutineLibraryAgent2Proxy(private val executionContext: DefaultExecution
 
     fun isInstalled(): Boolean {
         return try {
-            debugProbesImpl?.isInstalledValue ?: false
+            debugProbesImpl?.isInstalled ?: false
         } catch (e: Exception) {
             log.error("Exception happened while checking agent status.", e)
             false

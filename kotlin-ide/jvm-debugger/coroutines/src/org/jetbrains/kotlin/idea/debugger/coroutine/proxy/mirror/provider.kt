@@ -16,73 +16,34 @@ interface ReferenceTypeProvider {
 
 interface MirrorProvider<T, F> {
     fun mirror(value: T?, context: DefaultExecutionContext): F?
+    fun isCompatible(value: T?): Boolean
 }
 
-
-class MethodMirrorDelegate<T, F>(val name: String, private val mirrorProvider: MirrorProvider<T,F>) : ReadOnlyProperty<ReferenceTypeProvider, MethodMirrorDelegate.MethodEvaluator<T, F>> {
-    override fun getValue(thisRef: ReferenceTypeProvider, property: KProperty<*>): MethodEvaluator<T, F> {
-        return MethodEvaluator(thisRef.getCls().methodsByName(name).singleOrNull(), mirrorProvider)
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    class MethodEvaluator<T, F>(val method: Method?,private val mirrorProvider: MirrorProvider<T,F>) {
-        fun value(value: ObjectReference?, context: DefaultExecutionContext, vararg values: Value): T? {
-            return value?.let {
-                method?.let {
-                    context.invokeMethodAsObject(value, method, *values) as T?
-                }
-            }
-        }
-
-        fun mirror(ref: ObjectReference, context: DefaultExecutionContext): F? {
-            return mirrorProvider.mirror(value(ref, context), context)
-        }
+class MethodMirrorDelegate<T, F>(val name: String,
+                                 private val mirrorProvider: MirrorProvider<T, F>,
+                                 val signature: String? = null) : ReadOnlyProperty<ReferenceTypeProvider, MethodEvaluator.MirrorMethodEvaluator<T, F>> {
+    override fun getValue(thisRef: ReferenceTypeProvider, property: KProperty<*>): MethodEvaluator.MirrorMethodEvaluator<T, F> {
+        val methods = if (signature == null) thisRef.getCls().methodsByName(name) else thisRef.getCls().methodsByName(name, signature)
+        return MethodEvaluator.MirrorMethodEvaluator(methods.singleOrNull(), mirrorProvider)
     }
 }
-class MethodDelegate<T>(val name: String) : ReadOnlyProperty<ReferenceTypeProvider, MethodDelegate.MethodEvaluator<T>> {
+
+class MethodDelegate<T>(val name: String, val signature: String? = null) : ReadOnlyProperty<ReferenceTypeProvider, MethodEvaluator<T>> {
     override fun getValue(thisRef: ReferenceTypeProvider, property: KProperty<*>): MethodEvaluator<T> {
-        return MethodEvaluator(thisRef.getCls().methodsByName(name).singleOrNull())
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    class MethodEvaluator<T>(val method: Method?) {
-        fun value(value: ObjectReference?, context: DefaultExecutionContext, vararg values: Value): T? {
-            return value?.let {
-                method?.let {
-                    context.invokeMethodAsObject(value, method, *values) as T?
-                }
-            }
-        }
+        val methods = if (signature == null) thisRef.getCls().methodsByName(name) else thisRef.getCls().methodsByName(name, signature)
+        return MethodEvaluator.DefaultMethodEvaluator(methods.singleOrNull())
     }
 }
 
-class FieldMirrorDelegate<T, F>(val name: String,private val mirrorProvider: MirrorProvider<T,F>) : ReadOnlyProperty<ReferenceTypeProvider, FieldMirrorDelegate.FieldEvaluator<T, F>> {
-    override fun getValue(thisRef: ReferenceTypeProvider, property: KProperty<*>): FieldEvaluator<T, F> {
-        return FieldEvaluator(thisRef.getCls().fieldByName(name), mirrorProvider)
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    class FieldEvaluator<T, F>(val field: Field?, private val mirrorProvider: MirrorProvider<T, F>) {
-        fun value(value: ObjectReference): T? =
-                field?.let { value.getValue(it) as T? }
-
-        fun mirror(ref: ObjectReference, context: DefaultExecutionContext): F? {
-            return mirrorProvider.mirror(value(ref), context)
-        }
+class FieldMirrorDelegate<T, F>(val name: String,
+                                private val mirrorProvider: MirrorProvider<T, F>) : ReadOnlyProperty<ReferenceTypeProvider, FieldEvaluator.MirrorFieldEvaluator<T, F>> {
+    override fun getValue(thisRef: ReferenceTypeProvider, property: KProperty<*>): FieldEvaluator.MirrorFieldEvaluator<T, F> {
+        return FieldEvaluator.MirrorFieldEvaluator(thisRef.getCls().fieldByName(name), thisRef, mirrorProvider)
     }
 }
 
-
-class FieldDelegate<T>(val name: String) : ReadOnlyProperty<ReferenceTypeProvider, FieldDelegate.FieldEvaluator<T>> {
+class FieldDelegate<T>(val name: String) : ReadOnlyProperty<ReferenceTypeProvider, FieldEvaluator<T>> {
     override fun getValue(thisRef: ReferenceTypeProvider, property: KProperty<*>): FieldEvaluator<T> {
-        return FieldEvaluator(thisRef.getCls().fieldByName(name))
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    class FieldEvaluator<T>(val field: Field?) {
-        fun value(value: ObjectReference): T? =
-            field?.let { value.getValue(it) as T? }
-
-        fun jopa() = "1"
+        return FieldEvaluator.DefaultFieldEvaluator(thisRef.getCls().fieldByName(name), thisRef)
     }
 }

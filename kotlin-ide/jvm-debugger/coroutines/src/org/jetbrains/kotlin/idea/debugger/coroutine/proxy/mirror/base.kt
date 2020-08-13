@@ -123,10 +123,8 @@ abstract class BaseMirror<T: ObjectReference, F>(val name: String, context: Defa
     fun makeMethod(methodName: String): Method? =
             cls.methodsByName(methodName).singleOrNull()
 
-    fun makeMethod(methodName: String, signature: String): Method? =
-            cls.methodsByName(methodName, signature).singleOrNull()
 
-    fun isCompatible(value: ObjectReference?) =
+    override fun isCompatible(value: T?) =
             value?.referenceType()?.isSubTypeOrSame(name) ?: false
 
     override fun mirror(value: T?, context: DefaultExecutionContext): F? {
