@@ -76,6 +76,7 @@
                     <jvmTarget>1.8</jvmTarget>
                     <args>
                         <arg>-Xjvm-default=enable</arg>
+                        <arg>-Xopt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI</arg>
                     </args>
                 </configuration>
             </plugin>

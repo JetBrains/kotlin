@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -36,7 +35,6 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.*
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 interface IrBuilderExtension {
     val compilerContext: SerializationPluginContext
 

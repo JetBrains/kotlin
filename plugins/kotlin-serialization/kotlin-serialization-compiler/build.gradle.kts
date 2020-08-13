@@ -36,6 +36,12 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+    kotlinOptions {
+        freeCompilerArgs += "-Xopt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
+    }
+}
+
 runtimeJar()
 sourcesJar()
 javadocJar()
