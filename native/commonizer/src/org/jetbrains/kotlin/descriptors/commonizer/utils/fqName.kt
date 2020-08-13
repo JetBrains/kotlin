@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.konan.impl.ForwardDeclarationsFqNames
@@ -58,3 +60,10 @@ private fun String.hasPrefix(prefix: String): Boolean {
 
 internal val ClassId.isObjCInteropCallableAnnotation: Boolean
     get() = packageFqName.asString() == CINTEROP_PACKAGE && relativeClassName.asString() in OBJC_INTEROP_CALLABLE_ANNOTATIONS
+
+internal val AnnotationDescriptor.isObjCInteropCallableAnnotation: Boolean
+    get() {
+        val classifier = type.declarationDescriptor
+        return classifier.name.asString() in OBJC_INTEROP_CALLABLE_ANNOTATIONS
+                && (classifier.containingDeclaration as? PackageFragmentDescriptor)?.fqName?.asString() == CINTEROP_PACKAGE
+    }
