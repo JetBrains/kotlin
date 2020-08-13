@@ -112,6 +112,11 @@ internal class FirIdeProvider(
         TODO()
     }
 
+    override fun getClassNamesInPackage(fqName: FqName): Set<Name> {
+        // TODO: KT-41048
+        return emptySet()
+    }
+
     private inner class SymbolProvider : FirSymbolProvider() {
         override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> =
             providerHelper.getTopLevelCallableSymbols(packageFqName, name)
