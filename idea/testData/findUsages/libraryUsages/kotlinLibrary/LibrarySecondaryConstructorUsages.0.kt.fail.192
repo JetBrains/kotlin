@@ -1,6 +1,0 @@
-Actual data differs from file content: LibrarySecondaryConstructorUsages.results.txt expected:<... 13 class Y(): A()
-[[LibrarySecondaryConstructorUsages.1.java] New instance creation 14 A a = new A();
-[LibrarySecondaryConstructorUsages.1.java] Unclassified usage 10 super();
-[LibrarySecondaryConstructorUsages.1.java] Unclassified usage 6 public J() {
-[]library.kt] New inst...> but was:<... 13 class Y(): A()
-[[]library.kt] New inst...>
