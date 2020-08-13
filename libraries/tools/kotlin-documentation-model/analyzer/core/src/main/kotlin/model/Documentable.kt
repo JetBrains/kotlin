@@ -333,8 +333,9 @@ data class DTypeAlias(
     override val documentation: SourceSetDependent<DocumentationNode>,
     override val expectPresentInSet: DokkaSourceSet?,
     override val sourceSets: Set<DokkaSourceSet>,
-    override val extra: PropertyContainer<DTypeAlias> = PropertyContainer.empty()
-) : Documentable(), WithType, WithVisibility, WithExtraProperties<DTypeAlias> {
+    override val extra: PropertyContainer<DTypeAlias> = PropertyContainer.empty(),
+    override val generics: List<DTypeParameter>
+) : Documentable(), WithType, WithVisibility, WithExtraProperties<DTypeAlias>, WithGenerics {
     override val children: List<Nothing>
         get() = emptyList()
 
