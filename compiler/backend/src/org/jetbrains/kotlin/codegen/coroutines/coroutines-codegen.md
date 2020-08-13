@@ -275,3 +275,14 @@ The codegen generates the markers by calling `addSuspendMarker`. After generatin
 `CoroutineTransformerMethodVisitor`. `CoroutineTransformerMethodVisitor` collects the suspension
 points by checking these markers, and then it generates the state-machine.
 FIXME: I should rename `CoroutineTransformerMethodVisitor` to `StateMachineBuilder` already.
+
+#### JS & Native: Suspend Markers
+The difference between JVM_IR and JS_IR/Native in regards to coroutine codegen non-JVM back-ends do not generate suspending markers in the 
+resulting code. They still collect suspension points, however.
+That is because they assume the closed-world model; in other words, they do not generate libraries in their target languages, which could 
+contain suspending inline functions. Thus, the back-ends run the inliner before all lowerings, and they generate state machine during a 
+suspend lowering, whereas JVM_IR still relies on the old back-end's `CoroutineTransfromerMethodVisitor` to do this since we cannot just 
+generate state machine during a lowering, there are suspend inline functions in libraries bytecode, because of the open-world model.
+Well, we can, if the function does not inline other functions. Nevertheless, there is much work to do in the new back-end, and generating a 
+state-machine during the lowering is a part of it.
+
