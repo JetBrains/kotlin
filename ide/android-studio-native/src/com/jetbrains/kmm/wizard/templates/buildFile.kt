@@ -5,7 +5,7 @@ fun buildFileKts(moduleName: String, generateTests: Boolean, generatePackTask: B
         """
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
-"""".takeIf { generatePackTask }, """
+""".takeIf { generatePackTask }, """
 plugins {
     kotlin("multiplatform")
     id("com.android.library")
