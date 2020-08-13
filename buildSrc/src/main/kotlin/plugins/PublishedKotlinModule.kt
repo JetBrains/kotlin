@@ -46,6 +46,7 @@ open class PublishedKotlinModule : Plugin<Project> {
                 configure<SigningExtension> {
                     isRequired = signingRequired
                     sign(configurations["archives"])
+                    useGpgCmd()
                 }
 
                 tasks.named<Sign>("signArchives").configure {
