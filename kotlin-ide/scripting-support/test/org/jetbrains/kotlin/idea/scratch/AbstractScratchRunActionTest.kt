@@ -346,7 +346,8 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
             arrayListOf(
               KotlinArtifacts.instance.kotlinStdlib,
               KotlinArtifacts.instance.kotlinTest
-            )
+            ),
+            arrayListOf(KotlinArtifacts.instance.kotlinStdlibSources)
         ) {
             override fun getSdk() = PluginTestCaseBase.fullJdk()
         }
@@ -359,7 +360,8 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
             arrayListOf(
               KotlinArtifacts.instance.kotlinStdlib,
               KotlinArtifacts.instance.kotlinScriptRuntime
-            )
+            ),
+            arrayListOf(KotlinArtifacts.instance.kotlinStdlibSources)
         ) {
             override fun getSdk() = PluginTestCaseBase.fullJdk()
         }
