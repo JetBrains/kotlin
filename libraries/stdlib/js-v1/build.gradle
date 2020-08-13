@@ -328,6 +328,7 @@ def signingEnabled = !project.hasProperty('prebuiltJar')
 if (signingEnabled) {
     signing {
         sign configurations.publishedArtifacts
+        useGpgCmd()
     }
 
     signPublishedArtifacts {
