@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-private object ConeConditionalEffectToFirVisitor : ConeContractDescriptionVisitor<FirExpression?, Map<Int, FirExpression>>() {
+object ConeBooleanExpressionToFirVisitor : ConeContractDescriptionVisitor<FirExpression?, Map<Int, FirExpression>>() {
     override fun visitConditionalEffectDeclaration(conditionalEffect: ConeConditionalEffectDeclaration, data: Map<Int, FirExpression>): FirExpression? {
         return conditionalEffect.condition.accept(this, data)
     }
@@ -50,7 +50,7 @@ private object ConeConditionalEffectToFirVisitor : ConeContractDescriptionVisito
     }
 
     override fun visitIsInstancePredicate(isInstancePredicate: ConeIsInstancePredicate, data: Map<Int, FirExpression>): FirExpression? {
-        val argument = isInstancePredicate.arg.accept(this@ConeConditionalEffectToFirVisitor, data) ?: return null
+        val argument = isInstancePredicate.arg.accept(this@ConeBooleanExpressionToFirVisitor, data) ?: return null
         return buildTypeOperatorCall {
             argumentList = buildUnaryArgumentList(argument)
             operation = if (isInstancePredicate.isNegated) {
@@ -82,7 +82,7 @@ private object ConeConditionalEffectToFirVisitor : ConeContractDescriptionVisito
 }
 
 fun ConeConditionalEffectDeclaration.buildContractFir(argumentMapping: Map<Int, FirExpression>): FirExpression? {
-    return condition.accept(ConeConditionalEffectToFirVisitor, argumentMapping)
+    return condition.accept(ConeBooleanExpressionToFirVisitor, argumentMapping)
 }
 
 fun createArgumentsMapping(qualifiedAccess: FirQualifiedAccess): Map<Int, FirExpression>? {
@@ -105,4 +105,4 @@ fun createArgumentsMapping(qualifiedAccess: FirQualifiedAccess): Map<Int, FirExp
     return argumentsMapping
 }
 
-private fun FirExpression.unwrap(): FirExpression = if (this is FirWrappedArgumentExpression) expression else this
+fun FirExpression.unwrap(): FirExpression = if (this is FirWrappedArgumentExpression) expression else this

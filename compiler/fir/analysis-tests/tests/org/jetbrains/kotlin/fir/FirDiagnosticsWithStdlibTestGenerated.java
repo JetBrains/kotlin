@@ -748,6 +748,59 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
                     }
                 }
 
+                @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/trueIn")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class TrueIn extends AbstractFirDiagnosticsWithStdlibTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInTrueIn() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/trueIn"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                    }
+
+                    @TestMetadata("and.kt")
+                    public void testAnd() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/trueIn/and.kt");
+                    }
+
+                    @TestMetadata("complex.kt")
+                    public void testComplex() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/trueIn/complex.kt");
+                    }
+
+                    @TestMetadata("ifElse.kt")
+                    public void testIfElse() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/trueIn/ifElse.kt");
+                    }
+
+                    @TestMetadata("ifNotNull.kt")
+                    public void testIfNotNull() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/trueIn/ifNotNull.kt");
+                    }
+
+                    @TestMetadata("or.kt")
+                    public void testOr() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/trueIn/or.kt");
+                    }
+
+                    @TestMetadata("runElse.kt")
+                    public void testRunElse() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/trueIn/runElse.kt");
+                    }
+
+                    @TestMetadata("runIf.kt")
+                    public void testRunIf() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/trueIn/runIf.kt");
+                    }
+
+                    @TestMetadata("withDefaultValue.kt")
+                    public void testWithDefaultValue() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/trueIn/withDefaultValue.kt");
+                    }
+                }
+
                 @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/variousContracts")
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)

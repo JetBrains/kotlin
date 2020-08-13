@@ -23,6 +23,9 @@ abstract class ConeContractDescriptionVisitor<out R, in D> {
     open fun visitCallsEffectDeclaration(callsEffect: ConeCallsEffectDeclaration, data: D): R =
         visitEffectDeclaration(callsEffect, data)
 
+    open fun visitTrueInEffectDeclaration(trueInEffect: ConeTrueInEffectDeclaration, data: D): R =
+        visitEffectDeclaration(trueInEffect, data)
+
     // Expressions
     open fun visitBooleanExpression(booleanExpression: ConeBooleanExpression, data: D): R =
         visitContractDescriptionElement(booleanExpression, data)

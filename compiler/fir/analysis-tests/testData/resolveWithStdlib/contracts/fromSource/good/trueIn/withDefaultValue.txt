@@ -1,0 +1,50 @@
+FILE: withDefaultValue.kt
+    public final infix fun R|kotlin/Boolean|.trueIn(target: R|kotlin/Any|): R|kotlin/Unit|
+    public final inline fun <R> runIf(cond: R|kotlin/Boolean|, extra: R|kotlin/Boolean| = Boolean(true), block: R|() -> R|): R|R?|
+        [R|Contract description]
+         <
+            cond && extra trueIn block
+            CallsInPlace(block, AT_MOST_ONCE)
+        >
+     {
+        [StubStatement]
+        ^runIf when () {
+            R|<local>/cond| && R|<local>/extra| ->  {
+                R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()
+            }
+            else ->  {
+                Null(null)
+            }
+        }
+
+    }
+    public final inline fun <R> R|kotlin/Boolean|.then(extra: R|kotlin/Boolean| = Boolean(true), block: R|() -> R|): R|R?|
+        [R|Contract description]
+         <
+            this && extra trueIn block
+            CallsInPlace(block, AT_MOST_ONCE)
+        >
+     {
+        [StubStatement]
+        ^then when () {
+            this@R|/then| && R|<local>/extra| ->  {
+                R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()
+            }
+            else ->  {
+                Null(null)
+            }
+        }
+
+    }
+    public final fun test1(s: R|kotlin/String?|): R|kotlin/Unit| {
+        R|/runIf|<R|kotlin/Int|>(!=(R|<local>/s|, Null(null)), <L> = runIf@fun <anonymous>(): R|kotlin/Int| <kind=AT_MOST_ONCE>  {
+            ^ R|<local>/s|.R|kotlin/String.length|
+        }
+        )
+    }
+    public final fun test2(s: R|kotlin/String?|): R|kotlin/Unit| {
+        !=(R|<local>/s|, Null(null)).R|/then|<R|kotlin/Int|>(<L> = then@fun <anonymous>(): R|kotlin/Int| <kind=AT_MOST_ONCE>  {
+            ^ R|<local>/s|.R|kotlin/String.length|
+        }
+        )
+    }

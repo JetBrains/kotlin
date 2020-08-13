@@ -267,6 +267,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             try {
                 val initialExplicitReceiver = functionCall.explicitReceiver
                 val resultExpression = callResolver.resolveCallAndSelectCandidate(functionCall)
+                dataFlowAnalyzer.enterFunctionCallWithCandidate(resultExpression)
                 val resultExplicitReceiver = resultExpression.explicitReceiver
                 if (initialExplicitReceiver !== resultExplicitReceiver && resultExplicitReceiver is FirQualifiedAccess) {
                     // name.invoke() case

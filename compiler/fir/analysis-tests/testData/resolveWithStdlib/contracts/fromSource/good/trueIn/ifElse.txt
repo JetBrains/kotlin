@@ -1,0 +1,38 @@
+FILE: ifElse.kt
+    public final infix fun R|kotlin/Boolean|.trueIn(target: R|kotlin/Any|): R|kotlin/Unit|
+    public final inline fun <R> ifElse(cond: R|kotlin/Boolean|, ifBlock: R|() -> R|, thenBlock: R|() -> R|, extra: R|kotlin/Boolean| = R|<local>/cond|): R|R?|
+        [R|Contract description]
+         <
+            cond && extra trueIn ifBlock
+            !cond trueIn thenBlock
+            CallsInPlace(ifBlock, AT_MOST_ONCE)
+            CallsInPlace(thenBlock, AT_MOST_ONCE)
+        >
+     {
+        [StubStatement]
+        ^ifElse when () {
+            R|<local>/cond| && R|<local>/extra| ->  {
+                R|<local>/ifBlock|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()
+            }
+            else ->  {
+                R|<local>/thenBlock|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()
+            }
+        }
+
+    }
+    public final fun test1(a: R|kotlin/String?|, b: R|kotlin/String?|): R|kotlin/Unit| {
+        R|/ifElse|<R|kotlin/Int|>(!=(R|<local>/a|, Null(null)) || ==(R|<local>/b|, Null(null)), ifElse@fun <anonymous>(): R|kotlin/Int| <kind=AT_MOST_ONCE>  {
+            ^ R|<local>/a|.<Inapplicable(WRONG_RECEIVER): kotlin/String.length>#
+        }
+        , ifElse@fun <anonymous>(): R|kotlin/Int| <kind=AT_MOST_ONCE>  {
+            ^ R|<local>/b|.R|kotlin/String.length|
+        }
+        )
+        R|/ifElse|<R|kotlin/Int|>(!=(R|<local>/a|, Null(null)) && ==(R|<local>/b|, Null(null)), ifElse@fun <anonymous>(): R|kotlin/Int| <kind=AT_MOST_ONCE>  {
+            ^ R|<local>/a|.R|kotlin/String.length|
+        }
+        , ifElse@fun <anonymous>(): R|kotlin/Int| <kind=AT_MOST_ONCE>  {
+            ^ R|<local>/b|.<Inapplicable(WRONG_RECEIVER): kotlin/String.length>#
+        }
+        )
+    }

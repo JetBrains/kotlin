@@ -45,3 +45,15 @@ class ConeCallsEffectDeclaration(val valueParameterReference: ConeValueParameter
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitCallsEffectDeclaration(this, data)
 }
+
+
+/**
+ * Effect which specifies, that condition [condition] is true inside in-place lambda [target]
+ */
+class ConeTrueInEffectDeclaration(
+    val condition: ConeBooleanExpression,
+    val target: ConeValueParameterReference
+) : ConeEffectDeclaration() {
+    override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
+        contractDescriptionVisitor.visitTrueInEffectDeclaration(this, data)
+}
