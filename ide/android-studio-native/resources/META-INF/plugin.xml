@@ -50,16 +50,13 @@
     <programRunner implementation="com.jetbrains.kmm.ios.execution.AppleRunner"/>
     <stepsBeforeRunProvider implementation="com.jetbrains.kmm.ios.BuildIOSAppTaskProvider"/>
     <externalSystem.debuggerBackend implementation="com.jetbrains.kmm.ios.LLDBBackend"/>
+    <externalExecutionAware key="GRADLE" implementationClass="com.jetbrains.kmm.ios.execution.KmmDebugExecutionAware" />
     <configurationType implementation="com.jetbrains.kmm.ios.execution.BinaryRunConfigurationType"/>
     <postStartupActivity implementation="com.jetbrains.kmm.versions.KmmPluginStartupActivity"/>
   </extensions>
 
   <extensions defaultExtensionNs="cidr.debugger">
-    <languageSupport language="Koltin" implementationClass="com.jetbrains.kmm.ios.execution.KonanDebuggerLanguageSupport"/>
-  </extensions>
-
-  <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
-    <taskManager implementation="com.jetbrains.kmm.ios.execution.BinaryGradleTaskManager"/>
+    <languageSupport language="kotlin" implementationClass="com.jetbrains.kmm.ios.execution.KonanDebuggerLanguageSupport"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.android">

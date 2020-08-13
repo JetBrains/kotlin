@@ -20,12 +20,15 @@
 
     <externalProjectDataService implementation="com.jetbrains.mpp.gradle.MPPProjectDataService"/>
     <externalSystem.debuggerBackend implementation="com.jetbrains.mpp.debugger.GradleLLDBBackend" />
-    <externalExecutionAware key="GRADLE" implementationClass="com.jetbrains.mpp.debugger.MPPDebugExecutionAware" />
   </extensions>
 
   <extensions defaultExtensionNs="cidr.debugger">
     <languageSupport language="kotlin" implementationClass="com.jetbrains.mpp.debugger.MPPDebuggerLanguageSupport"/>
     <editorsExtension default="true" implementation="com.jetbrains.mpp.debugger.MPPDebuggerEditorsExtension" />
     <valueRendererFactory implementation="com.jetbrains.mpp.debugger.MPPValueRendererFactory"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
+    <taskManager implementation="com.jetbrains.mpp.debugger.MPPGradleTaskManagerExtension"/>
   </extensions>
 </idea-plugin>
