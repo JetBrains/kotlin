@@ -179,3 +179,77 @@ Exception in thread "main" java.lang.IllegalStateException: Already resumed
 The last line is what we get when we try to resume a finished continuation.
 
 In this little example happens a lot. The rest of the section explains it bit by bit, starting with a state-machine.
+
+### State-Machine
+
+The compiler turns sequential code into suspendable by using state machines. It distributes suspending calls between states in a 
+state-machine. The relationship between the calls and the states is one-to-one: each call gets a state, and each state gets a call. The 
+state ends with the call, and the compiler places all instructions preceding the call in the same state before the call. It places all 
+instructions after the last call in a separate state.
+
+For example, having
+```kotlin
+dummy()
+println(1)
+dummy()
+println(2)
+```
+the compiler splits the code in the following way
+```text
+==========
+dummy()
+----------
+println(1)
+dummy()
+----------
+println(2)
+==========
+```
+where function boundaries are represented by `==========` and state boundaries are represented by `----------`. The compiler after splitting 
+the function generates the following code (simplified for now):
+```kotlin
+val $result: Any? = null
+when(this.label) {
+    0 -> {
+        this.label = 1
+        $result = dummy(this)
+        if ($result == COROUTINE_SUSPENDED) return COROUTINE_SUSPENDED
+        goto 1
+    }
+    1 -> {
+        println(1)
+        this.label = 2
+        $result = dummy(this)
+        if ($result == COROUTINE_SUSPENDED) return COROUTINE_SUSPENDED
+        goto 2
+    }
+    2 -> {
+        println(2)
+        return Unit
+    }
+    else -> {
+        throw IllegalStateException("call to 'resume' before 'invoke' with coroutine")
+    }
+}
+```
+Then it puts the state-machine inside the `invokeSuspend` function. Thus, in addition to the usual for lambda captured parameters, `<init>` 
+and `invoke`, we have `label` field and `invokeSuspend` function.
+
+At the beginning of the function `label`'s value is `0`. Before the call, we set it to `1`. During the call, two things can happen:
+1. `dummy` returns a result, in this case, `Unit`. When this happens, execution continues as if it was sequential code, jumping to the next
+ state.
+2. `dummy` suspends. When a suspending function suspends, it returns the `COROUTINE_SUSPENDED` marker. So, if `dummy` suspends,
+the caller also suspends by returning the same `COROUTINE_SUSPENDED`. Furthermore, all the suspend functions in call stack suspend, 
+returning COROUTINE_SUSPEND, until we reach the coroutine builder function, which just returns.
+
+Upon resume, `invokeSuspend` is called again, but this time `label` is `1`, so the execution jumps directly to the second state, and the 
+caller does not execute the first call to `dummy` again. This way, the lambda's execution can be suspended and resumed. Thus the lambda
+is turned into a coroutine, which is, by definition, is a suspendable unit of code.
+
+That is the reason why we need to turn linear code into a state machine. 
+
+On a closing note, the state machine should be flat; in other words, there should be no state-machine inside the state of a state-machine.
+Otherwise, inner state-machine states will rewrite `label`, breaking the whole suspend-resume machinery and leading to weird behavior,
+ranging from CCE to infinite loops. Similar buggy behavior happens when several suspending calls are in one state: when the first call
+suspends, and then the execution resumes, skipping all the remaining code in the state. Both these bugs were quite frequent in the early
+days of coroutines inlining.
