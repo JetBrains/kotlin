@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.KotlinRoot
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.resetApplicationToNull
@@ -162,7 +163,7 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
     }
 }
 
-val TEST_KOTLIN_MODEL_DIR = File("plugins/uast-kotlin/testData")
+val TEST_KOTLIN_MODEL_DIR = KotlinRoot.DIR.resolve("uast/uast-kotlin/testData")
 
 private fun loadScriptingPlugin(configuration: CompilerConfiguration) {
     val artifacts = KotlinArtifacts.instance
