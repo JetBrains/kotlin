@@ -1,12 +1,12 @@
 package basic
 
 import org.jetbrains.dokka.DokkaException
+import org.jetbrains.dokka.testApi.logger.TestLogger
 import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
 import org.jetbrains.dokka.utilities.DokkaConsoleLogger
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
-import org.jetbrains.dokka.testApi.logger.TestLogger
 
 class FailOnWarningTest : AbstractCoreTest() {
 
@@ -62,7 +62,6 @@ class FailOnWarningTest : AbstractCoreTest() {
 
     @Test
     fun `does not throw if now warning or error was emitted`() {
-        logger = TestLogger(ZeroErrorOrWarningCountDokkaLogger())
 
         val configuration = dokkaConfiguration {
             failOnWarning = true
@@ -78,7 +77,9 @@ class FailOnWarningTest : AbstractCoreTest() {
             """
                 |/src/main/kotlin
                 |package sample
-                """.trimIndent(), configuration
+                """.trimIndent(),
+            configuration,
+            loggerForTest = TestLogger(ZeroErrorOrWarningCountDokkaLogger())
         ) {
             /* We expect no Exception */
         }
