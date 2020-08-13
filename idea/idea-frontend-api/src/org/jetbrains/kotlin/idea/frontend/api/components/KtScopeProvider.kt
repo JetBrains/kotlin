@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.components
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.frontend.api.scopes.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPackageSymbol
@@ -20,7 +21,11 @@ abstract class KtScopeProvider : KtAnalysisSessionComponent() {
 
     abstract fun getTypeScope(type: KtType): KtScope?
 
-    abstract fun getScopeContextForPosition(originalFile: KtFile, positionInFakeFile: KtElement): KtScopeContext
+    abstract fun getScopeContextForPosition(
+        originalFile: KtFile,
+        originalPosition: PsiElement?,
+        positionInFakeFile: KtElement
+    ): KtScopeContext
 }
 
 data class KtScopeContext(val scopes: KtCompositeScope, val implicitReceiversTypes: List<KtType>)

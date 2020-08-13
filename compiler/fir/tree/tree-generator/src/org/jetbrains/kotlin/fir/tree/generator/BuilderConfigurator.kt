@@ -269,6 +269,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             default("contractDescription", "FirEmptyContractDescription")
             useTypes(emptyContractDescriptionType)
             openBuilder()
+            withCopy()
         }
 
         builder(tryExpression) {

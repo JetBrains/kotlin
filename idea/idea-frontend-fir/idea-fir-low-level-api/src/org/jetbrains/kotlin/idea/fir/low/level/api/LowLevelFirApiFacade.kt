@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
@@ -18,6 +20,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 
 object LowLevelFirApiFacade {
@@ -64,14 +67,26 @@ object LowLevelFirApiFacade {
     fun buildCompletionContextForFunction(
         firFile: FirFile,
         element: KtNamedFunction,
+        originalElement: KtNamedFunction,
         state: FirModuleResolveState,
         phase: FirResolvePhase = FirResolvePhase.BODY_RESOLVE
     ): FirCompletionContext {
         val firIdeProvider = firFile.session.firIdeProvider
+        val originalFunction = state.getOrBuildFirFor(originalElement, phase) as FirSimpleFunction
         val builtFunction = firIdeProvider.buildFunctionWithBody(element)
         val towerDataContextForStatement = mutableMapOf<FirStatement, FirTowerDataContext>()
 
-        val function = builtFunction.apply {
+        // right now we can't resolve builtFunction header properly, as it built right in air,
+        // without file, which is now required for running stages other then body resolve, so we
+        // take original function header (which is resolved) and copy replacing body with body from builtFunction
+        val frankensteinFunction = buildSimpleFunctionCopy(originalFunction) {
+            body = builtFunction.body
+            symbol = builtFunction.symbol as FirNamedFunctionSymbol
+            resolvePhase = minOf(originalFunction.resolvePhase, FirResolvePhase.DECLARATIONS)
+            this.session = state.firIdeSourcesSession
+        }
+
+        val function = frankensteinFunction.apply {
             state.lazyResolveFunctionForCompletion(this, firFile, firIdeProvider, phase, towerDataContextForStatement)
             state.recordPsiToFirMappingsForCompletionFrom(this, firFile, element.containingKtFile)
         }
