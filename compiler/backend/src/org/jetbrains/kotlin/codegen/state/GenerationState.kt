@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -48,7 +47,6 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeApproximator
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.Method
 import java.io.File
 
 class GenerationState private constructor(
@@ -283,7 +281,6 @@ class GenerationState private constructor(
     val isIrWithStableAbi = configuration.getBoolean(JVMConfigurationKeys.IS_IR_WITH_STABLE_ABI)
 
     val globalSerializationBindings = JvmSerializationBindings()
-    lateinit var irBasedMapAsmMethod: (FunctionDescriptor) -> Method
     var mapInlineClass: (ClassDescriptor) -> Type = { descriptor -> typeMapper.mapType(descriptor.defaultType) }
 
     val typeApproximator: TypeApproximator? =
@@ -310,7 +307,6 @@ class GenerationState private constructor(
                         BuilderFactoryForDuplicateSignatureDiagnostics(
                             it, this.bindingContext, diagnostics, this.moduleName, this.languageVersionSettings,
                             shouldGenerate = { origin -> !shouldOnlyCollectSignatures(origin) },
-                            mapAsmMethod = if (isIrBackend) { descriptor: FunctionDescriptor -> irBasedMapAsmMethod(descriptor) } else null
                         ).apply { duplicateSignatureFactory = this }
                 },
                 { BuilderFactoryForDuplicateClassNameDiagnostics(it, diagnostics) },

@@ -119,9 +119,6 @@ object JvmBackendFacade {
         /* JvmBackendContext creates new unbound symbols, have to resolve them. */
         ExternalDependenciesGenerator(symbolTable, irProviders, state.languageVersionSettings).generateUnboundSymbolsAsDependencies()
 
-        state.irBasedMapAsmMethod = { descriptor ->
-            context.methodSignatureMapper.mapAsmMethod(context.referenceFunction(descriptor).owner)
-        }
         state.mapInlineClass = { descriptor ->
             context.typeMapper.mapType(context.referenceClass(descriptor).defaultType)
         }
