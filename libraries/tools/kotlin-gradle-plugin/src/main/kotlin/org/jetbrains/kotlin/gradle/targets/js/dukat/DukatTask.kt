@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.dukat
 
-import org.gradle.api.internal.AbstractTask
+import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
@@ -16,7 +16,7 @@ import java.io.File
 abstract class DukatTask(
     @Internal
     override val compilation: KotlinJsCompilation
-) : AbstractTask(), RequiresNpmDependencies {
+) : DefaultTask(), RequiresNpmDependencies {
     @get:Internal
     protected val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
