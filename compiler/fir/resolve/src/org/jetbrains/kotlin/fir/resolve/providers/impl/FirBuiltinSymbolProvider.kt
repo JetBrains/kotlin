@@ -25,9 +25,7 @@ import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
 import org.jetbrains.kotlin.fir.resolve.getOrPut
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
-import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
-import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -49,7 +47,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.io.InputStream
 
-class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider: KotlinScopeProvider) : FirSymbolProvider() {
+class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: KotlinScopeProvider) : FirSymbolProvider(session) {
 
     private data class SyntheticFunctionalInterfaceSymbolKey(val kind: FunctionClassDescriptor.Kind, val arity: Int)
 
@@ -250,15 +248,6 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
             it.getTopLevelCallableSymbols(name)
         }
     }
-
-    override fun getNestedClassifierScope(classId: ClassId): FirScope? {
-        return findRegularClass(classId)?.let {
-            nestedClassifierScope(it)
-        }
-    }
-
-    private fun findRegularClass(classId: ClassId): FirRegularClass? =
-        getClassLikeSymbolByFqName(classId)?.fir
 
     private class BuiltInsPackageFragment(
         stream: InputStream, val fqName: FqName, val session: FirSession,

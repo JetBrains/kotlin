@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
-import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
-class FirCompositeSymbolProvider(val providers: List<FirSymbolProvider>) : FirSymbolProvider() {
+class FirCompositeSymbolProvider(session: FirSession, val providers: List<FirSymbolProvider>) : FirSymbolProvider(session) {
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
         return providers.flatMap { it.getTopLevelCallableSymbols(packageFqName, name) }
     }
@@ -23,10 +23,6 @@ class FirCompositeSymbolProvider(val providers: List<FirSymbolProvider>) : FirSy
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
         destination += getTopLevelCallableSymbols(packageFqName, name)
-    }
-
-    override fun getNestedClassifierScope(classId: ClassId): FirScope? {
-        return providers.firstNotNullResult { it.getNestedClassifierScope(classId) }
     }
 
     override fun getPackage(fqName: FqName): FqName? {

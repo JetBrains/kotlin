@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
-import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
-import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -54,7 +52,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
         recordFile(file, state)
     }
 
-    private inner class SymbolProvider : FirSymbolProvider() {
+    private inner class SymbolProvider : FirSymbolProvider(session) {
         override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
             return getFirClassifierByFqName(classId)?.symbol
         }
@@ -66,12 +64,6 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
         @FirSymbolProviderInternals
         override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
             destination += getTopLevelCallableSymbols(packageFqName, name)
-        }
-
-        override fun getNestedClassifierScope(classId: ClassId): FirScope? {
-            return (getFirClassifierByFqName(classId) as? FirRegularClass)?.let {
-                nestedClassifierScope(it)
-            }
         }
 
         override fun getPackage(fqName: FqName): FqName? {

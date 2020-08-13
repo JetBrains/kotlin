@@ -33,10 +33,11 @@ fun <F : FirClass<F>> F.runTypeResolvePhaseForLocalClass(
 
 class FirTypeResolveTransformer(
     override val session: FirSession,
-    private val scopeSession: ScopeSession,
+    scopeSession: ScopeSession,
     initialScopes: List<FirScope> = emptyList()
 ) : FirAbstractTreeTransformerWithSuperTypes(
-    phase = FirResolvePhase.TYPES
+    phase = FirResolvePhase.TYPES,
+    scopeSession
 ) {
 
     init {

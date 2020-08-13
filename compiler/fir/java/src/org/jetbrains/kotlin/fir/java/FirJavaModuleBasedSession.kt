@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.registerCheckersComponent
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
+import org.jetbrains.kotlin.fir.resolve.calls.jvm.registerJvmCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.calls.jvm.registerJvmCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.providers.impl.*
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
@@ -48,6 +48,7 @@ class FirJavaModuleBasedSession private constructor(
                 register(
                     FirSymbolProvider::class,
                     FirCompositeSymbolProvider(
+                        this,
                         listOf(
                             firProvider.symbolProvider,
                             JavaSymbolProvider(this, sessionProvider.project, scope),
@@ -97,6 +98,7 @@ class FirLibrarySession private constructor(
                 register(
                     FirSymbolProvider::class,
                     FirCompositeSymbolProvider(
+                        this,
                         listOf(
                             KotlinDeserializedJvmSymbolsProvider(
                                 this, sessionProvider.project,

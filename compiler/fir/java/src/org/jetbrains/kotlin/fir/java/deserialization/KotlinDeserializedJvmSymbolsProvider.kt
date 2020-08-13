@@ -29,9 +29,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.AbstractFirSymbolProviderWithC
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.SymbolProviderCache
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredCallableSymbols
-import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
-import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -56,14 +54,14 @@ import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class KotlinDeserializedJvmSymbolsProvider(
-    val session: FirSession,
+    session: FirSession,
     val project: Project,
     private val packagePartProvider: PackagePartProvider,
     private val javaSymbolProvider: JavaSymbolProvider,
     private val kotlinClassFinder: KotlinClassFinder,
     private val javaClassFinder: JavaClassFinder,
     private val kotlinScopeProvider: KotlinScopeProvider,
-) : AbstractFirSymbolProviderWithCache<FirRegularClassSymbol>() {
+) : AbstractFirSymbolProviderWithCache<FirRegularClassSymbol>(session) {
     private val typeAliasCache = SymbolProviderCache<ClassId, FirTypeAliasSymbol>()
     private val packagePartsCache = SymbolProviderCache<FqName, Collection<PackagePartsCacheData>>()
 
@@ -388,12 +386,6 @@ class KotlinDeserializedJvmSymbolsProvider(
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
         getPackageParts(packageFqName).flatMapTo(destination) { part ->
             loadFunctionsByName(part, name) + loadPropertiesByName(part, name)
-        }
-    }
-
-    override fun getNestedClassifierScope(classId: ClassId): FirScope? {
-        return findRegularClass(classId)?.let {
-            nestedClassifierScope(it)
         }
     }
 

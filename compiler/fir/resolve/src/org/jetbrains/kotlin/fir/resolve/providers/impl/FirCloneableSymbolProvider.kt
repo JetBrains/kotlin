@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
-import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -29,7 +28,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class FirCloneableSymbolProvider(session: FirSession, scopeProvider: FirScopeProvider) : FirSymbolProvider() {
+class FirCloneableSymbolProvider(session: FirSession, scopeProvider: FirScopeProvider) : FirSymbolProvider(session) {
     companion object {
         val CLONEABLE: Name = Name.identifier("Cloneable")
         val CLONEABLE_CLASS_ID: ClassId = ClassId(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME, CLONEABLE)
@@ -68,10 +67,6 @@ class FirCloneableSymbolProvider(session: FirSession, scopeProvider: FirScopePro
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {}
-
-    override fun getNestedClassifierScope(classId: ClassId): FirScope? {
-        return null
-    }
 
     override fun getPackage(fqName: FqName): FqName? {
         return null

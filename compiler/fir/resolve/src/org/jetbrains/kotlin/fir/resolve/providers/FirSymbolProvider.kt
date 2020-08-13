@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.providers
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
-import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
-import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
@@ -26,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 @RequiresOptIn
 annotation class FirSymbolProviderInternals
 
-abstract class FirSymbolProvider : FirSessionComponent {
+abstract class FirSymbolProvider(protected val session: FirSession) : FirSessionComponent {
     abstract fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>?
 
     fun getSymbolByLookupTag(lookupTag: ConeClassLikeLookupTag): FirClassLikeSymbol<*>? {
@@ -54,16 +51,8 @@ abstract class FirSymbolProvider : FirSessionComponent {
     @FirSymbolProviderInternals
     abstract fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name)
 
-    abstract fun getNestedClassifierScope(classId: ClassId): FirScope?
-
     abstract fun getPackage(fqName: FqName): FqName? // TODO: Replace to symbol sometime
 }
-
-fun FirSession.getNestedClassifierScope(lookupTag: ConeClassLikeLookupTag): FirScope? =
-    when (lookupTag) {
-        is ConeClassLookupTagWithFixedSymbol -> nestedClassifierScope(lookupTag.symbol.fir)
-        else -> firSymbolProvider.getNestedClassifierScope(lookupTag.classId)
-    }
 
 fun FirSymbolProvider.getClassDeclaredCallableSymbols(classId: ClassId, name: Name): List<FirCallableSymbol<*>> {
     val classSymbol = getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol ?: return emptyList()

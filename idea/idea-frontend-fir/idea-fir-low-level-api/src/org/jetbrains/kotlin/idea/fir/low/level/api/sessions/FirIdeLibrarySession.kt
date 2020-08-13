@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.sessions
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.IDEPackagePartProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.IdeSessionComponents
-import org.jetbrains.kotlin.idea.search.minus
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 
@@ -52,6 +50,7 @@ class FirIdeModuleLibraryDependenciesSession private constructor(
                 register(
                     FirSymbolProvider::class,
                     FirCompositeSymbolProvider(
+                        this,
                         listOf(
                             KotlinDeserializedJvmSymbolsProvider(
                                 this,

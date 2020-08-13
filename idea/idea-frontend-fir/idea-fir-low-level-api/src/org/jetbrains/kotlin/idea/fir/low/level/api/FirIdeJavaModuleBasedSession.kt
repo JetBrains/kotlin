@@ -80,6 +80,7 @@ internal class FirIdeJavaModuleBasedSession private constructor(
                 register(
                     FirSymbolProvider::class,
                     FirCompositeSymbolProvider(
+                        this,
                         @OptIn(ExperimentalStdlibApi::class)
                         buildList {
                             add(provider.symbolProvider)

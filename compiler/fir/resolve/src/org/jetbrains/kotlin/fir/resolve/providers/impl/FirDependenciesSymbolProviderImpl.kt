@@ -10,16 +10,14 @@ import org.jetbrains.kotlin.fir.dependenciesWithoutSelf
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.AbstractFirSymbolProviderWithCache
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
-import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
-open class FirDependenciesSymbolProviderImpl(val session: FirSession) : AbstractFirSymbolProviderWithCache<FirClassLikeSymbol<*>>() {
+open class FirDependenciesSymbolProviderImpl(session: FirSession) : AbstractFirSymbolProviderWithCache<FirClassLikeSymbol<*>>(session) {
     protected open val dependencyProviders by lazy {
         val moduleInfo = session.moduleInfo ?: return@lazy emptyList()
         moduleInfo.dependenciesWithoutSelf().mapNotNull {
@@ -36,10 +34,6 @@ open class FirDependenciesSymbolProviderImpl(val session: FirSession) : Abstract
         return topLevelCallableCache.lookupCacheOrCalculate(CallableId(packageFqName, null, name)) {
             dependencyProviders.flatMap { provider -> provider.getTopLevelCallableSymbols(packageFqName, name) }
         } ?: emptyList()
-    }
-
-    override fun getNestedClassifierScope(classId: ClassId): FirScope? {
-        return dependencyProviders.firstNotNullResult { it.getNestedClassifierScope(classId) }
     }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {

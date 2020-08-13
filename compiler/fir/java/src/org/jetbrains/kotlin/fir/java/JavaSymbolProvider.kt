@@ -24,9 +24,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.AbstractFirSymbolProviderWithC
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.SymbolProviderCache
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
-import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.lazyNestedClassifierScope
-import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -45,10 +42,10 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class JavaSymbolProvider(
-    val session: FirSession,
+    session: FirSession,
     val project: Project,
     private val searchScope: GlobalSearchScope,
-) : AbstractFirSymbolProviderWithCache<FirRegularClassSymbol>() {
+) : AbstractFirSymbolProviderWithCache<FirRegularClassSymbol>(session) {
     companion object {
         private val VALUE_METHOD_NAME = Name.identifier("value")
     }
@@ -65,20 +62,6 @@ class JavaSymbolProvider(
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {}
-
-    override fun getNestedClassifierScope(classId: ClassId): FirScope? {
-        val symbol = this.getClassLikeSymbolByFqName(classId) ?: return null
-        val regularClass = symbol.fir
-        return if (regularClass is FirJavaClass) {
-            lazyNestedClassifierScope(
-                classId,
-                existingNames = regularClass.existingNestedClassifierNames,
-                symbolProvider = this,
-            )
-        } else {
-            nestedClassifierScope(regularClass)
-        }
-    }
 
     private fun JavaTypeParameter.toFirTypeParameterSymbol(
         javaTypeParameterStack: JavaTypeParameterStack

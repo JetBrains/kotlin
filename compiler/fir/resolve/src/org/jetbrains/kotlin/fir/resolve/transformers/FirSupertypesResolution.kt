@@ -14,11 +14,11 @@ import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.supertypeGenerators
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.providers.getNestedClassifierScope
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
 import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
+import org.jetbrains.kotlin.fir.scopes.getNestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
@@ -141,6 +141,7 @@ private fun FirClassLikeDeclaration<*>.typeParametersScope(): FirScope? {
 private fun createScopesForNestedClasses(
     klass: FirClass<*>,
     session: FirSession,
+    scopeSession: ScopeSession,
     supertypeComputationSession: SupertypeComputationSession
 ): Collection<FirScope> =
     mutableListOf<FirScope>().apply {
@@ -149,7 +150,7 @@ private fun createScopesForNestedClasses(
             lookupInterfaces = false, deep = true, substituteTypes = true, useSiteSession = session,
             supertypeSupplier = supertypeComputationSession.supertypesSupplier
         ).asReversed().mapNotNullTo(this) {
-            session.getNestedClassifierScope(it.lookupTag)
+            session.getNestedClassifierScope(it.lookupTag, scopeSession)
                 ?.wrapNestedClassifierScopeWithSubstitutionForSuperType(it, session)
         }
         addIfNotNull(klass.typeParametersScope())
@@ -188,7 +189,7 @@ private class FirSupertypeResolverVisitor(
 
             resolveAllSupertypes(klass, klass.superTypeRefs)
 
-            scopes.pushAll(createScopesForNestedClasses(klass, session, supertypeComputationSession))
+            scopes.pushAll(createScopesForNestedClasses(klass, session, scopeSession, supertypeComputationSession))
         }
     }
 

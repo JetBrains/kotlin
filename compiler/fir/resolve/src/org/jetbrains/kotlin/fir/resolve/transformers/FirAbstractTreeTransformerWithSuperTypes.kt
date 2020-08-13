@@ -13,21 +13,25 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
-import org.jetbrains.kotlin.fir.resolve.providers.getNestedClassifierScope
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.*
+import org.jetbrains.kotlin.fir.scopes.getNestedClassifierScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
+import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
+import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 
 abstract class FirAbstractTreeTransformerWithSuperTypes(
-    phase: FirResolvePhase
+    phase: FirResolvePhase,
+    protected val scopeSession: ScopeSession
 ) : FirAbstractTreeTransformer<Nothing?>(phase) {
     protected val scopes = mutableListOf<FirScope>()
     protected val towerScope = FirCompositeScope(scopes.asReversed())
@@ -57,7 +61,7 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
                 useSiteSession = session
             ).asReversed()
             for (superType in superTypes) {
-                session.getNestedClassifierScope(superType.lookupTag)?.let { nestedClassifierScope ->
+                session.getNestedClassifierScope(superType.lookupTag, scopeSession)?.let { nestedClassifierScope ->
                     val scope = nestedClassifierScope.wrapNestedClassifierScopeWithSubstitutionForSuperType(superType, session)
                     scopes.add(scope)
                 }
