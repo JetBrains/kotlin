@@ -257,12 +257,6 @@ class FirBuiltinSymbolProvider(val session: FirSession, val kotlinScopeProvider:
         }
     }
 
-    override fun getAllCallableNamesInPackage(fqName: FqName): Set<Name> {
-        return allPackageFragments[fqName]?.flatMapTo(mutableSetOf()) {
-            it.getAllCallableNames()
-        } ?: emptySet()
-    }
-
     override fun getClassNamesInPackage(fqName: FqName): Set<Name> {
         return allPackageFragments[fqName]?.flatMapTo(mutableSetOf()) {
             it.getAllClassNames()

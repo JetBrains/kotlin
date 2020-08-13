@@ -130,15 +130,6 @@ internal class FirIdeProvider(
         override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
             return getFirClassifierByFqName(classId)?.symbol
         }
-
-        // TODO this should be reworked because [FirIdeProvider] should not have such method
-        // used only in completion
-        override fun getAllCallableNamesInPackage(fqName: FqName): Set<Name> {
-            return hashSetOf<Name>().apply {
-                indexHelper.getTopLevelPropertiesInPackage(fqName).mapNotNullTo(this) { it.nameAsName }
-                indexHelper.getTopLevelFunctionsInPackage(fqName).mapNotNullTo(this) { it.nameAsName }
-            }
-        }
     }
 }
 

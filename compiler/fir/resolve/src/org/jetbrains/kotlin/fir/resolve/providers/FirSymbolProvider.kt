@@ -57,9 +57,6 @@ abstract class FirSymbolProvider : FirSessionComponent {
     abstract fun getNestedClassifierScope(classId: ClassId): FirScope?
 
     @Deprecated("will be deleted soon")
-    open fun getAllCallableNamesInPackage(fqName: FqName): Set<Name> = emptySet()
-
-    @Deprecated("will be deleted soon")
     open fun getClassNamesInPackage(fqName: FqName): Set<Name> = emptySet()
 
     abstract fun getPackage(fqName: FqName): FqName? // TODO: Replace to symbol sometime

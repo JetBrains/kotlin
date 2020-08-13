@@ -408,12 +408,6 @@ class KotlinDeserializedJvmSymbolsProvider(
         }
     }
 
-    override fun getAllCallableNamesInPackage(fqName: FqName): Set<Name> {
-        return getPackageParts(fqName).flatMapTo(mutableSetOf()) { packagePart ->
-            packagePart.proto.functionList.map { packagePart.context.nameResolver.getName(it.name) }
-        }
-    }
-
     override fun getClassNamesInPackage(fqName: FqName): Set<Name> =
         javaClassFinder.findPackage(fqName)
             ?.getClasses { true }.orEmpty()
