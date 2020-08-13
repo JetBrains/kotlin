@@ -9,6 +9,7 @@ import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.testApi.logger.TestLogger
 import org.jetbrains.dokka.utilities.DokkaConsoleLogger
+import org.jetbrains.dokka.utilities.DokkaLogger
 import org.junit.rules.TemporaryFolder
 import java.io.File
 import java.nio.charset.Charset
@@ -18,9 +19,9 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 // TODO: take dokka configuration from file
-abstract class AbstractCoreTest {
-    protected var logger = TestLogger(DokkaConsoleLogger)
-
+abstract class AbstractCoreTest(
+    protected val logger: TestLogger = TestLogger(DokkaConsoleLogger)
+) {
     protected fun getTestDataDir(name: String) =
         File("src/test/resources/$name").takeIf { it.exists() }?.toPath()
             ?: throw InvalidPathException(name, "Cannot be found")
@@ -52,6 +53,7 @@ abstract class AbstractCoreTest {
         configuration: DokkaConfigurationImpl,
         cleanupOutput: Boolean = true,
         pluginOverrides: List<DokkaPlugin> = emptyList(),
+        loggerForTest: DokkaLogger = logger,
         block: TestBuilder.() -> Unit
     ) {
         val testMethods = TestBuilder().apply(block).build()
@@ -59,7 +61,7 @@ abstract class AbstractCoreTest {
         val fileMap = query.toFileMap()
         fileMap.materializeFiles(testDirPath.toAbsolutePath())
         if (!cleanupOutput)
-            logger.info("Output generated under: ${testDirPath.toAbsolutePath()}")
+            loggerForTest.info("Output generated under: ${testDirPath.toAbsolutePath()}")
         val newConfiguration =
             configuration.copy(
                 outputDir = testDirPath.toAbsolutePath().toString(),
@@ -76,7 +78,7 @@ abstract class AbstractCoreTest {
             )
         DokkaTestGenerator(
             newConfiguration,
-            logger,
+            loggerForTest,
             testMethods,
             pluginOverrides
         ).generate()
