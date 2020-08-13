@@ -413,14 +413,6 @@ class JavaSymbolProvider(
         }
     }
 
-    @TestOnly
-    fun getJavaTopLevelClasses(): List<FirRegularClass> {
-        return classCache.values
-            .filterIsInstance<FirRegularClassSymbol>()
-            .filter { it.classId.relativeClassName.parent().isRoot }
-            .map { it.fir }
-    }
-
     private val knownClassNamesInPackage = mutableMapOf<FqName, Set<String>?>()
 
     private fun hasTopLevelClassOf(classId: ClassId): Boolean {
