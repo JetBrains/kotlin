@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,7 +54,7 @@ public class KtPackageDirective extends KtModifierListOwnerStub<KotlinPlaceHolde
         KtExpression nameExpression = getPackageNameExpression();
         if (nameExpression == null) return Collections.emptyList();
 
-        List<KtSimpleNameExpression> packageNames = ContainerUtil.newArrayList();
+        List<KtSimpleNameExpression> packageNames = new ArrayList<>();
         while (nameExpression instanceof KtQualifiedExpression) {
             KtQualifiedExpression qualifiedExpression = (KtQualifiedExpression) nameExpression;
 

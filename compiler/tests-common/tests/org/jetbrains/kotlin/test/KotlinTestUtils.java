@@ -608,7 +608,7 @@ public class KotlinTestUtils {
         }
         assert lastChild != null;
 
-        List<String> comments = ContainerUtil.newArrayList();
+        List<String> comments = new ArrayList<>();
 
         while (true) {
             if (lastChild.getNode().getElementType().equals(KtTokens.BLOCK_COMMENT)) {
@@ -1006,7 +1006,7 @@ public class KotlinTestUtils {
     }
 
     private static Set<String> collectPathsMetadata(Class<?> testCaseClass) {
-        return ContainerUtil.newHashSet(ContainerUtil.map(collectMethodsMetadata(testCaseClass), KotlinTestUtils::nameToCompare));
+        return new HashSet<>(ContainerUtil.map(collectMethodsMetadata(testCaseClass), KotlinTestUtils::nameToCompare));
     }
 
     @Nullable

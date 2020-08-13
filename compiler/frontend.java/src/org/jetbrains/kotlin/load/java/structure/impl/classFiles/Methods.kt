@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
 import com.intellij.util.cls.ClsFormatException
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.compact
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -37,7 +37,7 @@ abstract class BinaryJavaMethodBase(
 ) : JavaMember, MapBasedJavaAnnotationOwner, BinaryJavaModifierListOwner {
     override val annotationsByFqName by buildLazyValueForMap()
 
-    override val annotations: Collection<JavaAnnotation> = ContainerUtil.newSmartList()
+    override val annotations: Collection<JavaAnnotation> = SmartList()
 
     companion object {
         private class MethodInfo(
@@ -80,13 +80,10 @@ abstract class BinaryJavaMethodBase(
                         }
 
             val parameterTypes = info.valueParameterTypes
-            val parameterList = ContainerUtil.newArrayList<BinaryJavaValueParameter>()
             val paramCount = parameterTypes.size
-            for (i in 0 until paramCount) {
-                val type = parameterTypes[i]
+            val parameterList = parameterTypes.mapIndexed { i, type ->
                 val isEllipsisParam = isVarargs && i == paramCount - 1
-
-                parameterList.add(BinaryJavaValueParameter(type, isEllipsisParam))
+                BinaryJavaValueParameter(type, isEllipsisParam)
             }
 
             val member: BinaryJavaMethodBase =
@@ -95,7 +92,7 @@ abstract class BinaryJavaMethodBase(
                     else
                         BinaryJavaMethod(
                                 access, containingClass,
-                                parameterList.compact(),
+                                parameterList,
                                 info.typeParameters,
                                 Name.identifier(name), info.returnType
                         )
@@ -142,7 +139,7 @@ abstract class BinaryJavaMethodBase(
                 paramTypes = emptyList()
             }
             else {
-                    paramTypes = ContainerUtil.newArrayList()
+                paramTypes = mutableListOf()
                 while (iterator.current() != ')' && iterator.current() != CharacterIterator.DONE) {
                     paramTypes.add(signatureParser.parseTypeString(iterator, context))
                 }

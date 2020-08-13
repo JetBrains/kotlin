@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.SearchScope
-import com.intellij.util.containers.ContainerUtil
 import gnu.trove.THashMap
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.org.objectweb.asm.*
 import java.text.CharacterIterator
@@ -41,7 +41,7 @@ class BinaryJavaClass(
 ) : ClassVisitor(ASM_API_VERSION_FOR_CLASS_READING), VirtualFileBoundJavaClass, BinaryJavaModifierListOwner, MapBasedJavaAnnotationOwner {
     private lateinit var myInternalName: String
 
-    override val annotations: MutableCollection<JavaAnnotation> = ContainerUtil.newSmartList()
+    override val annotations: MutableCollection<JavaAnnotation> = SmartList()
     override lateinit var typeParameters: List<JavaTypeParameter>
     override lateinit var supertypes: Collection<JavaClassifierType>
     override val methods = arrayListOf<JavaMethod>()
@@ -150,7 +150,7 @@ class BinaryJavaClass(
                 .parseTypeParametersDeclaration(iterator, context)
                 .also(context::addTypeParameters)
 
-        val supertypes = ContainerUtil.newSmartList<JavaClassifierType>()
+        val supertypes = SmartList<JavaClassifierType>()
         supertypes.addIfNotNull(signatureParser.parseClassifierRefSignature(iterator, context))
         while (iterator.current() != CharacterIterator.DONE) {
             supertypes.addIfNotNull(signatureParser.parseClassifierRefSignature(iterator, context))
