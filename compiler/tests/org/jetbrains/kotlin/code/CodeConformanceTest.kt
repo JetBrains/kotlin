@@ -291,18 +291,21 @@ class CodeConformanceTest : TestCase() {
 
         val repoCheckers = listOf(
             RepoAllowList(
+                // Please use cache-redirector for importing in tests
                 "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root, setOf("gradle/cacheRedirector.gradle.kts")
             ),
             RepoAllowList(
                 "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root, setOf()
             ),
             RepoAllowList(
+                // Please use cache-redirector for importing in tests
                 "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/eap", root, setOf("gradle/cacheRedirector.gradle.kts")
             ),
             RepoAllowList(
                 "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root, setOf()
             ),
             RepoAllowList(
+                // Please use cache-redirector for importing in tests
                 "https://dl.bintray.com/kotlin/kotlin-dev", root, setOf(
                     "libraries/tools/new-project-wizard/new-project-wizard-cli/testData",
                     "gradle/cacheRedirector.gradle.kts",
@@ -316,6 +319,10 @@ class CodeConformanceTest : TestCase() {
                     "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/new-mpp-android/build.gradle",
                     "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/VariantAwareDependenciesIT.kt",
                     "libraries/tools/new-project-wizard/src/org/jetbrains/kotlin/tools/projectWizard/core/service/KotlinVersionProviderService.kt",
+                    "idea/testData/gradle/nativeRunConfiguration/customEntryPointWithoutRunGutter/build.gradle.kts",
+                    "idea/testData/gradle/nativeRunConfiguration/customEntryPointWithoutRunGutter/settings.gradle.kts",
+                    "idea/testData/gradle/nativeRunConfiguration/multiplatformNativeRunGutter/build.gradle.kts",
+                    "idea/testData/gradle/nativeRunConfiguration/multiplatformNativeRunGutter/settings.gradle.kts",
                     "idea/testData/perfTest/native/_common/settings.gradle.kts",
                     "idea/testData/gradle/nativeLibraries/commonIOSWithDisabledPropagation/settings.gradle.kts",
                     "idea/testData/gradle/packagePrefixImport/packagePrefixNonMPP/build.gradle",
@@ -327,6 +334,7 @@ class CodeConformanceTest : TestCase() {
             ),
             RepoAllowList("https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlin-dev", root, setOf()),
             RepoAllowList(
+                // Please use cache-redirector for importing in tests
                 "https://dl.bintray.com/kotlin/kotlin-eap", root, setOf(
                     "kotlin-ultimate/ide/android-studio-native/testData/wizard/expected/app/build.gradle.kts",
                     "kotlin-ultimate/ide/android-studio-native/testData/wizard/expected/shared/build.gradle.kts",
@@ -352,6 +360,10 @@ class CodeConformanceTest : TestCase() {
                     "idea/testData/gradle/configurator/configureJsEAPWithBuildGradleKts/build.gradle.kts.after",
                     "idea/testData/gradle/configurator/configureJvmEAPWithBuildGradle/build.gradle.after",
                     "idea/testData/gradle/configurator/configureJvmEAPWithBuildGradleKts/build.gradle.kts.after",
+                    "idea/testData/gradle/nativeRunConfiguration/customEntryPointWithoutRunGutter/build.gradle.kts",
+                    "idea/testData/gradle/nativeRunConfiguration/customEntryPointWithoutRunGutter/settings.gradle.kts",
+                    "idea/testData/gradle/nativeRunConfiguration/multiplatformNativeRunGutter/build.gradle.kts",
+                    "idea/testData/gradle/nativeRunConfiguration/multiplatformNativeRunGutter/settings.gradle.kts",
                     "idea/testData/perfTest/native/_common/settings.gradle.kts",
                     "kotlin-ultimate/gradle/cidrPluginTools.gradle.kts",
                     "libraries/tools/new-project-wizard/src/org/jetbrains/kotlin/tools/projectWizard/core/service/KotlinVersionProviderService.kt",
@@ -359,8 +371,17 @@ class CodeConformanceTest : TestCase() {
                 )
             ),
             RepoAllowList("https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlin-eap", root, setOf()),
-            RepoAllowList("https://dl.bintray.com/kotlin/kotlin-bootstrap", root, setOf()),
-            RepoAllowList("https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlin-bootstrap", root, setOf()),
+            RepoAllowList(
+                // Please use cache-redirector for importing in tests
+                "https://dl.bintray.com/kotlin/kotlin-bootstrap", root, setOf(
+                    "kotlin-ultimate/build.gradle.kts"
+                )
+            ),
+            RepoAllowList(
+                "https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlin-bootstrap", root, setOf(
+                    "kotlin-ultimate/build.gradle.kts"
+                )
+            ),
         )
 
         data class RepoOccurance(val repo: String, val file: File)
