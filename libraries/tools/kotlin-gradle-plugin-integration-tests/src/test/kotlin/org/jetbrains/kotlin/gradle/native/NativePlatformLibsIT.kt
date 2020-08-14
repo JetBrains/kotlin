@@ -3,8 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle
+package org.jetbrains.kotlin.gradle.native
 
+import org.jetbrains.kotlin.gradle.*
+import org.jetbrains.kotlin.gradle.embedProject
+import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -54,7 +57,7 @@ class NativePlatformLibsIT : BaseGradleIT() {
         }
     }
 
-    private fun BaseGradleIT.Project.buildWithLightDist(vararg tasks: String, check: CompiledProject.() -> Unit) =
+    private fun Project.buildWithLightDist(vararg tasks: String, check: CompiledProject.() -> Unit) =
         build(*tasks, "-Pkotlin.native.distribution.type=light", check = check)
 
     @Test
