@@ -15,7 +15,7 @@ class SomeClass : SomeInterface {
         get() = true
         set(value) {}
 
-    lateinit var fau: Double
+    <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit var fau: Double<!>
 }
 
 inline class InlineClass

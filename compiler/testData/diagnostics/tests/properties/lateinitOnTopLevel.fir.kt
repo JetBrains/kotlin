@@ -7,8 +7,8 @@ object Delegate {
 
 lateinit var testOk: String
 
-lateinit val testErr0: Any
-lateinit var testErr1: Int
-lateinit var testErr2: Any?
-lateinit var testErr3: String = ""
-lateinit var testErr4 by Delegate
+<!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit val testErr0: Any<!>
+<!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit var testErr1: Int<!>
+<!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit var testErr2: Any?<!>
+<!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit var testErr3: String = ""<!>
+<!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit var testErr4 by Delegate<!>
