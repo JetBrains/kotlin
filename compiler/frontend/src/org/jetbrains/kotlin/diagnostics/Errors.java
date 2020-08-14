@@ -901,6 +901,8 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, CallableDescriptor> DSL_SCOPE_VIOLATION = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, CallableDescriptor> DSL_SCOPE_VIOLATION_WARNING = DiagnosticFactory1.create(WARNING);
 
+    DiagnosticFactory0<PsiElement> NULLABLE_EXTENSION_OPERATOR_WITH_SAFE_CALL_RECEIVER = DiagnosticFactory0.create(WARNING);
+
     // Labels
 
     DiagnosticFactory0<KtSimpleNameExpression> LABEL_NAME_CLASH = DiagnosticFactory0.create(WARNING);

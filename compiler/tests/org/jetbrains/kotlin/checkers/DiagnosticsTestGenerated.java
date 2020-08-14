@@ -15828,6 +15828,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 runTest("compiler/testData/diagnostics/tests/nullableTypes/safeCallOnTypeWithNullableUpperBound.kt");
             }
 
+            @TestMetadata("safeCallOperators.kt")
+            public void testSafeCallOperators() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/nullableTypes/safeCallOperators.kt");
+            }
+
             @TestMetadata("safeCallWithInvoke.kt")
             public void testSafeCallWithInvoke() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/nullableTypes/safeCallWithInvoke.kt");

@@ -51,7 +51,7 @@ private val DEFAULT_CALL_CHECKERS = listOf(
     UselessElvisCallChecker(), ResultTypeWithNullableOperatorsChecker(), NullableVarargArgumentCallChecker,
     NamedFunAsExpressionChecker, ContractNotAllowedCallChecker, ReifiedTypeParameterSubstitutionChecker(),
     MissingDependencySupertypeChecker.ForCalls, AbstractClassInstantiationChecker, SuspendConversionCallChecker,
-    UnitConversionCallChecker, FunInterfaceConstructorReferenceChecker
+    UnitConversionCallChecker, FunInterfaceConstructorReferenceChecker, NullableExtensionOperatorWithSafeCallChecker
 )
 private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
 private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = listOf(
