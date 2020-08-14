@@ -4,15 +4,15 @@
 }
 
 public final enum class E : R|kotlin/Enum<test/E>| {
-    private constructor(): R|test/E|
-
-    public final static enum entry ENTRY: R|test/E|
-    public final static fun values(): R|kotlin/Array<test/E>| {
-    }
-
     public final static fun valueOf(value: R|kotlin/String|): R|test/E| {
     }
 
+    public final static fun values(): R|kotlin/Array<test/E>| {
+    }
+
+    private constructor(): R|test/E|
+
+    public final static enum entry ENTRY: R|test/E|
 }
 
 public final annotation class EnumOption : R|kotlin/Annotation| {

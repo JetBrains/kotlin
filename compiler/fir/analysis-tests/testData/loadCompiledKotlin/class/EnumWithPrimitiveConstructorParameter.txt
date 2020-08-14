@@ -1,11 +1,11 @@
 public final enum class EnumWithPrimitiveConstructorParameter : R|kotlin/Enum<test/EnumWithPrimitiveConstructorParameter>| {
-    private constructor(b: R|kotlin/Boolean|): R|test/EnumWithPrimitiveConstructorParameter|
+    public final static fun valueOf(value: R|kotlin/String|): R|test/EnumWithPrimitiveConstructorParameter| {
+    }
 
     public final static fun values(): R|kotlin/Array<test/EnumWithPrimitiveConstructorParameter>| {
     }
 
-    public final static fun valueOf(value: R|kotlin/String|): R|test/EnumWithPrimitiveConstructorParameter| {
-    }
+    private constructor(b: R|kotlin/Boolean|): R|test/EnumWithPrimitiveConstructorParameter|
 
 }
 
