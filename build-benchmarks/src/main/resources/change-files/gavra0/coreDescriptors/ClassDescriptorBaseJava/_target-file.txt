@@ -1,0 +1,1 @@
+core/descriptors/src/org/jetbrains/kotlin/descriptors/impl/ClassDescriptorBase.java
