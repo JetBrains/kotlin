@@ -49,6 +49,7 @@ dependencies {
     embedded(project(":core:metadata"))
     embedded(project(":core:metadata.jvm"))
     embedded(project(":core:descriptors"))
+    embedded(project(":core:descriptors.common"))
     embedded(project(":core:descriptors.jvm"))
     embedded(project(":core:deserialization"))
     embedded(project(":core:descriptors.runtime"))
@@ -158,6 +159,7 @@ val relocateCoreSources by task<Copy> {
     }
 
     from("$core/descriptors/src")
+    from("$core/descriptors.common/src")
     from("$core/descriptors.jvm/src")
     from("$core/descriptors.runtime/src")
     from("$core/deserialization/src")

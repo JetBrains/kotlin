@@ -28,6 +28,7 @@ val projectsToShadow by extra(listOf(
         ":core:metadata",
         ":core:metadata.jvm",
         ":core:descriptors",
+        ":core:descriptors.common",
         ":core:descriptors.jvm",
         ":core:deserialization",
         ":idea:jvm-debugger:eval4j",

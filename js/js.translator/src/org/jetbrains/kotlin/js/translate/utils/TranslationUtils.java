@@ -105,7 +105,7 @@ public final class TranslationUtils {
     @NotNull
     private static JsPropertyInitializer translateExtensionFunctionAsEcma5DataDescriptor(@NotNull JsExpression functionExpression,
             @NotNull FunctionDescriptor descriptor, @NotNull TranslationContext context) {
-        JsObjectLiteral meta = createDataDescriptor(functionExpression, ModalityKt.isOverridable(descriptor), false);
+        JsObjectLiteral meta = createDataDescriptor(functionExpression, ModalityUtilsKt.isOverridable(descriptor), false);
         return new JsPropertyInitializer(context.getNameForDescriptor(descriptor).makeRef(), meta);
     }
 
@@ -420,9 +420,9 @@ public final class TranslationUtils {
 
     public static boolean isOverridableFunctionWithDefaultParameters(@NotNull FunctionDescriptor descriptor) {
         return hasOrInheritsParametersWithDefaultValue(descriptor) &&
-                !(descriptor instanceof ConstructorDescriptor) &&
-                descriptor.getContainingDeclaration() instanceof ClassDescriptor &&
-                ModalityKt.isOverridable(descriptor);
+               !(descriptor instanceof ConstructorDescriptor) &&
+               descriptor.getContainingDeclaration() instanceof ClassDescriptor &&
+               ModalityUtilsKt.isOverridable(descriptor);
     }
 
     @NotNull

@@ -131,7 +131,7 @@ public final class JsDescriptorUtils {
 
     public static boolean sideEffectsPossibleOnRead(@NotNull PropertyDescriptor property) {
         return DynamicCallsKt.isDynamic(property) || !isDefaultAccessor(property.getGetter()) ||
-               ModalityKt.isOverridableOrOverrides(property) || isStaticInitializationPossible(property);
+               ModalityUtilsKt.isOverridableOrOverrides(property) || isStaticInitializationPossible(property);
     }
 
     private static boolean isStaticInitializationPossible(PropertyDescriptor property) {
@@ -144,7 +144,7 @@ public final class JsDescriptorUtils {
                isDefaultAccessor(propertyDescriptor.getGetter()) &&
                isDefaultAccessor(propertyDescriptor.getSetter()) &&
                !TranslationUtils.shouldAccessViaFunctions(propertyDescriptor) &&
-               !ModalityKt.isOverridableOrOverrides(propertyDescriptor);
+               !ModalityUtilsKt.isOverridableOrOverrides(propertyDescriptor);
     }
 
     @NotNull

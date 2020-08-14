@@ -18,26 +18,6 @@ package org.jetbrains.kotlin.descriptors
 
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-// For sealed classes, isOverridable is false but isOverridableByMembers is true
-enum class Modality {
-    // THE ORDER OF ENTRIES MATTERS HERE
-    FINAL,
-    // NB: class can be sealed but not function or property
-    SEALED,
-    OPEN,
-    ABSTRACT;
-
-    companion object {
-
-        // NB: never returns SEALED
-        fun convertFromFlags(abstract: Boolean, open: Boolean): Modality {
-            if (abstract) return ABSTRACT
-            if (open) return OPEN
-            return FINAL
-        }
-    }
-}
-
 val CallableMemberDescriptor.isOverridable: Boolean
     get() = visibility != Visibilities.PRIVATE
             && modality != Modality.FINAL
