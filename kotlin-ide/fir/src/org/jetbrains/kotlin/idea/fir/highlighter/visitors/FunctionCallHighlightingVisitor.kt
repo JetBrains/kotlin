@@ -61,7 +61,7 @@ internal class FunctionCallHighlightingVisitor(
             is KtConstructorSymbol -> Colors.CONSTRUCTOR_CALL
             is KtAnonymousFunctionSymbol -> null
             is KtFunctionSymbol -> when {
-                function.fqNameIfNonLocal == KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME -> Colors.KEYWORD
+                function.callableIdIfNonLocal == KOTLIN_SUSPEND_BUILT_IN_FUNCTION_FQ_NAME -> Colors.KEYWORD
                 function.isExtension -> Colors.EXTENSION_FUNCTION_CALL
                 function.symbolKind == KtSymbolKind.TOP_LEVEL -> Colors.PACKAGE_FUNCTION_CALL
                 else -> Colors.FUNCTION_CALL
