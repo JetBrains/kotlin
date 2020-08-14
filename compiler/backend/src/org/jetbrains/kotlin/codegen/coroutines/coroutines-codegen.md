@@ -450,3 +450,104 @@ value `42`. Then, this will be `$result` and work the same as if `suspendMe` ret
 unconditional resume will not suspend the coroutine and is semantically the same as returning the value.
 
 It is important to note that passing `COROUTINE_SUSPENDED` to continuation's `resumeWith` leads to undefined behavior.
+
+### Resume with Exception
+After reading the previous section about resume with a value, one might assume that `$result`'s type is `Int | COROUTINE_SUSPENDED`, but 
+this is not completely true. It is `Int | COROUTINE_SUSPENDED | Result$Failue(Throwable)`, or, more generally, it is `returnType | 
+COROUTINE_SUSPENDED | Result$Failue(Throwable)`. The section covers the last part: `Result$Failue(Throwable)`.
+
+Let us change the previous example to resume the coroutine with exception:
+```kotlin
+import kotlin.coroutines.*
+
+var c: Continuation<Int>? = null
+
+suspend fun suspendMe(): Int = suspendCoroutine { continuation ->
+    c = continuation
+}
+
+fun builder(c: suspend () -> Unit) {
+    c.startCoroutine(object: Continuation<Unit> {
+        override val context = EmptyCoroutineContext
+        override fun resumeWith(result: Result<Unit>) {
+            println(result.exceptionOrNull())
+        }
+    })
+}
+
+fun main() {
+    val a: suspend () -> Unit = { println(1 + suspendMe()) }
+    builder { a() }
+    c?.resumeWithException(IllegalStateException("BOO"))
+}
+```
+which, upon running, will print the exception. Note, that it is printed inside the `builder` function (because of 
+`println(result.exceptionOrNull())`). There are a couple of things happening here: one is inside the generated
+state machine, and the other is inside `BaseContinuationImpl`'s `resumeWith`.
+
+First, we change the generated state machine. As explained before, the type of `$result` variable is `Int | COROUTINE_SUSPENDED | 
+Result$Failue(Throwable)`, but when we resume, by convention, its type cannot be `COROUTINE_SUSPENDED`. Still, the type is `Int | 
+Result$Failure(Throwable)`, which we cannot just pass to `plus`, at least, without a check and `CHECKCAST`. Otherwise, we will get CCE at 
+runtime. Thus, we check the `$result` variable and throw the exception if the variable holds it.
+```kotlin
+fun invokeSuspend($result: Any?): Any? {
+    when(this.label) {
+        0 -> {
+            this.label = 1
+            $result = suspendMe(this)
+            if ($result == COROUTINE_SUSPENDED) return COROUTINE_SUSPENDED
+            goto 1
+        }
+        1 -> {
+            $result.throwOnFailure()
+            println(1 + $result)
+            return Unit
+        }
+        else -> {
+            throw IllegalStateException("call to 'resume' before 'invoke' with coroutine")
+        }
+    }
+}
+```
+where `throwOnFailure` is a function that performs the check and throwing part for us.
+
+Now, when we throw the exception, it should end up in the `main` function. However, as we saw from the example, it comes to `builder`'s 
+root continuation's `resumeWith`. The builder creates the root continuation, and, unlike other continuations, it has no completion. We 
+expect it to reach root continuation, since when we call one suspending function or lambda from another, we want to propagate the exception 
+through suspending stack (also known as an async stack), from callee to caller, regardless of whether or not there was a suspension, unless, 
+there is no explicit try-catch block. Thankfully, we can propagate the exception the same way as the execution upon coroutine's completion, 
+through the chain of `completion` fields. We, after all, should pass it to the caller, just like the return value. When `invokeSuspend` 
+throws an exception, `BaseContinuationImpl.resumeWith` catches it, wraps into `Result` inline class, which is essentially `T | 
+Result$Failure(Throwable)`, and calls `completion`'s `resumeWith` with the result (simplified):
+```kotlin
+abstract class BaseContinuationImpl(
+    private val completion: Continuation<Any?>
+): Continuation<Any?> {
+    public final override fun resumeWith(result: Result<Any?>) {
+        val outcome = try {
+            val outcome = invokeSuspend(result)
+            if (outcome == COROUTINE_SUSPENDED) return
+            Result.success(outcome)
+        } catch (e: Throwable) {
+            Result.failure(e)
+        }
+        completion.resumeWith(outcome)
+    }
+
+    protected abstract fun invokeSuspend(result: Result<Any?>): Any?
+}
+```
+The function passes the exception to `invokeSuspend`, `invokeSuspend` calls `throwOnFailure` and throws it again, then the exception is 
+caught in `BaseContinuationImpl.resumeWith` and wrapped again until it reaches root continuation's `resumeWith`, where, in this case, the 
+coroutine builder prints it. By the way, `resumeWithException` works in release coroutines precisely in the same way (except the catching 
+part): it wraps the exception into `Result` like in a burrito. It passes it to continuation's `resumeWith`. `resume` also wraps the argument 
+into `Result` and passes it to `resumeWith`.
+
+#### 1.2: Data and Exception
+
+Since 1.3 introduced inline classes and `Result` as one of them, experimental coroutines use a different approach to passing value and 
+exception to `doResume`, which was the name of `invokeSuspend` in experimental coroutines.
+Instead of one parameter with type `returnType | COROUTINE_SUSPENDED | Result$Failure(Throwable)`, experimental
+coroutines' suspend lambda's `doResume` accepts two parameters: `data` and `exception`. `data` has type `returnType | COROUTINE_SUSPENDED` 
+and `exception` has type `Throwable`. `resume` and `resumeWithException` used to be methods of `Continuation` interface and in 1.3 they 
+were replaced by `resumeWith`. `resume` and `resumeWithException` are now extension functions on `Continuation`, which call `resumeWith`.
