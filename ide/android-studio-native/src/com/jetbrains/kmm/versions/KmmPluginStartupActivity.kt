@@ -11,10 +11,10 @@ import com.intellij.notification.Notification
 import com.intellij.notification.NotificationAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.extensions.PluginId
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
-import com.intellij.openapi.util.text.StringUtilRt
 import com.jetbrains.kmm.KMM_LOG
 import com.jetbrains.kmm.KmmBundle
 import com.jetbrains.kmm.UserNotification
@@ -29,9 +29,9 @@ class KmmPluginStartupActivity : StartupActivity.DumbAware {
 }
 
 private val VERSIONS_INFO = listOf(
-    "Kotlin Plugin version: ${KotlinPluginUtil.getPluginVersion()}",
-    "Compiled against Kotlin: ${MobileMultiplatformPluginVersionsInfo.compiledAgainstKotlin}",
-    "KMM Plugin version: ${MobileMultiplatformPluginVersionsInfo.pluginVersion}"
+    KmmBundle.message("version.kotlinPlugin", KotlinPluginUtil.getPluginVersion()),
+    KmmBundle.message("version.compiledAgainstKotlin", MobileMultiplatformPluginVersionsInfo.compiledAgainstKotlin),
+    KmmBundle.message("version.kmmPlugin", MobileMultiplatformPluginVersionsInfo.pluginVersion)
 )
 
 object KmmCompatibilityChecker {
@@ -46,32 +46,16 @@ object KmmCompatibilityChecker {
 
         val errorText = when (checkVersions(actualKotlinPluginVersion, compiledAgainstKotlinVersion)) {
             COMPATIBLE -> null
-
-            OUTDATED_KOTLIN -> """
-                Warning!
-                Kotlin Multiplatform/Mobile plugin isn't guaranteed to work correctly and will be disabled on the next IDE launch, as the Kotlin-plugin is outdated.
-                Current version of KMM Plugin requires at least $compiledAgainstKotlinVersion
-                Please, update the Kotlin plugin.
-            """.trimIndent()
-
-            OUTDATED_KMM_PLUGIN -> """
-                Warning!
-                Kotlin Multiplatform/Mobile plugin isn't guaranteed to work correctly and will be disabled, as the KMM Plugin is outdated. 
-                Please, update the KMM Plugin
-            """.trimIndent()
-
-            UNKNOWN -> """
-                Warning!
-                Kotlin Multiplatform/Mobile plugin isn't guaranteed to work correctly and will be disabled, as the exact version of Kotlin Plugin can not be detected. 
-                Please, report this case to the JetBrains, attaching the following information:                
-            """.trimIndent() + VERSIONS_INFO.joinToString("\n")
+            OUTDATED_KOTLIN -> KmmBundle.message("startup.error.outdatedKotlin")
+            OUTDATED_KMM_PLUGIN -> KmmBundle.message("startup.error.outdatedPlugin")
+            UNKNOWN -> KmmBundle.message("startup.error.unknown") + VERSIONS_INFO.joinToString("<br/>")
         }
 
         if (errorText != null) {
             ApplicationManager.getApplication().invokeLater {
                 UserNotification(project).showError(
                     KmmBundle.message("startup.error.title"),
-                    StringUtilRt.convertLineSeparators(errorText, "<br/>"),
+                    errorText,
                     object : NotificationAction(KmmBundle.message("startup.error.suggestion.action")) {
                         override fun actionPerformed(action: AnActionEvent, notification: Notification) {
                             ShowSettingsUtil.getInstance().showSettingsDialog(null, PluginManagerConfigurable::class.java)
@@ -80,7 +64,7 @@ object KmmCompatibilityChecker {
                     }
                 )
 
-                PluginManagerCore.disablePlugin("com.jetbrains.kmm")
+                PluginManagerCore.disablePlugin(PluginId.getId("com.jetbrains.kmm"))
             }
         }
     }
