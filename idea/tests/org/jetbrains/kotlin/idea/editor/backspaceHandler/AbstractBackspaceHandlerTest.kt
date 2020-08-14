@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.idea.editor.backspaceHandler
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.EditorTestUtil
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase
+import com.intellij.testFramework.LightCodeInsightTestCase
 import java.io.File
 
 @Suppress("DEPRECATION")
-abstract class AbstractBackspaceHandlerTest : KotlinLightCodeInsightTestCase() {
+abstract class AbstractBackspaceHandlerTest : LightCodeInsightTestCase() {
     fun doTest(path: String) {
         configureFromFileText("a.kt", loadFile(path))
         EditorTestUtil.executeAction(getEditor(), IdeActions.ACTION_EDITOR_BACKSPACE)
