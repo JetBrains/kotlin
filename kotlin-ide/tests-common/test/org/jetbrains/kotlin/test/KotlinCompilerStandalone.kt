@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.test
 
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.util.lang.UrlClassLoader
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
@@ -29,7 +28,6 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
 import java.lang.ref.SoftReference
-import java.net.URL
 import java.net.URLClassLoader
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
@@ -240,22 +238,21 @@ object KotlinCliCompilerFacade {
 
     @Synchronized
     private fun createCompilerClassLoader(): ClassLoader {
-        val currentLoader = K2JVMCompiler::class.java.classLoader
-
-        val urls = when (currentLoader) {
-            is URLClassLoader -> currentLoader.urLs
-            is UrlClassLoader -> currentLoader.urls.toTypedArray()
-            else -> {
-                if (currentLoader.javaClass.name ==  UrlClassLoader::class.java.name) {
-                    // It seems UrlClassLoader is loaded from some other class loader on CI, and the type check doesn't work properly
-                    @Suppress("UNCHECKED_CAST")
-                    (currentLoader.javaClass.getMethod("getUrls").invoke(currentLoader) as List<URL>).toTypedArray()
-                } else {
-                    error("Unexpected class loader type $currentLoader")
-                }
-            }
+        val artifacts = with (KotlinArtifacts.instance) {
+            listOf(
+                kotlinStdlib,
+                kotlinStdlibJdk7,
+                kotlinStdlibJdk8,
+                kotlinReflect,
+                kotlinCompiler,
+                kotlinScriptRuntime,
+                trove4j,
+                kotlinDaemon,
+                jetbrainsAnnotations
+            )
         }
 
-        return URLClassLoader(urls, currentLoader.parent)
+        val urls = artifacts.map { it.toURI().toURL() }.toTypedArray()
+        return URLClassLoader(urls, ClassLoader.getPlatformClassLoader())
     }
 }
