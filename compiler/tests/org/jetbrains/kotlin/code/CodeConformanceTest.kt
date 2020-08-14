@@ -156,20 +156,23 @@ class CodeConformanceTest : TestCase() {
     }
 
     fun testNoBadSubstringsInProjectCode() {
-        class TestData(val message: String, val filter: (String) -> Boolean) {
+        class TestData(val message: String, val filter: (File, String) -> Boolean) {
             val result: MutableList<File> = ArrayList()
         }
 
         val atAuthorPattern = Pattern.compile("/\\*.+@author.+\\*/", Pattern.DOTALL)
 
+        val root = nonSourcesMatcher.root
+
         val tests = listOf(
             TestData(
                 "%d source files contain @author javadoc tag.\nPlease remove them or exclude in this test:\n%s"
-            ) { source ->
+            ) { file, source ->
                 // substring check is an optimization
                 "@author" in source && atAuthorPattern.matcher(source).find() &&
                         "ASM: a very small and fast Java bytecode manipulation framework" !in source &&
-                        "package org.jetbrains.kotlin.tools.projectWizard.settings.version.maven" !in source
+                        "package org.jetbrains.kotlin.tools.projectWizard.settings.version.maven" !in source &&
+                        !file.relativeTo(root).systemIndependentPath.startsWith("kotlin-ultimate/ide/common-cidr-native")
             },
             TestData(
                 "%d source files use something from com.beust.jcommander.internal package.\n" +
@@ -177,14 +180,14 @@ class CodeConformanceTest : TestCase() {
                         "because there's only an optional dependency on testng.jar.\n" +
                         "Most probably you meant to use Guava's Lists, Maps or Sets instead. " +
                         "Please change references in these files to com.google.common.collect:\n%s"
-            ) { source ->
+            ) { _, source ->
                 "com.beust.jcommander.internal" in source
             },
             TestData(
                 "%d source files contain references to package org.jetbrains.jet.\n" +
                         "Package org.jetbrains.jet is deprecated now in favor of org.jetbrains.kotlin. " +
                         "Please consider changing the package in these files:\n%s"
-            ) { source ->
+            ) { _, source ->
                 "org.jetbrains.jet" in source
             },
             TestData(
@@ -193,14 +196,14 @@ class CodeConformanceTest : TestCase() {
                         "post-processing of kotlin-reflect.jar by jarjar.\n" +
                         "Most probably you meant to use classes from org.jetbrains.kotlin.**.\n" +
                         "Please change references in these files or exclude them in this test:\n%s"
-            ) { source ->
+            ) { _, source ->
                 "kotlin.reflect.jvm.internal.impl" in source
             },
             TestData(
                 "%d source files contain references to package org.objectweb.asm.\n" +
                         "Package org.jetbrains.org.objectweb.asm should be used instead to avoid troubles with different asm versions in classpath. " +
                         "Please consider changing the package in these files:\n%s"
-            ) { source ->
+            ) { _, source ->
                 " org.objectweb.asm" in source
             }
         )
@@ -208,7 +211,7 @@ class CodeConformanceTest : TestCase() {
         nonSourcesMatcher.walkTopDown(SOURCES_FILE_PATTERN).forEach { sourceFile ->
             val source = sourceFile.readText()
             for (test in tests) {
-                if (test.filter(source)) test.result.add(sourceFile)
+                if (test.filter(sourceFile, source)) test.result.add(sourceFile)
             }
         }
 
