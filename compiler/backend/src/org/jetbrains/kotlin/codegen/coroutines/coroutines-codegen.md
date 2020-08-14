@@ -551,3 +551,246 @@ Instead of one parameter with type `returnType | COROUTINE_SUSPENDED | Result$Fa
 coroutines' suspend lambda's `doResume` accepts two parameters: `data` and `exception`. `data` has type `returnType | COROUTINE_SUSPENDED` 
 and `exception` has type `Throwable`. `resume` and `resumeWithException` used to be methods of `Continuation` interface and in 1.3 they 
 were replaced by `resumeWith`. `resume` and `resumeWithException` are now extension functions on `Continuation`, which call `resumeWith`.
+
+### Variables Spilling
+
+All the previous examples did not have local variables, and there is a reason for it. When a coroutine suspends, we should save its local 
+variables. Otherwise, when it resumes, the values of them are lost. So, before the suspension, which can be on each suspend call (more 
+generally, on each suspension point), we save them, and after the resumption, we restore them. There is no reason to restore them right 
+after the call if the call did not return `COROUTINE_SUSPENDED`: their values are still in local variable slots.
+
+Let us consider a simple example:
+```kotlin
+import kotlin.coroutines.*
+
+data class A(val i: Int)
+
+var c: Continuation<Unit>? = null
+
+suspend fun suspendMe(): Unit = suspendCoroutine { continuation ->
+    c = continuation
+}
+
+fun builder(c: suspend () -> Unit) {
+    c.startCoroutine(object: Continuation<Unit> {
+        override val context = EmptyCoroutineContext
+        override fun resumeWith(result: Result<Unit>) {
+            result.getOrThrow()
+        }
+    })
+}
+
+suspend operator fun A.plus(a: A) = A(i + a.i)
+
+fun main() {
+    val lambda: suspend () -> Unit = {
+        val a1 = A(1)
+        suspendMe()
+        val a2 = A(2)
+        println(a1 + a2)
+    }
+    builder {
+        lambda()
+    }
+    c?.resume(Unit)
+}
+```
+here, we should save `a1` before `suspendMe`, and we should restore it after the resumption. Similarly, we should save both `a1` and `a2` 
+before `+`, since the compiler does not generally know whether suspend call will suspend, so it assumes that the suspension might happen in 
+each suspension point. So, it spills the locals before each call and unspills after it.
+
+Thus, the compiler generates the following state machine
+```kotlin
+fun invokeSuspend($result: Any?): Any? {
+    when (this.label) {
+        0 -> {
+            var a1 = A(1)
+            this.L$0 = a1
+            this.label = 1
+            $result = suspendMe()
+            if ($result == COROUTINE_SUSPENDED) return COROUTINE_SUSPENDED
+            goto 1_1
+        }
+        1 -> {
+            a1 = this.L$0
+
+            1_1:
+            var a2 = A(2)
+            this.L$0 = null
+            this.label = 2
+            $result = plus(a1, a2)
+            if ($result == COROUTINE_SUSPENDED) return COROUTINE_SUSPENDED
+            goto 2_1
+        }
+        2 -> {
+            2_1:
+            println($result)
+            return Unit
+        }
+        else -> {
+            throw IllegalStateException("call to 'resume' before 'invoke' with coroutine")
+        }
+    }
+}
+```
+
+As one can see, the generated code does not spill and unspill variables, which are dead, in other words, which are not required afterward. 
+Furthermore, it cleans the field for spilled variables of reference types up to avoid memory leaks by pushing `null` to it so that GC can 
+collect the object.
+
+#### Spilled Variables Naming
+
+One might notice that the names of the fields for spilled variables are odd. The naming scheme is the following: the first letter of the 
+name represents type descriptor of variable:
+* L for a reference type, i.e., objects and arrays
+* J for longs
+* D for doubles
+* F for floats
+* I for booleans, bytes, chars, shorts, and ints
+
+It is important to note that although in Java Bytecode, we represent boolean variables with integer type and on HotSpot assigning a boolean 
+variable to the field of type `int` is fine, on Dalvik, these types are distinct. Thus, we coerce non-integer primitive integral types 
+(except long) before using them.
+
+The second letter is `$`, which is unlikely to be used in user code. We cannot start spilled variables with `$`, since the compiler uses 
+the prefix `$` for captured variables and using the same prefix for multiple things would confuse the inliner.
+
+The rest is just the integer index of the variable with the same prefix. I.e., there can be variables `I$0`, `L$0` and `L$1` inside the 
+same suspend lambda object.
+
+#### Spilled Variables Cleanup
+Since we spill a reference to the continuation object, we now hold an additional reference to the object. Thus, GC cannot clean its memory 
+as long as there is a reference to the continuation. Of course, holding a reference to a not-needed object leads to memory leaks. The 
+compiler clears the fields for reference types up to avoid the leaks.
+
+Consider the following example:
+```kotlin
+suspend fun blackhole(a: Any?) {}
+
+suspend fun cleanUpExample(a: String, b: String) {
+    blackhole(a) // 1
+    blackhole(b) // 2
+}
+```
+After line (1) `a` is dead, but `b` is still alive. So, we spill only `b`. There is no variable alive after line (2), but the continuation 
+object still holds a reference to `b` in the `L$0` field. So, to clean it up and avoid memory leaks, we push `null` to it.
+
+Generally, the compiler generates spilling and unspilling code so that it uses only the first fields. If there are M fields for references, 
+but we spill only N (where N ≤ M, of course) objects at the suspension point, everything else should be `null`. However, we do not need to 
+nullify all of them every suspension point. Instead, the compiler checks which of the fields hold references and clears only them.
+
+Additionally, the compiler shrinks and splits LVT records for local variables, so a debugger will not show dead variables as uninitialized.
+
+FIXME: Currently, dead variables do not present in LVT. So, if a programmer defines a variable but does not use it, the compiler removes the 
+LVT record for the variable. We can ease this restriction and assume the variable to be alive until the following suspension point.
+
+#### Stack spilling
+In the previous examples, the stack was clean before a call, meaning that there were only call arguments before the call, and only the call 
+result is on the stack after the call.
+
+However, this is not always true. Consider the following example:
+```kotlin
+val lambda: suspend () -> Unit = {
+    val a1 = A(1)
+    val a2 = A(2)
+    val a3 = A(3)
+    a1 + (a2 + a3)
+}
+```
+and have a closer look at `a1 + (a2 + a3)` expression. If `+` were not suspend, the compiler would generate the following
+bytecode:
+```text
+ALOAD 1 // a1
+ALOAD 2 // a2
+ALOAD 3 // a3
+INVOKESTATIC plus
+INVOKESTATIC plus
+ARETURN
+```
+We cannot just make this code suspendable since, after the resumption, the stack has only `$result` (it is passed to `resumewith` and is the 
+argument of `invokeSuspend`). So, there are not enough variables on the stack for the second call. Consequently, we need to save the stack 
+before the call and then restore it after the call. Instead of creating the separate logic of stack into slots spilling, we reuse two 
+already existing ones. One is stack normalization, which is already present in inliner. The inliner spills the stack into locals before the 
+inline call and restores them after the call.
+So, if we do the same here, the bytecode becomes
+
+```text
+INVOKESTATIC InlineMarker.beforeInlineCall
+ALOAD 1 // a1
+INVOKESTATIC InlineMarker.beforeInlineCall
+ALOAD 2 // a2
+ALOAD 3 // a3
+ICONST 0
+INVOKESTATIC InlineMarker.mark
+INVOKESTATIC plus
+ICONST 1
+INVOKESTATIC InlineMarker.mark
+INVOKESTATIC InlineMarker.afterInlineCall
+ICONST 0
+INVOKESTATIC InlineMarker.mark
+INVOKESTATIC plus
+ICONST 1
+INVOKESTATIC InlineMarker.mark
+INVOKESTATIC InlineMarker.afterInlineCall
+ARETURN
+```
+where suspend markers are `ICONST (0|1) INVOKESTATIC InlineMarker.mark`; and after stack normalization (`FixStackMethodTransformer` 
+normalizes the stack), the bytecode looks like
+```text
+ALOAD 1 // a1
+ASTORE 4 // a1
+ALOAD 2 // a2
+ALOAD 3 // a3
+ICONST 0
+INVOKESTATIC InlineMarker.mark
+INVOKESTATIC plus
+ICONST 1
+INVOKESTATIC InlineMarker.mark
+ASTORE 5 // a2 + a3
+ALOAD 4 // a1
+ALOAD 5 // a2 + a3
+ICONST 0
+INVOKESTATIC InlineMarker.mark
+INVOKESTATIC plus
+ICONST 1
+INVOKESTATIC InlineMarker.mark
+ARETURN
+```
+we need to spill `a2 + a3` since we should preserve the order of `plus`'s arguments. So, along with the suspend markers, the codegen puts 
+inline markers. However, unlike suspend markers, they are put around call arguments as well. So, the order the codegen generates 
+suspendable calls in the following:
+1. `beforeInlineCall` marker
+2. arguments
+3. before suspendable call marker
+4. the call itself
+5. after suspendable call marker
+6. `afterInlineCall` marker
+
+If we look at stack normalization once more, we see that there are now five locals, but, thankfully, we do not spill all of them. `a2 + a3` 
+is not alive during both calls and is not present in LVT, so there is no reason for the compiler to spill it. The same applies for slot 4: 
+the variable
+is dead during the second call, so we spill it only once. `a2` and `a3`  are dead during both calls, and thus they are not spilled, as well 
+as `a1` during the second call.
+
+FIXME: do not spill the same variables multiple times. We can reuse one spilled variable and put it to several slots. Even better, do not 
+create new locals while spilling the stack. In this example, `ALOAD 1` can be removed, thus removing the need in `ALOAD 4` So, the ideal 
+bytecode will look like
+```text
+ALOAD 2 // a2
+ALOAD 3 // a3
+ICONST 0
+INVOKESTATIC InlineMarker.mark
+INVOKESTATIC plus
+ICONST 1
+INVOKESTATIC InlineMarker.mark
+ASTORE 4 // a2 + a3
+ALOAD 1 // a1
+ALOAD 4 // a2 + a3
+ICONST 0
+INVOKESTATIC InlineMarker.mark
+INVOKESTATIC plus
+ICONST 1
+INVOKESTATIC InlineMarker.mark
+ARETURN
+```
+Then we will have the same three locals to spills, instead of four.
