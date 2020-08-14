@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-abstract class KtVariableLikeSymbol : KtCallableSymbol(), KtTypedSymbol, KtNamedSymbol, KtSymbolWithKind {
+sealed class KtVariableLikeSymbol : KtCallableSymbol(), KtTypedSymbol, KtNamedSymbol, KtSymbolWithKind {
     abstract override fun createPointer(): KtSymbolPointer<KtVariableLikeSymbol>
 }
 
@@ -22,13 +22,13 @@ abstract class KtEnumEntrySymbol : KtVariableLikeSymbol(), KtSymbolWithKind {
     abstract override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol>
 }
 
-abstract class KtParameterSymbol : KtVariableLikeSymbol() {
+sealed class KtParameterSymbol : KtVariableLikeSymbol() {
     abstract val hasDefaultValue: Boolean
 
     abstract override fun createPointer(): KtSymbolPointer<KtParameterSymbol>
 }
 
-abstract class KtVariableSymbol : KtVariableLikeSymbol() {
+sealed class KtVariableSymbol : KtVariableLikeSymbol() {
     abstract val isVal: Boolean
     abstract override fun createPointer(): KtSymbolPointer<KtVariableSymbol>
 }
