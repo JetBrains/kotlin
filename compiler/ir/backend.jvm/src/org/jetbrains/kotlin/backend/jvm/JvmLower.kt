@@ -378,6 +378,8 @@ private val jvmFilePhases = listOf(
 val jvmPhases = NamedCompilerPhase(
     name = "IrLowering",
     description = "IR lowering",
+    nlevels = 1,
+    actions = setOf(defaultDumper, validationAction),
     lower = validateIrBeforeLowering then
             processOptionalAnnotationsPhase then
             expectDeclarationsRemovingPhase then
