@@ -169,7 +169,7 @@ class KotlinDeserializedJvmSymbolsProvider(
         return JvmProtoBufUtil.readClassDataFrom(data, strings)
     }
 
-    private fun ConeClassLikeLookupTag.toDefaultResolvedTypeRef(classId: ClassId): FirResolvedTypeRef =
+    private fun ConeClassLikeLookupTag.toDefaultResolvedTypeRef(): FirResolvedTypeRef =
         buildResolvedTypeRef {
             type = constructClassType(emptyArray(), isNullable = false)
         }
@@ -191,7 +191,7 @@ class KotlinDeserializedJvmSymbolsProvider(
             private fun ClassLiteralValue.toFirClassReferenceExpression(): FirClassReferenceExpression {
                 val literalLookupTag = ConeClassLikeLookupTagImpl(classId)
                 return buildClassReferenceExpression {
-                    classTypeRef = literalLookupTag.toDefaultResolvedTypeRef(classId)
+                    classTypeRef = literalLookupTag.toDefaultResolvedTypeRef()
                 }
             }
 
@@ -274,7 +274,7 @@ class KotlinDeserializedJvmSymbolsProvider(
 
             override fun visitEnd() {
                 result += buildAnnotationCall {
-                    annotationTypeRef = lookupTag.toDefaultResolvedTypeRef(annotationClassId)
+                    annotationTypeRef = lookupTag.toDefaultResolvedTypeRef()
                     argumentList = buildArgumentList {
                         for ((name, expression) in argumentMap) {
                             arguments += buildNamedArgumentExpression {

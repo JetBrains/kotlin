@@ -242,7 +242,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         }
 
         override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
-            val firLabel = lambdaExpression.firstOfType<FirLabel>()
+            //val firLabel = lambdaExpression.firstOfType<FirLabel>()
 
             stack.push("<anonymous>")
             //firLabel?.let { addAnnotation("${it.name}@$innerLambdaCount", lambdaExpression) }

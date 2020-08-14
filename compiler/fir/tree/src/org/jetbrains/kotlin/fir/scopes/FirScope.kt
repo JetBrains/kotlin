@@ -66,7 +66,7 @@ enum class ProcessorAction {
     }
 }
 
-
+@Suppress("NOTHING_TO_INLINE")
 inline fun FirScope.processClassifiersByName(
     name: Name,
     noinline processor: (FirClassifierSymbol<*>) -> Unit

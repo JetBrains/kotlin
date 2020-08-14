@@ -152,6 +152,7 @@ class FirJvmSerializerExtension @JvmOverloads constructor(
         writeLocalProperties(proto, partAsmType, JvmProtoBuf.packageLocalVariable)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun <MessageType : GeneratedMessageLite.ExtendableMessage<MessageType>, BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>> writeLocalProperties(
         proto: BuilderType,
         classAsmType: Type,

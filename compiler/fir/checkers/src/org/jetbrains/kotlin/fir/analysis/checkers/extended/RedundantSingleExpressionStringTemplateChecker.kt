@@ -20,14 +20,14 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 
 object RedundantSingleExpressionStringTemplateChecker : FirBasicExpresionChecker() {
-    override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (expression.source?.kind != FirFakeSourceElementKind.GeneratedToStringCallOnTemplateEntry) return
-        if (expression !is FirFunctionCall) return
+    override fun check(functionCall: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (functionCall.source?.kind != FirFakeSourceElementKind.GeneratedToStringCallOnTemplateEntry) return
+        if (functionCall !is FirFunctionCall) return
         if (
-            expression.explicitReceiver?.typeRef?.coneType?.classId == StandardClassIds.String
-            && expression.psi?.findStringParent()?.children?.size == 1 // there is no more children in original string template
+            functionCall.explicitReceiver?.typeRef?.coneType?.classId == StandardClassIds.String
+            && functionCall.psi?.findStringParent()?.children?.size == 1 // there is no more children in original string template
         ) {
-            reporter.report(expression.source, REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE)
+            reporter.report(functionCall.source, REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE)
         }
     }
 

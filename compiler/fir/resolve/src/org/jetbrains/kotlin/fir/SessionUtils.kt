@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
@@ -26,7 +25,7 @@ fun FirSimpleFunction.lowestVisibilityAmongOverrides(
     session: FirSession,
     scopeSession: ScopeSession
 ): Visibility {
-    val firTypeScope = containingClass.unsubstitutedScope(session, scopeSession) as FirTypeScope
+    val firTypeScope = containingClass.unsubstitutedScope(session, scopeSession)
     var visibility = visibility
 
     // required; otherwise processOverriddenFunctions()

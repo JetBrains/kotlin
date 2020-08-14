@@ -69,7 +69,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
             }
             println("(")
             withIndent {
-                fieldsWithoutDefault.forEachIndexed { i, field ->
+                fieldsWithoutDefault.forEachIndexed { _, field ->
                     printField(field, isImplementation = true, override = true, end = ",")
                 }
             }

@@ -66,8 +66,6 @@ class LightTree2Fir(
         val lightTree = buildLightTree(code)
 
         return DeclarationsConverter(session, scopeProvider, stubMode, lightTree)
-            .convertFile(lightTree.root, fileName).also {
-                it
-            }
+            .convertFile(lightTree.root, fileName)
     }
 }

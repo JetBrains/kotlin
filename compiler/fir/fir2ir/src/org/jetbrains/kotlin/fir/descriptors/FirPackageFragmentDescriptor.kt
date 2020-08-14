@@ -29,6 +29,7 @@ open class FirPackageFragmentDescriptor(override val fqName: FqName, val moduleD
         return fqName.shortName()
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R {
         return visitor?.visitPackageFragmentDescriptor(this, data) as R
     }

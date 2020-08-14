@@ -159,14 +159,14 @@ internal class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationCont
     @Deprecated("Modification of 'hasLazyNestedClassifiers' has no impact for FirRegularClassImplBuilder", level = DeprecationLevel.HIDDEN)
     override var companionObject: FirRegularClass?
         get() = throw IllegalStateException()
-        set(value) {
+        set(@Suppress("UNUSED_PARAMETER") value) {
             throw IllegalStateException()
         }
 
     @Deprecated("Modification of 'origin' has no impact for FirJavaClassBuilder", level = DeprecationLevel.HIDDEN)
     override var origin: FirDeclarationOrigin
         get() = throw IllegalStateException()
-        set(value) {
+        set(@Suppress("UNUSED_PARAMETER") value) {
             throw IllegalStateException()
         }
 }

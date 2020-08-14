@@ -39,7 +39,7 @@ abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolO
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: D by lazy {
-        when (val owner = owner) {
+        val result = when (val owner = owner) {
             is IrEnumEntry -> WrappedEnumEntryDescriptor().apply { bind(owner) }
             is IrClass -> WrappedClassDescriptor().apply { bind(owner) }
             is IrConstructor -> WrappedClassConstructorDescriptor().apply { bind(owner) }
@@ -64,7 +64,10 @@ abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolO
             is IrField -> WrappedFieldDescriptor().apply { bind(owner) }
             is IrTypeAlias -> WrappedTypeAliasDescriptor().apply { bind(owner) }
             else -> throw IllegalStateException("Unsupported owner in Fir2IrBindableSymbol: $owner")
-        } as D
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        result as D
     }
 
     companion object {

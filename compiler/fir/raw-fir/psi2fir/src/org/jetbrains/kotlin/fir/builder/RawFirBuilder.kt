@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.builder.*
-import org.jetbrains.kotlin.fir.references.impl.FirReferenceForUnresolvedAnnotations
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
@@ -43,14 +41,13 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import java.util.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import java.util.*
 
 class RawFirBuilder(
     session: FirSession, val baseScopeProvider: FirScopeProvider, val stubMode: Boolean
@@ -188,7 +185,7 @@ class RawFirBuilder(
             delegatedSuperType: FirTypeRef,
             delegatedSelfType: FirResolvedTypeRef,
             owner: KtClassOrObject,
-            ownerClassBuilder: FirClassBuilder, hasPrimaryConstructor: Boolean,
+            ownerClassBuilder: FirClassBuilder,
             ownerTypeParameters: List<FirTypeParameterRef>
         ): FirDeclaration {
             return when (this) {
@@ -197,7 +194,6 @@ class RawFirBuilder(
                         delegatedSuperType,
                         delegatedSelfType,
                         owner,
-                        hasPrimaryConstructor,
                         ownerTypeParameters
                     )
                 }
@@ -718,7 +714,6 @@ class RawFirBuilder(
                                 delegatedSelfType = delegatedEntrySelfType,
                                 ktEnumEntry,
                                 ownerClassBuilder = this,
-                                hasPrimaryConstructor = true,
                                 ownerTypeParameters = emptyList()
                             )
                         }
@@ -801,7 +796,7 @@ class RawFirBuilder(
                                     delegatedSuperType,
                                     delegatedSelfType,
                                     classOrObject,
-                                    this, hasPrimaryConstructor = primaryConstructor != null,
+                                    this,
                                     typeParameters
                                 ),
                             )
@@ -872,7 +867,6 @@ class RawFirBuilder(
                             delegatedSelfType,
                             owner = objectDeclaration,
                             ownerClassBuilder = this,
-                            hasPrimaryConstructor = false,
                             ownerTypeParameters = emptyList()
                         )
                     }
@@ -1070,7 +1064,6 @@ class RawFirBuilder(
             delegatedSuperTypeRef: FirTypeRef,
             delegatedSelfTypeRef: FirTypeRef,
             owner: KtClassOrObject,
-            hasPrimaryConstructor: Boolean,
             ownerTypeParameters: List<FirTypeParameterRef>
         ): FirConstructor {
             val target = FirFunctionTarget(labelName = null, isLambda = false)
@@ -1091,7 +1084,6 @@ class RawFirBuilder(
                 delegatedConstructor = getDelegationCall().convert(
                     delegatedSuperTypeRef,
                     delegatedSelfTypeRef,
-                    hasPrimaryConstructor
                 )
                 this@RawFirBuilder.context.firFunctionTargets += target
                 extractAnnotationsTo(this)
@@ -1108,7 +1100,6 @@ class RawFirBuilder(
         private fun KtConstructorDelegationCall.convert(
             delegatedSuperTypeRef: FirTypeRef,
             delegatedSelfTypeRef: FirTypeRef,
-            hasPrimaryConstructor: Boolean,
         ): FirDelegatedConstructorCall {
             val isThis = isCallToThis //|| (isImplicit && hasPrimaryConstructor)
             val source = if (isImplicit) {

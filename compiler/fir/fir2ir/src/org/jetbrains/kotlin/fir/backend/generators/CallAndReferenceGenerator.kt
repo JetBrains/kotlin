@@ -600,7 +600,7 @@ class CallAndReferenceGenerator(
                         val argumentMapping = call.argumentMapping
                         if (argumentMapping != null && (annotationMode || argumentMapping.isNotEmpty())) {
                             if (valueParameters != null) {
-                                return applyArgumentsWithReorderingIfNeeded(call, argumentMapping, valueParameters, annotationMode)
+                                return applyArgumentsWithReorderingIfNeeded(argumentMapping, valueParameters, annotationMode)
                             }
                         }
                         for ((index, argument) in call.arguments.withIndex()) {
@@ -631,7 +631,6 @@ class CallAndReferenceGenerator(
     }
 
     private fun IrMemberAccessExpression<*>.applyArgumentsWithReorderingIfNeeded(
-        call: FirCall,
         argumentMapping: Map<FirExpression, FirValueParameter>,
         valueParameters: List<FirValueParameter>,
         annotationMode: Boolean
@@ -771,7 +770,7 @@ class CallAndReferenceGenerator(
 
     private fun FirQualifiedAccess.findBoundReceiver(explicitReceiverExpression: IrExpression?, isDispatch: Boolean): IrExpression? {
         val firReceiver = if (isDispatch) dispatchReceiver else extensionReceiver
-        if (firReceiver == null || firReceiver is FirNoReceiverExpression) {
+        if (firReceiver is FirNoReceiverExpression) {
             return null
         }
         return findIrReceiver(explicitReceiverExpression, isDispatch)

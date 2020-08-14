@@ -20,15 +20,15 @@ import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 
 object ArrayEqualityCanBeReplacedWithEquals : FirBasicExpresionChecker() {
-    override fun check(equality: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (equality !is FirEqualityOperatorCall) return
-        if (equality.operation != FirOperation.EQ && equality.operation != FirOperation.NOT_EQ) return
-        val left = equality.arguments.getOrNull(0) ?: return
-        val right = equality.arguments.getOrNull(1) ?: return
+    override fun check(functionCall: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (functionCall !is FirEqualityOperatorCall) return
+        if (functionCall.operation != FirOperation.EQ && functionCall.operation != FirOperation.NOT_EQ) return
+        val left = functionCall.arguments.getOrNull(0) ?: return
+        val right = functionCall.arguments.getOrNull(1) ?: return
 
         if (left.typeRef.coneType.classId != StandardClassIds.Array) return
         if (right.typeRef.coneType.classId != StandardClassIds.Array) return
 
-        reporter.report(equality.psi?.children?.get(1)?.toFirPsiSourceElement(), ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS)
+        reporter.report(functionCall.psi?.children?.get(1)?.toFirPsiSourceElement(), ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS)
     }
 }
