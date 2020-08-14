@@ -2923,17 +2923,17 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
                 @TestMetadata("parameterClassIsInternal.kt")
                 public void testParameterClassIsInternal() throws Exception {
-                    runTest("idea/testData/quickfix/createFromUsage/createClass/callExpression/parameterClassIsInternal.kt");
+                    runTest("testData/quickfix/createFromUsage/createClass/callExpression/parameterClassIsInternal.kt");
                 }
 
                 @TestMetadata("parameterClassIsPrivate.kt")
                 public void testParameterClassIsPrivate() throws Exception {
-                    runTest("idea/testData/quickfix/createFromUsage/createClass/callExpression/parameterClassIsPrivate.kt");
+                    runTest("testData/quickfix/createFromUsage/createClass/callExpression/parameterClassIsPrivate.kt");
                 }
 
                 @TestMetadata("parameterClassIsPublic.kt")
                 public void testParameterClassIsPublic() throws Exception {
-                    runTest("idea/testData/quickfix/createFromUsage/createClass/callExpression/parameterClassIsPublic.kt");
+                    runTest("testData/quickfix/createFromUsage/createClass/callExpression/parameterClassIsPublic.kt");
                 }
 
                 @TestMetadata("quotedName.kt")
@@ -14013,12 +14013,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         @TestMetadata("invokeFunctionType.kt")
         public void testInvokeFunctionType() throws Exception {
-            runTest("idea/testData/quickfix/wrapWithSafeLetCall/invokeFunctionType.kt");
+            runTest("testData/quickfix/wrapWithSafeLetCall/invokeFunctionType.kt");
         }
 
         @TestMetadata("invokeFunctionType2.kt")
         public void testInvokeFunctionType2() throws Exception {
-            runTest("idea/testData/quickfix/wrapWithSafeLetCall/invokeFunctionType2.kt");
+            runTest("testData/quickfix/wrapWithSafeLetCall/invokeFunctionType2.kt");
         }
 
         @TestMetadata("invokeUnsafe.kt")

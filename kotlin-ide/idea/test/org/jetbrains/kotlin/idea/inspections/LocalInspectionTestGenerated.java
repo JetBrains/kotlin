@@ -1274,32 +1274,32 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
                 @TestMetadata("maxByOrNull.kt")
                 public void testMaxByOrNull() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/maxByOrNull.kt");
+                    runTest("testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/maxByOrNull.kt");
                 }
 
                 @TestMetadata("maxOf.kt")
                 public void testMaxOf() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/maxOf.kt");
+                    runTest("testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/maxOf.kt");
                 }
 
                 @TestMetadata("maxOfOrNull.kt")
                 public void testMaxOfOrNull() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/maxOfOrNull.kt");
+                    runTest("testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/maxOfOrNull.kt");
                 }
 
                 @TestMetadata("maxOfWith.kt")
                 public void testMaxOfWith() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/maxOfWith.kt");
+                    runTest("testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/maxOfWith.kt");
                 }
 
                 @TestMetadata("maxOfWithOrNull.kt")
                 public void testMaxOfWithOrNull() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/maxOfWithOrNull.kt");
+                    runTest("testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/maxOfWithOrNull.kt");
                 }
 
                 @TestMetadata("maxOrNull.kt")
                 public void testMaxOrNull() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/maxOrNull.kt");
+                    runTest("testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/maxOrNull.kt");
                 }
 
                 @TestMetadata("maxWith.kt")
@@ -1309,7 +1309,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
                 @TestMetadata("maxWithOrNull.kt")
                 public void testMaxWithOrNull() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/maxWithOrNull.kt");
+                    runTest("testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/maxWithOrNull.kt");
                 }
 
                 @TestMetadata("min.kt")
@@ -1324,32 +1324,32 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
                 @TestMetadata("minByOrNull.kt")
                 public void testMinByOrNull() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/minByOrNull.kt");
+                    runTest("testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/minByOrNull.kt");
                 }
 
                 @TestMetadata("minOf.kt")
                 public void testMinOf() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/minOf.kt");
+                    runTest("testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/minOf.kt");
                 }
 
                 @TestMetadata("minOfOrNull.kt")
                 public void testMinOfOrNull() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/minOfOrNull.kt");
+                    runTest("testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/minOfOrNull.kt");
                 }
 
                 @TestMetadata("minOfWith.kt")
                 public void testMinOfWith() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/minOfWith.kt");
+                    runTest("testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/minOfWith.kt");
                 }
 
                 @TestMetadata("minOfWithOrNull.kt")
                 public void testMinOfWithOrNull() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/minOfWithOrNull.kt");
+                    runTest("testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/minOfWithOrNull.kt");
                 }
 
                 @TestMetadata("minOrNull.kt")
                 public void testMinOrNull() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/minOrNull.kt");
+                    runTest("testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/minOrNull.kt");
                 }
 
                 @TestMetadata("minWith.kt")
@@ -1359,7 +1359,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
                 @TestMetadata("minWithOrNull.kt")
                 public void testMinWithOrNull() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/minWithOrNull.kt");
+                    runTest("testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/minWithOrNull.kt");
                 }
 
                 @TestMetadata("none.kt")
@@ -1384,42 +1384,42 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
                 @TestMetadata("reduceIndexedOrNull.kt")
                 public void testReduceIndexedOrNull() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/reduceIndexedOrNull.kt");
+                    runTest("testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/reduceIndexedOrNull.kt");
                 }
 
                 @TestMetadata("reduceOrNull.kt")
                 public void testReduceOrNull() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/reduceOrNull.kt");
+                    runTest("testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/reduceOrNull.kt");
                 }
 
                 @TestMetadata("runningFold.kt")
                 public void testRunningFold() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/runningFold.kt");
+                    runTest("testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/runningFold.kt");
                 }
 
                 @TestMetadata("runningFoldIndexed.kt")
                 public void testRunningFoldIndexed() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/runningFoldIndexed.kt");
+                    runTest("testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/runningFoldIndexed.kt");
                 }
 
                 @TestMetadata("runningReduce.kt")
                 public void testRunningReduce() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/runningReduce.kt");
+                    runTest("testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/runningReduce.kt");
                 }
 
                 @TestMetadata("runningReduceIndexed.kt")
                 public void testRunningReduceIndexed() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/runningReduceIndexed.kt");
+                    runTest("testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/runningReduceIndexed.kt");
                 }
 
                 @TestMetadata("scan.kt")
                 public void testScan() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/scan.kt");
+                    runTest("testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/scan.kt");
                 }
 
                 @TestMetadata("scanIndexed.kt")
                 public void testScanIndexed() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/scanIndexed.kt");
+                    runTest("testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/scanIndexed.kt");
                 }
 
                 @TestMetadata("single.kt")
@@ -1449,7 +1449,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
                 @TestMetadata("sumOf.kt")
                 public void testSumOf() throws Exception {
-                    runTest("idea/testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/sumOf.kt");
+                    runTest("testData/inspectionsLocal/collections/convertCallChainIntoSequence/termination/sumOf.kt");
                 }
 
                 @TestMetadata("toCollection.kt")

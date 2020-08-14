@@ -308,17 +308,17 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
 
     @TestMetadata("ResolvePackageInTheEndInProperty.kt")
     public void testResolvePackageInTheEndInProperty() throws Exception {
-        runTest("idea/testData/resolve/references/ResolvePackageInTheEndInProperty.kt");
+        runTest("testData/resolve/references/ResolvePackageInTheEndInProperty.kt");
     }
 
     @TestMetadata("ResolvePackageInTheMiddleInProperty.kt")
     public void testResolvePackageInTheMiddleInProperty() throws Exception {
-        runTest("idea/testData/resolve/references/ResolvePackageInTheMiddleInProperty.kt");
+        runTest("testData/resolve/references/ResolvePackageInTheMiddleInProperty.kt");
     }
 
     @TestMetadata("ResolvePackageInTheTypeNameInProperty.kt")
     public void testResolvePackageInTheTypeNameInProperty() throws Exception {
-        runTest("idea/testData/resolve/references/ResolvePackageInTheTypeNameInProperty.kt");
+        runTest("testData/resolve/references/ResolvePackageInTheTypeNameInProperty.kt");
     }
 
     @TestMetadata("SamAdapter.kt")
@@ -556,7 +556,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
 
         @TestMetadata("lambdaAndParensIncorrectVararg.kt")
         public void testLambdaAndParensIncorrectVararg() throws Exception {
-            runTest("idea/testData/resolve/references/invoke/lambdaAndParensIncorrectVararg.kt");
+            runTest("testData/resolve/references/invoke/lambdaAndParensIncorrectVararg.kt");
         }
 
         @TestMetadata("lambdaNoPar.kt")
@@ -566,7 +566,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
 
         @TestMetadata("lambdaNoParIncorrectVararg.kt")
         public void testLambdaNoParIncorrectVararg() throws Exception {
-            runTest("idea/testData/resolve/references/invoke/lambdaNoParIncorrectVararg.kt");
+            runTest("testData/resolve/references/invoke/lambdaNoParIncorrectVararg.kt");
         }
 
         @TestMetadata("lambdaNoParLabel.kt")
@@ -576,7 +576,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
 
         @TestMetadata("lambdaNoParLabelIncorrectVararg.kt")
         public void testLambdaNoParLabelIncorrectVararg() throws Exception {
-            runTest("idea/testData/resolve/references/invoke/lambdaNoParLabelIncorrectVararg.kt");
+            runTest("testData/resolve/references/invoke/lambdaNoParLabelIncorrectVararg.kt");
         }
 
         @TestMetadata("lambdaNoParRCurly.kt")
@@ -586,7 +586,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
 
         @TestMetadata("lambdaNoParRCurlyIncorrectVararg.kt")
         public void testLambdaNoParRCurlyIncorrectVararg() throws Exception {
-            runTest("idea/testData/resolve/references/invoke/lambdaNoParRCurlyIncorrectVararg.kt");
+            runTest("testData/resolve/references/invoke/lambdaNoParRCurlyIncorrectVararg.kt");
         }
 
         @TestMetadata("noParams.kt")
@@ -606,7 +606,7 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
 
         @TestMetadata("nonemptyLambdaRParIncorrectVararg.kt")
         public void testNonemptyLambdaRParIncorrectVararg() throws Exception {
-            runTest("idea/testData/resolve/references/invoke/nonemptyLambdaRParIncorrectVararg.kt");
+            runTest("testData/resolve/references/invoke/nonemptyLambdaRParIncorrectVararg.kt");
         }
 
         @TestMetadata("oneParam.kt")

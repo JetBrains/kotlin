@@ -11395,12 +11395,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("comments2.kt")
         public void testComments2() throws Exception {
-            runTest("idea/testData/intentions/mergeIfs/comments2.kt");
+            runTest("testData/intentions/mergeIfs/comments2.kt");
         }
 
         @TestMetadata("comments3.kt")
         public void testComments3() throws Exception {
-            runTest("idea/testData/intentions/mergeIfs/comments3.kt");
+            runTest("testData/intentions/mergeIfs/comments3.kt");
         }
 
         @TestMetadata("else1.kt")
@@ -11675,7 +11675,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("dataClass.kt")
         public void testDataClass() throws Exception {
-            runTest("idea/testData/intentions/movePropertyToClassBody/dataClass.kt");
+            runTest("testData/intentions/movePropertyToClassBody/dataClass.kt");
         }
 
         @TestMetadata("location1.kt")

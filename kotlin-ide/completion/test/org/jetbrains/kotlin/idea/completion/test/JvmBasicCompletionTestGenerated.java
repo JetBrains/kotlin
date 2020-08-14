@@ -2113,9 +2113,8 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
             }
         }
 
-        @TestMetadata("idea/idea-completion/testData/basic/common/primitiveCompletion")
-        @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
+        @TestMetadata("testData/basic/common/primitiveCompletion")
         public static class PrimitiveCompletion extends AbstractJvmBasicCompletionTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
@@ -2123,122 +2122,122 @@ public class JvmBasicCompletionTestGenerated extends AbstractJvmBasicCompletionT
 
             @TestMetadata("classExtensionFunctionExplicitReceiver.kt")
             public void testClassExtensionFunctionExplicitReceiver() throws Exception {
-                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/classExtensionFunctionExplicitReceiver.kt");
+                runTest("testData/basic/common/primitiveCompletion/classExtensionFunctionExplicitReceiver.kt");
             }
 
             @TestMetadata("classFieldsAndFunctions.kt")
             public void testClassFieldsAndFunctions() throws Exception {
-                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/classFieldsAndFunctions.kt");
+                runTest("testData/basic/common/primitiveCompletion/classFieldsAndFunctions.kt");
             }
 
             @TestMetadata("classFieldsAndFunctionsExplicitReceiver.kt")
             public void testClassFieldsAndFunctionsExplicitReceiver() throws Exception {
-                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/classFieldsAndFunctionsExplicitReceiver.kt");
+                runTest("testData/basic/common/primitiveCompletion/classFieldsAndFunctionsExplicitReceiver.kt");
             }
 
             @TestMetadata("classFieldsAndFunctionsFromInheritor.kt")
             public void testClassFieldsAndFunctionsFromInheritor() throws Exception {
-                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/classFieldsAndFunctionsFromInheritor.kt");
+                runTest("testData/basic/common/primitiveCompletion/classFieldsAndFunctionsFromInheritor.kt");
             }
 
             @TestMetadata("classFieldsAndFunctionsFromInnerClass.kt")
             public void testClassFieldsAndFunctionsFromInnerClass() throws Exception {
-                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/classFieldsAndFunctionsFromInnerClass.kt");
+                runTest("testData/basic/common/primitiveCompletion/classFieldsAndFunctionsFromInnerClass.kt");
             }
 
             @TestMetadata("classFieldsAndFunctionsFromInnerClassExplicitReceiver.kt")
             public void testClassFieldsAndFunctionsFromInnerClassExplicitReceiver() throws Exception {
-                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/classFieldsAndFunctionsFromInnerClassExplicitReceiver.kt");
+                runTest("testData/basic/common/primitiveCompletion/classFieldsAndFunctionsFromInnerClassExplicitReceiver.kt");
             }
 
             @TestMetadata("defaultKotlinImports.kt")
             public void testDefaultKotlinImports() throws Exception {
-                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/defaultKotlinImports.kt");
+                runTest("testData/basic/common/primitiveCompletion/defaultKotlinImports.kt");
             }
 
             @TestMetadata("explicitReceiverCompletion.kt")
             public void testExplicitReceiverCompletion() throws Exception {
-                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/explicitReceiverCompletion.kt");
+                runTest("testData/basic/common/primitiveCompletion/explicitReceiverCompletion.kt");
             }
 
             @TestMetadata("extensionPropertyAndFunctionExplicitReceiver.kt")
             public void testExtensionPropertyAndFunctionExplicitReceiver() throws Exception {
-                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/extensionPropertyAndFunctionExplicitReceiver.kt");
+                runTest("testData/basic/common/primitiveCompletion/extensionPropertyAndFunctionExplicitReceiver.kt");
             }
 
             @TestMetadata("extensionPropertyAndFunctionImplicitReceiver.kt")
             public void testExtensionPropertyAndFunctionImplicitReceiver() throws Exception {
-                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/extensionPropertyAndFunctionImplicitReceiver.kt");
+                runTest("testData/basic/common/primitiveCompletion/extensionPropertyAndFunctionImplicitReceiver.kt");
             }
 
             @TestMetadata("genericExtensionPropertyAndFunctionExplicitReceiver.kt")
             public void testGenericExtensionPropertyAndFunctionExplicitReceiver() throws Exception {
-                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/genericExtensionPropertyAndFunctionExplicitReceiver.kt");
+                runTest("testData/basic/common/primitiveCompletion/genericExtensionPropertyAndFunctionExplicitReceiver.kt");
             }
 
             @TestMetadata("implicitReceiverCompletion.kt")
             public void testImplicitReceiverCompletion() throws Exception {
-                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/implicitReceiverCompletion.kt");
+                runTest("testData/basic/common/primitiveCompletion/implicitReceiverCompletion.kt");
             }
 
             @TestMetadata("implicitReceiverFromExtensionMethod.kt")
             public void testImplicitReceiverFromExtensionMethod() throws Exception {
-                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/implicitReceiverFromExtensionMethod.kt");
+                runTest("testData/basic/common/primitiveCompletion/implicitReceiverFromExtensionMethod.kt");
             }
 
             @TestMetadata("insideFunctionWithParameters.kt")
             public void testInsideFunctionWithParameters() throws Exception {
-                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/insideFunctionWithParameters.kt");
+                runTest("testData/basic/common/primitiveCompletion/insideFunctionWithParameters.kt");
             }
 
             @TestMetadata("localVariablesAndFunctions.kt")
             public void testLocalVariablesAndFunctions() throws Exception {
-                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/localVariablesAndFunctions.kt");
+                runTest("testData/basic/common/primitiveCompletion/localVariablesAndFunctions.kt");
             }
 
             @TestMetadata("localVariablesAndFunctionsFromNestedScope.kt")
             public void testLocalVariablesAndFunctionsFromNestedScope() throws Exception {
-                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/localVariablesAndFunctionsFromNestedScope.kt");
+                runTest("testData/basic/common/primitiveCompletion/localVariablesAndFunctionsFromNestedScope.kt");
             }
 
             @TestMetadata("noCompletionAfterNumberLiteral1.kt")
             public void testNoCompletionAfterNumberLiteral1() throws Exception {
-                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/noCompletionAfterNumberLiteral1.kt");
+                runTest("testData/basic/common/primitiveCompletion/noCompletionAfterNumberLiteral1.kt");
             }
 
             @TestMetadata("noCompletionAfterNumberLiteral2.kt")
             public void testNoCompletionAfterNumberLiteral2() throws Exception {
-                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/noCompletionAfterNumberLiteral2.kt");
+                runTest("testData/basic/common/primitiveCompletion/noCompletionAfterNumberLiteral2.kt");
             }
 
             @TestMetadata("nullableCompletion.kt")
             public void testNullableCompletion() throws Exception {
-                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/nullableCompletion.kt");
+                runTest("testData/basic/common/primitiveCompletion/nullableCompletion.kt");
             }
 
             @TestMetadata("smartCast.kt")
             public void testSmartCast() throws Exception {
-                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/smartCast.kt");
+                runTest("testData/basic/common/primitiveCompletion/smartCast.kt");
             }
 
             @TestMetadata("stringCompletion.kt")
             public void testStringCompletion() throws Exception {
-                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/stringCompletion.kt");
+                runTest("testData/basic/common/primitiveCompletion/stringCompletion.kt");
             }
 
             @TestMetadata("topLevelClasses.kt")
             public void testTopLevelClasses() throws Exception {
-                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/topLevelClasses.kt");
+                runTest("testData/basic/common/primitiveCompletion/topLevelClasses.kt");
             }
 
             @TestMetadata("topLevelVariablesAndFunctions.kt")
             public void testTopLevelVariablesAndFunctions() throws Exception {
-                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/topLevelVariablesAndFunctions.kt");
+                runTest("testData/basic/common/primitiveCompletion/topLevelVariablesAndFunctions.kt");
             }
 
             @TestMetadata("twoReceivers.kt")
             public void testTwoReceivers() throws Exception {
-                runTest("idea/idea-completion/testData/basic/common/primitiveCompletion/twoReceivers.kt");
+                runTest("testData/basic/common/primitiveCompletion/twoReceivers.kt");
             }
         }
 
