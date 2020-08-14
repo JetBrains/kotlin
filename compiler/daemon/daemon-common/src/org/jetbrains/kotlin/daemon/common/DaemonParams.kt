@@ -329,7 +329,7 @@ fun configureDaemonJVMOptions(vararg additionalParams: String,
                               inheritAdditionalProperties: Boolean
 ): DaemonJVMOptions =
         configureDaemonJVMOptions(DaemonJVMOptions(),
-                                  additionalParams = *additionalParams,
+                                  additionalParams = additionalParams,
                                   inheritMemoryLimits = inheritMemoryLimits,
                                   inheritOtherJvmOptions = inheritOtherJvmOptions,
                                   inheritAdditionalProperties = inheritAdditionalProperties)

@@ -248,7 +248,7 @@ class DefaultClient<ServerType : ServerBase>(
     serverHost: String = LoopbackNetworkInterface.loopbackInetAddressName
 ) : DefaultAuthorizableClient<ServerType>(serverPort, serverHost) {
     override suspend fun clientHandshake(input: ByteReadChannelWrapper, output: ByteWriteChannelWrapper, log: Logger) = true
-    override suspend fun authorizeOnServer(output: ByteWriteChannelWrapper): Boolean = true
+    override suspend fun authorizeOnServer(serverOutputChannel: ByteWriteChannelWrapper): Boolean = true
     override fun startKeepAlives() {}
     override fun delayKeepAlives() {}
 }

@@ -64,8 +64,8 @@ class RemoteReplStateFacadeClientSide(val serverPort: Int) : ReplStateFacadeClie
     }
 
     override suspend fun historyResetTo(id: ILineId): List<ILineId> {
-        val id = sendMessage(ReplStateFacadeServerSide.HistoryResetToMessage(id))
-        return readMessage(id)
+        val message = sendMessage(ReplStateFacadeServerSide.HistoryResetToMessage(id))
+        return readMessage(message)
     }
 
 }

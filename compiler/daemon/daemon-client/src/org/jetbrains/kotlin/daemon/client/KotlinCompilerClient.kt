@@ -63,7 +63,7 @@ object KotlinCompilerClient {
                                 daemonOptions: DaemonOptions,
                                 reportingTargets: DaemonReportingTargets,
                                 autostart: Boolean = true,
-                                checkId: Boolean = true
+                                @Suppress("UNUSED_PARAMETER") checkId: Boolean = true
     ): CompileService? {
         val flagFile = getOrCreateClientFlagFile(daemonOptions)
         return connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, reportingTargets, autostart)
@@ -142,6 +142,7 @@ object KotlinCompilerClient {
         compilerService.releaseCompileSession(sessionId)
     }
 
+    @Suppress("DEPRECATION")
     @Deprecated("Use other compile method", ReplaceWith("compile"))
     fun compile(compilerService: CompileService,
                 sessionId: Int,
@@ -156,6 +157,7 @@ object KotlinCompilerClient {
     }
 
 
+    @Suppress("DEPRECATION")
     @Deprecated("Use non-deprecated compile method", ReplaceWith("compile"))
     fun incrementalCompile(compileService: CompileService,
                            sessionId: Int,
@@ -277,6 +279,7 @@ object KotlinCompilerClient {
                     val memBefore = daemon.getUsedMemory().get() / 1024
                     val startTime = System.nanoTime()
 
+                    @Suppress("DEPRECATION")
                     val res = daemon.remoteCompile(CompileService.NO_SESSION, CompileService.TargetPlatform.JVM, filteredArgs.toList().toTypedArray(), servicesFacade, outStrm, CompileService.OutputFormat.PLAIN, outStrm, null)
 
                     val endTime = System.nanoTime()
@@ -308,8 +311,9 @@ object KotlinCompilerClient {
 
     // --- Implementation ---------------------------------------
 
-    @Synchronized
-    private inline fun <R> connectLoop(reportingTargets: DaemonReportingTargets, autostart: Boolean, body: (Boolean) -> R?): R? {
+    private inline fun <R> connectLoop(
+        reportingTargets: DaemonReportingTargets, autostart: Boolean, body: (Boolean) -> R?
+    ): R? = synchronized(this) {
         try {
             var attempts = 1
             while (true) {

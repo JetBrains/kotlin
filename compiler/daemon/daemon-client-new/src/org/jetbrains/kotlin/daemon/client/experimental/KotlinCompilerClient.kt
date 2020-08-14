@@ -297,13 +297,13 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
                     log.info("Executing daemon compilation with args: " + filteredArgs.joinToString(" "))
                     val servicesFacade =
                         CompilerCallbackServicesFacadeServerServerSide()
-                    val serverRun = servicesFacade.runServer()
+                    servicesFacade.runServer()
                     try {
                         val memBefore = daemon.getUsedMemory().get() / 1024
                         val startTime = System.nanoTime()
 
                         val compResults = createCompResults()
-                        val compResultsServerRun = compResults.runServer()
+                        compResults.runServer()
                         val res = daemon.compile(
                             CompileService.NO_SESSION,
                             filteredArgs.toList().toTypedArray(),
@@ -373,7 +373,6 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
 
     // --- Implementation ---------------------------------------
 
-    @Synchronized
     private inline fun <R> connectLoop(reportingTargets: DaemonReportingTargets, autostart: Boolean, body: (Boolean) -> R?): R? {
         try {
             var attempts = 1
@@ -544,6 +543,7 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
             // assuming that all important output is already done, the rest should be routed to the log by the daemon itself
             if (stdoutThread.isAlive) {
                 // TODO: find better method to stop the thread, but seems it will require asynchronous consuming of the stream
+                @Suppress("DEPRECATION")
                 stdoutThread.stop()
             }
             reportingTargets.out?.flush()

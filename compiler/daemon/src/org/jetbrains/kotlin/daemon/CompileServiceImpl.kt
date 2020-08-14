@@ -309,6 +309,7 @@ abstract class CompileServiceImplBase(
             CompileService.CallResult.Good(ExitCode.COMPILATION_ERROR.code)
         } else when (compilationOptions.compilerMode) {
             CompilerMode.JPS_COMPILER -> {
+                @Suppress("UNCHECKED_CAST")
                 servicesFacade as JpsServicesFacadeT
                 withIC(enabled = servicesFacade.hasIncrementalCaches()) {
                     doCompile(sessionId, daemonReporter, tracer = null) { eventManger, profiler ->
@@ -609,6 +610,7 @@ abstract class CompileServiceImplBase(
         body: KotlinJvmReplServiceT.() -> CompileService.CallResult<R>
     ): CompileService.CallResult<R> =
         withValidClientOrSessionProxy(sessionId) { session ->
+            @Suppress("UNCHECKED_CAST")
             (session?.data as? KotlinJvmReplServiceT?)?.body() ?: CompileService.CallResult.Error("Not a REPL session $sessionId")
         }
 
@@ -703,6 +705,7 @@ class CompileServiceImpl(
         CompileService.CallResult.Good(res)
     }
 
+    @Suppress("OverridingDeprecatedMember", "DEPRECATION")
     override fun remoteCompile(
         sessionId: Int,
         targetPlatform: CompileService.TargetPlatform,
@@ -728,6 +731,7 @@ class CompileServiceImpl(
             }
         }
 
+    @Suppress("OverridingDeprecatedMember", "DEPRECATION")
     override fun remoteIncrementalCompile(
         sessionId: Int,
         targetPlatform: CompileService.TargetPlatform,
@@ -784,7 +788,7 @@ class CompileServiceImpl(
     override fun leaseReplSession(
         aliveFlagPath: String?,
         targetPlatform: CompileService.TargetPlatform,
-        servicesFacade: CompilerCallbackServicesFacade,
+        @Suppress("DEPRECATION") servicesFacade: CompilerCallbackServicesFacade,
         templateClasspath: List<File>,
         templateClassName: String,
         scriptArgs: Array<out Any?>?,
@@ -819,15 +823,17 @@ class CompileServiceImpl(
     // TODO: add more checks (e.g. is it a repl session)
     override fun releaseReplSession(sessionId: Int): CompileService.CallResult<Nothing> = releaseCompileSession(sessionId)
 
+    @Suppress("OverridingDeprecatedMember")
     override fun remoteReplLineCheck(sessionId: Int, codeLine: ReplCodeLine): CompileService.CallResult<ReplCheckResult> =
         ifAlive(minAliveness = Aliveness.Alive) {
             withValidRepl(sessionId) {
+                @Suppress("DEPRECATION")
                 CompileService.CallResult.Good(check(codeLine))
             }
         }
 
     private fun createCompileServices(
-        facade: CompilerCallbackServicesFacade,
+        @Suppress("DEPRECATION") facade: CompilerCallbackServicesFacade,
         eventManager: EventManager,
         rpcProfiler: Profiler
     ): Services {
@@ -835,7 +841,7 @@ class CompileServiceImpl(
         if (facade.hasIncrementalCaches()) {
             builder.register(
                 IncrementalCompilationComponents::class.java,
-                RemoteIncrementalCompilationComponentsClient(facade, eventManager, rpcProfiler)
+                RemoteIncrementalCompilationComponentsClient(facade, rpcProfiler)
             )
         }
         if (facade.hasLookupTracker()) {
@@ -857,6 +863,7 @@ class CompileServiceImpl(
         return builder.build()
     }
 
+    @Suppress("OverridingDeprecatedMember")
     override fun remoteReplLineCompile(
         sessionId: Int,
         codeLine: ReplCodeLine,
@@ -864,10 +871,12 @@ class CompileServiceImpl(
     ): CompileService.CallResult<ReplCompileResult> =
         ifAlive(minAliveness = Aliveness.Alive) {
             withValidRepl(sessionId) {
+                @Suppress("DEPRECATION")
                 CompileService.CallResult.Good(compile(codeLine, history))
             }
         }
 
+    @Suppress("OverridingDeprecatedMember")
     override fun remoteReplLineEval(
         sessionId: Int,
         codeLine: ReplCodeLine,

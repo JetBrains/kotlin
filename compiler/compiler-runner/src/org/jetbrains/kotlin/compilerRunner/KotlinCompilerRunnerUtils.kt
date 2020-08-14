@@ -49,7 +49,7 @@ object KotlinCompilerRunnerUtils {
         additionalJvmParams: Array<String> = arrayOf()
     ): CompileServiceSession? {
         val daemonJVMOptions = configureDaemonJVMOptions(
-            additionalParams = *additionalJvmParams,
+            additionalParams = additionalJvmParams,
             inheritMemoryLimits = true,
             inheritOtherJvmOptions = false,
             inheritAdditionalProperties = true
