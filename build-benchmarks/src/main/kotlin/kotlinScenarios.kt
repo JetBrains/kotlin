@@ -6,7 +6,7 @@ fun kotlinBenchmarks() =
         val coreUtilCoreLib = changeableFile("coreUtil/CoreLibKt")
 
         defaultTasks(Tasks.DIST, Tasks.COMPILER_TEST_CLASSES, Tasks.IDEA_TEST_CLASSES)
-        defaultJdk = System.getProperty("JDK_8")
+        defaultJdk = System.getenv("JDK_8")
 
         scenario("clean build") {
             expectSlowBuild("clean build")
@@ -62,7 +62,7 @@ fun kotlinBenchmarks() =
 fun gavra0Benchmarks() =
     suite {
         defaultArguments("-Dorg.gradle.workers.max=8", "--parallel", "--watch-fs")
-        defaultJdk = System.getProperty("JDK_8")
+        defaultJdk = System.getenv("JDK_8")
 
         val stdlibFileTreeWalk = changeableFile("gavra0/stdlib/FileTreeWalkKt")
         val coreDescriptorsClassDescriptorsBase = changeableFile("gavra0/coreDescriptors/ClassDescriptorBaseJava")
