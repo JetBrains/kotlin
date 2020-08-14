@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.backend.wasm.ast.*
 import org.jetbrains.kotlin.backend.wasm.utils.getWasmInstructionAnnotation
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.isUnit
@@ -89,7 +88,6 @@ class ExpressionTransformer : BaseTransformer<WasmInstruction, WasmCodegenContex
 
     override fun visitCall(expression: IrCall, data: WasmCodegenContext): WasmInstruction {
         val function = expression.symbol.owner.realOverrideTarget
-        require(function is IrSimpleFunction) { "Only IrSimpleFunction could be called via IrCall" }
         val valueArgs = (0 until expression.valueArgumentsCount).mapNotNull { expression.getValueArgument(it) }
         val irArguments = listOfNotNull(expression.dispatchReceiver, expression.extensionReceiver) + valueArgs
         val wasmArguments = irArguments.map { expressionToWasmInstruction(it, data) }

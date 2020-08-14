@@ -220,12 +220,11 @@ class InlineClassLowering(val context: CommonBackendContext) {
 
                 override fun visitCall(expression: IrCall): IrExpression {
                     expression.transformChildrenVoid(this)
-                    val function = expression.symbol.owner
+                    val function: IrSimpleFunction = expression.symbol.owner
                     if (function.parent !is IrClass ||
                         function.isStaticMethodOfClass ||
                         !function.parentAsClass.isInline ||
-                        (function is IrSimpleFunction && !function.isReal) ||
-                        (function is IrConstructor && function.isPrimary)
+                        !function.isReal
                     ) {
                         return expression
                     }
@@ -233,7 +232,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
                     return irCall(
                         expression,
                         getOrCreateStaticMethod(function),
-                        receiversAsArguments = (function is IrSimpleFunction)
+                        receiversAsArguments = true
                     )
                 }
 

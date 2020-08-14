@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
@@ -128,7 +127,7 @@ private class InterfaceSuperCallsLowering(val context: JvmBackendContext) : IrEl
             return super.visitCall(expression)
         }
 
-        val superCallee = expression.symbol.owner as IrSimpleFunction
+        val superCallee = expression.symbol.owner
         if (superCallee.isDefinitelyNotDefaultImplsMethod(context.state.jvmDefaultMode)) return super.visitCall(expression)
 
         val redirectTarget = context.cachedDeclarations.getDefaultImplsFunction(superCallee)
@@ -159,7 +158,7 @@ private class InterfaceDefaultCallsLowering(val context: JvmBackendContext) : Ir
             return super.visitCall(expression)
         }
 
-        val redirectTarget = context.cachedDeclarations.getDefaultImplsFunction(callee as IrSimpleFunction)
+        val redirectTarget = context.cachedDeclarations.getDefaultImplsFunction(callee)
 
         // InterfaceLowering bridges from DefaultImpls in compatibility mode -- if that's the case,
         // this phase will inadvertently cause a recursive loop as the bridge on the DefaultImpls
@@ -201,7 +200,7 @@ private class InterfaceObjectCallsLowering(val context: JvmBackendContext) : IrE
         if (expression.superQualifierSymbol != null && !expression.isSuperToAny())
             return super.visitCall(expression)
         val callee = expression.symbol.owner
-        if (callee !is IrSimpleFunction || !callee.hasInterfaceParent())
+        if (!callee.hasInterfaceParent())
             return super.visitCall(expression)
         val resolved = callee.resolveFakeOverride()
         if (resolved?.isMethodOfAny() != true)

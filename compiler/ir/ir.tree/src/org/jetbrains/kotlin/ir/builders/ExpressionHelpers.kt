@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.builders
 
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -277,14 +276,6 @@ fun IrBuilderWithScope.irCall(callee: IrConstructorSymbol): IrConstructorCall =
 
 fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol): IrFunctionAccessExpression =
     irCall(callee, callee.owner.returnType)
-
-fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, descriptor: FunctionDescriptor, type: IrType): IrCall =
-    IrCallImpl(
-        startOffset, endOffset, type,
-        callee as IrSimpleFunctionSymbol,
-        valueArgumentsCount = callee.owner.valueParameters.size,
-        typeArgumentsCount = callee.owner.typeParameters.size
-    )
 
 fun IrBuilderWithScope.irCall(callee: IrFunction): IrFunctionAccessExpression =
     irCall(callee.symbol)

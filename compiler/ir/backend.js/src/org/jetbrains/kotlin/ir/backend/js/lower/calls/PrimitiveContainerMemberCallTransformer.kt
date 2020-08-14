@@ -59,13 +59,12 @@ class PrimitiveContainerMemberCallTransformer(private val context: JsIrBackendCo
         }
     }
 
-    override fun transformFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
-        val symbol = expression.symbol
-        symbolToTransformer[symbol]?.let {
-            return it(expression)
+    override fun transformFunctionAccess(call: IrFunctionAccessExpression): IrExpression {
+        symbolToTransformer[call.symbol]?.let {
+            return it(call)
         }
 
-        return expression
+        return call
     }
 }
 

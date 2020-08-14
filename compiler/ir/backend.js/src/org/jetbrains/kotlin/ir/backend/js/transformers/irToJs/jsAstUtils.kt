@@ -78,11 +78,8 @@ fun translateCall(
     transformer: IrElementToJsExpressionTransformer
 ): JsExpression {
     val function = expression.symbol.owner.realOverrideTarget
-    require(function is IrSimpleFunction) { "Only IrSimpleFunction could be called via IrCall" } // TODO: fix it in IrCall
 
-    val symbol = function.symbol
-
-    context.staticContext.intrinsics[symbol]?.let {
+    context.staticContext.intrinsics[function.symbol]?.let {
         return it(expression, context)
     }
 

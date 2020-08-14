@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
@@ -43,7 +42,7 @@ private class ReplaceKFunctionInvokeWithFunctionInvoke : FileLoweringPass, IrEle
 
     override fun visitCall(expression: IrCall): IrExpression {
         val callee = expression.symbol.owner
-        if (callee !is IrSimpleFunction || callee.name != OperatorNameConventions.INVOKE) return super.visitCall(expression)
+        if (callee.name != OperatorNameConventions.INVOKE) return super.visitCall(expression)
 
         val parentClass = callee.parent as? IrClass ?: return super.visitCall(expression)
         if (!parentClass.defaultType.isKFunction() && !parentClass.defaultType.isKSuspendFunction()) return super.visitCall(expression)
