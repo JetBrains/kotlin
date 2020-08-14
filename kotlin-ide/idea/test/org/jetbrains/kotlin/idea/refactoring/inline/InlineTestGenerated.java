@@ -527,6 +527,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
+            @TestMetadata("constructorCall.kt")
+            public void testConstructorCall() throws Exception {
+                runTest("testData/refactoring/inline/function/fromJavaToKotlin/constructorCall.kt");
+            }
+
             @TestMetadata("delegateStaticToStaticField.kt")
             public void testDelegateStaticToStaticField() throws Exception {
                 runTest("testData/refactoring/inline/function/fromJavaToKotlin/delegateStaticToStaticField.kt");

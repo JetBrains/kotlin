@@ -144,6 +144,7 @@ internal class J2KInlineCache(private val strategy: UsageReplacementStrategy, pr
 
 private fun PsiMember.validate(): String? = when {
     this is PsiField && !this.hasInitializer() -> KotlinBundle.message("a.field.without.an.initializer.is.not.yet.supported")
+    this is PsiMethod && this.isConstructor -> KotlinBundle.message("a.constructor.call.is.not.yet.supported")
     else -> null
 }
 
