@@ -247,7 +247,7 @@ abstract class AbstractCoreTest(
     }
 
     fun externalDocumentationLink(url: String, packageListUrl: String? = null) =
-        DokkaConfiguration.ExternalDocumentationLink.Builder(url, packageListUrl).build() as ExternalDocumentationLinkImpl
+        ExternalDocumentationLink(url, packageListUrl)
 
     protected val jvmStdlibPath: String? by lazy {
         PathManager.getResourceRoot(Strictfp::class.java, "/kotlin/jvm/Strictfp.class")
