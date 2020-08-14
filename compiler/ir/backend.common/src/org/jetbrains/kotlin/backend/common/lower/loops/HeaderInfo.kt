@@ -271,25 +271,25 @@ internal abstract class HeaderInfoBuilder(context: CommonBackendContext, private
     override fun visitElement(element: IrElement, data: IrCall?): HeaderInfo? = null
 
     /** Builds a [HeaderInfo] for iterable expressions that are calls (e.g., `.reversed()`, `.indices`. */
-    override fun visitCall(iterable: IrCall, iteratorCall: IrCall?): HeaderInfo? {
+    override fun visitCall(expression: IrCall, data: IrCall?): HeaderInfo? {
         // Return the HeaderInfo from the first successful match.
         // First, try to match a `reversed()` or `withIndex()` call.
-        val callHeaderInfo = callHandlers.firstNotNullResult { it.handle(iterable, iteratorCall, null, scopeOwnerSymbol()) }
+        val callHeaderInfo = callHandlers.firstNotNullResult { it.handle(expression, data, null, scopeOwnerSymbol()) }
         if (callHeaderInfo != null)
             return callHeaderInfo
 
         // Try to match a call to build a progression (e.g., `.indices`, `downTo`).
-        val progressionType = ProgressionType.fromIrType(iterable.type, symbols)
+        val progressionType = ProgressionType.fromIrType(expression.type, symbols)
         val progressionHeaderInfo =
-            progressionType?.run { progressionHandlers.firstNotNullResult { it.handle(iterable, iteratorCall, this, scopeOwnerSymbol()) } }
+            progressionType?.run { progressionHandlers.firstNotNullResult { it.handle(expression, data, this, scopeOwnerSymbol()) } }
 
-        return progressionHeaderInfo ?: super.visitCall(iterable, iteratorCall)
+        return progressionHeaderInfo ?: super.visitCall(expression, data)
     }
 
     /** Builds a [HeaderInfo] for iterable expressions not handled in [visitCall]. */
-    override fun visitExpression(iterable: IrExpression, iteratorCall: IrCall?): HeaderInfo? {
-        return expressionHandlers.firstNotNullResult { it.handle(iterable, iteratorCall, null, scopeOwnerSymbol()) }
-            ?: super.visitExpression(iterable, iteratorCall)
+    override fun visitExpression(expression: IrExpression, data: IrCall?): HeaderInfo? {
+        return expressionHandlers.firstNotNullResult { it.handle(expression, data, null, scopeOwnerSymbol()) }
+            ?: super.visitExpression(expression, data)
     }
 }
 

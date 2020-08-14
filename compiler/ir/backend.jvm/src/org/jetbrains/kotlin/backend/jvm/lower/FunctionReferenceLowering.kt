@@ -249,7 +249,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 return
             }
 
-            SamEqualsHashCodeMethodsGenerator(backendContext, functionReferenceClass, samSuperType) { receiver ->
+            SamEqualsHashCodeMethodsGenerator(backendContext, functionReferenceClass, samSuperType) {
                 val internalClass = when {
                     isAdaptedReference -> backendContext.ir.symbols.adaptedFunctionReference
                     else -> backendContext.ir.symbols.functionReferenceImpl

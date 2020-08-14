@@ -9,9 +9,7 @@ import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsMapping
 import org.jetbrains.kotlin.ir.backend.js.JsSharedVariablesManager
@@ -21,19 +19,17 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 
 class WasmBackendContext(
     val module: ModuleDescriptor,
     override val irBuiltIns: IrBuiltIns,
-    symbolTable: SymbolTable,
-    irModuleFragment: IrModuleFragment,
+    @Suppress("UNUSED_PARAMETER") symbolTable: SymbolTable,
+    @Suppress("UNUSED_PARAMETER") irModuleFragment: IrModuleFragment,
     val additionalExportedDeclarations: Set<FqName>,
     override val configuration: CompilerConfiguration
 ) : JsCommonBackendContext {

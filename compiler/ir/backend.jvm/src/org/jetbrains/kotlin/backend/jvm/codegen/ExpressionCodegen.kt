@@ -631,6 +631,7 @@ class ExpressionCodegen(
 
     private fun handlePlusMinus(expression: IrSetVariable, value: IrExpression?, isMinus: Boolean): Boolean {
         if (value is IrConst<*> && value.kind == IrConstKind.Int) {
+            @Suppress("UNCHECKED_CAST")
             val delta = (value as IrConst<Int>).value
             val upperBound = Byte.MAX_VALUE.toInt() + (if (isMinus) 1 else 0)
             val lowerBound = Byte.MIN_VALUE.toInt() + (if (isMinus) 1 else 0)

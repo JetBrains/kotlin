@@ -357,7 +357,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         fun build(): Pair<IrClass, IrConstructor> {
             val clazz = buildReferenceClass()
             val ctor = createConstructor(clazz)
-            val invoke = createInvokeMethod(clazz)
+            createInvokeMethod(clazz)
             createNameProperty(clazz)
             // TODO: create name property for KFunction*
 

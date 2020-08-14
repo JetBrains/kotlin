@@ -206,7 +206,9 @@ class SymbolTable(
                 }
             } else {
                 if (d.isBound()) {
-                    ((d.owner as? IrSymbolDeclaration<*>)?.symbol ?: descriptorToSymbol[d]) as S?
+                    val result = (d.owner as? IrSymbolDeclaration<*>)?.symbol ?: descriptorToSymbol[d]
+                    @Suppress("UNCHECKED_CAST")
+                    result as S?
                 } else {
                     descriptorToSymbol[d]
                 }

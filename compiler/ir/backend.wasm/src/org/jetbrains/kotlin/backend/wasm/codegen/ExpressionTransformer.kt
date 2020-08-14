@@ -106,8 +106,8 @@ class ExpressionTransformer : BaseTransformer<WasmInstruction, WasmCodegenContex
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: WasmCodegenContext): WasmInstruction {
         val wasmArgument = expressionToWasmInstruction(expression.argument, data)
-        when (expression.operator) {
-            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> return wasmArgument
+        if (expression.operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT) {
+            return wasmArgument
         }
         TODO("IrTypeOperatorCall:\n ${expression.dump()}")
     }

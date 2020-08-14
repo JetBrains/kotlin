@@ -100,6 +100,7 @@ class IrOverridingUtil(
     fun buildFakeOverridesForClass(clazz: IrClass) {
         val superTypes = allPublicApiSuperTypesOrAny(clazz)
 
+        @Suppress("UNCHECKED_CAST")
         val fromCurrent = clazz.declarations.filter { it is IrOverridableMember && it.symbol.isPublicApi } as List<IrOverridableMember>
 
         val allFromSuper = superTypes.flatMap { superType ->
@@ -190,10 +191,7 @@ class IrOverridingUtil(
         }
     }
 
-    private fun filterVisibleFakeOverrides(
-        current: IrClass,
-        toFilter: Collection<IrOverridableMember>
-    ): Collection<IrOverridableMember> {
+    private fun filterVisibleFakeOverrides(toFilter: Collection<IrOverridableMember>): Collection<IrOverridableMember> {
         return toFilter.filter { member: IrOverridableMember ->
             !Visibilities.isPrivate(member.visibility)
         }
@@ -296,7 +294,7 @@ class IrOverridingUtil(
         overridables: Collection<IrOverridableMember>,
         current: IrClass
     ) {
-        val effectiveOverridden = filterVisibleFakeOverrides(current, overridables)
+        val effectiveOverridden = filterVisibleFakeOverrides(overridables)
 
         // The descriptor based algorithm goes further building invisible fakes here,
         // but we don't use invisible fakes in IR

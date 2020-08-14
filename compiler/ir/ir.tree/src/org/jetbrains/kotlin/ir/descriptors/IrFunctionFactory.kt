@@ -293,7 +293,7 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
         }
     }
 
-    private fun IrClass.createMembers(isK: Boolean, isSuspend: Boolean, arity: Int, name: String, descriptorFactory: FunctionDescriptorFactory) {
+    private fun IrClass.createMembers(isK: Boolean, isSuspend: Boolean, descriptorFactory: FunctionDescriptorFactory) {
         if (!isK) {
             val invokeSymbol = descriptorFactory.memberDescriptor("invoke") {
                 val returnType = with(IrSimpleTypeBuilder()) {
@@ -461,7 +461,7 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
         klass.parent = packageFragment
         packageFragment.declarations += klass
 
-        klass.createMembers(isK, isSuspend, n, klass.name.identifier, descriptorFactory)
+        klass.createMembers(isK, isSuspend, descriptorFactory)
 
         return klass
     }

@@ -324,9 +324,6 @@ class NameTables(
             return sanitizeName(field.name.asString()) + "__error"
         }
 
-        require(name != null) {
-            "Can't find name for member field ${field.render()}"
-        }
         return name
     }
 
@@ -340,10 +337,6 @@ class NameTables(
             return sanitizeName(function.name.asString()) + "__error" // TODO one case is a virtual method of an abstract class with no implementation
         }
 
-        // TODO report backend error
-        require(name != null) {
-            "Can't find name for member function ${function.render()}"
-        }
         return name
     }
 

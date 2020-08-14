@@ -4,6 +4,7 @@
  */
 
 @file:OptIn(ExperimentalUnsignedTypes::class)
+@file:Suppress("NAME_SHADOWING")
 
 package org.jetbrains.kotlin.backend.common.serialization
 

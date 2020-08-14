@@ -245,7 +245,7 @@ private fun StatementGenerator.generateReceiverForCalleeImportedFromObject(
 private fun StatementGenerator.generateVarargExpressionUsing(
     varargArgument: VarargValueArgument,
     valueParameter: ValueParameterDescriptor,
-    resolvedCall: ResolvedCall<*>, // TODO resolvedCall is required for suspend conversions, see KT-38604
+    @Suppress("UNUSED_PARAMETER") resolvedCall: ResolvedCall<*>, // TODO resolvedCall is required for suspend conversions, see KT-38604
     generateArgumentExpression: (KtExpression) -> IrExpression?
 ): IrExpression? {
     if (varargArgument.arguments.isEmpty()) {

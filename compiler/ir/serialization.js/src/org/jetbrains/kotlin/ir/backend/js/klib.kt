@@ -158,7 +158,7 @@ fun generateKLib(
         deserializeFakeOverrides
     )
 
-    val deserializedModuleFragments = sortDependencies(allDependencies.getFullList(), depsDescriptors.descriptors).map {
+    sortDependencies(allDependencies.getFullList(), depsDescriptors.descriptors).map {
         irLinker.deserializeOnlyHeaderModule(depsDescriptors.getModuleDescriptor(it), it)
     }
 
