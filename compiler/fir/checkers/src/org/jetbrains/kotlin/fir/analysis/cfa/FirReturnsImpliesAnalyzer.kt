@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
+import org.jetbrains.kotlin.fir.contracts.coneEffects
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirFunction
@@ -36,7 +37,7 @@ object FirReturnsImpliesAnalyzer : FirControlFlowChecker() {
         val dataFlowInfo = graphRef.dataFlowInfo
         if (function !is FirContractDescriptionOwner || dataFlowInfo == null) return
 
-        val effects = (function.contractDescription as? FirResolvedContractDescription)?.effects
+        val effects = (function.contractDescription as? FirResolvedContractDescription)?.coneEffects
             ?.filter { it is ConeConditionalEffectDeclaration && it.effect is ConeReturnsEffectDeclaration }
 
         if (effects.isNullOrEmpty()) return

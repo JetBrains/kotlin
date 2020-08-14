@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration
 val FirContractDescription.effects: List<FirEffectDeclaration>?
     get() = (this as? FirResolvedContractDescription)?.effects
 
+val FirContractDescription.coneEffects: List<ConeEffectDeclaration>?
+    get() = effects?.map { it.effect }
+
 fun ConeEffectDeclaration.toFirEffectDeclaration(source: FirSourceElement? = null): FirEffectDeclaration =
     buildEffectDeclaration {
         if (source != null) {

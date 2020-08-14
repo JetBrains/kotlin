@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
+import org.jetbrains.kotlin.fir.contracts.coneEffects
 import org.jetbrains.kotlin.fir.contracts.description.ConeCallsEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.effects
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -45,7 +46,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
     override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter) {
         val function = (graph.declaration as? FirFunction<*>) ?: return
         if (function !is FirContractDescriptionOwner) return
-        if (function.contractDescription.effects?.any { it is ConeCallsEffectDeclaration } != true) return
+        if (function.contractDescription.coneEffects?.any { it is ConeCallsEffectDeclaration } != true) return
 
         val functionalTypeEffects = mutableMapOf<AbstractFirBasedSymbol<*>, ConeCallsEffectDeclaration>()
 
@@ -276,7 +277,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
         get() = (this as? FirContractDescriptionOwner)?.contractDescription
 
     private fun FirContractDescription?.getParameterCallsEffectDeclaration(index: Int): ConeCallsEffectDeclaration? {
-        val effects = this?.effects
+        val effects = this?.coneEffects
         val callsEffect = effects?.find { it is ConeCallsEffectDeclaration && it.valueParameterReference.parameterIndex == index }
         return callsEffect as? ConeCallsEffectDeclaration?
     }
