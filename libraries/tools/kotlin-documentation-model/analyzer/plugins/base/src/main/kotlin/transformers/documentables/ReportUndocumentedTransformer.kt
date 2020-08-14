@@ -100,14 +100,13 @@ internal class ReportUndocumentedTransformer : DocumentableTransformer {
             }
         }
 
-        fun withAllDependentSourceSets(sourceSet: DokkaSourceSet): Sequence<DokkaSourceSet> {
-            return sequence {
-                yield(sourceSet)
-                for (dependentSourceSet in resolveDependentSourceSets(sourceSet)) {
-                    yieldAll(withAllDependentSourceSets(dependentSourceSet))
-                }
+        fun withAllDependentSourceSets(sourceSet: DokkaSourceSet): Sequence<DokkaSourceSet> = sequence {
+            yield(sourceSet)
+            for (dependentSourceSet in resolveDependentSourceSets(sourceSet)) {
+                yieldAll(withAllDependentSourceSets(dependentSourceSet))
             }
         }
+
 
         return withAllDependentSourceSets(sourceSet).all { sourceSetOrDependentSourceSet ->
             documentable.documentation[sourceSetOrDependentSourceSet]?.children?.isEmpty() ?: true
