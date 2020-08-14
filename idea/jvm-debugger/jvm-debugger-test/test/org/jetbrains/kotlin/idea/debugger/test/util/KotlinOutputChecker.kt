@@ -59,6 +59,14 @@ internal class KotlinOutputChecker(
 
         val outDir = File(testDir)
         var outFile = File(outDir, "$myTestName.out")
+
+        if (useIrBackend) {
+            val irBackendOutFile = File(outDir, "$myTestName.ir.out")
+            if (irBackendOutFile.exists()) {
+                outFile = irBackendOutFile
+            }
+        }
+
         if (!outFile.exists()) {
             if (SystemInfo.isWindows) {
                 val winOut = File(outDir, "$myTestName.win.out")
