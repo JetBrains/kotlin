@@ -45,6 +45,7 @@ if (isMacos) {
     include(":opengl")
     include(":uikit")
     include(":watchos")
+    include(":simd")
 }
 
 if (isWindows) {
