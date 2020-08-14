@@ -49,7 +49,7 @@ data class DokkaModuleDescriptionImpl(
 
 data class SourceLinkDefinitionImpl(
     override val localDirectory: String,
-    override val remoteUrl: String,
+    override val remoteUrl: URL,
     override val remoteLineSuffix: String?
 ) : DokkaConfiguration.SourceLinkDefinition {
     companion object {
@@ -57,7 +57,7 @@ data class SourceLinkDefinitionImpl(
             val (path, urlAndLine) = srcLink.split('=')
             return SourceLinkDefinitionImpl(
                 File(path).canonicalPath,
-                urlAndLine.substringBefore("#"),
+                URL(urlAndLine.substringBefore("#")),
                 urlAndLine.substringAfter("#", "").let { if (it.isEmpty()) null else "#$it" })
         }
     }

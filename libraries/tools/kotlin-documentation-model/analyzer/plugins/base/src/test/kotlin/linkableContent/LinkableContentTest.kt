@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import java.net.URL
 import java.nio.file.Paths
 
 class LinkableContentTest : AbstractCoreTest() {
@@ -70,7 +71,7 @@ class LinkableContentTest : AbstractCoreTest() {
                     sourceLinks = listOf(
                         SourceLinkDefinitionImpl(
                             localDirectory = "jsMain/kotlin",
-                            remoteUrl = "https://github.com/user/repo/tree/master/src/jsMain/kotlin",
+                            remoteUrl = URL("https://github.com/user/repo/tree/master/src/jsMain/kotlin"),
                             remoteLineSuffix = "#L"
                         )
                     )
@@ -83,7 +84,7 @@ class LinkableContentTest : AbstractCoreTest() {
                     sourceLinks = listOf(
                         SourceLinkDefinitionImpl(
                             localDirectory = "jvmMain/kotlin",
-                            remoteUrl = "https://github.com/user/repo/tree/master/src/jvmMain/kotlin",
+                            remoteUrl = URL("https://github.com/user/repo/tree/master/src/jvmMain/kotlin"),
                             remoteLineSuffix = "#L"
                         )
                     )
