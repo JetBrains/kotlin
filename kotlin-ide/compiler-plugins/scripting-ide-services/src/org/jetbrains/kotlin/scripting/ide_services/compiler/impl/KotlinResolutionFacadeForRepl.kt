@@ -39,6 +39,7 @@ class KotlinResolutionFacadeForRepl(
     override val moduleDescriptor: ModuleDescriptor = provider.getService(ModuleDescriptor::class.java)
 
     override fun <T : Any> getFrontendService(serviceClass: Class<T>): T {
+        @Suppress("UNCHECKED_CAST")
         return provider.resolve(serviceClass)!!.getValue() as T
     }
 
