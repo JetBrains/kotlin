@@ -75,6 +75,12 @@ class JavaToKotlinInlineHandler : AbstractCrossLanguageInlineHandler() {
 private val PsiElement.javaMemberToInline: PsiMember?
     get() = if (language == JavaLanguage.INSTANCE && (this is PsiMethod || this is PsiField)) this as PsiMember else null
 
+private fun PsiMember.validate(): String? = when {
+    this is PsiField && !this.hasInitializer() -> KotlinBundle.message("a.field.without.an.initializer.is.not.yet.supported")
+    this is PsiMethod && this.isConstructor -> KotlinBundle.message("a.constructor.call.is.not.yet.supported")
+    else -> null
+}
+
 private fun NewJavaToKotlinConverter.convertToKotlinNamedDeclaration(
     referenced: PsiMember,
     context: PsiElement,
@@ -140,12 +146,6 @@ internal class J2KInlineCache(private val strategy: UsageReplacementStrategy, pr
             )?.also { javaMember.setUsageReplacementStrategy(it) }
         }
     }
-}
-
-private fun PsiMember.validate(): String? = when {
-    this is PsiField && !this.hasInitializer() -> KotlinBundle.message("a.field.without.an.initializer.is.not.yet.supported")
-    this is PsiMethod && this.isConstructor -> KotlinBundle.message("a.constructor.call.is.not.yet.supported")
-    else -> null
 }
 
 private fun createUsageReplacementStrategyForNamedDeclaration(
