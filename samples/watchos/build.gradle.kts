@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
 plugins {
-    kotlin("multiplatform") // version "1.3.60-eap-23" apply true
+    kotlin("multiplatform")
 }
 
 allprojects {

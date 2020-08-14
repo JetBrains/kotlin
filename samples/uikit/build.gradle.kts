@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
 plugins {
-    kotlin("multiplatform") // version "1.3.60-eap-23" apply true
+    kotlin("multiplatform")
 }
 
 allprojects {
@@ -39,7 +39,7 @@ kotlin {
     // We declare only one target (either arm64 or x64)
     // to workaround lack of common platform libraries
     // for both device and simulator.
-    val ios = if (!target.simulator ) {
+    val ios = if (!target.simulator) {
         // Device.
         iosArm64("ios")
     } else {
