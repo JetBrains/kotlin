@@ -108,7 +108,7 @@ interface DokkaConfiguration : Serializable {
 
     interface SourceLinkDefinition : Serializable {
         val localDirectory: String
-        val remoteUrl: String
+        val remoteUrl: URL
         val remoteLineSuffix: String?
     }
 
