@@ -1,0 +1,198 @@
+{
+  "3": {
+    "neg": {
+      "2": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 1,
+          "description": "body with init block",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/enum-class-declaration/p-3/neg/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    },
+    "pos": {
+      "2": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 2,
+          "description": "enum entry can have their own body",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/enum-class-declaration/p-3/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 1,
+          "description": "body with init block",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/enum-class-declaration/p-3/pos/2.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    }
+  },
+  "2": {
+    "neg": {
+      "3": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 5,
+          "description": "enum class cannot have any other base classes exept kotlin.Enum\u003cE\u003e",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/enum-class-declaration/p-2/neg/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ],
+      "4": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 4,
+          "description": "enum class is implicitly final and cannot be inherited from",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/enum-class-declaration/p-2/neg/4.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ],
+      "5": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 8,
+          "description": "enum class cannot have type parameters",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/enum-class-declaration/p-2/neg/5.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 4,
+          "description": "enum class cannot have type parameters (where)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/enum-class-declaration/p-2/neg/5.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 4,
+          "description": "enum class cannot have type parameters (intersection)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/enum-class-declaration/p-2/neg/5.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    },
+    "pos": {
+      "3": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 1,
+          "description": "enum class implicitly inherits the built-in class kotlin.Enum\u003cE\u003e",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/enum-class-declaration/p-2/pos/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType"
+        }
+      ],
+      "4": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 1,
+          "description": "enum class is implicitly final and cannot be inherited from",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/enum-class-declaration/p-2/pos/4.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    }
+  },
+  "4": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 4,
+          "description": "enum class is implicitly final and cannot be inherited from",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/enum-class-declaration/p-2/neg/4.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 8,
+          "description": "enum class cannot have type parameters",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/enum-class-declaration/p-2/neg/5.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 4,
+          "description": "enum class cannot have type parameters (where)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/enum-class-declaration/p-2/neg/5.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 4,
+          "description": "enum class cannot have type parameters (intersection)",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/enum-class-declaration/p-2/neg/5.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 1,
+          "description": "enum class implicitly inherits the built-in class kotlin.Enum\u003cE\u003e",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/enum-class-declaration/p-2/pos/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 1,
+          "description": "enum class is implicitly final and cannot be inherited from",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/enum-class-declaration/p-2/pos/4.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  },
+  "5": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 1,
+          "description": "enum class implicitly inherits the built-in class kotlin.Enum\u003cE\u003e",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/enum-class-declaration/p-2/pos/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        }
+      ]
+    }
+  },
+  "7": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 1,
+          "description": "enum class implicitly inherits the built-in class kotlin.Enum\u003cE\u003e",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/enum-class-declaration/p-2/pos/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        }
+      ]
+    }
+  }
+}

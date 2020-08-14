@@ -1,0 +1,1 @@
+java.lang.IllegalStateException: UNINITIALIZED_ENUM_ENTRY: Enum entry 'VAL1' is uninitialized here (25,9) in /1.3.kt

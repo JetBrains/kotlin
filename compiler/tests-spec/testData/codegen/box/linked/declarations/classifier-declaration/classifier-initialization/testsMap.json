@@ -1,0 +1,62 @@
+{
+  "8": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 0,
+          "description": "entry initialization an enum class with a property call",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/classifier-initialization/p-8/neg/1.2.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 0,
+          "description": "entry initialization an enum class",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/classifier-initialization/p-8/neg/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 0,
+          "description": "entry initialization an enum class",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/classifier-initialization/p-8/neg/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 0,
+          "description": "entry initialization an enum class with a property call",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/classifier-initialization/p-8/neg/1.1.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "main"
+        }
+      ]
+    }
+  },
+  "9": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 0,
+          "description": "entry initialization an enum class with a property call",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/classifier-initialization/p-8/neg/1.2.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 0,
+          "description": "entry initialization an enum class with a property call",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/declarations/classifier-declaration/classifier-initialization/p-8/neg/1.1.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "primary"
+        }
+      ]
+    }
+  }
+}

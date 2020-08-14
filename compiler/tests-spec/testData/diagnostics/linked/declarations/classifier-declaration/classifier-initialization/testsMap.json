@@ -1,4 +1,60 @@
 {
+  "8": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 2,
+          "description": "entry initialization an enum class",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/classifier-initialization/p-8/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 1,
+          "description": "entry initialization an enum class with a property call",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/classifier-initialization/p-8/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 1,
+          "description": "If any step in the initialization order creates a loop, it is considered to be undefined behaviour",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/classifier-initialization/p-8/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    }
+  },
+  "9": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 1,
+          "description": "entry initialization an enum class with a property call",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/classifier-initialization/p-8/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "1.4-rfc+0.3-603",
+          "casesNumber": 1,
+          "description": "body with init block",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/enum-class-declaration/p-3/neg/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  },
   "6": {
     "neg": {
       "4": [
