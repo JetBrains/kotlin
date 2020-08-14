@@ -569,8 +569,8 @@ class KtxTransformationTest : AbstractCodegenTest() {
     fun testKtxVariableTagsProperlyCapturedAcrossKtxLambdas() = ensureSetup {
         testCompile(
         """
+        import androidx.compose.androidview.adapters.*
         import androidx.compose.runtime.*
-        import androidx.ui.androidview.adapters.*
 
         @Composable fun Foo(children: @Composable (sub: @Composable () -> Unit) -> Unit) {
 
