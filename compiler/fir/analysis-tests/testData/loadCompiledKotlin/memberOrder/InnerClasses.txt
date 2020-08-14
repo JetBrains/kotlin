@@ -1,6 +1,4 @@
 public final class O : R|kotlin/Any| {
-    public constructor(): R|test/O|
-
     public final class A1 : R|kotlin/Any| {
         public constructor(): R|test/O.A1|
 
@@ -26,5 +24,7 @@ public final class O : R|kotlin/Any| {
 
     public abstract interface C2 : R|kotlin/Any| {
     }
+
+    public constructor(): R|test/O|
 
 }

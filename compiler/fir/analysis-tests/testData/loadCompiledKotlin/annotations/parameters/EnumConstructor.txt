@@ -9,6 +9,12 @@ public final annotation class B : R|kotlin/Annotation| {
 }
 
 public final enum class E : R|kotlin/Enum<test/E>| {
+    public final static fun valueOf(value: R|kotlin/String|): R|test/E| {
+    }
+
+    public final static fun values(): R|kotlin/Array<test/E>| {
+    }
+
     public final val x: R|kotlin/String|
         public get(): R|kotlin/String|
 
@@ -16,12 +22,6 @@ public final enum class E : R|kotlin/Enum<test/E>| {
         public get(): R|kotlin/Int|
 
     private constructor(@R|test/A|() x: R|kotlin/String|, @R|test/B|() y: R|kotlin/Int|): R|test/E|
-
-    public final static fun values(): R|kotlin/Array<test/E>| {
-    }
-
-    public final static fun valueOf(value: R|kotlin/String|): R|test/E| {
-    }
 
 }
 

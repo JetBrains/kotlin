@@ -1,4 +1,10 @@
 public final enum class En : R|kotlin/Enum<test/En>| {
+    public final static fun valueOf(value: R|kotlin/String|): R|test/En| {
+    }
+
+    public final static fun values(): R|kotlin/Array<test/En>| {
+    }
+
     public final val b: R|kotlin/Boolean|
         public get(): R|kotlin/Boolean|
 
@@ -10,11 +16,5 @@ public final enum class En : R|kotlin/Enum<test/En>| {
     public final static enum entry E1: R|test/En|
     public final static enum entry E2: R|test/En|
     public final static enum entry E3: R|test/En|
-    public final static fun values(): R|kotlin/Array<test/En>| {
-    }
-
-    public final static fun valueOf(value: R|kotlin/String|): R|test/En| {
-    }
-
 }
 
