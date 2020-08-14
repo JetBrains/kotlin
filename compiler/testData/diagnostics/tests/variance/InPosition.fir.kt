@@ -35,7 +35,7 @@ interface Test<in I, out O, P> {
     fun neOk6(i: In<In<O>>)
     fun neOk7(i: Pair<In<I>, O>)
     fun neOk8(i: Inv<out O>)
-    fun neOk9(i: In<out P>)
+    fun neOk9(i: <!CONFLICTING_PROJECTION!>In<out P><!>)
     fun neOk10(i: Out<O>)
 
     fun neOk11(i: Inv<in I>)

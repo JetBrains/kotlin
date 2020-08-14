@@ -23,6 +23,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirTypeParametersInObjectChecker,
         FirConflictsChecker,
         FirConstructorInInterfaceChecker,
+        FirConflictingProjectionChecker,
     )
 
     override val memberDeclarationCheckers: List<FirMemberDeclarationChecker> = listOf(

@@ -23,7 +23,7 @@ interface Test<in I, out O, P> {
     var neOk7: Pair<In<I>, O>
     var neOk8: Inv<in O>
     var neOk9: Inv<in I>
-    var neOk10: In<out I>
+    var neOk10: <!CONFLICTING_PROJECTION!>In<out I><!>
 
     var neOk11: I
     var neOk12: In<O>
