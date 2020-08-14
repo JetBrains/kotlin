@@ -362,3 +362,23 @@ completion.
 Since we add a continuation parameter to each suspend function and lambda, we cannot call suspending functions or lambdas
 from ordinary functions, and we cannot call them by passing null as the parameter since the coroutine call `resumeWith` on it. Instead, we 
 should use coroutine builders, which provide root continuation and start the coroutine. That is the reason for the two worlds model.
+
+#### Old JVM: getOrCreateJvmSuspendFunctionView
+
+The old back-end uses `FunctionDescriptor` to represent suspending functions and lambdas with runtime signature. These are synthetic
+descriptors, which are created by `getOrCreateJvmSuspendFunctionView`. The transformed one is named view. I could not find a reason for a 
+name, other than it is simple, original, and consistent. It generates this descriptor and stores
+it in `bindingContext`, so it returns the same instance upon consequent calls. `unwrapInitialDescriptorForSuspendFunction` returns the 
+original descriptor.
+
+The continuation parameter is named `continuation` in Kotlin Metadata and `$completion` in LVT.
+FIXME: use consistent naming, rename `continuation` to `$completion`,
+
+#### JVM_IR: AddContinuationLowering
+
+In JVM_IR `AddContinuationLowering` is responsible for turning suspend functions into views. However, it keeps the return types of the 
+functions in the views' `IrFunction`, so it only adds the continuation parameter. Using the original return type simplifies tail-call 
+optimization. Specifically, it simplifies tail-call optimization analysis for functions returning `Unit`. The codegen, however, generates 
+them as returning `Any?`.
+
+The continuation parameter is named `$completion` in both Kotlin Metadata and LVT.
