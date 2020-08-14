@@ -5,10 +5,6 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.model
 
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
-
 class ImplementationWithArg(
     val implementation: Implementation,
     val argument: Importable?

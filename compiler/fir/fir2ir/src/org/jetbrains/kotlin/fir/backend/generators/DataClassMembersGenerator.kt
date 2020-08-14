@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.Visibilities
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.DataClassMembersGenerator
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.descriptors.Visibilities as OldVisibilities
 
 /**
  * A generator that generates synthetic members of data class as well as part of inline class.
@@ -236,7 +237,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
             val signature = if (classId.isLocal) null else components.signatureComposer.composeSignature(firFunction)
             return components.declarationStorage.declareIrSimpleFunction(signature, null) { symbol ->
                 components.irFactory.createFunction(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, symbol, name, Visibilities.PUBLIC, Modality.OPEN, returnType,
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, symbol, name, OldVisibilities.PUBLIC, Modality.OPEN, returnType,
                     isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isOperator = false,
                     isInfix = false, isExpect = false, isFakeOverride = false,
                 ).apply {

@@ -9,14 +9,11 @@ import com.intellij.psi.PsiCompiledElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.FirConstKind
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
@@ -46,6 +43,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
@@ -53,6 +51,8 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.descriptors.Visibilities as OldVisibilities
+import org.jetbrains.kotlin.descriptors.Visibility as OldVisibility
 
 internal fun <T : IrElement> FirElement.convertWithOffsets(
     f: (startOffset: Int, endOffset: Int) -> T
@@ -491,4 +491,16 @@ fun Fir2IrComponents.createTemporaryVariableForSafeCallConstruction(
     val variableSymbol = receiverVariable.symbol
 
     return Pair(receiverVariable, variableSymbol)
+}
+
+fun Visibility.toOldVisibility(): OldVisibility = when (this.normalize()) {
+    Visibilities.PRIVATE -> OldVisibilities.PRIVATE
+    Visibilities.PRIVATE_TO_THIS -> OldVisibilities.PRIVATE_TO_THIS
+    Visibilities.PROTECTED -> OldVisibilities.PROTECTED
+    Visibilities.INTERNAL -> OldVisibilities.INTERNAL
+    Visibilities.PUBLIC -> OldVisibilities.PUBLIC
+    Visibilities.LOCAL -> OldVisibilities.LOCAL
+    Visibilities.INVISIBLE_FAKE -> OldVisibilities.INVISIBLE_FAKE
+    Visibilities.UNKNOWN -> OldVisibilities.UNKNOWN
+    else -> error("Unknown visiblity: $this")
 }

@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.descriptors.RelationToType
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirEffectiveVisibility.Permissiveness
 import org.jetbrains.kotlin.fir.FirEffectiveVisibilityImpl.*
 import org.jetbrains.kotlin.fir.declarations.*

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.java
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.toFirPsiSourceElement
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -41,6 +40,9 @@ import org.jetbrains.kotlin.load.java.typeEnhancement.TypeComponentPosition
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance.*
+import org.jetbrains.kotlin.descriptors.Visibilities as OldVisibilities
+import org.jetbrains.kotlin.descriptors.Visibility as OldVisibility
+import org.jetbrains.kotlin.load.java.JavaVisibilities as OldJavaVisibilities
 
 internal val JavaModifierListOwner.modality: Modality
     get() = when {
@@ -524,3 +526,17 @@ private fun JavaType.toFirResolvedTypeRef(
     }
 }
 
+fun OldVisibility.toFirVisibility(): Visibility = when (this) {
+    OldVisibilities.PRIVATE -> Visibilities.PRIVATE
+    OldVisibilities.PRIVATE_TO_THIS -> Visibilities.PRIVATE_TO_THIS
+    OldVisibilities.PROTECTED -> Visibilities.PROTECTED
+    OldVisibilities.INTERNAL -> Visibilities.INTERNAL
+    OldVisibilities.PUBLIC -> Visibilities.PUBLIC
+    OldVisibilities.LOCAL -> Visibilities.LOCAL
+    OldVisibilities.INVISIBLE_FAKE -> Visibilities.INVISIBLE_FAKE
+    OldVisibilities.UNKNOWN -> Visibilities.UNKNOWN
+    OldJavaVisibilities.PACKAGE_VISIBILITY -> JavaVisibilities.PACKAGE_VISIBILITY
+    OldJavaVisibilities.PROTECTED_AND_PACKAGE -> JavaVisibilities.PROTECTED_AND_PACKAGE
+    OldJavaVisibilities.PROTECTED_STATIC_VISIBILITY -> JavaVisibilities.PROTECTED_STATIC_VISIBILITY
+    else -> error("Unknown visiblity: $this")
+}

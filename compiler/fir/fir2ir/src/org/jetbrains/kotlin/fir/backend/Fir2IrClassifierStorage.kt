@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.Visibilities
+import org.jetbrains.kotlin.fir.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.resolve.firProvider
@@ -192,7 +192,7 @@ class Fir2IrClassifierStorage(
             declareIrTypeAlias(signature) { symbol ->
                 val irTypeAlias = irFactory.createTypeAlias(
                     startOffset, endOffset, symbol,
-                    typeAlias.name, typeAlias.visibility,
+                    typeAlias.name, typeAlias.visibility.toOldVisibility(),
                     typeAlias.expandedTypeRef.toIrType(),
                     typeAlias.isActual, IrDeclarationOrigin.DEFINED
                 ).apply {
@@ -237,7 +237,7 @@ class Fir2IrClassifierStorage(
                     symbol,
                     regularClass.name,
                     regularClass.classKind,
-                    visibility,
+                    visibility.toOldVisibility(),
                     modality,
                     isCompanion = regularClass.isCompanion,
                     isInner = regularClass.isInner,
@@ -277,7 +277,7 @@ class Fir2IrClassifierStorage(
                     startOffset, endOffset, origin, symbol, name,
                     // NB: for unknown reason, IR uses 'CLASS' kind for simple anonymous objects
                     anonymousObject.classKind.takeIf { it == ClassKind.ENUM_ENTRY } ?: ClassKind.CLASS,
-                    visibility, modality
+                    visibility.toOldVisibility(), modality
                 ).apply {
                     metadata = FirMetadataSource.Class(anonymousObject)
                     setThisReceiver(anonymousObject.typeParameters)

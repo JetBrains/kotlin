@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
@@ -58,7 +57,7 @@ fun deserializeClassToSymbol(
     val kind = Flags.CLASS_KIND.get(flags)
     val modality = ProtoEnumFlags.modality(Flags.MODALITY.get(flags))
     val status = FirResolvedDeclarationStatusImpl(
-        ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
+        FirProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
         modality
     ).apply {
         isExpect = Flags.IS_EXPECT_CLASS.get(flags)

@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.fir.lazy
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.backend.toIrType
+import org.jetbrains.kotlin.fir.backend.toOldVisibility
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.Fir2IrConstructorSymbol
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.descriptors.Visibility as OldVisibility
 
 class Fir2IrLazyConstructor(
     components: Fir2IrComponents,
@@ -61,8 +62,8 @@ class Fir2IrLazyConstructor(
     override val name: Name
         get() = Name.special("<init>")
 
-    override var visibility: Visibility
-        get() = fir.visibility
+    @Suppress("SetterBackingFieldAssignment")
+    override var visibility: OldVisibility = fir.visibility.toOldVisibility()
         set(_) {
             error("Mutating Fir2Ir lazy elements is not possible")
         }
