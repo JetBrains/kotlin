@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.completion
 import com.intellij.util.PlatformIcons
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import javax.swing.Icon
 
 internal object KotlinSymbolIconProvider {

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtNamedSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
