@@ -83,7 +83,7 @@ class JvmResolverForModuleFactory(
             }
 
             val resolverForModule = resolverForReferencedModule?.takeIf {
-                referencedClassModule.platform.isJvm() || referencedClassModule.platform == null
+                referencedClassModule.platform.isJvm()
             } ?: run {
                 // in case referenced class lies outside of our resolver, resolve the class as if it is inside our module
                 // this leads to java class being resolved several times
@@ -95,7 +95,7 @@ class JvmResolverForModuleFactory(
         val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
 
         val lookupTracker = LookupTracker.DO_NOTHING
-        val packagePartProvider = (platformParameters as JvmPlatformParameters).packagePartProviderFactory(moduleContent)
+        val packagePartProvider = platformParameters.packagePartProviderFactory(moduleContent)
         val container = createContainerForLazyResolveWithJava(
             moduleDescriptor.platform!!,
             moduleContext,

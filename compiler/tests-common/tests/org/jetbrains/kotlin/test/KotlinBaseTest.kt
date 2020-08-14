@@ -185,6 +185,7 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
             }
             assert(configurationKeyField != null) { "Expected [+|-][namespace.]configurationKey, got: $flag" }
             try {
+                @Suppress("UNCHECKED_CAST")
                 val configurationKey = configurationKeyField!![null] as CompilerConfigurationKey<Boolean>
                 configuration.put(configurationKey, flagEnabled)
             } catch (e: java.lang.Exception) {

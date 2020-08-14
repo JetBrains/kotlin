@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.resolve.calls.components.CreateFreshVariablesSubstit
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.LowerPriorityToPreserveCompatibility
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.DISPATCH_RECEIVER
@@ -351,9 +350,10 @@ class CallableReferencesCandidateFactory(
                             // If we've already mapped an argument to this value parameter, it'll always be a type mismatch.
                             mappedArguments[valueParameter] = ResolvedCallArgument.SimpleArgument(fakeArgument)
                         }
-
                         VarargMappingState.MAPPED_WITH_PLAIN_ARGS -> {
                             mappedVarargElements.getOrPut(valueParameter) { ArrayList() }.add(fakeArgument)
+                        }
+                        VarargMappingState.UNMAPPED -> {
                         }
                     }
                 } else {
@@ -390,13 +390,13 @@ class CallableReferencesCandidateFactory(
                 CoercionStrategy.NO_COERCION
 
         val adaptedArguments =
-            if (expectedType != null && ReflectionTypes.isBaseTypeForNumberedReferenceTypes(expectedType))
+            if (ReflectionTypes.isBaseTypeForNumberedReferenceTypes(expectedType))
                 emptyMap()
             else
                 mappedArguments
 
         val suspendConversionStrategy =
-            if (!descriptor.isSuspend && expectedType?.isSuspendFunctionType == true) {
+            if (!descriptor.isSuspend && expectedType.isSuspendFunctionType) {
                 SuspendConversionStrategy.SUSPEND_CONVERSION
             } else {
                 SuspendConversionStrategy.NO_CONVERSION

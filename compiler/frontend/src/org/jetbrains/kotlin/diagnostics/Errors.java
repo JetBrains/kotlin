@@ -1180,6 +1180,7 @@ public interface Errors {
             initializeFactoryNamesAndDefaultErrorMessages(aClass, DiagnosticFactoryToRendererMap::new);
         }
 
+        @SuppressWarnings({"unchecked", "rawtypes"})
         public static void initializeFactoryNamesAndDefaultErrorMessages(
                 @NotNull Class<?> aClass,
                 @NotNull DefaultErrorMessages.Extension defaultErrorMessages
@@ -1193,7 +1194,6 @@ public interface Errors {
                             DiagnosticFactory<?> factory = (DiagnosticFactory<?>)value;
                             factory.setName(field.getName());
 
-                            //noinspection rawtypes, unchecked
                             factory.setDefaultRenderer((DiagnosticRenderer) diagnosticToRendererMap.get(factory));
                         }
                     }

@@ -1543,7 +1543,7 @@ public abstract class StackValue {
 
                 //TODO: try to don't generate defaults at all in CollectionElementReceiver
 
-                List<ResolvedValueArgument> getterArguments = new ArrayList(collectionElementReceiver.valueArguments);
+                List<ResolvedValueArgument> getterArguments = new ArrayList<>(collectionElementReceiver.valueArguments);
                 List<ResolvedValueArgument> getterDefaults = CollectionsKt.takeLastWhile(getterArguments,
                                                                                          argument -> argument instanceof DefaultValueArgument);
 

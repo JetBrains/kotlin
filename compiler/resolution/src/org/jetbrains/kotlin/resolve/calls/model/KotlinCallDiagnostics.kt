@@ -150,7 +150,7 @@ sealed class UnstableSmartCast(
         operator fun invoke(
             argument: ExpressionKotlinCallArgument,
             targetType: UnwrappedType,
-            isReceiver: Boolean = false, // for reproducing OI behaviour
+            @Suppress("UNUSED_PARAMETER") isReceiver: Boolean = false, // for reproducing OI behaviour
         ): UnstableSmartCast {
             return UnstableSmartCastResolutionError(argument, targetType)
         }

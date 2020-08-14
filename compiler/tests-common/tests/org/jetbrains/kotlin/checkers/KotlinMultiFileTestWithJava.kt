@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.createForTests
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -131,7 +130,7 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
                 directives: Directives
             ): F? {
                 if (fileName.endsWith(".java")) {
-                    writeSourceFile(fileName, text, javaFilesDir!!)
+                    writeSourceFile(fileName, text, javaFilesDir)
                 }
                 if ((fileName.endsWith(".kt") || fileName.endsWith(".kts")) && kotlinSourceRoot != null) {
                     writeSourceFile(fileName, text, kotlinSourceRoot!!)
@@ -147,9 +146,9 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
             }
 
             private fun writeSourceFile(fileName: String, content: String, targetDir: File) {
-                val file = File(targetDir, fileName)
-                KotlinTestUtils.mkdirs(file.parentFile)
-                file.writeText(content, Charsets.UTF_8)
+                val tmpFile = File(targetDir, fileName)
+                KotlinTestUtils.mkdirs(tmpFile.parentFile)
+                tmpFile.writeText(content, Charsets.UTF_8)
             }
         }, coroutinesPackage)
     }

@@ -716,8 +716,7 @@ public class KotlinTestUtils {
         runTestImpl(testWithCustomIgnoreDirective(test, TargetBackend.ANY, IGNORE_BACKEND_DIRECTIVE_PREFIX), testCase, testDataFile);
     }
 
-    public static void runTest(@NotNull TestCase testCase, @NotNull Function0 test) {
-        //noinspection unchecked
+    public static void runTest(@NotNull TestCase testCase, @NotNull Function0<Unit> test) {
         MuteWithDatabaseKt.runTest(testCase, test);
     }
 

@@ -105,7 +105,6 @@ internal fun PsiAnnotation.tryConvertAsRetention(support: KtUltraLightSupport): 
 
     val convertedValue = extractAnnotationFqName("value")
         ?.let { retentionMapping[it] }
-        ?: null
 
     convertedValue ?: return null
 

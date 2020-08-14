@@ -148,7 +148,7 @@ fun getEnclosingDescriptor(context: BindingContext, element: KtElement): Declara
         getEnclosingDescriptor(context, declaration)
     } else {
         context.get(DECLARATION_TO_DESCRIPTOR, declaration)
-            ?: throw KotlinExceptionWithAttachments("No descriptor for named declaration of type ${declaration?.javaClass}")
+            ?: throw KotlinExceptionWithAttachments("No descriptor for named declaration of type ${declaration.javaClass}")
                 .withAttachment("declaration.kt", declaration.text)
     }
 }

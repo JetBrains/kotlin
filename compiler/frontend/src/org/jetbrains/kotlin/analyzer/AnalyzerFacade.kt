@@ -75,8 +75,8 @@ class EmptyResolverForProject<M : ModuleInfo> : ResolverForProject<M>() {
     override val allModules: Collection<M> = listOf()
     override fun diagnoseUnknownModuleInfo(infos: List<ModuleInfo>) = throw IllegalStateException("Should not be called for $infos")
 
-    override fun moduleInfoForModuleDescriptor(descriptor: ModuleDescriptor): M {
-        throw IllegalStateException("$descriptor is not contained in this resolver")
+    override fun moduleInfoForModuleDescriptor(moduleDescriptor: ModuleDescriptor): M {
+        throw IllegalStateException("$moduleDescriptor is not contained in this resolver")
     }
 }
 

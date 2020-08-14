@@ -157,7 +157,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
             val dependencies = ArrayList<ModuleInfo>()
             dependencies.add(module)
             for (dependency in testModule.dependencies) {
-                dependencies.add(modules[dependency]!!)
+                dependencies.add(modules[dependency as TestModule?]!!)
             }
 
 

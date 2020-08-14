@@ -660,7 +660,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             val dependencies = ArrayList<ModuleDescriptorImpl>()
             dependencies.add(module)
             for (dependency in testModule.dependencies) {
-                dependencies.add(modules[dependency]!!)
+                dependencies.add(modules[dependency as TestModule?]!!)
             }
 
             dependencies.add(module.builtIns.builtInsModule)

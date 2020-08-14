@@ -337,9 +337,6 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
                 for (previousNode in node.previousNodes) {
                     if (previousNode.owner != graph) continue
                     if (!node.incomingEdges.getValue(previousNode).isBack) {
-                        if (previousNode !in visited) {
-                            val x = 1
-                        }
                         assertTrue(previousNode in visited)
                     }
                 }

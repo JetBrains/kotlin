@@ -81,21 +81,6 @@ private fun KotlinTypeRefiner.refineBareType(type: PossiblyBareType): PossiblyBa
     return PossiblyBareType.type(newType)
 }
 
-@OptIn(TypeRefinement::class)
-private fun <T : DoubleColonLHS> KotlinTypeRefiner.refineLHS(lhs: T): T = when (lhs) {
-    is DoubleColonLHS.Expression -> {
-        val newType = lhs.typeInfo.type?.let { refineType(it) }
-        DoubleColonLHS.Expression(
-            lhs.typeInfo.replaceType(newType),
-            lhs.isObjectQualifier
-        ) as T
-    }
-    is DoubleColonLHS.Type -> {
-        DoubleColonLHS.Type(refineType(lhs.type), refineBareType(lhs.possiblyBareType)) as T
-    }
-    else -> throw IllegalStateException()
-}
-
 // Returns true if this expression has the form "A<B>" which means it's a type on the LHS of a double colon expression
 internal val KtCallExpression.isWithoutValueArguments: Boolean
     get() = valueArgumentList == null && lambdaArguments.isEmpty()

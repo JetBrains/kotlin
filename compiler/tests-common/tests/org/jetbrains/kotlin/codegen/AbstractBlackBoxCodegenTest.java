@@ -57,11 +57,12 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void doMultiFileTest(
         @NotNull File wholeFile,
         @NotNull List<? extends TestFile> files
     ) throws Exception {
-        doMultiFileTest(wholeFile, (List<TestFile>)files, false);
+        doMultiFileTest(wholeFile, (List<TestFile>) files, false);
     }
 
     private void doBytecodeListingTest(@NotNull File wholeFile) throws Exception {

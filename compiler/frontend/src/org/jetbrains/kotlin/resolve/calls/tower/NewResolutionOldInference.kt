@@ -606,10 +606,8 @@ fun transformToReceiverWithSmartCastInfo(
     )
 }
 
-@Deprecated("Temporary error")
 internal class PreviousResolutionError(candidateLevel: ResolutionCandidateApplicability) : ResolutionDiagnostic(candidateLevel)
 
-@Deprecated("Temporary error")
 internal fun createPreviousResolveError(status: ResolutionStatus): PreviousResolutionError? {
     val level = when (status) {
         ResolutionStatus.SUCCESS, ResolutionStatus.INCOMPLETE_TYPE_INFERENCE -> return null

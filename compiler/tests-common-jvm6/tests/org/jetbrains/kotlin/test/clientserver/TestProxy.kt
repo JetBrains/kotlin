@@ -55,8 +55,7 @@ class TestProxy(val serverPort: Int, val testClass: String, val classPath: List<
     }
 
     fun runTestNoOutput(): String {
-        return Socket("localhost", serverPort).use { clientSocket ->
-
+        Socket("localhost", serverPort).use { clientSocket ->
             val output = ObjectOutputStream(clientSocket.getOutputStream())
             try {
                 output.writeObject(MessageHeader.NEW_TEST)

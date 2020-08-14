@@ -69,6 +69,7 @@ abstract class KtLightAbstractAnnotation(parent: PsiElement, computeDelegate: La
 
     override fun getOwner() = parent as? PsiAnnotationOwner
 
+    @Suppress("DEPRECATION")
     override fun getMetaData() = clsDelegate.metaData
 
     override fun getParameterList() = clsDelegate.parameterList
@@ -91,6 +92,7 @@ class KtLightAnnotationForSourceEntry(
 
     override fun getOwner() = parent as? PsiAnnotationOwner
 
+    @Suppress("DEPRECATION")
     override fun getMetaData() = lazyClsDelegate?.value?.metaData
 
     override fun getQualifiedName() = qualifiedName

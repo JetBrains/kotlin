@@ -106,7 +106,7 @@ class LazyJavaClassDescriptor(
         LazyJavaClassMemberScope(c, this, jClass, skipRefinement = additionalSupertypeClassDescriptor != null)
 
     private val scopeHolder =
-        ScopesHolderForClass.create(this, c.storageManager, c.components.kotlinTypeChecker.kotlinTypeRefiner) { kotlinTypeRefiner ->
+        ScopesHolderForClass.create(this, c.storageManager, c.components.kotlinTypeChecker.kotlinTypeRefiner) {
             LazyJavaClassMemberScope(
                 c, this, jClass,
                 skipRefinement = additionalSupertypeClassDescriptor != null,

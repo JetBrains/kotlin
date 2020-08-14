@@ -202,6 +202,7 @@ class ResolvedAtomCompleter(
         }
 
     private fun completeLambda(lambda: ResolvedLambdaAtom) {
+        @Suppress("NAME_SHADOWING")
         val lambda = lambda.unwrap()
         val resultArgumentsInfo = lambda.resultArgumentsInfo!!
         val returnType = if (lambda.isCoercedToUnit) {

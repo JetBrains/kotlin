@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.KtNodeTypes;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("deprecation")
 public abstract class KtFunctionNotStubbed extends KtTypeParameterListOwnerNotStubbed implements KtFunction {
 
     public KtFunctionNotStubbed(@NotNull ASTNode node) {

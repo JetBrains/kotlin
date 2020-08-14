@@ -721,7 +721,7 @@ class PSICallResolver(
     ): PSIKotlinCallArgument {
         val builtIns = outerCallContext.scope.ownerDescriptor.builtIns
 
-        fun createParseErrorElement() = ParseErrorKotlinCallArgument(valueArgument, startDataFlowInfo, builtIns)
+        fun createParseErrorElement() = ParseErrorKotlinCallArgument(valueArgument, startDataFlowInfo)
 
         val argumentExpression = valueArgument.getArgumentExpression() ?: return createParseErrorElement()
         val ktExpression = KtPsiUtil.deparenthesize(argumentExpression) ?: createParseErrorElement()
