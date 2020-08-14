@@ -56,9 +56,7 @@ interface DokkaConfigurationBuilder<T : Any> {
     fun build(): T
 }
 
-fun <T : Any> Iterable<DokkaConfigurationBuilder<T>>.build(): List<T> {
-    return this.map { it.build() }
-}
+fun <T : Any> Iterable<DokkaConfigurationBuilder<T>>.build(): List<T> = this.map { it.build() }
 
 data class DokkaSourceSetID(
     val moduleName: String,
