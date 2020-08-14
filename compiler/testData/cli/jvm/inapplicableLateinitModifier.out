@@ -1,0 +1,52 @@
+compiler/testData/cli/jvm/inapplicableLateinitModifier.kt:6:1: error: 'lateinit' modifier is not allowed on properties of primitive types
+lateinit var test: Int
+^
+compiler/testData/cli/jvm/inapplicableLateinitModifier.kt:7:1: error: 'lateinit' modifier is not allowed on delegated properties
+lateinit var kest by Delegate
+^
+compiler/testData/cli/jvm/inapplicableLateinitModifier.kt:12:5: error: 'lateinit' modifier is allowed only on mutable properties
+    lateinit val fest = "10"
+    ^
+compiler/testData/cli/jvm/inapplicableLateinitModifier.kt:12:5: error: 'lateinit' modifier is not allowed on properties with initializer
+    lateinit val fest = "10"
+    ^
+compiler/testData/cli/jvm/inapplicableLateinitModifier.kt:14:5: error: 'lateinit' modifier is not allowed on properties of nullable types
+    lateinit var xest: String?
+    ^
+compiler/testData/cli/jvm/inapplicableLateinitModifier.kt:15:5: error: 'lateinit' modifier is not allowed on properties of primitive types
+    lateinit var nest: Int
+    ^
+compiler/testData/cli/jvm/inapplicableLateinitModifier.kt:16:5: error: 'lateinit' modifier is not allowed on properties of primitive types
+    lateinit var west: Char
+    ^
+compiler/testData/cli/jvm/inapplicableLateinitModifier.kt:17:5: error: 'lateinit' modifier is not allowed on properties of primitive types
+    lateinit var qest: Boolean
+    ^
+compiler/testData/cli/jvm/inapplicableLateinitModifier.kt:18:5: error: 'lateinit' modifier is not allowed on properties of primitive types
+    lateinit var aest: Short
+    ^
+compiler/testData/cli/jvm/inapplicableLateinitModifier.kt:19:5: error: 'lateinit' modifier is not allowed on properties of primitive types
+    lateinit var hest: Byte
+    ^
+compiler/testData/cli/jvm/inapplicableLateinitModifier.kt:20:5: error: 'lateinit' modifier is not allowed on properties of primitive types
+    lateinit var jest: Long
+    ^
+compiler/testData/cli/jvm/inapplicableLateinitModifier.kt:21:5: error: 'lateinit' modifier is allowed only on mutable properties
+    lateinit val dest: String
+    ^
+compiler/testData/cli/jvm/inapplicableLateinitModifier.kt:21:5: error: 'lateinit' modifier is not allowed on properties with a custom getter or setter
+    lateinit val dest: String
+    ^
+compiler/testData/cli/jvm/inapplicableLateinitModifier.kt:26:5: error: 'lateinit' modifier is not allowed on properties of a type with nullable upper bound
+    lateinit var best: T
+    ^
+compiler/testData/cli/jvm/inapplicableLateinitModifier.kt:31:5: error: 'lateinit' modifier is not allowed on properties of nullable types
+    lateinit var vest: K?
+    ^
+compiler/testData/cli/jvm/inapplicableLateinitModifier.kt:35:5: error: 'lateinit' modifier is not allowed on local variables of primitive types
+    lateinit var i: Int
+    ^
+compiler/testData/cli/jvm/inapplicableLateinitModifier.kt:37:5: error: 'lateinit' modifier is not allowed on local variables with initializer
+    lateinit var b: B<String> = B()
+    ^
+COMPILATION_ERROR

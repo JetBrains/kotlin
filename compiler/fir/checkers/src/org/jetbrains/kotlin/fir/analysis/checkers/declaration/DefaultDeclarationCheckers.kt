@@ -39,6 +39,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirInterfaceWithSuperclassChecker,
         FirEnumClassSimpleChecker,
         FirSealedSupertypeChecker,
+        FirInapplicableLateinitChecker,
     )
 
     override val regularClassCheckers: List<FirRegularClassChecker> = listOf(

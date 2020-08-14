@@ -320,6 +320,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/help.args");
         }
 
+        @TestMetadata("inapplicableLateinitModifier.args")
+        public void testInapplicableLateinitModifier() throws Exception {
+            runTest("compiler/testData/cli/jvm/inapplicableLateinitModifier.args");
+        }
+
         @TestMetadata("inlineCycle.args")
         public void testInlineCycle() throws Exception {
             runTest("compiler/testData/cli/jvm/inlineCycle.args");
