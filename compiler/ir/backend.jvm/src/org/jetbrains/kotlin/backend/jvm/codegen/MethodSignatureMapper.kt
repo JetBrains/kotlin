@@ -201,7 +201,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         mapSignature(function, false)
 
     private fun mapSignature(function: IrFunction, skipGenericSignature: Boolean, skipSpecial: Boolean = false): JvmMethodGenericSignature {
-        if (function is IrLazyFunctionBase && function.initialSignatureFunction != null) {
+        if (function is IrLazyFunctionBase && !function.isFakeOverride && function.initialSignatureFunction != null) {
             // Overrides of special builtin in Kotlin classes always have special signature
             if ((function as? IrSimpleFunction)?.getDifferentNameForJvmBuiltinFunction() == null ||
                 (function.parent as? IrClass)?.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
