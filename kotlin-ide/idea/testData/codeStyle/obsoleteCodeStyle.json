@@ -42,7 +42,7 @@
         "java.**",
         "javax.**",
         "kotlin.**",
-        "$"
+        "^"
       ],
       "indent_size": 4,
       "indent_style": "space",

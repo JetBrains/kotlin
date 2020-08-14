@@ -25,7 +25,7 @@ class KotlinPackageEntryTableAccessor(kotlinCodeStyle: KotlinCodeStyleSettings, 
     override fun toExternal(value: KotlinPackageEntryTable): List<String> = value.getEntries().map(::writePackageEntry)
 
     companion object {
-        private const val ALIAS_CHAR = "$"
+        private const val ALIAS_CHAR = "^"
         private const val OTHER_CHAR = "*"
 
         private fun readPackageEntry(string: String): KotlinPackageEntry = when {
