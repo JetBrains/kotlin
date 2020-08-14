@@ -3,7 +3,7 @@ fun foo(): Int = 10
 // SYMBOLS:
 /*
 KtFirFunctionSymbol:
-  fqName: foo
+  callableIdIfNonLocal: foo
   isExtension: false
   isOperator: false
   isSuspend: false

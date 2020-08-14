@@ -2,7 +2,7 @@ callable: kotlin/collections/List.get
 
 // SYMBOLS:
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.List.get
+  callableIdIfNonLocal: kotlin.collections.List.get
   isExtension: false
   isOperator: true
   isSuspend: false

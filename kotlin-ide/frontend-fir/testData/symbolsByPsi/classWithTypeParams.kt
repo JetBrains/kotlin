@@ -12,7 +12,7 @@ KtFirTypeParameterSymbol:
   origin: SOURCE
 
 KtFirClassOrObjectSymbol:
-  classId: A
+  classIdIfNonLocal: A
   classKind: CLASS
   modality: FINAL
   name: A

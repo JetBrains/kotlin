@@ -3,7 +3,7 @@ val Int.y = this
 
 // SYMBOLS:
 KtFirPropertySymbol:
-  fqName: x
+  callableIdIfNonLocal: x
   isExtension: false
   isVal: true
   modality: FINAL
@@ -14,7 +14,7 @@ KtFirPropertySymbol:
   type: kotlin/Int
 
 KtFirPropertySymbol:
-  fqName: y
+  callableIdIfNonLocal: y
   isExtension: true
   isVal: true
   modality: FINAL

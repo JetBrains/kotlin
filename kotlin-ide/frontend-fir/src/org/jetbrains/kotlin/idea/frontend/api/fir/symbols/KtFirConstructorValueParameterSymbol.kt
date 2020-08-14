@@ -40,11 +40,6 @@ internal class KtFirConstructorValueParameterSymbol(
             }
         }
 
-    override val containingNonLocalClassIdIfMember: ClassId?
-        get() = firRef.withFir { fir ->
-            fir.symbol.callableId.classId.takeIf { fir.isVal || fir.isVar }
-        }
-
     override val constructorParameterKind: KtConstructorParameterSymbolKind
         get() = firRef.withFir { fir ->
             when {

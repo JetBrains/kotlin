@@ -2,7 +2,7 @@ class: kotlin/collections/Iterator
 
 // SYMBOLS:
 KtFirClassOrObjectSymbol:
-  classId: kotlin/collections/Iterator
+  classIdIfNonLocal: kotlin/collections/Iterator
   classKind: INTERFACE
   modality: ABSTRACT
   name: Iterator

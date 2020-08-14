@@ -5,7 +5,7 @@ class A {
 
 // SYMBOLS:
 KtFirPropertySymbol:
-  fqName: A.x
+  callableIdIfNonLocal: A.x
   isExtension: false
   isVal: true
   modality: FINAL
@@ -16,7 +16,7 @@ KtFirPropertySymbol:
   type: kotlin/Int
 
 KtFirPropertySymbol:
-  fqName: A.y
+  callableIdIfNonLocal: A.y
   isExtension: true
   isVal: true
   modality: FINAL
@@ -27,7 +27,7 @@ KtFirPropertySymbol:
   type: A
 
 KtFirClassOrObjectSymbol:
-  classId: A
+  classIdIfNonLocal: A
   classKind: CLASS
   modality: FINAL
   name: A

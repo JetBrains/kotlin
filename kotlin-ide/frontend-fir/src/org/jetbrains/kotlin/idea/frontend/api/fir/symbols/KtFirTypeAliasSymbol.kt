@@ -27,7 +27,6 @@ internal class KtFirTypeAliasSymbol(
     override val psi: PsiElement? by firRef.withFirAndCache { it.findPsi(fir.session) }
     override val name: Name get() = firRef.withFir { it.name }
     override val classIdIfNonLocal: ClassId get() = firRef.withFir { it.symbol.classId }
-    override val containingPackageFqNameIfTopLevel: FqName get() = firRef.withFir { it.symbol.classId.packageFqName }
 
     override fun createPointer(): KtSymbolPointer<KtTypeAliasSymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }

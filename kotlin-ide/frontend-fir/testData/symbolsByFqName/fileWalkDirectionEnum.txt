@@ -2,7 +2,7 @@ callable: kotlin/collections/listOf
 
 // SYMBOLS:
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.listOf
+  callableIdIfNonLocal: kotlin.collections.listOf
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -16,7 +16,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(element)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.listOf
+  callableIdIfNonLocal: kotlin.collections.listOf
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -30,7 +30,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.listOf
+  callableIdIfNonLocal: kotlin.collections.listOf
   isExtension: false
   isOperator: false
   isSuspend: false

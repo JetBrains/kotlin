@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithKind
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtDeclaration
 
 internal class KtFirSymbolContainingDeclarationProvider(
@@ -43,8 +44,26 @@ internal class KtFirSymbolContainingDeclarationProvider(
     private fun getContainingDeclarationForLibrarySymbol(symbol: KtSymbolWithKind): KtSymbolWithKind = with(analysisSession) {
         require(symbol.origin == KtSymbolOrigin.LIBRARY)
         check(symbol.symbolKind == KtSymbolKind.MEMBER)
-        val containingClassId =
-            symbol.containingNonLocalClassIdIfMember ?: error("containingClassId should not be null for member declaration")
+
+        val containingClassId = when (symbol) {
+            is KtClassLikeSymbol -> {
+                val classId = symbol.classIdIfNonLocal ?: error("classId should not be null for non-local declaration")
+                classId.outerClassId
+            }
+            is KtFunctionSymbol -> {
+                val fqName = symbol.callableIdIfNonLocal ?: error("fqName should not be null for non-local declaration")
+                fqName.parent().let { ClassId.topLevel(it) }
+            }
+            is KtEnumEntrySymbol -> {
+                val classId = symbol.containingEnumClassIdIfNonLocal ?: error("fqName should not be null for non-local declaration")
+                classId.outerClassId
+            }
+            is KtPropertySymbol -> {
+                val fqName = symbol.callableIdIfNonLocal ?: error("fqName should not be null for non-local declaration")
+                fqName.parent().let { ClassId.topLevel(it) }
+            }
+            else -> error("We should not have a ${symbol::class} from a library")
+        } ?: error("outerClassId should not be null for member declaration")
         val containingClass = containingClassId.getCorrespondingToplevelClassOrObjectSymbol()
         return containingClass ?: error("Class with id $containingClassId should exists")
     }

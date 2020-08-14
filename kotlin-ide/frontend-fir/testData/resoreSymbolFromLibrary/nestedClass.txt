@@ -2,7 +2,7 @@ class: kotlin/collections/MutableMap.MutableEntry
 
 // SYMBOLS:
 KtFirClassOrObjectSymbol:
-  classId: kotlin/collections/MutableMap.MutableEntry
+  classIdIfNonLocal: kotlin/collections/MutableMap.MutableEntry
   classKind: INTERFACE
   modality: ABSTRACT
   name: MutableEntry
