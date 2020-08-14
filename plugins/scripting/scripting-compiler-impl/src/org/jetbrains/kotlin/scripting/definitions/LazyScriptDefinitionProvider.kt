@@ -55,6 +55,7 @@ abstract class LazyScriptDefinitionProvider : ScriptDefinitionProvider {
             cachedDefinitions.firstOrNull { it.isScript(script) }
         }
 
+    @Suppress("OverridingDeprecatedMember", "DEPRECATION")
     override fun findScriptDefinition(fileName: String): KotlinScriptDefinition? =
         if (nonScriptId(fileName)) null
         else lock.read {
@@ -67,6 +68,7 @@ abstract class LazyScriptDefinitionProvider : ScriptDefinitionProvider {
         cachedDefinitions.map { it.fileExtension }
     }
 
+    @Suppress("OverridingDeprecatedMember", "DEPRECATION")
     override fun getDefaultScriptDefinition(): KotlinScriptDefinition = getDefaultDefinition().legacyDefinition
 
     companion object {

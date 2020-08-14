@@ -15,6 +15,7 @@
  */
 
 @file:DependsOn("org.funktionale:funktionale:0.9.6")
+@file:Suppress("DEPRECATION")
 
 package org.jetbrains.kotlin.script.util.resolvers
 
