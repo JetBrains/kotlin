@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.resolve
 
-import com.google.common.collect.Lists
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiPolyVariantReference
@@ -14,7 +13,9 @@ import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightPlatformCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.test.util.renderAsGotoImplementation
 import org.junit.Assert
 import kotlin.test.assertTrue
 
-abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsightFixtureTestCase() {
+abstract class AbstractReferenceResolveTest : KotlinLightCodeInsightFixtureTestCase() {
     class ExpectedResolveData(private val shouldBeUnresolved: Boolean?, val referenceString: String) {
 
         fun shouldBeUnresolved(): Boolean {
@@ -72,7 +73,7 @@ abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsightFixt
                 wrapReference(psiReference).multiResolve(true)
             }
 
-            val actualResolvedTo = Lists.newArrayList<String>()
+            val actualResolvedTo = mutableListOf<String>()
             for (result in results) {
                 actualResolvedTo.add(result.element!!.renderAsGotoImplementation())
             }
@@ -89,13 +90,13 @@ abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsightFixt
         }
     }
 
-    override fun getProjectDescriptor(): LightProjectDescriptor? = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+    override fun getDefaultProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     open val refMarkerText: String = "REF"
 
     companion object {
-        val MULTIRESOLVE: String = "MULTIRESOLVE"
-        val REF_EMPTY: String = "REF_EMPTY"
+        const val MULTIRESOLVE: String = "MULTIRESOLVE"
+        const val REF_EMPTY: String = "REF_EMPTY"
 
         fun readResolveData(fileText: String, index: Int, refMarkerText: String = "REF"): ExpectedResolveData {
             val shouldBeUnresolved = InTextDirectivesUtils.isDirectiveDefined(fileText, REF_EMPTY)
@@ -110,7 +111,7 @@ abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsightFixt
                     refs.size == 1,
                     "Must be a single ref: $refs.\nUse $MULTIRESOLVE if you need multiple refs\nUse $REF_EMPTY for an unresolved reference"
                 )
-                referenceToString = refs.get(0)
+                referenceToString = refs[0]
                 Assert.assertNotNull("Test data wasn't found, use \"// REF: \" directive", referenceToString)
             }
 

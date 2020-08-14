@@ -77,7 +77,7 @@ abstract class AbstractFindUsagesWithDisableComponentSearchTest : AbstractFindUs
 
 abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() {
 
-    override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+    override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_NO_SOURCES
 
     // used in Spring tests (outside main project!)
     protected open fun extraConfig(path: String) {

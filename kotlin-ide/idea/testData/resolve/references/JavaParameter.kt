@@ -5,4 +5,4 @@ lateinit var y: java.nio.CharBuffer
 
 val h = x.read(p<caret>0 = y)
 
-// REF: java.nio.CharBuffer charBuffer
+// REF: CharBuffer var1

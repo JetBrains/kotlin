@@ -49,6 +49,11 @@ public class KotlinWithJdkAndRuntimeLightProjectDescriptor extends KotlinJdkAndL
             Collections.singletonList(KotlinArtifacts.getInstance().getKotlinStdlibSources())
     );
 
+    @NotNull
+    public static final KotlinWithJdkAndRuntimeLightProjectDescriptor INSTANCE_NO_SOURCES = new KotlinWithJdkAndRuntimeLightProjectDescriptor(
+            INSTANCE.getLibraryFiles(), Collections.emptyList()
+    );
+
     public static KotlinWithJdkAndRuntimeLightProjectDescriptor getInstance(LanguageLevel level) {
         return new KotlinWithJdkAndRuntimeLightProjectDescriptor() {
             @Override

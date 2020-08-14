@@ -2,4 +2,4 @@
 
 package foo
 
-// REF: (in kotlin.Deprecated).Deprecated(kotlin.String, kotlin.ReplaceWith, kotlin.DeprecationLevel)
+// REF: (in kotlin.Deprecated).Deprecated(String, ReplaceWith, DeprecationLevel)
