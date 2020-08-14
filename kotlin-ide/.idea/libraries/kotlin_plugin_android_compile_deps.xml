@@ -74,7 +74,6 @@
       <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/completion/completion-ranking-kotlin/0.1.2/completion-ranking-kotlin-0.1.2.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/trove4j/1.0.20181211/trove4j-1.0.20181211.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/allopen-ide-plugin-ij202/1.4.0-rc-release-221/allopen-ide-plugin-ij202-1.4.0-rc-release-221.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/android-extensions-compiler-ij202/1.4.0-rc-release-221/android-extensions-compiler-ij202-1.4.0-rc-release-221.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/android-extensions-ide-ij202/1.4.0-rc-release-221/android-extensions-ide-ij202-1.4.0-rc-release-221.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kapt3-idea-ij202/1.4.0-rc-release-221/kapt3-idea-ij202-1.4.0-rc-release-221.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-allopen-compiler-plugin-ij202/1.4.0-rc-release-221/kotlin-allopen-compiler-plugin-ij202-1.4.0-rc-release-221.jar!/" />
