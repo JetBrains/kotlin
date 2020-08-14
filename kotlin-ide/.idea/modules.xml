@@ -191,7 +191,6 @@
     <module old-name="layoutlib-resources" new-name="android.sdktools.layoutlib-resources" />
     <module old-name="lint-api" new-name="android.sdktools.lint-api" />
     <module old-name="lint-checks" new-name="android.sdktools.lint-checks" />
-    <module old-name="log-events" new-name="intellij.statsCollector.logEvents" />
     <module old-name="lvcs-api" new-name="intellij.platform.lvcs" />
     <module old-name="lvcs-impl" new-name="intellij.platform.lvcs.impl" />
     <module old-name="main_AndroidStudio" new-name="intellij.android.studio.main" />
@@ -790,7 +789,6 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/spellchecker/intellij.spellchecker.iml" filepath="$PROJECT_DIR$/intellij/spellchecker/intellij.spellchecker.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/stats-collector/intellij.statsCollector.iml" filepath="$PROJECT_DIR$/intellij/plugins/stats-collector/intellij.statsCollector.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/stats-collector/completion-ranker/intellij.statsCollector.completionRanker.iml" filepath="$PROJECT_DIR$/intellij/plugins/stats-collector/completion-ranker/intellij.statsCollector.completionRanker.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/stats-collector/log-events/intellij.statsCollector.logEvents.iml" filepath="$PROJECT_DIR$/intellij/plugins/stats-collector/log-events/intellij.statsCollector.logEvents.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/stats-collector/intellij.statsCollector.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/stats-collector/intellij.statsCollector.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/tasks/tasks-api/intellij.tasks.iml" filepath="$PROJECT_DIR$/intellij/plugins/tasks/tasks-api/intellij.tasks.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/tasks/tasks-compatibility/intellij.tasks.compatibility.iml" filepath="$PROJECT_DIR$/intellij/plugins/tasks/tasks-compatibility/intellij.tasks.compatibility.iml" />

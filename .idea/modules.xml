@@ -482,7 +482,6 @@
     <module old-name="lint-checks" new-name="android.sdktools.lint-checks" />
     <module old-name="liveedit-protocol" new-name="intellij.js.liveEdit.protocol" />
     <module old-name="localization" new-name="intellij.gnuGetText" />
-    <module old-name="log-events" new-name="intellij.statsCollector.logEvents" />
     <module old-name="lvcs-api" new-name="intellij.platform.lvcs" />
     <module old-name="lvcs-impl" new-name="intellij.platform.lvcs.impl" />
     <module old-name="main" new-name="intellij.idea.ultimate.main" />
@@ -2027,7 +2026,6 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/tests/statisticsTests/intellij.statisticsTests.iml" filepath="$PROJECT_DIR$/intellij/tests/statisticsTests/intellij.statisticsTests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/stats-collector/intellij.statsCollector.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/stats-collector/intellij.statsCollector.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/stats-collector/completion-ranker/intellij.statsCollector.completionRanker.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/stats-collector/completion-ranker/intellij.statsCollector.completionRanker.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/stats-collector/log-events/intellij.statsCollector.logEvents.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/stats-collector/log-events/intellij.statsCollector.logEvents.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/stats-collector/intellij.statsCollector.tests.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/stats-collector/intellij.statsCollector.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/struts2/plugin/intellij.struts2.iml" filepath="$PROJECT_DIR$/intellij/contrib/struts2/plugin/intellij.struts2.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/struts2/dom-api/intellij.struts2.dom.iml" filepath="$PROJECT_DIR$/intellij/contrib/struts2/dom-api/intellij.struts2.dom.iml" />
