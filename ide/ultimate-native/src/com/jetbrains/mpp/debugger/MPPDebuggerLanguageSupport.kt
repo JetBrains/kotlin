@@ -20,4 +20,6 @@ class MPPDebuggerLanguageSupport : CidrDebuggerLanguageSupport() {
     override fun getSupportedDebuggerLanguages(): MutableSet<DebuggerDriver.DebuggerLanguage> {
         return mutableSetOf(C)
     }
+
+    override fun useFrameLanguageFromDebugger(profile: RunProfile?) = false
 }

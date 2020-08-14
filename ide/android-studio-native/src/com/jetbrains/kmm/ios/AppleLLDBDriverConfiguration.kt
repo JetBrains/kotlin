@@ -19,6 +19,8 @@ class AppleLLDBDriverConfiguration : LLDBDriverConfiguration() {
         "LLDB.framework/Resources"
     )
 
+    override fun useSTLRenderers() = false
+
     override fun getLLDBFrontendFile(architecture: ArchitectureType) = CidrPathManager.getBinFile(
         AppleLLDBDriverConfiguration::class.java,
         "",
