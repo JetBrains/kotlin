@@ -382,3 +382,71 @@ optimization. Specifically, it simplifies tail-call optimization analysis for fu
 them as returning `Any?`.
 
 The continuation parameter is named `$completion` in both Kotlin Metadata and LVT.
+
+### Resume With Result
+
+Let us consider the following example with a suspending function, returning a value, instead of `Unit`:
+```kotlin
+import kotlin.coroutines.*
+
+var c: Continuation<Int>? = null
+
+suspend fun suspendMe(): Int = suspendCoroutine { continuation ->
+    c = continuation
+}
+
+fun builder(c: suspend () -> Unit) {
+    c.startCoroutine(object: Continuation<Unit> {
+        override val context = EmptyCoroutineContext
+        override fun resumeWith(result: Result<Unit>) {
+            result.getOrThrow()
+        }
+    })
+}
+
+fun main() {
+    val a: suspend () -> Unit = { println(suspendMe()) }
+    builder { a() }
+    c?.resume(42)
+}
+```
+if one runs the program, it prints `42`. However, `suspendMe` does not return `42`. It just suspends and returns nothing. By the way, 
+`suspendMe`'s continuation has type `Continuation<Int>`, i.e., the return type of the function is used as a type argument of `Continuation` 
+interface, as I mentioned in the previous section (about continuation-passing style).
+
+The state-machine section touched upon the `$result` variable inside the `invokeSuspend` function. The listing shows the `invokeSuspend` 
+function of `a`, but, unlike the previous example, with its signature:
+```kotlin
+fun invokeSuspend($result: Any?): Any? {
+    when(this.label) {
+        0 -> {
+            this.label = 1
+            $result = suspendMe(this)
+            if ($result == COROUTINE_SUSPENDED) return COROUTINE_SUSPENDED
+            goto 1
+        }
+        1 -> {
+            println($result)
+            return Unit
+        }
+        else -> {
+            throw IllegalStateException("call to 'resume' before 'invoke' with coroutine")
+        }
+    }
+}
+```
+The listing shows that the `$result` variable is both parameter of the function and result of suspending call. Thus, when we call 
+`c?.resume(42)`, the value `42` is passed to `BaseContinuationImpl.resumeImpl`, it calls `invokeSuspend` with it. Now, since `label`'s value 
+is `1` (`suspendMe` suspended),
+`42` is printed. Note that in the first state, we ignore the argument of `invokeSuspend`, and this becomes important when we
+see how we start a coroutine.
+
+So, what happens, when we call `resume` inside `suspendCoroutine`? Like
+```kotlin
+suspendCoroutine<Int> { it.resume(42) }
+```
+Following the resume process, `resume` calls continuation's `resumeWith`, which calls `invokeSuspend` with
+value `42`. Then, this will be `$result` and work the same as if `suspendMe` returned `42`. In other words, `suspendCoroutine` with an 
+unconditional resume will not suspend the coroutine and is semantically the same as returning the value.
+
+It is important to note that passing `COROUTINE_SUSPENDED` to continuation's `resumeWith` leads to undefined behavior.
