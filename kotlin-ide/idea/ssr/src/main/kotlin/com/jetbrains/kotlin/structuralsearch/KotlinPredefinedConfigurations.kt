@@ -5,6 +5,9 @@ import com.intellij.structuralsearch.PredefinedConfigurationUtil.createSearchTem
 import com.intellij.structuralsearch.plugin.ui.Configuration
 import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
+import com.jetbrains.kotlin.structuralsearch.filters.OneStateFilter
+import com.jetbrains.kotlin.structuralsearch.filters.ValOnlyFilter
+import com.jetbrains.kotlin.structuralsearch.filters.VarOnlyFilter
 import org.jetbrains.kotlin.idea.KotlinFileType
 
 object KotlinPredefinedConfigurations {
@@ -97,6 +100,21 @@ object KotlinPredefinedConfigurations {
         searchTemplate(
             KSSRBundle.message("predefined.configuration.strings.with.long.template"),
             """ "$$'_EntryBefore*${'$'}{ '_LongTemplateExpr }$$'_EntryAfter*" """,
+            EXPRESSION_TYPE
+        ),
+        searchTemplate(
+            KSSRBundle.message("predefined.configuration.vars.only"),
+            """var '_Variable:[_${VarOnlyFilter.CONSTRAINT_NAME}(${OneStateFilter.ENABLED})]""",
+            EXPRESSION_TYPE
+        ),
+        searchTemplate(
+            KSSRBundle.message("predefined.configuration.vals.only"),
+            """val '_Value:[_${ValOnlyFilter.CONSTRAINT_NAME}(${OneStateFilter.ENABLED})]""",
+            EXPRESSION_TYPE
+        ),
+        searchTemplate(
+            KSSRBundle.message("predefined.configuration.vars.of.given.type"),
+            """var '_Variable:[exprtype(Int)] = '_Init""",
             EXPRESSION_TYPE
         ),
 
