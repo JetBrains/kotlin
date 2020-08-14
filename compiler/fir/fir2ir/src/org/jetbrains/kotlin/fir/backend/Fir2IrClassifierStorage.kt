@@ -134,7 +134,7 @@ class Fir2IrClassifierStorage(
     }
 
     internal fun getCachedIrClass(klass: FirClass<*>): IrClass? {
-        return if (klass is FirAnonymousObject || klass is FirRegularClass && klass.visibility == Visibilities.LOCAL) {
+        return if (klass is FirAnonymousObject || klass is FirRegularClass && klass.visibility == Visibilities.Local) {
             localStorage.getLocalClass(klass)
         } else {
             classCache[klass]
@@ -254,7 +254,7 @@ class Fir2IrClassifierStorage(
         if (parent != null) {
             irClass.parent = parent
         }
-        if (regularClass.visibility == Visibilities.LOCAL) {
+        if (regularClass.visibility == Visibilities.Local) {
             localStorage.putLocalClass(regularClass, irClass)
         } else {
             classCache[regularClass] = irClass
@@ -264,7 +264,7 @@ class Fir2IrClassifierStorage(
 
     fun createIrAnonymousObject(
         anonymousObject: FirAnonymousObject,
-        visibility: Visibility = Visibilities.LOCAL,
+        visibility: Visibility = Visibilities.Local,
         name: Name = Name.special("<no name provided>"),
         irParent: IrDeclarationParent? = null
     ): IrClass {
@@ -293,7 +293,7 @@ class Fir2IrClassifierStorage(
 
     private fun getIrAnonymousObjectForEnumEntry(anonymousObject: FirAnonymousObject, name: Name, irParent: IrClass?): IrClass {
         localStorage.getLocalClass(anonymousObject)?.let { return it }
-        return createIrAnonymousObject(anonymousObject, Visibilities.PRIVATE, name, irParent)
+        return createIrAnonymousObject(anonymousObject, Visibilities.Private, name, irParent)
     }
 
     private fun createIrTypeParameterWithoutBounds(
@@ -426,7 +426,7 @@ class Fir2IrClassifierStorage(
     fun getIrClassSymbol(firClassSymbol: FirClassSymbol<*>): IrClassSymbol {
         val firClass = firClassSymbol.fir
         getCachedIrClass(firClass)?.let { return it.symbol }
-        if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.visibility == Visibilities.LOCAL) {
+        if (firClass is FirAnonymousObject || firClass is FirRegularClass && firClass.visibility == Visibilities.Local) {
             return createIrClass(firClass).symbol
         }
         val signature = signatureComposer.composeSignature(firClass)!!

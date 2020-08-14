@@ -468,10 +468,10 @@ internal object CheckVisibility : CheckerStage() {
             JavaVisibilities.PACKAGE_VISIBILITY -> {
                 symbol.packageFqName() == useSiteFile.packageFqName
             }
-            Visibilities.INTERNAL -> {
+            Visibilities.Internal -> {
                 declaration.session == callInfo.session
             }
-            Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS -> {
+            Visibilities.Private, Visibilities.PrivateToThis -> {
                 if (declaration.session == callInfo.session) {
                     if (ownerId == null || declaration is FirConstructor && declaration.isFromSealedClass) {
                         val candidateFile = when (symbol) {
@@ -489,7 +489,7 @@ internal object CheckVisibility : CheckerStage() {
                     declaration is FirSimpleFunction && declaration.isAllowedToBeAccessedFromOutside()
                 }
             }
-            Visibilities.PROTECTED -> {
+            Visibilities.Protected -> {
                 ownerId != null && canSeeProtectedMemberOf(containingDeclarations, candidate.dispatchReceiverValue, ownerId, session)
             }
             JavaVisibilities.PROTECTED_AND_PACKAGE, JavaVisibilities.PROTECTED_STATIC_VISIBILITY -> {

@@ -6,27 +6,27 @@
 package org.jetbrains.kotlin.fir
 
 object Visibilities {
-    object PRIVATE : Visibility("private", isPublicAPI = false)
+    object Private : Visibility("private", isPublicAPI = false)
 
-    object PRIVATE_TO_THIS : Visibility("private_to_this", isPublicAPI = false) {
+    object PrivateToThis : Visibility("private_to_this", isPublicAPI = false) {
         override val internalDisplayName: String
             get() = "private/*private to this*/"
     }
 
-    object PROTECTED : Visibility("protected", isPublicAPI = true)
-    object INTERNAL : Visibility("internal", isPublicAPI = false)
-    object PUBLIC : Visibility("public", isPublicAPI = true)
-    object LOCAL : Visibility("local", isPublicAPI = false)
-    object INVISIBLE_FAKE : Visibility("invisible_fake", isPublicAPI = false)
-    object UNKNOWN : Visibility("unknown", isPublicAPI = false)
+    object Protected : Visibility("protected", isPublicAPI = true)
+    object Internal : Visibility("internal", isPublicAPI = false)
+    object Public : Visibility("public", isPublicAPI = true)
+    object Local : Visibility("local", isPublicAPI = false)
+    object InvisibleFake : Visibility("invisible_fake", isPublicAPI = false)
+    object Unknown : Visibility("unknown", isPublicAPI = false)
 
     @OptIn(ExperimentalStdlibApi::class)
     private val ORDERED_VISIBILITIES: Map<Visibility, Int> = buildMap {
-        put(PRIVATE_TO_THIS, 0)
-        put(PRIVATE, 0);
-        put(INTERNAL, 1);
-        put(PROTECTED, 1);
-        put(PUBLIC, 2);
+        put(PrivateToThis, 0)
+        put(Private, 0);
+        put(Internal, 1);
+        put(Protected, 1);
+        put(Public, 2);
     }
 
     fun compare(first: Visibility, second: Visibility): Int? {
@@ -50,8 +50,8 @@ object Visibilities {
     }
 
     fun isPrivate(visibility: Visibility): Boolean {
-        return visibility === PRIVATE || visibility === PRIVATE_TO_THIS
+        return visibility === Private || visibility === PrivateToThis
     }
 
-    val DEFAULT_VISIBILITY = PUBLIC
+    val DEFAULT_VISIBILITY = Public
 }

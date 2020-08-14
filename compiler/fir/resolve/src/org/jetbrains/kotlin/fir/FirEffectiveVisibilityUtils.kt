@@ -81,11 +81,11 @@ private fun Visibility.forVisibility(
     session: FirSession, containerSymbol: FirClassLikeSymbol<*>?
 ): FirEffectiveVisibility =
     when (this) {
-        Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS, Visibilities.INVISIBLE_FAKE -> Private
-        Visibilities.PROTECTED -> Protected(containerSymbol, session)
-        Visibilities.INTERNAL -> Internal
-        Visibilities.PUBLIC -> Public
-        Visibilities.LOCAL -> Local
+        Visibilities.Private, Visibilities.PrivateToThis, Visibilities.InvisibleFake -> Private
+        Visibilities.Protected -> Protected(containerSymbol, session)
+        Visibilities.Internal -> Internal
+        Visibilities.Public -> Public
+        Visibilities.Local -> Local
         // NB: visibility must be already normalized here, so e.g. no JavaVisibilities are possible at this point
         // TODO: else -> throw AssertionError("Visibility $name is not allowed in forVisibility")
         JavaVisibilities.PACKAGE_VISIBILITY -> PackagePrivate

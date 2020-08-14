@@ -154,7 +154,7 @@ class Fir2IrVisitor(
     }
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: Any?): IrElement {
-        if (regularClass.visibility == Visibilities.LOCAL) {
+        if (regularClass.visibility == Visibilities.Local) {
             val irParent = conversionScope.parentFromStack()
             // NB: for implicit types it is possible that local class is already cached
             val irClass = classifierStorage.getCachedIrClass(regularClass)?.apply { this.parent = irParent }
@@ -222,7 +222,7 @@ class Fir2IrVisitor(
     }
 
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?): IrElement {
-        val irFunction = if (simpleFunction.visibility == Visibilities.LOCAL) {
+        val irFunction = if (simpleFunction.visibility == Visibilities.Local) {
             declarationStorage.createIrFunction(
                 simpleFunction, irParent = conversionScope.parent(), isLocal = true
             )
@@ -667,7 +667,7 @@ class Fir2IrVisitor(
             symbol = FirPropertySymbol(name)
             isVar = false
             isLocal = true
-            status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
+            status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
         }
         val irLhsVariable = firLhsVariable.accept(this, null) as IrVariable
         return elvisExpression.convertWithOffsets { startOffset, endOffset ->

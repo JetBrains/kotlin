@@ -222,7 +222,7 @@ internal class DelegatedMemberGenerator(
                 val visibility = when (firSuperFunction) {
                     is FirSimpleFunction -> firSuperFunction.status.visibility
                     is FirPropertyAccessor -> firSuperFunction.status.visibility
-                    else -> Visibilities.PUBLIC
+                    else -> Visibilities.Public
                 }
                 metadata = FirMetadataSource.Function(
                     buildSimpleFunction {

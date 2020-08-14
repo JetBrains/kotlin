@@ -43,8 +43,8 @@ fun FirElement.render(mode: FirRenderer.RenderMode = FirRenderer.RenderMode.Norm
 class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderMode.Normal) : FirVisitorVoid() {
     companion object {
         private val visibilitiesToRenderEffectiveSet = setOf(
-            Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS, Visibilities.INTERNAL,
-            Visibilities.PROTECTED, Visibilities.PUBLIC, Visibilities.LOCAL
+            Visibilities.Private, Visibilities.PrivateToThis, Visibilities.Internal,
+            Visibilities.Protected, Visibilities.Public, Visibilities.Local
         )
     }
 
@@ -187,13 +187,13 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
 
     private fun Visibility.asString(effectiveVisibility: FirEffectiveVisibility? = null): String {
         val itself = when (this) {
-            Visibilities.UNKNOWN -> return "public?"
+            Visibilities.Unknown -> return "public?"
             else -> toString()
         }
         if (effectiveVisibility == null || effectiveVisibility == FirEffectiveVisibility.Default) return itself
         val effectiveAsVisibility = effectiveVisibility.toVisibility()
         if (effectiveAsVisibility == this) return itself
-        if (effectiveAsVisibility == Visibilities.PRIVATE && this == Visibilities.PRIVATE_TO_THIS) return itself
+        if (effectiveAsVisibility == Visibilities.Private && this == Visibilities.PrivateToThis) return itself
         if (this !in visibilitiesToRenderEffectiveSet) return itself
         return itself + "[${effectiveVisibility.name}]"
     }

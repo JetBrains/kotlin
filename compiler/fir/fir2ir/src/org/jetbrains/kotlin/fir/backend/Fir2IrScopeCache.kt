@@ -33,7 +33,7 @@ class Fir2IrScopeCache {
     fun getLocalFunction(localFunction: FirFunction<*>): IrSimpleFunction? = localFunctionCache[localFunction]
 
     fun putLocalFunction(localFunction: FirFunction<*>, irFunction: IrSimpleFunction) {
-        require(localFunction !is FirSimpleFunction || localFunction.visibility == Visibilities.LOCAL)
+        require(localFunction !is FirSimpleFunction || localFunction.visibility == Visibilities.Local)
         localFunctionCache[localFunction] = irFunction
     }
 

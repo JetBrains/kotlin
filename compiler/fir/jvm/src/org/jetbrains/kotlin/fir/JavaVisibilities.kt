@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir
 
 object JavaVisibilities {
-    object PACKAGE_VISIBILITY : Visibility("package", isPublicAPI = false) {
+    object PackageVisibility : Visibility("package", isPublicAPI = false) {
         override fun compareTo(visibility: Visibility): Int? {
             if (this === visibility) return 0
             if (Visibilities.isPrivate(visibility)) return 1
@@ -14,31 +14,31 @@ object JavaVisibilities {
         }
 
         override fun normalize(): Visibility {
-            return Visibilities.PROTECTED
+            return Visibilities.Protected
         }
 
         override val internalDisplayName: String
             get() = "public/*package*/"
     }
 
-    object PROTECTED_STATIC_VISIBILITY : Visibility("protected_static", isPublicAPI = true) {
+    object ProtectedStaticVisibility : Visibility("protected_static", isPublicAPI = true) {
         override fun normalize(): Visibility {
-            return Visibilities.PROTECTED
+            return Visibilities.Protected
         }
 
         override val internalDisplayName: String
             get() = "protected/*protected static*/"
     }
 
-    object PROTECTED_AND_PACKAGE : Visibility("protected_and_package", isPublicAPI = true) {
+    object ProtectedAndPackage : Visibility("protected_and_package", isPublicAPI = true) {
         override fun compareTo(visibility: Visibility): Int? {
             if (this == visibility) return 0
-            if (visibility === Visibilities.INTERNAL) return null
+            if (visibility === Visibilities.Internal) return null
             return if (Visibilities.isPrivate(visibility)) 1 else -1
         }
 
         override fun normalize(): Visibility {
-            return Visibilities.PROTECTED
+            return Visibilities.Protected
         }
 
         override val internalDisplayName: String

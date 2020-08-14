@@ -108,9 +108,9 @@ class FirJavaElementFinder(
 
 private fun FirRegularClass.packFlags(): Int {
     var flags = when (visibility) {
-        Visibilities.PRIVATE -> ModifierFlags.PRIVATE_MASK
-        Visibilities.PROTECTED -> ModifierFlags.PROTECTED_MASK
-        Visibilities.PUBLIC -> ModifierFlags.PUBLIC_MASK
+        Visibilities.Private -> ModifierFlags.PRIVATE_MASK
+        Visibilities.Protected -> ModifierFlags.PROTECTED_MASK
+        Visibilities.Public -> ModifierFlags.PUBLIC_MASK
         else -> ModifierFlags.PACKAGE_LOCAL_MASK
     }
 

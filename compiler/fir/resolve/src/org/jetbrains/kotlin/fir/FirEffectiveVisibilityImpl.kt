@@ -42,7 +42,7 @@ sealed class FirEffectiveVisibilityImpl(
         override fun relation(other: FirEffectiveVisibility) =
             if (this == other || Local == other) Permissiveness.SAME else Permissiveness.LESS
 
-        override fun toVisibility() = Visibilities.PRIVATE
+        override fun toVisibility() = Visibilities.Private
     }
 
     // Effectively same as Private
@@ -50,14 +50,14 @@ sealed class FirEffectiveVisibilityImpl(
         override fun relation(other: FirEffectiveVisibility) =
             if (this == other || Private == other) Permissiveness.SAME else Permissiveness.LESS
 
-        override fun toVisibility() = Visibilities.LOCAL
+        override fun toVisibility() = Visibilities.Local
     }
 
     object Public : FirEffectiveVisibilityImpl("public", publicApi = true) {
         override fun relation(other: FirEffectiveVisibility) =
             if (this == other) Permissiveness.SAME else Permissiveness.MORE
 
-        override fun toVisibility() = Visibilities.PUBLIC
+        override fun toVisibility() = Visibilities.Public
     }
 
     abstract class InternalOrPackage protected constructor(internal: Boolean) : FirEffectiveVisibilityImpl(
@@ -79,11 +79,11 @@ sealed class FirEffectiveVisibilityImpl(
     }
 
     object Internal : InternalOrPackage(true) {
-        override fun toVisibility() = Visibilities.INTERNAL
+        override fun toVisibility() = Visibilities.Internal
     }
 
     object PackagePrivate : InternalOrPackage(false) {
-        override fun toVisibility() = Visibilities.PRIVATE
+        override fun toVisibility() = Visibilities.Private
     }
 
     class Protected(
@@ -124,7 +124,7 @@ sealed class FirEffectiveVisibilityImpl(
             is InternalOrPackage -> InternalProtected(containerSymbol, session)
         }
 
-        override fun toVisibility() = Visibilities.PROTECTED
+        override fun toVisibility() = Visibilities.Protected
     }
 
     // Lower bound for all protected visibilities
@@ -142,7 +142,7 @@ sealed class FirEffectiveVisibilityImpl(
             is InternalOrPackage, is InternalProtected -> InternalProtectedBound
         }
 
-        override fun toVisibility() = Visibilities.PROTECTED
+        override fun toVisibility() = Visibilities.Protected
     }
 
     // Lower bound for internal and protected(C)
@@ -180,7 +180,7 @@ sealed class FirEffectiveVisibilityImpl(
             ProtectedBound -> InternalProtectedBound
         }
 
-        override fun toVisibility() = Visibilities.PRIVATE
+        override fun toVisibility() = Visibilities.Private
     }
 
     // Lower bound for internal and protected lower bound
@@ -191,7 +191,7 @@ sealed class FirEffectiveVisibilityImpl(
             InternalProtectedBound -> Permissiveness.SAME
         }
 
-        override fun toVisibility() = Visibilities.PRIVATE
+        override fun toVisibility() = Visibilities.Private
     }
 
     override fun lowerBound(other: FirEffectiveVisibility): FirEffectiveVisibility {

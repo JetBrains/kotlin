@@ -90,7 +90,7 @@ class FirElementSerializer private constructor(
         val modality = regularClass?.modality ?: Modality.FINAL
         val flags = Flags.getClassFlags(
             klass.nonSourceAnnotations(session).isNotEmpty(),
-            FirProtoEnumFlags.visibility(regularClass?.let { normalizeVisibility(it) } ?: Visibilities.LOCAL),
+            FirProtoEnumFlags.visibility(regularClass?.let { normalizeVisibility(it) } ?: Visibilities.Local),
             ProtoEnumFlags.modality(modality),
             ProtoEnumFlags.classKind(klass.classKind, regularClass?.isCompanion == true),
             regularClass?.isInner == true,
@@ -301,7 +301,7 @@ class FirElementSerializer private constructor(
 
         val flags = Flags.getFunctionFlags(
             function.nonSourceAnnotations(session).isNotEmpty(),
-            FirProtoEnumFlags.visibility(simpleFunction?.let { normalizeVisibility(it) } ?: Visibilities.LOCAL),
+            FirProtoEnumFlags.visibility(simpleFunction?.let { normalizeVisibility(it) } ?: Visibilities.Local),
             ProtoEnumFlags.modality(simpleFunction?.modality ?: Modality.FINAL),
             ProtoBuf.MemberKind.DECLARATION,
             simpleFunction?.isOperator == true,

@@ -43,7 +43,7 @@ inline val FirRegularClass.isFun get() = status.isFun
 inline val FirMemberDeclaration.modality get() = status.modality
 inline val FirMemberDeclaration.visibility get() = status.visibility
 inline val FirMemberDeclaration.allowsToHaveFakeOverride: Boolean
-    get() = !Visibilities.isPrivate(visibility) && visibility != Visibilities.INVISIBLE_FAKE
+    get() = !Visibilities.isPrivate(visibility) && visibility != Visibilities.InvisibleFake
 inline val FirMemberDeclaration.isActual get() = status.isActual
 inline val FirMemberDeclaration.isExpect get() = status.isExpect
 inline val FirMemberDeclaration.isInner get() = status.isInner
@@ -65,10 +65,10 @@ inline val FirPropertyAccessor.visibility get() = status.visibility
 inline val FirPropertyAccessor.isInline get() = status.isInline
 inline val FirPropertyAccessor.isExternal get() = status.isExternal
 inline val FirPropertyAccessor.allowsToHaveFakeOverride: Boolean
-    get() = !Visibilities.isPrivate(visibility) && visibility != Visibilities.INVISIBLE_FAKE
+    get() = !Visibilities.isPrivate(visibility) && visibility != Visibilities.InvisibleFake
 
 inline val FirRegularClass.isLocal get() = symbol.classId.isLocal
-inline val FirSimpleFunction.isLocal get() = status.visibility == Visibilities.LOCAL
+inline val FirSimpleFunction.isLocal get() = status.visibility == Visibilities.Local
 
 fun FirRegularClassBuilder.addDeclaration(declaration: FirDeclaration) {
     declarations += declaration

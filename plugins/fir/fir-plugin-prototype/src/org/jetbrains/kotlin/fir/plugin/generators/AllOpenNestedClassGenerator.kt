@@ -40,7 +40,7 @@ class AllOpenNestedClassGenerator(session: FirSession) : FirDeclarationGeneratio
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Plugin(key)
             status = FirResolvedDeclarationStatusImpl(
-                Visibilities.PRIVATE,
+                Visibilities.Private,
                 Modality.FINAL
             ).apply {
                 isInner = true
@@ -65,7 +65,7 @@ class AllOpenNestedClassGenerator(session: FirSession) : FirDeclarationGeneratio
                 type = ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(classId), emptyArray(), isNullable = false)
             }
             status = FirResolvedDeclarationStatusImpl(
-                Visibilities.PUBLIC,
+                Visibilities.Public,
                 Modality.FINAL
             )
             symbol = FirConstructorSymbol(CallableId(classId, classId.shortClassName))
@@ -77,7 +77,7 @@ class AllOpenNestedClassGenerator(session: FirSession) : FirDeclarationGeneratio
             origin = FirDeclarationOrigin.Plugin(key)
             returnTypeRef = session.builtinTypes.intType
             status = FirResolvedDeclarationStatusImpl(
-                Visibilities.PUBLIC,
+                Visibilities.Public,
                 Modality.FINAL
             )
             name = Name.identifier("hello")

@@ -615,7 +615,7 @@ class ExpressionsConverter(
                         isVar = false
                         symbol = FirPropertySymbol(variable.name)
                         isLocal = true
-                        status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
+                        status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                     }
                 }
                 DESTRUCTURING_DECLARATION -> subjectExpression =

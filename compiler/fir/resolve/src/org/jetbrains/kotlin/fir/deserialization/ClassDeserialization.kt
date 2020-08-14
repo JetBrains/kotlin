@@ -153,7 +153,7 @@ fun deserializeClassToSymbol(
                     name = enumEntryName
                     this.symbol = FirVariableSymbol(CallableId(classId, enumEntryName))
                     this.status = FirResolvedDeclarationStatusImpl(
-                        Visibilities.PUBLIC,
+                        Visibilities.Public,
                         Modality.FINAL
                     ).apply {
                         isStatic = true
@@ -239,7 +239,7 @@ private fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId) {
                 isNullable = false
             )
         }
-        status = FirResolvedDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL).apply {
+        status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply {
             isOverride = true
         }
         name = CLONE

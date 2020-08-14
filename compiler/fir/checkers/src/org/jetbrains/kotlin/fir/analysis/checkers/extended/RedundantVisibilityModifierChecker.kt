@@ -40,17 +40,17 @@ object RedundantVisibilityModifierChecker : FirBasicDeclarationChecker() {
             modifierList.hasModifier(KtTokens.INTERNAL_KEYWORD) &&
                     containingMemberDeclaration.let {
                         it != null && (it.isLocalMember || modifierList.hasModifier(KtTokens.PRIVATE_KEYWORD))
-                    } -> Visibilities.INTERNAL
+                    } -> Visibilities.Internal
 
             else -> null
         } ?: return
 
         if (
-            redundantVisibility == Visibilities.PUBLIC
+            redundantVisibility == Visibilities.Public
             && declaration is FirProperty
             && modifierList.hasModifier(KtTokens.OVERRIDE_KEYWORD)
             && declaration.isVar
-            && declaration.setter?.visibility == Visibilities.PUBLIC
+            && declaration.setter?.visibility == Visibilities.Public
         ) return
 
         val source = modifierList.visibilityModifier()?.toFirPsiSourceElement()
@@ -71,7 +71,7 @@ object RedundantVisibilityModifierChecker : FirBasicDeclarationChecker() {
                     clazz is FirClass
                     && (clazz.classKind == ClassKind.ENUM_CLASS || clazz.modality() == Modality.SEALED)
                 ) {
-                    return Visibilities.PRIVATE
+                    return Visibilities.Private
                 } else {
                     Visibilities.DEFAULT_VISIBILITY
                 }
@@ -86,9 +86,9 @@ object RedundantVisibilityModifierChecker : FirBasicDeclarationChecker() {
     }
 
     private fun findFunctionVisibility(function: FirSimpleFunction, context: CheckerContext): Visibility {
-        val currentClass = context.findClosestClassOrObject() ?: return Visibilities.UNKNOWN
+        val currentClass = context.findClosestClassOrObject() ?: return Visibilities.Unknown
         val overriddenFunctions = function.overriddenFunctions(currentClass, context)
-        var visibility: Visibility = Visibilities.PRIVATE
+        var visibility: Visibility = Visibilities.Private
         for (func in overriddenFunctions) {
             val currentVisibility = func.fir.visibility()
             if (currentVisibility != null) {

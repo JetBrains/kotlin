@@ -89,7 +89,7 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
                         origin = FirDeclarationOrigin.Synthetic
                         name = relativeClassName.shortName()
                         status = FirResolvedDeclarationStatusImpl(
-                            Visibilities.PUBLIC,
+                            Visibilities.Public,
                             Modality.ABSTRACT
                         ).apply {
                             isExpect = false
@@ -129,7 +129,7 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
                         )
                         val name = OperatorNameConventions.INVOKE
                         val functionStatus = FirResolvedDeclarationStatusImpl(
-                            Visibilities.PUBLIC,
+                            Visibilities.Public,
                             Modality.ABSTRACT
                         ).apply {
                             isExpect = false

@@ -527,16 +527,16 @@ private fun JavaType.toFirResolvedTypeRef(
 }
 
 fun OldVisibility.toFirVisibility(): Visibility = when (this) {
-    OldVisibilities.PRIVATE -> Visibilities.PRIVATE
-    OldVisibilities.PRIVATE_TO_THIS -> Visibilities.PRIVATE_TO_THIS
-    OldVisibilities.PROTECTED -> Visibilities.PROTECTED
-    OldVisibilities.INTERNAL -> Visibilities.INTERNAL
-    OldVisibilities.PUBLIC -> Visibilities.PUBLIC
-    OldVisibilities.LOCAL -> Visibilities.LOCAL
-    OldVisibilities.INVISIBLE_FAKE -> Visibilities.INVISIBLE_FAKE
-    OldVisibilities.UNKNOWN -> Visibilities.UNKNOWN
-    OldJavaVisibilities.PACKAGE_VISIBILITY -> JavaVisibilities.PACKAGE_VISIBILITY
-    OldJavaVisibilities.PROTECTED_AND_PACKAGE -> JavaVisibilities.PROTECTED_AND_PACKAGE
-    OldJavaVisibilities.PROTECTED_STATIC_VISIBILITY -> JavaVisibilities.PROTECTED_STATIC_VISIBILITY
+    OldVisibilities.PRIVATE -> Visibilities.Private
+    OldVisibilities.PRIVATE_TO_THIS -> Visibilities.PrivateToThis
+    OldVisibilities.PROTECTED -> Visibilities.Protected
+    OldVisibilities.INTERNAL -> Visibilities.Internal
+    OldVisibilities.PUBLIC -> Visibilities.Public
+    OldVisibilities.LOCAL -> Visibilities.Local
+    OldVisibilities.INVISIBLE_FAKE -> Visibilities.InvisibleFake
+    OldVisibilities.UNKNOWN -> Visibilities.Unknown
+    OldJavaVisibilities.PACKAGE_VISIBILITY -> JavaVisibilities.PackageVisibility
+    OldJavaVisibilities.PROTECTED_AND_PACKAGE -> JavaVisibilities.ProtectedAndPackage
+    OldJavaVisibilities.PROTECTED_STATIC_VISIBILITY -> JavaVisibilities.ProtectedStaticVisibility
     else -> error("Unknown visiblity: $this")
 }

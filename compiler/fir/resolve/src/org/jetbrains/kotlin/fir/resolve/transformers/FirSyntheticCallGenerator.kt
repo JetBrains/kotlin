@@ -287,7 +287,7 @@ class FirSyntheticCallGenerator(
             origin = FirDeclarationOrigin.Synthetic
             this.symbol = symbol
             this.name = name
-            status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL).apply {
+            status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply {
                 isExpect = false
                 isActual = false
                 isOverride = false

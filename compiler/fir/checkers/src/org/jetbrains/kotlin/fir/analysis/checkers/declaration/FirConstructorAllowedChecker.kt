@@ -29,11 +29,11 @@ object FirConstructorAllowedChecker : FirConstructorChecker() {
             ClassKind.OBJECT -> reporter.report(source, FirErrors.CONSTRUCTOR_IN_OBJECT)
             ClassKind.INTERFACE -> reporter.report(source, FirErrors.CONSTRUCTOR_IN_INTERFACE)
             ClassKind.ENUM_ENTRY -> reporter.report(source, FirErrors.CONSTRUCTOR_IN_OBJECT)
-            ClassKind.ENUM_CLASS -> if (declaration.visibility != Visibilities.PRIVATE) {
+            ClassKind.ENUM_CLASS -> if (declaration.visibility != Visibilities.Private) {
                 reporter.report(source, FirErrors.NON_PRIVATE_CONSTRUCTOR_IN_ENUM)
             }
             ClassKind.CLASS -> if (containingClass is FirRegularClass && containingClass.modality == Modality.SEALED &&
-                declaration.visibility != Visibilities.PRIVATE
+                declaration.visibility != Visibilities.Private
             ) {
                 reporter.report(source, FirErrors.NON_PRIVATE_CONSTRUCTOR_IN_SEALED)
             }

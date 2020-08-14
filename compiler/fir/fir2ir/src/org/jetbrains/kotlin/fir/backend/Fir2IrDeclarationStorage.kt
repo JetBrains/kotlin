@@ -358,7 +358,7 @@ class Fir2IrDeclarationStorage(
     }
 
     fun getCachedIrFunction(function: FirFunction<*>): IrSimpleFunction? {
-        return if (function !is FirSimpleFunction || function.visibility == Visibilities.LOCAL) {
+        return if (function !is FirSimpleFunction || function.visibility == Visibilities.Local) {
             localStorage.getLocalFunction(function)
         } else {
             functionCache[function]
@@ -397,7 +397,7 @@ class Fir2IrDeclarationStorage(
         classifierStorage.preCacheTypeParameters(function)
         val name = simpleFunction?.name
             ?: if (isLambda) Name.special("<anonymous>") else Name.special("<no name provided>")
-        val visibility = simpleFunction?.visibility ?: Visibilities.LOCAL
+        val visibility = simpleFunction?.visibility ?: Visibilities.Local
         val isSuspend =
             if (isLambda) ((function as FirAnonymousFunction).typeRef as? FirResolvedTypeRef)?.isSuspend == true
             else simpleFunction?.isSuspend == true
@@ -432,7 +432,7 @@ class Fir2IrDeclarationStorage(
             result
         }
 
-        if (visibility == Visibilities.LOCAL) {
+        if (visibility == Visibilities.Local) {
             localStorage.putLocalFunction(function, created)
             return created
         }
@@ -618,7 +618,7 @@ class Fir2IrDeclarationStorage(
             isLateInit -> setter?.visibility ?: status.visibility
             isConst -> status.visibility
             hasJvmFieldAnnotation -> status.visibility
-            else -> Visibilities.PRIVATE
+            else -> Visibilities.Private
         }
 
     private fun declareIrProperty(

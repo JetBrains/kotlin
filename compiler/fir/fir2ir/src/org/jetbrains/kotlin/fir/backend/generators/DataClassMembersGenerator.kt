@@ -211,7 +211,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                 origin = FirDeclarationOrigin.Synthetic
                 this.name = name
                 this.symbol = FirNamedFunctionSymbol(CallableId(classId, name))
-                this.status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL)
+                this.status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
                 this.session = components.session
                 this.returnTypeRef = when (returnType) {
                     components.irBuiltIns.booleanType -> FirImplicitBooleanTypeRef(null)

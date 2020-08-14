@@ -521,7 +521,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.visibility(visibility: Visibility) {
-        if (visibility == Visibilities.UNKNOWN)
+        if (visibility == Visibilities.Unknown)
             return unresolved { keyword("public?") }
         return keyword(visibility.toString())
     }

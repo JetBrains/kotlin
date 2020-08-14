@@ -62,7 +62,7 @@ internal class ClassMemberGenerator(
                     }
                     declaration is FirConstructor && declaration.isPrimary -> {
                     }
-                    declaration is FirRegularClass && declaration.visibility == Visibilities.LOCAL -> {
+                    declaration is FirRegularClass && declaration.visibility == Visibilities.Local -> {
                         val irNestedClass = classifierStorage.getCachedIrClass(declaration)!!
                         irNestedClass.parent = irClass
                         conversionScope.withParent(irNestedClass) {

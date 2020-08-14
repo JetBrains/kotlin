@@ -227,10 +227,10 @@ fun KtModifierList?.getVisibility() = this?.visibilityModifierType()?.toFirVisib
 
 fun KtModifierKeywordToken.toFirVisibility(): Visibility {
     return when (this) {
-        KtTokens.PUBLIC_KEYWORD -> Visibilities.PUBLIC
-        KtTokens.PRIVATE_KEYWORD -> Visibilities.PRIVATE
-        KtTokens.PROTECTED_KEYWORD -> Visibilities.PROTECTED
-        KtTokens.INTERNAL_KEYWORD -> Visibilities.INTERNAL
+        KtTokens.PUBLIC_KEYWORD -> Visibilities.Public
+        KtTokens.PRIVATE_KEYWORD -> Visibilities.Private
+        KtTokens.PROTECTED_KEYWORD -> Visibilities.Protected
+        KtTokens.INTERNAL_KEYWORD -> Visibilities.Internal
         else -> throw IllegalArgumentException("Unknown visibility modifier:$this")
     }
 }

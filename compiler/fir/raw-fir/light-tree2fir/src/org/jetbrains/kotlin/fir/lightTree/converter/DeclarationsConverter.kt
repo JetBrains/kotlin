@@ -383,7 +383,7 @@ class DeclarationsConverter(
         return withChildClassName(className, isLocal) {
             withCapturedTypeParameters {
                 val status = FirDeclarationStatusImpl(
-                    if (isLocal) Visibilities.LOCAL else modifiers.getVisibility(),
+                    if (isLocal) Visibilities.Local else modifiers.getVisibility(),
                     modifiers.getModality()
                 ).apply {
                     isExpect = modifiers.hasExpect()
@@ -604,7 +604,7 @@ class DeclarationsConverter(
             returnTypeRef = classWrapper.delegatedSelfTypeRef
             name = enumEntryName
             symbol = FirVariableSymbol(CallableId(context.currentClassId, enumEntryName))
-            status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL).apply {
+            status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply {
                 isStatic = true
                 isExpect = classWrapper.hasExpect()
             }
@@ -717,7 +717,7 @@ class DeclarationsConverter(
             isExpect = modifiers.hasExpect() || classWrapper.hasExpect()
             isActual = modifiers.hasActual()
             isInner = classWrapper.isInner()
-            isFromSealedClass = classWrapper.isSealed() && explicitVisibility !== Visibilities.PRIVATE
+            isFromSealedClass = classWrapper.isSealed() && explicitVisibility !== Visibilities.Private
             isFromEnumClass = classWrapper.isEnum()
         }
 
@@ -784,7 +784,7 @@ class DeclarationsConverter(
             isExpect = modifiers.hasExpect() || classWrapper.hasExpect()
             isActual = modifiers.hasActual()
             isInner = classWrapper.isInner()
-            isFromSealedClass = classWrapper.isSealed() && explicitVisibility !== Visibilities.PRIVATE
+            isFromSealedClass = classWrapper.isSealed() && explicitVisibility !== Visibilities.Private
             isFromEnumClass = classWrapper.isEnum()
         }
 
@@ -942,7 +942,7 @@ class DeclarationsConverter(
                         expression = expressionConverter.getAsFirExpression(it, "Incorrect delegate expression")
                     }
                 }
-                status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL).apply {
+                status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL).apply {
                     isLateInit = modifiers.hasLateinit()
                 }
 
@@ -1058,7 +1058,7 @@ class DeclarationsConverter(
             isVar = false
             symbol = FirPropertySymbol(name)
             isLocal = true
-            status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
+            status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
             annotations += modifiers.annotations
         }
     }
@@ -1096,7 +1096,7 @@ class DeclarationsConverter(
         }
 
         var accessorVisibility = modifiers.getVisibility()
-        if (accessorVisibility == Visibilities.UNKNOWN) {
+        if (accessorVisibility == Visibilities.Unknown) {
             accessorVisibility = propertyVisibility
         }
         val status =
@@ -1237,7 +1237,7 @@ class DeclarationsConverter(
                 receiverTypeRef = receiverType
                 name = functionName
                 status = FirDeclarationStatusImpl(
-                    if (isLocal) Visibilities.LOCAL else modifiers.getVisibility(),
+                    if (isLocal) Visibilities.Local else modifiers.getVisibility(),
                     modifiers.getModality()
                 ).apply {
                     isExpect = modifiers.hasExpect() || classWrapper?.hasExpect() == true
@@ -1442,7 +1442,7 @@ class DeclarationsConverter(
                 returnTypeRef = firTypeRef
                 symbol = FirFieldSymbol(CallableId(name))
                 isVar = false
-                status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
+                status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
             }
         )
         initializeDelegateStatements.add(

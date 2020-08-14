@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.name.Name
 
 object FirLocalEntityNotAllowedChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration !is FirRegularClass || declaration.visibility != Visibilities.LOCAL) {
+        if (declaration !is FirRegularClass || declaration.visibility != Visibilities.Local) {
             return
         }
 

@@ -183,11 +183,11 @@ fun FirDeclaration.resolveStatus(
     containingClass: FirClass<*>?,
     isLocal: Boolean
 ): FirDeclarationStatus {
-    if (status.visibility == Visibilities.UNKNOWN || status.modality == null || status.modality == Modality.OPEN) {
+    if (status.visibility == Visibilities.Unknown || status.modality == null || status.modality == Modality.OPEN) {
         val visibility = when (status.visibility) {
-            Visibilities.UNKNOWN -> when {
-                isLocal -> Visibilities.LOCAL
-                this is FirConstructor && containingClass is FirAnonymousObject -> Visibilities.PRIVATE
+            Visibilities.Unknown -> when {
+                isLocal -> Visibilities.Local
+                this is FirConstructor && containingClass is FirAnonymousObject -> Visibilities.Private
                 else -> resolveVisibility(containingClass)
             }
             else -> status.visibility
@@ -219,10 +219,10 @@ private fun FirDeclaration.resolveVisibility(containingClass: FirClass<*>?): Vis
             (containingClass.classKind == ClassKind.ENUM_CLASS || containingClass.classKind == ClassKind.ENUM_ENTRY ||
                     containingClass.modality == Modality.SEALED)
         ) {
-            return Visibilities.PRIVATE
+            return Visibilities.Private
         }
     }
-    return Visibilities.PUBLIC // TODO (overrides)
+    return Visibilities.Public // TODO (overrides)
 }
 
 private fun FirDeclaration.resolveModality(containingClass: FirClass<*>?): Modality {
@@ -233,7 +233,7 @@ private fun FirDeclaration.resolveModality(containingClass: FirClass<*>?): Modal
                 containingClass == null -> Modality.FINAL
                 containingClass.classKind == ClassKind.INTERFACE -> {
                     when {
-                        visibility == Visibilities.PRIVATE ->
+                        visibility == Visibilities.Private ->
                             Modality.FINAL
                         !this.hasOwnBodyOrAccessorBody() ->
                             Modality.ABSTRACT

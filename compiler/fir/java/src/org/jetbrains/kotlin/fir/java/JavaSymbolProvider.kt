@@ -361,13 +361,13 @@ class JavaSymbolProvider(
                         declarations += buildJavaConstructor {
                             session = this@JavaSymbolProvider.session
                             symbol = FirConstructorSymbol(constructorId)
-                            status = FirResolvedDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL)
+                            status = FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
                             returnTypeRef = buildResolvedTypeRef {
                                 type = buildSelfTypeRef()
                             }
                             valueParameters.addIfNotNull(valueParameterForValueInAnnotationConstructor)
                             valueParameters += valueParametersForAnnotationConstructor
-                            visibility = Visibilities.PUBLIC
+                            visibility = Visibilities.Public
                             isInner = false
                             isPrimary = true
                         }

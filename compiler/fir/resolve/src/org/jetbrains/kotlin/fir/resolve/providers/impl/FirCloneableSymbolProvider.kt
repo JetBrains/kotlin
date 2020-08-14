@@ -41,7 +41,7 @@ class FirCloneableSymbolProvider(session: FirSession, scopeProvider: FirScopePro
         origin = FirDeclarationOrigin.Library
         this.session = session
         status = FirDeclarationStatusImpl(
-            Visibilities.PUBLIC,
+            Visibilities.Public,
             Modality.ABSTRACT
         )
         classKind = ClassKind.INTERFACE
@@ -52,7 +52,7 @@ class FirCloneableSymbolProvider(session: FirSession, scopeProvider: FirScopePro
             returnTypeRef = buildResolvedTypeRef {
                 type = session.builtinTypes.anyType.type
             }
-            status = FirDeclarationStatusImpl(Visibilities.PROTECTED, Modality.OPEN)
+            status = FirDeclarationStatusImpl(Visibilities.Protected, Modality.OPEN)
             name = CLONE
             symbol = FirNamedFunctionSymbol(CallableId(CLONEABLE_CLASS_ID, CLONE))
         }

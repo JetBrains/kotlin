@@ -92,11 +92,11 @@ class Modifier(
 
     fun getVisibility(): Visibility {
         return when {
-            visibilityModifiers.contains(VisibilityModifier.PRIVATE) -> Visibilities.PRIVATE
-            visibilityModifiers.contains(VisibilityModifier.PUBLIC) -> Visibilities.PUBLIC
-            visibilityModifiers.contains(VisibilityModifier.PROTECTED) -> Visibilities.PROTECTED
-            visibilityModifiers.contains(VisibilityModifier.INTERNAL) -> Visibilities.INTERNAL
-            else -> Visibilities.UNKNOWN
+            visibilityModifiers.contains(VisibilityModifier.PRIVATE) -> Visibilities.Private
+            visibilityModifiers.contains(VisibilityModifier.PUBLIC) -> Visibilities.Public
+            visibilityModifiers.contains(VisibilityModifier.PROTECTED) -> Visibilities.Protected
+            visibilityModifiers.contains(VisibilityModifier.INTERNAL) -> Visibilities.Internal
+            else -> Visibilities.Unknown
         }
     }
 

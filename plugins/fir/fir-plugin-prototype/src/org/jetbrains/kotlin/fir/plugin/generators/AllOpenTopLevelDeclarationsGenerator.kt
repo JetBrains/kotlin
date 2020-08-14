@@ -36,7 +36,7 @@ class AllOpenTopLevelDeclarationsGenerator(session: FirSession) : FirDeclaration
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Plugin(key)
             status = FirResolvedDeclarationStatusImpl(
-                Visibilities.PUBLIC,
+                Visibilities.Public,
                 Modality.FINAL
             )
             classKind = ClassKind.OBJECT
@@ -55,7 +55,7 @@ class AllOpenTopLevelDeclarationsGenerator(session: FirSession) : FirDeclaration
             origin = FirDeclarationOrigin.Plugin(key)
             returnTypeRef = session.builtinTypes.intType
             status = FirResolvedDeclarationStatusImpl(
-                Visibilities.PUBLIC,
+                Visibilities.Public,
                 Modality.FINAL
             )
             name = Name.identifier("hello")

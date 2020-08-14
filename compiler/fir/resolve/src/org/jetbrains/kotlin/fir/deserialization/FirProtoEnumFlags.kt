@@ -11,22 +11,22 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 
 object FirProtoEnumFlags {
     fun visibility(visibility: ProtoBuf.Visibility?): Visibility = when (visibility) {
-        ProtoBuf.Visibility.INTERNAL -> Visibilities.INTERNAL
-        ProtoBuf.Visibility.PRIVATE -> Visibilities.PRIVATE
-        ProtoBuf.Visibility.PRIVATE_TO_THIS -> Visibilities.PRIVATE_TO_THIS
-        ProtoBuf.Visibility.PROTECTED -> Visibilities.PROTECTED
-        ProtoBuf.Visibility.PUBLIC -> Visibilities.PUBLIC
-        ProtoBuf.Visibility.LOCAL -> Visibilities.LOCAL
-        else -> Visibilities.PRIVATE
+        ProtoBuf.Visibility.INTERNAL -> Visibilities.Internal
+        ProtoBuf.Visibility.PRIVATE -> Visibilities.Private
+        ProtoBuf.Visibility.PRIVATE_TO_THIS -> Visibilities.PrivateToThis
+        ProtoBuf.Visibility.PROTECTED -> Visibilities.Protected
+        ProtoBuf.Visibility.PUBLIC -> Visibilities.Public
+        ProtoBuf.Visibility.LOCAL -> Visibilities.Local
+        else -> Visibilities.Private
     }
 
     fun visibility(visibility: Visibility): ProtoBuf.Visibility = when (visibility) {
-        Visibilities.INTERNAL -> ProtoBuf.Visibility.INTERNAL
-        Visibilities.PUBLIC -> ProtoBuf.Visibility.PUBLIC
-        Visibilities.PRIVATE -> ProtoBuf.Visibility.PRIVATE
-        Visibilities.PRIVATE_TO_THIS -> ProtoBuf.Visibility.PRIVATE_TO_THIS
-        Visibilities.PROTECTED -> ProtoBuf.Visibility.PROTECTED
-        Visibilities.LOCAL -> ProtoBuf.Visibility.LOCAL
+        Visibilities.Internal -> ProtoBuf.Visibility.INTERNAL
+        Visibilities.Public -> ProtoBuf.Visibility.PUBLIC
+        Visibilities.Private -> ProtoBuf.Visibility.PRIVATE
+        Visibilities.PrivateToThis -> ProtoBuf.Visibility.PRIVATE_TO_THIS
+        Visibilities.Protected -> ProtoBuf.Visibility.PROTECTED
+        Visibilities.Local -> ProtoBuf.Visibility.LOCAL
         else -> throw IllegalArgumentException("Unknown visibility: $visibility")
     }
 }

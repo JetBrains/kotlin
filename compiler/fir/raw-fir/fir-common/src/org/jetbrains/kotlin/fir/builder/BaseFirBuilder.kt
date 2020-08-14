@@ -746,7 +746,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     returnTypeRef = firProperty.returnTypeRef
                     receiverTypeRef = null
                     this.name = name
-                    status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL)
+                    status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
                     symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, name))
 
                     // Refer to FIR backend ClassMemberGenerator for body generation.
@@ -766,7 +766,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     origin = FirDeclarationOrigin.Source
                     returnTypeRef = classTypeRef
                     name = copyName
-                    status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL)
+                    status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
                     symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, copyName))
                     for ((ktParameter, firProperty) in zippedParameters) {
                         val propertyName = firProperty.name

@@ -262,7 +262,7 @@ fun generateTemporaryVariable(
         symbol = FirPropertySymbol(name)
         isVar = false
         isLocal = true
-        status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
+        status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
     }
 
 fun generateTemporaryVariable(
@@ -363,7 +363,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
             origin = FirDeclarationOrigin.Source
             returnTypeRef = buildImplicitTypeRef()
             isGetter = true
-            status = FirDeclarationStatusImpl(Visibilities.UNKNOWN, Modality.FINAL)
+            status = FirDeclarationStatusImpl(Visibilities.Unknown, Modality.FINAL)
             symbol = FirPropertyAccessorSymbol()
 
             body = FirSingleExpressionBlock(
@@ -390,7 +390,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
             origin = FirDeclarationOrigin.Source
             returnTypeRef = session.builtinTypes.unitType
             isGetter = false
-            status = FirDeclarationStatusImpl(Visibilities.UNKNOWN, Modality.FINAL)
+            status = FirDeclarationStatusImpl(Visibilities.Unknown, Modality.FINAL)
             val parameter = buildValueParameter {
                 this.session = session
                 origin = FirDeclarationOrigin.Source
