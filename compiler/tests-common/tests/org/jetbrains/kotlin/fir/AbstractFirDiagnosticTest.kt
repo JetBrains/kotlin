@@ -76,11 +76,14 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
             get() = File(absolutePath.replace(".kt", ".dot"))
     }
 
+    protected open val pluginPhasesEnabled: Boolean
+        get() = false
+
     override fun runAnalysis(testDataFile: File, testFiles: List<TestFile>, firFilesPerSession: Map<FirSession, List<FirFile>>) {
         for ((session, firFiles) in firFilesPerSession) {
             doFirResolveTestBench(
                 firFiles,
-                createAllCompilerResolveProcessors(session),
+                createAllCompilerResolveProcessors(session, pluginPhasesEnabled = pluginPhasesEnabled),
                 gc = false
             )
         }
