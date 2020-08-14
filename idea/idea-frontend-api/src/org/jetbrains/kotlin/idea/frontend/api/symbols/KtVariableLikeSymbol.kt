@@ -17,14 +17,12 @@ abstract class KtVariableLikeSymbol : KtCallableSymbol(), KtTypedSymbol, KtNamed
 
 abstract class KtEnumEntrySymbol : KtVariableLikeSymbol(), KtSymbolWithKind {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
-    final override val containingPackageFqNameIfTopLevel: FqName? get() = null
+    abstract val containingEnumClassIdIfNonLocal: ClassId?
 
     abstract override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol>
 }
 
 abstract class KtParameterSymbol : KtVariableLikeSymbol() {
-    final override val containingPackageFqNameIfTopLevel: FqName? get() = null
-
     abstract val hasDefaultValue: Boolean
 
     abstract override fun createPointer(): KtSymbolPointer<KtParameterSymbol>
@@ -37,7 +35,8 @@ abstract class KtVariableSymbol : KtVariableLikeSymbol() {
 
 abstract class KtJavaFieldSymbol : KtVariableSymbol(), KtSymbolWithModality<KtCommonSymbolModality>, KtSymbolWithKind {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
-    final override val containingPackageFqNameIfTopLevel: FqName? get() = null
+
+    abstract val callableIdIfNonLocal: FqName?
 
     abstract override fun createPointer(): KtSymbolPointer<KtJavaFieldSymbol>
 }
@@ -48,13 +47,12 @@ abstract class KtPropertySymbol : KtVariableSymbol(),
     KtSymbolWithModality<KtCommonSymbolModality>,
     KtSymbolWithKind {
 
+    abstract val callableIdIfNonLocal: FqName?
+
     abstract override fun createPointer(): KtSymbolPointer<KtPropertySymbol>
 }
 
 abstract class KtLocalVariableSymbol : KtVariableSymbol(), KtSymbolWithKind {
-    final override val containingPackageFqNameIfTopLevel: FqName? get() = null
-    final override val containingNonLocalClassIdIfMember: ClassId? get() = null
-
     abstract override fun createPointer(): KtSymbolPointer<KtLocalVariableSymbol>
 }
 
@@ -62,7 +60,6 @@ abstract class KtFunctionParameterSymbol : KtParameterSymbol(), KtSymbolWithKind
     abstract val isVararg: Boolean
 
     override val symbolKind: KtSymbolKind get() = KtSymbolKind.NON_PROPERTY_PARAMETER
-    override val containingNonLocalClassIdIfMember: ClassId? get() = null
 
     abstract override fun createPointer(): KtSymbolPointer<KtFunctionParameterSymbol>
 }

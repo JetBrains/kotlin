@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.isLocal
 import org.jetbrains.kotlin.fir.declarations.modality
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
@@ -54,14 +55,9 @@ internal class KtFirPropertySymbol(
         }
     override val modality: KtCommonSymbolModality get() = firRef.withFir { it.modality.getSymbolModality() }
 
-    override val containingNonLocalClassIdIfMember: ClassId?
+    override val callableIdIfNonLocal: FqName?
         get() = firRef.withFir { fir ->
-            fir.symbol.callableId.classId
-        }
-
-    override val containingPackageFqNameIfTopLevel: FqName?
-        get() = firRef.withFir { fir ->
-            fir.symbol.callableId.packageName.takeIf { fir.symbol.callableId.className == null }
+            fir.symbol.callableId.takeUnless { fir.isLocal }?.asFqNameForDebugInfo()
         }
 
     override fun createPointer(): KtSymbolPointer<KtPropertySymbol> {

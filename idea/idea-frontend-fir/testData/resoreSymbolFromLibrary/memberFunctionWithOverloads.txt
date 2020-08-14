@@ -2,7 +2,7 @@ callable: kotlin/collections/List.listIterator
 
 // SYMBOLS:
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.List.listIterator
+  callableIdIfNonLocal: kotlin.collections.List.listIterator
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -16,7 +16,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.List.listIterator
+  callableIdIfNonLocal: kotlin.collections.List.listIterator
   isExtension: false
   isOperator: false
   isSuspend: false

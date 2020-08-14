@@ -4,7 +4,7 @@ callable: kotlin/LazyThreadSafetyMode.SYNCHRONIZED
 
 // SYMBOLS:
 KtFirEnumEntrySymbol:
-  enumClassId: kotlin/LazyThreadSafetyMode
+  containingEnumClassIdIfNonLocal: kotlin/LazyThreadSafetyMode
   name: SYNCHRONIZED
   origin: LIBRARY
   symbolKind: MEMBER

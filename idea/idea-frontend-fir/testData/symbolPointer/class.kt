@@ -3,7 +3,7 @@ class A {
 
 // SYMBOLS:
 KtFirClassOrObjectSymbol:
-  classId: A
+  classIdIfNonLocal: A
   classKind: CLASS
   modality: FINAL
   name: A

@@ -2,6 +2,7 @@ class: java/lang/String
 
 // SYMBOLS:
 KtFirJavaFieldSymbol:
+  callableIdIfNonLocal: java.lang.String.value
   isVal: true
   modality: FINAL
   name: value
@@ -10,6 +11,7 @@ KtFirJavaFieldSymbol:
   type: ft<kotlin/CharArray, kotlin/CharArray?>!
 
 KtFirJavaFieldSymbol:
+  callableIdIfNonLocal: java.lang.String.hash
   isVal: false
   modality: OPEN
   name: hash
@@ -18,7 +20,7 @@ KtFirJavaFieldSymbol:
   type: kotlin/Int
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.hash32
+  callableIdIfNonLocal: java.lang.String.hash32
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -32,6 +34,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirJavaFieldSymbol:
+  callableIdIfNonLocal: java.lang.String.hash32
   isVal: false
   modality: OPEN
   name: hash32
@@ -40,7 +43,7 @@ KtFirJavaFieldSymbol:
   type: kotlin/Int
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.length
+  callableIdIfNonLocal: java.lang.String.length
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -54,7 +57,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirPropertySymbol:
-  fqName: kotlin.CharSequence.length
+  callableIdIfNonLocal: kotlin.CharSequence.length
   isExtension: false
   isVal: true
   modality: ABSTRACT
@@ -65,7 +68,7 @@ KtFirPropertySymbol:
   type: kotlin/Int
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.isEmpty
+  callableIdIfNonLocal: java.lang.String.isEmpty
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -79,7 +82,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.charAt
+  callableIdIfNonLocal: java.lang.String.charAt
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -93,7 +96,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(index)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.codePointAt
+  callableIdIfNonLocal: java.lang.String.codePointAt
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -107,7 +110,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(index)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.codePointBefore
+  callableIdIfNonLocal: java.lang.String.codePointBefore
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -121,7 +124,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(index)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.codePointCount
+  callableIdIfNonLocal: java.lang.String.codePointCount
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -135,7 +138,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(beginIndex), KtFirFunctionValueParameterSymbol(endIndex)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.offsetByCodePoints
+  callableIdIfNonLocal: java.lang.String.offsetByCodePoints
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -149,7 +152,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(index), KtFirFunctionValueParameterSymbol(codePointOffset)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.getChars
+  callableIdIfNonLocal: java.lang.String.getChars
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -163,7 +166,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(dst), KtFirFunctionValueParameterSymbol(dstBegin)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.getChars
+  callableIdIfNonLocal: java.lang.String.getChars
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -177,7 +180,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(srcBegin), KtFirFunctionValueParameterSymbol(srcEnd), KtFirFunctionValueParameterSymbol(dst), KtFirFunctionValueParameterSymbol(dstBegin)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.getBytes
+  callableIdIfNonLocal: java.lang.String.getBytes
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -191,7 +194,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(srcBegin), KtFirFunctionValueParameterSymbol(srcEnd), KtFirFunctionValueParameterSymbol(dst), KtFirFunctionValueParameterSymbol(dstBegin)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.getBytes
+  callableIdIfNonLocal: java.lang.String.getBytes
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -205,7 +208,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(charsetName)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.getBytes
+  callableIdIfNonLocal: java.lang.String.getBytes
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -219,7 +222,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(charset)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.getBytes
+  callableIdIfNonLocal: java.lang.String.getBytes
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -233,7 +236,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.equals
+  callableIdIfNonLocal: java.lang.String.equals
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -247,7 +250,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(anObject)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.contentEquals
+  callableIdIfNonLocal: java.lang.String.contentEquals
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -261,7 +264,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(sb)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.contentEquals
+  callableIdIfNonLocal: java.lang.String.contentEquals
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -275,7 +278,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(cs)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.equalsIgnoreCase
+  callableIdIfNonLocal: java.lang.String.equalsIgnoreCase
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -289,7 +292,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(anotherString)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.compareTo
+  callableIdIfNonLocal: java.lang.String.compareTo
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -303,7 +306,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(anotherString)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.compareToIgnoreCase
+  callableIdIfNonLocal: java.lang.String.compareToIgnoreCase
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -317,7 +320,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(str)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.regionMatches
+  callableIdIfNonLocal: java.lang.String.regionMatches
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -331,7 +334,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(toffset), KtFirFunctionValueParameterSymbol(other), KtFirFunctionValueParameterSymbol(ooffset), KtFirFunctionValueParameterSymbol(len)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.regionMatches
+  callableIdIfNonLocal: java.lang.String.regionMatches
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -345,7 +348,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(ignoreCase), KtFirFunctionValueParameterSymbol(toffset), KtFirFunctionValueParameterSymbol(other), KtFirFunctionValueParameterSymbol(ooffset), KtFirFunctionValueParameterSymbol(len)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.startsWith
+  callableIdIfNonLocal: java.lang.String.startsWith
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -359,7 +362,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(prefix), KtFirFunctionValueParameterSymbol(toffset)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.startsWith
+  callableIdIfNonLocal: java.lang.String.startsWith
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -373,7 +376,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(prefix)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.endsWith
+  callableIdIfNonLocal: java.lang.String.endsWith
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -387,7 +390,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(suffix)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.hashCode
+  callableIdIfNonLocal: java.lang.String.hashCode
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -401,7 +404,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.indexOf
+  callableIdIfNonLocal: java.lang.String.indexOf
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -415,7 +418,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(ch)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.indexOf
+  callableIdIfNonLocal: java.lang.String.indexOf
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -429,7 +432,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(ch), KtFirFunctionValueParameterSymbol(fromIndex)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.indexOf
+  callableIdIfNonLocal: java.lang.String.indexOf
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -443,7 +446,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(str)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.indexOf
+  callableIdIfNonLocal: java.lang.String.indexOf
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -457,7 +460,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(str), KtFirFunctionValueParameterSymbol(fromIndex)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.indexOfSupplementary
+  callableIdIfNonLocal: java.lang.String.indexOfSupplementary
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -471,7 +474,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(ch), KtFirFunctionValueParameterSymbol(fromIndex)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.lastIndexOf
+  callableIdIfNonLocal: java.lang.String.lastIndexOf
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -485,7 +488,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(ch)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.lastIndexOf
+  callableIdIfNonLocal: java.lang.String.lastIndexOf
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -499,7 +502,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(ch), KtFirFunctionValueParameterSymbol(fromIndex)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.lastIndexOf
+  callableIdIfNonLocal: java.lang.String.lastIndexOf
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -513,7 +516,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(str)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.lastIndexOf
+  callableIdIfNonLocal: java.lang.String.lastIndexOf
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -527,7 +530,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(str), KtFirFunctionValueParameterSymbol(fromIndex)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.lastIndexOfSupplementary
+  callableIdIfNonLocal: java.lang.String.lastIndexOfSupplementary
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -541,7 +544,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(ch), KtFirFunctionValueParameterSymbol(fromIndex)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.substring
+  callableIdIfNonLocal: java.lang.String.substring
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -555,7 +558,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(beginIndex)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.substring
+  callableIdIfNonLocal: java.lang.String.substring
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -569,7 +572,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(beginIndex), KtFirFunctionValueParameterSymbol(endIndex)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.subSequence
+  callableIdIfNonLocal: java.lang.String.subSequence
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -583,7 +586,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(beginIndex), KtFirFunctionValueParameterSymbol(endIndex)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.concat
+  callableIdIfNonLocal: java.lang.String.concat
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -597,7 +600,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(str)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.replace
+  callableIdIfNonLocal: java.lang.String.replace
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -611,7 +614,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(oldChar), KtFirFunctionValueParameterSymbol(newChar)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.replace
+  callableIdIfNonLocal: java.lang.String.replace
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -625,7 +628,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(target), KtFirFunctionValueParameterSymbol(replacement)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.matches
+  callableIdIfNonLocal: java.lang.String.matches
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -639,7 +642,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(regex)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.contains
+  callableIdIfNonLocal: java.lang.String.contains
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -653,7 +656,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(s)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.replaceFirst
+  callableIdIfNonLocal: java.lang.String.replaceFirst
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -667,7 +670,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(regex), KtFirFunctionValueParameterSymbol(replacement)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.replaceAll
+  callableIdIfNonLocal: java.lang.String.replaceAll
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -681,7 +684,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(regex), KtFirFunctionValueParameterSymbol(replacement)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.split
+  callableIdIfNonLocal: java.lang.String.split
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -695,7 +698,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(regex), KtFirFunctionValueParameterSymbol(limit)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.split
+  callableIdIfNonLocal: java.lang.String.split
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -709,7 +712,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(regex)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.toLowerCase
+  callableIdIfNonLocal: java.lang.String.toLowerCase
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -723,7 +726,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(locale)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.toLowerCase
+  callableIdIfNonLocal: java.lang.String.toLowerCase
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -737,7 +740,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.toUpperCase
+  callableIdIfNonLocal: java.lang.String.toUpperCase
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -751,7 +754,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(locale)]
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.toUpperCase
+  callableIdIfNonLocal: java.lang.String.toUpperCase
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -765,7 +768,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.trim
+  callableIdIfNonLocal: java.lang.String.trim
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -779,7 +782,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.toString
+  callableIdIfNonLocal: java.lang.String.toString
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -793,7 +796,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.toCharArray
+  callableIdIfNonLocal: java.lang.String.toCharArray
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -807,7 +810,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: java.lang.String.intern
+  callableIdIfNonLocal: java.lang.String.intern
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -821,7 +824,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: kotlin.CharSequence.get
+  callableIdIfNonLocal: kotlin.CharSequence.get
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -835,7 +838,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(index)]
 
 KtFirClassOrObjectSymbol:
-  classId: java/lang/String.CaseInsensitiveComparator
+  classIdIfNonLocal: java/lang/String.CaseInsensitiveComparator
   classKind: CLASS
   modality: OPEN
   name: CaseInsensitiveComparator

@@ -22,9 +22,6 @@ abstract class KtTypeAliasSymbol : KtClassLikeSymbol() {
     abstract override val classIdIfNonLocal: ClassId
 
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.TOP_LEVEL
-    final override val containingNonLocalClassIdIfMember: ClassId? get() = null
-
-    abstract override val containingPackageFqNameIfTopLevel: FqName
 
     abstract override fun createPointer(): KtSymbolPointer<KtTypeAliasSymbol>
 }

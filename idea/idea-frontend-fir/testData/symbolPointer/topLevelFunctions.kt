@@ -3,7 +3,7 @@ fun y() {}
 
 // SYMBOLS:
 KtFirFunctionSymbol:
-  fqName: x
+  callableIdIfNonLocal: x
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -17,7 +17,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: y
+  callableIdIfNonLocal: y
   isExtension: false
   isOperator: false
   isSuspend: false

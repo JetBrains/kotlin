@@ -4,7 +4,7 @@ class: java.lang.String
 
 // SYMBOLS:
 KtFirClassOrObjectSymbol:
-  classId: java.lang.String
+  classIdIfNonLocal: java.lang.String
   classKind: CLASS
   modality: FINAL
   name: String

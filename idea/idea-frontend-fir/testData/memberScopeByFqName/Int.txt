@@ -2,7 +2,7 @@ class: kotlin/Int
 
 // SYMBOLS:
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.and
+  callableIdIfNonLocal: kotlin.Int.and
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -16,7 +16,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.compareTo
+  callableIdIfNonLocal: kotlin.Int.compareTo
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -30,7 +30,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.compareTo
+  callableIdIfNonLocal: kotlin.Int.compareTo
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -44,7 +44,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.compareTo
+  callableIdIfNonLocal: kotlin.Int.compareTo
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -58,7 +58,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.compareTo
+  callableIdIfNonLocal: kotlin.Int.compareTo
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -72,7 +72,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.compareTo
+  callableIdIfNonLocal: kotlin.Int.compareTo
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -86,7 +86,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.compareTo
+  callableIdIfNonLocal: kotlin.Int.compareTo
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -100,7 +100,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.dec
+  callableIdIfNonLocal: kotlin.Int.dec
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -114,7 +114,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.div
+  callableIdIfNonLocal: kotlin.Int.div
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -128,7 +128,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.div
+  callableIdIfNonLocal: kotlin.Int.div
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -142,7 +142,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.div
+  callableIdIfNonLocal: kotlin.Int.div
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -156,7 +156,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.div
+  callableIdIfNonLocal: kotlin.Int.div
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -170,7 +170,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.div
+  callableIdIfNonLocal: kotlin.Int.div
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -184,7 +184,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.div
+  callableIdIfNonLocal: kotlin.Int.div
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -198,7 +198,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.inc
+  callableIdIfNonLocal: kotlin.Int.inc
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -212,7 +212,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.inv
+  callableIdIfNonLocal: kotlin.Int.inv
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -226,7 +226,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.minus
+  callableIdIfNonLocal: kotlin.Int.minus
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -240,7 +240,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.minus
+  callableIdIfNonLocal: kotlin.Int.minus
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -254,7 +254,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.minus
+  callableIdIfNonLocal: kotlin.Int.minus
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -268,7 +268,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.minus
+  callableIdIfNonLocal: kotlin.Int.minus
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -282,7 +282,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.minus
+  callableIdIfNonLocal: kotlin.Int.minus
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -296,7 +296,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.minus
+  callableIdIfNonLocal: kotlin.Int.minus
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -310,7 +310,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.or
+  callableIdIfNonLocal: kotlin.Int.or
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -324,7 +324,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.plus
+  callableIdIfNonLocal: kotlin.Int.plus
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -338,7 +338,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.plus
+  callableIdIfNonLocal: kotlin.Int.plus
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -352,7 +352,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.plus
+  callableIdIfNonLocal: kotlin.Int.plus
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -366,7 +366,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.plus
+  callableIdIfNonLocal: kotlin.Int.plus
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -380,7 +380,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.plus
+  callableIdIfNonLocal: kotlin.Int.plus
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -394,7 +394,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.plus
+  callableIdIfNonLocal: kotlin.Int.plus
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -408,7 +408,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.rangeTo
+  callableIdIfNonLocal: kotlin.Int.rangeTo
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -422,7 +422,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.rangeTo
+  callableIdIfNonLocal: kotlin.Int.rangeTo
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -436,7 +436,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.rangeTo
+  callableIdIfNonLocal: kotlin.Int.rangeTo
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -450,7 +450,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.rangeTo
+  callableIdIfNonLocal: kotlin.Int.rangeTo
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -464,7 +464,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.rem
+  callableIdIfNonLocal: kotlin.Int.rem
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -478,7 +478,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.rem
+  callableIdIfNonLocal: kotlin.Int.rem
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -492,7 +492,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.rem
+  callableIdIfNonLocal: kotlin.Int.rem
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -506,7 +506,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.rem
+  callableIdIfNonLocal: kotlin.Int.rem
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -520,7 +520,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.rem
+  callableIdIfNonLocal: kotlin.Int.rem
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -534,7 +534,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.rem
+  callableIdIfNonLocal: kotlin.Int.rem
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -548,7 +548,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.shl
+  callableIdIfNonLocal: kotlin.Int.shl
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -562,7 +562,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(bitCount)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.shr
+  callableIdIfNonLocal: kotlin.Int.shr
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -576,7 +576,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(bitCount)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.times
+  callableIdIfNonLocal: kotlin.Int.times
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -590,7 +590,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.times
+  callableIdIfNonLocal: kotlin.Int.times
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -604,7 +604,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.times
+  callableIdIfNonLocal: kotlin.Int.times
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -618,7 +618,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.times
+  callableIdIfNonLocal: kotlin.Int.times
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -632,7 +632,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.times
+  callableIdIfNonLocal: kotlin.Int.times
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -646,7 +646,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.times
+  callableIdIfNonLocal: kotlin.Int.times
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -660,7 +660,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.toByte
+  callableIdIfNonLocal: kotlin.Int.toByte
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -674,7 +674,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.toChar
+  callableIdIfNonLocal: kotlin.Int.toChar
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -688,7 +688,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.toDouble
+  callableIdIfNonLocal: kotlin.Int.toDouble
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -702,7 +702,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.toFloat
+  callableIdIfNonLocal: kotlin.Int.toFloat
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -716,7 +716,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.toInt
+  callableIdIfNonLocal: kotlin.Int.toInt
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -730,7 +730,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.toLong
+  callableIdIfNonLocal: kotlin.Int.toLong
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -744,7 +744,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.toShort
+  callableIdIfNonLocal: kotlin.Int.toShort
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -758,7 +758,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.unaryMinus
+  callableIdIfNonLocal: kotlin.Int.unaryMinus
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -772,7 +772,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.unaryPlus
+  callableIdIfNonLocal: kotlin.Int.unaryPlus
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -786,7 +786,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.ushr
+  callableIdIfNonLocal: kotlin.Int.ushr
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -800,7 +800,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(bitCount)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Int.xor
+  callableIdIfNonLocal: kotlin.Int.xor
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -814,7 +814,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Any.equals
+  callableIdIfNonLocal: kotlin.Any.equals
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -828,7 +828,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Any.hashCode
+  callableIdIfNonLocal: kotlin.Any.hashCode
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -842,7 +842,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Any.toString
+  callableIdIfNonLocal: kotlin.Any.toString
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -856,7 +856,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirClassOrObjectSymbol:
-  classId: kotlin/Int.Companion
+  classIdIfNonLocal: kotlin/Int.Companion
   classKind: COMPANION_OBJECT
   modality: FINAL
   name: Companion

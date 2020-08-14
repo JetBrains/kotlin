@@ -2,7 +2,7 @@ class: kotlin/collections/MutableList
 
 // SYMBOLS:
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.MutableList.add
+  callableIdIfNonLocal: kotlin.collections.MutableList.add
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -16,7 +16,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(element)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.MutableList.add
+  callableIdIfNonLocal: kotlin.collections.MutableList.add
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -30,7 +30,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(index), KtFirFunctionValueParameterSymbol(element)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.MutableList.addAll
+  callableIdIfNonLocal: kotlin.collections.MutableList.addAll
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -44,7 +44,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(index), KtFirFunctionValueParameterSymbol(elements)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.MutableList.addAll
+  callableIdIfNonLocal: kotlin.collections.MutableList.addAll
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -58,7 +58,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(elements)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.MutableList.clear
+  callableIdIfNonLocal: kotlin.collections.MutableList.clear
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -72,7 +72,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.MutableList.listIterator
+  callableIdIfNonLocal: kotlin.collections.MutableList.listIterator
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -86,7 +86,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.MutableList.listIterator
+  callableIdIfNonLocal: kotlin.collections.MutableList.listIterator
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -100,7 +100,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(index)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.MutableList.remove
+  callableIdIfNonLocal: kotlin.collections.MutableList.remove
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -114,7 +114,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(element)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.MutableList.removeAll
+  callableIdIfNonLocal: kotlin.collections.MutableList.removeAll
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -128,7 +128,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(elements)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.MutableList.removeAt
+  callableIdIfNonLocal: kotlin.collections.MutableList.removeAt
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -142,7 +142,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(index)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.MutableList.retainAll
+  callableIdIfNonLocal: kotlin.collections.MutableList.retainAll
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -156,7 +156,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(elements)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.MutableList.set
+  callableIdIfNonLocal: kotlin.collections.MutableList.set
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -170,7 +170,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(index), KtFirFunctionValueParameterSymbol(element)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.MutableList.subList
+  callableIdIfNonLocal: kotlin.collections.MutableList.subList
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -184,7 +184,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(fromIndex), KtFirFunctionValueParameterSymbol(toIndex)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.MutableList.contains
+  callableIdIfNonLocal: kotlin.collections.MutableList.contains
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -198,7 +198,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(element)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.MutableList.containsAll
+  callableIdIfNonLocal: kotlin.collections.MutableList.containsAll
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -212,7 +212,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(elements)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.MutableList.get
+  callableIdIfNonLocal: kotlin.collections.MutableList.get
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -226,7 +226,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(index)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.MutableList.indexOf
+  callableIdIfNonLocal: kotlin.collections.MutableList.indexOf
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -240,7 +240,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(element)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.List.isEmpty
+  callableIdIfNonLocal: kotlin.collections.List.isEmpty
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -254,7 +254,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.MutableList.iterator
+  callableIdIfNonLocal: kotlin.collections.MutableList.iterator
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -268,7 +268,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: kotlin.collections.MutableList.lastIndexOf
+  callableIdIfNonLocal: kotlin.collections.MutableList.lastIndexOf
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -282,7 +282,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(element)]
 
 KtFirPropertySymbol:
-  fqName: kotlin.collections.List.size
+  callableIdIfNonLocal: kotlin.collections.List.size
   isExtension: false
   isVal: true
   modality: ABSTRACT
@@ -293,7 +293,7 @@ KtFirPropertySymbol:
   type: kotlin/Int
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Any.equals
+  callableIdIfNonLocal: kotlin.Any.equals
   isExtension: false
   isOperator: true
   isSuspend: false
@@ -307,7 +307,7 @@ KtFirFunctionSymbol:
   valueParameters: [KtFirFunctionValueParameterSymbol(other)]
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Any.hashCode
+  callableIdIfNonLocal: kotlin.Any.hashCode
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -321,7 +321,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: kotlin.Any.toString
+  callableIdIfNonLocal: kotlin.Any.toString
   isExtension: false
   isOperator: false
   isSuspend: false

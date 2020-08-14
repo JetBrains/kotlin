@@ -65,16 +65,6 @@ internal class KtFirClassOrObjectSymbol(
             }
         }
 
-    override val containingNonLocalClassIdIfMember: ClassId?
-        get() = firRef.withFir { fir ->
-            fir.classId.outerClassId?.takeUnless { it.isLocal }
-        }
-
-    override val containingPackageFqNameIfTopLevel: FqName?
-        get() = firRef.withFir { fir ->
-            fir.classId.packageFqName.takeIf { fir.classId.outerClassId == null }
-        }
-
     override fun createPointer(): KtSymbolPointer<KtClassOrObjectSymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         if (symbolKind == KtSymbolKind.LOCAL) {

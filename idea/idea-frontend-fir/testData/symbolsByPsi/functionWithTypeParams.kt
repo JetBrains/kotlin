@@ -10,11 +10,11 @@ KtFirFunctionValueParameterSymbol:
   isVararg: false
   name: x
   origin: SOURCE
-  symbolKind: LOCAL
+  symbolKind: NON_PROPERTY_PARAMETER
   type: X
 
 KtFirFunctionSymbol:
-  fqName: foo
+  callableIdIfNonLocal: foo
   isExtension: false
   isOperator: false
   isSuspend: false

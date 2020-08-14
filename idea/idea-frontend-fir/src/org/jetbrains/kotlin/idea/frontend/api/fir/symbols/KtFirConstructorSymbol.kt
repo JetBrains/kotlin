@@ -42,19 +42,17 @@ internal class KtFirConstructorSymbol(
         }
     }
 
-    override val isPrimary: Boolean get() = firRef.withFir { it.isPrimary }
+    override val containingClassIdIfNonLocal: ClassId?
+        get() = firRef.withFir { fir -> fir.symbol.callableId.classId /* TODO check if local */ }
 
-    override val containingNonLocalClassIdIfMember: ClassId?
-        get() = firRef.withFir { fir ->
-            fir.symbol.callableId.classId?.takeUnless { it.isLocal }
-        }
+    override val isPrimary: Boolean get() = firRef.withFir { it.isPrimary }
 
     override fun createPointer(): KtSymbolPointer<KtConstructorSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         if (symbolKind == KtSymbolKind.LOCAL) {
             throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException("constructor")
         }
-        val ownerClassId = containingNonLocalClassIdIfMember
+        val ownerClassId = containingClassIdIfNonLocal
             ?: error("ClassId should present for member declaration")
         return KtFirConstructorSymbolPointer(ownerClassId, isPrimary, firRef.withFir { it.createSignature() })
     }

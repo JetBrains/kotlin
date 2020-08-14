@@ -5,7 +5,7 @@ class A {
 
 // SYMBOLS:
 KtFirFunctionSymbol:
-  fqName: A.x
+  callableIdIfNonLocal: A.x
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -19,7 +19,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirFunctionSymbol:
-  fqName: A.y
+  callableIdIfNonLocal: A.y
   isExtension: false
   isOperator: false
   isSuspend: false
@@ -33,7 +33,7 @@ KtFirFunctionSymbol:
   valueParameters: []
 
 KtFirClassOrObjectSymbol:
-  classId: A
+  classIdIfNonLocal: A
   classKind: CLASS
   modality: FINAL
   name: A

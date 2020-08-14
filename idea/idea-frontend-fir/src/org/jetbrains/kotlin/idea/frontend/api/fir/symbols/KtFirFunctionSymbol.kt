@@ -51,7 +51,7 @@ internal class KtFirFunctionSymbol(
     override val receiverType: KtType? by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir -> fir.receiverTypeRef?.let(builder::buildKtType) }
     override val isOperator: Boolean get() = firRef.withFir { it.isOperator }
     override val isExtension: Boolean get() = firRef.withFir { it.receiverTypeRef != null }
-    override val fqNameIfNonLocal: FqName?
+    override val callableIdIfNonLocal: FqName?
         get() = firRef.withFir { fir ->
             fir.symbol.callableId.takeUnless { fir.isLocal }?.asFqNameForDebugInfo()
         }
@@ -65,16 +65,6 @@ internal class KtFirFunctionSymbol(
         }
     override val modality: KtCommonSymbolModality get() = firRef.withFir { it.modality.getSymbolModality() }
 
-    override val containingNonLocalClassIdIfMember: ClassId?
-        get() = firRef.withFir { fir ->
-            fir.symbol.callableId.classId?.takeUnless { it.isLocal }
-        }
-
-    override val containingPackageFqNameIfTopLevel: FqName?
-        get() = firRef.withFir { fir ->
-            fir.symbol.callableId.takeIf { !fir.isLocal && it.className == null }?.packageName
-        }
-
     override fun createPointer(): KtSymbolPointer<KtFunctionSymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         return when (symbolKind) {
@@ -85,7 +75,7 @@ internal class KtFirFunctionSymbol(
             )
             KtSymbolKind.NON_PROPERTY_PARAMETER -> error("KtFunction could not be a parameter")
             KtSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(
-                fqNameIfNonLocal?.asString() ?: name.asString()
+                callableIdIfNonLocal?.asString() ?: name.asString()
             )
         }
     }

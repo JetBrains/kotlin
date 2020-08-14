@@ -5,10 +5,9 @@ class A() {
 
 // SYMBOLS:
 KtFirConstructorSymbol:
+  containingClassIdIfNonLocal: A
   isPrimary: true
   origin: SOURCE
-  owner: KtFirClassOrObjectSymbol(A)
-  ownerClassId: A
   symbolKind: MEMBER
   type: A
   valueParameters: []
@@ -17,14 +16,13 @@ KtFirFunctionValueParameterSymbol:
   isVararg: false
   name: x
   origin: SOURCE
-  symbolKind: LOCAL
+  symbolKind: NON_PROPERTY_PARAMETER
   type: kotlin/Int
 
 KtFirConstructorSymbol:
+  containingClassIdIfNonLocal: A
   isPrimary: false
   origin: SOURCE
-  owner: KtFirClassOrObjectSymbol(A)
-  ownerClassId: A
   symbolKind: MEMBER
   type: A
   valueParameters: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirFunctionValueParameterSymbol cannot be cast to org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirConstructorValueParameterSymbol
@@ -33,27 +31,26 @@ KtFirFunctionValueParameterSymbol:
   isVararg: false
   name: y
   origin: SOURCE
-  symbolKind: LOCAL
+  symbolKind: NON_PROPERTY_PARAMETER
   type: kotlin/Int
 
 KtFirFunctionValueParameterSymbol:
   isVararg: false
   name: z
   origin: SOURCE
-  symbolKind: LOCAL
+  symbolKind: NON_PROPERTY_PARAMETER
   type: kotlin/String
 
 KtFirConstructorSymbol:
+  containingClassIdIfNonLocal: A
   isPrimary: false
   origin: SOURCE
-  owner: KtFirClassOrObjectSymbol(A)
-  ownerClassId: A
   symbolKind: MEMBER
   type: A
   valueParameters: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirFunctionValueParameterSymbol cannot be cast to org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirConstructorValueParameterSymbol
 
 KtFirClassOrObjectSymbol:
-  classId: A
+  classIdIfNonLocal: A
   classKind: CLASS
   modality: FINAL
   name: A

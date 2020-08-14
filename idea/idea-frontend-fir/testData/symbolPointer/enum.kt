@@ -4,21 +4,21 @@ enum class X {
 
 // SYMBOLS:
 KtFirEnumEntrySymbol:
-  enumClassId: X
+  containingEnumClassIdIfNonLocal: X
   name: Y
   origin: SOURCE
   symbolKind: MEMBER
   type: X
 
 KtFirEnumEntrySymbol:
-  enumClassId: X
+  containingEnumClassIdIfNonLocal: X
   name: Z
   origin: SOURCE
   symbolKind: MEMBER
   type: X
 
 KtFirClassOrObjectSymbol:
-  classId: X
+  classIdIfNonLocal: X
   classKind: ENUM_CLASS
   modality: FINAL
   name: X
