@@ -140,6 +140,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/conflictingOverloads.args");
         }
 
+        @TestMetadata("conflictingProjection.args")
+        public void testConflictingProjection() throws Exception {
+            runTest("compiler/testData/cli/jvm/conflictingProjection.args");
+        }
+
         @TestMetadata("coroutinesEnable.args")
         public void testCoroutinesEnable() throws Exception {
             runTest("compiler/testData/cli/jvm/coroutinesEnable.args");
