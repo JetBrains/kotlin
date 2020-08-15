@@ -794,3 +794,148 @@ INVOKESTATIC InlineMarker.mark
 ARETURN
 ```
 Then we will have the same three locals to spills, instead of four.
+
+### Coroutine Intrinsics
+
+Previous examples had an elementary coroutine builder. They used so-called empty continuation. Let us now recreate kotlinx.coroutines' 
+`async` function, which runs a coroutine on another thread and then, upon its completion, returns the result to the main thread.
+
+First, we need a class which waits on the main thread:
+```kotlin
+class Async<T> {
+    suspend fun await(): T = TODO()
+}
+```
+then the root continuation:
+```kotlin
+class AsyncContinuation<T>: Continuation<T> {
+    override val context = EmptyCoroutineContext
+
+    override fun resumeWith(result: Result<T>) {
+        TODO()
+    }
+}
+```
+Now, we can piece these two classes together. In `await`, we should check whether a coroutine already computed the result and if so, return 
+it by using `it.resume(value)` trick from resume with result section. Otherwise, we should save the continuation, so it can be resumed when 
+the result is available. Inside the continuation's `resumeWith`, we should check whether we await the result and resume the awaiting 
+continuation with the computed result; otherwise, we save the result so that it will be accessible in `await`. In code, it will look like:
+```kotlin
+class AsyncContinuation<T>: Continuation<T> {
+    var result: T? = null
+    var awaiting: Continuation<T>? = null
+    override val context: CoroutineContext
+        get() = EmptyCoroutineContext
+
+    override fun resumeWith(result: Result<T>) {
+        if (awaiting != null) {
+            awaiting?.resumeWith(result)
+        } else {
+            this.result = result.getOrThrow()
+        }
+    }
+}
+
+class Async<T>(val ac: AsyncContinuation<T>) {
+    suspend fun await(): T =
+        suspendCoroutine<T> {
+            val res = ac.result
+            if (res != null)
+                it.resume(res)
+            else
+                ac.awaiting = it
+        }
+}
+```
+
+Finally, we can write the builder itself:
+```kotlin
+fun <T> async(c: suspend () -> T): Async<T> {
+    val ac = AsyncContinuation<T>()
+    c.startCoroutine(ac)
+    return Async(ac)
+}
+```
+and simple main function to test, that everything works as expected (again, check with suspension just to be sure we did not miss 
+anything):
+```kotlin
+fun main() {
+    var c: Continuation<String>? = null
+    builder {
+        val async = async {
+            println("Async in thread ${Thread.currentThread().id}")
+            suspendCoroutine<String> { c = it }
+        }
+        println("Await in thread ${Thread.currentThread().id}")
+        println(async.await())
+    }
+    c?.resume("OK")
+}
+```
+Upon running, it will print
+```text
+Async in thread 1
+Await in thread 1
+OK
+```
+Since it is not multithreaded yet, it will run `async`'s coroutine in the main thread. However, before we make it multithreaded, we need to 
+cover how the `suspendCoroutine` function works.
+
+#### suspendCoroutine
+
+After explaining in depth how resume works, which hoops the compilers jumps through to generate a (correct) state machine, let's see, what 
+happens, when we call `suspendCoroutine`. We now know two pieces about the function: it somehow returns `COROUTINE_SUSPENDED` and it 
+provides access to continuation parameter. The function is defined as follows:
+```kotlin
+public suspend inline fun <T> suspendCoroutine(crossinline block: (Continuation<T>) -> Unit): T =
+    suspendCoroutineUninterceptedOrReturn { c: Continuation<T> ->
+        val safe = SafeContinuation(c.intercepted())
+        block(safe)
+        safe.getOrThrow()
+    }
+```
+So, it does five different things:
+1. accesses continuation argument
+2. intercepts continuation
+3. wraps it in `SafeContinuation`
+4. calls the lambda argument
+5. returns result, `COROUTINE_SUSPENDED` or throws an exception
+
+#### suspendCoroutineUninterceptedOrReturn
+
+First, let us examine how one can access a continuation argument without suspending current executions. 
+`suspendCoroutineUninterceptedOrReturn` is an intrinsic function that does only one thing: inlines provided lambda parameter passing 
+continuation parameter to it. Since its purpose is to give access to the continuation argument, which is invisible in suspend functions 
+and lambdas. Thus we cannot write in pure Kotlin. It has to be intrinsic.
+
+Fun fact: since the lambda returns `returnType | COROUTINE_SUSPENDED`, the compiler does not check its return type, so there can be some 
+funny CCEs at runtime because of this unsoundness in the Koltin type system:
+```kotlin
+import kotlin.coroutines.intrinsics.*
+
+suspend fun returnsInt(): Int = suspendCoroutineUninterceptedOrReturn { "Nope, it returns String" }
+
+suspend fun main() {
+    1 + returnsInt()
+}
+```
+will throw
+```text
+Exception in thread "main" java.lang.ClassCastException: java.lang.String cannot be cast to java.lang.Number
+```
+
+Furthermore, the runtime throws the CCE upon the usage of the return value. So, if one just ignores its return value or even better (I mean, 
+worse) calls the function in tail-call position (to enable tail-call optimization), no exception is thrown. So, the next example
+runs just fine:
+```kotlin
+import kotlin.coroutines.intrinsics.*
+
+suspend fun returnsInt(): Int = suspendCoroutineUninterceptedOrReturn { "Nope, it returns String" }
+
+suspend fun alsoReturnsInt(): Int = returnsInt()
+
+suspend fun main() {
+    returnsInt()
+    alsoReturnsInt()
+}
+```
