@@ -17,6 +17,7 @@ import kotlin.internal.*
 import kotlin.jvm.JvmName
 import kotlin.native.concurrent.ThreadLocal
 import kotlin.reflect.KClass
+import kotlin.reflect.typeOf
 
 /**
  * Current adapter providing assertion implementations
@@ -74,6 +75,31 @@ fun <@OnlyInputTypes T> assertSame(expected: T, actual: T, message: String? = nu
 /** Asserts that [actual] is not the same instance as [illegal], with an optional [message]. */
 fun <@OnlyInputTypes T> assertNotSame(illegal: T, actual: T, message: String? = null) {
     asserter.assertNotSame(message, illegal, actual)
+}
+
+/**
+ * Asserts that [value] is of type [T], with an optional [message].
+ *
+ * Note that due to type erasure the type check may be partial (e.g. assertIs<List<String>>(value)
+ * only checks for the class being [List] and not the type of its elements because it's erased).
+ */
+@SinceKotlin("1.5")
+@InlineOnly
+inline fun <reified T> assertIs(value: Any?, message: String? = null) {
+    contract { returns() implies (value is T) }
+    asserter.assertTrue({ messagePrefix(message) + "Expected value to be of type <${typeOf<T>()}>, actual <${value?.let { it::class }}>." }, value is T)
+}
+
+/**
+ * Asserts that [value] is not of type [T], with an optional [message].
+ *
+ * Note that due to type erasure the type check may be partial (e.g. assertNotIs<List<String>>(value)
+ * only checks for the class being [List] and not the type of its elements because it's erased).
+ */
+@SinceKotlin("1.5")
+@InlineOnly
+inline fun <reified T> assertNotIs(value: Any?, message: String? = null) {
+    asserter.assertFalse({ messagePrefix(message) + "Expected value to not be of type <${typeOf<T>()}>" }, value is T)
 }
 
 /** Asserts that the [actual] value is not `null`, with an optional [message]. */

@@ -205,6 +205,33 @@ class BasicAssertionsTest {
     fun testExpectFails() {
         checkFailedAssertion { expect(1) { 2 } }
     }
+
+    @Test
+    fun testAssertIs() {
+        val s: Any = "test"
+        assertIs<String>(s)
+        assertEquals(4, s.length)
+    }
+
+    @Test
+    fun testAssertIsFails() {
+        val error = checkFailedAssertion { assertIs<Int>("test") }
+        assertTrue(error.message.startsWith("Expected value to be of type"))
+        assertTrue(error.message.contains("Int"))
+        assertTrue(error.message.contains("String"))
+    }
+
+    @Test
+    fun testAssertNotIs() {
+        assertNotIs<Int>("test")
+    }
+
+    @Test
+    fun testAssertNotIsFails() {
+        val error = checkFailedAssertion { assertNotIs<Int>(1) }
+        assertTrue(error.message.startsWith("Expected value to not be of type"))
+        assertTrue(error.message.contains("Int"))
+    }
 }
 
 

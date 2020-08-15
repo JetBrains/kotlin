@@ -5,6 +5,7 @@
 
 package kotlin.test
 
+@PublishedApi // called from inline assert functions
 internal fun messagePrefix(message: String?) = if (message == null) "" else "$message. "
 internal expect fun lookupAsserter(): Asserter
 
