@@ -2558,6 +2558,15 @@
                      level="WEAK WARNING"
                      language="kotlin"
                      key="inspection.replace.with.ignore.case.equals.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantNullableReturnTypeInspection"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+                     key="inspection.redundant.nullable.return.type.display.name" bundle="messages.KotlinBundle"/>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SimplifyNestedEachInScopeFunctionInspection"
                      groupPath="Kotlin"
                      groupName="Style issues"
@@ -2565,6 +2574,7 @@
                      level="WEAK WARNING"
                      language="kotlin"
                      key="inspection.simplifiable.scope.function.display.name" bundle="messages.KotlinBundle"/>
+
   </extensions>
 
 </idea-plugin>
