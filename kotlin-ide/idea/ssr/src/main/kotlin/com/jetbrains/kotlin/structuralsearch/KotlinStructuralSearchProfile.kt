@@ -4,6 +4,7 @@ import com.intellij.dupLocator.util.NodeFilter
 import com.intellij.lang.Language
 import com.intellij.openapi.fileTypes.LanguageFileType
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
@@ -90,7 +91,9 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
                 elements = listOf(getNonWhitespaceChildren(fragment).first().parent)
                 if (elements.first() !is KtProperty) return PsiElement.EMPTY_ARRAY
             } catch (e: Exception) {
-                throw MalformedPatternException(KSSRBundle.message("error.context.getter.or.setter"))
+                return arrayOf(KtPsiFactory(project, false).createComment("//").apply {
+                    putUserData(PATTERN_ERROR, KSSRBundle.message("error.context.getter.or.setter"))
+                })
             }
         } else {
             val fragment = KtPsiFactory(project, false).createBlockCodeFragment("Unit\n$text", null)
@@ -116,6 +119,13 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
             super.visitErrorElement(element)
             if (shouldShowProblem(element)) {
                 throw MalformedPatternException(element.errorDescription)
+            }
+        }
+
+        override fun visitComment(comment: PsiComment) {
+            super.visitComment(comment)
+            comment.getUserData(PATTERN_ERROR)?.let { error ->
+                throw MalformedPatternException(error)
             }
         }
     }
@@ -307,6 +317,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         val DEFAULT_CONTEXT: PatternContext = PatternContext("default", KSSRBundle.message("context.default"))
         val PROPERTY_CONTEXT: PatternContext = PatternContext("property", KSSRBundle.message("context.property.getter.or.setter"))
         private val PATTERN_CONTEXTS: MutableList<PatternContext> = mutableListOf(DEFAULT_CONTEXT, PROPERTY_CONTEXT)
+        private val PATTERN_ERROR: Key<String> = Key("patternError")
 
         fun getNonWhitespaceChildren(fragment: PsiElement): List<PsiElement> {
             var element = fragment.firstChild
