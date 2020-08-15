@@ -7,6 +7,8 @@ import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.psi.compiled.ClassFileDecompilers
+import com.intellij.psi.impl.compiled.ClsDecompilerImpl
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -18,8 +20,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
-import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -89,10 +91,9 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
 
     private fun initializeKotlinEnvironment() {
         val area = Extensions.getRootArea()
-        area.getExtensionPoint(UastLanguagePlugin.extensionPointName)
-            .registerExtension(KotlinUastLanguagePlugin())
-        area.getExtensionPoint(UEvaluatorExtension.EXTENSION_POINT_NAME)
-            .registerExtension(KotlinEvaluatorExtension())
+        area.getExtensionPoint(UastLanguagePlugin.extensionPointName).registerExtension(KotlinUastLanguagePlugin(), project)
+        area.getExtensionPoint(UEvaluatorExtension.EXTENSION_POINT_NAME).registerExtension(KotlinEvaluatorExtension(), project)
+        area.getExtensionPoint(ClassFileDecompilers.getInstance().EP_NAME).registerExtension(ClsDecompilerImpl(), project)
 
         project.registerService(
             KotlinUastResolveProviderService::class.java,
@@ -168,10 +169,10 @@ val TEST_KOTLIN_MODEL_DIR = KotlinRoot.DIR.resolve("uast/uast-kotlin/testData")
 private fun loadScriptingPlugin(configuration: CompilerConfiguration) {
     val artifacts = KotlinArtifacts.instance
     val pluginClasspath = listOf(
-            artifacts.kotlinScriptingCompiler,
-            artifacts.kotlinScriptingCompilerImpl,
-            artifacts.kotlinScriptingCommon,
-            artifacts.kotlinScriptingJvm
+        artifacts.kotlinScriptingCompiler,
+        artifacts.kotlinScriptingCompilerImpl,
+        artifacts.kotlinScriptingCommon,
+        artifacts.kotlinScriptingJvm
     ).map { it.absolutePath }
 
     PluginCliParser.loadPluginsSafe(pluginClasspath, null, configuration)
