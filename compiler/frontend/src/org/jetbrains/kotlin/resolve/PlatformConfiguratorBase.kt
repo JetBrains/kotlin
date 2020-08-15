@@ -37,7 +37,8 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     TrailingCommaDeclarationChecker,
     MissingDependencySupertypeChecker.ForDeclarations,
     FunInterfaceDeclarationChecker(),
-    DeprecatedSinceKotlinAnnotationChecker
+    DeprecatedSinceKotlinAnnotationChecker,
+    ContractDescriptionBlockChecker
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(

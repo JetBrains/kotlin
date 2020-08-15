@@ -1370,6 +1370,39 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             }
         }
 
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/newSyntax")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class NewSyntax extends AbstractDiagnosticsTestWithStdLib {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInNewSyntax() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/newSyntax"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @TestMetadata("complexContractDescription.kt")
+            public void testComplexContractDescription() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/newSyntax/complexContractDescription.kt");
+            }
+
+            @TestMetadata("onelineFunctionsContractDescription.kt")
+            public void testOnelineFunctionsContractDescription() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/newSyntax/onelineFunctionsContractDescription.kt");
+            }
+
+            @TestMetadata("propertyAccessorsContractDescription.kt")
+            public void testPropertyAccessorsContractDescription() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/newSyntax/propertyAccessorsContractDescription.kt");
+            }
+
+            @TestMetadata("simpleFunctionsContractDescription.kt")
+            public void testSimpleFunctionsContractDescription() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/newSyntax/simpleFunctionsContractDescription.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/contracts/smartcasts")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
