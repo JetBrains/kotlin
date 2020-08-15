@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.backend.konan.getObjCMethodInfo
-import org.jetbrains.kotlin.backend.konan.lower.CallableReferenceLowering
+import org.jetbrains.kotlin.backend.konan.lower.FunctionReferenceLowering
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.descriptors.*
 
@@ -263,7 +263,7 @@ private fun <R> KotlinToCCallBuilder.handleArgumentForVarargParameter(
             } else {
                 stubs.throwCompilerError(initializer, "unexpected initializer")
             }
-        } else if (variable is IrValueParameter && CallableReferenceLowering.isLoweredCallableReference(variable)) {
+        } else if (variable is IrValueParameter && FunctionReferenceLowering.isLoweredFunctionReference(variable)) {
             val location = variable.parent // Parameter itself has incorrect location.
             val kind = if (this.isObjCMethod) "Objective-C methods" else "C functions"
             stubs.reportError(location, "callable references to variadic $kind are not supported")

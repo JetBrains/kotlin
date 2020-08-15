@@ -40,12 +40,12 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-internal class CallableReferenceLowering(val context: Context): FileLoweringPass {
+internal class FunctionReferenceLowering(val context: Context): FileLoweringPass {
 
     private object DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL : IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL")
 
     companion object {
-        fun isLoweredCallableReference(declaration: IrDeclaration): Boolean =
+        fun isLoweredFunctionReference(declaration: IrDeclaration): Boolean =
                 declaration.origin == DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL
     }
 

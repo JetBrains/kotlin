@@ -376,7 +376,7 @@ internal val allLoweringsPhase = NamedCompilerPhase(
                             testProcessorPhase,
                             enumClassPhase,
                             delegationPhase,
-                            callableReferencePhase,
+                            functionReferencePhase,
                             interopPhase,
                             varargPhase,
                             compileTimeEvaluatePhase,
