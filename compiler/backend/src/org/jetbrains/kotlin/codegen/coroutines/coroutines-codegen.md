@@ -1061,3 +1061,126 @@ case, the continuation object is the same, and we have the same problems as if t
 
 Of course, in JVM_IR, we do not have a `create` function in case when the lambda has more than one parameter, `invoke` creates a new 
 instance of the lambda with copies of all captured variables and then puts the parameters of the lambda to fields.
+
+#### Interception
+
+After all this boring theory, we can finally turn our `async` example from the previous section into a multithreaded one. In all previous 
+examples I used `EmptyCoroutineContext` as `context` for root continuations. `CoroutineContext`, the type of `context` property, is 
+essentially a hash map from `CoroutineContext.Key` to `CoroutineContext.Element`. A programmer can store coroutine-local information in it, 
+and here 'coroutine' is used in a broad sense to represent a lightweight thread, not just a suspend function or a suspend lambda. So, one 
+can view `context` as a replacement of `ThreadLocal`. To access it, the user should use `coroutineContext` intrinsic. Even a single context
+element is a context itself, so it forms a tree. The fact that one element of the context is context itself comes in handy when we need to 
+move a coroutine from one thread to another, i.e., intercept it. In order to do that, we need to provide the key and the element to the 
+context. There is a special interface `ContinuationInterceptor`, which overrides `CoroutineContext.Element` and has a property `key`. 
+Let us create one:
+```kotlin
+object SingleThreadedInterceptor: ContinuationInterceptor {
+    override val key = ContinuationInterceptor.Key
+
+    override fun <T> interceptContinuation(continuation: Continuation<T>): Continuation<T> =
+        SingleThreadedContinuation(continuation)
+}
+```
+
+In its method `interceptContinuation` we simply wrap provided continuation with a new one, and in this continuation we can run the coroutine 
+on a different thread:
+```kotlin
+class SingleThreadedContinuation<T>(val c: Continuation<T>): Continuation<T> {
+    override val context: CoroutineContext
+        get() = c.context
+
+    override fun resumeWith(result: Result<T>) {
+        thread {
+            c.resumeWith(result)
+        }
+    }
+}
+```
+Inside the `resumeWith` function, as one can see, we simply resume the continuation on another thread.
+
+Note that we pass the `context` of provided continuation as our own, so our continuation inherits it from the wrapped one. That is not 
+required, but since `context` is a replacement for `ThreadLocal`, we should keep it and. All we are allowed to do is add additional 
+infrastructural information, like `ContinuationInterceptor`, but we can never remove anything added by the user.
+
+It is important to note that the `key` property should be constant. Otherwise, `get` on this key will return null, and there will be no 
+interception.
+
+Now, if we change `AsyncContinuation`, `async` function and `main` to use the interceptor:
+```kotlin
+class AsyncContinuation<T>(override val context:  CoroutineContext): Continuation<T> {
+    var result: T? = null
+    var awaiting: Continuation<T>? = null
+
+    override fun resumeWith(result: Result<T>) {
+        if (awaiting != null) {
+            awaiting?.resumeWith(result)
+        } else {
+            this.result = result.getOrThrow()
+        }
+    }
+}
+
+fun <T> async(context: CoroutineContext = EmptyCoroutineContext, c: suspend () -> T): Async<T> {
+    val ac = AsyncContinuation<T>(context)
+    c.startCoroutine(ac)
+    return Async(ac)
+}
+
+fun main() {
+    var c: Continuation<String>? = null
+    builder {
+        val async = async(SingleThreadedIntercepted) {
+            println("Async in thread ${Thread.currentThread().id}")
+            suspendCoroutine<String> { c = it }
+        }
+        println("Await in thread ${Thread.currentThread().id}")
+        println(async.await())
+    }
+    c?.resume("OK")
+}
+```
+and when we run the program, we get something like
+```text
+Async in thread 11
+Await in thread 1
+OK
+```
+as expected.
+
+But what part of coroutine machinery calls `interceptContinuation` function of the interceptor? The function wraps the continuation, but 
+who calls the function? Well, `intercepted` does. If we rewrite
+`async` as
+```kotlin
+fun <T> async(context: CoroutineContext = EmptyCoroutineContext, c: suspend () -> T): Async<T> {
+    val ac = AsyncContinuation<T>(context)
+    c.createCoroutineUnintercepted(ac)
+//        .intercepted()
+        .resume(Unit)
+    return Async(ac)
+}
+```
+(note, that I commented `intercepted` call out) and then run the example, we get
+```text
+Async in thread 1
+Await in thread 1
+OK
+```
+since without interception, we do not wrap the continuation to run the coroutine on another thread.
+
+But how `intercepted` does that? Well, `intercepted`, after some indirections, does the following:
+```kotlin
+context[ContinuationInterceptor]?.interceptContinuation(this)
+```
+remember, `CoroutineContext.Element` is itself a `CoroutineContext` with a single element, which returns itself on `get` if its key is the 
+same as the provided one. That is why it is important to use constants as keys. We also cache intercepted continuation in the `intercepted` 
+field. The field causes KNPE when we do not wrap the continuation with `SafeContinuation`.
+
+#### Restricted Suspension
+
+There are cases when we do not want to allow calling other suspend functions or lambdas from ours, for example, inside a lambda, passed
+to `sequence` function, we want to call only `yield` and `yieldAll` functions, unless the functions we call inside the lambda, call `yield` 
+or `yieldAll`. Furthermore, we do not want to intercept their continuations. We want to limit them to the main thread. In this case, we use 
+`@RestrictsSuspension` annotation on classes or interfaces, which contain leaf suspend functions, which the lambda allowed to call.
+If we look at `sequence`, the `SequenceScope` interface is annotated with the annotation.
+
+Since we do not want to intercept the continuations, their `context`s cannot be other than `EmptyCoroutineContext`.
