@@ -10,7 +10,6 @@ dependencies {
     compile(project(":core:metadata"))
     compile(project(":core:util.runtime"))
     compile(project(":core:descriptors"))
-    compile(project(":core:deserialization:deserialization.common"))
     compile(commonDep("javax.inject"))
 }
 

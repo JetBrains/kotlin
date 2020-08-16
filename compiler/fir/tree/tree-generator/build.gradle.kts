@@ -12,6 +12,7 @@ runtimeOnly.extendsFrom(compileOnly)
 
 dependencies {
     compile(project(":compiler:frontend.common"))
+    implementation(project(":core:deserialization:deserialization.common"))
     compile(project(":core:descriptors"))
     compile(project(":compiler:fir:cones"))
     compile(project(":compiler:resolution"))

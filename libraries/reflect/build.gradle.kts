@@ -52,6 +52,7 @@ dependencies {
     embedded(project(":core:descriptors.common"))
     embedded(project(":core:descriptors.jvm"))
     embedded(project(":core:deserialization"))
+    embedded(project(":core:deserialization:deserialization.common"))
     embedded(project(":core:descriptors.runtime"))
     embedded(project(":core:util.runtime"))
     embedded("javax.inject:javax.inject:1")
@@ -163,6 +164,7 @@ val relocateCoreSources by task<Copy> {
     from("$core/descriptors.jvm/src")
     from("$core/descriptors.runtime/src")
     from("$core/deserialization/src")
+    from("$core/deserialization/deserialization.common/src")
     from("$core/util.runtime/src")
 
     exclude("META-INF/services/**")

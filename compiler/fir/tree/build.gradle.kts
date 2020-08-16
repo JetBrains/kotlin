@@ -7,6 +7,7 @@ plugins {
 
 dependencies {
     api(project(":compiler:fir:cones"))
+    api(project(":core:deserialization:deserialization.common"))
     compile(project(":compiler:resolution"))
     compile(project(":compiler:frontend.common"))
 
