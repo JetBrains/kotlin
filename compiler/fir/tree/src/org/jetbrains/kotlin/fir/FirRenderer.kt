@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
@@ -872,7 +872,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         print("|")
     }
 
-    private val FirResolvedTypeRef.functionTypeKind: FunctionClassDescriptor.Kind?
+    private val FirResolvedTypeRef.functionTypeKind: FunctionClassKind?
         get() {
             val classId = (type as? ConeClassLikeType)?.lookupTag?.classId ?: return null
             return BuiltInFictitiousFunctionClassFactory.getFunctionalClassKind(

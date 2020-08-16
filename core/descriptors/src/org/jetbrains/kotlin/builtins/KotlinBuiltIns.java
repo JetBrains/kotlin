@@ -10,7 +10,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory;
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor;
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider;
@@ -295,7 +295,7 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     private static FqNameUnsafe getKFunctionFqName(int parameterCount) {
-        return FqNames.reflect(FunctionClassDescriptor.Kind.KFunction.getClassNamePrefix() + parameterCount);
+        return FqNames.reflect(FunctionClassKind.KFunction.getClassNamePrefix() + parameterCount);
     }
 
     @NotNull
@@ -310,7 +310,7 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public static String getSuspendFunctionName(int parameterCount) {
-        return FunctionClassDescriptor.Kind.SuspendFunction.getClassNamePrefix() + parameterCount;
+        return FunctionClassKind.SuspendFunction.getClassNamePrefix() + parameterCount;
     }
 
     @NotNull
@@ -330,7 +330,7 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getKSuspendFunction(int parameterCount) {
-        Name name = Name.identifier(FunctionClassDescriptor.Kind.KSuspendFunction.getClassNamePrefix() + parameterCount);
+        Name name = Name.identifier(FunctionClassKind.KSuspendFunction.getClassNamePrefix() + parameterCount);
         return getBuiltInClassByFqName(COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(name));
     }
 

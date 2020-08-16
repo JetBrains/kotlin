@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.RESULT_FQ_NAME
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.isStaticMethod
@@ -328,8 +329,8 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
         if (classDescriptor is FunctionClassDescriptor) {
             if (classDescriptor.hasBigArity ||
-                classDescriptor.functionKind == FunctionClassDescriptor.Kind.KFunction ||
-                classDescriptor.functionKind == FunctionClassDescriptor.Kind.KSuspendFunction
+                classDescriptor.functionKind == FunctionClassKind.KFunction ||
+                classDescriptor.functionKind == FunctionClassKind.KSuspendFunction
             ) {
                 // kotlin.reflect.KFunction{n}<P1, ..., Pn, R> is mapped to kotlin.reflect.KFunction<R> (for all n), and
                 // kotlin.Function{n}<P1, ..., Pn, R> is mapped to kotlin.jvm.functions.FunctionN<R> (for n > 22).

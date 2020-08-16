@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -59,10 +59,10 @@ private fun ConeTypeProjection.render(): String {
     }
 }
 
-fun ConeKotlinType.renderFunctionType(kind: FunctionClassDescriptor.Kind?, isExtension: Boolean): String {
+fun ConeKotlinType.renderFunctionType(kind: FunctionClassKind?, isExtension: Boolean): String {
     if (!kind.withPrettyRender()) return render()
     return buildString {
-        if (kind == FunctionClassDescriptor.Kind.SuspendFunction) {
+        if (kind == FunctionClassKind.SuspendFunction) {
             append("suspend ")
         }
         val (receiver, otherTypeArguments) = if (isExtension && typeArguments.first() != ConeStarProjection) {
@@ -83,9 +83,9 @@ fun ConeKotlinType.renderFunctionType(kind: FunctionClassDescriptor.Kind?, isExt
 }
 
 @OptIn(ExperimentalContracts::class)
-fun FunctionClassDescriptor.Kind?.withPrettyRender(): Boolean {
+fun FunctionClassKind?.withPrettyRender(): Boolean {
     contract {
         returns(true) implies (this@withPrettyRender != null)
     }
-    return this != null && this != FunctionClassDescriptor.Kind.KSuspendFunction && this != FunctionClassDescriptor.Kind.KFunction
+    return this != null && this != FunctionClassKind.KSuspendFunction && this != FunctionClassKind.KFunction
 }

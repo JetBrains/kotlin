@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.FqNames
 import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.*
@@ -23,13 +23,13 @@ import java.util.*
 
 object JavaToKotlinClassMap : PlatformToKotlinClassMap {
     private val NUMBERED_FUNCTION_PREFIX =
-        FunctionClassDescriptor.Kind.Function.packageFqName.toString() + "." + FunctionClassDescriptor.Kind.Function.classNamePrefix
+        FunctionClassKind.Function.packageFqName.toString() + "." + FunctionClassKind.Function.classNamePrefix
     private val NUMBERED_K_FUNCTION_PREFIX =
-        FunctionClassDescriptor.Kind.KFunction.packageFqName.toString() + "." + FunctionClassDescriptor.Kind.KFunction.classNamePrefix
+        FunctionClassKind.KFunction.packageFqName.toString() + "." + FunctionClassKind.KFunction.classNamePrefix
     private val NUMBERED_SUSPEND_FUNCTION_PREFIX =
-        FunctionClassDescriptor.Kind.SuspendFunction.packageFqName.toString() + "." + FunctionClassDescriptor.Kind.SuspendFunction.classNamePrefix
+        FunctionClassKind.SuspendFunction.packageFqName.toString() + "." + FunctionClassKind.SuspendFunction.classNamePrefix
     private val NUMBERED_K_SUSPEND_FUNCTION_PREFIX =
-        FunctionClassDescriptor.Kind.KSuspendFunction.packageFqName.toString() + "." + FunctionClassDescriptor.Kind.KSuspendFunction.classNamePrefix
+        FunctionClassKind.KSuspendFunction.packageFqName.toString() + "." + FunctionClassKind.KSuspendFunction.classNamePrefix
 
     private val FUNCTION_N_CLASS_ID = ClassId.topLevel(FqName("kotlin.jvm.functions.FunctionN"))
     val FUNCTION_N_FQ_NAME = FUNCTION_N_CLASS_ID.asSingleFqName()
@@ -102,7 +102,7 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
             addKotlinToJava(FqName(NUMBERED_K_FUNCTION_PREFIX + i), K_FUNCTION_CLASS_ID)
         }
         for (i in 0 until FunctionInvokeDescriptor.BIG_ARITY - 1) {
-            val kSuspendFunction = FunctionClassDescriptor.Kind.KSuspendFunction
+            val kSuspendFunction = FunctionClassKind.KSuspendFunction
             val kSuspendFun = kSuspendFunction.packageFqName.toString() + "." + kSuspendFunction.classNamePrefix
             addKotlinToJava(FqName(kSuspendFun + i), K_FUNCTION_CLASS_ID)
         }

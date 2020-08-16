@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend.generators
 
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -128,8 +128,8 @@ class CallAndReferenceGenerator(
 
     private fun ConeKotlinType.kFunctionTypeToFunctionType(): IrSimpleType {
         val kind =
-            if (isSuspendFunctionType(session)) FunctionClassDescriptor.Kind.SuspendFunction
-            else FunctionClassDescriptor.Kind.Function
+            if (isSuspendFunctionType(session)) FunctionClassKind.SuspendFunction
+            else FunctionClassKind.Function
         val functionalTypeId = ClassId(kind.packageFqName, kind.numberedClassName(typeArguments.size - 1))
         val coneType = ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(functionalTypeId), typeArguments, isNullable = false)
         return coneType.toIrType() as IrSimpleType

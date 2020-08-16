@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.serialization
 
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -611,8 +611,8 @@ class FirElementSerializer private constructor(
         val suspendClassId = type.classId!!
         val relativeClassName = suspendClassId.relativeClassName.asString()
         val kind =
-            if (relativeClassName.startsWith("K")) FunctionClassDescriptor.Kind.KFunction
-            else FunctionClassDescriptor.Kind.Function
+            if (relativeClassName.startsWith("K")) FunctionClassKind.KFunction
+            else FunctionClassKind.Function
         val runtimeClassId = ClassId(kind.packageFqName, Name.identifier(relativeClassName.replaceFirst("Suspend", "")))
         val continuationClassId = CONTINUATION_INTERFACE_CLASS_ID
         return ConeClassLikeLookupTagImpl(runtimeClassId).constructClassType(

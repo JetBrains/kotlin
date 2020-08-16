@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.builtins.functions
 
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor.Kind
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory
@@ -35,11 +34,11 @@ class BuiltInFictitiousFunctionClassFactory(
         private val module: ModuleDescriptor
 ) : ClassDescriptorFactory {
 
-    private data class KindWithArity(val kind: Kind, val arity: Int)
+    private data class KindWithArity(val kind: FunctionClassKind, val arity: Int)
 
     companion object {
         private fun parseClassName(className: String, packageFqName: FqName): KindWithArity? {
-            val kind = FunctionClassDescriptor.Kind.byClassNamePrefix(packageFqName, className) ?: return null
+            val kind = FunctionClassKind.byClassNamePrefix(packageFqName, className) ?: return null
 
             val prefix = kind.classNamePrefix
 

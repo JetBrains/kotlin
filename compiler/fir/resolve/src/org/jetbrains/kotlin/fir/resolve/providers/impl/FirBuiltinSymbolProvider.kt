@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SourceElement
@@ -48,7 +48,7 @@ import java.io.InputStream
 
 class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: KotlinScopeProvider) : FirSymbolProvider(session) {
 
-    private data class SyntheticFunctionalInterfaceSymbolKey(val kind: FunctionClassDescriptor.Kind, val arity: Int)
+    private data class SyntheticFunctionalInterfaceSymbolKey(val kind: FunctionClassKind, val arity: Int)
 
     private val allPackageFragments = loadBuiltIns().groupBy { it.fqName }
     private val syntheticFunctionalInterfaceSymbols = mutableMapOf<SyntheticFunctionalInterfaceSymbolKey, FirRegularClassSymbol>()
@@ -79,7 +79,7 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
     private fun trySyntheticFunctionalInterface(classId: ClassId): FirRegularClassSymbol? {
         return with(classId) {
             val className = relativeClassName.asString()
-            val kind = FunctionClassDescriptor.Kind.byClassNamePrefix(packageFqName, className) ?: return@with null
+            val kind = FunctionClassKind.byClassNamePrefix(packageFqName, className) ?: return@with null
             val prefix = kind.classNamePrefix
             val arity = className.substring(prefix.length).toIntOrNull() ?: return null
             syntheticFunctionalInterfaceSymbols.getOrPut(SyntheticFunctionalInterfaceSymbolKey(kind, arity)) {
@@ -141,22 +141,22 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
                             isTailRec = false
                             isExternal = false
                             isSuspend =
-                                kind == FunctionClassDescriptor.Kind.SuspendFunction ||
-                                        kind == FunctionClassDescriptor.Kind.KSuspendFunction
+                                kind == FunctionClassKind.SuspendFunction ||
+                                        kind == FunctionClassKind.KSuspendFunction
                         }
                         val typeArguments = typeParameters.map {
                             buildResolvedTypeRef {
                                 type = ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
                             }
                         }
-                        val superKind: FunctionClassDescriptor.Kind? = when (kind) {
-                            FunctionClassDescriptor.Kind.KFunction -> FunctionClassDescriptor.Kind.Function
-                            FunctionClassDescriptor.Kind.KSuspendFunction -> FunctionClassDescriptor.Kind.SuspendFunction
+                        val superKind: FunctionClassKind? = when (kind) {
+                            FunctionClassKind.KFunction -> FunctionClassKind.Function
+                            FunctionClassKind.KSuspendFunction -> FunctionClassKind.SuspendFunction
                             else -> null
                         }
 
                         fun createSuperType(
-                            kind: FunctionClassDescriptor.Kind,
+                            kind: FunctionClassKind,
                         ): FirResolvedTypeRef {
                             return buildResolvedTypeRef {
                                 type = ConeClassLikeLookupTagImpl(kind.classId(arity))
@@ -165,34 +165,34 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
                         }
 
                         superTypeRefs += when (kind) {
-                            FunctionClassDescriptor.Kind.Function -> listOf(
+                            FunctionClassKind.Function -> listOf(
                                 buildResolvedTypeRef {
                                     type = ConeClassLikeLookupTagImpl(StandardClassIds.Function)
                                         .constructClassType(arrayOf(typeArguments.last().type), isNullable = false)
                                 }
                             )
 
-                            FunctionClassDescriptor.Kind.SuspendFunction -> listOf(
+                            FunctionClassKind.SuspendFunction -> listOf(
                                 buildResolvedTypeRef {
                                     type = ConeClassLikeLookupTagImpl(StandardClassIds.Function)
                                         .constructClassType(arrayOf(typeArguments.last().type), isNullable = false)
                                 }
                             )
 
-                            FunctionClassDescriptor.Kind.KFunction -> listOf(
+                            FunctionClassKind.KFunction -> listOf(
                                 buildResolvedTypeRef {
                                     type = ConeClassLikeLookupTagImpl(StandardClassIds.KFunction)
                                         .constructClassType(arrayOf(typeArguments.last().type), isNullable = false)
                                 },
-                                createSuperType(FunctionClassDescriptor.Kind.Function)
+                                createSuperType(FunctionClassKind.Function)
                             )
 
-                            FunctionClassDescriptor.Kind.KSuspendFunction -> listOf(
+                            FunctionClassKind.KSuspendFunction -> listOf(
                                 buildResolvedTypeRef {
                                     type = ConeClassLikeLookupTagImpl(StandardClassIds.KFunction)
                                         .constructClassType(arrayOf(typeArguments.last().type), isNullable = false)
                                 },
-                                createSuperType(FunctionClassDescriptor.Kind.SuspendFunction)
+                                createSuperType(FunctionClassKind.SuspendFunction)
                             )
                         }
                         addDeclaration(
@@ -232,14 +232,14 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
     }
 
     // Find the symbol for "invoke" in the function class
-    private fun FunctionClassDescriptor.Kind.getInvoke(arity: Int): FirNamedFunctionSymbol? {
+    private fun FunctionClassKind.getInvoke(arity: Int): FirNamedFunctionSymbol? {
         val functionClass = getClassLikeSymbolByFqName(classId(arity)) ?: return null
         val invoke =
             functionClass.fir.declarations.find { it is FirSimpleFunction && it.name == OperatorNameConventions.INVOKE } ?: return null
         return (invoke as FirSimpleFunction).symbol as? FirNamedFunctionSymbol
     }
 
-    private fun FunctionClassDescriptor.Kind.classId(arity: Int) = ClassId(packageFqName, numberedClassName(arity))
+    private fun FunctionClassKind.classId(arity: Int) = ClassId(packageFqName, numberedClassName(arity))
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
