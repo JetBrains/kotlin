@@ -192,7 +192,7 @@ class Fir2IrClassifierStorage(
             declareIrTypeAlias(signature) { symbol ->
                 val irTypeAlias = irFactory.createTypeAlias(
                     startOffset, endOffset, symbol,
-                    typeAlias.name, typeAlias.visibility.toOldVisibility(),
+                    typeAlias.name, components.visibilityConverter.convertToOldVisibility(typeAlias.visibility),
                     typeAlias.expandedTypeRef.toIrType(),
                     typeAlias.isActual, IrDeclarationOrigin.DEFINED
                 ).apply {
@@ -237,7 +237,7 @@ class Fir2IrClassifierStorage(
                     symbol,
                     regularClass.name,
                     regularClass.classKind,
-                    visibility.toOldVisibility(),
+                    components.visibilityConverter.convertToOldVisibility(visibility),
                     modality,
                     isCompanion = regularClass.isCompanion,
                     isInner = regularClass.isInner,
@@ -277,7 +277,7 @@ class Fir2IrClassifierStorage(
                     startOffset, endOffset, origin, symbol, name,
                     // NB: for unknown reason, IR uses 'CLASS' kind for simple anonymous objects
                     anonymousObject.classKind.takeIf { it == ClassKind.ENUM_ENTRY } ?: ClassKind.CLASS,
-                    visibility.toOldVisibility(), modality
+                    components.visibilityConverter.convertToOldVisibility(visibility), modality
                 ).apply {
                     metadata = FirMetadataSource.Class(anonymousObject)
                     setThisReceiver(anonymousObject.typeParameters)

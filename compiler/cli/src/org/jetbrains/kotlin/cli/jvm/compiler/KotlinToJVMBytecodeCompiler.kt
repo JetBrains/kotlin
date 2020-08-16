@@ -63,6 +63,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmClassCodegen
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
 import org.jetbrains.kotlin.fir.extensions.extensionService
@@ -405,7 +406,8 @@ object KotlinToJVMBytecodeCompiler {
                 Fir2IrConverter.createModuleFragment(
                     session, resolveTransformer.scopeSession, firFiles,
                     moduleConfiguration.languageVersionSettings, signaturer,
-                    JvmGeneratorExtensions(), FirJvmKotlinMangler(session), IrFactoryImpl
+                    JvmGeneratorExtensions(), FirJvmKotlinMangler(session), IrFactoryImpl,
+                    FirJvmVisibilityConverter
                 )
 
             performanceManager?.notifyIRTranslationFinished()

@@ -50,8 +50,6 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.descriptors.Visibilities as OldVisibilities
-import org.jetbrains.kotlin.descriptors.Visibility as OldVisibility
 
 internal fun <T : IrElement> FirElement.convertWithOffsets(
     f: (startOffset: Int, endOffset: Int) -> T
@@ -490,16 +488,4 @@ fun Fir2IrComponents.createTemporaryVariableForSafeCallConstruction(
     val variableSymbol = receiverVariable.symbol
 
     return Pair(receiverVariable, variableSymbol)
-}
-
-fun Visibility.toOldVisibility(): OldVisibility = when (this.normalize()) {
-    Visibilities.Private -> OldVisibilities.PRIVATE
-    Visibilities.PrivateToThis -> OldVisibilities.PRIVATE_TO_THIS
-    Visibilities.Protected -> OldVisibilities.PROTECTED
-    Visibilities.Internal -> OldVisibilities.INTERNAL
-    Visibilities.Public -> OldVisibilities.PUBLIC
-    Visibilities.Local -> OldVisibilities.LOCAL
-    Visibilities.InvisibleFake -> OldVisibilities.INVISIBLE_FAKE
-    Visibilities.Unknown -> OldVisibilities.UNKNOWN
-    else -> error("Unknown visiblity: $this")
 }

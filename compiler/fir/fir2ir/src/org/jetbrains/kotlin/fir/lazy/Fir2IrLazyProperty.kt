@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.toIrConst
-import org.jetbrains.kotlin.fir.backend.toOldVisibility
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
@@ -71,7 +70,7 @@ class Fir2IrLazyProperty(
         get() = fir.name
 
     @Suppress("SetterBackingFieldAssignment")
-    override var visibility: OldVisibility = fir.visibility.toOldVisibility()
+    override var visibility: OldVisibility = components.visibilityConverter.convertToOldVisibility(fir.visibility)
         set(_) {
             error("Mutating Fir2Ir lazy elements is not possible")
         }
@@ -95,7 +94,7 @@ class Fir2IrLazyProperty(
                 with(declarationStorage) {
                     createBackingField(
                         fir, IrDeclarationOrigin.PROPERTY_BACKING_FIELD, descriptor,
-                        fir.fieldVisibility.toOldVisibility(), fir.name, fir.isVal, fir.initializer,
+                        components.visibilityConverter.convertToOldVisibility(fir.visibility), fir.name, fir.isVal, fir.initializer,
                         type
                     ).also { field ->
                         val initializer = fir.initializer
@@ -111,7 +110,7 @@ class Fir2IrLazyProperty(
                 with(declarationStorage) {
                     createBackingField(
                         fir, IrDeclarationOrigin.PROPERTY_DELEGATE, descriptor,
-                        fir.fieldVisibility.toOldVisibility(), Name.identifier("${fir.name}\$delegate"), true, fir.delegate
+                        components.visibilityConverter.convertToOldVisibility(fir.visibility), Name.identifier("${fir.name}\$delegate"), true, fir.delegate
                     )
                 }
             }

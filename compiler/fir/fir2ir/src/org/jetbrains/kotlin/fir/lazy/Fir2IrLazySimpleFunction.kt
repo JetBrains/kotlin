@@ -72,7 +72,7 @@ class Fir2IrLazySimpleFunction(
         get() = fir.name
 
     @Suppress("SetterBackingFieldAssignment")
-    override var visibility: OldVisibility = fir.visibility.toOldVisibility()
+    override var visibility: OldVisibility = components.visibilityConverter.convertToOldVisibility(fir.visibility)
         set(_) {
             error("Mutating Fir2Ir lazy elements is not possible")
         }

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
@@ -93,6 +94,7 @@ abstract class AbstractFir2IrTextTest : AbstractIrTextTestCase() {
             JvmGeneratorExtensions(generateFacades = false),
             FirJvmKotlinMangler(session),
             IrFactoryImpl,
+            FirJvmVisibilityConverter
         ).irModuleFragment
     }
 }
