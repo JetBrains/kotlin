@@ -9,17 +9,12 @@ package org.jetbrains.kotlin.nj2k.symbols
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReference
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.nj2k.tree.JKClass
 import org.jetbrains.kotlin.nj2k.tree.JKMethod
-import org.jetbrains.kotlin.nj2k.types.asType
-import org.jetbrains.kotlin.nj2k.types.toJK
-import org.jetbrains.kotlin.nj2k.types.JKClassType
-import org.jetbrains.kotlin.nj2k.types.JKNoType
-import org.jetbrains.kotlin.nj2k.types.JKType
-import org.jetbrains.kotlin.nj2k.types.JKTypeFactory
+import org.jetbrains.kotlin.nj2k.types.*
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -77,7 +72,7 @@ class JKMultiverseFunctionSymbol(
             type?.let {
                 if (parameter.isVarArg) {
                     JKClassType(
-                        symbolProvider.provideClassSymbol(KotlinBuiltIns.FQ_NAMES.array.toSafe()),
+                        symbolProvider.provideClassSymbol(KotlinBuiltInsNames.FqNames.array.toSafe()),
                         listOf(it)
                     )
                 } else it

@@ -14,6 +14,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
@@ -225,7 +226,7 @@ class SpecifyTypeExplicitlyIntention : SelfTargetingRangeIntention<KtCallableDec
             val project = declaration.project
             val expression = createTypeExpressionForTemplate(exprType, declaration, useTypesFromOverridden = true) ?: return
 
-            declaration.setType(KotlinBuiltIns.FQ_NAMES.any.asString())
+            declaration.setType(KotlinBuiltInsNames.FqNames.any.asString())
 
             PsiDocumentManager.getInstance(project).commitAllDocuments()
             PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)

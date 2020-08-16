@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.codeStyle.CodeStyleManager
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
@@ -110,7 +110,7 @@ class DeprecatedCallableAddReplaceWithInspection : AbstractApplicabilityBasedIns
 
             val descriptor = resolvedCall.resultingDescriptor.containingDeclaration
             val descriptorFqName = DescriptorUtils.getFqName(descriptor).toSafe()
-            if (descriptorFqName != KotlinBuiltIns.FQ_NAMES.deprecated) continue
+            if (descriptorFqName != KotlinBuiltInsNames.FqNames.deprecated) continue
 
             val args = resolvedCall.valueArguments.mapKeys { it.key.name.asString() }
             val replaceWithArguments = args["replaceWith"] /*TODO: kotlin.deprecated::replaceWith.name*/
@@ -231,6 +231,6 @@ class DeprecatedCallableAddReplaceWithInspection : AbstractApplicabilityBasedIns
     }
 
     companion object {
-        val DEPRECATED_NAME = KotlinBuiltIns.FQ_NAMES.deprecated.shortName()
+        val DEPRECATED_NAME = KotlinBuiltInsNames.FqNames.deprecated.shortName()
     }
 }

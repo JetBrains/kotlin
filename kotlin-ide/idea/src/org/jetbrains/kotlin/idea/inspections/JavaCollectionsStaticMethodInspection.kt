@@ -12,7 +12,7 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -88,14 +88,14 @@ class JavaCollectionsStaticMethodInspection : AbstractKotlinInspection() {
 }
 
 private fun KotlinType.isMutableList() =
-    constructor.declarationDescriptor?.fqNameSafe == KotlinBuiltIns.FQ_NAMES.mutableList
+    constructor.declarationDescriptor?.fqNameSafe == KotlinBuiltInsNames.FqNames.mutableList
 
 private fun KotlinType.isMutableListOrSubtype(): Boolean {
     return isMutableList() || constructor.supertypes.reversed().any { it.isMutableList() }
 }
 
 private fun KotlinType.isList() =
-    constructor.declarationDescriptor?.fqNameSafe == KotlinBuiltIns.FQ_NAMES.list
+    constructor.declarationDescriptor?.fqNameSafe == KotlinBuiltInsNames.FqNames.list
 
 private fun KotlinType.isListOrSubtype(): Boolean {
     return isList() || constructor.supertypes.reversed().any { it.isList() }

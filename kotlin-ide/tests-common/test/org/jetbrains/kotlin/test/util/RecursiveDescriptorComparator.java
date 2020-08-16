@@ -22,7 +22,7 @@ import kotlin.Unit;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames;
 import org.jetbrains.kotlin.contracts.description.*;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SubpackagesScope;
@@ -69,7 +69,7 @@ public class RecursiveDescriptorComparator {
                                                                                          false, descriptor -> true, errorTypesForbidden(), DEFAULT_RENDERER);
     public static final Predicate<DeclarationDescriptor> SKIP_BUILT_INS_PACKAGES = descriptor -> {
         if (descriptor instanceof PackageViewDescriptor) {
-            return !KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.equals(((PackageViewDescriptor) descriptor).getFqName());
+            return !KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAME.equals(((PackageViewDescriptor) descriptor).getFqName());
         }
         return true;
     };

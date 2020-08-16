@@ -21,7 +21,7 @@ import com.intellij.codeInspection.SuppressIntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.idea.KotlinIdeaAnalysisBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.util.addAnnotation
@@ -63,7 +63,7 @@ class KotlinSuppressIntentionAction private constructor(
         val id = "\"$suppressKey\""
         when (suppressAt) {
             is KtModifierListOwner -> suppressAt.addAnnotation(
-                KotlinBuiltIns.FQ_NAMES.suppress,
+                KotlinBuiltInsNames.FqNames.suppress,
                 id,
                 whiteSpaceText = if (kind.newLineNeeded) "\n" else " ",
                 addToExistingAnnotation = { entry ->
@@ -150,7 +150,7 @@ class KotlinSuppressIntentionAction private constructor(
     }
 
     private fun suppressAnnotationText(id: String, withAt: Boolean = true) =
-        "${if (withAt) "@" else ""}${KotlinBuiltIns.FQ_NAMES.suppress.shortName()}($id)"
+        "${if (withAt) "@" else ""}${KotlinBuiltInsNames.FqNames.suppress.shortName()}($id)"
 
     private fun findSuppressAnnotation(annotated: KtAnnotated): KtAnnotationEntry? {
         val context = annotated.analyze()
@@ -164,7 +164,7 @@ class KotlinSuppressIntentionAction private constructor(
 
     private fun findSuppressAnnotation(context: BindingContext, annotationEntries: List<KtAnnotationEntry>): KtAnnotationEntry? {
         return annotationEntries.firstOrNull { entry ->
-            context.get(BindingContext.ANNOTATION, entry)?.fqName == KotlinBuiltIns.FQ_NAMES.suppress
+            context.get(BindingContext.ANNOTATION, entry)?.fqName == KotlinBuiltInsNames.FqNames.suppress
         }
     }
 }

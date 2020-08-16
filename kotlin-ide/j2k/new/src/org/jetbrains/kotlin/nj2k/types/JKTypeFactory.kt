@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.nj2k.types
 
 import com.intellij.psi.*
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
@@ -36,24 +36,24 @@ class JKTypeFactory(val symbolProvider: JKSymbolProvider) {
             nullability
         )
 
-        val boolean = typeByFqName(KotlinBuiltIns.FQ_NAMES._boolean)
-        val char = typeByFqName(KotlinBuiltIns.FQ_NAMES._char)
-        val byte = typeByFqName(KotlinBuiltIns.FQ_NAMES._byte)
-        val short = typeByFqName(KotlinBuiltIns.FQ_NAMES._short)
-        val int = typeByFqName(KotlinBuiltIns.FQ_NAMES._int)
-        val float = typeByFqName(KotlinBuiltIns.FQ_NAMES._float)
-        val long = typeByFqName(KotlinBuiltIns.FQ_NAMES._long)
-        val double = typeByFqName(KotlinBuiltIns.FQ_NAMES._double)
+        val boolean = typeByFqName(KotlinBuiltInsNames.FqNames._boolean)
+        val char = typeByFqName(KotlinBuiltInsNames.FqNames._char)
+        val byte = typeByFqName(KotlinBuiltInsNames.FqNames._byte)
+        val short = typeByFqName(KotlinBuiltInsNames.FqNames._short)
+        val int = typeByFqName(KotlinBuiltInsNames.FqNames._int)
+        val float = typeByFqName(KotlinBuiltInsNames.FqNames._float)
+        val long = typeByFqName(KotlinBuiltInsNames.FqNames._long)
+        val double = typeByFqName(KotlinBuiltInsNames.FqNames._double)
 
-        val string = typeByFqName(KotlinBuiltIns.FQ_NAMES.string)
-        val possiblyNullString = typeByFqName(KotlinBuiltIns.FQ_NAMES.string, nullability = Nullability.Default)
+        val string = typeByFqName(KotlinBuiltInsNames.FqNames.string)
+        val possiblyNullString = typeByFqName(KotlinBuiltInsNames.FqNames.string, nullability = Nullability.Default)
 
-        val unit = typeByFqName(KotlinBuiltIns.FQ_NAMES.unit)
-        val nothing = typeByFqName(KotlinBuiltIns.FQ_NAMES.nothing)
-        val nullableAny = typeByFqName(KotlinBuiltIns.FQ_NAMES.any, nullability = Nullability.Nullable)
+        val unit = typeByFqName(KotlinBuiltInsNames.FqNames.unit)
+        val nothing = typeByFqName(KotlinBuiltInsNames.FqNames.nothing)
+        val nullableAny = typeByFqName(KotlinBuiltInsNames.FqNames.any, nullability = Nullability.Nullable)
 
         val javaKlass = typeByFqName(FqNameUnsafe(CommonClassNames.JAVA_LANG_CLASS))
-        val kotlinClass = typeByFqName(KotlinBuiltIns.FQ_NAMES.kClass)
+        val kotlinClass = typeByFqName(KotlinBuiltInsNames.FqNames.kClass)
     }
 
     fun fromPrimitiveType(primitiveType: JKJavaPrimitiveType) = when (primitiveType.jvmPrimitiveType) {

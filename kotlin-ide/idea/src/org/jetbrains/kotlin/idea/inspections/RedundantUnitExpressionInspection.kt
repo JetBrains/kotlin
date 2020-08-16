@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
@@ -45,7 +45,7 @@ class RedundantUnitExpressionInspection : AbstractKotlinInspection(), CleanupLoc
             val parent = referenceExpression.parent ?: return false
             if (parent is KtReturnExpression) {
                 val expectedReturnType = parent.expectedReturnType() ?: return false
-                return expectedReturnType.nameIfStandardType != KotlinBuiltIns.FQ_NAMES.any.shortName() && !expectedReturnType.isMarkedNullable
+                return expectedReturnType.nameIfStandardType != KotlinBuiltInsNames.FqNames.any.shortName() && !expectedReturnType.isMarkedNullable
             }
 
             if (parent is KtBlockExpression) {

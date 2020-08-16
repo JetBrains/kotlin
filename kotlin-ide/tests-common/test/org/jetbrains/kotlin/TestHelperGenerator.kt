@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin
 
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.test.TargetBackend
 
 // Add the directive `// WITH_COROUTINES` to use these helpers in codegen tests (see TestFiles.java).
 fun createTextForCoroutineHelpers(isReleaseCoroutines: Boolean, checkStateMachine: Boolean, checkTailCallOptimization: Boolean): String {
     val coroutinesPackage =
         if (isReleaseCoroutines)
-            DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_RELEASE.asString()
+            KotlinBuiltInsNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE.asString()
         else
-            DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString()
+            KotlinBuiltInsNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString()
 
     fun continuationBody(t: String, useResult: (String) -> String) =
         if (isReleaseCoroutines)
