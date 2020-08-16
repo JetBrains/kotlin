@@ -3,6 +3,7 @@ fun foo(x: Int) {}
 // SYMBOLS:
 /*
 KtFirFunctionValueParameterSymbol:
+  hasDefaultValue: false
   isVararg: false
   name: x
   origin: SOURCE

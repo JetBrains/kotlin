@@ -7,6 +7,7 @@ KtFirTypeParameterSymbol:
   origin: SOURCE
 
 KtFirFunctionValueParameterSymbol:
+  hasDefaultValue: false
   isVararg: false
   name: x
   origin: SOURCE
