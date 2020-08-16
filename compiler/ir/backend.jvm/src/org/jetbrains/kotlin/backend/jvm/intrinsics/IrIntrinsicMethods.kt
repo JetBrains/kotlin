@@ -17,9 +17,12 @@
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -43,11 +46,11 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
     private val intrinsicsMap = (
             listOf(
                 Key(kotlinJvm, FqName("T"), "<get-javaClass>", emptyList()) to JavaClassProperty,
-                Key(kotlinJvm, KotlinBuiltIns.FQ_NAMES.kClass.toSafe(), "<get-javaObjectType>", emptyList()) to GetJavaObjectType,
-                Key(kotlinJvm, KotlinBuiltIns.FQ_NAMES.kClass.toSafe(), "<get-javaPrimitiveType>", emptyList()) to GetJavaPrimitiveType,
+                Key(kotlinJvm, KotlinBuiltInsNames.FqNames.kClass.toSafe(), "<get-javaObjectType>", emptyList()) to GetJavaObjectType,
+                Key(kotlinJvm, KotlinBuiltInsNames.FqNames.kClass.toSafe(), "<get-javaPrimitiveType>", emptyList()) to GetJavaPrimitiveType,
                 Key(
                     kotlinJvm,
-                    KotlinBuiltIns.FQ_NAMES.kClass.toSafe(),
+                    KotlinBuiltInsNames.FqNames.kClass.toSafe(),
                     "<get-java>",
                     emptyList()
                 ) to KClassJavaProperty,
@@ -55,49 +58,49 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                     kotlinJvmInternalUnsafe,
                     null,
                     "access\$monitorEnter",
-                    listOf(KotlinBuiltIns.FQ_NAMES.any.toSafe())
+                    listOf(KotlinBuiltInsNames.FqNames.any.toSafe())
                 ) to MonitorInstruction.MONITOR_ENTER,
                 Key(
                     kotlinJvmInternalUnsafe,
                     null,
                     "access\$monitorExit",
-                    listOf(KotlinBuiltIns.FQ_NAMES.any.toSafe())
+                    listOf(KotlinBuiltInsNames.FqNames.any.toSafe())
                 ) to MonitorInstruction.MONITOR_EXIT,
                 Key(
                     kotlinJvm,
-                    KotlinBuiltIns.FQ_NAMES.array.toSafe(),
+                    KotlinBuiltInsNames.FqNames.array.toSafe(),
                     "isArrayOf",
                     emptyList()
                 ) to IsArrayOf,
                 Key(
-                    KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME,
+                    KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAME,
                     null,
                     "arrayOfNulls",
-                    listOf(KotlinBuiltIns.FQ_NAMES._int.toSafe())
+                    listOf(KotlinBuiltInsNames.FqNames._int.toSafe())
                 ) to NewArray,
                 Key(
-                    KotlinBuiltIns.FQ_NAMES.cloneable.toSafe(),
+                    KotlinBuiltInsNames.FqNames.cloneable.toSafe(),
                     null,
                     "clone",
                     emptyList()
                 ) to Clone,
                 Key(
-                    KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME,
+                    KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAME,
                     null,
                     "enumValues",
                     listOf()
                 ) to EnumValues,
                 Key(
-                    KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME,
+                    KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAME,
                     null,
                     "enumValueOf",
-                    listOf(KotlinBuiltIns.FQ_NAMES.string.toSafe())
+                    listOf(KotlinBuiltInsNames.FqNames.string.toSafe())
                 ) to EnumValueOf,
                 Key(
-                    KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME,
-                    KotlinBuiltIns.FQ_NAMES.string.toSafe(),
+                    KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAME,
+                    KotlinBuiltInsNames.FqNames.string.toSafe(),
                     "plus",
-                    listOf(KotlinBuiltIns.FQ_NAMES.any.toSafe())
+                    listOf(KotlinBuiltInsNames.FqNames.any.toSafe())
                 ) to StringPlus,
                 irBuiltIns.eqeqSymbol.toKey()!! to Equals(KtTokens.EQEQ),
                 irBuiltIns.eqeqeqSymbol.toKey()!! to Equals(KtTokens.EQEQEQ),

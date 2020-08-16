@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.config.CoroutineLanguageVersionSettingsUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
@@ -59,7 +60,7 @@ public final class TranslationUtils {
             new FqNameUnsafe("kotlin.ranges.CharProgression"),
             new FqNameUnsafe("kotlin.js.internal.CharCompanionObject"),
             new FqNameUnsafe("kotlin.Char.Companion"),
-            KotlinBuiltIns.FQ_NAMES.charSequence, KotlinBuiltIns.FQ_NAMES.number
+            KotlinBuiltInsNames.FqNames.charSequence, KotlinBuiltInsNames.FqNames.number
     ));
 
     private TranslationUtils() {

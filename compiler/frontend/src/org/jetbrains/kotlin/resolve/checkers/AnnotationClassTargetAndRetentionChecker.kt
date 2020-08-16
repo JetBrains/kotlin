@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -31,8 +31,8 @@ class AnnotationClassTargetAndRetentionChecker : DeclarationChecker {
         val retention = descriptor.getAnnotationRetention() ?: KotlinRetention.RUNTIME
 
         if (targets.contains(KotlinTarget.EXPRESSION) && retention != KotlinRetention.SOURCE) {
-            val retentionAnnotation = descriptor.annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.retention)
-            val targetAnnotation = descriptor.annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.target)
+            val retentionAnnotation = descriptor.annotations.findAnnotation(KotlinBuiltInsNames.FqNames.retention)
+            val targetAnnotation = descriptor.annotations.findAnnotation(KotlinBuiltInsNames.FqNames.target)
 
             val diagnostics =
                 if (context.languageVersionSettings.supportsFeature(LanguageFeature.RestrictRetentionForExpressionAnnotations))

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve
 import com.google.common.collect.ImmutableSet
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -975,7 +976,7 @@ class DeclarationsChecker(
                 if (containingDeclaration !is ClassDescriptor) continue
                 if (visitedClasses.contains(containingDeclaration)) continue
 
-                if (DescriptorUtils.getFqName(containingDeclaration) == KotlinBuiltIns.FQ_NAMES.any) {
+                if (DescriptorUtils.getFqName(containingDeclaration) == KotlinBuiltInsNames.FqNames.any) {
                     return true
                 }
 

@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.builtins.isKSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -294,7 +295,7 @@ private val ARRAY_OF_METHODS = setOf(ArrayFqNames.ARRAY_OF_FUNCTION) +
 fun KtCallExpression.isArrayOfMethod(): Boolean {
     val resolvedCall = resolveToCall() ?: return false
     val descriptor = resolvedCall.candidateDescriptor
-    return (descriptor.containingDeclaration as? PackageFragmentDescriptor)?.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME &&
+    return (descriptor.containingDeclaration as? PackageFragmentDescriptor)?.fqName == KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAME &&
             ARRAY_OF_METHODS.contains(descriptor.name)
 }
 
@@ -357,7 +358,7 @@ internal fun Sequence<PsiElement>.lastWithPersistedElementOrNull(elementShouldPe
 }
 
 fun KotlinType.reflectToRegularFunctionType(): KotlinType {
-    val isTypeAnnotatedWithExtensionFunctionType = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.extensionFunctionType) != null
+    val isTypeAnnotatedWithExtensionFunctionType = annotations.findAnnotation(KotlinBuiltInsNames.FqNames.extensionFunctionType) != null
     val parameterCount = if (isTypeAnnotatedWithExtensionFunctionType) arguments.size - 2 else arguments.size - 1
     val classDescriptor =
         if (isKSuspendFunctionType) builtIns.getSuspendFunction(parameterCount) else builtIns.getFunction(parameterCount)

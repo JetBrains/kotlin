@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.types.KotlinType
@@ -65,10 +66,10 @@ class IntegerValueTypeConstructor(
     }
 
     private fun addUnsignedSuperTypes() {
-        checkBoundsAndAddSuperType(value, module.unsignedType(KotlinBuiltIns.FQ_NAMES.uInt))
-        checkBoundsAndAddSuperType(value, module.unsignedType(KotlinBuiltIns.FQ_NAMES.uByte))
-        checkBoundsAndAddSuperType(value, module.unsignedType(KotlinBuiltIns.FQ_NAMES.uShort))
-        supertypes.add(module.unsignedType(KotlinBuiltIns.FQ_NAMES.uLong))
+        checkBoundsAndAddSuperType(value, module.unsignedType(KotlinBuiltInsNames.FqNames.uInt))
+        checkBoundsAndAddSuperType(value, module.unsignedType(KotlinBuiltInsNames.FqNames.uByte))
+        checkBoundsAndAddSuperType(value, module.unsignedType(KotlinBuiltInsNames.FqNames.uShort))
+        supertypes.add(module.unsignedType(KotlinBuiltInsNames.FqNames.uLong))
     }
 
     private fun checkBoundsAndAddSuperType(value: Long, kotlinType: KotlinType) {

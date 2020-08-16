@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.allOverridden
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -63,46 +63,46 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
         IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, bridge.valueParameters[1].symbol)
 
     private val specialMethodsWithDefaults = mapOf(
-        makeDescription(KotlinBuiltIns.FQ_NAMES.collection, "contains", 1) to
+        makeDescription(KotlinBuiltInsNames.FqNames.collection, "contains", 1) to
                 SpecialMethodWithDefaultInfo(::constFalse, 1),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.mutableCollection, "remove", 1) to
+        makeDescription(KotlinBuiltInsNames.FqNames.mutableCollection, "remove", 1) to
                 SpecialMethodWithDefaultInfo(::constFalse, 1, needsArgumentBoxing = true),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.map, "containsKey", 1) to
+        makeDescription(KotlinBuiltInsNames.FqNames.map, "containsKey", 1) to
                 SpecialMethodWithDefaultInfo(::constFalse, 1),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.map, "containsValue", 1) to
+        makeDescription(KotlinBuiltInsNames.FqNames.map, "containsValue", 1) to
                 SpecialMethodWithDefaultInfo(::constFalse, 1),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.mutableMap, "remove", 2) to
+        makeDescription(KotlinBuiltInsNames.FqNames.mutableMap, "remove", 2) to
                 SpecialMethodWithDefaultInfo(::constFalse, 2),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.list, "indexOf", 1) to
+        makeDescription(KotlinBuiltInsNames.FqNames.list, "indexOf", 1) to
                 SpecialMethodWithDefaultInfo(::constMinusOne, 1),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.list, "lastIndexOf", 1) to
+        makeDescription(KotlinBuiltInsNames.FqNames.list, "lastIndexOf", 1) to
                 SpecialMethodWithDefaultInfo(::constMinusOne, 1),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.map, "getOrDefault", 2) to
+        makeDescription(KotlinBuiltInsNames.FqNames.map, "getOrDefault", 2) to
                 SpecialMethodWithDefaultInfo(::getSecondArg, 1, needsGenericSignature = true),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.map, "get", 1) to
+        makeDescription(KotlinBuiltInsNames.FqNames.map, "get", 1) to
                 SpecialMethodWithDefaultInfo(::constNull, 1, needsGenericSignature = true),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.mutableMap, "remove", 1) to
+        makeDescription(KotlinBuiltInsNames.FqNames.mutableMap, "remove", 1) to
                 SpecialMethodWithDefaultInfo(::constNull, 1, needsGenericSignature = true)
     )
 
     private val specialProperties = mapOf(
-        makeDescription(KotlinBuiltIns.FQ_NAMES.collection, "size") to BuiltInWithDifferentJvmName(),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.map, "size") to BuiltInWithDifferentJvmName(),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.charSequence.toSafe(), "length") to BuiltInWithDifferentJvmName(),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.map, "keys") to BuiltInWithDifferentJvmName(needsGenericSignature = true),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.map, "values") to BuiltInWithDifferentJvmName(needsGenericSignature = true),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.map, "entries") to BuiltInWithDifferentJvmName(needsGenericSignature = true)
+        makeDescription(KotlinBuiltInsNames.FqNames.collection, "size") to BuiltInWithDifferentJvmName(),
+        makeDescription(KotlinBuiltInsNames.FqNames.map, "size") to BuiltInWithDifferentJvmName(),
+        makeDescription(KotlinBuiltInsNames.FqNames.charSequence.toSafe(), "length") to BuiltInWithDifferentJvmName(),
+        makeDescription(KotlinBuiltInsNames.FqNames.map, "keys") to BuiltInWithDifferentJvmName(needsGenericSignature = true),
+        makeDescription(KotlinBuiltInsNames.FqNames.map, "values") to BuiltInWithDifferentJvmName(needsGenericSignature = true),
+        makeDescription(KotlinBuiltInsNames.FqNames.map, "entries") to BuiltInWithDifferentJvmName(needsGenericSignature = true)
     )
 
     private val specialMethods = mapOf(
-        makeDescription(KotlinBuiltIns.FQ_NAMES.number.toSafe(), "toByte") to BuiltInWithDifferentJvmName(),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.number.toSafe(), "toShort") to BuiltInWithDifferentJvmName(),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.number.toSafe(), "toInt") to BuiltInWithDifferentJvmName(),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.number.toSafe(), "toLong") to BuiltInWithDifferentJvmName(),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.number.toSafe(), "toFloat") to BuiltInWithDifferentJvmName(),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.number.toSafe(), "toDouble") to BuiltInWithDifferentJvmName(),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.charSequence.toSafe(), "get", 1) to BuiltInWithDifferentJvmName(),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.mutableList, "removeAt", 1) to BuiltInWithDifferentJvmName(needsGenericSignature = true)
+        makeDescription(KotlinBuiltInsNames.FqNames.number.toSafe(), "toByte") to BuiltInWithDifferentJvmName(),
+        makeDescription(KotlinBuiltInsNames.FqNames.number.toSafe(), "toShort") to BuiltInWithDifferentJvmName(),
+        makeDescription(KotlinBuiltInsNames.FqNames.number.toSafe(), "toInt") to BuiltInWithDifferentJvmName(),
+        makeDescription(KotlinBuiltInsNames.FqNames.number.toSafe(), "toLong") to BuiltInWithDifferentJvmName(),
+        makeDescription(KotlinBuiltInsNames.FqNames.number.toSafe(), "toFloat") to BuiltInWithDifferentJvmName(),
+        makeDescription(KotlinBuiltInsNames.FqNames.number.toSafe(), "toDouble") to BuiltInWithDifferentJvmName(),
+        makeDescription(KotlinBuiltInsNames.FqNames.charSequence.toSafe(), "get", 1) to BuiltInWithDifferentJvmName(),
+        makeDescription(KotlinBuiltInsNames.FqNames.mutableList, "removeAt", 1) to BuiltInWithDifferentJvmName(needsGenericSignature = true)
     )
 
     val specialMethodNames = (specialMethodsWithDefaults + specialMethods).map { (description) -> description.name }.toHashSet()

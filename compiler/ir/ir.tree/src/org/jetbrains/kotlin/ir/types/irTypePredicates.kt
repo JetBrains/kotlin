@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.ir.types
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 private fun IrType.isNotNullClassType(fqName: FqNameUnsafe) = isClassType(fqName, hasQuestionMark = false)
 private fun IrType.isNullableClassType(fqName: FqNameUnsafe) = isClassType(fqName, hasQuestionMark = true)
@@ -33,42 +32,42 @@ private fun classFqNameEquals(symbol: IrClassSymbol, fqName: FqNameUnsafe): Bool
 private fun classFqNameEquals(declaration: IrClass, fqName: FqNameUnsafe): Boolean =
     declaration.name == fqName.shortName() && fqName == declaration.fqNameWhenAvailable?.toUnsafe()
 
-fun IrType.isAny(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.any)
-fun IrType.isNullableAny(): Boolean = isNullableClassType(KotlinBuiltIns.FQ_NAMES.any)
+fun IrType.isAny(): Boolean = isNotNullClassType(KotlinBuiltInsNames.FqNames.any)
+fun IrType.isNullableAny(): Boolean = isNullableClassType(KotlinBuiltInsNames.FqNames.any)
 
-fun IrType.isString(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.string)
-fun IrType.isNullableString(): Boolean = isNullableClassType(KotlinBuiltIns.FQ_NAMES.string)
-fun IrType.isStringClassType(): Boolean = isClassType(KotlinBuiltIns.FQ_NAMES.string)
-fun IrType.isArray(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.array)
-fun IrType.isNullableArray(): Boolean = isNullableClassType(KotlinBuiltIns.FQ_NAMES.array)
-fun IrType.isCollection(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.collection.toUnsafe())
-fun IrType.isNothing(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.nothing)
-fun IrType.isKClass(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.kClass)
+fun IrType.isString(): Boolean = isNotNullClassType(KotlinBuiltInsNames.FqNames.string)
+fun IrType.isNullableString(): Boolean = isNullableClassType(KotlinBuiltInsNames.FqNames.string)
+fun IrType.isStringClassType(): Boolean = isClassType(KotlinBuiltInsNames.FqNames.string)
+fun IrType.isArray(): Boolean = isNotNullClassType(KotlinBuiltInsNames.FqNames.array)
+fun IrType.isNullableArray(): Boolean = isNullableClassType(KotlinBuiltInsNames.FqNames.array)
+fun IrType.isCollection(): Boolean = isNotNullClassType(KotlinBuiltInsNames.FqNames.collection.toUnsafe())
+fun IrType.isNothing(): Boolean = isNotNullClassType(KotlinBuiltInsNames.FqNames.nothing)
+fun IrType.isKClass(): Boolean = isNotNullClassType(KotlinBuiltInsNames.FqNames.kClass)
 
-fun IrType.isPrimitiveType(): Boolean = KotlinBuiltIns.FQ_NAMES.fqNameToPrimitiveType.keys.any { isNotNullClassType(it) }
-fun IrType.isNullablePrimitiveType(): Boolean = KotlinBuiltIns.FQ_NAMES.fqNameToPrimitiveType.keys.any { isNullableClassType(it) }
+fun IrType.isPrimitiveType(): Boolean = KotlinBuiltInsNames.FqNames.fqNameToPrimitiveType.keys.any { isNotNullClassType(it) }
+fun IrType.isNullablePrimitiveType(): Boolean = KotlinBuiltInsNames.FqNames.fqNameToPrimitiveType.keys.any { isNullableClassType(it) }
 
 fun IrType.isMarkedNullable() = (this as? IrSimpleType)?.hasQuestionMark ?: false
 
-fun IrType.isUnit() = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.unit)
+fun IrType.isUnit() = isNotNullClassType(KotlinBuiltInsNames.FqNames.unit)
 
-fun IrType.isBoolean(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._boolean)
-fun IrType.isChar(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._char)
-fun IrType.isByte(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._byte)
-fun IrType.isShort(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._short)
-fun IrType.isInt(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._int)
-fun IrType.isLong(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._long)
-fun IrType.isUByte(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.uByteFqName.toUnsafe())
-fun IrType.isUShort(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.uShortFqName.toUnsafe())
-fun IrType.isUInt(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.uIntFqName.toUnsafe())
-fun IrType.isULong(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.uLongFqName.toUnsafe())
-fun IrType.isFloat(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._float)
-fun IrType.isDouble(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._double)
-fun IrType.isNumber(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.number)
+fun IrType.isBoolean(): Boolean = isNotNullClassType(KotlinBuiltInsNames.FqNames._boolean)
+fun IrType.isChar(): Boolean = isNotNullClassType(KotlinBuiltInsNames.FqNames._char)
+fun IrType.isByte(): Boolean = isNotNullClassType(KotlinBuiltInsNames.FqNames._byte)
+fun IrType.isShort(): Boolean = isNotNullClassType(KotlinBuiltInsNames.FqNames._short)
+fun IrType.isInt(): Boolean = isNotNullClassType(KotlinBuiltInsNames.FqNames._int)
+fun IrType.isLong(): Boolean = isNotNullClassType(KotlinBuiltInsNames.FqNames._long)
+fun IrType.isUByte(): Boolean = isNotNullClassType(KotlinBuiltInsNames.FqNames.uByteFqName.toUnsafe())
+fun IrType.isUShort(): Boolean = isNotNullClassType(KotlinBuiltInsNames.FqNames.uShortFqName.toUnsafe())
+fun IrType.isUInt(): Boolean = isNotNullClassType(KotlinBuiltInsNames.FqNames.uIntFqName.toUnsafe())
+fun IrType.isULong(): Boolean = isNotNullClassType(KotlinBuiltInsNames.FqNames.uLongFqName.toUnsafe())
+fun IrType.isFloat(): Boolean = isNotNullClassType(KotlinBuiltInsNames.FqNames._float)
+fun IrType.isDouble(): Boolean = isNotNullClassType(KotlinBuiltInsNames.FqNames._double)
+fun IrType.isNumber(): Boolean = isNotNullClassType(KotlinBuiltInsNames.FqNames.number)
 
-fun IrType.isComparable(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.comparable.toUnsafe())
-fun IrType.isCharSequence(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.charSequence)
-fun IrType.isIterable(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.iterable.toUnsafe())
+fun IrType.isComparable(): Boolean = isNotNullClassType(KotlinBuiltInsNames.FqNames.comparable.toUnsafe())
+fun IrType.isCharSequence(): Boolean = isNotNullClassType(KotlinBuiltInsNames.FqNames.charSequence)
+fun IrType.isIterable(): Boolean = isNotNullClassType(KotlinBuiltInsNames.FqNames.iterable.toUnsafe())
 fun IrType.isSequence(): Boolean = isNotNullClassType(FqNameUnsafe("kotlin.sequences.Sequence"))
 
 fun IrType.isBooleanArray(): Boolean = isNotNullClassType(FqNameUnsafe("kotlin.BooleanArray"))
@@ -80,5 +79,5 @@ fun IrType.isLongArray(): Boolean = isNotNullClassType(FqNameUnsafe("kotlin.Long
 fun IrType.isFloatArray(): Boolean = isNotNullClassType(FqNameUnsafe("kotlin.FloatArray"))
 fun IrType.isDoubleArray(): Boolean = isNotNullClassType(FqNameUnsafe("kotlin.DoubleArray"))
 
-fun IrType.isKotlinResult(): Boolean = isNotNullClassType(DescriptorUtils.RESULT_FQ_NAME.toUnsafe())
-fun IrType.isNullableContinuation(): Boolean = isNullableClassType(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_RELEASE.toUnsafe())
+fun IrType.isKotlinResult(): Boolean = isNotNullClassType(KotlinBuiltInsNames.RESULT_FQ_NAME.toUnsafe())
+fun IrType.isNullableContinuation(): Boolean = isNullableClassType(KotlinBuiltInsNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE.toUnsafe())

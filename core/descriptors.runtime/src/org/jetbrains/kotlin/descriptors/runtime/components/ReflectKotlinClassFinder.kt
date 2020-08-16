@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors.runtime.components
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder.Result.KotlinClass
@@ -47,7 +47,7 @@ class ReflectKotlinClassFinder(private val classLoader: ClassLoader) : KotlinCla
     override fun hasMetadataPackage(fqName: FqName): Boolean = false
 
     override fun findBuiltInsData(packageFqName: FqName): InputStream? {
-        if (!packageFqName.startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) return null
+        if (!packageFqName.startsWith(KotlinBuiltInsNames.BUILT_INS_PACKAGE_NAME)) return null
 
         return builtInsResourceLoader.loadResource(BuiltInSerializerProtocol.getBuiltInsFilePath(packageFqName))
     }

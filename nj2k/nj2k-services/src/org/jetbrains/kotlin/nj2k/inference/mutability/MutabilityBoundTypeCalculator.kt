@@ -5,17 +5,15 @@
 
 package org.jetbrains.kotlin.nj2k.inference.mutability
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.FqNames
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.nj2k.inference.common.BoundType
 import org.jetbrains.kotlin.nj2k.inference.common.BoundTypeCalculatorImpl
 import org.jetbrains.kotlin.nj2k.inference.common.BoundTypeEnhancer
 import org.jetbrains.kotlin.nj2k.inference.common.InferenceContext
-import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class MutabilityBoundTypeCalculator(
     private val resolutionFacade: ResolutionFacade,
@@ -38,10 +36,10 @@ class MutabilityBoundTypeCalculator(
 
     companion object {
         private val PRESERVING_MUTABILITY_FQ_NAMES = setOf(
-            FQ_NAMES.collection.child(Name.identifier("iterator")),
-            FQ_NAMES.list.child(Name.identifier("listIterator")),
-            FQ_NAMES.map.child(Name.identifier("entries")),
-            FQ_NAMES.map.child(Name.identifier("values"))
+            FqNames.collection.child(Name.identifier("iterator")),
+            FqNames.list.child(Name.identifier("listIterator")),
+            FqNames.map.child(Name.identifier("entries")),
+            FqNames.map.child(Name.identifier("values"))
         )
     }
 }

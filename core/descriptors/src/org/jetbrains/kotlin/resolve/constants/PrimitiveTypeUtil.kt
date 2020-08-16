@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
@@ -41,16 +42,16 @@ internal fun KotlinType.maxValue(): Long {
 internal fun ModuleDescriptor.unsignedType(classId: ClassId): SimpleType = findClassAcrossModuleDependencies(classId)!!.defaultType
 
 internal val ModuleDescriptor.uIntType: SimpleType
-    get() = unsignedType(KotlinBuiltIns.FQ_NAMES.uInt)
+    get() = unsignedType(KotlinBuiltInsNames.FqNames.uInt)
 
 internal val ModuleDescriptor.uLongType: SimpleType
-    get() = unsignedType(KotlinBuiltIns.FQ_NAMES.uLong)
+    get() = unsignedType(KotlinBuiltInsNames.FqNames.uLong)
 
 internal val ModuleDescriptor.uByteType: SimpleType
-    get() = unsignedType(KotlinBuiltIns.FQ_NAMES.uByte)
+    get() = unsignedType(KotlinBuiltInsNames.FqNames.uByte)
 
 internal val ModuleDescriptor.uShortType: SimpleType
-    get() = unsignedType(KotlinBuiltIns.FQ_NAMES.uShort)
+    get() = unsignedType(KotlinBuiltInsNames.FqNames.uShort)
 
 internal val ModuleDescriptor.allSignedLiteralTypes: Collection<KotlinType>
     get() = listOf(builtIns.intType, builtIns.longType, builtIns.byteType, builtIns.shortType)
@@ -58,8 +59,8 @@ internal val ModuleDescriptor.allSignedLiteralTypes: Collection<KotlinType>
 internal val ModuleDescriptor.allUnsignedLiteralTypes: Collection<KotlinType>
     get() = if (hasUnsignedTypesInModuleDependencies(this)) {
         listOf(
-            unsignedType(KotlinBuiltIns.FQ_NAMES.uInt), unsignedType(KotlinBuiltIns.FQ_NAMES.uLong),
-            unsignedType(KotlinBuiltIns.FQ_NAMES.uByte), unsignedType(KotlinBuiltIns.FQ_NAMES.uShort)
+            unsignedType(KotlinBuiltInsNames.FqNames.uInt), unsignedType(KotlinBuiltInsNames.FqNames.uLong),
+            unsignedType(KotlinBuiltInsNames.FqNames.uByte), unsignedType(KotlinBuiltInsNames.FqNames.uShort)
         )
     } else {
         emptyList()

@@ -36,7 +36,7 @@ internal class DescriptorRendererImpl(
 
     private val functionTypeAnnotationsRenderer: DescriptorRendererImpl by lazy {
         withOptions {
-            excludedTypeAnnotationClasses += listOf(KotlinBuiltIns.FQ_NAMES.extensionFunctionType)
+            excludedTypeAnnotationClasses += listOf(KotlinBuiltInsNames.FqNames.extensionFunctionType)
             annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.ALWAYS_PARENTHESIZED
         } as DescriptorRendererImpl
     }
@@ -424,7 +424,7 @@ internal class DescriptorRendererImpl(
     }
 
     private fun AnnotationDescriptor.isParameterName(): Boolean {
-        return fqName == KotlinBuiltIns.FQ_NAMES.parameterName
+        return fqName == KotlinBuiltInsNames.FqNames.parameterName
     }
 
     override fun renderAnnotation(annotation: AnnotationDescriptor, target: AnnotationUseSiteTarget?): String {

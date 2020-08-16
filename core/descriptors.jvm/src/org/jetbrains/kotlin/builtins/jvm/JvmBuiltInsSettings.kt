@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.builtins.jvm
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.createDeprecatedAnnotation
@@ -338,7 +339,7 @@ open class JvmBuiltInsSettings(
         }
 
         private fun isArrayOrPrimitiveArray(fqName: FqNameUnsafe): Boolean {
-            return fqName == KotlinBuiltIns.FQ_NAMES.array || KotlinBuiltIns.isPrimitiveArray(fqName)
+            return fqName == KotlinBuiltInsNames.FqNames.array || KotlinBuiltIns.isPrimitiveArray(fqName)
         }
 
         val DROP_LIST_METHOD_SIGNATURES: Set<String> =

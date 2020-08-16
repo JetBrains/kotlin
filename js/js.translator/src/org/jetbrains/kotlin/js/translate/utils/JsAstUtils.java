@@ -20,7 +20,7 @@ import com.intellij.util.SmartList;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.js.backend.ast.*;
@@ -227,25 +227,25 @@ public final class JsAstUtils {
     @NotNull
     public static JsExpression byteToUByte(byte value, @NotNull TranslationContext context) {
         // replace with external builder
-        return toUnsignedNumber(new JsIntLiteral(value), context, KotlinBuiltIns.FQ_NAMES.uByte);
+        return toUnsignedNumber(new JsIntLiteral(value), context, KotlinBuiltInsNames.FqNames.uByte);
     }
 
     @NotNull
     public static JsExpression shortToUShort(short value, @NotNull TranslationContext context) {
         // replace with external builder
-        return toUnsignedNumber(new JsIntLiteral(value), context, KotlinBuiltIns.FQ_NAMES.uShort);
+        return toUnsignedNumber(new JsIntLiteral(value), context, KotlinBuiltInsNames.FqNames.uShort);
     }
 
     @NotNull
     public static JsExpression intToUInt(int value, @NotNull TranslationContext context) {
         // replace with external builder
-        return toUnsignedNumber(new JsIntLiteral(value), context, KotlinBuiltIns.FQ_NAMES.uInt);
+        return toUnsignedNumber(new JsIntLiteral(value), context, KotlinBuiltInsNames.FqNames.uInt);
     }
 
     @NotNull
     public static JsExpression longToULong(@NotNull JsExpression expression, @NotNull TranslationContext context) {
         // replace with external builder
-        return toUnsignedNumber(expression, context, KotlinBuiltIns.FQ_NAMES.uLong);
+        return toUnsignedNumber(expression, context, KotlinBuiltInsNames.FqNames.uLong);
     }
 
     private static JsExpression toUnsignedNumber(

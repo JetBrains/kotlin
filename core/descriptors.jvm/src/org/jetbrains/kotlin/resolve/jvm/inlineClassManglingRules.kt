@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -47,7 +48,7 @@ private fun KotlinType.requiresFunctionNameManglingInParameterTypes() =
     isInlineClassThatRequiresMangling() || isTypeParameterWithUpperBoundThatRequiresMangling()
 
 private fun isDontMangleClass(classDescriptor: ClassDescriptor) =
-    classDescriptor.fqNameSafe == DescriptorUtils.RESULT_FQ_NAME
+    classDescriptor.fqNameSafe == KotlinBuiltInsNames.RESULT_FQ_NAME
 
 private fun KotlinType.isTypeParameterWithUpperBoundThatRequiresMangling(): Boolean {
     val descriptor = constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false

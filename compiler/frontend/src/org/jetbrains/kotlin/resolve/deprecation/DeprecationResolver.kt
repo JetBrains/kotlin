@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.deprecation
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -200,11 +201,11 @@ class DeprecationResolver(
     }
 
     private fun DeclarationDescriptor.addDeprecationIfPresent(result: MutableList<Deprecation>) {
-        val annotation = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecated) ?: annotations.findAnnotation(JAVA_DEPRECATED)
+        val annotation = annotations.findAnnotation(KotlinBuiltInsNames.FqNames.deprecated) ?: annotations.findAnnotation(JAVA_DEPRECATED)
         if (annotation != null) {
             val deprecatedByAnnotation =
                 DeprecatedByAnnotation.create(
-                    annotation, annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.deprecatedSinceKotlin),
+                    annotation, annotations.findAnnotation(KotlinBuiltInsNames.FqNames.deprecatedSinceKotlin),
                     this, deprecationSettings.propagatedToOverrides(annotation),
                     languageVersionSettings.apiVersion
                 )

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.types.checker
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.FqNames
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.*
@@ -248,12 +248,12 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun TypeConstructorMarker.isAnyConstructor(): Boolean {
         require(this is TypeConstructor, this::errorMessage)
-        return KotlinBuiltIns.isTypeConstructorForGivenClass(this, FQ_NAMES.any)
+        return KotlinBuiltIns.isTypeConstructorForGivenClass(this, FqNames.any)
     }
 
     override fun TypeConstructorMarker.isNothingConstructor(): Boolean {
         require(this is TypeConstructor, this::errorMessage)
-        return KotlinBuiltIns.isTypeConstructorForGivenClass(this, FQ_NAMES.nothing)
+        return KotlinBuiltIns.isTypeConstructorForGivenClass(this, FqNames.nothing)
     }
 
     override fun KotlinTypeMarker.asTypeArgument(): TypeArgumentMarker {
@@ -263,7 +263,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun TypeConstructorMarker.isUnitTypeConstructor(): Boolean {
         require(this is TypeConstructor, this::errorMessage)
-        return KotlinBuiltIns.isTypeConstructorForGivenClass(this, FQ_NAMES.unit)
+        return KotlinBuiltIns.isTypeConstructorForGivenClass(this, FqNames.unit)
     }
 
     /**
@@ -441,7 +441,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         require(constructor is TypeConstructor, constructor::errorMessage)
 
         val annotations = if (isExtensionFunction) {
-            Annotations.create(listOf(BuiltInAnnotationDescriptor(builtIns, FQ_NAMES.extensionFunctionType, emptyMap())))
+            Annotations.create(listOf(BuiltInAnnotationDescriptor(builtIns, FqNames.extensionFunctionType, emptyMap())))
         } else Annotations.EMPTY
 
         @Suppress("UNCHECKED_CAST")
@@ -467,7 +467,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun SimpleTypeMarker.isExtensionFunction(): Boolean {
         require(this is SimpleType, this::errorMessage)
-        return this.hasAnnotation(FQ_NAMES.extensionFunctionType)
+        return this.hasAnnotation(FqNames.extensionFunctionType)
     }
 
     override fun SimpleTypeMarker.replaceArguments(newArguments: List<TypeArgumentMarker>): SimpleTypeMarker {

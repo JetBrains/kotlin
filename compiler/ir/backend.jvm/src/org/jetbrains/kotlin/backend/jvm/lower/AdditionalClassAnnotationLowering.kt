@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.addChild
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
@@ -127,7 +127,7 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
     }
 
     private fun generateDocumentedAnnotation(irClass: IrClass) {
-        if (!irClass.hasAnnotation(KotlinBuiltIns.FQ_NAMES.mustBeDocumented) ||
+        if (!irClass.hasAnnotation(KotlinBuiltInsNames.FqNames.mustBeDocumented) ||
             irClass.hasAnnotation(FqName("java.lang.annotation.Documented"))
         ) return
 
@@ -228,7 +228,7 @@ private fun IrConstructorCall.getValueArgument(name: Name): IrExpression? {
 private val TARGET_ALLOWED_TARGETS = Name.identifier("allowedTargets")
 
 private fun IrClass.applicableTargetSet(): Set<KotlinTarget>? {
-    val targetEntry = getAnnotation(KotlinBuiltIns.FQ_NAMES.target) ?: return null
+    val targetEntry = getAnnotation(KotlinBuiltInsNames.FqNames.target) ?: return null
     return loadAnnotationTargets(targetEntry)
 }
 

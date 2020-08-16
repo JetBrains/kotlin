@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
@@ -130,7 +130,7 @@ class PostponedArgumentsAnalyzer(
 
         val convertedAnnotations = lambda.expectedType?.annotations?.let { annotations ->
             if (receiver != null || expectedReceiver == null) annotations
-            else FilteredAnnotations(annotations, true) { it != KotlinBuiltIns.FQ_NAMES.extensionFunctionType }
+            else FilteredAnnotations(annotations, true) { it != KotlinBuiltInsNames.FqNames.extensionFunctionType }
         }
 
         val returnArgumentsAnalysisResult = resolutionCallbacks.analyzeAndGetLambdaReturnArguments(

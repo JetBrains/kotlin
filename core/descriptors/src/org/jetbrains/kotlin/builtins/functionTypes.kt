@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.builtins
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.BUILT_INS_PACKAGE_NAME
 import org.jetbrains.kotlin.builtins.functions.BuiltInFictitiousFunctionClassFactory
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -86,7 +87,7 @@ val DeclarationDescriptor.isBuiltinFunctionalClassDescriptor: Boolean
     }
 
 fun isBuiltinFunctionClass(classId: ClassId): Boolean {
-    if (!classId.startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) return false
+    if (!classId.startsWith(KotlinBuiltInsNames.BUILT_INS_PACKAGE_NAME)) return false
 
     val kind = classId.asSingleFqName().toUnsafe().getFunctionalClassKind()
     return kind == FunctionClassDescriptor.Kind.Function ||
@@ -103,14 +104,14 @@ val KotlinType.isBuiltinExtensionFunctionalType: Boolean
     get() = isBuiltinFunctionalType && isTypeAnnotatedWithExtensionFunctionType
 
 private val KotlinType.isTypeAnnotatedWithExtensionFunctionType: Boolean
-    get() = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.extensionFunctionType) != null
+    get() = annotations.findAnnotation(KotlinBuiltInsNames.FqNames.extensionFunctionType) != null
 
 /**
  * @return true if this is an FQ name of a fictitious class representing the function type,
  * e.g. kotlin.Function1 (but NOT kotlin.reflect.KFunction1)
  */
 fun isNumberedFunctionClassFqName(fqName: FqNameUnsafe): Boolean {
-    return fqName.startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME) &&
+    return fqName.startsWith(BUILT_INS_PACKAGE_NAME) &&
            fqName.getFunctionalClassKind() == FunctionClassDescriptor.Kind.Function
 }
 
@@ -173,7 +174,7 @@ fun KotlinType.getPureArgumentsForFunctionalTypeOrSubtype(): List<KotlinType> {
 }
 
 fun KotlinType.extractParameterNameFromFunctionTypeArgument(): Name? {
-    val annotation = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.parameterName) ?: return null
+    val annotation = annotations.findAnnotation(KotlinBuiltInsNames.FqNames.parameterName) ?: return null
     val name = (annotation.allValueArguments.values.singleOrNull() as? StringValue)
                        ?.value
                        ?.takeIf { Name.isValidIdentifier(it) }
@@ -196,9 +197,9 @@ fun getFunctionTypeArgumentProjections(
         val name = parameterNames?.get(index)?.takeUnless { it.isSpecial }
         val typeToUse = if (name != null) {
             val parameterNameAnnotation = BuiltInAnnotationDescriptor(
-                    builtIns,
-                    KotlinBuiltIns.FQ_NAMES.parameterName,
-                    mapOf(Name.identifier("name") to StringValue(name.asString()))
+                builtIns,
+                KotlinBuiltInsNames.FqNames.parameterName,
+                mapOf(Name.identifier("name") to StringValue(name.asString()))
             )
             type.replaceAnnotations(Annotations.create(type.annotations + parameterNameAnnotation))
         }
@@ -233,16 +234,16 @@ fun createFunctionType(
     return KotlinTypeFactory.simpleNotNullType(typeAnnotations, classDescriptor, arguments)
 }
 
-fun Annotations.hasExtensionFunctionAnnotation() = hasAnnotation(KotlinBuiltIns.FQ_NAMES.extensionFunctionType)
+fun Annotations.hasExtensionFunctionAnnotation() = hasAnnotation(KotlinBuiltInsNames.FqNames.extensionFunctionType)
 
 fun Annotations.withoutExtensionFunctionAnnotation() =
-    FilteredAnnotations(this, true) { it != KotlinBuiltIns.FQ_NAMES.extensionFunctionType }
+    FilteredAnnotations(this, true) { it != KotlinBuiltInsNames.FqNames.extensionFunctionType }
 
 fun Annotations.withExtensionFunctionAnnotation(builtIns: KotlinBuiltIns) =
-    if (hasAnnotation(KotlinBuiltIns.FQ_NAMES.extensionFunctionType)) {
+    if (hasAnnotation(KotlinBuiltInsNames.FqNames.extensionFunctionType)) {
         this
     } else {
-        Annotations.create(this + BuiltInAnnotationDescriptor(builtIns, KotlinBuiltIns.FQ_NAMES.extensionFunctionType, emptyMap()))
+        Annotations.create(this + BuiltInAnnotationDescriptor(builtIns, KotlinBuiltInsNames.FqNames.extensionFunctionType, emptyMap()))
     }
 
 fun getFunctionDescriptor(builtIns: KotlinBuiltIns, parameterCount: Int, isSuspendFunction: Boolean) =

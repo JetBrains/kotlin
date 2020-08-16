@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test
 
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableMap
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings
 import org.jetbrains.kotlin.checkers.parseLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -15,7 +16,6 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.JvmTarget.Companion.fromString
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
 import java.lang.reflect.Field
@@ -239,12 +239,12 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
                 }
                 if (directives.contains("COMMON_COROUTINES_TEST")) {
                     assert(!directives.contains("COROUTINES_PACKAGE")) { "Must replace COROUTINES_PACKAGE prior to tests compilation" }
-                    if (DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString() == coroutinesPackage) {
+                    if (KotlinBuiltInsNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString() == coroutinesPackage) {
                         disableReleaseCoroutines = true
                         includeCompatExperimentalCoroutines = true
                     }
                 }
-                if (content.contains(DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString())) {
+                if (content.contains(KotlinBuiltInsNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString())) {
                     includeCompatExperimentalCoroutines = true
                 }
                 val fileLanguageVersionSettings: LanguageVersionSettings? = parseLanguageVersionSettings(directives)

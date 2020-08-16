@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.codegen.SamType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations
@@ -106,7 +106,7 @@ class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : Gene
         descriptor.getParentJavaStaticClassScope()
 
     private val annotationPackage =
-        IrExternalPackageFragmentImpl(DescriptorlessExternalPackageFragmentSymbol(), KotlinBuiltIns.ANNOTATION_PACKAGE_FQ_NAME)
+        IrExternalPackageFragmentImpl(DescriptorlessExternalPackageFragmentSymbol(), KotlinBuiltInsNames.ANNOTATION_PACKAGE_FQ_NAME)
 
     private val flexibleNullabilityAnnotationClass = IrFactoryImpl.buildClass {
         kind = ClassKind.ANNOTATION_CLASS
@@ -123,6 +123,6 @@ class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : Gene
 
     companion object {
         val FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME =
-            KotlinBuiltIns.ANNOTATION_PACKAGE_FQ_NAME.child(Name.identifier("FlexibleNullability"))
+            KotlinBuiltInsNames.ANNOTATION_PACKAGE_FQ_NAME.child(Name.identifier("FlexibleNullability"))
     }
 }

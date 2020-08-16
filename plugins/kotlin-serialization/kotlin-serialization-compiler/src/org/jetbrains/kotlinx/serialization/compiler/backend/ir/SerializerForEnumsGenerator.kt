@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.builders.*
@@ -19,7 +20,6 @@ import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
@@ -57,7 +57,7 @@ class SerializerForEnumsGenerator(
         val serialDescGetter = irGet(descriptorGetterSymbol.owner.returnType, irThis(), descriptorGetterSymbol)
 
         val serializableIrClass = requireNotNull(serializableIrClass) { "Enums do not support external serialization" }
-        val valuesF = serializableIrClass.functions.single { it.name == DescriptorUtils.ENUM_VALUES }
+        val valuesF = serializableIrClass.functions.single { it.name == KotlinBuiltInsNames.ENUM_VALUES }
         val getValues = irInvoke(dispatchReceiver = null, callee = valuesF.symbol)
 
 

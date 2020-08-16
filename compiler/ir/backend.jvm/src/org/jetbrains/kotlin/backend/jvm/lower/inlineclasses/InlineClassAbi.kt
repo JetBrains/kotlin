@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower.inlineclasses
 
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.codegen.state.md5base64
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
@@ -13,7 +14,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 /**
  * Replace inline classes by their underlying types.
@@ -114,7 +114,7 @@ object InlineClassAbi {
 internal val IrType.requiresMangling: Boolean
     get() {
         val irClass = erasedUpperBound
-        return irClass.isInline && irClass.fqNameWhenAvailable != DescriptorUtils.RESULT_FQ_NAME
+        return irClass.isInline && irClass.fqNameWhenAvailable != KotlinBuiltInsNames.RESULT_FQ_NAME
     }
 
 internal val IrFunction.fullValueParameterList: List<IrValueParameter>

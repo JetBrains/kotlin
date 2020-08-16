@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.KotlinBundle
@@ -22,14 +22,14 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 object RestrictedRetentionForExpressionAnnotationFactory : KotlinIntentionActionsFactory() {
 
-    private val sourceRetention = "${KotlinBuiltIns.FQ_NAMES.annotationRetention.asString()}.${AnnotationRetention.SOURCE.name}"
-    private val sourceRetentionAnnotation = "@${KotlinBuiltIns.FQ_NAMES.retention.asString()}($sourceRetention)"
+    private val sourceRetention = "${KotlinBuiltInsNames.FqNames.annotationRetention.asString()}.${AnnotationRetention.SOURCE.name}"
+    private val sourceRetentionAnnotation = "@${KotlinBuiltInsNames.FqNames.retention.asString()}($sourceRetention)"
 
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
         val annotationEntry = diagnostic.psiElement as? KtAnnotationEntry ?: return emptyList()
         val containingClass = annotationEntry.containingClass() ?: return emptyList()
-        val retentionAnnotation = containingClass.annotation(KotlinBuiltIns.FQ_NAMES.retention)
-        val targetAnnotation = containingClass.annotation(KotlinBuiltIns.FQ_NAMES.target)
+        val retentionAnnotation = containingClass.annotation(KotlinBuiltInsNames.FqNames.retention)
+        val targetAnnotation = containingClass.annotation(KotlinBuiltInsNames.FqNames.target)
         val expressionTargetArgument = if (targetAnnotation != null) findExpressionTargetArgument(targetAnnotation) else null
 
         return listOfNotNull(

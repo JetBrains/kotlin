@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.SyntheticElement
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 
 fun isSyntheticValuesOrValueOfMethod(method: PsiMethod): Boolean {
     if (method !is SyntheticElement) return false
-    return DescriptorUtils.ENUM_VALUE_OF.asString() == method.name || DescriptorUtils.ENUM_VALUES.asString() == method.name
+    return KotlinBuiltInsNames.ENUM_VALUE_OF.asString() == method.name || KotlinBuiltInsNames.ENUM_VALUES.asString() == method.name
 }

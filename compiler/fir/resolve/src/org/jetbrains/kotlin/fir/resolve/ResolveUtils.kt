@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
@@ -395,7 +395,7 @@ fun CallableId.isInvoke() =
     isKFunctionInvoke()
             || callableName.asString() == "invoke"
             && className?.asString()?.startsWith("Function") == true
-            && packageName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
+            && packageName == KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAME
 
 fun CallableId.isKFunctionInvoke() =
     callableName.asString() == "invoke"

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.FqNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
@@ -105,7 +105,7 @@ fun JvmBackendContext.getSourceMapper(declaration: IrClass): SourceMapper {
 }
 
 val IrType.isExtensionFunctionType: Boolean
-    get() = isFunctionTypeOrSubtype() && hasAnnotation(FQ_NAMES.extensionFunctionType)
+    get() = isFunctionTypeOrSubtype() && hasAnnotation(FqNames.extensionFunctionType)
 
 
 /* Borrowed with modifications from MemberCodegen.java */
@@ -409,7 +409,7 @@ fun IrClass.isOptionalAnnotationClass(): Boolean =
 
 val IrAnnotationContainer.deprecationFlags: Int
     get() {
-        val annotation = annotations.findAnnotation(FQ_NAMES.deprecated)
+        val annotation = annotations.findAnnotation(FqNames.deprecated)
             ?: return if ((this as? IrDeclaration)?.origin?.let {
                     it == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY
                 } == true

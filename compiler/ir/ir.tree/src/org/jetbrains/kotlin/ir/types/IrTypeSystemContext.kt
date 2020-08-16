@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.types
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -202,10 +202,10 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun SimpleTypeMarker.asArgumentList() = this as IrSimpleType
 
     override fun TypeConstructorMarker.isAnyConstructor(): Boolean =
-        this is IrClassSymbol && isClassWithFqName(KotlinBuiltIns.FQ_NAMES.any)
+        this is IrClassSymbol && isClassWithFqName(KotlinBuiltInsNames.FqNames.any)
 
     override fun TypeConstructorMarker.isNothingConstructor(): Boolean =
-        this is IrClassSymbol && isClassWithFqName(KotlinBuiltIns.FQ_NAMES.nothing)
+        this is IrClassSymbol && isClassWithFqName(KotlinBuiltInsNames.FqNames.nothing)
 
     override fun SimpleTypeMarker.isSingleClassifierType() = true
 
@@ -246,7 +246,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun SimpleTypeMarker.isExtensionFunction(): Boolean {
         require(this is IrSimpleType)
-        return this.hasAnnotation(KotlinBuiltIns.FQ_NAMES.extensionFunctionType)
+        return this.hasAnnotation(KotlinBuiltInsNames.FqNames.extensionFunctionType)
     }
 
     override fun SimpleTypeMarker.typeDepth(): Int {
@@ -364,7 +364,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         while (true) {
             val parent = declaration.parent
             if (parent is IrPackageFragment) {
-                return parent.fqName.startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)
+                return parent.fqName.startsWith(KotlinBuiltInsNames.BUILT_INS_PACKAGE_NAME)
             }
             declaration = parent as? IrDeclaration ?: return false
         }
