@@ -9,7 +9,7 @@ plugins {
 }
 
 dependencies {
-    compile(project(":core:descriptors"))
+    api(project(":core:descriptors.common"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
