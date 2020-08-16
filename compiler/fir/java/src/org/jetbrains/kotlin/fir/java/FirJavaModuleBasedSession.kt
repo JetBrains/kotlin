@@ -39,6 +39,7 @@ class FirJavaModuleBasedSession private constructor(
                 registerResolveComponents()
                 registerCheckersComponent()
                 registerJvmCallConflictResolverFactory()
+                registerJavaVisibilityChecker()
 
                 val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
 
