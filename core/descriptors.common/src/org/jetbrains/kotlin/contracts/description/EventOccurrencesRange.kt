@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -31,9 +31,11 @@ enum class EventOccurrencesRange(private val left: Int, private val right: Int) 
             else -> throw IllegalArgumentException()
         }
 
-        fun or(x: EventOccurrencesRange, y: EventOccurrencesRange): EventOccurrencesRange = fromRange(min(x.left, y.left), max(x.right, y.right))
+        fun or(x: EventOccurrencesRange, y: EventOccurrencesRange): EventOccurrencesRange =
+            fromRange(min(x.left, y.left), max(x.right, y.right))
 
-        fun plus(x: EventOccurrencesRange, y: EventOccurrencesRange): EventOccurrencesRange = fromRange(x.left + y.left, x.right + y.right)
+        fun plus(x: EventOccurrencesRange, y: EventOccurrencesRange): EventOccurrencesRange =
+            fromRange(x.left + y.left, x.right + y.right)
     }
 
     infix fun or(other: EventOccurrencesRange): EventOccurrencesRange = Companion.or(this, other)
@@ -41,5 +43,8 @@ enum class EventOccurrencesRange(private val left: Int, private val right: Int) 
     operator fun contains(other: EventOccurrencesRange): Boolean = left <= other.left && other.right <= right
 }
 
-fun EventOccurrencesRange.isDefinitelyVisited(): Boolean = this == EventOccurrencesRange.EXACTLY_ONCE || this == EventOccurrencesRange.AT_LEAST_ONCE || this == EventOccurrencesRange.MORE_THAN_ONCE
-fun EventOccurrencesRange.canBeRevisited(): Boolean = this == EventOccurrencesRange.UNKNOWN || this == EventOccurrencesRange.AT_LEAST_ONCE || this == EventOccurrencesRange.MORE_THAN_ONCE
+fun EventOccurrencesRange.isDefinitelyVisited(): Boolean =
+    this == EventOccurrencesRange.EXACTLY_ONCE || this == EventOccurrencesRange.AT_LEAST_ONCE || this == EventOccurrencesRange.MORE_THAN_ONCE
+
+fun EventOccurrencesRange.canBeRevisited(): Boolean =
+    this == EventOccurrencesRange.UNKNOWN || this == EventOccurrencesRange.AT_LEAST_ONCE || this == EventOccurrencesRange.MORE_THAN_ONCE
