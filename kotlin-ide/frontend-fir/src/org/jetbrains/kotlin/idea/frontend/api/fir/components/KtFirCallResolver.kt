@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.fir.declarations.isSuspend
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -86,8 +88,8 @@ internal class KtFirCallResolver(
     companion object {
         private val kotlinFunctionInvokeCallableIds = (0..23).flatMapTo(hashSetOf()) { arity ->
             listOf(
-                CallableId(KotlinBuiltIns.getFunctionClassId(arity), Name.identifier("invoke")),
-                CallableId(KotlinBuiltIns.getSuspendFunctionClassId(arity), Name.identifier("invoke"))
+                CallableId(KotlinBuiltInsNames.getFunctionClassId(arity), Name.identifier("invoke")),
+                CallableId(KotlinBuiltInsNames.getSuspendFunctionClassId(arity), Name.identifier("invoke"))
             )
         }
     }
