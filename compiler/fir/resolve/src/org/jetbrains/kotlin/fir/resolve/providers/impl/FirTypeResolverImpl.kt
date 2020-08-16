@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -148,9 +148,9 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver {
                     typeRef.valueParameters.map { it.returnTypeRef.coneType } +
                     listOf(typeRef.returnTypeRef.coneType)
         val classId = if (typeRef.isSuspend) {
-            KotlinBuiltIns.getSuspendFunctionClassId(typeRef.parametersCount)
+            KotlinBuiltInsNames.getSuspendFunctionClassId(typeRef.parametersCount)
         } else {
-            KotlinBuiltIns.getFunctionClassId(typeRef.parametersCount)
+            KotlinBuiltInsNames.getFunctionClassId(typeRef.parametersCount)
         }
         val attributes = typeRef.annotations.computeTypeAttributes()
         return ConeClassLikeTypeImpl(

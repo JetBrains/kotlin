@@ -453,7 +453,7 @@ public final class TranslationUtils {
                 FqNameUnsafe containingClassName = DescriptorUtilsKt.getFqNameUnsafe(containingClass);
                 if (!CLASSES_WITH_NON_BOXED_CHARS.contains(containingClassName) &&
                     !KotlinBuiltIns.isPrimitiveType(containingClass.getDefaultType()) &&
-                    !KotlinBuiltIns.isPrimitiveArray(containingClassName)
+                    !KotlinBuiltInsNames.isPrimitiveArray(containingClassName)
                 ) {
                     return getAnyTypeFromSameModule(descriptor);
                 }

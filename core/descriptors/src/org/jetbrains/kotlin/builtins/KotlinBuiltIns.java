@@ -289,33 +289,8 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public static String getFunctionName(int parameterCount) {
-        return "Function" + parameterCount;
-    }
-
-    @NotNull
-    private static FqNameUnsafe getKFunctionFqName(int parameterCount) {
-        return FqNames.reflect(FunctionClassKind.KFunction.getClassNamePrefix() + parameterCount);
-    }
-
-    @NotNull
-    public static ClassId getFunctionClassId(int parameterCount) {
-        return new ClassId(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier(getFunctionName(parameterCount)));
-    }
-
-    @NotNull
     public ClassDescriptor getFunction(int parameterCount) {
         return getBuiltInClassByName(getFunctionName(parameterCount));
-    }
-
-    @NotNull
-    public static String getSuspendFunctionName(int parameterCount) {
-        return FunctionClassKind.SuspendFunction.getClassNamePrefix() + parameterCount;
-    }
-
-    @NotNull
-    public static ClassId getSuspendFunctionClassId(int parameterCount) {
-        return new ClassId(COROUTINES_PACKAGE_FQ_NAME_RELEASE, Name.identifier(getSuspendFunctionName(parameterCount)));
     }
 
     @NotNull
@@ -663,10 +638,6 @@ public abstract class KotlinBuiltIns {
         return null;
     }
 
-    public static boolean isPrimitiveArray(@NotNull FqNameUnsafe arrayFqName) {
-        return FqNames.arrayClassFqNameToPrimitiveType.get(arrayFqName) != null;
-    }
-
     @Nullable
     public static PrimitiveType getPrimitiveType(@NotNull DeclarationDescriptor descriptor) {
         return FqNames.primitiveTypeShortNames.contains(descriptor.getName())
@@ -984,9 +955,5 @@ public abstract class KotlinBuiltIns {
 
     public static boolean isNotNullOrNullableFunctionSupertype(@NotNull KotlinType type) {
         return isConstructedFromGivenClass(type, FqNames.functionSupertype);
-    }
-
-    public static FqName getPrimitiveFqName(@NotNull PrimitiveType primitiveType) {
-        return BUILT_INS_PACKAGE_FQ_NAME.child(primitiveType.getTypeName());
     }
 }

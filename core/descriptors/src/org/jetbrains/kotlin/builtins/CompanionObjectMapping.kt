@@ -24,7 +24,7 @@ import java.util.*
 
 object CompanionObjectMapping {
     private val classIds =
-        (PrimitiveType.NUMBER_TYPES.map(KotlinBuiltIns::getPrimitiveFqName) +
+        (PrimitiveType.NUMBER_TYPES.map(KotlinBuiltInsNames::getPrimitiveFqName) +
                 KotlinBuiltInsNames.FqNames.string.toSafe() +
                 KotlinBuiltInsNames.FqNames._boolean.toSafe() +
                 KotlinBuiltInsNames.FqNames._enum.toSafe()).mapTo(linkedSetOf<ClassId>(), ClassId::topLevel)

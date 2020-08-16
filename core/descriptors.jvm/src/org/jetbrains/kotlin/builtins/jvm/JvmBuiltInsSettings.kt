@@ -339,7 +339,7 @@ open class JvmBuiltInsSettings(
         }
 
         private fun isArrayOrPrimitiveArray(fqName: FqNameUnsafe): Boolean {
-            return fqName == KotlinBuiltInsNames.FqNames.array || KotlinBuiltIns.isPrimitiveArray(fqName)
+            return fqName == KotlinBuiltInsNames.FqNames.array || KotlinBuiltInsNames.isPrimitiveArray(fqName)
         }
 
         val DROP_LIST_METHOD_SIGNATURES: Set<String> =

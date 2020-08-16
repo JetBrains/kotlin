@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.builtins
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.FqNames.reflect
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -204,5 +206,40 @@ object KotlinBuiltInsNames {
         private fun annotationName(simpleName: String): FqName {
             return ANNOTATION_PACKAGE_FQ_NAME.child(Name.identifier(simpleName))
         }
+    }
+
+    @JvmStatic
+    fun getFunctionName(parameterCount: Int): String {
+        return "Function$parameterCount"
+    }
+
+    @JvmStatic
+    fun getKFunctionFqName(parameterCount: Int): FqNameUnsafe {
+        return reflect(FunctionClassKind.KFunction.classNamePrefix + parameterCount)
+    }
+
+    @JvmStatic
+    fun getFunctionClassId(parameterCount: Int): ClassId {
+        return ClassId(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier(getFunctionName(parameterCount)))
+    }
+
+    @JvmStatic
+    fun getSuspendFunctionName(parameterCount: Int): String {
+        return FunctionClassKind.SuspendFunction.classNamePrefix + parameterCount
+    }
+
+    @JvmStatic
+    fun getSuspendFunctionClassId(parameterCount: Int): ClassId {
+        return ClassId(COROUTINES_PACKAGE_FQ_NAME_RELEASE, Name.identifier(getSuspendFunctionName(parameterCount)))
+    }
+
+    @JvmStatic
+    fun isPrimitiveArray(arrayFqName: FqNameUnsafe): Boolean {
+        return FqNames.arrayClassFqNameToPrimitiveType.get(arrayFqName) != null
+    }
+
+    @JvmStatic
+    fun getPrimitiveFqName(primitiveType: PrimitiveType): FqName {
+        return BUILT_INS_PACKAGE_FQ_NAME.child(primitiveType.typeName)
     }
 }
