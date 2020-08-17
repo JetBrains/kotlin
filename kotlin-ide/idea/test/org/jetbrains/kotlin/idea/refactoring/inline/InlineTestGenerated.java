@@ -29,6 +29,16 @@ public class InlineTestGenerated extends AbstractInlineTest {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
+        @TestMetadata("abstract.kt")
+        public void testAbstract() throws Exception {
+            runTest("testData/refactoring/inline/function/abstract.kt");
+        }
+
+        @TestMetadata("abstract2.kt")
+        public void testAbstract2() throws Exception {
+            runTest("testData/refactoring/inline/function/abstract2.kt");
+        }
+
         @TestMetadata("CommentBetweenReturnAndExpression.kt")
         public void testCommentBetweenReturnAndExpression() throws Exception {
             runTest("testData/refactoring/inline/function/CommentBetweenReturnAndExpression.kt");
@@ -44,9 +54,19 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/function/DiffirentNamedParameters.kt");
         }
 
+        @TestMetadata("emptyBody.kt")
+        public void testEmptyBody() throws Exception {
+            runTest("testData/refactoring/inline/function/emptyBody.kt");
+        }
+
         @TestMetadata("EmptyFunction.kt")
         public void testEmptyFunction() throws Exception {
             runTest("testData/refactoring/inline/function/EmptyFunction.kt");
+        }
+
+        @TestMetadata("expect.kt")
+        public void testExpect() throws Exception {
+            runTest("testData/refactoring/inline/function/expect.kt");
         }
 
         @TestMetadata("ExtensionAndDispatchReceivers.kt")
