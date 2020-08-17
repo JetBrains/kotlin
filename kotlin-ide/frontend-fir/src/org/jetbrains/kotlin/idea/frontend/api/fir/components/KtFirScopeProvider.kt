@@ -51,12 +51,13 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import java.util.*
 
 internal class KtFirScopeProvider(
-    override val analysisSession: KtAnalysisSession,
+    analysisSession: KtAnalysisSession,
     private val builder: KtSymbolByFirBuilder,
     private val project: Project,
     firResolveState: FirModuleResolveState,
     firScopeRegistry: FirScopeRegistry,
 ) : KtScopeProvider(), ValidityTokenOwner {
+    override val analysisSession: KtAnalysisSession by analysisSession.weakRef(analysisSession)
     private val firResolveState by weakRef(firResolveState)
     private val firScopeStorage by weakRef(firScopeRegistry)
 
