@@ -129,7 +129,7 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
             else -> throw IllegalStateException()
         }
 
-    fun createLauncher(environment: ExecutionEnvironment): CidrLauncher =
+    override fun createLauncher(environment: ExecutionEnvironment, device: AppleDevice): CidrLauncher =
         object : AppleLauncher<AppleRunConfiguration>(this, environment, executionTarget) {
             override fun createDebuggerDriverConfiguration() = AppleLLDBDriverConfiguration()
         }
