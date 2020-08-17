@@ -1,4 +1,4 @@
-// ERROR: Inline Property refactoring cannot be applied to abstract function
+// ERROR: Inline Property refactoring cannot be applied to abstract property
 
 interface SilentFace { val hush: Unit }
 fun callSilently(pf: SilentFace) {
