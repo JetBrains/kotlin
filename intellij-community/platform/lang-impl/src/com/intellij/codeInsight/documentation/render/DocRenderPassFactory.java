@@ -28,6 +28,7 @@ import java.util.Map;
 public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRegistrar, TextEditorHighlightingPassFactory, DumbAware {
   private static final Logger LOG = Logger.getInstance(DocRenderPassFactory.class);
   private static final Key<Long> MODIFICATION_STAMP = Key.create("doc.render.modification.stamp");
+  private static final Key<Boolean> RESET_TO_DEFAULT = Key.create("doc.render.reset.to.default");
   private static final Key<Boolean> ICONS_ENABLED = Key.create("doc.render.icons.enabled");
 
   @Override
@@ -49,6 +50,7 @@ public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRe
 
   static void forceRefreshOnNextPass(@NotNull Editor editor) {
     editor.putUserData(MODIFICATION_STAMP, null);
+    editor.putUserData(RESET_TO_DEFAULT, Boolean.TRUE);
   }
 
   private static class DocRenderPass extends EditorBoundHighlightingPass implements DumbAware {
@@ -65,7 +67,9 @@ public class DocRenderPassFactory implements TextEditorHighlightingPassFactoryRe
 
     @Override
     public void doApplyInformationToEditor() {
-      applyItemsToRender(myEditor, myProject, items, false);
+      boolean resetToDefault = myEditor.getUserData(RESET_TO_DEFAULT) != null;
+      myEditor.putUserData(RESET_TO_DEFAULT, null);
+      applyItemsToRender(myEditor, myProject, items, resetToDefault && DocRenderManager.isDocRenderingEnabled(myEditor));
     }
   }
 
