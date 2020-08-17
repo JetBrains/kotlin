@@ -88,24 +88,26 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
     }
 
     private fun KtClassOrObject.replaceClassOrObject(searchTemplate: KtClassOrObject, match: KtClassOrObject) : PsiElement {
+        CLASS_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
         if(primaryConstructor == null && searchTemplate.primaryConstructor == null) match.primaryConstructor?.let(this::add)
         if(getSuperTypeList() == null && searchTemplate.getSuperTypeList() == null) match.superTypeListEntries.forEach {
             addSuperTypeListEntry(it)
         }
         if(body == null && searchTemplate.body == null) match.body?.let(this::add)
-        CLASS_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
         return this
     }
 
     private fun KtNamedFunction.replaceNamedFunction(searchTemplate: KtNamedFunction, match: KtNamedFunction): PsiElement {
+        FUN_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
         if(!hasBody() && !searchTemplate.hasBody()) {
+            match.equalsToken?.let(this::add)
             match.bodyExpression?.let(this::add)
         }
-        FUN_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
         return this
     }
 
     private fun KtProperty.replaceProperty(searchTemplate: KtProperty, match: KtProperty): PsiElement {
+        PROPERTY_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
         if(receiverTypeReference == null && searchTemplate.receiverTypeReference == null) {
             match.receiverTypeReference?.let(this::setReceiverTypeReference)
         }
@@ -114,7 +116,6 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
             if(!searchTemplate.hasInitializer()) initializer = match.initializer
             if(!searchTemplate.hasDelegate()) match.delegate?.let(this::add)
         }
-        PROPERTY_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
         return this
     }
 
