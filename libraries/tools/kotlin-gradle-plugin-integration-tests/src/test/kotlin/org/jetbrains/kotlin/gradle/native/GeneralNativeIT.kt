@@ -96,7 +96,7 @@ class GeneralNativeIT : BaseGradleIT() {
     @Test
     fun testEndorsedLibsController() {
         with(
-            transformProjectWithPluginsDsl("new-mpp-native-endorsed")
+            transformProjectWithPluginsDsl("native-endorsed")
         ) {
             setupWorkingDir()
 
@@ -114,7 +114,7 @@ class GeneralNativeIT : BaseGradleIT() {
 
 
     @Test
-    fun testCanProduceNativeLibraries() = with(Project("new-mpp-native-libraries")) {
+    fun testCanProduceNativeLibraries() = with(Project("native-libraries")) {
         val baseName = "main"
 
         val sharedPrefix = CompilerOutputKind.DYNAMIC.prefix(HostManager.host)
@@ -209,7 +209,7 @@ class GeneralNativeIT : BaseGradleIT() {
         // Building K/N binaries is very time-consuming. So we check building only for Kotlin DSL.
         // For Groovy DSl we just check that a project can be configured.
         val project = transformProjectWithPluginsDsl(
-            "groovy-dsl", directoryPrefix = "new-mpp-native-binaries"
+            "groovy-dsl", directoryPrefix = "native-binaries"
         )
         project.build("tasks") {
             assertSuccessful()
@@ -234,7 +234,7 @@ class GeneralNativeIT : BaseGradleIT() {
 
     @Test
     fun testNativeBinaryKotlinDSL() = with(
-        transformProjectWithPluginsDsl("kotlin-dsl", directoryPrefix = "new-mpp-native-binaries")
+        transformProjectWithPluginsDsl("kotlin-dsl", directoryPrefix = "native-binaries")
     ) {
 
         val hostSuffix = nativeHostTargetName.capitalize()
@@ -426,7 +426,7 @@ class GeneralNativeIT : BaseGradleIT() {
     // TODO: Reenable the test when the args are separated.
     @Ignore
     @Test
-    fun testNativeFreeArgsWarning() = with(transformProjectWithPluginsDsl("kotlin-dsl", directoryPrefix = "new-mpp-native-binaries")) {
+    fun testNativeFreeArgsWarning() = with(transformProjectWithPluginsDsl("kotlin-dsl", directoryPrefix = "native-binaries")) {
         gradleBuildScript().appendText(
             """kotlin.targets["macos64"].compilations["main"].kotlinOptions.freeCompilerArgs += "-opt""""
         )
@@ -472,7 +472,7 @@ class GeneralNativeIT : BaseGradleIT() {
         }
 
     @Test
-    fun testNativeTests() = with(Project("new-mpp-native-tests")) {
+    fun testNativeTests() = with(Project("native-tests")) {
         val testTasks = listOf("macos64Test", "linux64Test", "mingw64Test", "iosTest")
         val hostTestTask = "${nativeHostTargetName}Test"
 
@@ -566,12 +566,12 @@ class GeneralNativeIT : BaseGradleIT() {
                 assertTrue(stacktrace.contains("""at org\.foo\.test#fail\(.*test\.kt:24\)""".toRegex()))
             }
 
-            assertTestResults("testProject/new-mpp-native-tests/TEST-TestKt.xml", hostTestTask)
+            assertTestResults("testProject/native-tests/TEST-TestKt.xml", hostTestTask)
             // K/N doesn't report line numbers correctly on Linux (see KT-35408).
             // TODO: Uncomment when this is fixed.
             //assertStacktrace(hostTestTask)
             if (hostIsMac) {
-                assertTestResults("testProject/new-mpp-native-tests/TEST-TestKt.xml", "iosTest")
+                assertTestResults("testProject/native-tests/TEST-TestKt.xml", "iosTest")
                 assertStacktrace("iosTest")
             }
         }
@@ -583,7 +583,7 @@ class GeneralNativeIT : BaseGradleIT() {
     }
 
     @Test
-    fun testNativeTestGetters() = with(Project("new-mpp-native-tests")) {
+    fun testNativeTestGetters() = with(Project("native-tests")) {
         // Check that test binaries can be accessed in a buildscript.
         build("checkNewGetters") {
             assertSuccessful()
@@ -631,7 +631,7 @@ class GeneralNativeIT : BaseGradleIT() {
     @Test
     fun kt33750() {
         // Check that build fails if a test executable crashes.
-        with(Project("new-mpp-native-tests")) {
+        with(Project("native-tests")) {
             setupWorkingDir()
             projectDir.resolve("src/commonTest/kotlin/test.kt").appendText("\nval fail: Int = error(\"\")\n")
             build("check") {
@@ -649,7 +649,7 @@ class GeneralNativeIT : BaseGradleIT() {
         }
         val repo = libProject.projectDir.resolve("repo").absolutePath.replace('\\', '/')
 
-        with(Project("new-mpp-native-cinterop")) {
+        with(Project("native-cinterop")) {
 
             setupWorkingDir()
             listOf(gradleBuildScript(), gradleBuildScript("publishedLibrary")).forEach {
@@ -725,7 +725,7 @@ class GeneralNativeIT : BaseGradleIT() {
                 assertFalse(output.contains("Kotlin/Native distribution: "))
             }
         }
-        with(Project("new-mpp-native-libraries")) {
+        with(Project("native-libraries")) {
             build("tasks") {
                 assertSuccessful()
                 assertTrue(output.contains("Kotlin/Native distribution: "))
@@ -770,7 +770,7 @@ class GeneralNativeIT : BaseGradleIT() {
         // Gradle 5.0 introduced a new API for Ivy repository layouts.
         // MPP plugin uses this API to download K/N if Gradle version is >= 5.0.
         // Check this too (see KT-30258).
-        with(Project("new-mpp-native-libraries")) {
+        with(Project("native-libraries")) {
             build("tasks", "-Pkotlin.native.version=1.3.50-eap-11606") {
                 assertSuccessful()
                 assertTrue(output.contains("Kotlin/Native distribution: "))
@@ -781,7 +781,7 @@ class GeneralNativeIT : BaseGradleIT() {
 
     @Test
     fun testKt29725() {
-        with(Project("new-mpp-native-libraries")) {
+        with(Project("native-libraries")) {
             // Assert that a project with a native target can be configured with Gradle 5.2
             build("tasks") {
                 assertSuccessful()
