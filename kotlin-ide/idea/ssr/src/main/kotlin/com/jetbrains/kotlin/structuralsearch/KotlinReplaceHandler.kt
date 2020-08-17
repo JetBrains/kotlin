@@ -3,29 +3,28 @@ package com.jetbrains.kotlin.structuralsearch
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
-import com.intellij.psi.impl.DebugUtil
 import com.intellij.structuralsearch.StructuralReplaceHandler
 import com.intellij.structuralsearch.impl.matcher.MatcherImplUtil
 import com.intellij.structuralsearch.impl.matcher.PatternTreeContext
+import com.intellij.structuralsearch.impl.matcher.compiler.PatternCompiler
 import com.intellij.structuralsearch.plugin.replace.ReplaceOptions
 import com.intellij.structuralsearch.plugin.replace.ReplacementInfo
 import org.jetbrains.kotlin.idea.core.addTypeParameter
+import org.jetbrains.kotlin.idea.core.setDefaultValue
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.before
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 
 class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHandler() {
     override fun replace(info: ReplacementInfo, options: ReplaceOptions) {
-        val searchTemplate = MatcherImplUtil.createTreeFromText(
-            options.matchOptions.searchPattern, PatternTreeContext.Block, options.matchOptions.fileType, project
-        ).first()
+        val searchTemplate = PatternCompiler.compilePattern(project, options.matchOptions, true, true).nodes.current()
         val replaceTemplate = MatcherImplUtil.createTreeFromText(
             info.replacement, PatternTreeContext.Block, options.matchOptions.fileType, project
         ).first()
         replaceTemplate.structuralReplace(searchTemplate, info.matchResult.match)
-        println(DebugUtil.psiToString(replaceTemplate, false))
         val codeStyleManager = CodeStyleManager.getInstance(project)
         (0 until info.matchesCount).mapNotNull(info::getMatch).forEach {
             val replacement = it.replace(replaceTemplate)
@@ -55,11 +54,12 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         searchTemplate: KtModifierListOwner,
         match: KtModifierListOwner,
         modifier: KtModifierKeywordToken
-    ) {
+    ): KtModifierListOwner {
         if(!hasModifier(modifier) && match.hasModifier(modifier) && !searchTemplate.hasModifier(modifier)) addModifier(modifier)
+        return this
     }
 
-    private fun KtDeclaration.replaceDeclaration(searchTemplate: KtDeclaration, match: KtDeclaration): PsiElement {
+    private fun KtDeclaration.replaceDeclaration(searchTemplate: KtDeclaration, match: KtDeclaration): KtDeclaration {
         fun KtDeclaration.replaceVisibilityModifiers(searchTemplate: KtDeclaration, match: KtDeclaration): PsiElement {
             if(visibilityModifierType() == null && searchTemplate.visibilityModifierType() == null) {
                 match.visibilityModifierType()?.let(this::addModifier)
@@ -87,7 +87,7 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         return this
     }
 
-    private fun KtClassOrObject.replaceClassOrObject(searchTemplate: KtClassOrObject, match: KtClassOrObject) : PsiElement {
+    private fun KtClassOrObject.replaceClassOrObject(searchTemplate: KtClassOrObject, match: KtClassOrObject) : KtClassOrObject {
         CLASS_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
         if(primaryConstructor == null && searchTemplate.primaryConstructor == null) match.primaryConstructor?.let(this::add)
         if(getSuperTypeList() == null && searchTemplate.getSuperTypeList() == null) match.superTypeListEntries.forEach {
@@ -97,8 +97,11 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         return this
     }
 
-    private fun KtNamedFunction.replaceNamedFunction(searchTemplate: KtNamedFunction, match: KtNamedFunction): PsiElement {
+    private fun KtNamedFunction.replaceNamedFunction(searchTemplate: KtNamedFunction, match: KtNamedFunction): KtNamedFunction {
         FUN_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
+        val searchParam = searchTemplate.valueParameterList
+        val matchParam = match.valueParameterList
+        if(searchParam != null && matchParam != null) valueParameterList?.replaceParameterList(searchParam, matchParam)
         if(!hasBody() && !searchTemplate.hasBody()) {
             match.equalsToken?.let(this::add)
             match.bodyExpression?.let(this::add)
@@ -106,7 +109,7 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         return this
     }
 
-    private fun KtProperty.replaceProperty(searchTemplate: KtProperty, match: KtProperty): PsiElement {
+    private fun KtProperty.replaceProperty(searchTemplate: KtProperty, match: KtProperty): KtProperty {
         PROPERTY_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
         if(receiverTypeReference == null && searchTemplate.receiverTypeReference == null) {
             match.receiverTypeReference?.let(this::setReceiverTypeReference)
@@ -115,6 +118,23 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         if(!hasDelegate() && !hasInitializer()) {
             if(!searchTemplate.hasInitializer()) initializer = match.initializer
             if(!searchTemplate.hasDelegate()) match.delegate?.let(this::add)
+        }
+        return this
+    }
+
+    private fun KtParameterList.replaceParameterList(
+        searchTemplate: KtParameterList,
+        match: KtParameterList
+    ): KtParameterList {
+        parameters.forEachIndexed { i, param ->
+            val searchParam = searchTemplate.parameters.getOrNull(i)
+            val matchParam = match.parameters.getOrNull(i)
+            if(param.typeReference == null && searchParam?.typeReference == null) {
+                matchParam?.typeReference?.let(param::setTypeReference)
+            }
+            if(!param.hasDefaultValue() && (searchParam == null || !searchParam.hasDefaultValue())) {
+                matchParam?.defaultValue?.let(param::setDefaultValue)
+            }
         }
         return this
     }
