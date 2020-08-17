@@ -15,8 +15,10 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 private val POST_INSERTION_ACTION: Key<(KtElement) -> Unit> = Key("POST_INSERTION_ACTION")
+private val PRE_COMMIT_ACTION: Key<(KtElement) -> Unit> = Key("PRE_COMMIT_ACTION_KEY")
 
 internal class MutableCodeToInline(
     var mainExpression: KtExpression?,
@@ -31,15 +33,14 @@ internal class MutableCodeToInline(
         element.putCopyableUserData(POST_INSERTION_ACTION, action as (KtElement) -> Unit)
     }
 
+    fun <TElement : KtElement> addPreCommitAction(element: TElement, action: (TElement) -> Unit) {
+        @Suppress("UNCHECKED_CAST")
+        element.putCopyableUserData(PRE_COMMIT_ACTION, action as (KtElement) -> Unit)
+    }
+
     fun performPostInsertionActions(elements: Collection<PsiElement>) {
         for (element in elements) {
-            element.forEachDescendantOfType<KtElement> {
-                val action = it.getCopyableUserData(POST_INSERTION_ACTION)
-                if (action != null) {
-                    it.putCopyableUserData(POST_INSERTION_ACTION, null)
-                    action.invoke(it)
-                }
-            }
+            element.forEachDescendantOfType<KtElement> { performAction(it, POST_INSERTION_ACTION) }
         }
     }
 
@@ -90,13 +91,29 @@ internal fun CodeToInline.toMutable(): MutableCodeToInline = MutableCodeToInline
     extraComments,
 )
 
-internal fun MutableCodeToInline.toNonMutable(): CodeToInline = CodeToInline(
-    mainExpression,
-    statementsBefore,
-    fqNamesToImport,
-    alwaysKeepMainExpression,
-    extraComments
-)
+private fun performAction(element: KtElement, actionKey: Key<(KtElement) -> Unit>) {
+    val action = element.getCopyableUserData(actionKey)
+    if (action != null) {
+        element.putCopyableUserData(actionKey, null)
+        action.invoke(element)
+    }
+}
+
+private fun performPreCommitActions(expressions: Collection<KtExpression>) = expressions.asSequence()
+    .flatMap { it.collectDescendantsOfType<KtElement> { element -> element.getCopyableUserData(PRE_COMMIT_ACTION) != null } }
+    .sortedWith(compareByDescending(KtElement::startOffset).thenBy(PsiElement::getTextLength))
+    .forEach { performAction(it, PRE_COMMIT_ACTION) }
+
+internal fun MutableCodeToInline.toNonMutable(): CodeToInline {
+    performPreCommitActions(expressions)
+    return CodeToInline(
+        mainExpression,
+        statementsBefore,
+        fqNamesToImport,
+        alwaysKeepMainExpression,
+        extraComments
+    )
+}
 
 internal inline fun <reified T : PsiElement> MutableCodeToInline.collectDescendantsOfType(noinline predicate: (T) -> Boolean = { true }): List<T> {
     return expressions.flatMap { it.collectDescendantsOfType({ true }, predicate) }

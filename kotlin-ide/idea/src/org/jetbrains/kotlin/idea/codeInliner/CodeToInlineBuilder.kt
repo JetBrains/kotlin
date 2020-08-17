@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
 import java.util.*
@@ -48,14 +47,13 @@ class CodeToInlineBuilder(
 ) {
     private val psiFactory = KtPsiFactory(resolutionFacade.project)
 
-    //TODO: document that code will be modified
-    fun prepareCodeToInline(
+    private fun prepareMutableCodeToInline(
         mainExpression: KtExpression?,
         statementsBefore: List<KtExpression>,
         analyze: (KtExpression) -> BindingContext,
         reformat: Boolean,
         contextDeclaration: KtDeclaration? = null,
-    ): CodeToInline {
+    ): MutableCodeToInline {
         val alwaysKeepMainExpression =
             when (val descriptor = mainExpression?.getResolvedCall(analyze(mainExpression))?.resultingDescriptor) {
                 is PropertyDescriptor -> descriptor.getter?.isDefault == false
@@ -75,9 +73,19 @@ class CodeToInlineBuilder(
         }
 
         insertExplicitTypeArguments(codeToInline, analyze)
-
         processReferences(codeToInline, analyze, reformat)
+        return codeToInline
+    }
 
+    //TODO: document that code will be modified
+    fun prepareCodeToInline(
+        mainExpression: KtExpression?,
+        statementsBefore: List<KtExpression>,
+        analyze: (KtExpression) -> BindingContext,
+        reformat: Boolean,
+        contextDeclaration: KtDeclaration? = null,
+    ): CodeToInline {
+        val codeToInline = prepareMutableCodeToInline(mainExpression, statementsBefore, analyze, reformat, contextDeclaration)
         when {
             mainExpression == null -> Unit
             mainExpression.isNull() -> targetCallable.returnType?.let { returnType ->
@@ -211,19 +219,17 @@ class CodeToInlineBuilder(
         }
     }
 
-    private fun insertExplicitTypeArguments(codeToInline: MutableCodeToInline, analyze: (KtExpression) -> BindingContext) {
-        val typeArgsToAdd = ArrayList<Pair<KtCallExpression, KtTypeArgumentList>>()
-        codeToInline.forEachDescendantOfType<KtCallExpression> {
-            val expression = it.parent as? KtQualifiedExpression ?: it
-            val bindingContext = analyze(expression)
-            if (InsertExplicitTypeArgumentsIntention.isApplicableTo(it, bindingContext)) {
-                typeArgsToAdd.add(it to InsertExplicitTypeArgumentsIntention.createTypeArguments(it, bindingContext)!!)
+    private fun insertExplicitTypeArguments(
+        codeToInline: MutableCodeToInline,
+        analyze: (KtExpression) -> BindingContext
+    ) = codeToInline.forEachDescendantOfType<KtCallExpression> {
+        val expression = it.parent as? KtQualifiedExpression ?: it
+        val bindingContext = analyze(expression)
+        if (InsertExplicitTypeArgumentsIntention.isApplicableTo(it, bindingContext)) {
+            val typeArguments = InsertExplicitTypeArgumentsIntention.createTypeArguments(it, bindingContext)!!
+            codeToInline.addPreCommitAction(it) { callExpression ->
+                callExpression.addAfter(typeArguments, callExpression.calleeExpression)
             }
-        }
-
-        if (typeArgsToAdd.isEmpty()) return
-        for ((callExpr, typeArgs) in typeArgsToAdd) {
-            callExpr.addAfter(typeArgs, callExpr.calleeExpression)
         }
     }
 
@@ -267,8 +273,6 @@ class CodeToInlineBuilder(
     }
 
     private fun processReferences(codeToInline: MutableCodeToInline, analyze: (KtExpression) -> BindingContext, reformat: Boolean) {
-        val receiversToAdd = ArrayList<Triple<KtExpression, KtExpression, KotlinType>>()
-        val extensionFunctionCalls = mutableListOf<KtCallExpression>()
         val targetDispatchReceiverType = targetCallable.dispatchReceiverParameter?.value?.type
         val targetExtensionReceiverType = targetCallable.extensionReceiverParameter?.value?.type
 
@@ -299,7 +303,17 @@ class CodeToInlineBuilder(
                 target.type.isExtensionFunctionType &&
                 target.containingDeclaration == callableDescriptor
             ) {
-                extensionFunctionCalls += parent
+                codeToInline.addPreCommitAction(parent) { callExpression ->
+                    val qualifiedExpression = callExpression.parent as KtDotQualifiedExpression
+                    val valueArgumentList = callExpression.getOrCreateValueArgumentList()
+                    val newArgument = psiFactory.createArgument(qualifiedExpression.receiverExpression)
+                    valueArgumentList.addArgumentBefore(newArgument, valueArgumentList.arguments.firstOrNull())
+                    val newExpression = qualifiedExpression.replaced(callExpression)
+                    if (qualifiedExpression in codeToInline) {
+                        codeToInline.replaceExpression(qualifiedExpression, newExpression)
+                    }
+                }
+
                 expression.putCopyableUserData(CodeToInline.PARAMETER_USAGE_KEY, target.name)
             } else if (receiverExpression == null) {
                 if (target is ValueParameterDescriptor && target.containingDeclaration == callableDescriptor) {
@@ -321,36 +335,24 @@ class CodeToInlineBuilder(
                         val resolutionScope = expression.getResolutionScope(bindingContext, resolutionFacade)
                         val receiverExpressionToInline = receiver.asExpression(resolutionScope, psiFactory)
                         if (receiverExpressionToInline != null) {
-                            receiversToAdd.add(Triple(expressionToResolve, receiverExpressionToInline, receiver.type))
+                            val receiverType = receiver.type
+                            codeToInline.addPreCommitAction(expressionToResolve) { expr ->
+                                val expressionToReplace = expr.parent as? KtCallExpression ?: expr
+                                val replaced = codeToInline.replaceExpression(
+                                    expressionToReplace,
+                                    psiFactory.createExpressionByPattern(
+                                        "$0.$1", receiverExpressionToInline, expressionToReplace,
+                                        reformat = reformat
+                                    )
+                                ) as? KtQualifiedExpression
+
+                                if (receiverType != targetDispatchReceiverType && receiverType != targetExtensionReceiverType) {
+                                    replaced?.receiverExpression?.putCopyableUserData(CodeToInline.SIDE_RECEIVER_USAGE_KEY, Unit)
+                                }
+                            }
                         }
                     }
                 }
-            }
-        }
-
-        // add receivers in reverse order because arguments of a call were processed after the callee's name
-        for ((expr, receiverExpression, receiverType) in receiversToAdd.asReversed()) {
-            val expressionToReplace = expr.parent as? KtCallExpression ?: expr
-            val replaced = codeToInline.replaceExpression(
-                expressionToReplace,
-                psiFactory.createExpressionByPattern(
-                    "$0.$1", receiverExpression, expressionToReplace,
-                    reformat = reformat
-                )
-            ) as? KtQualifiedExpression
-            if (receiverType != targetDispatchReceiverType && receiverType != targetExtensionReceiverType) {
-                replaced?.receiverExpression?.putCopyableUserData(CodeToInline.SIDE_RECEIVER_USAGE_KEY, Unit)
-            }
-        }
-
-        for (callExpression in extensionFunctionCalls) {
-            val qualifiedExpression = callExpression.parent as KtDotQualifiedExpression
-            val valueArgumentList = callExpression.getOrCreateValueArgumentList()
-            val newArgument = psiFactory.createArgument(qualifiedExpression.receiverExpression)
-            valueArgumentList.addArgumentBefore(newArgument, valueArgumentList.arguments.firstOrNull())
-            val newExpression = qualifiedExpression.replaced(callExpression)
-            if (qualifiedExpression in codeToInline) {
-                codeToInline.replaceExpression(qualifiedExpression, newExpression)
             }
         }
     }
