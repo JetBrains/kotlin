@@ -30,8 +30,8 @@ class KotlinInlineFunctionHandler : KotlinInlineActionHandler() {
         element as KtNamedFunction
         if (!element.hasBody()) {
             val message = when {
-                element.isAbstract() -> KotlinBundle.message("refactoring.cannot.be.applied.to.abstract.function", REFACTORING_NAME)
-                element.isExpectDeclaration() -> KotlinBundle.message("refactoring.cannot.be.applied.to.expect.function", REFACTORING_NAME)
+                element.isAbstract() -> KotlinBundle.message("refactoring.cannot.be.applied.to.abstract.declaration", REFACTORING_NAME)
+                element.isExpectDeclaration() -> KotlinBundle.message("refactoring.cannot.be.applied.to.expect.declaration", REFACTORING_NAME)
                 else -> KotlinBundle.message("refactoring.cannot.be.applied.no.sources.attached", REFACTORING_NAME)
             }
 

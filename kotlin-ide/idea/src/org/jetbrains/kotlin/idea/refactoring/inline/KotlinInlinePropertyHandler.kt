@@ -29,8 +29,8 @@ class KotlinInlinePropertyHandler(private val withPrompt: Boolean = true) : Kotl
 
         if (!element.hasBody()) {
             val message = when {
-                element.isAbstract() -> KotlinBundle.message("refactoring.cannot.be.applied.to.abstract.property", REFACTORING_NAME)
-                element.isExpectDeclaration() -> KotlinBundle.message("refactoring.cannot.be.applied.to.expect.property", REFACTORING_NAME)
+                element.isAbstract() -> KotlinBundle.message("refactoring.cannot.be.applied.to.abstract.declaration", REFACTORING_NAME)
+                element.isExpectDeclaration() -> KotlinBundle.message("refactoring.cannot.be.applied.to.expect.declaration", REFACTORING_NAME)
                 else -> null
             }
 
