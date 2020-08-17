@@ -1335,3 +1335,39 @@ In experimental coroutines, the diagram is much simpler.
 +-------------+
 ```
 Every suspending function's continuation or suspend lambda extends `CoroutineImpl`.
+
+### Suspend Lambda Layout
+
+The ideal suspend lambda layout is the following:
+1. supertypes: `kotlin/coroutines/jvm/internal/SuspendLambda` and `kotlin/jvm/functions/Function{N}`
+2. package-private captured variables
+3. private label field of int. Private, since it is used only in the lambda itself.
+4. private fields for spilled variables. Same.
+5. public final method `invokeSuspend` of type `(Ljava/lang/Object;)Ljava/lang/Object;`.
+6. overrides `BaseContinuationImpl`'s `invokeSuspend`.
+7. public final `create` of type `(<params>,Lkotlin/coroutines/Continuation)Lkotlin/coroutines/Continuation`.
+`<params>` types are erased. In other words, their types are `Ljava/lang/Object;` as long as the number of parameters
+is either 0 or 1. That is because the method overrides the base class's `create`.
+8. public final `invoke` of type `(<params>,Ljava/lang/Object;)Ljava/lang/Object;`. Since it overrides `Function{N}`'s
+`invoke`, types of `<params>` are erased.
+9. public or package-private constructor: `<init>` of type `(<captured-variables>,Lkotlin/coroutines/Continuation;)V`,
+where we call `SuspendLambda`'s constructor with arity and completion and initialize captured variables.
+The compiler knows the arity, but the completion is provided as an argument to the constructor.
+
+### kotlin.suspend
+
+`suspend` soft keyword cannot be used with lambdas or function expression yet. It is not supported in the parser.
+However, writing the type of the variable is quite annoying, so, since 1.3, there is a function `kotlin.suspend`, which
+can precede lambda without parameters and turn it into suspend one. Since `suspend` is a soft keyword, it is possible to
+name a function `suspend`. A user can define `suspend` function, which accepts lambdas, but token sequence `suspend {`
+can only be used with `kotlin.suspend`. That is just for the transition period and while suspend lambdas and function
+expressions are not supported in the parser.
+
+FIXME: Support it in the parser and stop using the hack.
+
+### Tail-Call Suspend Lambdas
+
+FIXME: This feature is not implemented yet. Ideally, they should behave like callable references to suspend functions.
+Meaning, they should
+1. not have `create`, `invokeSuspend`, and all the fields, except for captured variables. Only constructor and `invoke`.
+2. not inherit `BaseContinuationImpl` or any of its children.
