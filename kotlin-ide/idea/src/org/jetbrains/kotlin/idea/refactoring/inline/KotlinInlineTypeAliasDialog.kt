@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.psi.KtTypeAlias
 class KotlinInlineTypeAliasDialog(
     typeAlias: KtTypeAlias,
     reference: KtSimpleNameReference?,
-    editor: Editor?
+    editor: Editor?,
 ) : AbstractKotlinInlineDialog<KtTypeAlias>(typeAlias, reference, editor) {
     init {
         init()

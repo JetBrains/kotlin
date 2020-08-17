@@ -44,6 +44,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/function/CommentBetweenReturnAndExpression.kt");
         }
 
+        @TestMetadata("customLet.kt")
+        public void testCustomLet() throws Exception {
+            runTest("testData/refactoring/inline/function/customLet.kt");
+        }
+
         @TestMetadata("delegateToFunctionWithParameter.kt")
         public void testDelegateToFunctionWithParameter() throws Exception {
             runTest("testData/refactoring/inline/function/delegateToFunctionWithParameter.kt");
@@ -124,6 +129,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/function/Kt39818.kt");
         }
 
+        @TestMetadata("let.kt")
+        public void testLet() throws Exception {
+            runTest("testData/refactoring/inline/function/let.kt");
+        }
+
         @TestMetadata("LocalCapturing.kt")
         public void testLocalCapturing() throws Exception {
             runTest("testData/refactoring/inline/function/LocalCapturing.kt");
@@ -182,6 +192,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
         @TestMetadata("OuterClassReceiver.kt")
         public void testOuterClassReceiver() throws Exception {
             runTest("testData/refactoring/inline/function/OuterClassReceiver.kt");
+        }
+
+        @TestMetadata("println.kt")
+        public void testPrintln() throws Exception {
+            runTest("testData/refactoring/inline/function/println.kt");
         }
 
         @TestMetadata("Reference.kt")
@@ -993,6 +1008,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
         @TestMetadata("InFunctionLiteral.kt")
         public void testInFunctionLiteral() throws Exception {
             runTest("testData/refactoring/inline/inlineVariableOrProperty/InFunctionLiteral.kt");
+        }
+
+        @TestMetadata("intMax.kt")
+        public void testIntMax() throws Exception {
+            runTest("testData/refactoring/inline/inlineVariableOrProperty/intMax.kt");
         }
 
         @TestMetadata("lessAndGreaterInCallArgs.kt")

@@ -6,11 +6,15 @@
 package org.jetbrains.kotlin.idea.refactoring.inline
 
 import com.intellij.lang.Language
+import com.intellij.lang.findUsages.DescriptiveNameUtil
 import com.intellij.lang.refactoring.InlineActionHandler
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.NlsContexts
 import com.intellij.psi.PsiElement
+import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtElement
 
@@ -26,8 +30,31 @@ abstract class KotlinInlineActionHandler : InlineActionHandler() {
         inlineKotlinElement(project, editor, kotlinElement)
     }
 
+    override fun getActionName(element: PsiElement?): String = refactoringName
+
     abstract fun canInlineKotlinElement(element: KtElement): Boolean
     abstract fun inlineKotlinElement(project: Project, editor: Editor?, element: KtElement)
+    abstract val refactoringName: @NlsContexts.DialogTitle String
+
+    open val helpId: String? = null
+
+    fun showErrorHint(project: Project, editor: Editor?, @NlsContexts.DialogMessage message: String) {
+        CommonRefactoringUtil.showErrorHint(project, editor, message, refactoringName, helpId)
+    }
+
+    fun checkSources(project: Project, editor: Editor?, declaration: KtElement): Boolean = !declaration.containingKtFile.isCompiled.also {
+        if (it) {
+            val declarationName = DescriptiveNameUtil.getDescriptiveName(declaration)
+            showErrorHint(
+                project,
+                editor,
+                KotlinBundle.message("error.hint.text.cannot.inline.0.from.a.decompiled.file", declarationName)
+            )
+        }
+    }
 }
 
-private fun unwrapKotlinElement(element: PsiElement): KtElement? = element.unwrapped as? KtElement
+private fun unwrapKotlinElement(element: PsiElement): KtElement? {
+    val ktElement = element.unwrapped as? KtElement
+    return ktElement?.navigationElement as? KtElement ?: ktElement
+}

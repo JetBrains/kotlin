@@ -1,0 +1,18 @@
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
+
+fun a() {
+    val a: Int = 42
+    val block = { it: Int ->
+        println(it)
+    }
+    /**
+     * Calls the specified function [block] with `this` value as its argument and returns its result.
+     *
+     * For detailed usage information see the documentation for [scope functions](https://kotlinlang.org/docs/reference/scope-functions.html#let).
+     */
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    block(a)
+}

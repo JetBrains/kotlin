@@ -32,9 +32,8 @@ class KotlinInlinePropertyDialog(
     reference: KtSimpleNameReference?,
     private val assignmentToDelete: KtBinaryExpression?,
     withPreview: Boolean = true,
-    editor: Editor?
+    editor: Editor?,
 ) : AbstractKotlinInlineDialog<KtProperty>(property, reference, editor) {
-
     private val simpleLocal = declaration.isLocal && (reference == null || occurrencesNumber == 1)
 
     init {
@@ -64,14 +63,13 @@ class KotlinInlinePropertyDialog(
     override fun isInlineThis() = KotlinRefactoringSettings.instance.INLINE_LOCAL_THIS
 
     public override fun doAction() {
-        val isWhenSubjectVariable = (declaration.parent as? KtWhenExpression)?.subjectVariable == declaration
-        val deleteAfter = !isInlineThisOnly && !isKeepTheDeclaration
         invokeRefactoring(
             KotlinInlinePropertyProcessor(
-                declaration, reference,
+                declaration = declaration,
+                reference = reference,
                 inlineThisOnly = isInlineThisOnly,
-                deleteAfter = deleteAfter,
-                isWhenSubjectVariable = isWhenSubjectVariable,
+                deleteAfter = !isInlineThisOnly && !isKeepTheDeclaration,
+                isWhenSubjectVariable = (declaration.parent as? KtWhenExpression)?.subjectVariable == declaration,
                 editor = editor,
                 statementToDelete = assignmentToDelete,
             )

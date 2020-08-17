@@ -10,7 +10,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
-import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
@@ -24,18 +23,27 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
 class KotlinInlineFunctionHandler : KotlinInlineActionHandler() {
+    override val helpId: String? get() = HelpID.INLINE_METHOD
+
+    override val refactoringName: String get() = KotlinBundle.message("title.inline.function")
+
     override fun canInlineKotlinElement(element: KtElement): Boolean = element is KtNamedFunction
 
     override fun inlineKotlinElement(project: Project, editor: Editor?, element: KtElement) {
         element as KtNamedFunction
+        if (!checkSources(project, editor, element)) return
+
         if (!element.hasBody()) {
             val message = when {
-                element.isAbstract() -> KotlinBundle.message("refactoring.cannot.be.applied.to.abstract.declaration", REFACTORING_NAME)
-                element.isExpectDeclaration() -> KotlinBundle.message("refactoring.cannot.be.applied.to.expect.declaration", REFACTORING_NAME)
-                else -> KotlinBundle.message("refactoring.cannot.be.applied.no.sources.attached", REFACTORING_NAME)
+                element.isAbstract() -> KotlinBundle.message("refactoring.cannot.be.applied.to.abstract.declaration", refactoringName)
+                element.isExpectDeclaration() -> KotlinBundle.message(
+                    "refactoring.cannot.be.applied.to.expect.declaration",
+                    refactoringName
+                )
+                else -> KotlinBundle.message("refactoring.cannot.be.applied.no.sources.attached", refactoringName)
             }
 
-            CommonRefactoringUtil.showErrorHint(project, editor, message, REFACTORING_NAME, HelpID.INLINE_METHOD)
+            showErrorHint(project, editor, message)
             return
         }
 
@@ -46,14 +54,14 @@ class KotlinInlineFunctionHandler : KotlinInlineActionHandler() {
                 KotlinBundle.message("text.inline.recursive.function.is.supported.only.on.references")
             )
 
-            CommonRefactoringUtil.showErrorHint(project, editor, message, REFACTORING_NAME, HelpID.INLINE_METHOD)
+            showErrorHint(project, editor, message)
             return
         }
 
         val dialog = KotlinInlineFunctionDialog(
             element,
             nameReference,
-            allowInlineThisOnly = recursive,
+            allowToInlineThisOnly = recursive,
             editor = editor,
         )
 
@@ -74,9 +82,5 @@ class KotlinInlineFunctionHandler : KotlinInlineActionHandler() {
         return descriptor == refDescriptor || anyDescendantOfType<KtExpression> {
             it !== this && descriptor == it.getResolvedCall(context)?.resultingDescriptor
         }
-    }
-
-    companion object {
-        private val REFACTORING_NAME: String get() = KotlinBundle.message("title.inline.function")
     }
 }

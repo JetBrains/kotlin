@@ -9,7 +9,9 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.LocalSearchScope
+import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
+import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.annotations.Nls
@@ -82,7 +84,13 @@ class KotlinInlinePropertyProcessor(
             val initializer = initializerOrNull
             if (initializer != null) return initializer
 
-            KotlinInlinePropertyHandler.showErrorHint(project, editor, error)
+            CommonRefactoringUtil.showErrorHint(
+                project,
+                editor,
+                error,
+                KotlinBundle.message("title.inline.property"),
+                HelpID.INLINE_VARIABLE,
+            )
             return null
         }
 

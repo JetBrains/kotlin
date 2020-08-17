@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.search.declarationsSearch.findSuperMethodsNoWrapping
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingElement
 import org.jetbrains.kotlin.psi.*
+import java.util.*
 
 private val LOG = Logger.getInstance(AbstractKotlinInlineDeclarationProcessor::class.java)
 
@@ -104,6 +105,10 @@ abstract class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDe
     open fun additionalPreprocessUsages(usages: Array<out UsageInfo>, conflicts: MultiMap<PsiElement, String>) = Unit
 
     final override fun preprocessUsages(refUsages: Ref<Array<UsageInfo>>): Boolean {
+        if (deleteAfter && isWritable) {
+            if (!CommonRefactoringUtil.checkReadOnlyStatus(myProject, declaration)) return false
+        }
+
         val usagesInfo = refUsages.get()
         val conflicts = MultiMap<PsiElement, String>()
         additionalPreprocessUsages(usagesInfo, conflicts)
@@ -189,6 +194,16 @@ abstract class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDe
 
         override fun getProcessedElementsHeader() = KotlinBundle.message("text.0.to.inline", kind.capitalize())
     }
+
+    private val isWritable: Boolean
+        get() = declaration.isWritable
+
+    override fun getElementsToWrite(descriptor: UsageViewDescriptor): Collection<PsiElement?> = when {
+        inlineThisOnly -> listOfNotNull(reference?.element)
+        isWritable -> listOfNotNull(reference?.element, declaration)
+        else -> emptyList()
+    }
+
 }
 
 private class OverrideUsageInfo(element: PsiElement) : UsageInfo(element)

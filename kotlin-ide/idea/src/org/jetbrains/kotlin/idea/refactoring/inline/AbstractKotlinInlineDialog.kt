@@ -47,7 +47,7 @@ abstract class AbstractKotlinInlineDialog<TDeclaration : KtNamedDeclaration>(
 
     // If this is false, "inline all & remove" is disabled
     // If this is true, it can be enabled if 'canInlineThisOnly' is false (see above)
-    override fun allowInlineAll() = true
+    override fun allowInlineAll() = declaration.isWritable
 
     override fun getBorderTitle() = refactoringName
 

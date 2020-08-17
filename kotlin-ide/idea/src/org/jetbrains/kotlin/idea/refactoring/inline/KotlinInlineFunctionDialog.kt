@@ -17,7 +17,7 @@ class KotlinInlineFunctionDialog(
     function: KtNamedFunction,
     reference: KtSimpleNameReference?,
     editor: Editor?,
-    private val allowInlineThisOnly: Boolean,
+    private val allowToInlineThisOnly: Boolean,
 ) : AbstractKotlinInlineDialog<KtNamedFunction>(function, reference, editor) {
     init {
         init()
@@ -30,8 +30,8 @@ class KotlinInlineFunctionDialog(
             KotlinInlineFunctionProcessor(
                 declaration = declaration,
                 reference = reference,
-                inlineThisOnly = isInlineThisOnly || allowInlineThisOnly,
-                deleteAfter = !isInlineThisOnly && !isKeepTheDeclaration && !allowInlineThisOnly,
+                inlineThisOnly = isInlineThisOnly || allowToInlineThisOnly,
+                deleteAfter = !isInlineThisOnly && !isKeepTheDeclaration && !allowToInlineThisOnly,
                 editor = editor
             )
         )
@@ -46,5 +46,5 @@ class KotlinInlineFunctionDialog(
         if (declaration is KtConstructor<*>) HelpID.INLINE_CONSTRUCTOR else HelpID.INLINE_METHOD
     )
 
-    override fun canInlineThisOnly() = allowInlineThisOnly
+    override fun canInlineThisOnly() = allowToInlineThisOnly
 }
