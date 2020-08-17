@@ -221,6 +221,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                     session = c.session
                     origin = FirDeclarationOrigin.Library
                     this.returnTypeRef = returnTypeRef
+                    resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                     isGetter = true
                     status = FirResolvedDeclarationStatusImpl(visibility, modality)
                     annotations +=
@@ -245,6 +246,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                     session = c.session
                     origin = FirDeclarationOrigin.Library
                     this.returnTypeRef = FirImplicitUnitTypeRef(source)
+                    resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                     isGetter = false
                     status = FirResolvedDeclarationStatusImpl(visibility, modality)
                     annotations +=
@@ -456,6 +458,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 returnTypeRef = proto.type(c.typeTable).toTypeRef(c)
                 this.name = name
                 symbol = FirVariableSymbol(name)
+                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 defaultValue = defaultValue(flags)
                 if (addDefaultValue) {
                     defaultValue = buildExpressionStub()
