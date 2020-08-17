@@ -724,13 +724,28 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val identifier = klass.nameIdentifier
         var matchNameIdentifiers = matchTextOrVariable(identifier, other.nameIdentifier)
 
+        // Possible match if "within hierarchy" is set
         if (!matchNameIdentifiers && identifier != null) {
-            // Possible match if "within hierarchy" is set
-            val handler = getHandler(identifier)
-            if (handler is SubstitutionHandler && (handler.isStrictSubtype || handler.isSubtype)) {
+            var checkHierarchy = false
+
+            // "within hierarchy" on class name
+            val identifierHandler = getHandler(identifier)
+            if (identifierHandler is SubstitutionHandler && (identifierHandler.isStrictSubtype || identifierHandler.isSubtype))
+                checkHierarchy = true
+
+            // "within hierarchy" on member
+            if (klass.body?.children?.filterIsInstance<KtProperty>()?.any {
+                    val propertyIdentifier = it.nameIdentifier ?: return@any false
+                    val handler = getHandler(propertyIdentifier)
+                    handler is SubstitutionHandler && (handler.isSubtype || handler.isStrictSubtype)
+                } == true)
+                checkHierarchy = true
+
+            if (checkHierarchy) {
+                val predicate = (identifierHandler as? SubstitutionHandler)?.findRegExpPredicate()
                 matchNameIdentifiers = (other.descriptor as ClassDescriptor).toSimpleType().supertypes().any { type ->
-                    val predicate = handler.findRegExpPredicate() ?: return@any false
-                    type.renderNames().any { predicate.doMatch(it, myMatchingVisitor.matchContext, other) }
+                    type.renderNames()
+                        .any { predicate?.doMatch(it, myMatchingVisitor.matchContext, other) ?: (identifier.text == it) }
                 }
             }
         }
