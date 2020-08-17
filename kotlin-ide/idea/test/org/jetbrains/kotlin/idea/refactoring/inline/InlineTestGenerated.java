@@ -621,6 +621,16 @@ public class InlineTestGenerated extends AbstractInlineTest {
             public void testReturnNullAsInteger() throws Exception {
                 runTest("testData/refactoring/inline/function/fromJavaToKotlin/returnNullAsInteger.kt");
             }
+
+            @TestMetadata("syntheticAccessor.kt")
+            public void testSyntheticAccessor() throws Exception {
+                runTest("testData/refactoring/inline/function/fromJavaToKotlin/syntheticAccessor.kt");
+            }
+
+            @TestMetadata("syntheticAccessor2.kt")
+            public void testSyntheticAccessor2() throws Exception {
+                runTest("testData/refactoring/inline/function/fromJavaToKotlin/syntheticAccessor2.kt");
+            }
         }
 
         @RunWith(JUnit3RunnerWithInners.class)

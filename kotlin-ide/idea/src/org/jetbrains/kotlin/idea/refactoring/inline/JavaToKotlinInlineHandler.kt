@@ -112,7 +112,7 @@ internal class J2KInlineCache(private val strategy: UsageReplacementStrategy, pr
     /**
      * @return [strategy] without validation if [elementToValidation] is null
      */
-    fun getStrategy(elementToValidation: PsiElement?): UsageReplacementStrategy? = strategy.takeIf {
+    private fun getStrategy(elementToValidation: PsiElement?): UsageReplacementStrategy? = strategy.takeIf {
         elementToValidation?.textMatches(originalText) != false
     }
 
