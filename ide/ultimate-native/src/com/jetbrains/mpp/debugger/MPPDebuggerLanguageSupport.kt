@@ -5,6 +5,7 @@
 
 package com.jetbrains.mpp.debugger
 
+import com.intellij.execution.configurations.RunProfile
 import com.jetbrains.cidr.execution.debugger.CidrDebugProcess
 import com.jetbrains.cidr.execution.debugger.CidrDebuggerLanguageSupport
 import com.jetbrains.cidr.execution.debugger.backend.DebuggerDriver
@@ -20,4 +21,6 @@ class MPPDebuggerLanguageSupport : CidrDebuggerLanguageSupport() {
     override fun getSupportedDebuggerLanguages(): MutableSet<DebuggerDriver.DebuggerLanguage> {
         return mutableSetOf(C)
     }
+
+    override fun useFrameLanguageFromDebugger(profile: RunProfile?): Boolean = false
 }

@@ -11,11 +11,11 @@ import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider
 import com.jetbrains.cidr.execution.debugger.CidrDebugProcess
 import com.jetbrains.cidr.execution.debugger.CidrDebuggerEditorsProvider
 import com.jetbrains.cidr.execution.debugger.CidrDebuggerLanguageSupport
-import com.jetbrains.cidr.execution.debugger.OCDebuggerTypesHelper
 import com.jetbrains.cidr.execution.debugger.backend.DebuggerDriver
 import com.jetbrains.cidr.execution.debugger.evaluation.CidrDebuggerTypesHelper
+import com.jetbrains.konan.debugger.KonanDebuggerTypesHelper
 
-class KonanDebuggerLanguageSupport: CidrDebuggerLanguageSupport() {
+class KonanDebuggerLanguageSupport : CidrDebuggerLanguageSupport() {
     override fun getSupportedDebuggerLanguages(): Set<DebuggerDriver.DebuggerLanguage> {
         // currently Kotlin/Native presents itself as a C in debug information
         return setOf(DebuggerDriver.StandardDebuggerLanguage.C)
@@ -26,7 +26,9 @@ class KonanDebuggerLanguageSupport: CidrDebuggerLanguageSupport() {
     }
 
     override fun createTypesHelper(process: CidrDebugProcess): CidrDebuggerTypesHelper {
-        return OCDebuggerTypesHelper(process)
+        return KonanDebuggerTypesHelper(process)
     }
+
+    override fun useFrameLanguageFromDebugger(profile: RunProfile?) = false
 }
 
