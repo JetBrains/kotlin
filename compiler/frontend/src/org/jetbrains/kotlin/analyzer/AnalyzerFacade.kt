@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ModuleContext
+import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDependencies
@@ -213,4 +214,7 @@ interface ResolverForModuleComputationTracker {
 
 
 @Suppress("UNCHECKED_CAST")
-fun <T> ModuleInfo.getCapability(capability: ModuleDescriptor.Capability<T>) = capabilities[capability] as? T
+fun <T> ModuleInfo.getCapability(capability: ModuleCapability<T>) = capabilities[capability] as? T
+
+val ModuleDescriptor.moduleInfo: ModuleInfo?
+    get() = getCapability(ModuleInfo.Capability)

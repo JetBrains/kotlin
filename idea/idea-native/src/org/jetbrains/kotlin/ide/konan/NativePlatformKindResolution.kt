@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.caches.resolve.IdePlatformKindResolution
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
@@ -37,14 +38,14 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.isInterop
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
-import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
-import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.library.nativeTargets
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.platform.konan.NativePlatforms.nativePlatformByTargetNames
+import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
+import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.serialization.konan.impl.KlibMetadataModuleDescriptorFactoryImpl
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -156,7 +157,7 @@ class NativeKlibLibraryInfo(project: Project, library: Library, libraryRoot: Str
     // If you're changing this, please take a look at ideaModelDependencies as well
     val isStdlib: Boolean get() = libraryRoot.endsWith(KONAN_STDLIB_NAME)
 
-    override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
+    override val capabilities: Map<ModuleCapability<*>, Any?>
         get() {
             val capabilities = super.capabilities.toMutableMap()
             capabilities += KlibModuleOrigin.CAPABILITY to DeserializedKlibModuleOrigin(resolvedKotlinLibrary)

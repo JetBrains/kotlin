@@ -55,7 +55,7 @@ public class ErrorUtils {
         ERROR_MODULE = new ModuleDescriptor() {
             @Nullable
             @Override
-            public <T> T getCapability(@NotNull Capability<T> capability) {
+            public <T> T getCapability(@NotNull ModuleCapability<T> capability) {
                 return null;
             }
 

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analyzer
 
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
@@ -18,7 +18,7 @@ interface ModuleInfo {
     val platform: TargetPlatform
     val analyzerServices: PlatformDependentAnalyzerServices
     fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> = listOf()
-    val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
+    val capabilities: Map<ModuleCapability<*>, Any?>
         get() = mapOf(Capability to this)
     val stableName: Name?
         get() = null
@@ -35,9 +35,6 @@ interface ModuleInfo {
     enum class DependencyOnBuiltIns { NONE, AFTER_SDK, LAST }
 
     companion object {
-        val Capability = ModuleDescriptor.Capability<ModuleInfo>("ModuleInfo")
+        val Capability = ModuleCapability<ModuleInfo>("ModuleInfo")
     }
 }
-
-val ModuleDescriptor.moduleInfo: ModuleInfo?
-    get() = getCapability(ModuleInfo.Capability)

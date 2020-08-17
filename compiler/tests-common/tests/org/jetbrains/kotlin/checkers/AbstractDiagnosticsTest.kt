@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.context.SimpleGlobalContext
 import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
@@ -759,6 +760,6 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
     companion object {
         private val HASH_SANITIZER = fun(s: String): String = s.replace("@(\\d)+".toRegex(), "")
 
-        private val MODULE_FILES = ModuleDescriptor.Capability<List<KtFile>>("")
+        private val MODULE_FILES = ModuleCapability<List<KtFile>>("")
     }
 }
