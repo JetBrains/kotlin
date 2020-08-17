@@ -38,7 +38,7 @@ internal class KtFirLocalVariableSymbol(
 
     override val isVal: Boolean get() = firRef.withFir { it.isVal }
     override val name: Name get() = firRef.withFir { it.name }
-    override val type: KtType by firRef.withFirAndCache(FirResolvePhase.BODY_RESOLVE) { fir -> builder.buildKtType(fir.returnTypeRef) }
+    override val type: KtType by firRef.withFirAndCache(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) { fir -> builder.buildKtType(fir.returnTypeRef) }
     override val symbolKind: KtSymbolKind get() = KtSymbolKind.LOCAL
 
     override fun createPointer(): KtSymbolPointer<KtLocalVariableSymbol> {
