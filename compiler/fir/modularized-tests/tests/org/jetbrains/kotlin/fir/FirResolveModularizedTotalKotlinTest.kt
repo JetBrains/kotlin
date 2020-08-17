@@ -56,18 +56,22 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     private var bestStatistics: FirResolveBench.TotalStatistics? = null
     private var bestPass: Int = 0
 
-    private val asyncProfiler = try {
-        if (ASYNC_PROFILER_LIB != null) {
+    private val asyncProfiler = if (ASYNC_PROFILER_LIB != null) {
+        try {
             AsyncProfilerHelper.getInstance(ASYNC_PROFILER_LIB)
-        } else {
-            null
+        } catch (e: ExceptionInInitializerError) {
+            if (e.cause is ClassNotFoundException) {
+                throw IllegalStateException("Async-profiler initialization error, make sure async-profiler.jar is on classpath", e.cause)
+            }
+            throw e
         }
-    } catch (_: Throwable) {
+    } else {
         null
     }
 
-    private fun executeAsyncProfilerCommand(command: String, pass: Int) {
+    private fun executeAsyncProfilerCommand(command: String?, pass: Int) {
         if (asyncProfiler != null) {
+            require(command != null)
             fun String.replaceParams(): String =
                 this.replace("\$REPORT_DATE", reportDateStr)
                     .replace("\$PASS", pass.toString())
