@@ -15,6 +15,10 @@ import org.jetbrains.kotlin.utils.PathUtil
  */
 class KotlinPluginMacros : PathMacroContributor {
     override fun registerPathMacros(macros: MutableMap<String, String>, legacyMacros: MutableMap<String, String>) {
+
+    }
+
+    override fun forceRegisterPathMacros(macros: MutableMap<String, String>) {
         macros[KOTLIN_BUNDLED_PATH_VARIABLE] = PathUtil.kotlinPathsForIdeaPlugin.homePath.path
     }
 
