@@ -47,9 +47,9 @@ class FirControlFlowAnalyzer(session: FirSession) {
     }
 
     private fun runAssignmentCfaCheckers(graph: ControlFlowGraph, reporter: DiagnosticReporter) {
-        val properties = AbstractFirPropertyInitializationChecker.LocalPropertyCollector.collect(graph)
+        val properties = AbstractFirCfaPropertyAssignmentChecker.LocalPropertyCollector.collect(graph)
         if (properties.isEmpty()) return
-        val data = AbstractFirPropertyInitializationChecker.DataCollector(properties).getData(graph)
+        val data = AbstractFirCfaPropertyAssignmentChecker.DataCollector(properties).getData(graph)
         variableAssignmentCheckers.forEach { it.analyze(graph, reporter, data, properties) }
     }
 }

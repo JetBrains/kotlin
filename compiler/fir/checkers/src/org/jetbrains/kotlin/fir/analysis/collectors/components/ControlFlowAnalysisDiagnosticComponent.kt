@@ -58,7 +58,10 @@ class ControlFlowAnalysisDiagnosticComponent(collector: AbstractDiagnosticCollec
     }
 
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: CheckerContext) {
-        visitFunction(propertyAccessor, data)
+        val graph = propertyAccessor.controlFlowGraphReference?.controlFlowGraph ?: return
+        runCheck {
+            controlFlowAnalyzer.analyzePropertyAccessor(propertyAccessor, graph, data, it)
+        }
     }
 
     override fun visitConstructor(constructor: FirConstructor, data: CheckerContext) {
