@@ -65,12 +65,12 @@ public abstract class MavenImportingTestCase extends MavenTestCase {
 
     @Override
     protected void setUp() throws Exception {
-        VfsRootAccess.allowRootAccess(PathManager.getConfigPath());
+        VfsRootAccess.allowRootAccess(getTestRootDisposable(), PathManager.getConfigPath());
         super.setUp();
         myGlobalSettingsFile =
                 MavenWorkspaceSettingsComponent.getInstance(myProject).getSettings().generalSettings.getEffectiveGlobalSettingsIoFile();
         if (myGlobalSettingsFile != null) {
-            VfsRootAccess.allowRootAccess(myGlobalSettingsFile.getAbsolutePath());
+            VfsRootAccess.allowRootAccess(getTestRootDisposable(), myGlobalSettingsFile.getAbsolutePath());
         }
         sdkCreationChecker = new KotlinSdkCreationChecker();
     }
@@ -86,10 +86,6 @@ public abstract class MavenImportingTestCase extends MavenTestCase {
     protected void tearDown() throws Exception {
         try {
             JavaAwareProjectJdkTableImpl.removeInternalJdkInTests();
-            if (myGlobalSettingsFile != null) {
-                VfsRootAccess.disallowRootAccess(myGlobalSettingsFile.getAbsolutePath());
-            }
-            VfsRootAccess.disallowRootAccess(PathManager.getConfigPath());
             TestDialogManager.setTestDialog(TestDialog.DEFAULT);
             removeFromLocalRepository("test");
             FileUtil.delete(BuildManager.getInstance().getBuildSystemDirectory().toFile());
