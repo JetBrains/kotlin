@@ -292,22 +292,22 @@ class CodeToInlineBuilder(
             }
 
             val callableDescriptor = targetCallable.safeAs<ImportedFromObjectCallableDescriptor<*>>()?.callableFromObject ?: targetCallable
-            when {
-                target is ValueParameterDescriptor && target.containingDeclaration == callableDescriptor -> {
-                    val receiverExpression = expression.getReceiverExpression()
-                    if (receiverExpression != null && parent is KtCallExpression && target.type.isExtensionFunctionType) {
-                        extensionFunctionCalls += parent
-                    }
-
+            val receiverExpression = expression.getReceiverExpression()
+            if (receiverExpression != null &&
+                parent is KtCallExpression &&
+                target is ValueParameterDescriptor &&
+                target.type.isExtensionFunctionType &&
+                target.containingDeclaration == callableDescriptor
+            ) {
+                extensionFunctionCalls += parent
+                expression.putCopyableUserData(CodeToInline.PARAMETER_USAGE_KEY, target.name)
+            } else if (receiverExpression == null) {
+                if (target is ValueParameterDescriptor && target.containingDeclaration == callableDescriptor) {
                     expression.putCopyableUserData(CodeToInline.PARAMETER_USAGE_KEY, target.name)
-                }
-
-                target is TypeParameterDescriptor && target.containingDeclaration == callableDescriptor -> {
+                } else if (target is TypeParameterDescriptor && target.containingDeclaration == callableDescriptor) {
                     expression.putCopyableUserData(CodeToInline.TYPE_PARAMETER_USAGE_KEY, target.name)
                 }
-            }
 
-            if (expression.getReceiverExpression() == null) {
                 if (targetCallable !is ImportedFromObjectCallableDescriptor<*>) {
                     val (expressionToResolve, resolvedCall) = findResolvedCall(expression, bindingContext, analyze)
                         ?: return@forEachDescendantOfType
@@ -319,9 +319,9 @@ class CodeToInlineBuilder(
 
                     if (receiver is ImplicitReceiver) {
                         val resolutionScope = expression.getResolutionScope(bindingContext, resolutionFacade)
-                        val receiverExpression = receiver.asExpression(resolutionScope, psiFactory)
-                        if (receiverExpression != null) {
-                            receiversToAdd.add(Triple(expressionToResolve, receiverExpression, receiver.type))
+                        val receiverExpressionToInline = receiver.asExpression(resolutionScope, psiFactory)
+                        if (receiverExpressionToInline != null) {
+                            receiversToAdd.add(Triple(expressionToResolve, receiverExpressionToInline, receiver.type))
                         }
                     }
                 }

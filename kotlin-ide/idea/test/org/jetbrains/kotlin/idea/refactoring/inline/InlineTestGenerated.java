@@ -194,6 +194,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/function/ReturnNotInTheEnd.kt");
         }
 
+        @TestMetadata("sameNameInThisAndParameter.kt")
+        public void testSameNameInThisAndParameter() throws Exception {
+            runTest("testData/refactoring/inline/function/sameNameInThisAndParameter.kt");
+        }
+
         @TestMetadata("SameNamedParameters.kt")
         public void testSameNamedParameters() throws Exception {
             runTest("testData/refactoring/inline/function/SameNamedParameters.kt");
