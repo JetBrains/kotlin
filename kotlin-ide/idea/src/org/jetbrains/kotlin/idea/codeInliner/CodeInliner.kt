@@ -593,7 +593,7 @@ class CodeInliner<TCallElement : KtElement>(
     }
 
     private fun removeExplicitTypeArguments(result: KtElement) {
-        for (typeArgumentList in result.collectDescendantsOfType<KtTypeArgumentList>(canGoInside = { !it[USER_CODE_KEY] })) {
+        for (typeArgumentList in result.collectDescendantsOfType<KtTypeArgumentList>(canGoInside = { !it[USER_CODE_KEY] }).asReversed()) {
             if (RemoveExplicitTypeArgumentsIntention.isApplicableTo(typeArgumentList, approximateFlexible = true)) {
                 typeArgumentList.delete()
             }

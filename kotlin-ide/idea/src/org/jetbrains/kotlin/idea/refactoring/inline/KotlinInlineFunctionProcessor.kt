@@ -6,14 +6,10 @@
 package org.jetbrains.kotlin.idea.refactoring.inline
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInliner.CallableUsageReplacementStrategy
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.types.typeUtil.isUnit
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinInlineFunctionProcessor(
     declaration: KtNamedFunction,
@@ -28,17 +24,12 @@ class KotlinInlineFunctionProcessor(
     deleteAfter = deleteAfter,
     editor = editor
 ) {
-    override fun createReplacementStrategy(): UsageReplacementStrategy? {
-        return createUsageReplacementStrategyForFunction(declaration, editor)
-    }
+    override fun createReplacementStrategy(): UsageReplacementStrategy? = createUsageReplacementStrategyForFunction(declaration, editor)
 }
 
 fun createUsageReplacementStrategyForFunction(function: KtNamedFunction, editor: Editor?): UsageReplacementStrategy? {
-    val returnType = function.unsafeResolveToDescriptor().safeAs<SimpleFunctionDescriptor>()?.returnType
     val codeToInline = buildCodeToInline(
         function,
-        returnType,
-        function.hasDeclaredReturnType() || (function.hasBlockBody() && returnType?.isUnit() == true),
         function.bodyExpression!!,
         function.hasBlockBody(),
         editor

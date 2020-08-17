@@ -10,10 +10,12 @@ import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInliner.CommentHolder.CommentNode.Companion.mergeComments
 import org.jetbrains.kotlin.idea.codeInliner.CommentHolder.Companion.collectComments
 import org.jetbrains.kotlin.idea.core.asExpression
+import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArgumentsIntention
@@ -47,6 +49,29 @@ class CodeToInlineBuilder(
 ) {
     private val psiFactory = KtPsiFactory(resolutionFacade.project)
 
+    fun prepareCodeToInlineWithAdvancedResolution(
+        contextDeclaration: KtDeclaration,
+        bodyOrExpression: KtExpression,
+        expressionMapper: (bodyOrExpression: KtExpression) -> Pair<KtExpression?, List<KtExpression>>?,
+    ): CodeToInline? {
+        val (mainExpression, statementsBefore) = expressionMapper(bodyOrExpression) ?: return null
+        val codeToInline = prepareMutableCodeToInline(
+            mainExpression = mainExpression,
+            statementsBefore = statementsBefore,
+            analyze = { it.analyze() },
+            reformat = true,
+            contextDeclaration = contextDeclaration,
+        )
+
+        val copyOfBodyOrExpression = bodyOrExpression.copied()
+        val (resultMainExpression, resultStatementsBefore) = expressionMapper(copyOfBodyOrExpression) ?: return null
+        codeToInline.mainExpression = resultMainExpression
+        codeToInline.statementsBefore.clear()
+        codeToInline.statementsBefore.addAll(resultStatementsBefore)
+
+        return codeToInline.toNonMutable()
+    }
+
     private fun prepareMutableCodeToInline(
         mainExpression: KtExpression?,
         statementsBefore: List<KtExpression>,
@@ -74,29 +99,19 @@ class CodeToInlineBuilder(
 
         insertExplicitTypeArguments(codeToInline, analyze)
         processReferences(codeToInline, analyze, reformat)
-        return codeToInline
-    }
-
-    //TODO: document that code will be modified
-    fun prepareCodeToInline(
-        mainExpression: KtExpression?,
-        statementsBefore: List<KtExpression>,
-        analyze: (KtExpression) -> BindingContext,
-        reformat: Boolean,
-        contextDeclaration: KtDeclaration? = null,
-    ): CodeToInline {
-        val codeToInline = prepareMutableCodeToInline(mainExpression, statementsBefore, analyze, reformat, contextDeclaration)
         when {
             mainExpression == null -> Unit
             mainExpression.isNull() -> targetCallable.returnType?.let { returnType ->
-                codeToInline.replaceExpression(
-                    mainExpression,
-                    KtPsiFactory(mainExpression).createExpression(
-                        "null as ${
-                            IdeDescriptorRenderers.FQ_NAMES_IN_TYPES_WITH_NORMALIZER.renderType(returnType)
-                        }"
-                    ),
-                )
+                codeToInline.addPreCommitAction(mainExpression) {
+                    codeToInline.replaceExpression(
+                        it,
+                        psiFactory.createExpression(
+                            "null as ${
+                                IdeDescriptorRenderers.FQ_NAMES_IN_TYPES_WITH_NORMALIZER.renderType(returnType)
+                            }"
+                        ),
+                    )
+                }
             }
 
             else -> {
@@ -112,8 +127,16 @@ class CodeToInlineBuilder(
             }
         }
 
-        return codeToInline.toNonMutable()
+        return codeToInline
     }
+
+    fun prepareCodeToInline(
+        mainExpression: KtExpression?,
+        statementsBefore: List<KtExpression>,
+        analyze: (KtExpression) -> BindingContext,
+        reformat: Boolean,
+        contextDeclaration: KtDeclaration? = null,
+    ): CodeToInline = prepareMutableCodeToInline(mainExpression, statementsBefore, analyze, reformat, contextDeclaration).toNonMutable()
 
     private fun saveComments(codeToInline: MutableCodeToInline, contextDeclaration: KtDeclaration) {
         val topLevelLeadingComments = contextDeclaration.collectDescendantsOfType<PsiComment>(
@@ -221,10 +244,9 @@ class CodeToInlineBuilder(
 
     private fun insertExplicitTypeArguments(
         codeToInline: MutableCodeToInline,
-        analyze: (KtExpression) -> BindingContext
+        analyze: (KtExpression) -> BindingContext,
     ) = codeToInline.forEachDescendantOfType<KtCallExpression> {
-        val expression = it.parent as? KtQualifiedExpression ?: it
-        val bindingContext = analyze(expression)
+        val bindingContext = analyze(it)
         if (InsertExplicitTypeArgumentsIntention.isApplicableTo(it, bindingContext)) {
             val typeArguments = InsertExplicitTypeArgumentsIntention.createTypeArguments(it, bindingContext)!!
             codeToInline.addPreCommitAction(it) { callExpression ->

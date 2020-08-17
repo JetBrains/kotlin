@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.psi.KtExpression
  * * All external symbols to be imported should be either referenced via fully-qualified form or included into [fqNamesToImport]
  * * All usages of value parameters (of our callable) should be marked with [PARAMETER_USAGE_KEY] copyable user data (holds the name of the corresponding parameter)
  * * All usages of type parameters (of our callable) should be marked with [TYPE_PARAMETER_USAGE_KEY] copyable user data (holds the name of the corresponding type parameter)
- * Use [CodeToInlineBuilder.prepareCodeToInline].
+ * Use [CodeToInlineBuilder.prepareCodeToInlineWithAdvancedResolution] or [CodeToInlineBuilder.prepareCodeToInline].
  */
 class CodeToInline(
     val mainExpression: KtExpression?,

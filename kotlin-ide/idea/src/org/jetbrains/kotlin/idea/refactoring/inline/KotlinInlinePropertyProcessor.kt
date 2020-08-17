@@ -13,14 +13,11 @@ import com.intellij.refactoring.RefactoringBundle
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.annotations.Nls
-import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInline
 import org.jetbrains.kotlin.idea.codeInliner.PropertyUsageReplacementStrategy
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.findUsages.ReferencesSearchScopeHelper
-import org.jetbrains.kotlin.idea.project.builtIns
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.ReferenceAccess
 import org.jetbrains.kotlin.idea.references.readWriteAccess
@@ -148,16 +145,12 @@ fun createReplacementStrategyForProperty(property: KtProperty, editor: Editor?, 
 
     val readReplacement: CodeToInline?
     val writeReplacement: CodeToInline?
-    val descriptor = property.unsafeResolveToDescriptor() as ValueDescriptor
-    val isTypeExplicit = property.typeReference != null
     if (getter == null && setter == null) {
         val value = KotlinInlinePropertyProcessor.extractInitialization(property).getInitializerOrShowErrorHint(project, editor)?.value
             ?: return null
 
         readReplacement = buildCodeToInline(
             declaration = property,
-            returnType = descriptor.type,
-            isReturnTypeExplicit = isTypeExplicit,
             bodyOrInitializer = value,
             isBlockBody = false,
             editor = editor
@@ -168,8 +161,6 @@ fun createReplacementStrategyForProperty(property: KtProperty, editor: Editor?, 
         readReplacement = getter?.let {
             buildCodeToInline(
                 declaration = getter,
-                returnType = descriptor.type,
-                isReturnTypeExplicit = isTypeExplicit,
                 bodyOrInitializer = getter.bodyExpression!!,
                 isBlockBody = getter.hasBlockBody(),
                 editor = editor
@@ -179,8 +170,6 @@ fun createReplacementStrategyForProperty(property: KtProperty, editor: Editor?, 
         writeReplacement = setter?.let {
             buildCodeToInline(
                 declaration = setter,
-                returnType = setter.builtIns.unitType,
-                isReturnTypeExplicit = true,
                 bodyOrInitializer = setter.bodyExpression!!,
                 isBlockBody = setter.hasBlockBody(),
                 editor = editor
