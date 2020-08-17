@@ -106,7 +106,7 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
 
     override fun afterPass(pass: Int) {}
-    override fun beforePass() {}
+    override fun beforePass(pass: Int) {}
 
     fun testTotalKotlin() {
         writeMessageToLog("use_ni: $USE_NI")

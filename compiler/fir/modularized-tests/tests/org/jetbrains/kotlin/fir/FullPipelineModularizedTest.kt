@@ -19,7 +19,7 @@ import java.io.PrintStream
 import java.nio.file.Files
 
 class FullPipelineModularizedTest : AbstractModularizedTest() {
-    override fun beforePass() {
+    override fun beforePass(pass: Int) {
         totalPassResult = CumulativeTime()
         totalModules = 0
         okModules = 0
