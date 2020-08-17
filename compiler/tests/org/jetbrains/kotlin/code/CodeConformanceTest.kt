@@ -260,12 +260,11 @@ class CodeConformanceTest : TestCase() {
 
     private class FileMatcher(val root: File, paths: Collection<String>) {
         private val files = paths.map { File(it) }
-        private val names = files.mapTo(HashSet()) { it.name }
         private val paths = files.mapTo(HashSet()) { it.systemIndependentPath }
         private val relativePaths = files.filterTo(ArrayList()) { it.isDirectory }.mapTo(HashSet()) { it.systemIndependentPath + "/" }
 
         fun matchExact(file: File): Boolean {
-            return (file.name in names) && file.relativeTo(root).systemIndependentPath in paths
+            return file.relativeTo(root).systemIndependentPath in paths
         }
 
         fun matchWithContains(file: File): Boolean {
