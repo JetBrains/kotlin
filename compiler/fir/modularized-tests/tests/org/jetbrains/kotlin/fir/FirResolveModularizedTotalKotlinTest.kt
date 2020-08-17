@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
+import org.jetbrains.kotlin.cli.common.profiling.AsyncProfilerHelper
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -43,12 +44,42 @@ private val APPEND_ERROR_REPORTS = System.getProperty("fir.bench.report.errors.a
 private val RUN_CHECKERS = System.getProperty("fir.bench.run.checkers", "false").toBooleanLenient()!!
 private val USE_LIGHT_TREE = System.getProperty("fir.bench.use.light.tree", "false").toBooleanLenient()!!
 
+private val ASYNC_PROFILER_LIB = System.getProperty("fir.bench.use.async.profiler.lib")
+private val ASYNC_PROFILER_START_CMD = System.getProperty("fir.bench.use.async.profiler.cmd.start")
+private val ASYNC_PROFILER_STOP_CMD = System.getProperty("fir.bench.use.async.profiler.cmd.stop")
+private val PROFILER_SNAPSHOT_DIR = System.getProperty("fir.bench.snapshot.dir") ?: "tmp/snapshots"
+
 class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
     private lateinit var dump: MultiModuleHtmlFirDump
     private lateinit var bench: FirResolveBench
     private var bestStatistics: FirResolveBench.TotalStatistics? = null
     private var bestPass: Int = 0
+
+    private val asyncProfiler = try {
+        if (ASYNC_PROFILER_LIB != null) {
+            AsyncProfilerHelper.getInstance(ASYNC_PROFILER_LIB)
+        } else {
+            null
+        }
+    } catch (_: Throwable) {
+        null
+    }
+
+    private fun executeAsyncProfilerCommand(command: String, pass: Int) {
+        if (asyncProfiler != null) {
+            fun String.replaceParams(): String =
+                this.replace("\$REPORT_DATE", reportDateStr)
+                    .replace("\$PASS", pass.toString())
+
+            val snapshotDir = File(PROFILER_SNAPSHOT_DIR.replaceParams()).also { it.mkdirs() }
+            val expandedCommand = command
+                .replace("\$SNAPSHOT_DIR", snapshotDir.toString())
+                .replaceParams()
+            val result = asyncProfiler.execute(expandedCommand)
+            println("PROFILER: $result")
+        }
+    }
 
     private fun runAnalysis(moduleData: ModuleData, environment: KotlinCoreEnvironment) {
         val project = environment.project
@@ -146,6 +177,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     override fun beforePass(pass: Int) {
         if (DUMP_FIR) dump = MultiModuleHtmlFirDump(File(FIR_HTML_DUMP_PATH))
         System.gc()
+        executeAsyncProfilerCommand(ASYNC_PROFILER_START_CMD, pass)
     }
 
     override fun afterPass(pass: Int) {
@@ -163,6 +195,8 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         if (FAIL_FAST) {
             bench.throwFailure()
         }
+
+        executeAsyncProfilerCommand(ASYNC_PROFILER_STOP_CMD, pass)
     }
 
     override fun afterAllPasses() {
