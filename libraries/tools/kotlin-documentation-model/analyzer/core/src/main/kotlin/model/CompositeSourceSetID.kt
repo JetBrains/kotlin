@@ -27,4 +27,12 @@ data class CompositeSourceSetID(
     operator fun contains(sourceSet: DokkaConfiguration.DokkaSourceSet): Boolean {
         return sourceSet.sourceSetID in this
     }
+
+    operator fun plus(other: DokkaSourceSetID): CompositeSourceSetID {
+        return copy(children = children + other)
+    }
+}
+
+operator fun DokkaSourceSetID.plus(other: DokkaSourceSetID): CompositeSourceSetID {
+    return CompositeSourceSetID(listOf(this, other))
 }

@@ -2,6 +2,7 @@ package model
 
 import org.jetbrains.dokka.DokkaSourceSetID
 import org.jetbrains.dokka.model.CompositeSourceSetID
+import org.jetbrains.dokka.model.plus
 import kotlin.test.*
 
 class CompositeSourceSetIDTest {
@@ -53,6 +54,15 @@ class CompositeSourceSetIDTest {
         assertTrue(
             DokkaSourceSetID("m1+m2", "s1+s2") in composite,
             "Expected merged source set id being contained in composite"
+        )
+    }
+
+    @Test
+    fun `plus operator`() {
+        val composite = DokkaSourceSetID("m1", "s1") + DokkaSourceSetID("m2", "s2") + DokkaSourceSetID("m3", "s3")
+        assertEquals(
+            DokkaSourceSetID("m1+m2+m3", "s1+s2+s3"), composite.merged,
+            "Expected all three source sets being merged in order"
         )
     }
 }
