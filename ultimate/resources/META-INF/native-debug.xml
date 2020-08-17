@@ -25,6 +25,6 @@
 
   <extensions defaultExtensionNs="cidr.debugger">
     <languageSupport language="kotlin" implementationClass="com.jetbrains.mpp.debugger.MPPDebuggerLanguageSupport"/>
-    <valueRendererFactory implementation="com.jetbrains.mpp.debugger.MPPKonanValueRendererFactory"/>
+    <valueRendererFactory implementation="com.jetbrains.mpp.debugger.MPPValueRendererFactory"/>
   </extensions>
 </idea-plugin>
