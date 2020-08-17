@@ -1,8 +1,8 @@
-package com.jetbrains.kotlin.structuralsearch.res
+package com.jetbrains.kotlin.structuralsearch.res.filters
 
 import com.jetbrains.kotlin.structuralsearch.KotlinSSResourceInspectionTest
 
-class KotlinSSCountFilterTests : KotlinSSResourceInspectionTest() {
+class KotlinSSCountFilterTest : KotlinSSResourceInspectionTest() {
     override fun getBasePath(): String = "countFilter"
 
     // isApplicableMinCount

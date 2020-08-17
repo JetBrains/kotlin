@@ -173,26 +173,28 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
     }
 
     override fun isApplicableConstraint(
-        constraintName: String?,
+        constraintName: String,
         variableNode: PsiElement?,
         completePattern: Boolean,
         target: Boolean
     ): Boolean {
-        when (constraintName) {
-            UIUtil.TYPE, UIUtil.TYPE_REGEX -> return when (variableNode) {
-                null -> false
-                else -> isApplicableType(variableNode)
+        if (variableNode != null)
+            return when (constraintName) {
+                UIUtil.TYPE, UIUtil.TYPE_REGEX -> isApplicableType(variableNode)
+                UIUtil.MINIMUM_ZERO -> isApplicableMinCount(variableNode) || isApplicableMinMaxCount(variableNode)
+                UIUtil.MAXIMUM_UNLIMITED -> isApplicableMaxCount(variableNode) || isApplicableMinMaxCount(variableNode)
+                UIUtil.TEXT_HIERARCHY -> isApplicableTextHierarchy(variableNode)
+                else -> super.isApplicableConstraint(constraintName, variableNode as PsiElement?, completePattern, target)
             }
-            UIUtil.MINIMUM_ZERO -> return when (variableNode) {
-                null -> false
-                else -> isApplicableMinCount(variableNode) || isApplicableMinMaxCount(variableNode)
-            }
-            UIUtil.MAXIMUM_UNLIMITED -> return when (variableNode) {
-                null -> false
-                else -> isApplicableMaxCount(variableNode) || isApplicableMinMaxCount(variableNode)
-            }
+
+        return super.isApplicableConstraint(constraintName, null as PsiElement?, completePattern, target)
+    }
+
+    private fun isApplicableTextHierarchy(variableNode: PsiElement): Boolean {
+        return when {
+            variableNode.parent is KtClass && (variableNode.parent as KtClass).nameIdentifier == variableNode -> true
+            else -> false
         }
-        return super.isApplicableConstraint(constraintName, variableNode, completePattern, target)
     }
 
     private fun isApplicableType(variableNode: PsiElement): Boolean {

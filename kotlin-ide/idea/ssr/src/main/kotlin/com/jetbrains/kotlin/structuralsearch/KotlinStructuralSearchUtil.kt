@@ -6,6 +6,8 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 fun getCommentText(comment: PsiComment): String {
@@ -22,3 +24,8 @@ private val BINARY_EXPR_OP_NAMES = ImmutableBiMap.builder<KtSingleValueToken, Na
     .build()
 
 fun IElementType.binaryExprOpName(): Name? = BINARY_EXPR_OP_NAMES[this]
+
+fun KotlinType.renderNames(): Array<String> = arrayOf(
+    DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(this),
+    DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(this)
+)

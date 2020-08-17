@@ -13,6 +13,8 @@ import com.intellij.util.containers.reverse
 import com.jetbrains.kotlin.structuralsearch.KSSRBundle
 import com.jetbrains.kotlin.structuralsearch.binaryExprOpName
 import com.jetbrains.kotlin.structuralsearch.getCommentText
+import com.jetbrains.kotlin.structuralsearch.renderNames
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.fir.builder.toUnaryName
@@ -37,7 +39,9 @@ import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlinx.serialization.compiler.resolve.toSimpleType
 
 class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor) : KtVisitor() {
     /** Gets the next element in the query tree and removes unnecessary parentheses. */
@@ -368,7 +372,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     private fun matchTypeReferenceWithDeclaration(typeReference: KtTypeReference?, other: KtDeclaration): Boolean {
         val type = other.type()
         if (type != null) {
-            val fqType = DescriptorRenderer.DEBUG_TEXT.renderType(type)
+            val fqType = DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type)
             val factory = KtPsiFactory(other, true)
             val analzyableFile = factory.createAnalyzableFile("${other.hashCode()}.kt", "val x: $fqType = TODO()", other)
             return myMatchingVisitor.match(typeReference, (analzyableFile.lastChild as KtProperty).typeReference)
@@ -398,10 +402,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         val fqMatch = when {
             type != null -> {
                 val handler = getHandler(typeReference)
-                arrayOf(
-                    DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type),
-                    DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(type)
-                ).any {
+                type.renderNames().any {
                     if (handler is SubstitutionHandler)
                         if (handler.findRegExpPredicate()?.doMatch(it, myMatchingVisitor.matchContext, other) == true) {
                             handler.addResult(other, myMatchingVisitor.matchContext)
@@ -719,9 +720,24 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
     override fun visitClass(klass: KtClass) {
         val other = getTreeElementDepar<KtClass>() ?: return
+
+        val identifier = klass.nameIdentifier
+        var matchNameIdentifiers = matchTextOrVariable(identifier, other.nameIdentifier)
+
+        if (!matchNameIdentifiers && identifier != null) {
+            // Possible match if "within hierarchy" is set
+            val handler = getHandler(identifier)
+            if (handler is SubstitutionHandler && (handler.isStrictSubtype || handler.isSubtype)) {
+                matchNameIdentifiers = (other.descriptor as ClassDescriptor).toSimpleType().supertypes().any { type ->
+                    val predicate = handler.findRegExpPredicate() ?: return@any false
+                    type.renderNames().any { predicate.doMatch(it, myMatchingVisitor.matchContext, other) }
+                }
+            }
+        }
+
         myMatchingVisitor.result = myMatchingVisitor.match(klass.getClassOrInterfaceKeyword(), other.getClassOrInterfaceKeyword())
                 && myMatchingVisitor.match(klass.modifierList, other.modifierList)
-                && matchTextOrVariable(klass.nameIdentifier, other.nameIdentifier)
+                && matchNameIdentifiers
                 && myMatchingVisitor.match(klass.typeParameterList, other.typeParameterList)
                 && myMatchingVisitor.match(klass.primaryConstructor, other.primaryConstructor)
                 && myMatchingVisitor.matchInAnyOrder(klass.secondaryConstructors, other.secondaryConstructors)

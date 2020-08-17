@@ -1,4 +1,4 @@
-package com.jetbrains.kotlin.structuralsearch.res
+package com.jetbrains.kotlin.structuralsearch.res.filters
 
 import com.jetbrains.kotlin.structuralsearch.KotlinSSResourceInspectionTest
 import com.jetbrains.kotlin.structuralsearch.KotlinStructuralSearchProfile
