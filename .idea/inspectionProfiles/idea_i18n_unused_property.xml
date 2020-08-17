@@ -1,0 +1,10 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0" is_locked="true">
+    <option name="myName" value="idea.i18n.unused_property" />
+    <inspection_tool class="UnusedProperty" enabled="true" level="WARNING" enabled_by_default="true">
+      <scope name="Tests" level="WARNING" enabled="false" />
+      <scope name="test-framework" level="WARNING" enabled="false" />
+      <scope name="android" level="WARNING" enabled="false" />
+    </inspection_tool>
+  </profile>
+</component>
