@@ -9,6 +9,7 @@ import com.intellij.util.xmlb.annotations.Tag;
 import com.intellij.util.xmlb.annotations.XCollection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.incremental.relativizer.PathRelativizerService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,13 +38,13 @@ public class GradleModuleResourceConfiguration {
   @XCollection(propertyElementName = "test-resources", elementName = "resource")
   public List<ResourceRootConfiguration> testResources = new ArrayList<>();
 
-  public int computeConfigurationHash(boolean forTestResources) {
+  public int computeConfigurationHash(boolean forTestResources, PathRelativizerService pathRelativizerService) {
     int result = computeModuleConfigurationHash();
 
     final List<ResourceRootConfiguration> _resources = forTestResources ? testResources : resources;
     result = 31 * result;
     for (ResourceRootConfiguration resource : _resources) {
-      result += resource.computeConfigurationHash();
+      result += resource.computeConfigurationHash(pathRelativizerService);
     }
     return result;
   }
@@ -54,7 +55,7 @@ public class GradleModuleResourceConfiguration {
     final List<ResourceRootConfiguration> _resources = ContainerUtil.concat(testResources, resources);
     result = 31 * result;
     for (ResourceRootConfiguration resource : _resources) {
-      result += resource.computeConfigurationHash();
+      result += resource.computeConfigurationHash(null);
     }
     return result;
   }

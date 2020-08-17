@@ -11,6 +11,7 @@ import org.jetbrains.jps.builders.storage.BuildDataPaths;
 import org.jetbrains.jps.cmdline.ProjectDescriptor;
 import org.jetbrains.jps.gradle.model.JpsGradleExtensionService;
 import org.jetbrains.jps.incremental.CompileContext;
+import org.jetbrains.jps.incremental.relativizer.PathRelativizerService;
 import org.jetbrains.jps.indices.IgnoredFileIndex;
 import org.jetbrains.jps.indices.ModuleExcludeIndex;
 import org.jetbrains.jps.model.JpsModel;
@@ -141,7 +142,8 @@ public class GradleResourcesTarget extends ModuleBasedTarget<GradleResourceRootD
     final BuildDataPaths dataPaths = pd.getTargetsState().getDataPaths();
     final GradleModuleResourceConfiguration configuration = getModuleResourcesConfiguration(dataPaths);
     if (configuration != null) {
-      out.write(Integer.toHexString(configuration.computeConfigurationHash(isTests())));
+      PathRelativizerService pathRelativizerService = pd.dataManager.getRelativizer();
+      out.write(Integer.toHexString(configuration.computeConfigurationHash(isTests(), pathRelativizerService)));
     }
   }
 }
