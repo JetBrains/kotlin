@@ -75,8 +75,24 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 implicitReceiver?.boundSymbol?.let {
                     callee.replaceBoundSymbol(it)
                 }
-                qualifiedAccessExpression.resultType = buildResolvedTypeRef {
-                    type = implicitReceiver?.type ?: ConeKotlinErrorType(ConeSimpleDiagnostic("Unresolved this@$labelName", DiagnosticKind.UnresolvedLabel))
+                val implicitType = implicitReceiver?.type
+                qualifiedAccessExpression.resultType = when {
+                    implicitReceiver is InaccessibleImplicitReceiverValue -> buildErrorTypeRef {
+                        source = qualifiedAccessExpression.source
+                        diagnostic = ConeInstanceAccessBeforeSuperCall("<this>")
+                    }
+                    implicitType != null -> buildResolvedTypeRef {
+                        source = callee.source
+                        type = implicitType
+                    }
+                    labelName != null -> buildErrorTypeRef {
+                        source = qualifiedAccessExpression.source
+                        diagnostic = ConeSimpleDiagnostic("Unresolved this@$labelName", DiagnosticKind.UnresolvedLabel)
+                    }
+                    else -> buildErrorTypeRef {
+                        source = qualifiedAccessExpression.source
+                        diagnostic = ConeSimpleDiagnostic("'this' is not defined in this context", DiagnosticKind.NoThis)
+                    }
                 }
                 qualifiedAccessExpression
             }
@@ -312,8 +328,17 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         block.resultType = if (resultExpression == null) {
             block.resultType.resolvedTypeFromPrototype(session.builtinTypes.unitType.type)
         } else {
-            (resultExpression.resultType as? FirResolvedTypeRef) ?: buildErrorTypeRef {
-                diagnostic = ConeSimpleDiagnostic("No type for block", DiagnosticKind.InferenceError)
+            val theType = resultExpression.resultType
+            if (theType is FirResolvedTypeRef) {
+                buildResolvedTypeRef {
+                    source = theType.source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef)
+                    type = theType.type
+                    annotations += theType.annotations
+                }
+            } else {
+                buildErrorTypeRef {
+                    diagnostic = ConeSimpleDiagnostic("No type for block", DiagnosticKind.InferenceError)
+                }
             }
         }
 
@@ -489,7 +514,11 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 resolved.resultType = session.builtinTypes.booleanType
             }
             FirOperation.AS -> {
-                resolved.resultType = conversionTypeRef
+                resolved.resultType = buildResolvedTypeRef {
+                    source = conversionTypeRef.source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef)
+                    type = conversionTypeRef.coneType
+                    annotations += conversionTypeRef.annotations
+                }
             }
             FirOperation.SAFE_AS -> {
                 resolved.resultType =
@@ -763,9 +792,10 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         when (delegatedConstructorCall.calleeReference) {
             is FirResolvedNamedReference, is FirErrorNamedReference -> return delegatedConstructorCall.compose()
         }
+        val containers = components.context.containers
+        val containingClass = containers[containers.lastIndex - 1] as FirClass<*>
+        val containingConstructor = containers.last() as FirConstructor
         if (delegatedConstructorCall.isSuper && delegatedConstructorCall.constructedTypeRef is FirImplicitTypeRef) {
-            val containers = components.context.containers
-            val containingClass = containers[containers.lastIndex - 1] as FirClass<*>
             val superClass = containingClass.superTypeRefs.firstOrNull {
                 if (it !is FirResolvedTypeRef) return@firstOrNull false
                 val declaration = extractSuperTypeDeclaration(it) ?: return@firstOrNull false
@@ -789,7 +819,31 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     context.getPrimaryConstructorParametersScope()?.let(context::addLocalScope)
                 }
 
-                delegatedConstructorCall.transformChildren(transformer, ResolutionMode.ContextDependent)
+                // it's just a constructor parameters scope created in
+                // `FirDeclarationResolveTransformer::doTransformConstructor()`
+                val parametersScope = context.towerDataContext.localScopes.lastOrNull()
+
+                // because there's a `context.saveContextForAnonymousFunction(anonymousFunction)`
+                // call inside of the FirDeclarationResolveTransformer and accessing `this`
+                // inside a lambda which is a value parameter of a constructor delegate
+                // is prohibited
+                context.withTowerDataContext(context.getTowerDataContextForConstructorResolution()) {
+                    parametersScope?.let {
+                        addLocalScope(it)
+                    }
+                    if (containingClass is FirRegularClass && !containingConstructor.isPrimary) {
+                        context.addReceiver(
+                            null,
+                            InaccessibleImplicitReceiverValue(
+                                containingClass.symbol,
+                                containingClass.defaultType(),
+                                session,
+                                scopeSession
+                            )
+                        )
+                    }
+                    delegatedConstructorCall.transformChildren(transformer, ResolutionMode.ContextDependent)
+                }
             }
             val reference = delegatedConstructorCall.calleeReference
             val constructorType: ConeClassLikeType = when (reference) {
@@ -814,6 +868,8 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 }
             }
 
+            // it seems that we may leave this code as is
+            // without adding `context.withTowerDataContext(context.getTowerDataContextForConstructorResolution())`
             val completionResult = callCompleter.completeCall(resolvedCall, noExpectedType)
             result = completionResult.result
             callCompleted = completionResult.callCompleted

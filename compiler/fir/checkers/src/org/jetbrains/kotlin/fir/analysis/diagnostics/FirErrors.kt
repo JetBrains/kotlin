@@ -46,11 +46,13 @@ object FirErrors {
     val ERROR_FROM_JAVA_RESOLUTION by error0<FirSourceElement, PsiElement>()
     val UNKNOWN_CALLABLE_KIND by error0<FirSourceElement, PsiElement>()
     val MISSING_STDLIB_CLASS by error0<FirSourceElement, PsiElement>()
+    val NO_THIS by error0<FirSourceElement, PsiElement>()
 
     // Super
     val SUPER_IS_NOT_AN_EXPRESSION by error0<FirSourceElement, PsiElement>()
     val SUPER_NOT_AVAILABLE by error0<FirSourceElement, PsiElement>()
     val ABSTRACT_SUPER_CALL by error0<FirSourceElement, PsiElement>()
+    val INSTANCE_ACCESS_BEFORE_SUPER_CALL by error1<FirSourceElement, PsiElement, String>()
 
     // Supertypes
     val TYPE_PARAMETER_AS_SUPERTYPE by error0<FirSourceElement, PsiElement>()

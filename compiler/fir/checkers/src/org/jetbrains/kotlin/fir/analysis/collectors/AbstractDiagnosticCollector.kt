@@ -6,19 +6,24 @@
 package org.jetbrains.kotlin.fir.analysis.collectors
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.components.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.collectImplicitReceivers
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.Name
 
@@ -45,8 +50,6 @@ abstract class AbstractDiagnosticCollector(
 
     @Suppress("LeakingThis")
     private var context = PersistentCheckerContext(this)
-
-    private var lastExpression: FirExpression? = null
 
     fun initializeComponents(vararg components: AbstractDiagnosticCollectorComponent) {
         if (componentsInitialized) {
@@ -120,8 +123,10 @@ abstract class AbstractDiagnosticCollector(
         }
 
         override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: Nothing?) {
-            val property = context.containingDeclarations.last() as FirProperty
-            visitWithDeclarationAndReceiver(propertyAccessor, property.name, property.receiverTypeRef)
+            if (propertyAccessor !is FirDefaultPropertyAccessor) {
+                val property = context.containingDeclarations.last() as FirProperty
+                visitWithDeclarationAndReceiver(propertyAccessor, property.name, property.receiverTypeRef)
+            }
         }
 
         override fun visitValueParameter(valueParameter: FirValueParameter, data: Nothing?) {
@@ -140,33 +145,13 @@ abstract class AbstractDiagnosticCollector(
             visitWithDeclaration(anonymousInitializer)
         }
 
-        override fun visitExpression(expression: FirExpression, data: Nothing?) {
-            expression.runComponents()
-            withExpression(expression) {
-                expression.acceptChildren(this, null)
-            }
-        }
-
         override fun visitBlock(block: FirBlock, data: Nothing?) {
             visitExpression(block, data)
         }
 
         override fun visitTypeRef(typeRef: FirTypeRef, data: Nothing?) {
-            if (typeRef === lastExpression?.typeRef) {
-                return
-            }
-            super.visitTypeRef(typeRef, null)
-        }
-
-        override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Nothing?) {
-            typeOperatorCall.runComponents()
-            withExpression(typeOperatorCall) {
-                typeOperatorCall.acceptChildren(this, null)
-            }
-            if (typeOperatorCall.operation == FirOperation.AS) {
-                // NB: in this case conversionTypeRef === typeRef, so we *should* visit it explicitly
-                typeOperatorCall.conversionTypeRef.runComponents()
-                typeOperatorCall.conversionTypeRef.acceptChildren(this, null)
+            if (typeRef.source != null && typeRef.source?.kind !is FirFakeSourceElementKind) {
+                super.visitTypeRef(typeRef, null)
             }
         }
 
@@ -198,16 +183,6 @@ abstract class AbstractDiagnosticCollector(
             return block()
         } finally {
             context = existingContext
-        }
-    }
-
-    private inline fun <R> withExpression(expression: FirExpression, block: () -> R): R {
-        val previousExpression = lastExpression
-        lastExpression = expression
-        try {
-            return block()
-        } finally {
-            lastExpression = previousExpression
         }
     }
 

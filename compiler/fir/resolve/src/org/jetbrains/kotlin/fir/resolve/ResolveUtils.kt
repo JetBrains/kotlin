@@ -351,9 +351,14 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: AbstractFirBasedSymbol<
             if (makeNullable) {
                 returnTypeRef.withReplacedConeType(
                     returnTypeRef.type.withNullability(ConeNullability.NULLABLE, session.typeContext),
+                    FirFakeSourceElementKind.ImplicitTypeRef
                 )
             } else {
-                returnTypeRef
+                buildResolvedTypeRef {
+                    source = returnTypeRef.source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef)
+                    type = returnTypeRef.type
+                    annotations += returnTypeRef.annotations
+                }
             }
         }
         is FirClassifierSymbol<*> -> {

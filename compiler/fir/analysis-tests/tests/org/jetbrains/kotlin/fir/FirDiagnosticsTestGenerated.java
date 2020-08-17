@@ -976,6 +976,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/infixFunctions.kt");
         }
 
+        @TestMetadata("instanceAccessBeforeSuperCall.kt")
+        public void testInstanceAccessBeforeSuperCall() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/instanceAccessBeforeSuperCall.kt");
+        }
+
         @TestMetadata("interfaceWithSuperclass.kt")
         public void testInterfaceWithSuperclass() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/interfaceWithSuperclass.kt");

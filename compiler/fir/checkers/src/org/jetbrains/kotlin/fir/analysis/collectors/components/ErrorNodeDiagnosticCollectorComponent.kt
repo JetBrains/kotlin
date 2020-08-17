@@ -33,18 +33,6 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
     }
 
     override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: CheckerContext) {
-        when (val lastContainingDeclaration = data.containingDeclarations.lastOrNull()) {
-            is FirDefaultPropertyAccessor -> {
-                // It always uses the same type ref as the corresponding property
-                return
-            }
-            else -> if (
-                errorTypeRef.source?.kind is FirFakeSourceElementKind ||
-                lastContainingDeclaration?.source?.kind is FirFakeSourceElementKind
-            ) {
-                return
-            }
-        }
         val source = errorTypeRef.source ?: return
         runCheck { reportFirDiagnostic(errorTypeRef.diagnostic, source, it) }
     }
@@ -90,13 +78,12 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
             is ConeIllegalAnnotationError -> FirErrors.NOT_AN_ANNOTATION_CLASS.on(source, diagnostic.name.asString())
             is ConeWrongNumberOfTypeArgumentsError ->
                 FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(source, diagnostic.desiredCount, diagnostic.type)
-            is ConeSimpleDiagnostic -> if (source.kind is FirFakeSourceElementKind) {
-                null
-            } else if (diagnostic.kind == SymbolNotFound) {
-                FirErrors.UNRESOLVED_REFERENCE.on(source, "<No name>")
-            } else {
-                diagnostic.getFactory().on(source)
+            is ConeSimpleDiagnostic -> when {
+                source.kind is FirFakeSourceElementKind -> null
+                diagnostic.kind == SymbolNotFound -> FirErrors.UNRESOLVED_REFERENCE.on(source, "<No name>")
+                else -> diagnostic.getFactory().on(source)
             }
+            is ConeInstanceAccessBeforeSuperCall -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.on(source, diagnostic.target)
             is ConeStubDiagnostic -> null
             is ConeIntermediateDiagnostic -> null
             else -> throw IllegalArgumentException("Unsupported diagnostic type: ${diagnostic.javaClass}")
@@ -110,6 +97,7 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
             Syntax -> FirErrors.SYNTAX_ERROR
             ReturnNotAllowed -> FirErrors.RETURN_NOT_ALLOWED
             UnresolvedLabel -> FirErrors.UNRESOLVED_LABEL
+            NoThis -> FirErrors.NO_THIS
             IllegalConstExpression -> FirErrors.ILLEGAL_CONST_EXPRESSION
             IllegalUnderscore -> FirErrors.ILLEGAL_UNDERSCORE
             DeserializationError -> FirErrors.DESERIALIZATION_ERROR

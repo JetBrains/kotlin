@@ -88,6 +88,13 @@ class FirCallCompletionResultsWriterTransformer(
                 }
             }
         } else {
+            // this branch is for cases when we have
+            // some invalid qualified access expression itself.
+            // e.g. `T::toString` where T is a generic type.
+            // in these cases we should report an error on
+            // the calleeReference.source which is not a fake source.
+            // uncommenting `?.fakeElement...` here removes reports
+            // of OTHER_ERROR from tests.
             buildErrorTypeRef {
                 source = calleeReference.source //?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef)
                 diagnostic = ConeSimpleDiagnostic("Callee reference to candidate without return type: ${declaration.render()}")

@@ -3,6 +3,6 @@ interface Base {
 }
 val String.test: Base = object: Base {
     override fun foo() {
-        this@test
+        <!UNRESOLVED_LABEL!>this@test<!>
     }
 }

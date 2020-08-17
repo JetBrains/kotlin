@@ -383,7 +383,7 @@ class RawFirBuilder(
                 source = propertySource
                 session = baseSession
                 origin = FirDeclarationOrigin.Source
-                returnTypeRef = type
+                returnTypeRef = type.copyWithNewSourceKind(FirFakeSourceElementKind.PropertyFromParameter)
                 receiverTypeRef = null
                 name = propertyName
                 initializer = buildQualifiedAccessExpression {
@@ -597,7 +597,7 @@ class RawFirBuilder(
                 ?: owner.toFirPsiSourceElement(FirFakeSourceElementKind.ImplicitConstructor)
             val firDelegatedCall = buildDelegatedConstructorCall {
                 source = constructorCallee ?: constructorSource.fakeElement(FirFakeSourceElementKind.DelegatingConstructorCall)
-                constructedTypeRef = delegatedSuperTypeRef
+                constructedTypeRef = delegatedSuperTypeRef.copyWithNewSourceKind(FirFakeSourceElementKind.ImplicitTypeRef)
                 isThis = false
                 if (!stubMode) {
                     superTypeCallEntry?.extractArgumentsTo(this)
@@ -1112,7 +1112,7 @@ class RawFirBuilder(
             }
             return buildDelegatedConstructorCall {
                 this.source = source
-                constructedTypeRef = delegatedType
+                constructedTypeRef = delegatedType.copyWithNewSourceKind(FirFakeSourceElementKind.ImplicitTypeRef)
                 this.isThis = isThis
                 if (!stubMode) {
                     extractArgumentsTo(this)
@@ -1834,11 +1834,11 @@ class RawFirBuilder(
 
         override fun visitSuperExpression(expression: KtSuperExpression, data: Unit): FirElement {
             val superType = expression.superTypeQualifier
-            val source = expression.toFirSourceElement()
+            val theSource = expression.toFirSourceElement()
             return buildQualifiedAccessExpression {
-                this.source = source
+                this.source = theSource
                 calleeReference = buildExplicitSuperReference {
-                    source.fakeElement(FirFakeSourceElementKind.ExplicitThisOrSuperReference)
+                    source = theSource.fakeElement(FirFakeSourceElementKind.ExplicitThisOrSuperReference)
                     labelName = expression.getLabelName()
                     superTypeRef = superType.toFirOrImplicitType()
                 }
