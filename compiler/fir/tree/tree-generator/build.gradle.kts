@@ -11,11 +11,10 @@ val compileOnly by configurations
 runtimeOnly.extendsFrom(compileOnly)
 
 dependencies {
-    compile(project(":compiler:frontend.common"))
     implementation(project(":core:deserialization:deserialization.common"))
-    compile(project(":core:descriptors"))
-    compile(project(":compiler:fir:cones"))
-    compile(project(":compiler:resolution"))
+    implementation(project(":core:descriptors.common"))
+    implementation(project(":compiler:frontend.common"))
+    implementation(project(":compiler:fir:cones"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
     Platform[193].orLower {
