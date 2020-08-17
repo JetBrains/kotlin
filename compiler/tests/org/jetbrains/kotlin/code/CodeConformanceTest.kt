@@ -133,7 +133,7 @@ class CodeConformanceTest : TestCase() {
         val root = nonSourcesMatcher.root
         val extensions = File(root, ".bunch").readLines().map { it.split("_") }.flatten().toSet()
         val failBuilder = mutableListOf<String>()
-        nonSourcesMatcher.walkTopDown(sourceBunchFilePattern).forEach { sourceFile ->
+        nonSourcesMatcher.excludeWalkTopDown(sourceBunchFilePattern).forEach { sourceFile ->
             val matches = Regex("BUNCH (\\w+)")
                 .findAll(sourceFile.readText())
                 .map { it.groupValues[1] }
@@ -208,7 +208,7 @@ class CodeConformanceTest : TestCase() {
             }
         )
 
-        nonSourcesMatcher.walkTopDown(SOURCES_FILE_PATTERN).forEach { sourceFile ->
+        nonSourcesMatcher.excludeWalkTopDown(SOURCES_FILE_PATTERN).forEach { sourceFile ->
             val source = sourceFile.readText()
             for (test in tests) {
                 if (test.filter(sourceFile, source)) test.result.add(sourceFile)
@@ -234,7 +234,7 @@ class CodeConformanceTest : TestCase() {
         val copyrightRegex = Regex("""\bCopyright\b""")
         val root = COPYRIGHT_EXCLUDED_FILES_AND_DIRS_MATCHER.root
 
-        COPYRIGHT_EXCLUDED_FILES_AND_DIRS_MATCHER.walkTopDown(SOURCES_FILE_PATTERN)
+        COPYRIGHT_EXCLUDED_FILES_AND_DIRS_MATCHER.excludeWalkTopDown(SOURCES_FILE_PATTERN)
             .filter { sourceFile ->
                 val relativePath = FileUtil.toSystemIndependentName(sourceFile.toRelativeString(root))
                 !knownThirdPartyCode.any { relativePath.startsWith(it) }
@@ -274,7 +274,7 @@ class CodeConformanceTest : TestCase() {
         }
     }
 
-    private fun FileMatcher.walkTopDown(filePattern: Pattern): Sequence<File> {
+    private fun FileMatcher.excludeWalkTopDown(filePattern: Pattern): Sequence<File> {
         return root.walkTopDown()
             .onEnter { dir ->
                 !matchExact(dir) // Don't enter to ignored dirs
@@ -390,7 +390,7 @@ class CodeConformanceTest : TestCase() {
         data class RepoOccurrences(val repo: String, val files: Collection<File>)
 
         val extensionsPattern = Pattern.compile(".+\\.(java|kt|gradle|kts|xml)(\\.\\w+)?")
-        val repoOccurrences: List<RepoOccurrences> = nonSourcesMatcher.walkTopDown(extensionsPattern)
+        val repoOccurrences: List<RepoOccurrences> = nonSourcesMatcher.excludeWalkTopDown(extensionsPattern)
             .flatMap { file ->
                 val checkers = repoCheckers.filter { checker ->
                     !checker.matcher.matchWithContains(file)
