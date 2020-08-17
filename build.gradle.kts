@@ -277,7 +277,7 @@ extra["compilerModules"] = arrayOf(
     ":compiler:fir:resolve",
     ":compiler:fir:fir-serialization",
     ":compiler:fir:tree",
-    ":compiler:fir:raw-fir:fir-common",
+    ":compiler:fir:raw-fir:raw-fir.common",
     ":compiler:fir:raw-fir:psi2fir",
     ":compiler:fir:raw-fir:light-tree2fir",
     ":compiler:fir:fir2ir",
