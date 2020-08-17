@@ -1462,6 +1462,16 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
+            @TestMetadata("abstract.kt")
+            public void testAbstract() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/property/abstract.kt");
+            }
+
+            @TestMetadata("abstract2.kt")
+            public void testAbstract2() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/property/abstract2.kt");
+            }
+
             @TestMetadata("Basic.kt")
             public void testBasic() throws Exception {
                 runTest("testData/refactoring/inline/inlineVariableOrProperty/property/Basic.kt");
@@ -1470,6 +1480,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             @TestMetadata("ClassObjectProperty.kt")
             public void testClassObjectProperty() throws Exception {
                 runTest("testData/refactoring/inline/inlineVariableOrProperty/property/ClassObjectProperty.kt");
+            }
+
+            @TestMetadata("expect.kt")
+            public void testExpect() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/property/expect.kt");
             }
 
             @TestMetadata("InstanceProperty.kt")
