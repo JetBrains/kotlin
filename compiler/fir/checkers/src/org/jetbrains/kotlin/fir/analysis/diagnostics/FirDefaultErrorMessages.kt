@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_CAND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_INFIX_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_MODIFIERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERENCE_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INTERFACE_WITH_SUPERCLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LEAKED_IN_PLACE_LAMBDA
@@ -61,6 +62,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_PRIVATE_CONST
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_AN_ANNOTATION_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_A_LOOP_LABEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_A_SUPERTYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_THIS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_TYPE_FOR_TYPE_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_TYPE_OF_ANNOTATION_MEMBER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OTHER_ERROR
@@ -131,11 +133,17 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(ERROR_FROM_JAVA_RESOLUTION, "Java resolution error")
 //            map.put(UNKNOWN_CALLABLE_KIND, ...) // &
 //            map.put(MISSING_STDLIB_CLASS, ...) // &
+            map.put(NO_THIS, "'this' is not defined in this context")
 
             // Super
             map.put(SUPER_IS_NOT_AN_EXPRESSION, "Super cannot be a callee")
             map.put(SUPER_NOT_AVAILABLE, "No supertypes are accessible in this context")
             map.put(ABSTRACT_SUPER_CALL, "Abstract member cannot be accessed directly")
+            map.put(
+                INSTANCE_ACCESS_BEFORE_SUPER_CALL,
+                "Cannot access ''{0}'' before superclass constructor has been called",
+                TO_STRING
+            )
 
             // Supertypes
             map.put(TYPE_PARAMETER_AS_SUPERTYPE, "Type parameter as supertype")

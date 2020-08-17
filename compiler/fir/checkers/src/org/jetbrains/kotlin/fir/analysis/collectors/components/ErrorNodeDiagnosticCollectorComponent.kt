@@ -90,12 +90,10 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
             is ConeIllegalAnnotationError -> FirErrors.NOT_AN_ANNOTATION_CLASS.on(source, diagnostic.name.asString())
             is ConeWrongNumberOfTypeArgumentsError ->
                 FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(source, diagnostic.desiredCount, diagnostic.type)
-            is ConeSimpleDiagnostic -> if (source.kind is FirFakeSourceElementKind) {
-                null
-            } else if (diagnostic.kind == SymbolNotFound) {
-                FirErrors.UNRESOLVED_REFERENCE.on(source, "<No name>")
-            } else {
-                diagnostic.getFactory().on(source)
+            is ConeSimpleDiagnostic -> when {
+                source.kind is FirFakeSourceElementKind -> null
+                diagnostic.kind == SymbolNotFound -> FirErrors.UNRESOLVED_REFERENCE.on(source, "<No name>")
+                else -> diagnostic.getFactory().on(source)
             }
             is ConeStubDiagnostic -> null
             is ConeIntermediateDiagnostic -> null
@@ -110,6 +108,7 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
             Syntax -> FirErrors.SYNTAX_ERROR
             ReturnNotAllowed -> FirErrors.RETURN_NOT_ALLOWED
             UnresolvedLabel -> FirErrors.UNRESOLVED_LABEL
+            NoThis -> FirErrors.NO_THIS
             IllegalConstExpression -> FirErrors.ILLEGAL_CONST_EXPRESSION
             IllegalUnderscore -> FirErrors.ILLEGAL_UNDERSCORE
             DeserializationError -> FirErrors.DESERIALIZATION_ERROR

@@ -315,6 +315,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/inlineCycle_ir.args");
         }
 
+        @TestMetadata("instanceAccessBeforeSuperCall.args")
+        public void testInstanceAccessBeforeSuperCall() throws Exception {
+            runTest("compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.args");
+        }
+
         @TestMetadata("internalArgDisableLanguageFeature.args")
         public void testInternalArgDisableLanguageFeature() throws Exception {
             runTest("compiler/testData/cli/jvm/internalArgDisableLanguageFeature.args");

@@ -1,0 +1,31 @@
+warning: ATTENTION!
+This build uses unsafe internal compiler arguments:
+
+-XXLanguage:-SoundSmartCastsAfterTry
+
+This mode is not recommended for production use,
+as no stability/compatibility guarantees are given on
+compiler or generated code. Use it at your own risk!
+
+compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:2:26: error: cannot access 'getSomeInt' before superclass constructor has been called
+    constructor(x: Int = getSomeInt(), other: A = this, header: String = keker) {}
+                         ^
+compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:2:51: error: cannot access '<this>' before superclass constructor has been called
+    constructor(x: Int = getSomeInt(), other: A = this, header: String = keker) {}
+                                                  ^
+compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:2:74: error: cannot access 'keker' before superclass constructor has been called
+    constructor(x: Int = getSomeInt(), other: A = this, header: String = keker) {}
+                                                                         ^
+compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:2:74: error: variable 'keker' must be initialized
+    constructor(x: Int = getSomeInt(), other: A = this, header: String = keker) {}
+                                                                         ^
+compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:7:20: error: 'this' is not defined in this context
+class B(other: B = this)
+                   ^
+compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:10:32: error: type mismatch: inferred type is () -> C but Int was expected
+    constructor(x: Int) : this({
+                               ^
+compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:12:9: error: cannot access '<this>' before superclass constructor has been called
+        this
+        ^
+COMPILATION_ERROR

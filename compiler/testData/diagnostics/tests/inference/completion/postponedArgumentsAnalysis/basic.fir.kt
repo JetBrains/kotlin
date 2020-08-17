@@ -142,13 +142,13 @@ fun main() {
     val x18: (C) -> Unit = select(id { <!DEBUG_INFO_EXPRESSION_TYPE("C")!>it<!> }, { <!DEBUG_INFO_EXPRESSION_TYPE("C")!>it<!> }, id<(B) -> Unit> { x -> x })
 
     // Resolution of extension/non-extension functions combination
-    val x19: String.() -> Unit = select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.String, kotlin.Unit>")!>id { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved this@null"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>this<!> }<!>, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.String, kotlin.Unit>")!>id(fun(x: String) {})<!>)
-    val x20: String.() -> Unit = select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.String, kotlin.Unit>")!>{ <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved this@null"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>this<!> }<!>, (fun(x: String) {}))
+    val x19: String.() -> Unit = select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.String, kotlin.Unit>")!>id { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: 'this' is not defined in this context"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing"), NO_THIS!>this<!> }<!>, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.String, kotlin.Unit>")!>id(fun(x: String) {})<!>)
+    val x20: String.() -> Unit = select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.String, kotlin.Unit>")!>{ <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: 'this' is not defined in this context"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing"), NO_THIS!>this<!> }<!>, (fun(x: String) {}))
     val x21: String.() -> Unit = select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.String, kotlin.Unit>")!>id(fun(x: String) {})<!>, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.String, kotlin.Unit>")!>id(fun(x: String) {})<!>)
     select(id<String.() -> Unit>(fun(x: String) {}), <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.String, kotlin.Unit>")!>id(fun(x: String) {})<!>)
     select(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function2<kotlin.String, kotlin.String, kotlin.Unit>")!>id(fun String.(x: String) {})<!>, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function2<kotlin.String, kotlin.String, kotlin.Unit>")!>id(fun(x: String, y: String) {})<!>)
-    select(id(fun String.(x: String) {}), id(fun(x: String, y: String) { }), { x: String -> <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved this@null"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>this<!> })
-    select(id(fun String.(x: String) {}), id(fun(x: String, y: String) { }), { x -> <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved this@null"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>this<!> })
+    select(id(fun String.(x: String) {}), id(fun(x: String, y: String) { }), { x: String -> <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: 'this' is not defined in this context"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing"), NO_THIS!>this<!> })
+    select(id(fun String.(x: String) {}), id(fun(x: String, y: String) { }), { x -> <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: 'this' is not defined in this context"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing"), NO_THIS!>this<!> })
     select(id(fun String.(x: String) {}), id(fun(x: String, y: String) { }), { x: String, y: String -> x })
     // Convert to extension lambda is impossible because the lambda parameter types aren't specified explicitly
     select(id(fun String.(x: String) {}), id(fun(x: String, y: String) { }), { x, y -> x })

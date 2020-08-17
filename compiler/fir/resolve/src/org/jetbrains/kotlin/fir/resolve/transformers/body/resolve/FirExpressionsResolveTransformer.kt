@@ -74,8 +74,20 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 implicitReceiver?.boundSymbol?.let {
                     callee.replaceBoundSymbol(it)
                 }
-                qualifiedAccessExpression.resultType = buildResolvedTypeRef {
-                    type = implicitReceiver?.type ?: ConeKotlinErrorType(ConeSimpleDiagnostic("Unresolved this@$labelName", DiagnosticKind.UnresolvedLabel))
+                val implicitType = implicitReceiver?.type
+                qualifiedAccessExpression.resultType = when {
+                    implicitType != null -> buildResolvedTypeRef {
+                        source = callee.source
+                        type = implicitType
+                    }
+                    labelName != null -> buildErrorTypeRef {
+                        source = qualifiedAccessExpression.source
+                        diagnostic = ConeSimpleDiagnostic("Unresolved this@$labelName", DiagnosticKind.UnresolvedLabel)
+                    }
+                    else -> buildErrorTypeRef {
+                        source = qualifiedAccessExpression.source
+                        diagnostic = ConeSimpleDiagnostic("'this' is not defined in this context", DiagnosticKind.NoThis)
+                    }
                 }
                 qualifiedAccessExpression
             }

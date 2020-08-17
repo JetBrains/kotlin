@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 abstract class AbstractDiagnosticCollector(
     override val session: FirSession,
@@ -108,11 +109,13 @@ abstract class AbstractDiagnosticCollector(
 
         override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Nothing?) {
             val labelName = anonymousFunction.label?.name?.let { Name.identifier(it) }
-            visitWithDeclarationAndReceiver(
-                anonymousFunction,
-                labelName,
-                anonymousFunction.receiverTypeRef
-            )
+            withExpression(anonymousFunction) {
+                visitWithDeclarationAndReceiver(
+                    anonymousFunction,
+                    labelName,
+                    anonymousFunction.receiverTypeRef
+                )
+            }
         }
 
         override fun visitProperty(property: FirProperty, data: Nothing?) {
@@ -147,12 +150,19 @@ abstract class AbstractDiagnosticCollector(
             }
         }
 
+        override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Nothing?) {
+            visitExpression(thisReceiverExpression, data)
+        }
+
         override fun visitBlock(block: FirBlock, data: Nothing?) {
             visitExpression(block, data)
         }
 
         override fun visitTypeRef(typeRef: FirTypeRef, data: Nothing?) {
-            if (typeRef === lastExpression?.typeRef) {
+            if (
+                lastExpression !is FirThisReceiverExpression &&
+                (typeRef === lastExpression?.typeRef || typeRef === lastExpression.safeAs<FirTypedDeclaration>()?.returnTypeRef)
+            ) {
                 return
             }
             super.visitTypeRef(typeRef, null)
