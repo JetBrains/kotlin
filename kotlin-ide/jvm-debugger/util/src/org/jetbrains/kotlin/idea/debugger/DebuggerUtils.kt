@@ -23,7 +23,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.sun.jdi.Location
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
-import org.jetbrains.kotlin.idea.core.KotlinFileTypeFactory
+import org.jetbrains.kotlin.idea.core.KotlinFileTypeFactoryUtils
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil.findFilesWithExactPackage
 import org.jetbrains.kotlin.idea.stubindex.StaticFacadeIndexUtil
@@ -98,6 +98,6 @@ object DebuggerUtils {
 
     fun isKotlinSourceFile(fileName: String): Boolean {
         val extension = FileUtilRt.getExtension(fileName).toLowerCase()
-        return extension in KotlinFileTypeFactory.KOTLIN_EXTENSIONS
+        return extension in KotlinFileTypeFactoryUtils.KOTLIN_EXTENSIONS
     }
 }

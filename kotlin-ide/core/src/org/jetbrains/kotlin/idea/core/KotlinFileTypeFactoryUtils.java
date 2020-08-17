@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea;
+package org.jetbrains.kotlin.idea.core;
 
-import com.intellij.openapi.fileTypes.FileTypeConsumer;
-import com.intellij.openapi.fileTypes.FileTypeFactory;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.openapi.fileTypes.FileType;
+import org.jetbrains.kotlin.idea.KotlinFileType;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
-// FIX ME WHEN BUNCH 192 REMOVED
-public class KotlinModuleFileFactory extends FileTypeFactory {
-    @Override
-    public void createFileTypes(@NotNull FileTypeConsumer consumer) {
-        consumer.consume(KotlinModuleFileType.INSTANCE, KotlinModuleFileType.EXTENSION);
-    }
+public class KotlinFileTypeFactoryUtils {
+    public final static String[] KOTLIN_EXTENSIONS = new String[] { "kt", "kts" };
+    private final static FileType[] KOTLIN_FILE_TYPES = new FileType[] { KotlinFileType.INSTANCE };
+    public final static Set<FileType> KOTLIN_FILE_TYPES_SET = new HashSet<>(Arrays.asList(KOTLIN_FILE_TYPES));
 }

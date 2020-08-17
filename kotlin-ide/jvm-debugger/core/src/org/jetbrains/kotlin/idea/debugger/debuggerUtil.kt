@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.codegen.coroutines.DO_RESUME_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.continuationAsmTypes
 import org.jetbrains.kotlin.codegen.inline.KOTLIN_STRATA_NAME
-import org.jetbrains.kotlin.idea.core.KotlinFileTypeFactory
+import org.jetbrains.kotlin.idea.core.KotlinFileTypeFactoryUtils
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.util.getLineEndOffset
 import org.jetbrains.kotlin.idea.core.util.getLineStartOffset
@@ -38,7 +38,7 @@ fun Location.isInKotlinSources(): Boolean {
 
 fun ReferenceType.isInKotlinSources(): Boolean {
     val fileExtension = safeSourceName()?.substringAfterLast('.')?.toLowerCase() ?: ""
-    return fileExtension in KotlinFileTypeFactory.KOTLIN_EXTENSIONS || containsKotlinStrata()
+    return fileExtension in KotlinFileTypeFactoryUtils.KOTLIN_EXTENSIONS || containsKotlinStrata()
 }
 
 fun ReferenceType.containsKotlinStrata() = availableStrata().contains(KOTLIN_STRATA_NAME)

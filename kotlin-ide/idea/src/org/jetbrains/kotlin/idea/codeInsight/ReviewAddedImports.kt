@@ -30,7 +30,6 @@ import java.util.*
 import javax.swing.event.HyperlinkEvent
 import javax.swing.event.HyperlinkListener
 
-// FIX ME WHEN BUNCH 192 REMOVED
 object ReviewAddedImports {
     @get:TestOnly
     var importsToBeReviewed: Collection<String> = emptyList()
@@ -109,12 +108,3 @@ object ReviewAddedImports {
         })
     }
 }
-
-internal fun <T> submitNonBlocking(project: Project, indicator: ProgressIndicator, block: () -> T): CancellablePromise<T> =
-    nonBlocking<T> {
-        return@nonBlocking block()
-    }
-        .withDocumentsCommitted(project)
-        .wrapProgress(indicator)
-        .expireWith(project)
-        .submit(AppExecutorUtil.getAppExecutorService())

@@ -423,3 +423,6 @@ class KotlinImporterComponent : PersistentStateComponent<KotlinImporterComponent
         return State(addedSources.sorted())
     }
 }
+
+internal val Module.kotlinImporterComponent: KotlinImporterComponent
+    get() = this.getServiceSafe()
