@@ -216,5 +216,3 @@ interface ResolverForModuleComputationTracker {
 @Suppress("UNCHECKED_CAST")
 fun <T> ModuleInfo.getCapability(capability: ModuleCapability<T>) = capabilities[capability] as? T
 
-val ModuleDescriptor.moduleInfo: ModuleInfo?
-    get() = getCapability(ModuleInfo.Capability)

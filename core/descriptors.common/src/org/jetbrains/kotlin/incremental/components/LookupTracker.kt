@@ -25,11 +25,11 @@ interface LookupTracker {
     val requiresPosition: Boolean
 
     fun record(
-            filePath: String,
-            position: Position,
-            scopeFqName: String,
-            scopeKind: ScopeKind,
-            name: String
+        filePath: String,
+        position: Position,
+        scopeFqName: String,
+        scopeKind: ScopeKind,
+        name: String
     )
 
     object DO_NOTHING : LookupTracker {
@@ -47,9 +47,9 @@ enum class ScopeKind {
 }
 
 data class LookupInfo(
-        val filePath: String,
-        val position: Position,
-        val scopeFqName: String,
-        val scopeKind: ScopeKind,
-        val name: String
+    val filePath: String,
+    val position: Position,
+    val scopeFqName: String,
+    val scopeKind: ScopeKind,
+    val name: String
 ) : Serializable
