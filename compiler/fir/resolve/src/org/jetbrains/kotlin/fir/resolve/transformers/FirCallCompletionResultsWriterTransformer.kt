@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCall
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.remapArgumentsWithVararg
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
-import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef

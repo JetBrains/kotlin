@@ -543,20 +543,3 @@ fun FirTypeRef.withReplacedReturnType(newType: ConeKotlinType?): FirTypeRef {
         annotations += this@withReplacedReturnType.annotations
     }
 }
-
-fun FirTypeRef.withReplacedConeType(
-    newType: ConeKotlinType?,
-    firFakeSourceElementKind: FirFakeSourceElementKind? = null
-): FirResolvedTypeRef {
-    require(this is FirResolvedTypeRef)
-    if (newType == null) return this
-
-    return buildResolvedTypeRef {
-        source = if (firFakeSourceElementKind != null)
-            this@withReplacedConeType.source?.fakeElement(firFakeSourceElementKind)
-        else
-            this@withReplacedConeType.source
-        type = newType
-        annotations += this@withReplacedConeType.annotations
-    }
-}

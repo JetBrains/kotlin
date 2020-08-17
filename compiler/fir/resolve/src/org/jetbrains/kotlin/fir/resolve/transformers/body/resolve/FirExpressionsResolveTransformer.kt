@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.resolve.inference.FirStubInferenceSession
 import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
 import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
-import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*

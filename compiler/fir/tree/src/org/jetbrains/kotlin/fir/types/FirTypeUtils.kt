@@ -5,11 +5,16 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirConstKind
+import org.jetbrains.kotlin.fir.fakeElement
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.types.AbstractTypeApproximator
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -91,4 +96,33 @@ fun List<FirAnnotationCall>.computeTypeAttributes(): ConeAttributes {
         }
     }
     return ConeAttributes.create(attributes)
+}
+
+fun FirTypeRef.withReplacedConeType(
+    newType: ConeKotlinType?,
+    firFakeSourceElementKind: FirFakeSourceElementKind? = null
+): FirResolvedTypeRef {
+    require(this is FirResolvedTypeRef)
+    if (newType == null) return this
+
+    return buildResolvedTypeRef {
+        source = if (firFakeSourceElementKind != null)
+            this@withReplacedConeType.source?.fakeElement(firFakeSourceElementKind)
+        else
+            this@withReplacedConeType.source
+        type = newType
+        annotations += this@withReplacedConeType.annotations
+    }
+}
+
+fun FirTypeRef.approximated(
+    typeApproximator: AbstractTypeApproximator,
+    toSuper: Boolean,
+    conf: TypeApproximatorConfiguration = TypeApproximatorConfiguration.PublicDeclaration
+): FirTypeRef {
+    val approximatedType = if (toSuper)
+        typeApproximator.approximateToSuperType(coneType, conf)
+    else
+        typeApproximator.approximateToSubType(coneType, conf)
+    return withReplacedConeType(approximatedType as? ConeKotlinType)
 }
