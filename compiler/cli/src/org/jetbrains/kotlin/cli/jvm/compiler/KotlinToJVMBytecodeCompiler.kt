@@ -427,7 +427,6 @@ object KotlinToJVMBytecodeCompiler {
             }
             CodegenFactory.doCheckCancelled(generationState)
             generationState.factory.done()
-            performanceManager?.notifyGenerationFinished()
 
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
@@ -444,6 +443,7 @@ object KotlinToJVMBytecodeCompiler {
             )
 
             performanceManager?.notifyIRGenerationFinished()
+            performanceManager?.notifyGenerationFinished()
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             outputs[module] = generationState
         }
