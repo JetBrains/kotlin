@@ -212,20 +212,22 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
     final InspectionProfile inspectionProfile = myProfileWrapper.getInspectionProfile();
     if (key != null && inspectionProfile.isToolEnabled(key, getFile())) {
       InspectionToolWrapper<?,?> toolWrapper = inspectionProfile.getInspectionTool(RedundantSuppressInspection.SHORT_NAME, getFile());
-      InspectionSuppressor suppressor = LanguageInspectionSuppressors.INSTANCE.forLanguage(getFile().getLanguage());
+      Language fileLanguage = getFile().getLanguage();
+      InspectionSuppressor suppressor = LanguageInspectionSuppressors.INSTANCE.forLanguage(fileLanguage);
       if (suppressor instanceof RedundantSuppressionDetector) {
         if (toolWrappers.stream().anyMatch(LocalInspectionToolWrapper::runForWholeFile)) {
           return;
         }
         Set<String> activeTools = new HashSet<>();
         for (LocalInspectionToolWrapper tool : toolWrappers) {
-          if (!tool.isUnfair()) {
-            activeTools.add(tool.getID());
-            ContainerUtil.addIfNotNull(activeTools, tool.getAlternativeID());
-            InspectionElementsMerger elementsMerger = InspectionElementsMerger.getMerger(tool.getShortName());
-            if (elementsMerger != null) {
-              activeTools.addAll(Arrays.asList(elementsMerger.getSuppressIds()));
-            }
+          if (tool.isUnfair() || !tool.isApplicable(fileLanguage)) {
+            continue;
+          }
+          activeTools.add(tool.getID());
+          ContainerUtil.addIfNotNull(activeTools, tool.getAlternativeID());
+          InspectionElementsMerger elementsMerger = InspectionElementsMerger.getMerger(tool.getShortName());
+          if (elementsMerger != null) {
+            activeTools.addAll(Arrays.asList(elementsMerger.getSuppressIds()));
           }
         }
         LocalInspectionTool
