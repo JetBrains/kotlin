@@ -9,10 +9,9 @@ plugins {
 }
 
 dependencies {
-    compile(project(":compiler:psi"))
-    compile(project(":core:descriptors"))
-    compile(project(":compiler:fir:tree"))
-    compile("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.2")
+    api(project(":compiler:fir:tree"))
+    api(project(":compiler:psi"))
+    api("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.2")
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 
