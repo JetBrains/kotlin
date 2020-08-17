@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.framework.detectLibraryKind
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import org.jetbrains.kotlin.idea.platform.tooling
+import org.jetbrains.kotlin.idea.util.application.getServiceSafe
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
@@ -422,3 +423,6 @@ class KotlinImporterComponent : PersistentStateComponent<KotlinImporterComponent
         return State(addedSources.sorted())
     }
 }
+
+internal val Module.kotlinImporterComponent: KotlinImporterComponent
+    get() = this.getServiceSafe()

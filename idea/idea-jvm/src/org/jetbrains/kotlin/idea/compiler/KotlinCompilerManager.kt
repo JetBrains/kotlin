@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.js.JavaScript
 import java.io.PrintStream
 import java.io.PrintWriter
 
-// FIX ME WHEN BUNCH 192 REMOVED
+
 class KotlinCompilerStartupActivity : StartupActivity {
     // Extending PluginException ensures that Exception Analyzer recognizes this as a Kotlin exception
     private class KotlinCompilerException(private val text: String) :
