@@ -72,7 +72,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun SimpleTypeMarker.isStubType(): Boolean {
         require(this is SimpleType, this::errorMessage)
-        return this is StubType
+        return this is AbstractStubType
     }
 
     override fun CapturedTypeMarker.lowerType(): KotlinTypeMarker? {
