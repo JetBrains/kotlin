@@ -215,26 +215,28 @@ class Fir2IrConverter(
             )
             constantValueGenerator.typeTranslator = typeTranslator
             typeTranslator.constantValueGenerator = constantValueGenerator
-            val builtIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
-            FirBuiltinSymbols(builtIns, moduleDescriptor.builtIns, symbolTable)
+            val irBuiltIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
+            FirBuiltinSymbols(irBuiltIns, moduleDescriptor.builtIns, symbolTable)
             val sourceManager = PsiSourceManager()
-            val components = Fir2IrComponentsStorage(session, scopeSession, symbolTable, builtIns, irFactory, mangler)
+            val components = Fir2IrComponentsStorage(session, scopeSession, symbolTable, irBuiltIns, irFactory, mangler)
             val conversionScope = Fir2IrConversionScope()
             val classifierStorage = Fir2IrClassifierStorage(components)
             val declarationStorage = Fir2IrDeclarationStorage(components, moduleDescriptor)
             val typeConverter = Fir2IrTypeConverter(components)
+            val builtIns = Fir2IrBuiltIns(components, session)
             components.declarationStorage = declarationStorage
             components.classifierStorage = classifierStorage
             components.typeConverter = typeConverter
+            components.builtIns = builtIns
             val irFiles = mutableListOf<IrFile>()
 
             val converter = Fir2IrConverter(moduleDescriptor, sourceManager, components)
             for (firFile in firFiles) {
                 irFiles += converter.registerFileAndClasses(firFile)
             }
-            val irModuleFragment = IrModuleFragmentImpl(moduleDescriptor, builtIns, irFiles)
+            val irModuleFragment = IrModuleFragmentImpl(moduleDescriptor, irBuiltIns, irFiles)
             val irProviders =
-                generateTypicalIrProviderList(irModuleFragment.descriptor, builtIns, symbolTable, extensions = generatorExtensions)
+                generateTypicalIrProviderList(irModuleFragment.descriptor, irBuiltIns, symbolTable, extensions = generatorExtensions)
             val externalDependenciesGenerator = ExternalDependenciesGenerator(
                 symbolTable,
                 irProviders,
