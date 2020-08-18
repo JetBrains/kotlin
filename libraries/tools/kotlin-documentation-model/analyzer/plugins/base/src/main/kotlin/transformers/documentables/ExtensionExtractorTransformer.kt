@@ -91,7 +91,7 @@ private fun Callable.asPairsWithReceiverDRIs(): Sequence<Pair<DRI, Callable>> =
 private fun Callable.findReceiverDRIs(bound: Bound): Sequence<DRI> = when (bound) {
     is Nullable -> findReceiverDRIs(bound.inner)
     is TypeParameter ->
-        if (this is DFunction && bound.declarationDRI == this.dri)
+        if (this is DFunction && bound.dri == this.dri)
             generics.find { it.name == bound.name }?.bounds?.asSequence()?.flatMap(::findReceiverDRIs).orEmpty()
         else
             emptySequence()

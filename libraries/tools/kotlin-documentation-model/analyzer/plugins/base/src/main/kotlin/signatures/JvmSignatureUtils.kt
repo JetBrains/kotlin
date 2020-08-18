@@ -6,6 +6,8 @@ import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.properties.WithExtraProperties
 import org.jetbrains.dokka.pages.*
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
+import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.driOrNull
+import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.drisOfAllNestedBounds
 
 interface JvmSignatureUtils {
 
@@ -133,6 +135,10 @@ interface JvmSignatureUtils {
                 it.dri == DRI("kotlin", "Deprecated")
                         || it.dri == DRI("java.lang", "Deprecated")
             } == true) setOf(TextStyle.Strikethrough) else emptySet()
+
+    infix fun DFunction.uses(t: DTypeParameter): Boolean =
+        t.dri in (listOfNotNull(receiver?.type?.drisOfAllNestedBounds, receiver?.dri) +
+                parameters.flatMap { listOf(it.dri) + it.type.drisOfAllNestedBounds })
 }
 
 sealed class AtStrategy
