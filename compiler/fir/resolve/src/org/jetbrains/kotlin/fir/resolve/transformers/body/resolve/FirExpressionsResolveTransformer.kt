@@ -323,8 +323,17 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         block.resultType = if (resultExpression == null) {
             block.resultType.resolvedTypeFromPrototype(session.builtinTypes.unitType.type)
         } else {
-            (resultExpression.resultType as? FirResolvedTypeRef) ?: buildErrorTypeRef {
-                diagnostic = ConeSimpleDiagnostic("No type for block", DiagnosticKind.InferenceError)
+            val theType = resultExpression.resultType
+            if (theType is FirResolvedTypeRef) {
+                buildResolvedTypeRef {
+                    source = theType.source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef)
+                    type = theType.type
+                    annotations += theType.annotations
+                }
+            } else {
+                buildErrorTypeRef {
+                    diagnostic = ConeSimpleDiagnostic("No type for block", DiagnosticKind.InferenceError)
+                }
             }
         }
 
@@ -500,7 +509,11 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 resolved.resultType = session.builtinTypes.booleanType
             }
             FirOperation.AS -> {
-                resolved.resultType = conversionTypeRef
+                resolved.resultType = buildResolvedTypeRef {
+                    source = conversionTypeRef.source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef)
+                    type = conversionTypeRef.coneType
+                    annotations += conversionTypeRef.annotations
+                }
             }
             FirOperation.SAFE_AS -> {
                 resolved.resultType =

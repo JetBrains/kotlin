@@ -38,10 +38,7 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
                 // It always uses the same type ref as the corresponding property
                 return
             }
-            else -> if (
-                errorTypeRef.source?.kind is FirFakeSourceElementKind ||
-                lastContainingDeclaration?.source?.kind is FirFakeSourceElementKind
-            ) {
+            else -> if (lastContainingDeclaration?.source?.kind is FirFakeSourceElementKind) {
                 return
             }
         }

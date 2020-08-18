@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.collectors
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.PersistentCheckerContext
 import org.jetbrains.kotlin.fir.analysis.collectors.components.*
@@ -17,11 +18,13 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.collectImplicitReceivers
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 abstract class AbstractDiagnosticCollector(
     override val session: FirSession,
@@ -46,8 +49,6 @@ abstract class AbstractDiagnosticCollector(
 
     @Suppress("LeakingThis")
     private var context = PersistentCheckerContext(this)
-
-    private var lastExpression: FirExpression? = null
 
     fun initializeComponents(vararg components: AbstractDiagnosticCollectorComponent) {
         if (componentsInitialized) {
@@ -109,13 +110,11 @@ abstract class AbstractDiagnosticCollector(
 
         override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Nothing?) {
             val labelName = anonymousFunction.label?.name?.let { Name.identifier(it) }
-            withExpression(anonymousFunction) {
-                visitWithDeclarationAndReceiver(
-                    anonymousFunction,
-                    labelName,
-                    anonymousFunction.receiverTypeRef
-                )
-            }
+            visitWithDeclarationAndReceiver(
+                anonymousFunction,
+                labelName,
+                anonymousFunction.receiverTypeRef
+            )
         }
 
         override fun visitProperty(property: FirProperty, data: Nothing?) {
@@ -143,40 +142,13 @@ abstract class AbstractDiagnosticCollector(
             visitWithDeclaration(anonymousInitializer)
         }
 
-        override fun visitExpression(expression: FirExpression, data: Nothing?) {
-            expression.runComponents()
-            withExpression(expression) {
-                expression.acceptChildren(this, null)
-            }
-        }
-
-        override fun visitThisReceiverExpression(thisReceiverExpression: FirThisReceiverExpression, data: Nothing?) {
-            visitExpression(thisReceiverExpression, data)
-        }
-
         override fun visitBlock(block: FirBlock, data: Nothing?) {
             visitExpression(block, data)
         }
 
         override fun visitTypeRef(typeRef: FirTypeRef, data: Nothing?) {
-            if (
-                lastExpression !is FirThisReceiverExpression &&
-                (typeRef === lastExpression?.typeRef || typeRef === lastExpression.safeAs<FirTypedDeclaration>()?.returnTypeRef)
-            ) {
-                return
-            }
-            super.visitTypeRef(typeRef, null)
-        }
-
-        override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Nothing?) {
-            typeOperatorCall.runComponents()
-            withExpression(typeOperatorCall) {
-                typeOperatorCall.acceptChildren(this, null)
-            }
-            if (typeOperatorCall.operation == FirOperation.AS) {
-                // NB: in this case conversionTypeRef === typeRef, so we *should* visit it explicitly
-                typeOperatorCall.conversionTypeRef.runComponents()
-                typeOperatorCall.conversionTypeRef.acceptChildren(this, null)
+            if (typeRef.source != null && typeRef.source?.kind !is FirFakeSourceElementKind) {
+                super.visitTypeRef(typeRef, null)
             }
         }
 
@@ -208,16 +180,6 @@ abstract class AbstractDiagnosticCollector(
             return block()
         } finally {
             context = existingContext
-        }
-    }
-
-    private inline fun <R> withExpression(expression: FirExpression, block: () -> R): R {
-        val previousExpression = lastExpression
-        lastExpression = expression
-        try {
-            return block()
-        } finally {
-            lastExpression = previousExpression
         }
     }
 
