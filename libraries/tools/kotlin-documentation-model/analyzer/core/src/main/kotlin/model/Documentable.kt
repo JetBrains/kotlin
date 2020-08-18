@@ -343,7 +343,7 @@ data class DTypeAlias(
 
 sealed class Projection
 sealed class Bound : Projection()
-data class TypeParameter(val declarationDRI: DRI, val name: String) : Bound()
+data class TypeParameter(val dri: DRI, val name: String) : Bound()
 object Star : Projection()
 data class TypeConstructor(
     val dri: DRI,
