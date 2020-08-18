@@ -8383,6 +8383,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             public void testPropertyMetadata() throws Exception {
                 runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/propertyMetadata.kt");
             }
+
+            @TestMetadata("provideDelegateByExtensionFunction.kt")
+            public void testProvideDelegateByExtensionFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/delegatedProperty/provideDelegate/provideDelegateByExtensionFunction.kt");
+            }
         }
     }
 
