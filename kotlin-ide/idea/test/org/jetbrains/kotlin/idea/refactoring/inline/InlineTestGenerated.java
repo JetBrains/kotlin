@@ -169,6 +169,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/function/methodReference.kt");
         }
 
+        @TestMetadata("methodReference2.kt")
+        public void testMethodReference2() throws Exception {
+            runTest("testData/refactoring/inline/function/methodReference2.kt");
+        }
+
         @TestMetadata("MethodReferenceAsParameter.kt")
         public void testMethodReferenceAsParameter() throws Exception {
             runTest("testData/refactoring/inline/function/MethodReferenceAsParameter.kt");
