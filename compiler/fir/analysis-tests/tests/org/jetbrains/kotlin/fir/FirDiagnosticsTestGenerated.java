@@ -916,14 +916,29 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/anonymousObjectByDelegate.kt");
         }
 
+        @TestMetadata("classInSupertypeForEnum.kt")
+        public void testClassInSupertypeForEnum() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/classInSupertypeForEnum.kt");
+        }
+
         @TestMetadata("conflictingOverloads.kt")
         public void testConflictingOverloads() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/conflictingOverloads.kt");
         }
 
+        @TestMetadata("constructorInInterface.kt")
+        public void testConstructorInInterface() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/constructorInInterface.kt");
+        }
+
         @TestMetadata("cyclicConstructorDelegationCall.kt")
         public void testCyclicConstructorDelegationCall() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/cyclicConstructorDelegationCall.kt");
+        }
+
+        @TestMetadata("delegationInInterface.kt")
+        public void testDelegationInInterface() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/delegationInInterface.kt");
         }
 
         @TestMetadata("delegationSuperCallInEnumConstructor.kt")
@@ -934,21 +949,6 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         @TestMetadata("explicitDelegationCallRequired.kt")
         public void testExplicitDelegationCallRequired() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/explicitDelegationCallRequired.kt");
-        }
-
-        @TestMetadata("classInSupertypeForEnum.kt")
-        public void testClassInSupertypeForEnum() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/classInSupertypeForEnum.kt");
-        }
-
-        @TestMetadata("constructorInInterface.kt")
-        public void testConstructorInInterface() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/constructorInInterface.kt");
-        }
-
-        @TestMetadata("delegationInInterface.kt")
-        public void testDelegationInInterface() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/delegationInInterface.kt");
         }
 
         @TestMetadata("incompatibleModifiers.kt")
@@ -1041,6 +1041,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/superclassNotAccessibleFromInterface.kt");
         }
 
+        @TestMetadata("supertypeInitializedInInterface.kt")
+        public void testSupertypeInitializedInInterface() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/supertypeInitializedInInterface.kt");
+        }
+
         @TestMetadata("supertypeInitializedWithoutPrimaryConstructor.kt")
         public void testSupertypeInitializedWithoutPrimaryConstructor() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/supertypeInitializedWithoutPrimaryConstructor.kt");
@@ -1051,24 +1056,19 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/typeArgumentsNotAllowed.kt");
         }
 
-        @TestMetadata("supertypeInitializedInInterface.kt")
-        public void testSupertypeInitializedInInterface() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/supertypeInitializedInInterface.kt");
-        }
-
         @TestMetadata("typeOfAnnotationMember.kt")
         public void testTypeOfAnnotationMember() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/typeOfAnnotationMember.kt");
         }
 
-        @TestMetadata("typeParametersInObject.kt")
-        public void testTypeParametersInObject() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/typeParametersInObject.kt");
-        }
-
         @TestMetadata("typeParametersInEnum.kt")
         public void testTypeParametersInEnum() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/typeParametersInEnum.kt");
+        }
+
+        @TestMetadata("typeParametersInObject.kt")
+        public void testTypeParametersInObject() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/typeParametersInObject.kt");
         }
 
         @TestMetadata("upperBoundViolated.kt")

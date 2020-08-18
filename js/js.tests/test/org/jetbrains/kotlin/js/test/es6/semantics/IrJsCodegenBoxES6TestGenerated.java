@@ -10767,6 +10767,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/inference/earlyReturnInsideCrossinlineLambda.kt");
         }
 
+        @TestMetadata("inferFromReturnTypeOfLambdaForRawTypes.kt")
+        public void testInferFromReturnTypeOfLambdaForRawTypes() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/inferFromReturnTypeOfLambdaForRawTypes.kt");
+        }
+
         @TestMetadata("integerLiteralTypeInLamdaReturnType.kt")
         public void testIntegerLiteralTypeInLamdaReturnType() throws Exception {
             runTest("compiler/testData/codegen/box/inference/integerLiteralTypeInLamdaReturnType.kt");
