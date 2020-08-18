@@ -16,6 +16,7 @@ import com.intellij.openapi.actionSystem.ex.CustomComponentAction;
 import com.intellij.openapi.actionSystem.ex.DefaultCustomComponentAction;
 import com.intellij.openapi.application.ApplicationBundle;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.event.EditorFactoryEvent;
 import com.intellij.openapi.editor.event.EditorFactoryListener;
@@ -58,6 +59,7 @@ public class EditorSearchSession implements SearchSession,
                                             SearchReplaceComponent.Listener {
   private static final String FIND_TYPE = "FindInFile";
   public static final DataKey<EditorSearchSession> SESSION_KEY = DataKey.create("EditorSearchSession");
+  public static final Logger SELECTION_UPDATE_LOGGER = Logger.getInstance("com.intellij.find.selection");
 
   private final Editor myEditor;
   private final LivePreviewController myLivePreviewController;
@@ -549,6 +551,13 @@ public class EditorSearchSession implements SearchSession,
     myEditor.getSelectionModel().setSelection(originalSelectionStart, originalSelectionEnd);
     myEditor.getCaretModel().moveToOffset(Math.min(myStartSessionCaretMarker.getEndOffset(), myEditor.getDocument().getTextLength()));
     myEditor.getScrollingModel().scrollToCaret(ScrollType.RELATIVE);
+    logSelectionUpdate();
+  }
+
+  public static void logSelectionUpdate() {
+    if (SELECTION_UPDATE_LOGGER.isDebugEnabled()) {
+      SELECTION_UPDATE_LOGGER.debug(new Throwable());
+    }
   }
 
   private void updateUIWithEmptyResults() {

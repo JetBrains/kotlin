@@ -15,6 +15,7 @@
  */
 package com.intellij.find.impl.livePreview;
 
+import com.intellij.find.EditorSearchSession;
 import com.intellij.find.FindResult;
 import com.intellij.find.FindUtil;
 import com.intellij.openapi.editor.*;
@@ -66,6 +67,7 @@ public class SelectionManager {
         });
         editor.getCaretModel().moveToOffset(cursor.getEndOffset());
         editor.getSelectionModel().setSelection(cursor.getStartOffset(), cursor.getEndOffset());
+        EditorSearchSession.logSelectionUpdate();
       }
       else {
         FindUtil.selectSearchResultInEditor(editor, cursor, -1);

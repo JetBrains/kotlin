@@ -1021,6 +1021,7 @@ public final class FindManagerImpl extends FindManager {
       }
       editor.getScrollingModel().scrollToCaret(scrollType);
       editor.putUserData(HIGHLIGHTER_WAS_NOT_FOUND_KEY, null);
+      EditorSearchSession.logSelectionUpdate();
       return true;
     }
 

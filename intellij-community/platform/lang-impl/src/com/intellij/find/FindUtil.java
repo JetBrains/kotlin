@@ -178,6 +178,7 @@ public final class FindUtil {
       }
       if (start < end && selectWordIfFound) {
         editor.getSelectionModel().setSelection(start, end);
+        EditorSearchSession.logSelectionUpdate();
       }
     }
     else {
@@ -732,6 +733,7 @@ public final class FindUtil {
       }
       else {
         selection.setSelection(result.getStartOffset(), result.getEndOffset());
+        EditorSearchSession.logSelectionUpdate();
       }
     }
 
@@ -1010,6 +1012,7 @@ public final class FindUtil {
       EditorActionUtil.makePositionVisible(editor, selectionStartOffset);
       EditorActionUtil.makePositionVisible(editor, selectionEndOffset);
       newCaret.setSelection(selectionStartOffset, selectionEndOffset);
+      EditorSearchSession.logSelectionUpdate();
       return true;
     }
   }
