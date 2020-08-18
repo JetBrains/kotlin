@@ -1060,6 +1060,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/inlineVariableOrProperty/PropertyReference.kt");
         }
 
+        @TestMetadata("propertyReference2.kt")
+        public void testPropertyReference2() throws Exception {
+            runTest("testData/refactoring/inline/inlineVariableOrProperty/propertyReference2.kt");
+        }
+
         @TestMetadata("semicolon.kt")
         public void testSemicolon() throws Exception {
             runTest("testData/refactoring/inline/inlineVariableOrProperty/semicolon.kt");
