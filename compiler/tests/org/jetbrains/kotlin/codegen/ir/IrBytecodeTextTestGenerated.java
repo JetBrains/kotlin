@@ -1917,6 +1917,64 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeText/fieldsForCapturedValues")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FieldsForCapturedValues extends AbstractIrBytecodeTextTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInFieldsForCapturedValues() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/fieldsForCapturedValues"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("extensionLambdaExtensionReceiver.kt")
+        public void testExtensionLambdaExtensionReceiver() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/fieldsForCapturedValues/extensionLambdaExtensionReceiver.kt");
+        }
+
+        @TestMetadata("extensionReceiver.kt")
+        public void testExtensionReceiver() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/fieldsForCapturedValues/extensionReceiver.kt");
+        }
+
+        @TestMetadata("innerAndOuterThis.kt")
+        public void testInnerAndOuterThis() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/fieldsForCapturedValues/innerAndOuterThis.kt");
+        }
+
+        @TestMetadata("labeledExtensionLambdaExtensionReceiver.kt")
+        public void testLabeledExtensionLambdaExtensionReceiver() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/fieldsForCapturedValues/labeledExtensionLambdaExtensionReceiver.kt");
+        }
+
+        @TestMetadata("multipleExtensionReceivers.kt")
+        public void testMultipleExtensionReceivers() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/fieldsForCapturedValues/multipleExtensionReceivers.kt");
+        }
+
+        @TestMetadata("outerThis.kt")
+        public void testOuterThis() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/fieldsForCapturedValues/outerThis.kt");
+        }
+
+        @TestMetadata("outerThisInInnerConstructor.kt")
+        public void testOuterThisInInnerConstructor() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/fieldsForCapturedValues/outerThisInInnerConstructor.kt");
+        }
+
+        @TestMetadata("outerThisInInnerInitBlock.kt")
+        public void testOuterThisInInnerInitBlock() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/fieldsForCapturedValues/outerThisInInnerInitBlock.kt");
+        }
+
+        @TestMetadata("this.kt")
+        public void testThis() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/fieldsForCapturedValues/this.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeText/forLoop")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
