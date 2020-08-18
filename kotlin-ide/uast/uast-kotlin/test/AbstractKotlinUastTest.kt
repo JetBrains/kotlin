@@ -7,8 +7,6 @@ import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.compiled.ClassFileDecompilers
-import com.intellij.psi.impl.compiled.ClsDecompilerImpl
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -93,7 +91,6 @@ abstract class AbstractKotlinUastTest : AbstractUastTest() {
         val area = Extensions.getRootArea()
         area.getExtensionPoint(UastLanguagePlugin.extensionPointName).registerExtension(KotlinUastLanguagePlugin(), project)
         area.getExtensionPoint(UEvaluatorExtension.EXTENSION_POINT_NAME).registerExtension(KotlinEvaluatorExtension(), project)
-        area.getExtensionPoint(ClassFileDecompilers.getInstance().EP_NAME).registerExtension(ClsDecompilerImpl(), project)
 
         project.registerService(
             KotlinUastResolveProviderService::class.java,
