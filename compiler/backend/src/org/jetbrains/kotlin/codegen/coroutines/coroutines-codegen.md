@@ -51,7 +51,10 @@ suspend fun main() {
 ```
 which, upon running, will print `1` and `2`, as expected.
 
-One can call a suspend function only from other suspend function or suspend lambda, but it can call ordinary, non-suspendable functions. For example, both `dummy` and `println` are used only inside the lambda. Because one is not allowed to call suspendable functions from ordinary, we can imagine two worlds: suspendable and ordinary. Alternatively, one can consider them as being of two different colors, and we color the program by using the "suspend" modifier.
+One can call a suspend function only from other suspend function or suspend lambda, but it can call ordinary, non-suspendable functions. For
+example, both `dummy` and `println` are used only inside the lambda. Because one is not allowed to call suspendable functions from ordinary, 
+we can imagine two worlds: suspendable and ordinary. Alternatively, one can consider them as being of two different colors, and we color the 
+program by using the "suspend" modifier.
 
 The lambda, creatively named `lambda`, contains two suspend calls (`dummy`) and one from the `main` function to the lambda itself,
 but there is no suspension. Let us add it:
@@ -75,11 +78,13 @@ suspend fun main() {
     lambda()
 }
 ```
-Now, when we run the code, it prints `Suspended` and nothing else; it does not even finish the execution of the program, since `lambda` is, in fact, suspended, and it suspends `suspend fun main` as well.
+Now, when we run the code, it prints `Suspended` and nothing else; it does not even finish the execution of the program, since `lambda` is, 
+in fact, suspended, and it suspends `suspend fun main` as well.
 
 To fix the issue with the suspension of `main`, we need to cross a boundary between suspendable and ordinary worlds and make
 `main` ordinary, so, when it starts a coroutine, and the coroutine suspends, `main` does not. Since one cannot call a suspendable
-function from an ordinary one, there are special functions, so-called coroutine builders, whose sole purpose is to create a coroutine, run it, and when it suspends, return execution to the caller.
+function from an ordinary one, there are special functions, so-called coroutine builders, whose sole purpose is to create a coroutine, run 
+it, and when it suspends, return execution to the caller.
 Other than that, they act like other ordinary functions.
 Let's name ours, I don't know, `builder`:
 
@@ -93,7 +98,8 @@ fun builder(c: suspend () -> Unit) {
     })
 }
 ```
-A separate section explains the exact mechanism of starting a coroutine (in a broad sense) and how one can write their builders. For now, consider `builder` as a boilerplate to cross the worlds.
+A separate section explains the exact mechanism of starting a coroutine (in a broad sense) and how one can write their builders. For now, 
+consider `builder` as a boilerplate to cross the worlds.
 
 Now, when we change `main` to use the builder and not suspend itself
 ```kotlin
