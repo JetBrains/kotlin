@@ -127,8 +127,9 @@ FILE fqName:<root> fileName:/jvmFieldWithIntersectionTypes.kt
       SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public' type=kotlin.Unit origin=EQ
         receiver: GET_VAR 'val k: <root>.JFieldOwner [val] declared in <root>.test' type=<root>.JFieldOwner origin=null
         value: CONST Int type=kotlin.Int value=42
-      GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public' type=kotlin.Int origin=GET_PROPERTY
-        receiver: GET_VAR 'val k: <root>.JFieldOwner [val] declared in <root>.test' type=<root>.JFieldOwner origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public' type=kotlin.Int origin=GET_PROPERTY
+          receiver: GET_VAR 'val k: <root>.JFieldOwner [val] declared in <root>.test' type=<root>.JFieldOwner origin=null
       VAR name:md1 type:<root>.DerivedThroughMid1 [val]
         CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.DerivedThroughMid1' type=<root>.DerivedThroughMid1 origin=null
       VAR name:md2 type:<root>.DerivedThroughMid2 [val]
@@ -144,5 +145,6 @@ FILE fqName:<root> fileName:/jvmFieldWithIntersectionTypes.kt
       SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public' type=kotlin.Unit origin=EQ
         receiver: GET_VAR 'val mk: <root>.Mid [val] declared in <root>.test' type=<root>.Mid origin=null
         value: CONST Int type=kotlin.Int value=44
-      GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public' type=kotlin.Int origin=GET_PROPERTY
-        receiver: GET_VAR 'val mk: <root>.Mid [val] declared in <root>.test' type=<root>.Mid origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:f type:kotlin.Int visibility:public' type=kotlin.Int origin=GET_PROPERTY
+          receiver: GET_VAR 'val mk: <root>.Mid [val] declared in <root>.test' type=<root>.Mid origin=null

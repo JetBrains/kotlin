@@ -34,8 +34,9 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
   FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
-      TYPE_OP type=<root>.J<kotlin.String> origin=CAST typeOperand=<root>.J<kotlin.String>
-        GET_VAR 'a: kotlin.Any declared in <root>.test4' type=kotlin.Any origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        TYPE_OP type=<root>.J<kotlin.String> origin=CAST typeOperand=<root>.J<kotlin.String>
+          GET_VAR 'a: kotlin.Any declared in <root>.test4' type=kotlin.Any origin=null
       CALL 'public open fun bar <X> (j: <root>.J<X of <root>.H.bar?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
         <X>: kotlin.String?
         j: TYPE_OP type=<root>.J<kotlin.String> origin=IMPLICIT_CAST typeOperand=<root>.J<kotlin.String>
@@ -43,8 +44,9 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
   FUN name:test5 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
-      TYPE_OP type=kotlin.Function1<kotlin.String, kotlin.String> origin=CAST typeOperand=kotlin.Function1<kotlin.String, kotlin.String>
-        GET_VAR 'a: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        TYPE_OP type=kotlin.Function1<kotlin.String, kotlin.String> origin=CAST typeOperand=kotlin.Function1<kotlin.String, kotlin.String>
+          GET_VAR 'a: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
       CALL 'public open fun bar <X> (j: <root>.J<X of <root>.H.bar?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
         <X>: kotlin.String?
         j: TYPE_OP type=<root>.J<X of <root>.H.bar?>? origin=SAM_CONVERSION typeOperand=<root>.J<X of <root>.H.bar?>?
@@ -62,8 +64,9 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
-      TYPE_OP type=kotlin.Function1<T of <root>.test7, T of <root>.test7> origin=CAST typeOperand=kotlin.Function1<T of <root>.test7, T of <root>.test7>
-        GET_VAR 'a: kotlin.Any declared in <root>.test7' type=kotlin.Any origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        TYPE_OP type=kotlin.Function1<T of <root>.test7, T of <root>.test7> origin=CAST typeOperand=kotlin.Function1<T of <root>.test7, T of <root>.test7>
+          GET_VAR 'a: kotlin.Any declared in <root>.test7' type=kotlin.Any origin=null
       CALL 'public open fun bar <X> (j: <root>.J<X of <root>.H.bar?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
         <X>: T of <root>.test7?
         j: TYPE_OP type=<root>.J<X of <root>.H.bar?>? origin=SAM_CONVERSION typeOperand=<root>.J<X of <root>.H.bar?>?

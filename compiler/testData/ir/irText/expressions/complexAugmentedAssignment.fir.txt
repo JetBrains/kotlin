@@ -139,7 +139,8 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
           GET_VAR 'val tmp_2: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
         value: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
-      GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.Int [val]
@@ -149,7 +150,8 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
         $this: GET_OBJECT 'CLASS OBJECT name:X1 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.X1
         <set-?>: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'val tmp_3: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
-      GET_VAR 'val tmp_3: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_VAR 'val tmp_3: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
       VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Int [val]
         CALL 'public final fun <get-x2> (): kotlin.Int declared in <root>.X1.X2' type=kotlin.Int origin=GET_PROPERTY
           $this: GET_OBJECT 'CLASS OBJECT name:X2 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.X1.X2
@@ -157,7 +159,8 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
         $this: GET_OBJECT 'CLASS OBJECT name:X2 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.X1.X2
         <set-?>: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'val tmp_4: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
-      GET_VAR 'val tmp_4: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_VAR 'val tmp_4: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
       VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:kotlin.Int [val]
         CALL 'public final fun <get-x3> (): kotlin.Int declared in <root>.X1.X2.X3' type=kotlin.Int origin=GET_PROPERTY
           $this: GET_OBJECT 'CLASS OBJECT name:X3 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.X1.X2.X3
@@ -165,7 +168,8 @@ FILE fqName:<root> fileName:/complexAugmentedAssignment.kt
         $this: GET_OBJECT 'CLASS OBJECT name:X3 modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.X1.X2.X3
         <set-?>: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: GET_VAR 'val tmp_5: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
-      GET_VAR 'val tmp_5: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_VAR 'val tmp_5: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
   CLASS CLASS name:B modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
     CONSTRUCTOR visibility:public <> (s:kotlin.Int) returnType:<root>.B [primary]

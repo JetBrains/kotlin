@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
@@ -590,7 +591,7 @@ class Fir2IrVisitor(
                 } else {
                     emptyList()
                 }
-            )
+            ).insertImplicitCasts()
         }
     }
 
@@ -608,14 +609,42 @@ class Fir2IrVisitor(
                 IrCompositeImpl(
                     startOffset, endOffset, type, origin,
                     mapToIrStatements().filterNotNull()
-                )
+                ).insertImplicitCasts()
             } else {
                 IrBlockImpl(
                     startOffset, endOffset, type, origin,
                     mapToIrStatements().filterNotNull()
-                )
+                ).insertImplicitCasts()
             }
         }
+    }
+
+    private fun IrBlockBody.insertImplicitCasts(): IrBlockBody {
+        if (statements.isEmpty()) return this
+
+        statements.forEachIndexed { i, irStatement ->
+            if (irStatement !is IrErrorCallExpression && irStatement is IrExpression) {
+                statements[i] = irStatement.coerceToUnitIfNeeded(irStatement.type, irBuiltIns)
+            }
+        }
+        return this
+    }
+
+    private fun IrContainerExpression.insertImplicitCasts(): IrContainerExpression {
+        if (statements.isEmpty()) return this
+
+        val lastIndex = statements.lastIndex
+        statements.forEachIndexed { i, irStatement ->
+            if (irStatement !is IrErrorCallExpression && irStatement is IrExpression) {
+                if (i != lastIndex) {
+                    statements[i] = irStatement.coerceToUnitIfNeeded(irStatement.type, irBuiltIns)
+                } else {
+                    // TODO: for the last statement, need to cast to the return type if mismatched
+                }
+            }
+        }
+
+        return this
     }
 
     override fun visitErrorExpression(errorExpression: FirErrorExpression, data: Any?): IrElement {
