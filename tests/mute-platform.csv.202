@@ -138,3 +138,6 @@ org.jetbrains.kotlin.idea.intentions.IntentionTestGenerated.ConvertSealedClassTo
 org.jetbrains.kotlin.idea.intentions.IntentionTestGenerated.ConvertSealedClassToEnum.testInstancesAndMembers, Enum reorder,, FLAKY
 org.jetbrains.kotlin.idea.navigation.GotoDeclarationTestGenerated.testImportAliasMultiDeclarations, showInBestPositionFor doesn't work in headless in 202,,
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.CreateFromUsage.CreateClass.DelegationSpecifier.testCreateSuperClassFromSuperTypeEntry3, Unprocessed,,
+org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptListenerTest.testChangeInsideNonKtsFileInvalidatesOtherFiles, Unprocessed,,
+org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptListenerTest.testTwoFilesChanged, Unprocessed,,
+org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptListenerTest.testLoadedConfigurationWhenExternalFileChanged, Unprocessed,,
