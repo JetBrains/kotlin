@@ -61,7 +61,7 @@
   </extensions>
 
   <extensions defaultExtensionNs="com.android">
-    <moduleDescriptionProvider implementation="com.jetbrains.kmm.wizard.ModuleTemplate"/>
+    <moduleDescriptionProvider implementation="com.jetbrains.kmm.wizard.KmmModuleDescriptionProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.android.tools.idea.wizard.template">
