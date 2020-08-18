@@ -1527,6 +1527,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 runTest("testData/refactoring/inline/inlineVariableOrProperty/property/expect.kt");
             }
 
+            @TestMetadata("inheritance.kt")
+            public void testInheritance() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/property/inheritance.kt");
+            }
+
             @TestMetadata("InstanceProperty.kt")
             public void testInstanceProperty() throws Exception {
                 runTest("testData/refactoring/inline/inlineVariableOrProperty/property/InstanceProperty.kt");
