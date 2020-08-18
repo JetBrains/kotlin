@@ -140,3 +140,4 @@ org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.CreateFromUsage.CreateC
 org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptListenerTest.testChangeInsideNonKtsFileInvalidatesOtherFiles, Unprocessed,,
 org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptListenerTest.testTwoFilesChanged, Unprocessed,,
 org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptListenerTest.testLoadedConfigurationWhenExternalFileChanged, Unprocessed,,
+org.jetbrains.kotlin.idea.debugger.test.KotlinSteppingTestGenerated.Custom.testFunctionBreakpointInStdlib, Unprocessed,,
