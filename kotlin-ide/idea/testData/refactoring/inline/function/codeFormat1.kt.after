@@ -1,0 +1,8 @@
+class A {
+    fun foo() {
+        baz("")
+        baz("")
+    }
+
+    fun baz(a: String) {}
+}

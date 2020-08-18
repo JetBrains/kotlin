@@ -54,6 +54,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/function/codeFormat.kt");
         }
 
+        @TestMetadata("codeFormat1.kt")
+        public void testCodeFormat1() throws Exception {
+            runTest("testData/refactoring/inline/function/codeFormat1.kt");
+        }
+
         @TestMetadata("CommentBetweenReturnAndExpression.kt")
         public void testCommentBetweenReturnAndExpression() throws Exception {
             runTest("testData/refactoring/inline/function/CommentBetweenReturnAndExpression.kt");
