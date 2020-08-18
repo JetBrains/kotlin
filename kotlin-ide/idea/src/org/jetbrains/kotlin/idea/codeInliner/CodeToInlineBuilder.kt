@@ -99,6 +99,8 @@ class CodeToInlineBuilder(
 
         insertExplicitTypeArguments(codeToInline, analyze)
         processReferences(codeToInline, analyze, reformat)
+        removeContracts(codeToInline, analyze)
+
         when {
             mainExpression == null -> Unit
             mainExpression.isNull() -> targetCallable.returnType?.let { returnType ->
@@ -128,6 +130,17 @@ class CodeToInlineBuilder(
         }
 
         return codeToInline
+    }
+
+    private fun removeContracts(codeToInline: MutableCodeToInline, analyze: (KtExpression) -> BindingContext) {
+        for (statement in codeToInline.statementsBefore) {
+            val context = analyze(statement)
+            if (statement.getResolvedCall(context)?.resultingDescriptor?.fqNameOrNull()?.asString() == "kotlin.contracts.contract") {
+                codeToInline.addPreCommitAction(statement) {
+                    codeToInline.statementsBefore.remove(it)
+                }
+            }
+        }
     }
 
     fun prepareCodeToInline(
