@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.idea.scripting.gradle.GradleKotlinScriptConfiguratio
 import org.jetbrains.kotlin.idea.scripting.gradle.LastModifiedFiles
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
 
-open class AbstractGradleBuildRootsLocatorTest : TestCase() {
+abstract class AbstractGradleBuildRootsLocatorTest : TestCase() {
     private val scripts = mutableMapOf<String, ScriptFixture>()
-    private val locator = MyRootsLocator()
+    private val locator by lazy { MyRootsLocator() }
 
     class ScriptFixture(val introductionTs: Long, val info: GradleScriptInfo)
 
