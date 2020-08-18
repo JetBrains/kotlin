@@ -218,8 +218,6 @@ internal class ExpressionReplacementPerformer(
      * Returns statement in a block to insert statement before it
      */
     private fun findOrCreateBlockToInsertStatement(): KtExpression {
-        //TODO: Sometimes it's not correct because of side effects
-
         for (element in elementToBeReplaced.parentsWithSelf) {
             val parent = element.parent
             when (element) {
@@ -240,27 +238,35 @@ internal class ExpressionReplacementPerformer(
                     }
 
                     if (parent is KtBlockExpression) return element
+                    if (parent is KtBinaryExpression) {
+                        return element.replaceWithRun()
+                    }
                 }
             }
         }
 
-        val runExpression = psiFactory.createExpressionByPattern("run { $0 }", elementToBeReplaced) as KtCallExpression
-        val runAfterReplacement = elementToBeReplaced.replaced(runExpression)
-        val ktLambdaArgument = runAfterReplacement.lambdaArguments[0]
-        val block = ktLambdaArgument.getLambdaExpression()?.bodyExpression
-            ?: throw KotlinExceptionWithAttachments("cant get body expression for $ktLambdaArgument")
-                .withAttachment("ktLambdaArgument", ktLambdaArgument.text)
-        elementToBeReplaced = block.statements.single()
+        elementToBeReplaced = elementToBeReplaced.replaceWithRunBlockAndGetExpression()
         return elementToBeReplaced
-
     }
 
-    private fun KtExpression.replaceWithBlock(): KtExpression {
-        val blockExpression = withElementToBeReplacedPreserved {
-            this.replaced(KtPsiFactory(this).createSingleStatementBlock(this))
-        }
-        return blockExpression.statements.single()
+    private fun KtElement.replaceWithRun(): KtExpression = withElementToBeReplacedPreserved {
+        replaceWithRunBlockAndGetExpression()
     }
+
+    private fun KtElement.replaceWithRunBlockAndGetExpression(): KtExpression {
+        val runExpression = psiFactory.createExpressionByPattern("run { $0 }", this) as KtCallExpression
+        val runAfterReplacement = this.replaced(runExpression)
+        val ktLambdaArgument = runAfterReplacement.lambdaArguments[0]
+        return ktLambdaArgument.getLambdaExpression()?.bodyExpression?.statements?.singleOrNull()
+            ?: throw KotlinExceptionWithAttachments("cant get body expression for $ktLambdaArgument").withAttachment(
+                "ktLambdaArgument",
+                ktLambdaArgument.text
+            )
+    }
+
+    private fun KtExpression.replaceWithBlock(): KtExpression = withElementToBeReplacedPreserved {
+        replaced(KtPsiFactory(this).createSingleStatementBlock(this))
+    }.statements.single()
 
     private fun <TElement : KtElement> withElementToBeReplacedPreserved(action: () -> TElement): TElement {
         elementToBeReplaced.putCopyableUserData(ELEMENT_TO_BE_REPLACED_KEY, Unit)

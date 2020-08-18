@@ -1,4 +1,4 @@
-fun fact(x: Int): Int = if (x < 2) 1 else {
+fun fact(x: Int): Int = if (x < 2) 1 else x * run {
     val x1 = x - 1
-    x * if (x1 < 2) 1 else x1 * fact(x1 - 1)
+    if (x1 < 2) 1 else x1 * fact(x1 - 1)
 }

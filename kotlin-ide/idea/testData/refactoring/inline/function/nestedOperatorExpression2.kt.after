@@ -1,0 +1,13 @@
+class A {
+
+    fun b() {
+        println(this.toString())
+    }
+}
+
+fun test() {
+    val t = 33 + run {
+        A().b()
+        1
+    }
+}

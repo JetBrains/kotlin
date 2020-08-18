@@ -209,6 +209,26 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/function/MultipleReturns.kt");
         }
 
+        @TestMetadata("nestedOperatorExpression.kt")
+        public void testNestedOperatorExpression() throws Exception {
+            runTest("testData/refactoring/inline/function/nestedOperatorExpression.kt");
+        }
+
+        @TestMetadata("nestedOperatorExpression2.kt")
+        public void testNestedOperatorExpression2() throws Exception {
+            runTest("testData/refactoring/inline/function/nestedOperatorExpression2.kt");
+        }
+
+        @TestMetadata("nestedOperatorExpression3.kt")
+        public void testNestedOperatorExpression3() throws Exception {
+            runTest("testData/refactoring/inline/function/nestedOperatorExpression3.kt");
+        }
+
+        @TestMetadata("nestedOperatorExpression4.kt")
+        public void testNestedOperatorExpression4() throws Exception {
+            runTest("testData/refactoring/inline/function/nestedOperatorExpression4.kt");
+        }
+
         @TestMetadata("NullableUnitReturnType.kt")
         public void testNullableUnitReturnType() throws Exception {
             runTest("testData/refactoring/inline/function/NullableUnitReturnType.kt");
@@ -292,6 +312,16 @@ public class InlineTestGenerated extends AbstractInlineTest {
         @TestMetadata("setOperator.kt")
         public void testSetOperator() throws Exception {
             runTest("testData/refactoring/inline/function/setOperator.kt");
+        }
+
+        @TestMetadata("throwAsBody.kt")
+        public void testThrowAsBody() throws Exception {
+            runTest("testData/refactoring/inline/function/throwAsBody.kt");
+        }
+
+        @TestMetadata("throwInsteadOfReturn.kt")
+        public void testThrowInsteadOfReturn() throws Exception {
+            runTest("testData/refactoring/inline/function/throwInsteadOfReturn.kt");
         }
 
         @TestMetadata("TypeArguments.kt")
