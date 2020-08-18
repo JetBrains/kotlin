@@ -728,6 +728,9 @@ class PSICallResolver(
 
         val argumentName = valueArgument.getArgumentName()?.asName
 
+        @Suppress("NAME_SHADOWING")
+        val outerCallContext = outerCallContext.expandContextForCatchClause(ktExpression)
+
         processFunctionalExpression(
             outerCallContext, argumentExpression, startDataFlowInfo,
             valueArgument, argumentName, builtIns, typeResolver
@@ -743,7 +746,7 @@ class PSICallResolver(
 
         val context = outerCallContext.replaceContextDependency(ContextDependency.DEPENDENT)
             .replaceDataFlowInfo(startDataFlowInfo)
-            .expandContextForCatchClause(ktExpression).let {
+            .let {
                 if (isSpecialFunction &&
                     argumentExpression is KtBlockExpression &&
                     ArgumentTypeResolver.getCallableReferenceExpressionIfAny(argumentExpression, it) != null
