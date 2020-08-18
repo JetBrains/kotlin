@@ -55,8 +55,9 @@ internal class KtFirScopeProvider(
     private val builder: KtSymbolByFirBuilder,
     private val project: Project,
     firResolveState: FirModuleResolveState,
+    override val token: ValidityToken,
 ) : KtScopeProvider(), ValidityTokenOwner {
-    override val analysisSession: KtAnalysisSession by analysisSession.weakRef(analysisSession)
+    override val analysisSession: KtAnalysisSession by weakRef(analysisSession)
     private val firResolveState by weakRef(firResolveState)
     private val firScopeStorage = FirScopeRegistry()
 

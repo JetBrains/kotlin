@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import com.intellij.psi.util.parentOfType
+import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtSymbolContainingDeclarationProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
@@ -15,7 +16,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtDeclaration
 
 internal class KtFirSymbolContainingDeclarationProvider(
-    override val analysisSession: KtFirAnalysisSession
+    override val analysisSession: KtFirAnalysisSession,
+    override val token: ValidityToken,
 ) : KtSymbolContainingDeclarationProvider(), KtFirAnalysisSessionComponent {
     override fun getContainingDeclaration(symbol: KtSymbolWithKind): KtSymbolWithKind? {
         if (symbol is KtPackageSymbol) return null

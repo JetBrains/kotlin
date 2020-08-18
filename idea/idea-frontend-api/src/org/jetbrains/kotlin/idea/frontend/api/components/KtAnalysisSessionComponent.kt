@@ -11,5 +11,4 @@ import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 
 abstract class KtAnalysisSessionComponent : ValidityTokenOwner {
     protected abstract val analysisSession: KtAnalysisSession
-    final override val token: ValidityToken get() = analysisSession.token
 }

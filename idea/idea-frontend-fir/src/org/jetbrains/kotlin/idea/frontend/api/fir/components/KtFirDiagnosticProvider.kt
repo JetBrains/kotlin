@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.idea.fir.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.fir.low.level.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.idea.frontend.api.ImplicitReceiverSmartCast
 import org.jetbrains.kotlin.idea.frontend.api.ImplicitReceiverSmartcastKind
+import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtDiagnosticProvider
 import org.jetbrains.kotlin.idea.frontend.api.components.KtSmartCastProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
@@ -21,7 +22,8 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 
 internal class KtFirDiagnosticProvider(
-    override val analysisSession: KtFirAnalysisSession
+    override val analysisSession: KtFirAnalysisSession,
+    override val token: ValidityToken,
 ) : KtDiagnosticProvider(), KtFirAnalysisSessionComponent {
     override fun getDiagnosticsForElement(element: KtElement): Collection<Diagnostic> = withValidityAssertion {
         LowLevelFirApiFacade.getDiagnosticsFor(element, firResolveState)
