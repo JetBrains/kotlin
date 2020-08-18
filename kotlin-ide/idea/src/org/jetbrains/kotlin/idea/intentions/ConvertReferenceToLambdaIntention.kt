@@ -141,12 +141,11 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
                 lambdaExpression
 
             val result = ShortenReferences.DEFAULT.process(element.replaced(wrappedExpression)) as KtExpression
-            return if (valueArgumentParent != null && callGrandParent != null) {
-                callGrandParent.getLastLambdaExpression()?.moveFunctionLiteralOutsideParenthesesIfPossible()
-                callGrandParent.lambdaArguments.lastOrNull()?.getArgumentExpression()
-            } else {
-                result
-            }
+            if (valueArgumentParent == null || callGrandParent == null) return result
+            val lastLambdaExpression = callGrandParent.getLastLambdaExpression()
+            if (lastLambdaExpression != result) return result
+            lastLambdaExpression.moveFunctionLiteralOutsideParenthesesIfPossible()
+            return callGrandParent.lambdaArguments.lastOrNull()?.getArgumentExpression()
         }
     }
 }

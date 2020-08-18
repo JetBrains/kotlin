@@ -1,0 +1,20 @@
+fun <X> adjust(f1: () -> X, f2: () -> X) {}
+fun f1(): Any = 1
+
+fun callAdjust() {
+    adjust(::f1) {
+        "a" // Inline and remove.
+    }
+    adjust({
+        "a" // Inline and remove.
+    }, ::f1)
+    adjust(::f1, ::f1)
+    adjust({
+        "a" // Inline and remove.
+    }) {
+        "a" // Inline and remove.
+    }
+    adjust({ f1() }, {
+        "a" // Inline and remove.
+    })
+}

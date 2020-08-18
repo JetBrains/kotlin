@@ -179,6 +179,21 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/function/methodReference2.kt");
         }
 
+        @TestMetadata("methodReference3.kt")
+        public void testMethodReference3() throws Exception {
+            runTest("testData/refactoring/inline/function/methodReference3.kt");
+        }
+
+        @TestMetadata("methodReference4.kt")
+        public void testMethodReference4() throws Exception {
+            runTest("testData/refactoring/inline/function/methodReference4.kt");
+        }
+
+        @TestMetadata("methodReference5.kt")
+        public void testMethodReference5() throws Exception {
+            runTest("testData/refactoring/inline/function/methodReference5.kt");
+        }
+
         @TestMetadata("MethodReferenceAsParameter.kt")
         public void testMethodReferenceAsParameter() throws Exception {
             runTest("testData/refactoring/inline/function/MethodReferenceAsParameter.kt");
