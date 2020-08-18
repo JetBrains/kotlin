@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
+import org.jetbrains.kotlin.name.Name
 
 internal class Common private constructor(
     override val irClass: IrClass, override val fields: MutableList<Variable>
@@ -46,6 +48,16 @@ internal class Common private constructor(
             .filter { it.name.asString() == "toString" }
             .first { it.valueParameters.isEmpty() }
             .let { getOverridden(it as IrSimpleFunction, this) }
+    }
+
+    fun getEqualsFunction(): IrFunction {
+        val equalsFun = irClass.declarations
+            .filterIsInstance<IrSimpleFunction>()
+            .single {
+                it.name == Name.identifier("equals") && it.dispatchReceiverParameter != null
+                        && it.valueParameters.size == 1 && it.valueParameters[0].type.isNullableAny()
+            }
+        return getOverridden(equalsFun, this)
     }
 
     override fun toString(): String {

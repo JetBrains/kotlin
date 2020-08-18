@@ -173,13 +173,14 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
         val argsType = listOfNotNull(receiverType) + irFunction.valueParameters.map { it.type }
         val argsValues = args.map {
             when (it) {
+                is Wrapper -> it.value // wrapper can be used in built in calculation, for example, in null or equality checks
                 is Complex -> when (irFunction.fqNameWhenAvailable?.asString()) {
                     // must explicitly convert Common to String in String plus method or else will be taken default toString from Common
                     "kotlin.String.plus" -> stack.apply { interpretToString(it) }.popReturnValue().asString()
                     else -> it.getOriginal()
                 }
                 is Primitive<*> -> it.value
-                is Lambda -> it // lambda can be used in built in calculation, for example, in null check or toString
+                is Lambda -> it // lambda also can be used, for example, in null check or toString
                 else -> TODO("unsupported type of argument for builtins calculations: ${it::class.java}")
             }
         }
@@ -207,6 +208,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
                         ?: throw InterpreterMethodNotFoundError("For given function $signature there is no entry in binary map")
                     when (methodName) {
                         "rangeTo" -> return calculateRangeTo(irFunction.returnType)
+                        "EQEQ" -> return calculateEquals(argsValues[0], argsValues[1])
                         else -> function.invoke(argsValues[0], argsValues[1])
                     }
                 }
@@ -236,6 +238,24 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
         return stack.newFrame(initPool = constructorValueParameters.map { Variable(it.first, it.second) }) {
             constructorCall.interpret()
         }
+    }
+
+    private fun calculateEquals(first: Any?, second: Any?): ExecutionResult {
+        if (first == null || second == null || first !is Common || second !is Common) {
+            return Next.apply { stack.pushReturnValue((first == second).toState(irBuiltIns.booleanType)) }
+        }
+
+        val valueArguments = mutableListOf<Variable>()
+        val equalsFun = first.getEqualsFunction()
+        if (equalsFun.isFakeOverriddenFromAny()) {
+            return Next.apply { stack.pushReturnValue((first == second).toState(irBuiltIns.booleanType)) }
+        }
+
+        equalsFun.getDispatchReceiver()!!.let { valueArguments.add(Variable(it, first)) }
+        valueArguments.add(Variable(equalsFun.valueParameters.single().symbol, second))
+        return stack.newFrame(initPool = valueArguments) {
+            equalsFun.interpret()
+        }.check { return it }
     }
 
     private fun interpretValueParameters(
@@ -663,12 +683,12 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
                 }
             }
             IrTypeOperator.INSTANCEOF -> {
-                val isInstance = isErased || stack.peekReturnValue().isSubtypeOf(typeOperand)
-                stack.pushReturnValue(isInstance.toState(irBuiltIns.nothingType))
+                val isInstance = stack.popReturnValue().isSubtypeOf(typeOperand) || isErased
+                stack.pushReturnValue(isInstance.toState(irBuiltIns.booleanType))
             }
             IrTypeOperator.NOT_INSTANCEOF -> {
-                val isInstance = isErased || stack.peekReturnValue().isSubtypeOf(typeOperand)
-                stack.pushReturnValue((!isInstance).toState(irBuiltIns.nothingType))
+                val isInstance = stack.popReturnValue().isSubtypeOf(typeOperand) || isErased
+                stack.pushReturnValue((!isInstance).toState(irBuiltIns.booleanType))
             }
             IrTypeOperator.IMPLICIT_NOTNULL -> {
 
