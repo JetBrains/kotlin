@@ -58,7 +58,7 @@ class CodeToInlineBuilder(
         val codeToInline = prepareMutableCodeToInline(
             mainExpression = mainExpression,
             statementsBefore = statementsBefore,
-            analyze = { it.analyze() },
+            analyze = { it.analyze(BodyResolveMode.PARTIAL) },
             reformat = true,
             contextDeclaration = contextDeclaration,
         )
