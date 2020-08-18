@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.idea.fir.getOrBuildFirOfType
 import org.jetbrains.kotlin.idea.fir.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.frontend.api.ImplicitReceiverSmartCast
 import org.jetbrains.kotlin.idea.frontend.api.ImplicitReceiverSmartcastKind
+import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtSmartCastProvider
 import org.jetbrains.kotlin.idea.frontend.api.components.KtTypeProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
@@ -23,7 +24,8 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 
 internal class KtFirTypeProvider(
-    override val analysisSession: KtFirAnalysisSession
+    override val analysisSession: KtFirAnalysisSession,
+    override val token: ValidityToken,
 ) : KtTypeProvider(), KtFirAnalysisSessionComponent {
     override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType = withValidityAssertion {
         val firDeclaration = declaration.getOrBuildFirOfType<FirCallableDeclaration<*>>(firResolveState)

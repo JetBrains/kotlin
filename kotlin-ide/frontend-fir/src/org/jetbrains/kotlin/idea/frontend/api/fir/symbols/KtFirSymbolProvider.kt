@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.idea.fir.getOrBuildFirOfType
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
+import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
@@ -21,10 +22,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 internal class KtFirSymbolProvider(
-    override val token: ValidityToken,
+    override val analysisSession: KtAnalysisSession,
     firSymbolProvider: FirSymbolProvider,
     private val resolveState: FirModuleResolveState,
-    private val firSymbolBuilder: KtSymbolByFirBuilder
+    private val firSymbolBuilder: KtSymbolByFirBuilder,
+    override val token: ValidityToken,
 ) : KtSymbolProvider(), ValidityTokenOwner {
     private val firSymbolProvider by weakRef(firSymbolProvider)
 

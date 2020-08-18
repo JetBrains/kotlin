@@ -28,7 +28,10 @@ import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtExpression
 
-internal class KtFirCallResolver(override val analysisSession: KtFirAnalysisSession) : KtCallResolver(), KtFirAnalysisSessionComponent {
+internal class KtFirCallResolver(
+    override val analysisSession: KtFirAnalysisSession,
+    override val token: ValidityToken,
+) : KtCallResolver(), KtFirAnalysisSessionComponent {
 
     override fun resolveCall(call: KtBinaryExpression): CallInfo? = withValidityAssertion {
         val firCall = call.getOrBuildFirSafe<FirFunctionCall>(firResolveState) ?: return null

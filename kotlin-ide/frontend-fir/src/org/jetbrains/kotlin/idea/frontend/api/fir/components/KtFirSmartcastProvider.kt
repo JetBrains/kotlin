@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.idea.fir.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.frontend.api.ImplicitReceiverSmartCast
 import org.jetbrains.kotlin.idea.frontend.api.ImplicitReceiverSmartcastKind
+import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtSmartCastProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
@@ -17,8 +18,9 @@ import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtExpression
 
 internal class KtFirSmartcastProvider(
-    override val analysisSession: KtFirAnalysisSession
-) : KtSmartCastProvider(), KtFirAnalysisSessionComponent {
+    override val analysisSession: KtFirAnalysisSession,
+    override val token: ValidityToken,
+    ) : KtSmartCastProvider(), KtFirAnalysisSessionComponent {
     override fun getSmartCastedToTypes(expression: KtExpression): Collection<KtType> = withValidityAssertion {
         // TODO filter out not used smartcasts
         expression.getOrBuildFirSafe<FirExpressionWithSmartcast>(analysisSession.firResolveState)

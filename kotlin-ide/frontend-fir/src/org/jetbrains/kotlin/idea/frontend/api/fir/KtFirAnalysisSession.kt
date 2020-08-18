@@ -34,14 +34,14 @@ private constructor(
 
     private val project = element.project
 
-    override val smartCastProvider: KtSmartCastProvider = KtFirSmartcastProvider(this)
-    override val typeProvider: KtTypeProvider = KtFirTypeProvider(this)
-    override val diagnosticProvider: KtDiagnosticProvider = KtFirDiagnosticProvider(this)
-    override val containingDeclarationProvider = KtFirSymbolContainingDeclarationProvider(this)
-    override val callResolver: KtCallResolver = KtFirCallResolver(this)
-    override val scopeProvider by threadLocal { KtFirScopeProvider(this, firSymbolBuilder, project, firResolveState) }
+    override val smartCastProvider: KtSmartCastProvider = KtFirSmartcastProvider(this, token)
+    override val typeProvider: KtTypeProvider = KtFirTypeProvider(this, token)
+    override val diagnosticProvider: KtDiagnosticProvider = KtFirDiagnosticProvider(this, token)
+    override val containingDeclarationProvider = KtFirSymbolContainingDeclarationProvider(this, token)
+    override val callResolver: KtCallResolver = KtFirCallResolver(this, token)
+    override val scopeProvider by threadLocal { KtFirScopeProvider(this, firSymbolBuilder, project, firResolveState, token) }
     override val symbolProvider: KtSymbolProvider =
-        KtFirSymbolProvider(token, firResolveState.firIdeLibrariesSession.firSymbolProvider, firResolveState, firSymbolBuilder)
+        KtFirSymbolProvider(this, firResolveState.firIdeLibrariesSession.firSymbolProvider, firResolveState, firSymbolBuilder, token)
 
 
     override fun createContextDependentCopy(): KtAnalysisSession {
