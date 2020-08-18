@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.psi2ir.endOffsetOrUndefined
 import org.jetbrains.kotlin.psi2ir.startOffsetOrUndefined
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
+import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.types.KotlinType
 
 class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
@@ -195,7 +196,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
 
         symbolTable.withScope(descriptor) {
             generateOverridenSymbols(irFunction, descriptor.overriddenDescriptors)
-            generateScopedTypeParameterDeclarations(irFunction, descriptor.typeParameters)
+            generateScopedTypeParameterDeclarations(irFunction, descriptor.propertyIfAccessor.typeParameters)
             generateValueParameterDeclarations(irFunction, descriptor, defaultArgumentFactory)
             irFunction.returnType = descriptor.returnType?.toIrType() ?: error("Expected return type $descriptor")
         }
