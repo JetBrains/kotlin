@@ -111,7 +111,8 @@ FILE fqName:<root> fileName:/breakContinueInLoopHeader.kt
           SET_VAR 'var i: kotlin.Int [var] declared in <root>.test5' type=kotlin.Unit origin=EQ
             CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_VAR 'val tmp_6: kotlin.Int [val] declared in <root>.test5' type=kotlin.Int origin=null
-          GET_VAR 'var i: kotlin.Int [var] declared in <root>.test5' type=kotlin.Int origin=null
+          TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+            GET_VAR 'var i: kotlin.Int [var] declared in <root>.test5' type=kotlin.Int origin=null
           VAR name:j type:kotlin.Int [var]
             CONST Int type=kotlin.Int value=0
           DO_WHILE label=Inner origin=DO_WHILE_LOOP

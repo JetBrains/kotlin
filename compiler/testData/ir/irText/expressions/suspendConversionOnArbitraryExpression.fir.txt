@@ -95,8 +95,9 @@ FILE fqName:<root> fileName:/suspendConversionOnArbitraryExpression.kt
   FUN name:testSmartCastWithSuspendConversion visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
-      TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=CAST typeOperand=kotlin.Function0<kotlin.Unit>
-        GET_VAR 'a: kotlin.Any declared in <root>.testSmartCastWithSuspendConversion' type=kotlin.Any origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=CAST typeOperand=kotlin.Function0<kotlin.Unit>
+          GET_VAR 'a: kotlin.Any declared in <root>.testSmartCastWithSuspendConversion' type=kotlin.Any origin=null
       ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /useSuspend>#' type=kotlin.Unit
         TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function0<kotlin.Unit>
           GET_VAR 'a: kotlin.Any declared in <root>.testSmartCastWithSuspendConversion' type=kotlin.Any origin=null
@@ -105,16 +106,18 @@ FILE fqName:<root> fileName:/suspendConversionOnArbitraryExpression.kt
     BLOCK_BODY
       VAR name:b type:kotlin.Any [var]
         GET_VAR 'a: kotlin.Any declared in <root>.testSmartCastOnVarWithSuspendConversion' type=kotlin.Any origin=null
-      TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=CAST typeOperand=kotlin.Function0<kotlin.Unit>
-        GET_VAR 'var b: kotlin.Any [var] declared in <root>.testSmartCastOnVarWithSuspendConversion' type=kotlin.Any origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=CAST typeOperand=kotlin.Function0<kotlin.Unit>
+          GET_VAR 'var b: kotlin.Any [var] declared in <root>.testSmartCastOnVarWithSuspendConversion' type=kotlin.Any origin=null
       ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /useSuspend>#' type=kotlin.Unit
         TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function0<kotlin.Unit>
           GET_VAR 'var b: kotlin.Any [var] declared in <root>.testSmartCastOnVarWithSuspendConversion' type=kotlin.Any origin=null
   FUN name:testSmartCastVsSuspendConversion visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit>
     BLOCK_BODY
-      TYPE_OP type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=CAST typeOperand=kotlin.coroutines.SuspendFunction0<kotlin.Unit>
-        GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.testSmartCastVsSuspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        TYPE_OP type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=CAST typeOperand=kotlin.coroutines.SuspendFunction0<kotlin.Unit>
+          GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.testSmartCastVsSuspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
       CALL 'public final fun useSuspend (sfn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         sfn: TYPE_OP type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.coroutines.SuspendFunction0<kotlin.Unit>
           GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.testSmartCastVsSuspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
@@ -123,8 +126,9 @@ FILE fqName:<root> fileName:/suspendConversionOnArbitraryExpression.kt
     BLOCK_BODY
       VAR name:b type:kotlin.Function0<kotlin.Unit> [var]
         GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.testSmartCastOnVarVsSuspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
-      TYPE_OP type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=CAST typeOperand=kotlin.coroutines.SuspendFunction0<kotlin.Unit>
-        GET_VAR 'var b: kotlin.Function0<kotlin.Unit> [var] declared in <root>.testSmartCastOnVarVsSuspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        TYPE_OP type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=CAST typeOperand=kotlin.coroutines.SuspendFunction0<kotlin.Unit>
+          GET_VAR 'var b: kotlin.Function0<kotlin.Unit> [var] declared in <root>.testSmartCastOnVarVsSuspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
       CALL 'public final fun useSuspend (sfn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         sfn: GET_VAR 'var b: kotlin.Function0<kotlin.Unit> [var] declared in <root>.testSmartCastOnVarVsSuspendConversion' type=kotlin.Function0<kotlin.Unit> origin=null
   FUN name:testIntersectionVsSuspendConversion visibility:public modality:FINAL <T> (x:T of <root>.testIntersectionVsSuspendConversion) returnType:kotlin.Unit
