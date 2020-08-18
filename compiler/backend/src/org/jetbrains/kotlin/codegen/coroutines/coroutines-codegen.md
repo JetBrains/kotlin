@@ -1377,3 +1377,546 @@ FIXME: This feature is not implemented yet. Ideally, they should behave like cal
 Meaning, they should
 1. not have `create`, `invokeSuspend`, and all the fields, except for captured variables. Only constructor and `invoke`.
 2. not inherit `BaseContinuationImpl` or any of its children.
+
+## Suspend Functions
+
+As explained in the continuation-passing style section, every suspending function's signature is changed: the compiler adds a continuation 
+parameter and changes the return type to `Any?`.
+
+The tricky part becomes when we try to make it suspendable, in other words, when we build a state machine and generate a continuation. 
+Unlike suspend lambdas, we cannot reuse an existing class for the continuation, since the suspend function can be static, or there can be 
+several functions inside one class.
+
+One way we can solve the issue is to turn the suspend function into a suspend lambda somewhat. We could generate a suspend lambda with code 
+of the suspend function and inside the function call the lambda. For example, when we have a function
+like
+```kotlin
+suspend fun test() {
+    suspendMe()
+    suspendMe()
+}
+```
+we could generate code like
+```kotlin
+val test$1: suspend () -> Unit = {
+    suspendMe()
+    suspendMe()
+}
+
+suspend fun test() {
+    test$1()
+}
+```
+As one can see, these two pieces of code are semantically identical. That, by the way, is how JS and Native back-ends generate suspending 
+functions. Furthermore, in JVM, we also used to do this, but not anymore.
+
+The reason why in JVM we do not do this anymore is stack-traces. If we did copy the body of the suspend function to the lambda, the 
+stack-trace would look like
+```text
+suspendFun1$1.invokeSuspend
+suspendFun2$1.invokeSuspend
+suspendFun3$1.invokeSuspend
+suspendFun4$1.invokeSuspend
+suspendFun5$1.invokeSuspend
+```
+but we want it to look like
+```text
+suspendFun1
+suspendFun2
+suspendFun3
+suspendFun4
+suspendFun5
+```
+thus, instead of moving the function body to lambda, we keep it in the function and build the state-machine there. However, we also keep the 
+'lambda', so we store all spilled variables there and the label. This 'lambda' is called continuation, and it is, essentially, the state of 
+the coroutine. So, unlike suspend lambdas, we split the state (and call it continuation) and the state-machine for suspending functions.
+
+### Start
+
+Nevertheless, there is another problem. To properly support the completion chain, we need to create the continuation and store the 
+continuation parameter in the `completion` field. Also, we need to support resuming the coroutine, i.e., we need to get `label` and spilled 
+variables from the continuation. So, we need to distinguish these two cases: starting anew and continuing previously suspended execution. 
+The easiest way to do this is to check for the type of continuation parameter. So, the function preamble will look like:
+```kotlin
+fun test($completion: Continuation<Unit>): Any? {
+    val $continuation =
+        if ($completion is test$1) $completion
+        else test$1($completion)
+    // state machine
+}
+```
+As long as we generate distinct continuation types for each suspending function, the trick with the check allows us to distinguish these 
+two cases.
+
+However, we have a third case: recursion. When we recursively call the function, the type of the continuation parameter is the same, as if 
+we just resumed (see next section for this). So, there three possible calls of the function:
+1. direct call from another suspend function or suspend lambda
+2. resumption
+3. recursion
+
+So, we need to store at least one another bit of information. We use sign bit of `label` field for this. Thus, the prefix of the function 
+looks like
+```kotlin
+fun test($completion: Continuation<Unit>): Any? {
+    val $continuation =
+        if ($completion is test$1 && $completion.label < 0) {
+            $completion.label.sign_bit = 0
+            $completion
+        } else test$1($completion)
+    // state machine
+}
+```
+here, we assume that in recursive calls, the sign bit is unset, while the continuation class sets it during the resume process. So, let us 
+see how we resume and set the bit.
+
+### Resume
+
+As we dealt with starting a suspend function and creating a coroutine (in a broad sense), we can tackle the resume process. As explained 
+earlier, when a coroutine (in a narrow sense) suspends, it returns `COROUTINE_SUSPENDED`. Thus, among the three essential processes of 
+coroutines: creation, suspension, and resumption, there is only the latter left.
+
+In `BaseContinuationImpl.resumeWith` we call `invokeSuspend`. So, inside of `invokeSuspend`, we call the function and pass `this` as the 
+continuation parameter:
+```kotlin
+fun invokeSuspend(result: Result<Any?>): Any? {
+    test(this)
+}
+```
+However, we need to set sign bit of the label as well:
+```kotlin
+fun invokeSuspend(result: Result<Any?>): Any? {
+    this.label.sign_bit = 1
+    test(this)
+}
+```
+
+Let us change the function to call another function that returns a value:
+```kotlin
+val c: Continuation<Int>? = null
+
+fun suspendInt(): Int = suspendCoroutine {
+    c = it
+}
+
+suspend fun test() {
+    val i = suspendInt()
+    println(i)
+}
+
+fun main() {
+    builder {
+        test()
+    }
+    c?.resume(42)
+}
+```
+When we run the example, we get 42 printed. Meaning, that the result is somehow passed to the function. The only place we can pass it is 
+`invokeSuspend`. Also, there is only the continuation parameter of the function. Thus, we need to put the result to the continuation object 
+itself:
+```kotlin
+fun invokeSuspend(result: Result<Any?>): Any? {
+    this.result = result
+    this.label.sign_bit = 1
+    test(this)
+}
+```
+then, get the result from the continuation object in the function:
+```kotlin
+fun test($completion: Continuation<Unit>): Any? {
+    val $continuation =
+        if ($completion is test$1 && $completion.label < 0) {
+            $completion.label.sign_bit = 0
+            $completion
+        } else test$1($completion)
+    val $result = $continuation.result
+    // state machine
+}
+```
+
+Variables spilling is the same regardless, whether it is a lambda or a  function. However, we spill the variables to the continuation object.
+
+### JVM: Parameters
+
+Let us now have a look into how we deal with suspend function parameters. We do not generate fields for them, since a lambda uses them just 
+to pass the arguments from `invoke` to `invokeSuspend`. We do not need them for suspending functions: the arguments are locals; thus, we 
+reuse local variables spilling for them.
+
+Nevertheless, keeping the parameters in the function signature breaks resumption. There is not enough information in continuation's
+`invokeSuspend` to pass them as they were before or as they are now. So, we just put nulls for reference types and zeroes for primitives. 
+That means we cannot generate nullability checks at the beginning of the function, so they must be generated at the beginning of the first 
+state, to which we cannot resume.
+
+For example, if we change the `test` function to accept an argument:
+```kotlin
+suspend fun dummy() {}
+
+suspend fun test(a: Int) {
+    dummy()
+    dummy()
+}
+```
+its continuation's `invokeSuspend` becomes something like
+```kotlin
+fun invokeSuspend(result: Result<Any?>): Any? {
+    this.result = result
+    this.label.sign_bit = 1
+    test(0, this)
+}
+```
+
+### JVM: Layout
+
+We can now deduce the layout of the suspend function's continuation.
+
+The ideal suspend lambda layout is the following:
+1. supertypes: `kotlin/coroutines/jvm/internal/ContinuationImpl`
+2. package-local label field of int. Package-local, considering the function uses it, and the function is outside of the class.
+3. package-local fields for spilled variables. Same.
+4. public final method `invokeSuspend` of type `(Ljava/lang/Object;)Ljava/lang/Object;`. It overrides `BaseContinuationImpl`'s 
+`invokeSuspend`, which calls the function.
+5. public or package-private constructor: `<init>` of type `(Lkotlin/coroutines/Continuation;)V`, which calls
+`BaseContinuatonImpl`.
+
+### Local Suspend Functions
+
+Local functions are weird: the way the compiler generates them is different in back-ends. Local suspend functions are even stranger.
+
+#### Old JVM: Unerased Suspend Lambdas
+
+Old JVM back-end generates local functions as lambdas. Thus, suspend local functions are generated as suspend lambda:
+```kotlin
+fun main() {
+    suspend fun local(i: Int) {}
+}
+```
+is generated as something like:
+```kotlin
+fun main() {
+    val local: suspend (Int) -> Unit = {}
+}
+```
+Doing so allows us to reuse the logic of captured variables and simplify the logic of code generation. However, because of the limitations 
+of old BE, its `create` and `invoke` are unerased. In other words, the compiler duplicates them, generating unerased and erased copies. 
+Unerased copy accepts typed parameters, and it contains the logic of lambda's `invoke` or `create`. The other accepts only `Any?` 
+parameters since they override supertype's functions, and delegates call to an unerased copy. Thus, the layout of local suspend functions is:
+1. supertypes: `kotlin/coroutines/jvm/internal/SuspendLambda` and `kotlin/jvm/functions/Function{N}`
+2. package-private captured variables
+3. private label field of int. Private, since it is used only in the lambda itself.
+4. private parameter fields. The reason for visibility is the same as for the `label` field.
+5. private fields for spilled variables. Same.
+6. public final method `invokeSuspend` of type `(Ljava/lang/Object;)Ljava/lang/Object;`.
+It overrides `BaseContinuationImpl`'s `invokeSuspend`.
+7. public final `create` of type `(<params>,Lkotlin/coroutines/Continuation)Lkotlin/coroutines/Continuation`.
+`<params>` types are erased.
+8. public final `create` of type `(<params>,Lkotlin/coroutines/Continuation)Lkotlin/coroutines/Continuation`.
+`<params>` types are unerased.
+9. public final `invoke` of type `(<params>,Ljava/lang/Object;)Ljava/lang/Object;`. `<params>` are erased.
+10. public final `invoke` of type `(<params>,Lkotlin/coroutines/Continuation;)Ljava/lang/Object;`. `<params>` are unerased.
+11. public or package-private constructor: `<init>` of type `(<captured-variables>,Lkotlin/coroutines/Continuation;)V`,
+where we call `SuspendLambda`'s constructor with arity and completion and initlialize captured variables.
+As for suspending lambdas, the compiler knows the function's arity, but the completion is provided as an argument to the constructor.
+
+FIXME: There is a massive amount of bugs because of this implementation. For example, local suspend functions can hardly be recursive.
+
+#### JVM_IR: Static Functions
+
+On the other hand, JVM_IR generates local functions as static functions with captured variables put as first parameters. Thus, suspend local 
+functions are generated as static functions as well. That reduces code size and method count and enables tail-call optimization.
+
+An example:
+```kotlin
+fun main() {
+    val aa: Long = 1
+    suspend fun local(i: Int) {
+        println(aa)
+    }
+}
+```
+is generated as something like
+```kotlin
+suspend fun main$1(aa: Long, i: Int) {
+    println(aa)
+}
+
+fun main() {
+    val aa: Long = 1
+}
+```
+
+### Tail-Call Optimization
+One might have noticed that we do not always need a state machine. For example, when a suspend function does not call another suspend 
+functions at all. Since every suspend call creates a continuation, it becomes quite expensive to one in a loop. For these two reasons, we do 
+not generate a continuation class and a state machine for suspending functions, which have all their suspend calls in tail position. Since 
+there is no way they can suspend in the middle of the function, they do not need either of them: they have only one state.
+
+Example of tail-call functions:
+```kotlin
+suspend fun returnsInt() = suspendCoroutine<Int> { it.resume(42) }
+
+suspend fun tailCall1(): Int {
+    return returnsInt()
+}
+
+suspend fun tailCall2() = returnsInt()
+```
+
+For both of the functions the compiler generates the following bytecode (before `CoroutineTransformerMethodVisitor`:
+```text
+INVOKESTATIC InlineMarker.beforeInlineCall
+ALOAD 1 // continuation
+ICONST 0 // before suspend marker
+INVOKESTATIC InlineMarker.mark
+INVOKESTATIC returnsInt()
+ICONST 1 // after suspend marker
+INVOKESTATIC InlineMarker.mark
+INVOKESTATIC InlineMarker.afterInlineCall
+ARETURN
+```
+
+After tail-call optimization the code becomes
+```text
+ALOAD 1 // continuation
+INVOKESTATIC returnsInt
+ARETURN
+```
+
+The check whether the function is tail-call is simple: check, that all (reachable) suspension points are
+1. not inside try-catch block
+2. immediately followed by ARETURN with optional branching or stack modification, with one notable exception: `GETSTATIC Unit; ARETURN` 
+(more on that later).
+
+`MethodNodeExaminer` contains the logic of the check. Since we use the same state machine builder in both back-ends (because we should 
+support bytecode inlining in JVM_IR), the logic applies is shared as well.
+
+Note that because we do not create a state-machine, there is no reason to spill the variables, and thus we do not create a continuation 
+class. So, the completion chain will miss a link:
+```kotlin
+suspend fun returnsInt1() = suspendCoroutine<Int> { it.resume(42) }
+
+suspend fun returnsInt2(): Int {
+    val result = returnsInt1()
+    println(result)
+    return result
+}
+
+suspend fun returnsInt3() = returnsInt2()
+
+suspend fun main() {
+    println(returnsInt3())
+}
+```
+
+If there were no tail-call optimization, the completion chain would look like:
+```text
+          null<------+
+                     |
+      +-----------+  |
+   +->+returnsInt1|  |
+   |  +-----------+  |
+   |  |completion +--+
+   |  +-----------+
+   |
+   |
+   |  +-----------+
+   |  |returnsInt2+<-+
+   |  +-----------+  |
+   +--+completion |  |
+      +-----------+  |
+                     |
+      +-----------+  |
+   +->+returnsInt3|  |
+   |  +-----------+  |
+   |  |completion +--+
+   |  +-----------+
+   |
+   |
+   |  +-----------+
+   |  |    main   |
+   |  +-----------+
+   +--+completion |
+      +-----------+
+```
+
+but with tail-call optimization, it becomes
+
+```text
+   +----->null
+   |
+   |  +-----------+
+   |  |returnsInt2+<-+
+   |  +-----------+  |
+   +--+completion |  |
+      +-----------+  |
+                     |
+      +-----------+  |
+      |    main   |  |
+      +-----------+  |
+      |completion +--+
+      +-----------+
+```
+
+`returnInt1` and `returnInt3` are tail-call and have no continuation.
+
+In Old JVM back-end, local suspend functions are lambdas, they do not support tail-call optimization, but local suspend functions, 
+generated by JVM_IR do.
+
+#### Redundant Locals Elimination
+
+As explained in the section about variables spilling, the inliner spills stack before inlining and unspills it after. That results in a 
+bunch of repeated ASTORE and ALOAD instructions, which can break tail-call elimination since there can be a sequence of `ASTORE; ALOAD` 
+between the suspension point and ARETURN. This bytecode modification simplifies the chains and enables tail-call optimization for these 
+cases.
+
+#### Tail-Call Optimization for Functions Returning Unit
+
+There are some challenges if we want to make suspending functions, returning `Unit` tail-call. Let us have a look at one of them. If the 
+function returns `Unit`, `return` keyword is optional:
+```kotlin
+suspend fun returnsUnit() = suspendCoroutine<Unit> { it.resume(Unit) }
+
+suspend fun tailCall1() {
+    return returnsUnit()
+}
+
+suspend fun tailCall2() = returnsUnit()
+
+suspend fun tailCall3() {
+    returnsUnit()
+}
+```
+in this example, `tailCall1` and `tailCall2` are covered by usual tail-call optimization. However, the last function is different. The 
+codegen generates the following bytecode:
+```text
+INVOKESTATIC InlineMarker.beforeInlineCall
+ALOAD 1 // continuation
+ICONST 0 // before suspending marker
+INVOKESTATIC InlineMarker.mark
+INVOKESTATIC returnsUnit()
+ICONST 1 // after suspending marker
+INVOKESTATIC InlineMarker.mark
+INVOKESTATIC InlineMarker.afterInlineCall
+POP
+GETSTATIC kotlin/Unit.INSTANCE
+ARETURN
+```
+as one sees, `Unit` is `POP`ed, and then is pushed to the stack and returned. We unfortunately, cannot just remove 
+`POP; GETSTATIC kotlin/Unit.INSTANCE`: if we replace `returnsUnit` with `returnsInt`, the bytecode is the same. Since inside 
+`CoroutineTransformerMethodVisitor` we do not have information about return types of suspending calls,
+we see all of them as just `Any?`, we need to mark calls to functions, returning Unit, with a marker. The marker is similar to suspend 
+markers, but with a different argument: `ICONST_2`. So, full bytecode for `tailCall3` function becomes
+```text
+INVOKESTATIC InlineMarker.beforeInlineCall
+ALOAD 1 // continuation
+ICONST 0 // before suspending marker
+INVOKESTATIC InlineMarker.mark
+INVOKESTATIC returnsUnit()
+ICONST_2 // returns unit marker
+INVOKESTATIC InlineMarker.mark
+ICONST 1 // after suspending marker
+INVOKESTATIC InlineMarker.mark
+INVOKESTATIC InlineMarker.afterInlineCall
+POP
+GETSTATIC kotlin/Unit.INSTANCE
+ARETURN
+```
+
+After tail-call optimization, it is, expectedly, without a state-machine:
+```text
+ALOAD 1 // continuation
+INVOKESTATIC returnsUnit()
+ARETURN
+```
+
+Let's replace `returnsUnit` with `returnsInt` for the moment:
+```kotlin
+suspend fun returnsInt() = suspendCoroutine<Int> { it.resume(42) }
+
+suspend fun tailCall() {
+    returnsInt()
+}
+```
+as explained, one cannot simply remove `POP; GETSTATIC kotlin/Unit.INSTANCE`, since in such case function, returning `Unit` would return 
+`Int`. However, there can be only one state is state-machine. Thus, we simply keep `POP; GETSTATIC kotlin/Unit.INSTANCE`:
+```text
+ALOAD 1 // continuation
+INVOKESTATIC returnsUnit()
+POP
+GETSTATIC kotlin/Unit.INSTANCE
+ARETURN
+```
+
+Nevertheless, there is a problem. Since the completion chain misses a link, there can be cases when a suspend function returning `Unit` 
+appears to return non-`Unit` value:
+```kotlin
+import kotlin.coroutines.*
+
+var c: Continuation<*>? = null
+
+suspend fun <T> tx(lambda: () -> T): T = suspendCoroutine { c = it; lambda() }
+
+object Dummy
+
+interface Base<T> {
+    suspend fun generic(): T
+}
+
+class Derived: Base<Unit> {
+    override suspend fun generic() {
+        tx { Dummy }
+    }
+}
+
+fun builder(c: suspend () -> Unit) {
+    c.startCoroutine(object: Continuation<Unit> {
+        override val context = EmptyCoroutineContext
+        override fun resumeWith(result: Result<Unit>){
+            result.getOrThrow()
+        }
+    })
+}
+
+fun main() {
+    var res: Any? = null
+
+    builder {
+        val base: Base<*> = Derived()
+        res = base.generic()
+    }
+
+    (c as? Continuation<Dummy>)?.resume(Dummy)
+
+    println(res)
+}
+```
+In this example, `tx` returns `Dummy`, `generic` should return `Unit`. If `generic` would be tail-call, the program will output `Dummy` 
+instead of `Unit`. So, there is a problem with resumption.
+
+Let us have a look at the completion chain:
+```text
+           null<-----+
+                     |
+      +-----------+  |
+   +->+ builder$1 |  |
+   |  +-----------+  |
+   |  |completion +--+
+   |  +-----------+
+   |
+   |
+   |  +-----------+
+   |  |   main$1  |
+   |  +-----------+
+   +--+completion |
+      +-----------+
+```
+That is right; there is only one continuation, generated by the compiler: `main$1`. Moreover, it is passed to `generic` and then to `tx`, 
+since these functions are tail-call and do not create a continuation themselves. In `tx`, it is saved so that we can resume it in `main`. 
+When we call `resume` on it, its `resumeWith` calls `invokeSuspend` and passes `Dummy` as `$result`. The value will be on the stack at the 
+beginning of the last state inside the state-machine. It would appear that the suspend function returning `Unit` (in this case `generic`) 
+returns `Dummy`.
+
+To fix the issue, we generate `POP; GETSTATIC kotlin/Unit.INSTANCE` on the call site, when we are sure that callee returns `Unit`. By the 
+way, we do the same in `callSuspend` and `callSuspendBy` functions.
+
+However, in this example, we cannot be sure that `generic` returns `Unit`. In this case, the compiler disables tail-call optimization. More 
+generally, the compiler disables tail-call optimization for functions returning `Unit` if the function overrides a function, returning 
+non-`Unit` type.
