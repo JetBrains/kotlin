@@ -394,8 +394,6 @@ object KotlinToJVMBytecodeCompiler {
                 environment.messageCollector
             )
 
-            if (extendedAnalysisMode) return false
-
             val debugTargetDescription = "target " + module.getModuleName() + "-" + module.getModuleType() + " "
             val codeLines = environment.countLinesOfCode(ktFiles)
             performanceManager?.notifyAnalysisFinished(ktFiles.size, codeLines, debugTargetDescription)
