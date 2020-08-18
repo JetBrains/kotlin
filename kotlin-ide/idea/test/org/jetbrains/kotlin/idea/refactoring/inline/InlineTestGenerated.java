@@ -59,6 +59,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/function/CommentBetweenReturnAndExpression.kt");
         }
 
+        @TestMetadata("companionWithSuperType.kt")
+        public void testCompanionWithSuperType() throws Exception {
+            runTest("testData/refactoring/inline/function/companionWithSuperType.kt");
+        }
+
         @TestMetadata("customLet.kt")
         public void testCustomLet() throws Exception {
             runTest("testData/refactoring/inline/function/customLet.kt");
@@ -1058,6 +1063,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
         @TestMetadata("CommentsInGetter.kt")
         public void testCommentsInGetter() throws Exception {
             runTest("testData/refactoring/inline/inlineVariableOrProperty/CommentsInGetter.kt");
+        }
+
+        @TestMetadata("companionWithSuperType.kt")
+        public void testCompanionWithSuperType() throws Exception {
+            runTest("testData/refactoring/inline/inlineVariableOrProperty/companionWithSuperType.kt");
         }
 
         @TestMetadata("ifInQualifiedExpression.kt")

@@ -1,0 +1,14 @@
+class A {
+    fun test() {
+        println(42)
+    }
+
+    companion object : B() {
+    }
+}
+
+class B {
+    init {
+      println("Hey!")
+    }
+}
