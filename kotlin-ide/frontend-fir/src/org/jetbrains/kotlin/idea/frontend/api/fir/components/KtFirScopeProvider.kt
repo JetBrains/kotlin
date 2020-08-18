@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.components.KtScopeContext
 import org.jetbrains.kotlin.idea.frontend.api.components.KtScopeProvider
-import org.jetbrains.kotlin.idea.frontend.api.fir.FirScopeRegistry
+import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.scopes.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.scopes.KtFirDeclaredMemberScope
@@ -55,11 +55,10 @@ internal class KtFirScopeProvider(
     private val builder: KtSymbolByFirBuilder,
     private val project: Project,
     firResolveState: FirModuleResolveState,
-    firScopeRegistry: FirScopeRegistry,
 ) : KtScopeProvider(), ValidityTokenOwner {
     override val analysisSession: KtAnalysisSession by analysisSession.weakRef(analysisSession)
     private val firResolveState by weakRef(firResolveState)
-    private val firScopeStorage by weakRef(firScopeRegistry)
+    private val firScopeStorage = FirScopeRegistry()
 
     private val memberScopeCache = IdentityHashMap<KtClassOrObjectSymbol, KtMemberScope>()
     private val declaredMemberScopeCache = IdentityHashMap<KtClassOrObjectSymbol, KtDeclaredMemberScope>()
@@ -161,4 +160,17 @@ private class KtFirDelegatingScopeImpl<S>(
     token: ValidityToken
 ) : KtFirDelegatingScope<S>(builder, token), ValidityTokenOwner where S : FirContainingNamesAwareScope, S : FirScope {
     override val firScope: S by weakRef(firScope)
+}
+
+/**
+ * Stores strong references to all instances of [FirScope] used
+ * Needed as the only entity which may have a strong references to FIR internals is [KtFirAnalysisSession] & [KtAnalysisSessionComponent]
+ * Entities which needs storing [FirScope] instances will store them as weak references via [org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef]
+ */
+internal class FirScopeRegistry {
+    private val scopes = mutableListOf<FirScope>()
+
+    fun register(scope: FirScope) {
+        scopes += scope
+    }
 }

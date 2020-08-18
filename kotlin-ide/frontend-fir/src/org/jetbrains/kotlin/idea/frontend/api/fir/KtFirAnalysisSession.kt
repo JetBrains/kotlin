@@ -33,14 +33,13 @@ private constructor(
     }
 
     private val project = element.project
-    private val firScopeStorage = FirScopeRegistry()
 
     override val smartCastProvider: KtSmartCastProvider = KtFirSmartcastProvider(this)
     override val typeProvider: KtTypeProvider = KtFirTypeProvider(this)
     override val diagnosticProvider: KtDiagnosticProvider = KtFirDiagnosticProvider(this)
     override val containingDeclarationProvider = KtFirSymbolContainingDeclarationProvider(this)
     override val callResolver: KtCallResolver = KtFirCallResolver(this)
-    override val scopeProvider by threadLocal { KtFirScopeProvider(this, firSymbolBuilder, project, firResolveState, firScopeStorage) }
+    override val scopeProvider by threadLocal { KtFirScopeProvider(this, firSymbolBuilder, project, firResolveState) }
     override val symbolProvider: KtSymbolProvider =
         KtFirSymbolProvider(token, firResolveState.firIdeLibrariesSession.firSymbolProvider, firResolveState, firSymbolBuilder)
 
@@ -79,15 +78,3 @@ private constructor(
     }
 }
 
-/**
- * Stores strong references to all instances of [FirScope] used
- * Needed as the only entity which may have a strong references to FIR internals is [KtFirAnalysisSession]
- * Entities which needs storing [FirScope] instances will store them as weak references via [org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef]
- */
-internal class FirScopeRegistry {
-    private val scopes = mutableListOf<FirScope>()
-
-    fun register(scope: FirScope) {
-        scopes += scope
-    }
-}
