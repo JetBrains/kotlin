@@ -763,6 +763,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("testData/newJ2k/class/ClassShadowing.java");
         }
 
+        @TestMetadata("classToObjectWithAnnotations.java")
+        public void testClassToObjectWithAnnotations() throws Exception {
+            runTest("nj2k/testData/newJ2k/class/classToObjectWithAnnotations.java");
+        }
+
         @TestMetadata("classWithEmptyMethods.java")
         public void testClassWithEmptyMethods() throws Exception {
             runTest("testData/newJ2k/class/classWithEmptyMethods.java");
