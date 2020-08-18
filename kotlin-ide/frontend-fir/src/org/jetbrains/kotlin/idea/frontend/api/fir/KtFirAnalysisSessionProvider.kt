@@ -27,10 +27,6 @@ class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider
         }
 
     override fun getAnalysisSessionFor(contextElement: KtElement): KtAnalysisSession {
-        if (ApplicationManager.getApplication().isUnitTestMode) {
-            @Suppress("DEPRECATION")
-            return KtFirAnalysisSession.createForElement(contextElement)
-        }
         return analysisSessionByModuleInfoCache.value.getOrPut(contextElement.getModuleInfo()) {
             @Suppress("DEPRECATION")
             KtFirAnalysisSession.createForElement(contextElement)
