@@ -263,12 +263,12 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
               %composer.startReplaceableGroup(<> xor %key, "C(Test)<Exampl...>:Test.kt#2487m")
               Example({ %composer: Composer<*>?, %key: Int, %changed: Int ->
                 %composer.startReplaceableGroup(<>, "C:Test.kt#2487m")
-                %composer.endReplaceableGroup()
                 if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
                   Unit
                 } else {
                   %composer.skipToGroupEnd()
                 }
+                %composer.endReplaceableGroup()
               }, %composer, <>, 0)
               %composer.endReplaceableGroup()
             }
