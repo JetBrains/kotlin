@@ -1,0 +1,11 @@
+class FlowContextTest {
+    fun <T> flow(block: suspend Int.() -> Unit) {}
+    fun withScope(block: suspend () -> Unit) {}
+
+    fun reproducer() = withScope {
+        flow<Int> {
+            println(this)
+        }
+    }
+
+}
