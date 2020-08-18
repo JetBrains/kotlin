@@ -359,6 +359,7 @@
         <option name="ignoreForEnumConstant" value="true" />
         <option name="reportUnannotatedReferences" value="true" />
         <option name="ignoreAllButNls" value="true" />
+        <option name="nonNlsLiteralPattern" value="((?i)https?://.+)|\w*(\.\w+)+|\w*[$]\w*|((?i)&lt;/?(html|b|i|body|br|li|ol|ul)&gt;)*|&amp;\w+;|[A-Za-z][a-z0-9]*([A-Z]+[a-z0-9]*)+|\p{Upper}{5,}|\p{Upper}+(_\p{Upper}+)+|\p{Lower}+(_\p{Lower}+)+|\S*[\\/-]\p{Lower}\S*[\\/-]\S*|\S*[%*+#@|]\S*|-\S*|\S*[)}&gt;\],:?!;=]\S+|\S*[0-9]{3,}\S*" />
       </scope>
       <scope name="Angular" level="ERROR" enabled="true">
         <option name="ignoreForAssertStatements" value="true" />
