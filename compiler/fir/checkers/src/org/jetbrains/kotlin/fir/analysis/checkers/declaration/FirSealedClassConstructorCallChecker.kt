@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirSealedClassConstructorCallChecker : FirQualifiedAccessChecker() {
-    override fun check(functionCall: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        val constructorFir = functionCall.calleeReference.safeAs<FirResolvedNamedReference>()
+    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+        val constructorFir = expression.calleeReference.safeAs<FirResolvedNamedReference>()
             ?.resolvedSymbol
             ?.fir.safeAs<FirConstructor>()
             ?: return
@@ -39,7 +39,7 @@ object FirSealedClassConstructorCallChecker : FirQualifiedAccessChecker() {
             ?: return
 
         if (typeFir.status.modality == Modality.SEALED) {
-            reporter.report(functionCall.calleeReference.source)
+            reporter.report(expression.calleeReference.source)
         }
     }
 

@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
 
 object EmptyRangeChecker : FirBasicExpresionChecker() {
-    override fun check(functionCall: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (functionCall.source is FirFakeSourceElement<*>) return
-        if (functionCall !is FirFunctionCall) return
-        val left = functionCall.rangeLeft ?: return
-        val right = functionCall.rangeRight ?: return
+    override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (expression.source is FirFakeSourceElement<*>) return
+        if (expression !is FirFunctionCall) return
+        val left = expression.rangeLeft ?: return
+        val right = expression.rangeRight ?: return
 
-        val needReport = when (functionCall.calleeReference.name.asString()) {
+        val needReport = when (expression.calleeReference.name.asString()) {
             "rangeTo" -> {
                 left > right
             }
@@ -36,7 +36,7 @@ object EmptyRangeChecker : FirBasicExpresionChecker() {
         }
 
         if (needReport) {
-            reporter.report(functionCall.source, FirErrors.EMPTY_RANGE)
+            reporter.report(expression.source, FirErrors.EMPTY_RANGE)
 
         }
     }
@@ -57,6 +57,7 @@ object EmptyRangeChecker : FirBasicExpresionChecker() {
             else (arg as? FirConstExpression<*>)?.value as? Long
         }
 
+    // todo: add proper integer operator calls checking (e.g. (1+2)*3 transforms to 9)
     private val FirIntegerOperatorCall.asLong: Long?
         get() {
             val value = (dispatchReceiver as? FirConstExpression<*>)?.value as Long? ?: return null

@@ -21,17 +21,17 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirSuperclassNotAccessibleFromInterfaceChecker : FirQualifiedAccessChecker() {
-    override fun check(functionCall: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         val closestClass = context.findClosest<FirRegularClass>() ?: return
 
         if (closestClass.classKind == ClassKind.INTERFACE) {
-            val origin = getClassLikeDeclaration(functionCall, context)
+            val origin = getClassLikeDeclaration(expression, context)
                 ?.symbol.safeAs<FirRegularClassSymbol>()
                 ?.fir
                 ?: return
 
             if (origin.source != null && origin.isSuperclassOf(closestClass)) {
-                reporter.report(functionCall.explicitReceiver?.source)
+                reporter.report(expression.explicitReceiver?.source)
             }
         }
     }

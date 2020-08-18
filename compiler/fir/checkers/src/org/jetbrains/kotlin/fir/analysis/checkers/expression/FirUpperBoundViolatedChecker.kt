@@ -25,12 +25,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.min
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
-    override fun check(functionCall: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         // something that contains the type parameters
         // declarations with their declared bounds.
         // it may be the called function declaration
         // or the class declaration
-        val calleeFir = functionCall.calleeReference.safeAs<FirResolvedNamedReference>()
+        val calleeFir = expression.calleeReference.safeAs<FirResolvedNamedReference>()
             ?.resolvedSymbol
             ?.fir.safeAs<FirTypeParameterRefsOwner>()
             ?: return
@@ -41,10 +41,10 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
         )
 
         val parameterPairs = mutableMapOf<FirTypeParameterSymbol, FirResolvedTypeRef>()
-        val count = min(calleeFir.typeParameters.size, functionCall.typeArguments.size)
+        val count = min(calleeFir.typeParameters.size, expression.typeArguments.size)
 
         for (it in 0 until count) {
-            functionCall.typeArguments[it].safeAs<FirTypeProjectionWithVariance>()
+            expression.typeArguments[it].safeAs<FirTypeProjectionWithVariance>()
                 ?.typeRef.safeAs<FirResolvedTypeRef>()
                 ?.let { that ->
                     if (that !is FirErrorTypeRef) {
@@ -92,7 +92,7 @@ object FirUpperBoundViolatedChecker : FirQualifiedAccessChecker() {
         // typealias A<G> = B<List<G>>
         // val a = A<Int>()
         when (calleeFir) {
-            is FirConstructor -> analyzeConstructorCall(functionCall, substitutor, typeCheckerContext, reporter)
+            is FirConstructor -> analyzeConstructorCall(expression, substitutor, typeCheckerContext, reporter)
         }
     }
 
