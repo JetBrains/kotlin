@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.newvfs.events.VFileEvent
+import org.jetbrains.kotlin.idea.core.KotlinPluginDisposable
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener
 import org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleLegacyScriptListener
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
@@ -23,7 +24,7 @@ class GradleScriptListener(project: Project) : ScriptChangeListener(project) {
     init {
         // listen changes using VFS events, including gradle-configuration related files
         val listener = GradleScriptFileChangeListener(this, buildRootsManager)
-        VirtualFileManager.getInstance().addAsyncFileListener(listener, project)
+        VirtualFileManager.getInstance().addAsyncFileListener(listener, KotlinPluginDisposable.getInstance(project))
     }
 
     fun fileChanged(filePath: String, ts: Long) =

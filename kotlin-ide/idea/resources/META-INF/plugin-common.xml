@@ -161,6 +161,8 @@
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.core.KotlinPluginDisposable"/>
+
     <applicationService serviceImplementation="org.jetbrains.kotlin.idea.quickfix.QuickFixes"/>
 
     <applicationService serviceInterface="org.jetbrains.kotlin.idea.references.ReadWriteAccessChecker"
