@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.intentions.LambdaToAnonymousFunctionIntention
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
-import org.jetbrains.kotlin.idea.util.CommentSaver
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -338,23 +335,25 @@ class CodeInliner<TCallElement : KtElement>(
         return when (this) {
             is KtSimpleNameExpression -> false
             is KtQualifiedExpression -> receiverExpression.shouldKeepValue(usageCount) || selectorExpression.shouldKeepValue(usageCount)
-            is KtUnaryExpression -> operationToken in setOf(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS) || baseExpression.shouldKeepValue(
-                usageCount
-            )
+            is KtUnaryExpression -> operationToken in setOf(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS) ||
+                    baseExpression.shouldKeepValue(usageCount)
+
             is KtStringTemplateExpression -> entries.any {
                 if (sideEffectOnly) it.expression.shouldKeepValue(usageCount) else it is KtStringTemplateEntryWithExpression
             }
+
             is KtThisExpression, is KtSuperExpression, is KtConstantExpression -> false
             is KtParenthesizedExpression -> expression.shouldKeepValue(usageCount)
-            is KtArrayAccessExpression -> if (sideEffectOnly) arrayExpression.shouldKeepValue(usageCount) || indexExpressions.any {
-                it.shouldKeepValue(
-                    usageCount
-                )
-            } else true
-            is KtBinaryExpression -> if (sideEffectOnly) left.shouldKeepValue(usageCount) || right.shouldKeepValue(usageCount) else true
-            is KtIfExpression -> if (sideEffectOnly) condition.shouldKeepValue(usageCount) || then.shouldKeepValue(usageCount) || `else`.shouldKeepValue(
-                usageCount
-            ) else true
+            is KtArrayAccessExpression -> !sideEffectOnly ||
+                    arrayExpression.shouldKeepValue(usageCount) ||
+                    indexExpressions.any { it.shouldKeepValue(usageCount) }
+
+            is KtBinaryExpression -> !sideEffectOnly || left.shouldKeepValue(usageCount) || right.shouldKeepValue(usageCount)
+            is KtIfExpression -> !sideEffectOnly ||
+                    condition.shouldKeepValue(usageCount) ||
+                    then.shouldKeepValue(usageCount) ||
+                    `else`.shouldKeepValue(usageCount)
+
             is KtBinaryExpressionWithTypeRHS -> !(sideEffectOnly && left.isNull())
             is KtClassLiteralExpression -> false
             is KtCallableReferenceExpression -> false
