@@ -520,6 +520,13 @@ __attribute__((swift_name("JsonConfiguration")))
 @end;
 
 __attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("MoreTrickyChars")))
+@interface KtMoreTrickyChars : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer)) __attribute__((deprecated("'\"\\@$(){}\r\n")));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("Kt39206Kt")))
 @interface KtKt39206Kt : KtBase
 + (int32_t)myFunc __attribute__((swift_name("myFunc()"))) __attribute__((deprecated("Don't call this\nPlease")));

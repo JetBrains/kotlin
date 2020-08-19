@@ -1234,7 +1234,23 @@ private fun Deprecation.toDeprecationAttribute(): String {
     // TODO: consider avoiding code generation for unavailable.
 
     val message = this.message.orEmpty()
-            .replace("\n", "\\n")
 
-    return "$attribute(\"$message\")"
+    return "$attribute(${quoteAsCStringLiteral(message)})"
+}
+
+private fun quoteAsCStringLiteral(str: String): String = buildString {
+    append('"')
+    for (c in str) {
+        when (c) {
+            '\n' -> append("\\n")
+
+            '\r' -> append("\\r")
+
+            '"', '\\' -> append('\\').append(c)
+
+            // TODO: handle more special cases.
+            else -> append(c)
+        }
+    }
+    append('"')
 }

@@ -12,3 +12,6 @@ fun myFunc() = 17
                 "'Json(MyJsonConfiguration.copy(prettyPrint = true))' can be replaced with 'Json(from = MyApplicationJson) { prettyPrint = true }'"
 )
 public open class JsonConfiguration
+
+@Deprecated("'\"\\@\$(){}\r\n")
+class MoreTrickyChars
