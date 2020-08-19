@@ -118,4 +118,11 @@ abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTo
         check(this is KtSymbolBasedReference) { "To get reference symbol the one should be KtSymbolBasedReference but was ${this::class}" }
         return resolveToSymbols().singleOrNull()
     }
+
+    abstract fun resolveAndCheckReceivers(
+        firSymbolForCandidate: KtCallableSymbol,
+        originalFile: KtFile,
+        nameExpression: KtSimpleNameExpression,
+        possibleReceiver: KtExpression?,
+    ): Boolean
 }

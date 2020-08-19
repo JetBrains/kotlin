@@ -83,6 +83,11 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             runTest("testData/basic/common/ComponentFunction.kt");
         }
 
+        @TestMetadata("ConsiderExtensionType.kt")
+        public void testConsiderExtensionType() throws Exception {
+            runTest("idea/idea-completion/testData/basic/common/ConsiderExtensionType.kt");
+        }
+
         @TestMetadata("CoroutineContext.kt")
         public void testCoroutineContext() throws Exception {
             runTest("testData/basic/common/CoroutineContext.kt");
@@ -183,6 +188,11 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             runTest("testData/basic/common/ExtensionWithManyTypeParamsInReceiver.kt");
         }
 
+        @TestMetadata("ExtensionsWithTypeParameterConstraints.kt")
+        public void testExtensionsWithTypeParameterConstraints() throws Exception {
+            runTest("idea/idea-completion/testData/basic/common/ExtensionsWithTypeParameterConstraints.kt");
+        }
+
         @TestMetadata("FromImports.kt")
         public void testFromImports() throws Exception {
             runTest("testData/basic/common/FromImports.kt");
@@ -196,6 +206,11 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         @TestMetadata("FunctionVariableCallArgument.kt")
         public void testFunctionVariableCallArgument() throws Exception {
             runTest("testData/basic/common/FunctionVariableCallArgument.kt");
+        }
+
+        @TestMetadata("GenericCompanionExtension.kt")
+        public void testGenericCompanionExtension() throws Exception {
+            runTest("idea/idea-completion/testData/basic/common/GenericCompanionExtension.kt");
         }
 
         @TestMetadata("GenericExtensionFunReceiver1.kt")
