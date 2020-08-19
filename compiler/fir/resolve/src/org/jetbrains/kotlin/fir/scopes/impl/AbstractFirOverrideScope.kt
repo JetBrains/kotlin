@@ -72,6 +72,7 @@ abstract class AbstractFirOverrideScope(
         FirSimpleFunctionBuilder().apply {
             source = firSimpleFunction.source
             session = firSimpleFunction.session
+            resolvePhase = firSimpleFunction.resolvePhase
             origin = FirDeclarationOrigin.FakeOverride
             returnTypeRef = firSimpleFunction.returnTypeRef
             receiverTypeRef = firSimpleFunction.receiverTypeRef
@@ -84,6 +85,7 @@ abstract class AbstractFirOverrideScope(
         FirValueParameterBuilder().apply {
             source = parameter.source
             session = parameter.session
+            resolvePhase = parameter.resolvePhase
             origin = FirDeclarationOrigin.FakeOverride
             returnTypeRef = parameter.returnTypeRef
             name = parameter.name
@@ -101,6 +103,7 @@ abstract class AbstractFirOverrideScope(
         FirPropertyBuilder().apply {
             source = firProperty.source
             session = firProperty.session
+            resolvePhase = firProperty.resolvePhase
             origin = FirDeclarationOrigin.FakeOverride
             returnTypeRef = firProperty.returnTypeRef
             receiverTypeRef = firProperty.receiverTypeRef

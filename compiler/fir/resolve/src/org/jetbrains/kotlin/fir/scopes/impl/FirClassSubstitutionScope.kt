@@ -327,6 +327,7 @@ class FirClassSubstitutionScope(
                 buildValueParameter {
                     source = valueParameter.source
                     this.session = session
+                    resolvePhase = valueParameter.resolvePhase
                     origin = FirDeclarationOrigin.FakeOverride
                     returnTypeRef = valueParameter.returnTypeRef.withReplacedConeType(newType)
                     name = valueParameter.name
@@ -452,6 +453,7 @@ class FirClassSubstitutionScope(
                 source = baseField.source
                 this.session = session
                 origin = FirDeclarationOrigin.FakeOverride
+                resolvePhase = baseField.resolvePhase
                 returnTypeRef = baseField.returnTypeRef.withReplacedConeType(newReturnType)
                 name = baseField.name
                 this.symbol = symbol
