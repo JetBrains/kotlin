@@ -652,6 +652,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 runTest("testData/refactoring/inline/function/fromJavaToKotlin/constructorCall.kt");
             }
 
+            @TestMetadata("constructorCallInSuperClass.kt")
+            public void testConstructorCallInSuperClass() throws Exception {
+                runTest("testData/refactoring/inline/function/fromJavaToKotlin/constructorCallInSuperClass.kt");
+            }
+
             @TestMetadata("delegateStaticToStaticField.kt")
             public void testDelegateStaticToStaticField() throws Exception {
                 runTest("testData/refactoring/inline/function/fromJavaToKotlin/delegateStaticToStaticField.kt");
