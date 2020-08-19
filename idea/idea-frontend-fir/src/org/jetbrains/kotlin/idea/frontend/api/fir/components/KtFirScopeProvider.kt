@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractSimpleImportingScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractStarImportingScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
-import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
+import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.idea.fir.getOrBuildFirOfType
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
@@ -155,6 +152,7 @@ internal class KtFirScopeProvider(
             is FirAbstractStarImportingScope -> KtFirStarImportingScope(firScope, builder, project, token)
             is FirPackageMemberScope -> KtFirPackageScope(firScope, project, builder, token)
             is FirContainingNamesAwareScope -> KtFirDelegatingScopeImpl(firScope, builder, token)
+            is FirMemberTypeParameterScope -> KtFirMemberTypeParameterStubbingScope(firScope, token)
             else -> TODO(firScope::class.toString())
         }
     }
