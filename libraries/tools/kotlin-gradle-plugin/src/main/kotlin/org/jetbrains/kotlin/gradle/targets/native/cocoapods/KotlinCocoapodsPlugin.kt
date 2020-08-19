@@ -213,8 +213,8 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                     interop.packageName = "cocoapods.${pod.moduleName}"
 
 
-                    if (//TODO ychernyshev improve first check
-                        isAvailableToProduceSynthetic()
+                    if (
+                        isAvailableToProduceSynthetic
                         && project.findProperty(TARGET_PROPERTY) == null
                         && project.findProperty(CONFIGURATION_PROPERTY) == null
                     ) {
@@ -239,8 +239,8 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                         // Since we cannot expand the configuration phase of interop tasks
                         // receiving the required environment variables happens on execution phase.
                         // TODO This needs to be fixed to improve UP-TO-DATE checks.
-                        if (// TODO ychernyshev improve first check
-                            isAvailableToProduceSynthetic()
+                        if (
+                            isAvailableToProduceSynthetic
                             && project.findProperty(TARGET_PROPERTY) == null
                             && project.findProperty(CONFIGURATION_PROPERTY) == null
                         ) {
@@ -305,6 +305,8 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             it.group = TASK_GROUP
             it.description = "Invokes `pod install` call within Podfile location directory"
             it.cocoapodsExtension = cocoapodsExtension
+            it.onlyIf { isAvailableToProduceSynthetic }
+
             //TODO avoid subproject task management here
             project.allprojects.map { it.tasks.named(POD_SPEC_TASK_NAME, PodspecTask::class.java) }
                 .forEach { podspecTaskProvider ->
@@ -328,6 +330,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 it.kotlinNativeTarget = target
                 it.cocoapodsExtension = cocoapodsExtension
                 it.dependsOn(podspecTaskProvider)
+                it.onlyIf { isAvailableToProduceSynthetic }
             }
         }
     }
@@ -352,6 +355,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 val podGenTaskProvider = project.tasks.named(target.toPodGenTaskName, PodGenTask::class.java)
                 it.podsXcodeProjDirProvider = podGenTaskProvider.get().podsXcodeProjDirProvider
                 it.dependsOn(podGenTaskProvider)
+                it.onlyIf { isAvailableToProduceSynthetic }
             }
         }
     }
@@ -374,6 +378,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 it.podsXcodeProjDirProvider = podSetupBuildTaskProvider.get().podsXcodeProjDirProvider
                 it.buildSettingsFileProvider = podSetupBuildTaskProvider.get().buildSettingsFileProvider
                 it.dependsOn(podSetupBuildTaskProvider)
+                it.onlyIf { isAvailableToProduceSynthetic }
             }
         }
     }
@@ -388,6 +393,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             it.group = TASK_GROUP
             it.description = "Called on Gradle sync, depends on Cinterop tasks for every used pod"
             it.dependsOn(podInstallTaskProvider)
+            it.onlyIf { isAvailableToProduceSynthetic }
 
             kotlinExtension.supportedTargets().all { target ->
                 target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).cinterops.all { interop ->
@@ -408,13 +414,14 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             registerDummyFrameworkTask(project, cocoapodsExtension)
             createSyncTask(project, kotlinExtension)
             registerPodspecTask(project, cocoapodsExtension)
-            if (isAvailableToProduceSynthetic()) {
-                registerPodGenTask(project, kotlinExtension, cocoapodsExtension)
-                registerPodInstallTask(project, cocoapodsExtension)
-                registerPodSetupBuildTasks(project, kotlinExtension, cocoapodsExtension)
-                registerPodBuildTasks(project, kotlinExtension, cocoapodsExtension)
-                registerPodImportTask(project, kotlinExtension)
-            } else {
+
+            registerPodGenTask(project, kotlinExtension, cocoapodsExtension)
+            registerPodInstallTask(project, cocoapodsExtension)
+            registerPodSetupBuildTasks(project, kotlinExtension, cocoapodsExtension)
+            registerPodBuildTasks(project, kotlinExtension, cocoapodsExtension)
+            registerPodImportTask(project, kotlinExtension)
+
+            if (HostManager.hostIsMac && !isAvailableToProduceSynthetic) {
                 logger.quiet(
                     """
                     To take advantage of the new functionality for Cocoapods Integration like synchronizing with the Xcode project 
@@ -457,13 +464,17 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         const val KOTLIN_TARGET_FOR_IOS_DEVICE = "ios_arm"
         const val KOTLIN_TARGET_FOR_WATCHOS_DEVICE = "watchos_arm"
 
-        fun isAvailableToProduceSynthetic(): Boolean {
+        val isAvailableToProduceSynthetic: Boolean by lazy {
+            if (!HostManager.hostIsMac) {
+                return@lazy false
+            }
+
             val gemListProcess = ProcessBuilder("gem", "list").start()
             val gemListRetCode = gemListProcess.waitFor()
             val gemListOutput = gemListProcess.inputStream.use {
                 it.reader().readText()
             }
-            return gemListRetCode == 0 && gemListOutput.contains("cocoapods-generate")
+            gemListRetCode == 0 && gemListOutput.contains("cocoapods-generate")
         }
     }
 }
