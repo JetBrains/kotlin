@@ -33,43 +33,11 @@ class BuiltInFictitiousFunctionClassFactory(
         private val storageManager: StorageManager,
         private val module: ModuleDescriptor
 ) : ClassDescriptorFactory {
-
-    private data class KindWithArity(val kind: FunctionClassKind, val arity: Int)
-
-    companion object {
-        private fun parseClassName(className: String, packageFqName: FqName): KindWithArity? {
-            val kind = FunctionClassKind.byClassNamePrefix(packageFqName, className) ?: return null
-
-            val prefix = kind.classNamePrefix
-
-            val arity = toInt(className.substring(prefix.length)) ?: return null
-
-            // TODO: validate arity, should be <= 255
-            return KindWithArity(kind, arity)
-        }
-
-        @JvmStatic
-        fun getFunctionalClassKind(className: String, packageFqName: FqName) =
-                parseClassName(className, packageFqName)?.kind
-
-        private fun toInt(s: String): Int? {
-            if (s.isEmpty()) return null
-
-            var result = 0
-            for (c in s) {
-                val d = c - '0'
-                if (d !in 0..9) return null
-                result = result * 10 + d
-            }
-            return result
-        }
-    }
-
     override fun shouldCreateClass(packageFqName: FqName, name: Name): Boolean {
         val string = name.asString()
         return (string.startsWith("Function") || string.startsWith("KFunction") ||
                 string.startsWith("SuspendFunction") || string.startsWith("KSuspendFunction")) // an optimization
-               && parseClassName(string, packageFqName) != null
+               && FunctionClassKind.parseClassName(string, packageFqName) != null
     }
 
     override fun createClass(classId: ClassId): ClassDescriptor? {
@@ -79,7 +47,7 @@ class BuiltInFictitiousFunctionClassFactory(
         if ("Function" !in className) return null // An optimization
 
         val packageFqName = classId.packageFqName
-        val (kind, arity) = parseClassName(className, packageFqName) ?: return null
+        val (kind, arity) = FunctionClassKind.parseClassName(className, packageFqName) ?: return null
 
 
         val builtInsFragments = module.getPackage(packageFqName).fragments.filterIsInstance<BuiltInsPackageFragment>()

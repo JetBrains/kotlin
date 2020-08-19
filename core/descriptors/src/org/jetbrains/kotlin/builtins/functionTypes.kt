@@ -125,7 +125,7 @@ fun DeclarationDescriptor.getFunctionalClassKind(): FunctionClassKind? {
 private fun FqNameUnsafe.getFunctionalClassKind(): FunctionClassKind? {
     if (!isSafe || isRoot) return null
 
-    return BuiltInFictitiousFunctionClassFactory.getFunctionalClassKind(shortName().asString(), toSafe().parent())
+    return FunctionClassKind.getFunctionalClassKind(shortName().asString(), toSafe().parent())
 }
 
 

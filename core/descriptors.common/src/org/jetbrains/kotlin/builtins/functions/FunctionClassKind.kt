@@ -20,5 +20,34 @@ enum class FunctionClassKind(val packageFqName: FqName, val classNamePrefix: Str
     companion object {
         fun byClassNamePrefix(packageFqName: FqName, className: String): FunctionClassKind? =
             values().firstOrNull { it.packageFqName == packageFqName && className.startsWith(it.classNamePrefix) }
+
+        data class KindWithArity(val kind: FunctionClassKind, val arity: Int)
+
+        fun parseClassName(className: String, packageFqName: FqName): KindWithArity? {
+            val kind = byClassNamePrefix(packageFqName, className) ?: return null
+
+            val prefix = kind.classNamePrefix
+
+            val arity = toInt(className.substring(prefix.length)) ?: return null
+
+            // TODO: validate arity, should be <= 255
+            return KindWithArity(kind, arity)
+        }
+
+        @JvmStatic
+        fun getFunctionalClassKind(className: String, packageFqName: FqName) =
+            parseClassName(className, packageFqName)?.kind
+
+        private fun toInt(s: String): Int? {
+            if (s.isEmpty()) return null
+
+            var result = 0
+            for (c in s) {
+                val d = c - '0'
+                if (d !in 0..9) return null
+                result = result * 10 + d
+            }
+            return result
+        }
     }
 }
