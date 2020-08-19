@@ -229,8 +229,18 @@ $ ./gradlew backend.native:tests:runExternal -Ptest_two_stage=true 2>&1 | tee lo
 
 ## LLVM
 
-See [BUILDING_LLVM.md](BUILDING_LLVM.md) if you want to use your own LLVM distribution
+See [BUILDING_LLVM.md](BUILDING_LLVM.md) if you want to build and use your own LLVM distribution
 instead of provided one.
+
+### Using different LLVM distributions as part of Kotlin/Native compilation pipeline.
+
+`llvmHome.<HOST_NAME>` variable in `<distribution_location>/konan/konan.properties` controls 
+which LLVM distribution Kotlin/Native will use in its compilation pipeline. 
+You can replace its value with either `$llvm.<HOST_NAME>.{dev, user}` to use one of predefined distributions
+or pass an absolute to your own distribution. 
+Don't forget to set `llvmVersion.<HOST_NAME>` to the version of your LLVM distribution.
+
+### Playing with compilation pipeline.
 
 Following compiler phases control different parts of LLVM pipeline:
 1. `LinkBitcodeDependencies`. Linkage of produced bitcode with runtime and some other dependencies.
