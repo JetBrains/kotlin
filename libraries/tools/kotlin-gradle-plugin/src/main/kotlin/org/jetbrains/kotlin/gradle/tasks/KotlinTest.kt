@@ -14,6 +14,7 @@ import org.gradle.api.tasks.testing.AbstractTestTask
 import org.gradle.process.internal.ExecHandleFactory
 import org.jetbrains.kotlin.gradle.internal.testing.KotlinTestRunnerListener
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.utils.injected
 import javax.inject.Inject
 
@@ -61,6 +62,7 @@ abstract class KotlinTest : AbstractTestTask() {
         execHandleFactory,
         buildOperationExecutor,
         runListeners,
+        PropertiesProvider(project).ignoreTcsmOverflow,
         ignoreRunFailures
     )
 }
