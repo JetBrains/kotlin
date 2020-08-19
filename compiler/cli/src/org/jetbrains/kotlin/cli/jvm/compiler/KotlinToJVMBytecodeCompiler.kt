@@ -370,7 +370,7 @@ object KotlinToJVMBytecodeCompiler {
             val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
             val resolveTransformer = FirTotalResolveProcessor(session)
             val collector = FirDiagnosticsCollector.create(session)
-            val diagnostics = mutableListOf<FirDiagnostic<*>>()
+            val firDiagnostics = mutableListOf<FirDiagnostic<*>>()
             val firFiles = ktFiles.map {
                 val firFile = builder.buildFirFile(it)
                 firProvider.recordFile(firFile)
@@ -379,7 +379,7 @@ object KotlinToJVMBytecodeCompiler {
                 try {
                     resolveTransformer.process(firFiles)
                     firFiles.forEach {
-                        diagnostics += collector.collectDiagnostics(it)
+                        firDiagnostics += collector.collectDiagnostics(it)
                     }
                 } catch (e: Exception) {
                     throw e
@@ -387,12 +387,15 @@ object KotlinToJVMBytecodeCompiler {
             }
             AnalyzerWithCompilerReport.reportDiagnostics(
                 SimpleDiagnostics(
-                    diagnostics.map { it.toRegularDiagnostic() }
+                    firDiagnostics.map { it.toRegularDiagnostic() }
                 ),
                 environment.messageCollector
             )
-
             performanceManager?.notifyAnalysisFinished()
+
+            if (firDiagnostics.any { it.severity == Severity.ERROR }) {
+                return false
+            }
 
             performanceManager?.notifyGenerationStarted()
             val signaturer = IdSignatureDescriptor(JvmManglerDesc())
