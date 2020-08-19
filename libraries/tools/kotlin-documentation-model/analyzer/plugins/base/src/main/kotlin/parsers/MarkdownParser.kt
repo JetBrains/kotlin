@@ -280,11 +280,13 @@ class MarkdownParser(
                 MarkdownElementTypes.IMAGE -> imagesHandler(node)
                 MarkdownTokenTypes.HARD_LINE_BREAK -> DocTagsFromIElementFactory.getInstance(node.type)
                 MarkdownTokenTypes.CODE_FENCE_CONTENT,
-                MarkdownTokenTypes.CODE_LINE,
+                MarkdownTokenTypes.CODE_LINE -> DocTagsFromIElementFactory.getInstance(
+                    MarkdownTokenTypes.TEXT,
+                    body = text.substring(node.startOffset, node.endOffset)
+                )
                 MarkdownTokenTypes.TEXT -> DocTagsFromIElementFactory.getInstance(
                     MarkdownTokenTypes.TEXT,
-                    body = text
-                        .substring(node.startOffset, node.endOffset).transform()
+                    body = text.substring(node.startOffset, node.endOffset).transform()
                 )
                 MarkdownElementTypes.MARKDOWN_FILE -> if (node.children.size == 1) visitNode(node.children.first()) else defaultHandler(
                     node
@@ -339,11 +341,12 @@ class MarkdownParser(
                     children += this[index]
                 } else {
                     val startOffset = this[index].startOffset
+                    val type = this[index].type
                     while (index < this.lastIndex) {
                         if (this.isNotLeaf(index + 1) || this[index + 1].startOffset != this[index].endOffset) {
                             val endOffset = this[index].endOffset
                             if (text.substring(startOffset, endOffset).transform().trim().isNotEmpty())
-                                children += LeafASTNode(MarkdownTokenTypes.TEXT, startOffset, endOffset)
+                                children += LeafASTNode(type, startOffset, endOffset)
                             break
                         }
                         index++
@@ -351,7 +354,7 @@ class MarkdownParser(
                     if (index == this.lastIndex) {
                         val endOffset = this[index].endOffset
                         if (text.substring(startOffset, endOffset).transform().trim().isNotEmpty())
-                            children += LeafASTNode(MarkdownTokenTypes.TEXT, startOffset, endOffset)
+                            children += LeafASTNode(type, startOffset, endOffset)
                     }
                 }
                 index++
