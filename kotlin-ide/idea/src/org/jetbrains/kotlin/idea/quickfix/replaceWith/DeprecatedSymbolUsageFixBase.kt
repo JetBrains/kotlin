@@ -12,7 +12,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -80,7 +80,7 @@ abstract class DeprecatedSymbolUsageFixBase(
             contextElement: KtReferenceExpression?,
             replaceInWholeProject: Boolean
         ): ReplaceWith? {
-            val annotation = descriptor.annotations.findAnnotation(KotlinBuiltInsNames.FqNames.deprecated) ?: return null
+            val annotation = descriptor.annotations.findAnnotation(StandardNames.FqNames.deprecated) ?: return null
             val replaceWithValue =
                 annotation.argumentValue(Deprecated::replaceWith.name)?.safeAs<AnnotationValue>()?.value ?: return null
             val pattern = replaceWithValue.argumentValue(kotlin.ReplaceWith::expression.name)?.safeAs<StringValue>()?.value ?: return null

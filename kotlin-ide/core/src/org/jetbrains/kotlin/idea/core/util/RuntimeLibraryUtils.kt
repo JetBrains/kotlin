@@ -9,14 +9,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled
 
 fun getKotlinJvmRuntimeMarkerClass(project: Project, scope: GlobalSearchScope): PsiClass? {
     return runReadAction {
         project.runWithAlternativeResolveEnabled {
-            JavaPsiFacade.getInstance(project).findClass(KotlinBuiltInsNames.FqNames.unit.asString(), scope)
+            JavaPsiFacade.getInstance(project).findClass(StandardNames.FqNames.unit.asString(), scope)
         }
     }
 }

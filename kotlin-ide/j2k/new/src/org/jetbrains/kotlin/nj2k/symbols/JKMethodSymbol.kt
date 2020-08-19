@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.nj2k.symbols
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReference
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.nj2k.tree.JKClass
@@ -72,7 +72,7 @@ class JKMultiverseFunctionSymbol(
             type?.let {
                 if (parameter.isVarArg) {
                     JKClassType(
-                        symbolProvider.provideClassSymbol(KotlinBuiltInsNames.FqNames.array.toSafe()),
+                        symbolProvider.provideClassSymbol(StandardNames.FqNames.array.toSafe()),
                         listOf(it)
                     )
                 } else it

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.nj2k.inference.mutability
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.FqNames
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.nj2k.inference.common.*

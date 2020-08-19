@@ -12,6 +12,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -63,7 +64,7 @@ fun KtDotQualifiedExpression.hasNotReceiver(): Boolean {
 }
 
 val KtExpression.isUnitLiteral: Boolean
-    get() = KotlinBuiltInsNames.FqNames.unit.shortName() == (this as? KtNameReferenceExpression)?.getReferencedNameAsName()
+    get() = StandardNames.FqNames.unit.shortName() == (this as? KtNameReferenceExpression)?.getReferencedNameAsName()
 
 val PsiElement.isAnonymousFunction: Boolean get() = this is KtNamedFunction && isAnonymousFunction
 

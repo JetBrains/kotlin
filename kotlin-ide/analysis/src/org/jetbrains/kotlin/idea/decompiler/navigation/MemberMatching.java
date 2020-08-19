@@ -24,7 +24,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames;
+import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
@@ -75,7 +75,7 @@ public class MemberMatching {
 
             @Override
             public String visitFunctionType(@NotNull KtFunctionType type, Void data) {
-                return KotlinBuiltInsNames.getFunctionName(type.getParameters().size() + (type.getReceiverTypeReference() != null ? 1 : 0));
+                return StandardNames.getFunctionName(type.getParameters().size() + (type.getReceiverTypeReference() != null ? 1 : 0));
             }
 
             @Override

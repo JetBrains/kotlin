@@ -25,7 +25,7 @@ import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.annotations.CalledInBackground
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.actions.internal.refactoringTesting.readAction
@@ -299,7 +299,7 @@ fun hasKotlinJsRuntimeInScope(module: Module): Boolean {
 }
 
 fun hasKotlinCommonRuntimeInScope(scope: GlobalSearchScope): Boolean {
-    return IDEVirtualFileFinder(scope).hasMetadataPackage(KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAME)
+    return IDEVirtualFileFinder(scope).hasMetadataPackage(StandardNames.BUILT_INS_PACKAGE_FQ_NAME)
 }
 
 class LibraryKindSearchScope(

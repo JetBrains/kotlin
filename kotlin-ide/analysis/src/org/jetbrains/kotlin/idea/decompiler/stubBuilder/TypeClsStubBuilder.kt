@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionClass
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.utils.doNothing
 import java.util.*
 
 // TODO: see DescriptorRendererOptions.excludedTypeAnnotationClasses for decompiler
-private val ANNOTATIONS_NOT_LOADED_FOR_TYPES = setOf(KotlinBuiltInsNames.FqNames.parameterName)
+private val ANNOTATIONS_NOT_LOADED_FOR_TYPES = setOf(StandardNames.FqNames.parameterName)
 
 class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     fun createTypeReferenceStub(
@@ -95,7 +95,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         val shouldBuildAsFunctionType = isBuiltinFunctionClass(classId) && type.argumentList.none { it.projection == Projection.STAR }
         if (shouldBuildAsFunctionType) {
             val (extensionAnnotations, notExtensionAnnotations) = annotations.partition {
-                it.classId.asSingleFqName() == KotlinBuiltInsNames.FqNames.extensionFunctionType
+                it.classId.asSingleFqName() == StandardNames.FqNames.extensionFunctionType
             }
 
             val isExtension = extensionAnnotations.isNotEmpty()
@@ -194,8 +194,8 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                     val classId = c.nameResolver.getClassId(parameterType.className)
                     val fqName = classId.asSingleFqName()
                     assert(
-                        fqName == KotlinBuiltInsNames.CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL
-                                || fqName == KotlinBuiltInsNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE
+                        fqName == StandardNames.CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL
+                                || fqName == StandardNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE
                     ) {
                         "Last parameter type of suspend function must be Continuation, but it is $fqName"
                     }
@@ -337,7 +337,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
     private fun Type.isDefaultUpperBound(): Boolean {
         return this.hasClassName() &&
-                c.nameResolver.getClassId(className).let { KotlinBuiltInsNames.FqNames.any == it.asSingleFqName().toUnsafe() } &&
+                c.nameResolver.getClassId(className).let { StandardNames.FqNames.any == it.asSingleFqName().toUnsafe() } &&
                 this.nullable
     }
 }

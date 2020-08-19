@@ -9,7 +9,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiDocCommentOwner
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
@@ -71,7 +71,7 @@ abstract class DeclarationLookupObjectImpl(
 fun isDeprecatedAtCallSite(descriptor: DeclarationDescriptor, languageVersionSettings: () -> LanguageVersionSettings?): Boolean {
     if (!KotlinBuiltIns.isDeprecated(descriptor)) return false
 
-    val annotation = descriptor.original.annotations.findAnnotation(KotlinBuiltInsNames.FqNames.deprecatedSinceKotlin) ?: return true
+    val annotation = descriptor.original.annotations.findAnnotation(StandardNames.FqNames.deprecatedSinceKotlin) ?: return true
 
     //only from here we probably need languageVersionSettings, which evaluation could be costly
     val hiddenSince = annotation.getSinceVersion("hiddenSince")

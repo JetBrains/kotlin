@@ -9,7 +9,7 @@ import com.intellij.psi.CommonClassNames
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiType
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
@@ -119,7 +119,7 @@ fun JKType.isStringType(): Boolean =
 
 fun JKClassSymbol.isStringType(): Boolean =
     fqName == CommonClassNames.JAVA_LANG_STRING
-            || fqName == KotlinBuiltInsNames.FqNames.string.asString()
+            || fqName == StandardNames.FqNames.string.asString()
 
 fun JKJavaPrimitiveType.toLiteralType(): JKLiteralExpression.LiteralType? =
     when (this) {
@@ -137,14 +137,14 @@ fun JKJavaPrimitiveType.toLiteralType(): JKLiteralExpression.LiteralType? =
 fun JKType.asPrimitiveType(): JKJavaPrimitiveType? =
     if (this is JKJavaPrimitiveType) this
     else when ((this as? JKClassType)?.classReference?.fqName) {
-        KotlinBuiltInsNames.FqNames._char.asString(), CommonClassNames.JAVA_LANG_CHARACTER -> JKJavaPrimitiveType.CHAR
-        KotlinBuiltInsNames.FqNames._boolean.asString(), CommonClassNames.JAVA_LANG_BOOLEAN -> JKJavaPrimitiveType.BOOLEAN
-        KotlinBuiltInsNames.FqNames._int.asString(), CommonClassNames.JAVA_LANG_INTEGER -> JKJavaPrimitiveType.INT
-        KotlinBuiltInsNames.FqNames._long.asString(), CommonClassNames.JAVA_LANG_LONG -> JKJavaPrimitiveType.LONG
-        KotlinBuiltInsNames.FqNames._float.asString(), CommonClassNames.JAVA_LANG_FLOAT -> JKJavaPrimitiveType.FLOAT
-        KotlinBuiltInsNames.FqNames._double.asString(), CommonClassNames.JAVA_LANG_DOUBLE -> JKJavaPrimitiveType.DOUBLE
-        KotlinBuiltInsNames.FqNames._byte.asString(), CommonClassNames.JAVA_LANG_BYTE -> JKJavaPrimitiveType.BYTE
-        KotlinBuiltInsNames.FqNames._short.asString(), CommonClassNames.JAVA_LANG_SHORT -> JKJavaPrimitiveType.SHORT
+        StandardNames.FqNames._char.asString(), CommonClassNames.JAVA_LANG_CHARACTER -> JKJavaPrimitiveType.CHAR
+        StandardNames.FqNames._boolean.asString(), CommonClassNames.JAVA_LANG_BOOLEAN -> JKJavaPrimitiveType.BOOLEAN
+        StandardNames.FqNames._int.asString(), CommonClassNames.JAVA_LANG_INTEGER -> JKJavaPrimitiveType.INT
+        StandardNames.FqNames._long.asString(), CommonClassNames.JAVA_LANG_LONG -> JKJavaPrimitiveType.LONG
+        StandardNames.FqNames._float.asString(), CommonClassNames.JAVA_LANG_FLOAT -> JKJavaPrimitiveType.FLOAT
+        StandardNames.FqNames._double.asString(), CommonClassNames.JAVA_LANG_DOUBLE -> JKJavaPrimitiveType.DOUBLE
+        StandardNames.FqNames._byte.asString(), CommonClassNames.JAVA_LANG_BYTE -> JKJavaPrimitiveType.BYTE
+        StandardNames.FqNames._short.asString(), CommonClassNames.JAVA_LANG_SHORT -> JKJavaPrimitiveType.SHORT
         else -> null
     }
 
@@ -170,7 +170,7 @@ val primitiveTypes =
 fun JKType.arrayFqName(): String =
     if (this is JKJavaPrimitiveType)
         PrimitiveType.valueOf(jvmPrimitiveType.name).arrayTypeFqName.asString()
-    else KotlinBuiltInsNames.FqNames.array.asString()
+    else StandardNames.FqNames.array.asString()
 
 fun JKClassSymbol.isArrayType(): Boolean =
     fqName in arrayFqNames
@@ -178,7 +178,7 @@ fun JKClassSymbol.isArrayType(): Boolean =
 @OptIn(ExperimentalStdlibApi::class)
 private val arrayFqNames = buildList {
     JKJavaPrimitiveType.ALL.mapTo(this) { PrimitiveType.valueOf(it.jvmPrimitiveType.name).arrayTypeFqName.asString() }
-    add(KotlinBuiltInsNames.FqNames.array.asString())
+    add(StandardNames.FqNames.array.asString())
 }
 
 fun JKType.isArrayType() =
@@ -189,19 +189,19 @@ fun JKType.isArrayType() =
     }
 
 fun JKType.isUnit() =
-    safeAs<JKClassType>()?.classReference?.fqName == KotlinBuiltInsNames.FqNames.unit.asString()
+    safeAs<JKClassType>()?.classReference?.fqName == StandardNames.FqNames.unit.asString()
 
 val JKType.isCollectionType: Boolean
     get() = safeAs<JKClassType>()?.classReference?.fqName in collectionFqNames
 
 private val collectionFqNames = setOf(
-    KotlinBuiltInsNames.FqNames.mutableIterator.asString(),
-    KotlinBuiltInsNames.FqNames.mutableList.asString(),
-    KotlinBuiltInsNames.FqNames.mutableCollection.asString(),
-    KotlinBuiltInsNames.FqNames.mutableSet.asString(),
-    KotlinBuiltInsNames.FqNames.mutableMap.asString(),
-    KotlinBuiltInsNames.FqNames.mutableMapEntry.asString(),
-    KotlinBuiltInsNames.FqNames.mutableListIterator.asString()
+    StandardNames.FqNames.mutableIterator.asString(),
+    StandardNames.FqNames.mutableList.asString(),
+    StandardNames.FqNames.mutableCollection.asString(),
+    StandardNames.FqNames.mutableSet.asString(),
+    StandardNames.FqNames.mutableMap.asString(),
+    StandardNames.FqNames.mutableMapEntry.asString(),
+    StandardNames.FqNames.mutableListIterator.asString()
 )
 
 fun JKType.arrayInnerType(): JKType? =
@@ -231,7 +231,7 @@ fun JKType.replaceJavaClassWithKotlinClassType(symbolProvider: JKSymbolProvider)
     applyRecursive { type ->
         if (type is JKClassType && type.classReference.fqName == "java.lang.Class") {
             JKClassType(
-                symbolProvider.provideClassSymbol(KotlinBuiltInsNames.FqNames.kClass.toSafe()),
+                symbolProvider.provideClassSymbol(StandardNames.FqNames.kClass.toSafe()),
                 type.parameters.map { it.replaceJavaClassWithKotlinClassType(symbolProvider) },
                 Nullability.NotNull
             )
