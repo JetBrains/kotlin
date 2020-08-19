@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.idea.completion
 
 import com.intellij.codeInsight.completion.*
-import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PsiJavaPatterns
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.idea.frontend.api.getAnalysisSessionFor
-import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtPossibleExtensionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.isExtension
@@ -30,11 +30,39 @@ class KotlinFirCompletionContributor : CompletionContributor() {
 }
 
 private object KotlinHighLevelApiContributor : CompletionProvider<CompletionParameters>() {
-    private val lookupElementFactory = HighLevelApiLookupElementFactory()
-
     override fun addCompletions(parameters: CompletionParameters, context: ProcessingContext, result: CompletionResultSet) {
         if (shouldSuppressCompletion(parameters, result.prefixMatcher)) return
 
+        KotlinAvailableScopesCompletionContributor.collectCompletions(parameters, result)
+    }
+
+    private val AFTER_NUMBER_LITERAL = PsiJavaPatterns.psiElement().afterLeafSkipping(
+        PsiJavaPatterns.psiElement().withText(""),
+        PsiJavaPatterns.psiElement().withElementType(PsiJavaPatterns.elementType().oneOf(KtTokens.FLOAT_LITERAL, KtTokens.INTEGER_LITERAL))
+    )
+    private val AFTER_INTEGER_LITERAL_AND_DOT = PsiJavaPatterns.psiElement().afterLeafSkipping(
+        PsiJavaPatterns.psiElement().withText("."),
+        PsiJavaPatterns.psiElement().withElementType(PsiJavaPatterns.elementType().oneOf(KtTokens.INTEGER_LITERAL))
+    )
+
+    private fun shouldSuppressCompletion(parameters: CompletionParameters, prefixMatcher: PrefixMatcher): Boolean {
+        val position = parameters.position
+        val invocationCount = parameters.invocationCount
+
+        // no completion inside number literals
+        if (AFTER_NUMBER_LITERAL.accepts(position)) return true
+
+        // no completion auto-popup after integer and dot
+        if (invocationCount == 0 && prefixMatcher.prefix.isEmpty() && AFTER_INTEGER_LITERAL_AND_DOT.accepts(position)) return true
+
+        return false
+    }
+}
+
+private object KotlinAvailableScopesCompletionContributor {
+    private val lookupElementFactory = HighLevelApiLookupElementFactory()
+
+    fun collectCompletions(parameters: CompletionParameters, result: CompletionResultSet) {
         val originalFile = parameters.originalFile as? KtFile ?: return
 
         val reference = (parameters.position.parent as? KtSimpleNameExpression)?.mainReference ?: return
@@ -46,7 +74,7 @@ private object KotlinHighLevelApiContributor : CompletionProvider<CompletionPara
             val (implicitScopes, implicitReceivers) = originalFile.getScopeContextForPosition(parameters.originalPosition, nameExpression)
 
             val typeOfPossibleReceiver = possibleReceiver?.getKtType()
-            val possibleReceiverScope = typeOfPossibleReceiver?.let { it.getTypeScope() }
+            val possibleReceiverScope = typeOfPossibleReceiver?.getTypeScope()
 
             fun addToCompletion(symbol: KtSymbol) {
                 if (symbol !is KtNamedSymbol) return
@@ -76,29 +104,6 @@ private object KotlinHighLevelApiContributor : CompletionProvider<CompletionPara
             }
         }
     }
-
-    private val AFTER_NUMBER_LITERAL = PsiJavaPatterns.psiElement().afterLeafSkipping(
-        PsiJavaPatterns.psiElement().withText(""),
-        PsiJavaPatterns.psiElement().withElementType(PsiJavaPatterns.elementType().oneOf(KtTokens.FLOAT_LITERAL, KtTokens.INTEGER_LITERAL))
-    )
-    private val AFTER_INTEGER_LITERAL_AND_DOT = PsiJavaPatterns.psiElement().afterLeafSkipping(
-        PsiJavaPatterns.psiElement().withText("."),
-        PsiJavaPatterns.psiElement().withElementType(PsiJavaPatterns.elementType().oneOf(KtTokens.INTEGER_LITERAL))
-    )
-
-    private fun shouldSuppressCompletion(parameters: CompletionParameters, prefixMatcher: PrefixMatcher): Boolean {
-        val position = parameters.position
-        val invocationCount = parameters.invocationCount
-
-        // no completion inside number literals
-        if (AFTER_NUMBER_LITERAL.accepts(position)) return true
-
-        // no completion auto-popup after integer and dot
-        if (invocationCount == 0 && prefixMatcher.prefix.isEmpty() && AFTER_INTEGER_LITERAL_AND_DOT.accepts(position)) return true
-
-        return false
-    }
-
 }
 
 private fun KtCallableSymbol.canBeCalledWith(implicitReceivers: List<KtType>): Boolean {
