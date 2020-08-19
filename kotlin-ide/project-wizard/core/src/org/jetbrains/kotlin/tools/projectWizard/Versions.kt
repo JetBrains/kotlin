@@ -15,7 +15,7 @@ object Versions {
     val JUNIT = version("4.12")
 
     object ANDROID {
-        val ANDROIDX_CORE_KTX = version("1.2.0")
+        val ANDROID_MATERIAL = version("1.2.0")
         val ANDROIDX_APPCOMPAT = version("1.2.0")
         val ANDROIDX_CONSTRAINTLAYOUT = version("1.1.3")
     }
