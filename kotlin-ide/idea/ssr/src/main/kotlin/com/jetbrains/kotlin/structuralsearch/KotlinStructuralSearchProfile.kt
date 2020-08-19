@@ -168,7 +168,7 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
 
     private fun ancestors(node: PsiElement?): List<PsiElement?> {
         val family = mutableListOf(node)
-        repeat(6) { family.add(family.last()?.parent) }
+        repeat(7) { family.add(family.last()?.parent) }
         return family.drop(1)
     }
 
@@ -195,6 +195,8 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
         return when {
             family[0] is KtClassOrObject && (family[0] as KtClass).nameIdentifier == variableNode -> true
             family[0] is KtNamedDeclaration && family[2] is KtClassOrObject -> true
+            family[3] is KtSuperTypeListEntry && family[5] is KtClassOrObject -> true
+            family[4] is KtSuperTypeListEntry && family[6] is KtClassOrObject -> true
             else -> false
         }
     }

@@ -3,6 +3,8 @@ package com.jetbrains.kotlin.structuralsearch
 import com.google.common.collect.ImmutableBiMap
 import com.intellij.psi.PsiComment
 import com.intellij.psi.tree.IElementType
+import com.intellij.structuralsearch.impl.matcher.handlers.MatchingHandler
+import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -38,3 +40,6 @@ fun String.removeTypeParameters(): String {
         this.indexOfLast { c -> c == '>' } + 1
     )
 }
+
+val MatchingHandler.withinHierarchyTextFilterSet: Boolean
+    get() = this is SubstitutionHandler && (this.isSubtype || this.isStrictSubtype)

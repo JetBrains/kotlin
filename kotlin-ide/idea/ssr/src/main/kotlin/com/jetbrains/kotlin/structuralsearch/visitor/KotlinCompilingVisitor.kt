@@ -16,6 +16,7 @@ import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import com.intellij.structuralsearch.impl.matcher.handlers.TopLevelMatchingHandler
 import com.jetbrains.kotlin.structuralsearch.getCommentText
 import com.jetbrains.kotlin.structuralsearch.handler.CommentedDeclarationHandler
+import com.jetbrains.kotlin.structuralsearch.withinHierarchyTextFilterSet
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
@@ -206,8 +207,7 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         super.visitNamedDeclaration(declaration)
 
         declaration.nameIdentifier?.let { identifier ->
-            val handler = getHandler(identifier)
-            if (handler is SubstitutionHandler && (handler.isStrictSubtype || handler.isSubtype) && declaration.parent is KtClassBody) {
+            if (getHandler(identifier).withinHierarchyTextFilterSet && declaration.parent is KtClassBody) {
                 val klass = declaration.parent.parent
                 if (klass is KtClassOrObject) {
                     klass.nameIdentifier?.putUserData(WITHIN_HIERARCHY, true)

@@ -9,6 +9,7 @@ import com.intellij.structuralsearch.impl.matcher.CompiledPattern
 import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.handlers.LiteralWithSubstitutionHandler
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
+import com.intellij.structuralsearch.impl.matcher.predicates.RegExpPredicate
 import com.intellij.util.containers.reverse
 import com.jetbrains.kotlin.structuralsearch.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlinx.serialization.compiler.resolve.toSimpleType
@@ -710,9 +712,43 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
         myMatchingVisitor.result = myMatchingVisitor.match(specifier.typeReference, other.typeReference)
     }
 
+    private fun matchTypeAgainstPredicate(
+        type: KotlinType,
+        predicate: RegExpPredicate?,
+        element: PsiElement,
+        other: PsiElement?
+    ): Boolean {
+        return type.renderNames().any { renderedType ->
+            when (predicate) {
+                null -> element.text == renderedType
+                        // Ignore type parameters if absent from the pattern
+                        || !element.text.contains('<') && element.text == renderedType.removeTypeParameters()
+                else -> predicate.doMatch(renderedType, myMatchingVisitor.matchContext, other)
+            }
+        }
+    }
+
     override fun visitSuperTypeList(list: KtSuperTypeList) {
         val other = getTreeElementDepar<KtSuperTypeList>() ?: return
-        myMatchingVisitor.result = myMatchingVisitor.matchSonsInAnyOrder(list, other)
+
+        val withinHierarchyEntries = list.entries.filter {
+            val type = it.typeReference; type is KtTypeReference && getHandler(type).withinHierarchyTextFilterSet
+        }
+        val klass = other.parent
+        if (withinHierarchyEntries.any() && klass is KtClassOrObject) {
+            val supertypes = (klass.descriptor as ClassDescriptor).toSimpleType().supertypes()
+            for (entry in withinHierarchyEntries) {
+                val typeReference = entry.typeReference ?: continue
+                val predicate = (getHandler(typeReference) as SubstitutionHandler).findRegExpPredicate()
+                if (supertypes.none { matchTypeAgainstPredicate(it, predicate, typeReference, other) }) {
+                    myMatchingVisitor.result = false
+                    return
+                }
+            }
+        }
+
+        myMatchingVisitor.result =
+            myMatchingVisitor.matchInAnyOrder(list.entries.filter { it !in withinHierarchyEntries }, other.entries)
     }
 
     override fun visitClass(klass: KtClass) {
@@ -726,7 +762,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             val identifierHandler = getHandler(identifier)
             val checkHierarchy = when {
                 // "within hierarchy" on class name
-                identifierHandler is SubstitutionHandler && (identifierHandler.isStrictSubtype || identifierHandler.isSubtype) -> true
+                identifierHandler.withinHierarchyTextFilterSet -> true
                 // "within hierarchy" on KtNamedDeclaration
                 identifier.getUserData(KotlinCompilingVisitor.WITHIN_HIERARCHY) == true -> true
                 else -> false
@@ -734,14 +770,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
             if (checkHierarchy) {
                 val predicate = (identifierHandler as? SubstitutionHandler)?.findRegExpPredicate()
-                matchNameIdentifiers = (other.descriptor as ClassDescriptor).toSimpleType().supertypes().any { type ->
-                    type.renderNames()
-                        .any {
-                            predicate?.doMatch(it, myMatchingVisitor.matchContext, other)
-                                ?: (identifier.text == it
-                                        // Ignore type parameters if absent from the pattern
-                                        || !identifier.text.contains('<') && identifier.text == it.removeTypeParameters())
-                        }
+                matchNameIdentifiers = (other.descriptor as ClassDescriptor).toSimpleType().supertypes().any {
+                    matchTypeAgainstPredicate(it, predicate, identifier, other.nameIdentifier)
                 }
             }
         }
