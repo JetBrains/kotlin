@@ -12,6 +12,7 @@ dependencies {
     compile(project(":core:type-system"))
     compile(kotlinStdlib())
     compile(project(":kotlin-annotations-jvm"))
+    api(project(":core:deserialization:deserialization.common"))
 }
 
 sourceSets {

@@ -8,8 +8,8 @@ javaHome = rootProject.extra["JDK_16"] as String
 
 dependencies {
     compile(project(":core:metadata"))
+    api(project(":core:descriptors.common"))
     compile(project(":core:util.runtime"))
-    compile(project(":core:descriptors"))
     compile(commonDep("javax.inject"))
 }
 
