@@ -226,7 +226,16 @@ abstract class ClassCodegen protected constructor(
         fun getOrCreate(
             irClass: IrClass,
             context: JvmBackendContext,
-            parentFunction: IrFunction? = null,
+            // The `parentFunction` is only set for classes nested inside of functions. This is usually safe, since there is no
+            // way to refer to (inline) members of such a class from outside of the function unless the function in question is
+            // itself declared as inline. In that case, the function will be compiled before we can refer to the nested class.
+            //
+            // The one exception to this rule are anonymous objects defined as members of a class. These are nested inside of the
+            // class initializer, but can be referred to from anywhere within the scope of the class. That's why we have to ensure
+            // that all references to classes inside of <clinit> have a non-null `parentFunction`.
+            parentFunction: IrFunction? = irClass.parent.safeAs<IrFunction>()?.takeIf {
+                it.origin == JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER
+            },
         ): ClassCodegen =
             context.classCodegens.getOrPut(irClass) {
                 context.createCodegen(irClass, context, parentFunction) ?: DescriptorBasedClassCodegen(irClass, context, parentFunction)
