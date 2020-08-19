@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyAccessorDescriptorImpl
@@ -148,7 +148,7 @@ class VarianceCheckerCore(
         if (classifierDescriptor is TypeParameterDescriptor) {
             val declarationVariance = classifierDescriptor.varianceWithManual()
             if (!declarationVariance.allowsPosition(position)
-                && !type.annotations.hasAnnotation(KotlinBuiltInsNames.FqNames.unsafeVariance)
+                && !type.annotations.hasAnnotation(StandardNames.FqNames.unsafeVariance)
             ) {
                 val varianceConflictDiagnosticData = VarianceConflictDiagnosticData(containingType, classifierDescriptor, position)
                 val diagnostic =

@@ -25,7 +25,7 @@ import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.tree.TreeScanner
 import kotlinx.kapt.KaptIgnored
 import org.jetbrains.kotlin.base.kapt3.KaptFlag
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_PARAMETER_NAME
 import org.jetbrains.kotlin.codegen.needsExperimentalCoroutinesWrapper
@@ -945,8 +945,8 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                 && kaptContext.generationState.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
 
         return when (areCoroutinesReleased) {
-            true -> KotlinBuiltInsNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE
-            false -> KotlinBuiltInsNames.CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL
+            true -> StandardNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE
+            false -> StandardNames.CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL
         }
     }
 

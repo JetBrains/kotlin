@@ -16,7 +16,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.canOmitDeclaredType
@@ -169,7 +169,7 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
         if (!declaration.hasDeclaredReturnType() && declaration is KtNamedFunction && block.statements.isNotEmpty()) {
             val valueType = value.analyze().getType(value)
             if (valueType == null || !KotlinBuiltIns.isUnit(valueType)) {
-                declaration.setType(KotlinBuiltInsNames.FqNames.unit.asString(), shortenReferences = true)
+                declaration.setType(StandardNames.FqNames.unit.asString(), shortenReferences = true)
             }
         }
 

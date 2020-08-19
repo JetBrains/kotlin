@@ -10,7 +10,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames;
+import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -500,10 +500,10 @@ public class TypeUtils {
             return longType;
         }
 
-        KotlinType uIntType = findByFqName(supertypes, KotlinBuiltInsNames.FqNames.uIntFqName);
+        KotlinType uIntType = findByFqName(supertypes, StandardNames.FqNames.uIntFqName);
         if (uIntType != null) return uIntType;
 
-        KotlinType uLongType = findByFqName(supertypes, KotlinBuiltInsNames.FqNames.uLongFqName);
+        KotlinType uLongType = findByFqName(supertypes, StandardNames.FqNames.uLongFqName);
         if (uLongType != null) return uLongType;
 
         return null;

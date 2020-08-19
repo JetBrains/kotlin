@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.deserialization
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.ClassId
 
 
-val CONTINUATION_INTERFACE_CLASS_ID = ClassId.topLevel(KotlinBuiltInsNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE)
+val CONTINUATION_INTERFACE_CLASS_ID = ClassId.topLevel(StandardNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE)

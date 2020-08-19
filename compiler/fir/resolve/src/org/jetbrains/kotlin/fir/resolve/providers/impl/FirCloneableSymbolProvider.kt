@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.name.Name
 class FirCloneableSymbolProvider(session: FirSession, scopeProvider: FirScopeProvider) : FirSymbolProvider(session) {
     companion object {
         val CLONEABLE: Name = Name.identifier("Cloneable")
-        val CLONEABLE_CLASS_ID: ClassId = ClassId(KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAME, CLONEABLE)
+        val CLONEABLE_CLASS_ID: ClassId = ClassId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, CLONEABLE)
 
         val CLONE: Name = Name.identifier("clone")
     }

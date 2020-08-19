@@ -18,7 +18,7 @@
 
 package org.jetbrains.kotlin.codegen.state
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.FqNames
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor

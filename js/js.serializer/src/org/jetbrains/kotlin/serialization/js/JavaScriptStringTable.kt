@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.js
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.name.ClassId
@@ -36,7 +36,7 @@ class JavaScriptStringTable : StringTableImpl() {
                 superClassifiers[0].classId
             } else {
                 val superClass = superClassifiers.find { !DescriptorUtils.isInterface(it) }
-                superClass?.classId ?: ClassId.topLevel(KotlinBuiltInsNames.FqNames.any.toSafe())
+                superClass?.classId ?: ClassId.topLevel(StandardNames.FqNames.any.toSafe())
             }
         } else {
             super.getLocalClassIdReplacement(descriptor)

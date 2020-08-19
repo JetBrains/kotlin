@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
@@ -38,7 +38,7 @@ object PublishedApiUsageChecker {
 
         for (entry in declaration.annotationEntries) {
             val annotationDescriptor = trace.get(BindingContext.ANNOTATION, entry) ?: continue
-            if (annotationDescriptor.fqName == KotlinBuiltInsNames.FqNames.publishedApi) {
+            if (annotationDescriptor.fqName == StandardNames.FqNames.publishedApi) {
                 trace.report(Errors.NON_INTERNAL_PUBLISHED_API.on(entry))
             }
         }

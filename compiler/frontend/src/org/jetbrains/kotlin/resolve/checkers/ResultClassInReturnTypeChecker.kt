@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
@@ -59,6 +59,6 @@ internal fun KotlinType.isResultType(): Boolean {
 private fun DeclarationDescriptor.isResultClass(): Boolean {
     val container = containingDeclaration ?: return false
     return container is PackageFragmentDescriptor &&
-            container.fqName == KotlinBuiltInsNames.RESULT_FQ_NAME.parent() &&
-            name == KotlinBuiltInsNames.RESULT_FQ_NAME.shortName()
+            container.fqName == StandardNames.RESULT_FQ_NAME.parent() &&
+            name == StandardNames.RESULT_FQ_NAME.shortName()
 }

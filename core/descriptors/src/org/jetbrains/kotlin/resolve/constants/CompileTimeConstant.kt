@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
@@ -102,7 +102,7 @@ fun createIntegerValueTypeConstant(
 }
 
 fun hasUnsignedTypesInModuleDependencies(module: ModuleDescriptor): Boolean {
-    return module.findClassAcrossModuleDependencies(KotlinBuiltInsNames.FqNames.uInt) != null
+    return module.findClassAcrossModuleDependencies(StandardNames.FqNames.uInt) != null
 }
 
 class UnsignedErrorValueTypeConstant(

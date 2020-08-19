@@ -13,7 +13,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameValuePair
 import org.jetbrains.kotlin.asJava.classes.KtUltraLightSimpleAnnotation
 import org.jetbrains.kotlin.asJava.classes.KtUltraLightSupport
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.FqNames
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ArrayValue

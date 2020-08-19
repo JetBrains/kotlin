@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.builtins.jvm
 
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
@@ -49,8 +49,8 @@ class JvmBuiltInClassDescriptorFactory(
         }
 
     companion object {
-        private val KOTLIN_FQ_NAME = KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAME
-        private val CLONEABLE_NAME = KotlinBuiltInsNames.FqNames.cloneable.shortName()
-        val CLONEABLE_CLASS_ID = ClassId.topLevel(KotlinBuiltInsNames.FqNames.cloneable.toSafe())
+        private val KOTLIN_FQ_NAME = StandardNames.BUILT_INS_PACKAGE_FQ_NAME
+        private val CLONEABLE_NAME = StandardNames.FqNames.cloneable.shortName()
+        val CLONEABLE_CLASS_ID = ClassId.topLevel(StandardNames.FqNames.cloneable.toSafe())
     }
 }

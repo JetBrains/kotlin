@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.types.Variance;
 
 import java.util.Collections;
 
-import static org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.ENUM_VALUES;
-import static org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.ENUM_VALUE_OF;
+import static org.jetbrains.kotlin.builtins.StandardNames.ENUM_VALUES;
+import static org.jetbrains.kotlin.builtins.StandardNames.ENUM_VALUE_OF;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getDefaultConstructorVisibility;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 

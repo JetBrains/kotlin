@@ -141,7 +141,7 @@ object ArrayFIF : CompositeFIF() {
     }
 
     init {
-        val arrayName = KotlinBuiltInsNames.FqNames.array.shortName()
+        val arrayName = StandardNames.FqNames.array.shortName()
 
         val arrayTypeNames = mutableListOf(arrayName)
         PrimitiveType.values().mapTo(arrayTypeNames) { it.arrayTypeName }

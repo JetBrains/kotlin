@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.utils.sure
@@ -21,7 +21,7 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
 
         val prefixes = when {
             backend.isIR -> listOf("_ir", "_1_3", "")
-            coroutinesPackage == KotlinBuiltInsNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE.asString() -> listOf("_1_3", "")
+            coroutinesPackage == StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE.asString() -> listOf("_1_3", "")
             else -> listOf("")
         }
 

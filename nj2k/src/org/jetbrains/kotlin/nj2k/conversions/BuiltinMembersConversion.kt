@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.nj2k.*
 import org.jetbrains.kotlin.nj2k.symbols.JKMethodSymbol
 import org.jetbrains.kotlin.nj2k.symbols.JKUnresolvedField
@@ -499,7 +499,7 @@ class BuiltinMembersConversion(context: NewJ2kConverterContext) : RecursiveAppli
             },
             Method("java.lang.String.format") convertTo CustomExpression { expression ->
                 JKClassAccessExpression(
-                    symbolProvider.provideClassSymbol(KotlinBuiltInsNames.FqNames.string)
+                    symbolProvider.provideClassSymbol(StandardNames.FqNames.string)
                 ).callOn(
                     symbolProvider.provideMethodSymbol("kotlin.text.String.format"),
                     (expression as JKCallExpression).arguments::arguments.detached()

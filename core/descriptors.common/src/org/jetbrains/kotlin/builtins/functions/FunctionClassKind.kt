@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.builtins.functions
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 enum class FunctionClassKind(val packageFqName: FqName, val classNamePrefix: String) {
-    Function(KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAME, "Function"),
-    SuspendFunction(KotlinBuiltInsNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE, "SuspendFunction"),
-    KFunction(KotlinBuiltInsNames.KOTLIN_REFLECT_FQ_NAME, "KFunction"),
-    KSuspendFunction(KotlinBuiltInsNames.KOTLIN_REFLECT_FQ_NAME, "KSuspendFunction");
+    Function(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Function"),
+    SuspendFunction(StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE, "SuspendFunction"),
+    KFunction(StandardNames.KOTLIN_REFLECT_FQ_NAME, "KFunction"),
+    KSuspendFunction(StandardNames.KOTLIN_REFLECT_FQ_NAME, "KSuspendFunction");
 
     fun numberedClassName(arity: Int) = Name.identifier("$classNamePrefix$arity")
 

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.serialization.builtins
 
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInClassDescriptorFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
@@ -100,9 +100,9 @@ class BuiltInsSerializer(dependOnOldBuiltIns: Boolean) : MetadataSerializer(Buil
     // Since Kotlin 1.1, we always discard this class during deserialization (see ClassDeserializer.kt).
     private fun createCloneable(module: ModuleDescriptor): ClassDescriptor {
         val factory = JvmBuiltInClassDescriptorFactory(LockBasedStorageManager.NO_LOCKS, module) {
-            EmptyPackageFragmentDescriptor(module, KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAME)
+            EmptyPackageFragmentDescriptor(module, StandardNames.BUILT_INS_PACKAGE_FQ_NAME)
         }
-        return factory.createClass(ClassId.topLevel(KotlinBuiltInsNames.FqNames.cloneable.toSafe()))
+        return factory.createClass(ClassId.topLevel(StandardNames.FqNames.cloneable.toSafe()))
                ?: error("Could not create kotlin.Cloneable in $module")
     }
 }

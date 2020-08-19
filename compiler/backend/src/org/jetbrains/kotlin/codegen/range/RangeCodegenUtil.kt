@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitiveNumberClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
@@ -84,10 +84,10 @@ fun getRangeOrProgressionElementType(rangeType: KotlinType): KotlinType? {
         COMPARABLE_RANGE_FQN -> rangeType.arguments.singleOrNull()?.type
 
         UINT_RANGE_FQN, UINT_PROGRESSION_FQN ->
-            rangeClassDescriptor.findTypeInModuleByTopLevelClassFqName(KotlinBuiltInsNames.FqNames.uIntFqName)
+            rangeClassDescriptor.findTypeInModuleByTopLevelClassFqName(StandardNames.FqNames.uIntFqName)
 
         ULONG_RANGE_FQN, ULONG_PROGRESSION_FQN ->
-            rangeClassDescriptor.findTypeInModuleByTopLevelClassFqName(KotlinBuiltInsNames.FqNames.uLongFqName)
+            rangeClassDescriptor.findTypeInModuleByTopLevelClassFqName(StandardNames.FqNames.uLongFqName)
 
         else -> null
     }

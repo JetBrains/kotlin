@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.descriptors
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE
+import org.jetbrains.kotlin.builtins.StandardNames.CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL
+import org.jetbrains.kotlin.builtins.StandardNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName

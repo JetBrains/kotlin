@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.psi2ir.transformations
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
@@ -452,7 +452,7 @@ internal class InsertImplicitCasts(
         // There are several such functions (one for each built-in integer type: Byte, Short, Int, Long),
         // we need one that takes Int.
         val coercionFunction = targetType.constructor.declarationDescriptor!!.module
-            .getPackage(KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAME)
+            .getPackage(StandardNames.BUILT_INS_PACKAGE_FQ_NAME)
             .memberScope.getContributedFunctions(Name.identifier(coercionFunName), NoLookupLocation.FROM_BACKEND)
             .find {
                 val extensionReceiver = it.extensionReceiverParameter

@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.builtins
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE
+import org.jetbrains.kotlin.builtins.StandardNames.CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL
+import org.jetbrains.kotlin.builtins.StandardNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE
+import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL
+import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SourceElement

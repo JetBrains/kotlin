@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.load.java
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.FqNames
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.name.FqName
 
 object FakePureImplementationsProvider {

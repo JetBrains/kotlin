@@ -4,7 +4,7 @@
  */
 package org.jetbrains.kotlin.checkers
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.test.ConfigurationKind
 import java.io.File
 
@@ -16,6 +16,6 @@ abstract class AbstractDiagnosticsTestWithStdLib : AbstractDiagnosticsTest() {
 
     override fun shouldValidateFirTestData(testDataFile: File): Boolean {
         val path = testDataFile.absolutePath
-        return !path.endsWith(".kts") && coroutinesPackage != KotlinBuiltInsNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString()
+        return !path.endsWith(".kts") && coroutinesPackage != StandardNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString()
     }
 }

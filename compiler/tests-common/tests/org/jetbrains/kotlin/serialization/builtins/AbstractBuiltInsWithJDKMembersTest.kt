@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.serialization.builtins
 
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAME
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.COLLECTIONS_PACKAGE_FQ_NAME
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.RANGES_PACKAGE_FQ_NAME
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAME
+import org.jetbrains.kotlin.builtins.StandardNames.COLLECTIONS_PACKAGE_FQ_NAME
+import org.jetbrains.kotlin.builtins.StandardNames.RANGES_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy
@@ -56,7 +56,7 @@ abstract class AbstractBuiltInsWithJDKMembersTest : KotlinTestWithEnvironment() 
                     verbose = true
                     annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY
                     modifiers = DescriptorRendererModifier.ALL
-                    excludedTypeAnnotationClasses = setOf(KotlinBuiltInsNames.FqNames.unsafeVariance)
+                    excludedTypeAnnotationClasses = setOf(StandardNames.FqNames.unsafeVariance)
                 }
             )
         }

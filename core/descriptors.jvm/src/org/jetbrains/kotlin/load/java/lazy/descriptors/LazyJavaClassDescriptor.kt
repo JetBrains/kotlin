@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.createMappedTypeParametersSubstitution
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -226,7 +226,7 @@ class LazyJavaClassDescriptor(
 
         private fun getPurelyImplementedSupertype(): KotlinType? {
             val annotatedPurelyImplementedFqName = getPurelyImplementsFqNameFromAnnotation()?.takeIf { fqName ->
-                !fqName.isRoot && fqName.startsWith(KotlinBuiltInsNames.BUILT_INS_PACKAGE_NAME)
+                !fqName.isRoot && fqName.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)
             }
 
             val purelyImplementedFqName =

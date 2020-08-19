@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.flags.FlagsToModifiers
 import org.jetbrains.kotlin.idea.stubindex.KotlinFileStubForIde
@@ -139,7 +139,7 @@ fun createStubForTypeName(
 ): KotlinUserTypeStub {
     val substituteWithAny = typeClassId.isLocal
 
-    val fqName = if (substituteWithAny) KotlinBuiltInsNames.FqNames.any
+    val fqName = if (substituteWithAny) StandardNames.FqNames.any
     else typeClassId.asSingleFqName().toUnsafe()
 
     val segments = fqName.pathSegments().asReversed()

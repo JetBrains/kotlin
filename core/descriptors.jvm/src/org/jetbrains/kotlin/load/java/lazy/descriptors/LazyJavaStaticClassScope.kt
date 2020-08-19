@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -46,7 +46,7 @@ class LazyJavaStaticClassScope(
         declaredMemberIndex().getMethodNames().toMutableSet().apply {
             addAll(ownerDescriptor.getParentJavaStaticClassScope()?.getFunctionNames().orEmpty())
             if (jClass.isEnum) {
-                addAll(listOf(KotlinBuiltInsNames.ENUM_VALUE_OF, KotlinBuiltInsNames.ENUM_VALUES))
+                addAll(listOf(StandardNames.ENUM_VALUE_OF, StandardNames.ENUM_VALUES))
             }
         }
 
@@ -75,8 +75,8 @@ class LazyJavaStaticClassScope(
 
         if (jClass.isEnum) {
             when (name) {
-                KotlinBuiltInsNames.ENUM_VALUE_OF -> result.add(createEnumValueOfMethod(ownerDescriptor))
-                KotlinBuiltInsNames.ENUM_VALUES -> result.add(createEnumValuesMethod(ownerDescriptor))
+                StandardNames.ENUM_VALUE_OF -> result.add(createEnumValueOfMethod(ownerDescriptor))
+                StandardNames.ENUM_VALUES -> result.add(createEnumValuesMethod(ownerDescriptor))
             }
         }
     }

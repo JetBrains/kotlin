@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
 import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
 import org.jetbrains.kotlin.backend.jvm.ir.propertyIfAccessor
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.replaceValueParametersIn
@@ -130,7 +130,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         else null) ?: context.state.moduleName
 
     private fun IrFunction.isPublishedApi(): Boolean =
-        propertyIfAccessor.annotations.hasAnnotation(KotlinBuiltInsNames.FqNames.publishedApi)
+        propertyIfAccessor.annotations.hasAnnotation(StandardNames.FqNames.publishedApi)
 
     fun mapReturnType(declaration: IrDeclaration, sw: JvmSignatureWriter? = null): Type {
         if (declaration !is IrFunction) {
@@ -369,7 +369,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         }
 
     private val IrSimpleFunction.isBuiltIn: Boolean
-        get() = getPackageFragment()?.fqName == KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAME ||
+        get() = getPackageFragment()?.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME ||
                 parent.safeAs<IrClass>()?.fqNameWhenAvailable?.toUnsafe()?.let(JavaToKotlinClassMap::mapKotlinToJava) != null
 
     // From BuiltinMethodsWithDifferentJvmName.isBuiltinFunctionWithDifferentNameInJvm, BuiltinMethodsWithDifferentJvmName.getJvmName

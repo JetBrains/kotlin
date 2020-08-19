@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator;
 import java.io.File;
 import java.util.Collections;
 
-import static org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAMES;
+import static org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES;
 
 public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
     @Override

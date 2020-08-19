@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.inspections.collections
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.quickfix.ReplaceSelectorOfQualifiedExpressionFix
 import org.jetbrains.kotlin.psi.KtExpression
@@ -96,5 +96,5 @@ class UselessCallOnCollectionInspection : AbstractUselessCallInspection() {
         }
     }
 
-    private fun KotlinType?.isList() = this?.constructor?.declarationDescriptor?.fqNameSafe == KotlinBuiltInsNames.FqNames.list
+    private fun KotlinType?.isList() = this?.constructor?.declarationDescriptor?.fqNameSafe == StandardNames.FqNames.list
 }

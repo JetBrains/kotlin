@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.*
@@ -58,7 +58,7 @@ fun forceSingleValueParameterBoxing(f: CallableDescriptor): Boolean {
             ?: return false
 
     val overriddenParameterType = overridden.original.valueParameters.single().type.mapToJvmType()
-    return overridden.containingDeclaration.fqNameUnsafe == KotlinBuiltInsNames.FqNames.mutableCollection.toUnsafe()
+    return overridden.containingDeclaration.fqNameUnsafe == StandardNames.FqNames.mutableCollection.toUnsafe()
             && overriddenParameterType is JvmType.Object && overriddenParameterType.internalName == "java/lang/Object"
 }
 

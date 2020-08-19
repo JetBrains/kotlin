@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
@@ -80,7 +80,7 @@ class ArrayInitializerConversion(context: NewJ2kConverterContext) : RecursiveApp
         )
         for (i in 0 until dimensions.size - 2) {
             resultType = JKClassType(
-                symbolProvider.provideClassSymbol(KotlinBuiltInsNames.FqNames.array.toSafe()),
+                symbolProvider.provideClassSymbol(StandardNames.FqNames.array.toSafe()),
                 listOf(resultType),
                 Nullability.Default
             )

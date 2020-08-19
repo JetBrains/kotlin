@@ -20,7 +20,7 @@ import com.google.common.collect.ImmutableSet
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.psi.PsiElement
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
@@ -152,7 +152,7 @@ abstract class KotlinSuppressCache {
     }
 
     private fun processAnnotation(builder: ImmutableSet.Builder<String>, annotationDescriptor: AnnotationDescriptor) {
-        if (annotationDescriptor.fqName != KotlinBuiltInsNames.FqNames.suppress) return
+        if (annotationDescriptor.fqName != StandardNames.FqNames.suppress) return
 
         // We only add strings and skip other values to facilitate recovery in presence of erroneous code
         for (arrayValue in annotationDescriptor.allValueArguments.values) {

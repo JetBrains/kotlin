@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.codegen.coroutines
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
 import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineUninterceptedOrReturn
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalClassDescriptor
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
@@ -312,7 +312,7 @@ private fun FunctionDescriptor.getContinuationParameterTypeOfSuspendFunction(isR
 
 fun ModuleDescriptor.getResult(kotlinType: KotlinType) =
     module.resolveTopLevelClass(
-        KotlinBuiltInsNames.RESULT_FQ_NAME,
+        StandardNames.RESULT_FQ_NAME,
         NoLookupLocation.FROM_BACKEND
     )?.defaultType?.let {
         KotlinTypeFactory.simpleType(
@@ -501,7 +501,7 @@ fun FunctionDescriptor.isSuspendLambdaOrLocalFunction() = this.isSuspend && when
 fun FunctionDescriptor.isLocalSuspendFunctionNotSuspendLambda() = isSuspendLambdaOrLocalFunction() && this !is AnonymousFunctionDescriptor
 
 @JvmField
-val EXPERIMENTAL_CONTINUATION_ASM_TYPE = KotlinBuiltInsNames.CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL.topLevelClassAsmType()
+val EXPERIMENTAL_CONTINUATION_ASM_TYPE = StandardNames.CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL.topLevelClassAsmType()
 
 @JvmField
-val RELEASE_CONTINUATION_ASM_TYPE = KotlinBuiltInsNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE.topLevelClassAsmType()
+val RELEASE_CONTINUATION_ASM_TYPE = StandardNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE.topLevelClassAsmType()

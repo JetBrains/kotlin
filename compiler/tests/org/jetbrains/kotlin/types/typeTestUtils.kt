@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.types
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 
 fun ModuleDescriptor.builtInPackageAsLexicalScope(): LexicalScope.Base {
-    val packageView = getPackage(KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAME)
+    val packageView = getPackage(StandardNames.BUILT_INS_PACKAGE_FQ_NAME)
     return LexicalScope.Base(packageView.memberScope.memberScopeAsImportingScope(), this)
 }

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
@@ -78,9 +78,9 @@ object JsExternalChecker : DeclarationChecker {
         if (descriptor is ClassDescriptor && descriptor.kind != ClassKind.ANNOTATION_CLASS) {
             val superClasses = (listOfNotNull(descriptor.getSuperClassNotAny()) + descriptor.getSuperInterfaces()).toMutableSet()
             if (descriptor.kind == ClassKind.ENUM_CLASS || descriptor.kind == ClassKind.ENUM_ENTRY) {
-                superClasses.removeAll { it.fqNameUnsafe == KotlinBuiltInsNames.FqNames._enum }
+                superClasses.removeAll { it.fqNameUnsafe == StandardNames.FqNames._enum }
             }
-            if (superClasses.any { !AnnotationsUtils.isNativeObject(it) && it.fqNameSafe != KotlinBuiltInsNames.FqNames.throwable }) {
+            if (superClasses.any { !AnnotationsUtils.isNativeObject(it) && it.fqNameSafe != StandardNames.FqNames.throwable }) {
                 trace.report(ErrorsJs.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE.on(declaration))
             }
         }

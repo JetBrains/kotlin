@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.*;
+import static org.jetbrains.kotlin.builtins.StandardNames.*;
 import static org.jetbrains.kotlin.builtins.PrimitiveType.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 

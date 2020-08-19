@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.builtins.jvm
 
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.FqNames
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
@@ -87,7 +87,7 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
         for (jvmType in JvmPrimitiveType.values()) {
             add(
                 ClassId.topLevel(jvmType.wrapperFqName),
-                ClassId.topLevel(KotlinBuiltInsNames.getPrimitiveFqName(jvmType.primitiveType))
+                ClassId.topLevel(StandardNames.getPrimitiveFqName(jvmType.primitiveType))
             )
         }
 
@@ -99,7 +99,7 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
         }
 
         for (i in 0 until FunctionInvokeDescriptor.BIG_ARITY) {
-            add(ClassId.topLevel(FqName("kotlin.jvm.functions.Function$i")), KotlinBuiltInsNames.getFunctionClassId(i))
+            add(ClassId.topLevel(FqName("kotlin.jvm.functions.Function$i")), StandardNames.getFunctionClassId(i))
             addKotlinToJava(FqName(NUMBERED_K_FUNCTION_PREFIX + i), K_FUNCTION_CLASS_ID)
         }
         for (i in 0 until FunctionInvokeDescriptor.BIG_ARITY - 1) {
@@ -133,7 +133,7 @@ object JavaToKotlinClassMap : PlatformToKotlinClassMap {
 
     fun mapJavaToKotlin(fqName: FqName, builtIns: KotlinBuiltIns, functionTypeArity: Int? = null): ClassDescriptor? {
         val kotlinClassId =
-            if (functionTypeArity != null && fqName == FUNCTION_N_FQ_NAME) KotlinBuiltInsNames.getFunctionClassId(functionTypeArity)
+            if (functionTypeArity != null && fqName == FUNCTION_N_FQ_NAME) StandardNames.getFunctionClassId(functionTypeArity)
             else mapJavaToKotlin(fqName)
         return if (kotlinClassId != null) builtIns.getBuiltInClassByFqName(kotlinClassId.asSingleFqName()) else null
     }

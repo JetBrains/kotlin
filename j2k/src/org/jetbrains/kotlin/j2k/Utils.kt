@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiMethodUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
@@ -143,32 +143,32 @@ fun Converter.convertToKotlinAnalogIdentifier(classQualifiedName: String?, mutab
 }
 
 val toKotlinTypesMap: Map<String, String> = mapOf(
-    CommonClassNames.JAVA_LANG_OBJECT to KotlinBuiltInsNames.FqNames.any.asString(),
-    CommonClassNames.JAVA_LANG_BYTE to KotlinBuiltInsNames.FqNames._byte.asString(),
-    CommonClassNames.JAVA_LANG_CHARACTER to KotlinBuiltInsNames.FqNames._char.asString(),
-    CommonClassNames.JAVA_LANG_DOUBLE to KotlinBuiltInsNames.FqNames._double.asString(),
-    CommonClassNames.JAVA_LANG_FLOAT to KotlinBuiltInsNames.FqNames._float.asString(),
-    CommonClassNames.JAVA_LANG_INTEGER to KotlinBuiltInsNames.FqNames._int.asString(),
-    CommonClassNames.JAVA_LANG_LONG to KotlinBuiltInsNames.FqNames._long.asString(),
-    CommonClassNames.JAVA_LANG_SHORT to KotlinBuiltInsNames.FqNames._short.asString(),
-    CommonClassNames.JAVA_LANG_BOOLEAN to KotlinBuiltInsNames.FqNames._boolean.asString(),
-    CommonClassNames.JAVA_LANG_ITERABLE to KotlinBuiltInsNames.FqNames.iterable.asString(),
-    CommonClassNames.JAVA_UTIL_ITERATOR to KotlinBuiltInsNames.FqNames.iterator.asString(),
-    CommonClassNames.JAVA_UTIL_LIST to KotlinBuiltInsNames.FqNames.list.asString(),
-    CommonClassNames.JAVA_UTIL_COLLECTION to KotlinBuiltInsNames.FqNames.collection.asString(),
-    CommonClassNames.JAVA_UTIL_SET to KotlinBuiltInsNames.FqNames.set.asString(),
-    CommonClassNames.JAVA_UTIL_MAP to KotlinBuiltInsNames.FqNames.map.asString(),
-    CommonClassNames.JAVA_UTIL_MAP_ENTRY to KotlinBuiltInsNames.FqNames.mapEntry.asString(),
-    java.util.ListIterator::class.java.canonicalName to KotlinBuiltInsNames.FqNames.listIterator.asString()
+    CommonClassNames.JAVA_LANG_OBJECT to StandardNames.FqNames.any.asString(),
+    CommonClassNames.JAVA_LANG_BYTE to StandardNames.FqNames._byte.asString(),
+    CommonClassNames.JAVA_LANG_CHARACTER to StandardNames.FqNames._char.asString(),
+    CommonClassNames.JAVA_LANG_DOUBLE to StandardNames.FqNames._double.asString(),
+    CommonClassNames.JAVA_LANG_FLOAT to StandardNames.FqNames._float.asString(),
+    CommonClassNames.JAVA_LANG_INTEGER to StandardNames.FqNames._int.asString(),
+    CommonClassNames.JAVA_LANG_LONG to StandardNames.FqNames._long.asString(),
+    CommonClassNames.JAVA_LANG_SHORT to StandardNames.FqNames._short.asString(),
+    CommonClassNames.JAVA_LANG_BOOLEAN to StandardNames.FqNames._boolean.asString(),
+    CommonClassNames.JAVA_LANG_ITERABLE to StandardNames.FqNames.iterable.asString(),
+    CommonClassNames.JAVA_UTIL_ITERATOR to StandardNames.FqNames.iterator.asString(),
+    CommonClassNames.JAVA_UTIL_LIST to StandardNames.FqNames.list.asString(),
+    CommonClassNames.JAVA_UTIL_COLLECTION to StandardNames.FqNames.collection.asString(),
+    CommonClassNames.JAVA_UTIL_SET to StandardNames.FqNames.set.asString(),
+    CommonClassNames.JAVA_UTIL_MAP to StandardNames.FqNames.map.asString(),
+    CommonClassNames.JAVA_UTIL_MAP_ENTRY to StandardNames.FqNames.mapEntry.asString(),
+    java.util.ListIterator::class.java.canonicalName to StandardNames.FqNames.listIterator.asString()
 
 )
 
 val toKotlinMutableTypesMap: Map<String, String> = mapOf(
-    CommonClassNames.JAVA_UTIL_ITERATOR to KotlinBuiltInsNames.FqNames.mutableIterator.asString(),
-    CommonClassNames.JAVA_UTIL_LIST to KotlinBuiltInsNames.FqNames.mutableList.asString(),
-    CommonClassNames.JAVA_UTIL_COLLECTION to KotlinBuiltInsNames.FqNames.mutableCollection.asString(),
-    CommonClassNames.JAVA_UTIL_SET to KotlinBuiltInsNames.FqNames.mutableSet.asString(),
-    CommonClassNames.JAVA_UTIL_MAP to KotlinBuiltInsNames.FqNames.mutableMap.asString(),
-    CommonClassNames.JAVA_UTIL_MAP_ENTRY to KotlinBuiltInsNames.FqNames.mutableMapEntry.asString(),
-    java.util.ListIterator::class.java.canonicalName to KotlinBuiltInsNames.FqNames.mutableListIterator.asString()
+    CommonClassNames.JAVA_UTIL_ITERATOR to StandardNames.FqNames.mutableIterator.asString(),
+    CommonClassNames.JAVA_UTIL_LIST to StandardNames.FqNames.mutableList.asString(),
+    CommonClassNames.JAVA_UTIL_COLLECTION to StandardNames.FqNames.mutableCollection.asString(),
+    CommonClassNames.JAVA_UTIL_SET to StandardNames.FqNames.mutableSet.asString(),
+    CommonClassNames.JAVA_UTIL_MAP to StandardNames.FqNames.mutableMap.asString(),
+    CommonClassNames.JAVA_UTIL_MAP_ENTRY to StandardNames.FqNames.mutableMapEntry.asString(),
+    java.util.ListIterator::class.java.canonicalName to StandardNames.FqNames.mutableListIterator.asString()
 )

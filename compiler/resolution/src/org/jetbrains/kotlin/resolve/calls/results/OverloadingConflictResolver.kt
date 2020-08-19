@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.results
 import gnu.trove.THashSet
 import gnu.trove.TObjectHashingStrategy
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
@@ -310,10 +310,10 @@ open class OverloadingConflictResolver<C : Any>(
             val isGeneralUnsigned = UnsignedTypes.isUnsignedType(general)
             return when {
                 isSpecificUnsigned && isGeneralUnsigned -> {
-                    val uLong = module.findClassAcrossModuleDependencies(KotlinBuiltInsNames.FqNames.uLong)?.defaultType ?: return false
-                    val uInt = module.findClassAcrossModuleDependencies(KotlinBuiltInsNames.FqNames.uInt)?.defaultType ?: return false
-                    val uByte = module.findClassAcrossModuleDependencies(KotlinBuiltInsNames.FqNames.uByte)?.defaultType ?: return false
-                    val uShort = module.findClassAcrossModuleDependencies(KotlinBuiltInsNames.FqNames.uShort)?.defaultType ?: return false
+                    val uLong = module.findClassAcrossModuleDependencies(StandardNames.FqNames.uLong)?.defaultType ?: return false
+                    val uInt = module.findClassAcrossModuleDependencies(StandardNames.FqNames.uInt)?.defaultType ?: return false
+                    val uByte = module.findClassAcrossModuleDependencies(StandardNames.FqNames.uByte)?.defaultType ?: return false
+                    val uShort = module.findClassAcrossModuleDependencies(StandardNames.FqNames.uShort)?.defaultType ?: return false
 
                     isNonSubtypeNotLessSpecific(specific, general, _double, _float, uLong, uInt, uByte, uShort)
                 }

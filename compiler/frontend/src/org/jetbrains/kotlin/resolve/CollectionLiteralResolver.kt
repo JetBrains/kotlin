@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -76,7 +76,7 @@ class CollectionLiteralResolver(
         expression: KtCollectionLiteralExpression,
         callName: Name
     ): Collection<SimpleFunctionDescriptor> {
-        val memberScopeOfKotlinPackage = module.getPackage(KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAME).memberScope
+        val memberScopeOfKotlinPackage = module.getPackage(StandardNames.BUILT_INS_PACKAGE_FQ_NAME).memberScope
         return memberScopeOfKotlinPackage.getContributedFunctions(callName, KotlinLookupLocation(expression))
     }
 

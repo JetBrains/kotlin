@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors.runtime.components
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.runtime.structure.classId
 import org.jetbrains.kotlin.descriptors.runtime.structure.desc
@@ -196,7 +196,7 @@ private object ReflectClassStructure {
         if (currentClass.isPrimitive) {
             if (currentClass == Void.TYPE) {
                 // void.class is not representable in Kotlin, we approximate it by Unit::class
-                return ClassLiteralValue(ClassId.topLevel(KotlinBuiltInsNames.FqNames.unit.toSafe()), dimensions)
+                return ClassLiteralValue(ClassId.topLevel(StandardNames.FqNames.unit.toSafe()), dimensions)
             }
 
             val primitiveType = JvmPrimitiveType.get(currentClass.name).primitiveType

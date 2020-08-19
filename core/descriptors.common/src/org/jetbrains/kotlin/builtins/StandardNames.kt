@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.builtins
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.FqNames.reflect
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames.reflect
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
 
 @Suppress("Reformat")
-object KotlinBuiltInsNames {
-    // --------------------------- From DescriptorUtils ---------------------------
-
+object StandardNames {
     @JvmField val ENUM_VALUES = Name.identifier("values")
 
     @JvmField val ENUM_VALUE_OF = Name.identifier("valueOf")
@@ -34,7 +32,6 @@ object KotlinBuiltInsNames {
 
     @JvmField val RESULT_FQ_NAME = FqName("kotlin.Result")
 
-    // --------------------------- From ReflectionTypes ---------------------------
     @JvmField val KOTLIN_REFLECT_FQ_NAME = FqName("kotlin.reflect")
     const val K_PROPERTY_PREFIX = "KProperty"
     const val K_MUTABLE_PROPERTY_PREFIX = "KMutableProperty"
@@ -42,8 +39,6 @@ object KotlinBuiltInsNames {
     const val K_SUSPEND_FUNCTION_PREFIX = "KSuspendFunction"
 
     @JvmField val PREFIXES = listOf(K_PROPERTY_PREFIX, K_MUTABLE_PROPERTY_PREFIX, K_FUNCTION_PREFIX, K_SUSPEND_FUNCTION_PREFIX)
-
-    // --------------------------- From KotlinBuiltIns ---------------------------
 
     @JvmField
     val BUILT_INS_PACKAGE_NAME = Name.identifier("kotlin")

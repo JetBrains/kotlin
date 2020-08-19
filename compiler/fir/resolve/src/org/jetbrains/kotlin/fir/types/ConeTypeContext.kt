@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
@@ -495,10 +495,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun TypeConstructorMarker.getPrimitiveType() =
-        getClassFqNameUnsafe()?.let(KotlinBuiltInsNames.FqNames.fqNameToPrimitiveType::get)
+        getClassFqNameUnsafe()?.let(StandardNames.FqNames.fqNameToPrimitiveType::get)
 
     override fun TypeConstructorMarker.getPrimitiveArrayType() =
-        getClassFqNameUnsafe()?.let(KotlinBuiltInsNames.FqNames.arrayClassFqNameToPrimitiveType::get)
+        getClassFqNameUnsafe()?.let(StandardNames.FqNames.arrayClassFqNameToPrimitiveType::get)
 
     override fun TypeConstructorMarker.isUnderKotlinPackage() =
         getClassFqNameUnsafe()?.startsWith(Name.identifier("kotlin")) == true

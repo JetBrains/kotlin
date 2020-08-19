@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.allOverridden
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -63,46 +63,46 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
         IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, bridge.valueParameters[1].symbol)
 
     private val specialMethodsWithDefaults = mapOf(
-        makeDescription(KotlinBuiltInsNames.FqNames.collection, "contains", 1) to
+        makeDescription(StandardNames.FqNames.collection, "contains", 1) to
                 SpecialMethodWithDefaultInfo(::constFalse, 1),
-        makeDescription(KotlinBuiltInsNames.FqNames.mutableCollection, "remove", 1) to
+        makeDescription(StandardNames.FqNames.mutableCollection, "remove", 1) to
                 SpecialMethodWithDefaultInfo(::constFalse, 1, needsArgumentBoxing = true),
-        makeDescription(KotlinBuiltInsNames.FqNames.map, "containsKey", 1) to
+        makeDescription(StandardNames.FqNames.map, "containsKey", 1) to
                 SpecialMethodWithDefaultInfo(::constFalse, 1),
-        makeDescription(KotlinBuiltInsNames.FqNames.map, "containsValue", 1) to
+        makeDescription(StandardNames.FqNames.map, "containsValue", 1) to
                 SpecialMethodWithDefaultInfo(::constFalse, 1),
-        makeDescription(KotlinBuiltInsNames.FqNames.mutableMap, "remove", 2) to
+        makeDescription(StandardNames.FqNames.mutableMap, "remove", 2) to
                 SpecialMethodWithDefaultInfo(::constFalse, 2),
-        makeDescription(KotlinBuiltInsNames.FqNames.list, "indexOf", 1) to
+        makeDescription(StandardNames.FqNames.list, "indexOf", 1) to
                 SpecialMethodWithDefaultInfo(::constMinusOne, 1),
-        makeDescription(KotlinBuiltInsNames.FqNames.list, "lastIndexOf", 1) to
+        makeDescription(StandardNames.FqNames.list, "lastIndexOf", 1) to
                 SpecialMethodWithDefaultInfo(::constMinusOne, 1),
-        makeDescription(KotlinBuiltInsNames.FqNames.map, "getOrDefault", 2) to
+        makeDescription(StandardNames.FqNames.map, "getOrDefault", 2) to
                 SpecialMethodWithDefaultInfo(::getSecondArg, 1, needsGenericSignature = true),
-        makeDescription(KotlinBuiltInsNames.FqNames.map, "get", 1) to
+        makeDescription(StandardNames.FqNames.map, "get", 1) to
                 SpecialMethodWithDefaultInfo(::constNull, 1, needsGenericSignature = true),
-        makeDescription(KotlinBuiltInsNames.FqNames.mutableMap, "remove", 1) to
+        makeDescription(StandardNames.FqNames.mutableMap, "remove", 1) to
                 SpecialMethodWithDefaultInfo(::constNull, 1, needsGenericSignature = true)
     )
 
     private val specialProperties = mapOf(
-        makeDescription(KotlinBuiltInsNames.FqNames.collection, "size") to BuiltInWithDifferentJvmName(),
-        makeDescription(KotlinBuiltInsNames.FqNames.map, "size") to BuiltInWithDifferentJvmName(),
-        makeDescription(KotlinBuiltInsNames.FqNames.charSequence.toSafe(), "length") to BuiltInWithDifferentJvmName(),
-        makeDescription(KotlinBuiltInsNames.FqNames.map, "keys") to BuiltInWithDifferentJvmName(needsGenericSignature = true),
-        makeDescription(KotlinBuiltInsNames.FqNames.map, "values") to BuiltInWithDifferentJvmName(needsGenericSignature = true),
-        makeDescription(KotlinBuiltInsNames.FqNames.map, "entries") to BuiltInWithDifferentJvmName(needsGenericSignature = true)
+        makeDescription(StandardNames.FqNames.collection, "size") to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.map, "size") to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.charSequence.toSafe(), "length") to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.map, "keys") to BuiltInWithDifferentJvmName(needsGenericSignature = true),
+        makeDescription(StandardNames.FqNames.map, "values") to BuiltInWithDifferentJvmName(needsGenericSignature = true),
+        makeDescription(StandardNames.FqNames.map, "entries") to BuiltInWithDifferentJvmName(needsGenericSignature = true)
     )
 
     private val specialMethods = mapOf(
-        makeDescription(KotlinBuiltInsNames.FqNames.number.toSafe(), "toByte") to BuiltInWithDifferentJvmName(),
-        makeDescription(KotlinBuiltInsNames.FqNames.number.toSafe(), "toShort") to BuiltInWithDifferentJvmName(),
-        makeDescription(KotlinBuiltInsNames.FqNames.number.toSafe(), "toInt") to BuiltInWithDifferentJvmName(),
-        makeDescription(KotlinBuiltInsNames.FqNames.number.toSafe(), "toLong") to BuiltInWithDifferentJvmName(),
-        makeDescription(KotlinBuiltInsNames.FqNames.number.toSafe(), "toFloat") to BuiltInWithDifferentJvmName(),
-        makeDescription(KotlinBuiltInsNames.FqNames.number.toSafe(), "toDouble") to BuiltInWithDifferentJvmName(),
-        makeDescription(KotlinBuiltInsNames.FqNames.charSequence.toSafe(), "get", 1) to BuiltInWithDifferentJvmName(),
-        makeDescription(KotlinBuiltInsNames.FqNames.mutableList, "removeAt", 1) to BuiltInWithDifferentJvmName(needsGenericSignature = true)
+        makeDescription(StandardNames.FqNames.number.toSafe(), "toByte") to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.number.toSafe(), "toShort") to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.number.toSafe(), "toInt") to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.number.toSafe(), "toLong") to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.number.toSafe(), "toFloat") to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.number.toSafe(), "toDouble") to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.charSequence.toSafe(), "get", 1) to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.mutableList, "removeAt", 1) to BuiltInWithDifferentJvmName(needsGenericSignature = true)
     )
 
     val specialMethodNames = (specialMethodsWithDefaults + specialMethods).map { (description) -> description.name }.toHashSet()

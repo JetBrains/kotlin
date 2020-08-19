@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.FqNames;
+import static org.jetbrains.kotlin.builtins.StandardNames.FqNames;
 import static org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern;
 
 public final class TopLevelFIF extends CompositeFIF {

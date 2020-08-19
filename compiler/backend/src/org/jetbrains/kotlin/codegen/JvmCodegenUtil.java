@@ -12,7 +12,7 @@ import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames;
+import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
@@ -405,7 +405,7 @@ public class JvmCodegenUtil {
         // The Result class is the only inline class in the standard library without special rules for equality.
         // We only call Result.equals-impl0 if we are compiling for Kotlin 1.4 or later. Otherwise, the code
         // might well be running against an older version of the standard library.
-        if (DescriptorUtils.getFqNameSafe(classDescriptor).equals(KotlinBuiltInsNames.RESULT_FQ_NAME)) {
+        if (DescriptorUtils.getFqNameSafe(classDescriptor).equals(StandardNames.RESULT_FQ_NAME)) {
             return state.getLanguageVersionSettings().getApiVersion().compareTo(ApiVersion.KOTLIN_1_4) >= 0;
         } else {
             return ((DeserializedClassDescriptor) descriptor).getMetadataVersion().isAtLeast(1, 1, 16);

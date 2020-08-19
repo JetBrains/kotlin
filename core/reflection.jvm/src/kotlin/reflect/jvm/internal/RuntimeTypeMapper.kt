@@ -16,7 +16,7 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.jvm.CloneableClassScope
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
@@ -259,15 +259,15 @@ internal object RuntimeTypeMapper {
     fun mapJvmClassToKotlinClassId(klass: Class<*>): ClassId {
         if (klass.isArray) {
             klass.componentType.primitiveType?.let {
-                return ClassId(KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAME, it.arrayTypeName)
+                return ClassId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, it.arrayTypeName)
             }
-            return ClassId.topLevel(KotlinBuiltInsNames.FqNames.array.toSafe())
+            return ClassId.topLevel(StandardNames.FqNames.array.toSafe())
         }
 
         if (klass == Void.TYPE) return JAVA_LANG_VOID
 
         klass.primitiveType?.let {
-            return ClassId(KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAME, it.typeName)
+            return ClassId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, it.typeName)
         }
 
         val classId = klass.classId

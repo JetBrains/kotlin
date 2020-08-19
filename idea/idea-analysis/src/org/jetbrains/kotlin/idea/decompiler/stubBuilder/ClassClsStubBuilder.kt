@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isNumberedFunctionClassFqName
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.flags.*
@@ -64,7 +64,7 @@ private class ClassClsStubBuilder(
     private val supertypeIds = run {
         val supertypeIds = classProto.supertypes(c.typeTable).map { c.nameResolver.getClassId(it.className) }
         //empty supertype list if single supertype is Any
-        if (supertypeIds.singleOrNull()?.let { KotlinBuiltInsNames.FqNames.any == it.asSingleFqName().toUnsafe() } == true) {
+        if (supertypeIds.singleOrNull()?.let { StandardNames.FqNames.any == it.asSingleFqName().toUnsafe() } == true) {
             listOf()
         } else {
             supertypeIds

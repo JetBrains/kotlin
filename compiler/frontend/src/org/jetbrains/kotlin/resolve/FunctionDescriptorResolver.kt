@@ -306,7 +306,7 @@ class FunctionDescriptorResolver(
 
     private fun KotlinType.removeParameterNameAnnotation(): KotlinType {
         if (this is TypeUtils.SpecialType) return this
-        val parameterNameAnnotation = annotations.findAnnotation(KotlinBuiltInsNames.FqNames.parameterName) ?: return this
+        val parameterNameAnnotation = annotations.findAnnotation(StandardNames.FqNames.parameterName) ?: return this
         return replaceAnnotations(Annotations.create(annotations.filter { it != parameterNameAnnotation }))
     }
 

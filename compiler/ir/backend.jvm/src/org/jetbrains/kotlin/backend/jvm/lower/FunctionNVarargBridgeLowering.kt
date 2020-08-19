@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArray
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -150,7 +150,7 @@ private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
             val fqName = clazz.parent.safeAs<IrPackageFragment>()?.fqName ?: return false
             return when {
                 name.startsWith("Function") ->
-                    fqName == KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAME || fqName == FUNCTIONS_PACKAGE_FQ_NAME
+                    fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME || fqName == FUNCTIONS_PACKAGE_FQ_NAME
                 name.startsWith("KFunction") ->
                     fqName == REFLECT_PACKAGE_FQ_NAME
                 else -> false
@@ -169,11 +169,11 @@ private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
     }
 
     private val FUNCTIONS_PACKAGE_FQ_NAME =
-        KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAME
+        StandardNames.BUILT_INS_PACKAGE_FQ_NAME
             .child(Name.identifier("jvm"))
             .child(Name.identifier("functions"))
 
     private val REFLECT_PACKAGE_FQ_NAME =
-        KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAME
+        StandardNames.BUILT_INS_PACKAGE_FQ_NAME
             .child(Name.identifier("reflect"))
 }

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api.types
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.ClassId
 
 val KtType.isUnit: Boolean get() = isClassTypeWithClassId(DefaultTypeClassIds.UNIT)
@@ -17,5 +17,5 @@ fun KtType.isClassTypeWithClassId(classId: ClassId): Boolean {
 }
 
 private object DefaultTypeClassIds {
-    val UNIT = ClassId.topLevel(KotlinBuiltInsNames.FqNames.unit.toSafe())
+    val UNIT = ClassId.topLevel(StandardNames.FqNames.unit.toSafe())
 }

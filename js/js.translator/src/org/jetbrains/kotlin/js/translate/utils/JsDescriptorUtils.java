@@ -20,7 +20,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames;
+import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -42,7 +42,7 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 public final class JsDescriptorUtils {
     // TODO: maybe we should use external annotations or something else.
     private static final Set<String> FAKE_CLASSES = ContainerUtil.immutableSet(
-            KotlinBuiltInsNames.FqNames.any.asString()
+            StandardNames.FqNames.any.asString()
     );
 
     private JsDescriptorUtils() {

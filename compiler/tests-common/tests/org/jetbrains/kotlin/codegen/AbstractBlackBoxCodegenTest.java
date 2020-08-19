@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.TestsRuntimeError;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames;
+import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.codegen.ir.AbstractFirBlackBoxCodegenTest;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -69,7 +69,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         if (!InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(wholeFile), "CHECK_BYTECODE_LISTING")) return;
 
         String suffix =
-                (coroutinesPackage.equals(KotlinBuiltInsNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString()) || coroutinesPackage.isEmpty())
+                (coroutinesPackage.equals(StandardNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString()) || coroutinesPackage.isEmpty())
                 && InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(wholeFile), "COMMON_COROUTINES_TEST")
                 ? "_1_2" :
                 getBackend().isIR() ? "_ir" : "";

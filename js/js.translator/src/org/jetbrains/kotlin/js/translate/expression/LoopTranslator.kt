@@ -19,7 +19,7 @@
 package org.jetbrains.kotlin.js.translate.expression
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
@@ -316,7 +316,7 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
     }
 
     fun findCollection() =
-            context.currentModule.findClassAcrossModuleDependencies(ClassId.topLevel(KotlinBuiltInsNames.FqNames.collection))!!
+            context.currentModule.findClassAcrossModuleDependencies(ClassId.topLevel(StandardNames.FqNames.collection))!!
 
     fun translateForOverCollectionIndices(info: WithIndexInfo): JsStatement {
         val range = context.cacheExpressionIfNeeded(info.range)
@@ -337,7 +337,7 @@ fun translateForExpression(expression: KtForExpression, context: TranslationCont
     }
 
     fun findIterable() =
-        context.currentModule.findClassAcrossModuleDependencies(ClassId.topLevel(KotlinBuiltInsNames.FqNames.iterable))!!
+        context.currentModule.findClassAcrossModuleDependencies(ClassId.topLevel(StandardNames.FqNames.iterable))!!
 
     fun findSequence() =
             context.currentModule.findClassAcrossModuleDependencies(ClassId.topLevel(sequenceFqName))!!

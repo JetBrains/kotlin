@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.resolve.descriptorUtil
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames.ENUM_VALUE_OF
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.StandardNames.ENUM_VALUE_OF
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.ClassKind.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
@@ -202,14 +202,14 @@ fun ValueParameterDescriptor.declaresOrInheritsDefaultValue(): Boolean {
 }
 
 fun Annotated.isRepeatableAnnotation(): Boolean =
-    annotations.findAnnotation(KotlinBuiltInsNames.FqNames.repeatable) != null
+    annotations.findAnnotation(StandardNames.FqNames.repeatable) != null
 
 fun Annotated.isDocumentedAnnotation(): Boolean =
-    annotations.findAnnotation(KotlinBuiltInsNames.FqNames.mustBeDocumented) != null
+    annotations.findAnnotation(StandardNames.FqNames.mustBeDocumented) != null
 
 fun Annotated.getAnnotationRetention(): KotlinRetention? {
     val retentionArgumentValue =
-        annotations.findAnnotation(KotlinBuiltInsNames.FqNames.retention)?.allValueArguments?.get(RETENTION_PARAMETER_NAME)
+        annotations.findAnnotation(StandardNames.FqNames.retention)?.allValueArguments?.get(RETENTION_PARAMETER_NAME)
                 as? EnumValue ?: return null
 
     val retentionArgumentValueName = retentionArgumentValue.enumEntryName.asString()
@@ -405,7 +405,7 @@ fun computeSealedSubclasses(sealedClass: ClassDescriptor): Collection<ClassDescr
 
 fun DeclarationDescriptor.isPublishedApi(): Boolean {
     val descriptor = if (this is CallableMemberDescriptor) DescriptorUtils.getDirectMember(this) else this
-    return descriptor.annotations.hasAnnotation(KotlinBuiltInsNames.FqNames.publishedApi)
+    return descriptor.annotations.hasAnnotation(StandardNames.FqNames.publishedApi)
 }
 
 fun DeclarationDescriptor.isAncestorOf(descriptor: DeclarationDescriptor, strict: Boolean): Boolean =

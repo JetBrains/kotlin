@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
@@ -42,16 +42,16 @@ internal fun KotlinType.maxValue(): Long {
 internal fun ModuleDescriptor.unsignedType(classId: ClassId): SimpleType = findClassAcrossModuleDependencies(classId)!!.defaultType
 
 internal val ModuleDescriptor.uIntType: SimpleType
-    get() = unsignedType(KotlinBuiltInsNames.FqNames.uInt)
+    get() = unsignedType(StandardNames.FqNames.uInt)
 
 internal val ModuleDescriptor.uLongType: SimpleType
-    get() = unsignedType(KotlinBuiltInsNames.FqNames.uLong)
+    get() = unsignedType(StandardNames.FqNames.uLong)
 
 internal val ModuleDescriptor.uByteType: SimpleType
-    get() = unsignedType(KotlinBuiltInsNames.FqNames.uByte)
+    get() = unsignedType(StandardNames.FqNames.uByte)
 
 internal val ModuleDescriptor.uShortType: SimpleType
-    get() = unsignedType(KotlinBuiltInsNames.FqNames.uShort)
+    get() = unsignedType(StandardNames.FqNames.uShort)
 
 internal val ModuleDescriptor.allSignedLiteralTypes: Collection<KotlinType>
     get() = listOf(builtIns.intType, builtIns.longType, builtIns.byteType, builtIns.shortType)
@@ -59,8 +59,8 @@ internal val ModuleDescriptor.allSignedLiteralTypes: Collection<KotlinType>
 internal val ModuleDescriptor.allUnsignedLiteralTypes: Collection<KotlinType>
     get() = if (hasUnsignedTypesInModuleDependencies(this)) {
         listOf(
-            unsignedType(KotlinBuiltInsNames.FqNames.uInt), unsignedType(KotlinBuiltInsNames.FqNames.uLong),
-            unsignedType(KotlinBuiltInsNames.FqNames.uByte), unsignedType(KotlinBuiltInsNames.FqNames.uShort)
+            unsignedType(StandardNames.FqNames.uInt), unsignedType(StandardNames.FqNames.uLong),
+            unsignedType(StandardNames.FqNames.uByte), unsignedType(StandardNames.FqNames.uShort)
         )
     } else {
         emptyList()

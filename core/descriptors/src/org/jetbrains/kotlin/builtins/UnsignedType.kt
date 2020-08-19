@@ -63,7 +63,7 @@ object UnsignedTypes {
     fun isUnsignedClass(descriptor: DeclarationDescriptor): Boolean {
         val container = descriptor.containingDeclaration
         return container is PackageFragmentDescriptor &&
-                container.fqName == KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAME &&
+                container.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME &&
                 descriptor.name in UnsignedTypes.unsignedTypeNames
     }
 }

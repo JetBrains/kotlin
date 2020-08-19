@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.types
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.FqNameEqualityChecker
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -47,7 +47,7 @@ fun IrType.isNullable(): Boolean =
     }
 
 val IrType.isBoxedArray: Boolean
-    get() = classOrNull?.owner?.fqNameWhenAvailable == KotlinBuiltInsNames.FqNames.array.toSafe()
+    get() = classOrNull?.owner?.fqNameWhenAvailable == StandardNames.FqNames.array.toSafe()
 
 fun IrType.getArrayElementType(irBuiltIns: IrBuiltIns): IrType =
     if (isBoxedArray)

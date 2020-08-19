@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.deserialization
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -210,7 +210,7 @@ private fun FirRegularClassBuilder.addSerializableIfNeeded(classId: ClassId) {
 }
 
 private fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId) {
-    if (classId.packageFqName != KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAME) return
+    if (classId.packageFqName != StandardNames.BUILT_INS_PACKAGE_FQ_NAME) return
     if (classId.shortClassName !in ARRAY_CLASSES) return
     superTypeRefs += buildResolvedTypeRef {
         type = ConeClassLikeTypeImpl(

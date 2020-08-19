@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.ClassId
@@ -16,7 +16,7 @@ internal val DEPRECATED_ANNOTATION_FQN: FqName = FqName(Deprecated::class.java.n
 internal val DEPRECATED_ANNOTATION_CID: ClassId = internedClassId(DEPRECATED_ANNOTATION_FQN)
 
 internal val STANDARD_KOTLIN_PACKAGE_FQNS: List<FqName> = listOf(
-    KotlinBuiltInsNames.BUILT_INS_PACKAGE_FQ_NAME.intern(),
+    StandardNames.BUILT_INS_PACKAGE_FQ_NAME.intern(),
     FqName("kotlinx").intern()
 )
 

@@ -10,7 +10,7 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.builtins.KotlinBuiltInsNames
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.idea.KotlinBundle
@@ -27,7 +27,7 @@ class MigrateDiagnosticSuppressionInspection : AbstractKotlinInspection(), Clean
             if (annotationEntry.calleeExpression?.text != "Suppress") return
             val context = annotationEntry.analyze(BodyResolveMode.PARTIAL)
             val descriptor = context[BindingContext.ANNOTATION, annotationEntry] ?: return
-            if (descriptor.fqName != KotlinBuiltInsNames.FqNames.suppress) return
+            if (descriptor.fqName != StandardNames.FqNames.suppress) return
 
             for (argument in annotationEntry.valueArguments) {
                 val expression = argument.getArgumentExpression() as? KtStringTemplateExpression ?: continue
