@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
+import com.intellij.lang.LighterASTNode
+import com.intellij.openapi.util.Ref
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSymbolOwner
-import org.jetbrains.kotlin.fir.Visibilities
-import org.jetbrains.kotlin.fir.Visibility
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
@@ -223,15 +222,18 @@ fun FirSimpleFunction.overriddenFunctions(
 /**
  * Returns the visibility by given KtModifierList
  */
-fun KtModifierList?.getVisibility() = this?.visibilityModifierType()?.toFirVisibility()
+fun KtModifierList?.getVisibility() = this?.visibilityModifierType()?.toVisibilityOrNull()
 
-fun KtModifierKeywordToken.toFirVisibility(): Visibility {
+/**
+ * Returns Visibility by token or null
+ */
+fun KtModifierKeywordToken.toVisibilityOrNull(): Visibility? {
     return when (this) {
         KtTokens.PUBLIC_KEYWORD -> Visibilities.Public
         KtTokens.PRIVATE_KEYWORD -> Visibilities.Private
         KtTokens.PROTECTED_KEYWORD -> Visibilities.Protected
         KtTokens.INTERNAL_KEYWORD -> Visibilities.Internal
-        else -> throw IllegalArgumentException("Unknown visibility modifier:$this")
+        else -> null
     }
 }
 
@@ -256,10 +258,10 @@ fun FirMemberDeclaration.implicitModality(context: CheckerContext): Modality {
 
     val klass = context.findClosestClassOrObject() ?: return Modality.FINAL
     val modifiers = this.modifierListOrNull() ?: return Modality.FINAL
-    if (modifiers.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
+    if (modifiers.contains(KtTokens.OVERRIDE_KEYWORD)) {
         val klassModifiers = klass.modifierListOrNull()
         if (klassModifiers != null && klassModifiers.run {
-                hasModifier(KtTokens.ABSTRACT_KEYWORD) || hasModifier(KtTokens.OPEN_KEYWORD) || hasModifier(KtTokens.SEALED_KEYWORD)
+                contains(KtTokens.ABSTRACT_KEYWORD) || contains(KtTokens.OPEN_KEYWORD) || contains(KtTokens.SEALED_KEYWORD)
             }) {
             return Modality.OPEN
         }
@@ -268,7 +270,7 @@ fun FirMemberDeclaration.implicitModality(context: CheckerContext): Modality {
     if (
         klass is FirRegularClass
         && klass.classKind == ClassKind.INTERFACE
-        && !modifiers.hasModifier(KtTokens.PRIVATE_KEYWORD)
+        && !modifiers.contains(KtTokens.PRIVATE_KEYWORD)
     ) {
         return if (this.hasBody()) Modality.OPEN else Modality.ABSTRACT
     }
@@ -276,7 +278,7 @@ fun FirMemberDeclaration.implicitModality(context: CheckerContext): Modality {
     return Modality.FINAL
 }
 
-private fun FirDeclaration.modifierListOrNull() = (this.source.getModifierList() as? FirPsiModifierList)?.modifierList
+private fun FirDeclaration.modifierListOrNull() = this.source.getModifierList()?.modifiers?.map { it.token }
 
 private fun FirDeclaration.hasBody(): Boolean = when (this) {
     is FirSimpleFunction -> this.body != null && this.body !is FirEmptyExpressionBlock
@@ -305,4 +307,24 @@ fun FirClass<*>.findNonInterfaceSupertype(context: CheckerContext): FirTypeRef? 
     }
 
     return null
+}
+
+/**
+ * Returns the source element of the eq operator in assignment statement
+ */
+fun FirSourceElement.eqOperatorSource(): FirSourceElement? {
+    return when (this) {
+        is FirLightSourceElement -> {
+            val children = Ref<Array<LighterASTNode>>()
+            val tree = tree
+            tree.getChildren(element, children)
+            val element = children.get().getOrNull(2) ?: return null
+            element.toFirLightSourceElement(element.startOffset, element.endOffset, tree)
+        }
+        is FirPsiSourceElement<*> -> {
+            val operator = psi.children.getOrNull(1)
+            operator?.toFirPsiSourceElement()
+        }
+        else -> null
+    }
 }
