@@ -92,7 +92,7 @@ private object KotlinAvailableScopesCompletionContributor {
 
                 nonExtensionMembers.forEach(::addToCompletion)
                 extensionNonMembers.forEach(::addToCompletion)
-            } else {
+            } else if (possibleReceiver == null) {
                 val extensionNonMembers = implicitScopes
                     .getCallableSymbols()
                     .filter { !it.isExtension || it.canBeCalledWith(implicitReceivers) }
