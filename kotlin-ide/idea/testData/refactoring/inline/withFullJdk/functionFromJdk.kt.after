@@ -1,0 +1,20 @@
+// RUNTIME_WITH_FULL_JDK
+
+fun test() {
+    val a =
+        /**
+         * Returns the absolute value of an `int` value.
+         * If the argument is not negative, the argument is returned.
+         * If the argument is negative, the negation of the argument is returned.
+         *
+         *
+         * Note that if the argument is equal to the value of
+         * [Integer.MIN_VALUE], the most negative representable
+         * `int` value, the result is that same value, which is
+         * negative.
+         *
+         * @param   a   the argument whose absolute value is to be determined
+         * @return  the absolute value of the argument.
+         */
+        if (42 < 0) -42 else 42
+}

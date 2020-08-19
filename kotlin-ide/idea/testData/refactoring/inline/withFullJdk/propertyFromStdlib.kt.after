@@ -1,0 +1,9 @@
+// RUNTIME_WITH_FULL_JDK
+
+fun test() {
+    val a =
+        /**
+         * A constant holding the maximum value an instance of Int can have.
+         */
+        2147483647
+}

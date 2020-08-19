@@ -1,0 +1,6 @@
+// RUNTIME_WITH_FULL_JDK
+
+fun test() {
+    /** Prints the given [message] and the line separator to the standard output stream. */
+    System.out.println(42)
+}

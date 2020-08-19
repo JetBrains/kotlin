@@ -1,0 +1,11 @@
+// RUNTIME_WITH_FULL_JDK
+
+fun test() {
+    val a =
+        /**
+         * The `double` value that is closer than any other to
+         * *pi*, the ratio of the circumference of a circle to its
+         * diameter.
+         */
+        3.14159265358979323846
+}

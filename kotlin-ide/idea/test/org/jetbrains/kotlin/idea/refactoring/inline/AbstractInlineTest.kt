@@ -12,6 +12,7 @@ import com.intellij.lang.refactoring.InlineActionHandler
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.util.CommonRefactoringUtil
+import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -74,5 +75,9 @@ abstract class AbstractInlineTest : KotlinLightCodeInsightFixtureTestCase() {
         }
     }
 
-    override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+    override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+}
+
+abstract class AbstractInlineTestWithSomeDescriptors: AbstractInlineTest() {
+    override fun getProjectDescriptor(): LightProjectDescriptor = getProjectDescriptorFromFileDirective()
 }

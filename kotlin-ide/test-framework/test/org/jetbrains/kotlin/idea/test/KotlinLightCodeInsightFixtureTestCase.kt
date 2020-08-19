@@ -167,7 +167,7 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
         }
     }
 
-    private fun getProjectDescriptorFromFileDirective(): LightProjectDescriptor {
+    protected fun getProjectDescriptorFromFileDirective(): LightProjectDescriptor {
         val file = File(testDataPath, fileName())
         if (!file.exists()) {
             return KotlinLightProjectDescriptor.INSTANCE
