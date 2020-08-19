@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.psi.*
 
 class ConvertStringTemplateToBuildStringIntention : SelfTargetingIntention<KtStringTemplateExpression>(
@@ -30,7 +32,7 @@ class ConvertStringTemplateToBuildStringIntention : SelfTargetingIntention<KtStr
             lastEntry = entry
         }
         val buildStringCall = KtPsiFactory(element).buildExpression {
-            appendFixedText("buildString {\n")
+            appendFixedText("kotlin.text.buildString {\n")
             entries.forEach {
                 val singleEntry = it.singleOrNull()
                 appendFixedText("append(")
@@ -45,6 +47,7 @@ class ConvertStringTemplateToBuildStringIntention : SelfTargetingIntention<KtStr
             }
             appendFixedText("}")
         }
-        element.replace(buildStringCall)
+        val replaced = element.replaced(buildStringCall)
+        ShortenReferences.DEFAULT.process(replaced)
     }
 }
