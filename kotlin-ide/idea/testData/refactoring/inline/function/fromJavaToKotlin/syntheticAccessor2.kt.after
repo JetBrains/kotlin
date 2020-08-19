@@ -1,5 +1,5 @@
 fun reproduceAccessorsBug() {
     val accessorsBug = AccessorsBug()
-    accessorsBug.smth = 2 // KT-41030
-    println("in setter")
+    println("in setter${1}")
+    println("in setter${2}")
 }
