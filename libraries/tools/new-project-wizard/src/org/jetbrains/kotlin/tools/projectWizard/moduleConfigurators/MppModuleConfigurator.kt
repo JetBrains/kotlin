@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.entity.properties.ModuleCon
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ModuleConfiguratorSetting
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.KotlinBuildSystemPluginIR
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.GradlePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
@@ -67,6 +68,7 @@ object MppModuleConfigurator : ModuleConfigurator,
     ): TaskResult<Unit> = compute {
         createMppFiles(module, modulePath).ensure()
         createSimpleFiles(module, modulePath).ensure()
+        GradlePlugin.gradleProperties.addValues("kotlin.mpp.enableGranularSourceSetsMetadata" to true)
     }
 
     private fun Writer.createMppFiles(
