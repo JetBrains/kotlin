@@ -65,12 +65,13 @@ class CandidateFactory private constructor(
 
     fun createErrorCandidate(diagnostic: ConeDiagnostic): Candidate {
         val symbol: AbstractFirBasedSymbol<*> = when (callInfo.callKind) {
-            CallKind.VariableAccess -> createErrorPropertySymbol(diagnostic)
-            CallKind.Function,
-            CallKind.DelegatingConstructorCall,
-            CallKind.CallableReference -> createErrorFunctionSymbol(diagnostic)
-            CallKind.SyntheticSelect -> throw IllegalStateException()
-            CallKind.SyntheticIdForCallableReferencesResolution -> throw IllegalStateException()
+            is CallKind.VariableAccess -> createErrorPropertySymbol(diagnostic)
+            is CallKind.Function,
+            is CallKind.DelegatingConstructorCall,
+            is CallKind.CallableReference -> createErrorFunctionSymbol(diagnostic)
+            is CallKind.SyntheticSelect -> throw IllegalStateException()
+            is CallKind.SyntheticIdForCallableReferencesResolution -> throw IllegalStateException()
+            is CallKind.CustomForIde -> throw IllegalStateException()
         }
         return Candidate(
             symbol,

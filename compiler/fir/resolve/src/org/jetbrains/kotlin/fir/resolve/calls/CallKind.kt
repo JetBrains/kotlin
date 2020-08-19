@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-enum class CallKind(vararg resolutionSequence: ResolutionStage) {
-    VariableAccess(
+sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
+    object VariableAccess : CallKind(
         CheckVisibility,
         DiscriminateSynthetics,
         CheckExplicitReceiverConsistency,
@@ -16,15 +16,17 @@ enum class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckReceivers.Extension,
         CheckLowPriorityInOverloadResolution,
         PostponedVariablesInitializerResolutionStage
-    ),
-    SyntheticSelect(
+    )
+
+    object SyntheticSelect : CallKind(
         MapArguments,
         NoTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
         CheckArguments,
         EagerResolveOfCallableReferences
-    ),
-    Function(
+    )
+
+    object Function : CallKind(
         CheckVisibility,
         DiscriminateSynthetics,
         MapArguments,
@@ -37,8 +39,9 @@ enum class CallKind(vararg resolutionSequence: ResolutionStage) {
         EagerResolveOfCallableReferences,
         CheckLowPriorityInOverloadResolution,
         PostponedVariablesInitializerResolutionStage
-    ),
-    DelegatingConstructorCall(
+    )
+
+    object DelegatingConstructorCall : CallKind(
         CheckVisibility,
         MapArguments,
         CheckExplicitReceiverConsistency,
@@ -48,8 +51,9 @@ enum class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckReceivers.Extension,
         CheckArguments,
         EagerResolveOfCallableReferences
-    ),
-    CallableReference(
+    )
+
+    object CallableReference : CallKind(
         CheckVisibility,
         DiscriminateSynthetics,
         NoTypeArguments,
@@ -57,14 +61,54 @@ enum class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckReceivers.Dispatch,
         CheckReceivers.Extension,
         CheckCallableReferenceExpectedType
-    ),
-    SyntheticIdForCallableReferencesResolution(
+    )
+
+    object SyntheticIdForCallableReferencesResolution : CallKind(
         MapArguments,
         NoTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
         CheckArguments,
         EagerResolveOfCallableReferences
-    );
+    )
+
+    internal class CustomForIde(vararg resolutionSequence: ResolutionStage) : CallKind(*resolutionSequence)
 
     val resolutionSequence: List<ResolutionStage> = resolutionSequence.toList()
+}
+
+class ResolutionSequenceBuilder(
+    var checkVisibility: Boolean = false,
+    var discriminateSynthetics: Boolean = false,
+    var checkExplicitReceiverConsistency: Boolean = false,
+    var checkDispatchReceiver: Boolean = false,
+    var checkExtensionReceiver: Boolean = false,
+    var checkArguments: Boolean = false,
+    var checkLowPriorityInOverloadResolution: Boolean = false,
+    var initializePostponedVariables: Boolean = false,
+    var mapTypeArguments: Boolean = false,
+    var resolveCallableReferenceArguments: Boolean = false,
+    var checkCallableReferenceExpectedType: Boolean = false,
+) {
+    fun build(): CallKind {
+        val stages = mutableListOf<ResolutionStage>().apply {
+            if (checkVisibility) add(CheckVisibility)
+            if (discriminateSynthetics) add(DiscriminateSynthetics)
+            if (checkArguments) add(MapArguments)
+            if (checkExplicitReceiverConsistency) add(CheckExplicitReceiverConsistency)
+            if (mapTypeArguments) add(MapTypeArguments) else add(NoTypeArguments)
+            if (checkArguments || checkDispatchReceiver || checkExtensionReceiver) add(CreateFreshTypeVariableSubstitutorStage)
+            if (checkDispatchReceiver) add(CheckReceivers.Dispatch)
+            if (checkExtensionReceiver) add(CheckReceivers.Extension)
+            if (checkArguments) add(CheckArguments)
+            if (resolveCallableReferenceArguments) add(EagerResolveOfCallableReferences)
+            if (checkLowPriorityInOverloadResolution) add(CheckLowPriorityInOverloadResolution)
+            if (initializePostponedVariables) add(PostponedVariablesInitializerResolutionStage)
+            if (checkCallableReferenceExpectedType) add(CheckCallableReferenceExpectedType)
+        }.toTypedArray()
+        return CallKind.CustomForIde(*stages)
+    }
+}
+
+fun buildCallKindWithCustomResolutionSequence(init: ResolutionSequenceBuilder.() -> Unit): CallKind {
+    return ResolutionSequenceBuilder().apply(init).build()
 }
