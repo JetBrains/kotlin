@@ -36,10 +36,10 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-compiler:$KOTLIN_VERSION")
 
     testImplementation(KOTLIN_STDLIB)
-    testImplementation(project(":compose:runtime:runtime"))
-    testImplementation(project(":compose:ui:ui"))
     testImplementation(project(":compose:androidview:androidview"))
     testImplementation(project(":compose:compose-compiler-hosted"))
+    testImplementation(project(":compose:runtime:runtime"))
+    testImplementation(project(":compose:ui:ui"))
     testImplementation("androidx.core:core-ktx:1.1.0")
 }
 
