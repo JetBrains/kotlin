@@ -1,5 +1,6 @@
 package markdown
 
+import org.jetbrains.dokka.model.WithGenerics
 import org.jetbrains.dokka.model.dfs
 import org.jetbrains.dokka.pages.ClasslikePageNode
 import org.jetbrains.dokka.pages.ContentDRILink
@@ -70,9 +71,10 @@ class LinkTest : AbstractCoreTest() {
                 val root = rootPageNode.children.single().children.single() as ClasslikePageNode
                 val innerClass = root.children.first { it is ClasslikePageNode }
                 val foo = innerClass.children.first { it.name == "foo" } as MemberPageNode
+                val destinationDri = (root.documentable as WithGenerics).generics.first().dri.toString()
 
-                assertEquals(root.dri.first().toString(), "[JVM root]/Outer///PointingToDeclaration/")
-                assertNotNull(foo.content.dfs { it is ContentDRILink && it.address.toString() == root.dri.first().toString() } )
+                assertEquals(destinationDri, "[JVM root]/Outer///PointingToGenericParameters(0)/")
+                assertNotNull(foo.content.dfs { it is ContentDRILink && it.address.toString() == destinationDri } )
             }
         }
     }
