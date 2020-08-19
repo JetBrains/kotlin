@@ -271,7 +271,7 @@ class DRITest : AbstractCoreTest() {
                 val foo = sampleInner.children.first { it.name == "foo" } as MemberPageNode
                 val documentable = foo.documentable as DFunction
 
-                assertEquals(sampleClass.dri.first().toString(), (documentable.type as TypeParameter).dri.toString())
+                assertEquals((sampleClass.documentable as WithGenerics).generics.first().dri.toString(), (documentable.type as TypeParameter).dri.toString())
                 assertEquals(0, documentable.generics.size)
             }
         }

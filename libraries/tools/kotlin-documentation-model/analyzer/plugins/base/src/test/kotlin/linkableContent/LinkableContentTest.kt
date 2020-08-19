@@ -5,6 +5,7 @@ import org.jetbrains.dokka.base.DokkaBase
 import org.jetbrains.dokka.base.transformers.pages.samples.DefaultSamplesTransformer
 import org.jetbrains.dokka.base.transformers.pages.sourcelinks.SourceLinksTransformer
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
+import org.jetbrains.dokka.model.WithGenerics
 import org.jetbrains.dokka.model.dfs
 import org.jetbrains.dokka.pages.*
 import org.jetbrains.dokka.plugability.plugin
@@ -220,7 +221,7 @@ class LinkableContentTest : AbstractCoreTest() {
                     child?.text == "S"
                 }?.safeAs<ContentDRILink>()
 
-                Assertions.assertEquals(sample.dri.first(), returnTypeNode?.address)
+                Assertions.assertEquals((sample.documentable as WithGenerics).generics.first().dri, returnTypeNode?.address)
             }
         }
     }
