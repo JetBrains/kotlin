@@ -6,7 +6,6 @@ import org.jetbrains.dokka.model.childrenOfType
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.model.firstChildOfType
 import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import utils.text
@@ -100,6 +99,15 @@ class JavadocParserTest : AbstractCoreTest() {
             | *     minute, but this specification follows the date and time conventions
             | *     for ISO C.
             | * </ul>
+            | * <pre class="prettyprint">
+            | * &lt;androidx.fragment.app.FragmentContainerView
+            | *        xmlns:android="http://schemas.android.com/apk/res/android"
+            | *        xmlns:app="http://schemas.android.com/apk/res-auto"
+            | *        android:id="@+id/fragment_container_view"
+            | *        android:layout_width="match_parent"
+            | *        android:layout_height="match_parent"&gt;
+            | * &lt;/androidx.fragment.app.FragmentContainerView&gt;
+            | * </pre>
             | * <p>
             | * In all cases, arguments given to methods for these purposes need
             | * not fall within the indicated ranges; for example, a date may be
@@ -151,6 +159,22 @@ class JavadocParserTest : AbstractCoreTest() {
             assertEquals("java.text.DateFormat", sees[0].name)
             assertEquals(DRI("java.util", "Calendar"), sees[1].address)
             assertEquals("java.util.Calendar", sees[1].name)
+        }
+    }
+
+    @Test
+    fun `correctly parsed code block`(){
+        performJavadocTest { module ->
+            val dateDescription = module.descriptionOf("Date2")!!
+            val preTagContent = dateDescription.firstChildOfType<Pre>().firstChildOfType<Text>()
+            val expectedText = """<androidx.fragment.app.FragmentContainerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/fragment_container_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+ </androidx.fragment.app.FragmentContainerView>""".trimIndent()
+            assertEquals(expectedText.trim(), preTagContent.body.trim())
         }
     }
 }
