@@ -17,7 +17,7 @@ data class DestructuringDeclaration(
     val initializer: FirExpression
 ) {
     fun toFirDestructingDeclaration(session: FirSession): FirExpression {
-        val baseVariable = generateTemporaryVariable(session, null, "destruct", initializer)
+        val baseVariable = generateTemporaryVariable(session, initializer.source, "destruct", initializer)
         return generateDestructuringBlock(session, this, baseVariable, tmpVariable = true)
     }
 }
