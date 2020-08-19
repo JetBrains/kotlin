@@ -60,3 +60,5 @@ org.jetbrains.kotlin.idea.navigation.GotoWithMultipleLibrariesTest.testOneHasSou
 org.jetbrains.kotlin.idea.navigation.GotoWithMultipleLibrariesTest.testOneHasSourceAndManyDoNot,,, FLAKY
 org.jetbrains.kotlin.idea.navigation.GotoWithMultipleLibrariesTest.testSeveralWithSource,,, FLAKY
 org.jetbrains.kotlin.idea.resolve.ReferenceResolveTestGenerated.DelegatedPropertyAccessors.InStandardLibrary.testNotNull,,,
+org.jetbrains.kotlin.tools.projectWizard.wizard.ProjectTemplateNewWizardProjectImportTestGenerated.GradleGroovy.testMultiplatformApplication,,,
+org.jetbrains.kotlin.tools.projectWizard.wizard.ProjectTemplateNewWizardProjectImportTestGenerated.GradleKts.testMultiplatformApplication,,,
