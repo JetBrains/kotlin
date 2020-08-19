@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.BuildScrip
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.BuildScriptRepositoryIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.irsList
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.GradlePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
@@ -113,6 +114,7 @@ object AndroidSinglePlatformModuleConfigurator :
                 FileTemplate(AndroidModuleConfigurator.FileTemplateDescriptors.mainActivityKt(javaPackage), modulePath, settings)
             )
         )
+        GradlePlugin.gradleProperties.addValues("android.useAndroidX" to true)
     }
 
     override fun Reader.createAndroidPlugin(module: Module): AndroidGradlePlugin =
