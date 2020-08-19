@@ -2978,6 +2978,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 public void testWhenWithoutSubject() throws Exception {
                     runTest("testData/intentions/branched/when/eliminateSubject/whenWithoutSubject.kt");
                 }
+
+                @TestMetadata("withoutElse.kt")
+                public void testWithoutElse() throws Exception {
+                    runTest("idea/testData/intentions/branched/when/eliminateSubject/withoutElse.kt");
+                }
+
+                @TestMetadata("withoutElseUsedAsExpression.kt")
+                public void testWithoutElseUsedAsExpression() throws Exception {
+                    runTest("idea/testData/intentions/branched/when/eliminateSubject/withoutElseUsedAsExpression.kt");
+                }
             }
 
             @RunWith(JUnit3RunnerWithInners.class)
