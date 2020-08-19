@@ -44,7 +44,7 @@ internal class KtFirPropertySymbol(
     override val isVal: Boolean get() = firRef.withFir { it.isVal }
     override val name: Name get() = firRef.withFir { it.name }
     override val type: KtType by firRef.withFirAndCache(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) { fir -> builder.buildKtType(fir.returnTypeRef) }
-    override val receiverType: KtType? by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir -> builder.buildKtType(fir.returnTypeRef) }
+    override val receiverType: KtType? by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir -> fir.receiverTypeRef?.let(builder::buildKtType) }
     override val isExtension: Boolean get() = firRef.withFir { it.receiverTypeRef != null }
     override val symbolKind: KtSymbolKind
         get() = firRef.withFir { fir ->
