@@ -4,7 +4,7 @@
  */
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.native.configure
+import org.jetbrains.kotlin.gradle.native.MPPNativeTargets
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.*
 import org.jetbrains.kotlin.gradle.plugin.ProjectLocalConfigurations
@@ -32,9 +32,8 @@ import kotlin.test.assertTrue
 class NewMultiplatformIT : BaseGradleIT() {
     val gradleVersion = GradleVersionRequired.FOR_MPP_SUPPORT
 
-    val nativeHostTargetName = configure().current
-    val supportedNativeTargets = configure().supported
-    val unsupportedNativeTargets = configure().unsupported
+    val nativeHostTargetName = MPPNativeTargets.current
+    val unsupportedNativeTargets = MPPNativeTargets.unsupported
 
     private fun Project.targetClassesDir(targetName: String, sourceSetName: String = "main") =
         classesDir(sourceSet = "$targetName/$sourceSetName")
