@@ -2,7 +2,6 @@ package translators
 
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
