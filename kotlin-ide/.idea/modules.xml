@@ -617,6 +617,8 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/maven/maven3-server-impl/intellij.maven.server.m3.impl.iml" filepath="$PROJECT_DIR$/intellij/plugins/maven/maven3-server-impl/intellij.maven.server.m3.impl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/maven/maven30-server-impl/intellij.maven.server.m30.impl.iml" filepath="$PROJECT_DIR$/intellij/plugins/maven/maven30-server-impl/intellij.maven.server.m30.impl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/maven/maven36-server-impl/intellij.maven.server.m36.impl.iml" filepath="$PROJECT_DIR$/intellij/plugins/maven/maven36-server-impl/intellij.maven.server.m36.impl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/ml-completion-models/intellij.mlCompletionModels.iml" filepath="$PROJECT_DIR$/intellij/plugins/ml-completion-models/intellij.mlCompletionModels.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/ml-completion-models/intellij.mlCompletionModels.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/ml-completion-models/intellij.mlCompletionModels.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/built-in-server/client/node-rpc-client/intellij.nodeRpcClient.iml" filepath="$PROJECT_DIR$/intellij/platform/built-in-server/client/node-rpc-client/intellij.nodeRpcClient.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/analysis-api/intellij.platform.analysis.iml" filepath="$PROJECT_DIR$/intellij/platform/analysis-api/intellij.platform.analysis.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/analysis-impl/intellij.platform.analysis.impl.iml" filepath="$PROJECT_DIR$/intellij/platform/analysis-impl/intellij.platform.analysis.impl.iml" />
@@ -788,7 +790,6 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/space/intellij.space.iml" filepath="$PROJECT_DIR$/intellij/plugins/space/intellij.space.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/spellchecker/intellij.spellchecker.iml" filepath="$PROJECT_DIR$/intellij/spellchecker/intellij.spellchecker.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/stats-collector/intellij.statsCollector.iml" filepath="$PROJECT_DIR$/intellij/plugins/stats-collector/intellij.statsCollector.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/stats-collector/completion-ranker/intellij.statsCollector.completionRanker.iml" filepath="$PROJECT_DIR$/intellij/plugins/stats-collector/completion-ranker/intellij.statsCollector.completionRanker.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/stats-collector/intellij.statsCollector.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/stats-collector/intellij.statsCollector.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/tasks/tasks-api/intellij.tasks.iml" filepath="$PROJECT_DIR$/intellij/plugins/tasks/tasks-api/intellij.tasks.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/tasks/tasks-compatibility/intellij.tasks.compatibility.iml" filepath="$PROJECT_DIR$/intellij/plugins/tasks/tasks-compatibility/intellij.tasks.compatibility.iml" />

@@ -1622,6 +1622,8 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/microservices/microservices-test-utils/intellij.microservices.test.iml" filepath="$PROJECT_DIR$/intellij/plugins/microservices/microservices-test-utils/intellij.microservices.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/microservices/microservices-uast/intellij.microservices.uast.iml" filepath="$PROJECT_DIR$/intellij/plugins/microservices/microservices-uast/intellij.microservices.uast.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/microservices/microservices-ui/intellij.microservices.ui.iml" filepath="$PROJECT_DIR$/intellij/plugins/microservices/microservices-ui/intellij.microservices.ui.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/ml-completion-models/intellij.mlCompletionModels.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/ml-completion-models/intellij.mlCompletionModels.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/ml-completion-models/intellij.mlCompletionModels.tests.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/ml-completion-models/intellij.mlCompletionModels.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/mobile-ide/intellij.mobile.ide.iml" filepath="$PROJECT_DIR$/intellij/mobile-ide/intellij.mobile.ide.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/mobile-ide/build/intellij.mobile.ide.build.iml" filepath="$PROJECT_DIR$/intellij/mobile-ide/build/intellij.mobile.ide.build.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/native/debugger/cdb/intellij.native.debugger.cdb.iml" filepath="$PROJECT_DIR$/intellij/native/debugger/cdb/intellij.native.debugger.cdb.iml" />
@@ -2026,7 +2028,6 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/static-analysis/intellij.staticAnalysis.iml" filepath="$PROJECT_DIR$/intellij/plugins/static-analysis/intellij.staticAnalysis.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/tests/statisticsTests/intellij.statisticsTests.iml" filepath="$PROJECT_DIR$/intellij/tests/statisticsTests/intellij.statisticsTests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/stats-collector/intellij.statsCollector.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/stats-collector/intellij.statsCollector.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/stats-collector/completion-ranker/intellij.statsCollector.completionRanker.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/stats-collector/completion-ranker/intellij.statsCollector.completionRanker.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/stats-collector/intellij.statsCollector.tests.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/stats-collector/intellij.statsCollector.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/struts2/plugin/intellij.struts2.iml" filepath="$PROJECT_DIR$/intellij/contrib/struts2/plugin/intellij.struts2.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/struts2/dom-api/intellij.struts2.dom.iml" filepath="$PROJECT_DIR$/intellij/contrib/struts2/dom-api/intellij.struts2.dom.iml" />
