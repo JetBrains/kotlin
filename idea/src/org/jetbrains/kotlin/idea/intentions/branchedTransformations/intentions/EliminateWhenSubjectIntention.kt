@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.intentions.branchedTransformations.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.toExpression
 import org.jetbrains.kotlin.idea.util.CommentSaver
@@ -16,6 +17,8 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.psi.buildExpression
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class EliminateWhenSubjectIntention :
     SelfTargetingIntention<KtWhenExpression>(KtWhenExpression::class.java, KotlinBundle.lazyMessage("eliminate.argument.of.when")),
@@ -23,7 +26,10 @@ class EliminateWhenSubjectIntention :
     override fun isApplicableTo(element: KtWhenExpression, caretOffset: Int): Boolean {
         if (element.subjectExpression !is KtNameReferenceExpression) return false
         val lBrace = element.openBrace ?: return false
-        return caretOffset <= lBrace.startOffset
+        if (caretOffset > lBrace.startOffset) return false
+        val lastEntry = element.entries.lastOrNull()
+        if (lastEntry?.isElse != true && element.isUsedAsExpression(element.analyze(BodyResolveMode.PARTIAL_WITH_CFA))) return false
+        return true
     }
 
     override fun applyTo(element: KtWhenExpression, editor: Editor?) {
