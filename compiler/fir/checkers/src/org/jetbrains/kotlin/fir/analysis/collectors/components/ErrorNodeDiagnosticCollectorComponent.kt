@@ -92,6 +92,7 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
                 diagnostic.kind == SymbolNotFound -> FirErrors.UNRESOLVED_REFERENCE.on(source, "<No name>")
                 else -> diagnostic.getFactory().on(source)
             }
+            is ConeInstanceAccessBeforeSuperCall -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.on(source, diagnostic.target)
             is ConeStubDiagnostic -> null
             is ConeIntermediateDiagnostic -> null
             else -> throw IllegalArgumentException("Unsupported diagnostic type: ${diagnostic.javaClass}")

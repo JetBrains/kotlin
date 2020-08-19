@@ -363,8 +363,12 @@ class FirTowerResolverSession internal constructor(
                 onScope(lexical.scope, parentGroup.NonLocal(depth))
             }
 
-            lexical.implicitReceiver?.let { implicitReceiverValue ->
-                onImplicitReceiver(implicitReceiverValue, parentGroup.Implicit(depth))
+            val receiver = lexical.implicitReceiver
+
+            if (receiver !is InaccessibleImplicitReceiverValue) {
+                receiver?.let { implicitReceiverValue ->
+                    onImplicitReceiver(implicitReceiverValue, parentGroup.Implicit(depth))
+                }
             }
         }
     }

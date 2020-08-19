@@ -21,5 +21,5 @@ annotation class Bar(
 annotation class Baz(
         val a: IntArray = [null],
         val b: IntArray = [1, null, 2],
-        val c: IntArray = [<!NO_THIS!>this<!>]
+        val c: IntArray = [<!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>]
 )

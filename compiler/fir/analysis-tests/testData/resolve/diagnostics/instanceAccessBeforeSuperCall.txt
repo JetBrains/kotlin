@@ -1,6 +1,6 @@
 FILE: instanceAccessBeforeSuperCall.kt
     public final class A : R|kotlin/Any| {
-        public constructor(x: R|kotlin/Int| = <Unresolved name: getSomeInt>#(), other: R|A| = this#, header: R|kotlin/String| = <Unresolved name: keker>#): R|A| {
+        public constructor(x: R|kotlin/Int| = <Unresolved name: getSomeInt>#(), other: R|A| = this@R|/A|, header: R|kotlin/String| = <Unresolved name: keker>#): R|A| {
             super<R|kotlin/Any|>()
         }
 
@@ -14,7 +14,7 @@ FILE: instanceAccessBeforeSuperCall.kt
 
     }
     public final class B : R|kotlin/Any| {
-        public constructor(other: R|B| = this#): R|B| {
+        public constructor(other: R|B| = this@R|/B|): R|B| {
             super<R|kotlin/Any|>()
         }
 
@@ -25,7 +25,7 @@ FILE: instanceAccessBeforeSuperCall.kt
         }
 
         public constructor(x: R|kotlin/Int|): R|C| {
-            this<R|C|>(fun <anonymous>(): R|C| {
+            this<R|C|>(fun <anonymous>(): R|ERROR CLASS: Cannot access ''<this>'' before superclass constructor has been called| {
                 lval a: R|kotlin/Int| = Int(10)
                 ^ this@R|/C|
             }
@@ -58,6 +58,31 @@ FILE: instanceAccessBeforeSuperCall.kt
                 }
 
             }
+        }
+
+    }
+    public final fun test(f: R|F|): R|kotlin/Unit| {
+    }
+    public final val a: R|ERROR CLASS: 'this' is not defined in this context| = this#
+        public get(): R|ERROR CLASS: 'this' is not defined in this context|
+    public final class F : R|kotlin/Any| {
+        public constructor(a: R|kotlin/Int|, b: R|kotlin/Int|, closure: R|() -> kotlin/Unit|, instance: R|F?|): R|F| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var a: R|kotlin/Int| = R|<local>/a|
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public constructor(x: R|kotlin/Int|): R|F| {
+            this<R|F|>(R|<local>/x|, R|<local>/x|, fun <anonymous>(): R|kotlin/Unit| {
+                lval a: R|kotlin/Int| = Int(10)
+                this@R|/F|
+                R|/test|(this@R|/F|)
+                this@R|/F|.<Unresolved name: a># = Int(20)
+            }
+            , this@R|/F|)
+            this@R|/F|.R|/F.a| = Int(30)
         }
 
     }
