@@ -5,8 +5,14 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
+import com.intellij.lang.LighterASTNode
+import com.intellij.lang.PsiBuilder
+import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.FirLightSourceElement
+import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBasicExpresionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -20,19 +26,42 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.psi.KtStringTemplateExpression
 
 object RedundantSingleExpressionStringTemplateChecker : FirBasicExpresionChecker() {
-    override fun check(functionCall: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (functionCall.source?.kind != FirFakeSourceElementKind.GeneratedToStringCallOnTemplateEntry) return
-        if (functionCall !is FirFunctionCall) return
+    override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (expression.source?.kind != FirFakeSourceElementKind.GeneratedToStringCallOnTemplateEntry) return
+        if (expression !is FirFunctionCall) return
         if (
-            functionCall.explicitReceiver?.typeRef?.coneType?.classId == StandardClassIds.String
-            && functionCall.psi?.findStringParent()?.children?.size == 1 // there is no more children in original string template
+            expression.explicitReceiver?.typeRef?.coneType?.classId == StandardClassIds.String
+            && expression.stringParentChildrenCount() == 1 // there is no more children in original string template
         ) {
-            reporter.report(functionCall.source, REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE)
+            reporter.report(expression.source, REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE)
         }
     }
 
-    private fun PsiElement.findStringParent(): KtStringTemplateExpression? {
-        if (this is KtStringTemplateExpression) return this
-        return this.parent?.findStringParent()
+    private fun FirStatement.stringParentChildrenCount(): Int? {
+        return when (source) {
+            is FirPsiSourceElement<*> -> {
+                source.psi?.stringParentChildrenCount()
+            }
+            is FirLightSourceElement -> {
+                (source as FirLightSourceElement).element.stringParentChildrenCount(source as FirLightSourceElement)
+            }
+            else -> null
+        }
+    }
+
+    private fun PsiElement.stringParentChildrenCount(): Int? {
+        if (parent is KtStringTemplateExpression) return parent?.children?.size
+        return parent.stringParentChildrenCount()
+    }
+
+    private fun LighterASTNode.stringParentChildrenCount(source: FirLightSourceElement): Int? {
+        val parent = source.tree.getParent(this)
+        return if (parent?.tokenType == KtNodeTypes.STRING_TEMPLATE) {
+            val childrenOfParent = Ref<Array<LighterASTNode>>()
+            source.tree.getChildren(parent!!, childrenOfParent)
+            childrenOfParent.get().filter { it is PsiBuilder.Marker }.size
+        } else {
+            parent?.stringParentChildrenCount(source)
+        }
     }
 }

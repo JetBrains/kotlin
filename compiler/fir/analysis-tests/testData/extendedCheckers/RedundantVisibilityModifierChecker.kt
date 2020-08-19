@@ -1,10 +1,9 @@
 fun f() {
-
+    <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> <!CAN_BE_VAL!>var<!> baz = 0
     class LocalClass {
         <!REDUNDANT_VISIBILITY_MODIFIER!>internal<!> var foo = 0
     }
     LocalClass().foo = 1
-    <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> <!CAN_BE_VAL!>var<!> baz = 0
 }
 
 internal inline fun internal() {
