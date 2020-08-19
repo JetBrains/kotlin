@@ -53,3 +53,6 @@ org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.ConvertToAnonymousObjec
 org.jetbrains.kotlin.idea.quickfix.QuickFixMultiFileTestGenerated.MakePrivateAndOverrideMember.testSetter, Unprocessed,,
 org.jetbrains.uast.test.kotlin.KotlinUastTypesTest.testEa101715, Unprocessed,,
 org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.CreateFromUsage.CreateFunction.Invoke.testLambdaArgument, Unprocessed,,
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateJavaToLibrarySourceTestGenerated.testClassAndConstuctors, Unprocessed,,
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateJavaToLibrarySourceTestGenerated.testOverloadedFun, Unprocessed,,
+org.jetbrains.kotlin.idea.decompiler.navigation.NavigateJavaToLibrarySourceTestGenerated.testRenamedElements, Unprocessed,,
