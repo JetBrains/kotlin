@@ -193,8 +193,8 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
     private fun isApplicableTextHierarchy(variableNode: PsiElement): Boolean {
         val family = ancestors(variableNode)
         return when {
-            family[0] is KtClass && (family[0] as KtClass).nameIdentifier == variableNode -> true
-            family[0] is KtDeclaration && family[2] is KtClass -> true
+            family[0] is KtClassOrObject && (family[0] as KtClass).nameIdentifier == variableNode -> true
+            family[0] is KtNamedDeclaration && family[2] is KtClassOrObject -> true
             else -> false
         }
     }

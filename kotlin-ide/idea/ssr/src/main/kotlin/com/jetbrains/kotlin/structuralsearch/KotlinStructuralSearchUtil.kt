@@ -27,5 +27,14 @@ fun IElementType.binaryExprOpName(): Name? = BINARY_EXPR_OP_NAMES[this]
 
 fun KotlinType.renderNames(): Array<String> = arrayOf(
     DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(this),
-    DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(this)
+    DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(this),
+    "$this"
 )
+
+fun String.removeTypeParameters(): String {
+    if (!this.contains('<') || !this.contains('>')) return this
+    return this.removeRange(
+        this.indexOfFirst { c -> c == '<' },
+        this.indexOfLast { c -> c == '>' } + 1
+    )
+}

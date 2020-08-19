@@ -10,10 +10,7 @@ import com.intellij.structuralsearch.impl.matcher.GlobalMatchingVisitor
 import com.intellij.structuralsearch.impl.matcher.handlers.LiteralWithSubstitutionHandler
 import com.intellij.structuralsearch.impl.matcher.handlers.SubstitutionHandler
 import com.intellij.util.containers.reverse
-import com.jetbrains.kotlin.structuralsearch.KSSRBundle
-import com.jetbrains.kotlin.structuralsearch.binaryExprOpName
-import com.jetbrains.kotlin.structuralsearch.getCommentText
-import com.jetbrains.kotlin.structuralsearch.renderNames
+import com.jetbrains.kotlin.structuralsearch.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
@@ -726,26 +723,25 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
         // Possible match if "within hierarchy" is set
         if (!matchNameIdentifiers && identifier != null) {
-            var checkHierarchy = false
-
-            // "within hierarchy" on class name
             val identifierHandler = getHandler(identifier)
-            if (identifierHandler is SubstitutionHandler && (identifierHandler.isStrictSubtype || identifierHandler.isSubtype))
-                checkHierarchy = true
-
-            // "within hierarchy" on member
-            if (klass.body?.children?.filterIsInstance<KtProperty>()?.any {
-                    val propertyIdentifier = it.nameIdentifier ?: return@any false
-                    val handler = getHandler(propertyIdentifier)
-                    handler is SubstitutionHandler && (handler.isSubtype || handler.isStrictSubtype)
-                } == true)
-                checkHierarchy = true
+            val checkHierarchy = when {
+                // "within hierarchy" on class name
+                identifierHandler is SubstitutionHandler && (identifierHandler.isStrictSubtype || identifierHandler.isSubtype) -> true
+                // "within hierarchy" on KtNamedDeclaration
+                identifier.getUserData(KotlinCompilingVisitor.WITHIN_HIERARCHY) == true -> true
+                else -> false
+            }
 
             if (checkHierarchy) {
                 val predicate = (identifierHandler as? SubstitutionHandler)?.findRegExpPredicate()
                 matchNameIdentifiers = (other.descriptor as ClassDescriptor).toSimpleType().supertypes().any { type ->
                     type.renderNames()
-                        .any { predicate?.doMatch(it, myMatchingVisitor.matchContext, other) ?: (identifier.text == it) }
+                        .any {
+                            predicate?.doMatch(it, myMatchingVisitor.matchContext, other)
+                                ?: (identifier.text == it
+                                        // Ignore type parameters if absent from the pattern
+                                        || !identifier.text.contains('<') && identifier.text == it.removeTypeParameters())
+                        }
                 }
             }
         }

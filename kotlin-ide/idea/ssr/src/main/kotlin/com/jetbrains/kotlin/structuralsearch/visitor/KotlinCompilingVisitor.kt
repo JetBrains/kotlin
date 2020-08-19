@@ -1,6 +1,7 @@
 package com.jetbrains.kotlin.structuralsearch.visitor
 
 import com.intellij.dupLocator.util.NodeFilter
+import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
@@ -201,6 +202,20 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
         }
     }
 
+    override fun visitNamedDeclaration(declaration: KtNamedDeclaration) {
+        super.visitNamedDeclaration(declaration)
+
+        declaration.nameIdentifier?.let { identifier ->
+            val handler = getHandler(identifier)
+            if (handler is SubstitutionHandler && (handler.isStrictSubtype || handler.isSubtype) && declaration.parent is KtClassBody) {
+                val klass = declaration.parent.parent
+                if (klass is KtClassOrObject) {
+                    klass.nameIdentifier?.putUserData(WITHIN_HIERARCHY, true)
+                }
+            }
+        }
+    }
+
     override fun visitParameter(parameter: KtParameter) {
         super.visitParameter(parameter)
         getHandler(parameter).filter = ParameterFilter
@@ -359,6 +374,8 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
     }
 
     companion object {
+
+        val WITHIN_HIERARCHY: Key<Boolean> = Key<Boolean>("withinHierarchy")
 
         private fun deparIfNecessary(element: PsiElement): PsiElement =
             if (element is KtParenthesizedExpression) element.deparenthesize() else element

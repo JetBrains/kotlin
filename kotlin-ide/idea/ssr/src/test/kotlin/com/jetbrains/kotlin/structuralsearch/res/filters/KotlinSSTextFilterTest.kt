@@ -7,5 +7,5 @@ class KotlinSSTextFilterTest : KotlinSSResourceInspectionTest() {
 
     fun testHierarchyClassName() { doTest("class '_:*[regex(Foo)]") }
 
-    fun testHierarchyClassMember() { doTest("class Foo { val '_:*[regex(.*)] }") }
+    fun testHierarchyClassDeclaration() { doTest("class Foo { val '_:*[regex(.*)] }") }
 }
