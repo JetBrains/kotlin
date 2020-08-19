@@ -13,13 +13,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.formatter.adjustLineIndent
-import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.isNullabilityFlexible
@@ -65,16 +61,12 @@ class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody
                 val needReturn = returnsValue && (bodyType == null || (!bodyType.isUnit() && !bodyType.isNothing()))
                 return if (needReturn || unitWhenAsResult) {
                     val annotatedExpr = body as? KtAnnotatedExpression
-                    val suppressAnnotation = annotatedExpr?.annotationEntries?.singleOrNull()?.takeIf {
-                        val context = annotatedExpr.analyze(BodyResolveMode.PARTIAL)
-                        context[BindingContext.ANNOTATION, it]?.type?.fqName == FqName("kotlin.Suppress")
-                    }
-                    val returnedExpr = annotatedExpr?.baseExpression?.takeIf { suppressAnnotation != null } ?: body
+                    val returnedExpr = annotatedExpr?.baseExpression ?: body
                     val block = factory.createSingleStatementBlock(factory.createExpressionByPattern("return $0", returnedExpr))
-                    if (suppressAnnotation != null && returnedExpr != body) {
-                        val firstStatement = block.firstStatement
-                        block.addBefore(suppressAnnotation, firstStatement)
-                        block.addBefore(factory.createNewLine(), firstStatement)
+                    val statement = block.firstStatement
+                    annotatedExpr?.annotationEntries?.forEach {
+                        block.addBefore(it, statement)
+                        block.addBefore(factory.createNewLine(), statement)
                     }
                     block
                 } else {
