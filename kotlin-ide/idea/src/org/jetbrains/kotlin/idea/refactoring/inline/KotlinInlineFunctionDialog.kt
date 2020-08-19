@@ -7,15 +7,15 @@ package org.jetbrains.kotlin.idea.refactoring.inline
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.help.HelpManager
+import com.intellij.psi.PsiReference
 import com.intellij.refactoring.HelpID
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
-import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
 class KotlinInlineFunctionDialog(
     function: KtNamedFunction,
-    reference: KtSimpleNameReference?,
+    reference: PsiReference?,
     editor: Editor?,
     private val allowToInlineThisOnly: Boolean,
 ) : AbstractKotlinInlineDialog<KtNamedFunction>(function, reference, editor) {

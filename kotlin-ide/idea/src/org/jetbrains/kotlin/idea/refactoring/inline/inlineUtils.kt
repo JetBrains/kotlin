@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.refactoring.inline
 
 import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
+import com.intellij.psi.PsiReference
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -16,12 +16,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInline
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInlineBuilder
-import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import java.util.*
 
 internal fun buildCodeToInline(
     declaration: KtDeclaration,
@@ -76,9 +73,4 @@ internal fun buildCodeToInline(
     )
 }
 
-internal fun Editor.findSimpleNameReference(): KtSimpleNameReference? =
-    when (val reference = TargetElementUtil.findReference(this, caretModel.offset)) {
-        is KtSimpleNameReference -> reference
-        is PsiMultiReference -> reference.references.firstIsInstanceOrNull()
-        else -> null
-    }
+internal fun Editor.findSimpleNameReference(): PsiReference? = TargetElementUtil.findReference(this, caretModel.offset)

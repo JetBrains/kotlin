@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.refactoring.inline
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.ElementDescriptionUtil
+import com.intellij.psi.PsiReference
 import com.intellij.refactoring.inline.InlineOptionsDialog
 import com.intellij.usageView.UsageViewTypeLocation
 import org.jetbrains.annotations.Nls
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
 abstract class AbstractKotlinInlineDialog<TDeclaration : KtNamedDeclaration>(
     protected val declaration: TDeclaration,
-    protected val reference: KtSimpleNameReference?,
+    protected val reference: PsiReference?,
     protected val editor: Editor?,
 ) : InlineOptionsDialog(declaration.project, true, declaration) {
 

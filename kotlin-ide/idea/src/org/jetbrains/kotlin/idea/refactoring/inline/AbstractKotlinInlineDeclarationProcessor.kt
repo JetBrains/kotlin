@@ -23,6 +23,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.OverrideMethodsProcessor
 import com.intellij.refactoring.RefactoringBundle
@@ -41,7 +42,6 @@ import org.jetbrains.kotlin.idea.codeInliner.replaceUsages
 import org.jetbrains.kotlin.idea.findUsages.ReferencesSearchScopeHelper
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.refactoring.pullUp.deleteWithCompanion
-import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.search.declarationsSearch.findSuperMethodsNoWrapping
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingElement
 import org.jetbrains.kotlin.psi.*
@@ -51,7 +51,7 @@ private val LOG = Logger.getInstance(AbstractKotlinInlineDeclarationProcessor::c
 
 abstract class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDeclaration>(
     protected val declaration: TDeclaration,
-    private val reference: KtSimpleNameReference?,
+    private val reference: PsiReference?,
     private val inlineThisOnly: Boolean,
     private val deleteAfter: Boolean,
     protected val editor: Editor?,

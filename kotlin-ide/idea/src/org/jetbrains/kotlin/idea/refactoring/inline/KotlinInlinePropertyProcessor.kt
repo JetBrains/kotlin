@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.refactoring.inline
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiReference
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
@@ -33,7 +34,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinInlinePropertyProcessor(
     declaration: KtProperty,
-    reference: KtSimpleNameReference?,
+    reference: PsiReference?,
     inlineThisOnly: Boolean,
     private val deleteAfter: Boolean,
     private val isWhenSubjectVariable: Boolean,

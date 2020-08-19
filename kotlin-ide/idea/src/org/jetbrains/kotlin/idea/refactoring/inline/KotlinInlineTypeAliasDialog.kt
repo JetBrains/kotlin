@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.idea.refactoring.inline
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.help.HelpManager
+import com.intellij.psi.PsiReference
 import com.intellij.refactoring.HelpID
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
-import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.KtTypeAlias
 
 class KotlinInlineTypeAliasDialog(
     typeAlias: KtTypeAlias,
-    reference: KtSimpleNameReference?,
+    reference: PsiReference?,
     editor: Editor?,
 ) : AbstractKotlinInlineDialog<KtTypeAlias>(typeAlias, reference, editor) {
     init {

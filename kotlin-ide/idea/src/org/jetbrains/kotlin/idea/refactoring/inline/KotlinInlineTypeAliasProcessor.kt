@@ -6,15 +6,15 @@
 package org.jetbrains.kotlin.idea.refactoring.inline
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiReference
 import org.jetbrains.kotlin.idea.codeInliner.TypeAliasUsageReplacementStrategy
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
-import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.KtTypeAlias
 
 class KotlinInlineTypeAliasProcessor(
     declaration: KtTypeAlias,
-    reference: KtSimpleNameReference?,
+    reference: PsiReference?,
     inlineThisOnly: Boolean,
     deleteAfter: Boolean,
     editor: Editor?,
