@@ -16,11 +16,37 @@
 
 package com.bnorm.power
 
-import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
+import org.jetbrains.kotlin.gradle.plugin.SubpluginArtifact
+import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 
-class PowerAssertGradlePlugin : Plugin<Project> {
-  override fun apply(project: Project): Unit = with(project) {
+class PowerAssertGradlePlugin : KotlinCompilerPluginSupportPlugin {
+  override fun apply(target: Project): Unit = with(target) {
     extensions.create("kotlinPowerAssert", PowerAssertGradleExtension::class.java)
+  }
+
+  override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = true
+
+  override fun getCompilerPluginId(): String = "com.bnorm.kotlin-power-assert"
+
+  override fun getPluginArtifact(): SubpluginArtifact = SubpluginArtifact(
+    groupId = "com.bnorm.power",
+    artifactId = "kotlin-power-assert",
+    version = "0.4.0-SNAPSHOT"
+  )
+
+  override fun applyToCompilation(
+    kotlinCompilation: KotlinCompilation<*>
+  ): Provider<List<SubpluginOption>> {
+    val project = kotlinCompilation.target.project
+    val extension = project.extensions.getByType(PowerAssertGradleExtension::class.java)
+    return project.provider {
+      extension.functions.map {
+        SubpluginOption(key = "function", value = it)
+      }
+    }
   }
 }

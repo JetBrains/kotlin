@@ -31,6 +31,7 @@ class PowerAssertCommandLineProcessor : CommandLineProcessor {
       optionName = "function",
       valueDescription = "function full-qualified name",
       description = "fully qualified path of function to intercept",
+      required = false, // TODO required for Kotlin/JS
       allowMultipleOccurrences = true
     )
   )
