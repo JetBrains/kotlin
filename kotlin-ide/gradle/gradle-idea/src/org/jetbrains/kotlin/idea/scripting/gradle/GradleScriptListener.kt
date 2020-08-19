@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle
 
+import com.intellij.openapi.externalSystem.autoimport.AsyncFileChangeListenerBase
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.newvfs.events.VFileEvent
 import org.jetbrains.kotlin.idea.core.script.configuration.listener.ScriptChangeListener
 import org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleLegacyScriptListener
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
@@ -18,7 +22,8 @@ class GradleScriptListener(project: Project) : ScriptChangeListener(project) {
 
     init {
         // listen changes using VFS events, including gradle-configuration related files
-        addVfsListener(this, buildRootsManager)
+        val listener = GradleScriptFileChangeListener(this, buildRootsManager)
+        VirtualFileManager.getInstance().addAsyncFileListener(listener, project)
     }
 
     fun fileChanged(filePath: String, ts: Long) =
@@ -44,6 +49,33 @@ class GradleScriptListener(project: Project) : ScriptChangeListener(project) {
 
         if (!isCustomScriptingSupport(vFile)) {
             legacy.documentChanged(vFile)
+        }
+    }
+}
+
+private class GradleScriptFileChangeListener(
+    private val watcher: GradleScriptListener,
+    private val buildRootsManager: GradleBuildRootsManager
+) : AsyncFileChangeListenerBase() {
+    val changedFiles = mutableListOf<String>()
+
+    override fun init() {
+        changedFiles.clear()
+    }
+
+    override fun isRelevant(path: String): Boolean {
+        return buildRootsManager.maybeAffectedGradleProjectFile(path)
+    }
+
+    override fun updateFile(file: VirtualFile, event: VFileEvent) {
+        changedFiles.add(event.path)
+    }
+
+    override fun apply() {
+        changedFiles.forEach {
+            LocalFileSystem.getInstance().findFileByPath(it)?.let { f ->
+                watcher.fileChanged(f.path, f.timeStamp)
+            }
         }
     }
 }
