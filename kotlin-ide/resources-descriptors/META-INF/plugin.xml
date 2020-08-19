@@ -29,7 +29,7 @@ The Kotlin plugin provides language support in IntelliJ IDEA and Android Studio.
       <li>Support for sharing code in several targets thanks to the hierarchical structure in multiplatform projects.</li>
       <li>New collection operators, delegated properties improvements, the double-ended queue implementation ArrayDeque, and much more new things in the standard library.</li>
     </ul>
-    For more details, see <a href="https://kotlinlang.org/docs/reference/whatsnew14.html/?utm_source=product&utm_medium=link">What’s New in Kotlin 1.4.0</a> and <a href="http://blog.jetbrains.com/kotlin/2020/08/kotlin-1-4-released-with-a-focus-on-quality-and-performance/?utm_source=product&utm_medium=link">this blog post</a>.
+    For more details, see <a href="https://kotlinlang.org/docs/reference/whatsnew14.html?utm_source=product&utm_medium=link">What’s New in Kotlin 1.4.0</a> and <a href="http://blog.jetbrains.com/kotlin/2020/08/kotlin-1-4-released-with-a-focus-on-quality-and-performance/?utm_source=product&utm_medium=link">this blog post</a>.
     <br><br>
     To get the most out of the changes and improvements introduced in Kotlin 1.4, join our <a href="https://kotlinlang.org/lp/event-14/">Online Event</a> where you will be able to enjoy four days of Kotlin talks, Q&As with the Kotlin team, and more.
     ]]>
