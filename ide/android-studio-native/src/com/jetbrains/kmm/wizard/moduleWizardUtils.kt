@@ -24,6 +24,7 @@ import javax.swing.JTextField
 
 
 private const val HMMP_SUPPORT_KEY = "kotlin.mpp.enableGranularSourceSetsMetadata"
+private const val COMMONIZER_DISABLE_KEY = "kotlin.native.enableDependencyPropagation"
 
 private fun String.asDirectory(): String = this.replace(".", "/")
 
@@ -98,6 +99,8 @@ fun RecipeExecutor.generateKmmModule(project: Project, data: ModuleTemplateData,
 
     if (propertiesFile != null) {
         propertiesFile.findPropertyByKey(HMMP_SUPPORT_KEY)?.setValue("true") ?: propertiesFile.addProperty(HMMP_SUPPORT_KEY, "true")
+        propertiesFile.findPropertyByKey(COMMONIZER_DISABLE_KEY)?.setValue("false")
+            ?: propertiesFile.addProperty(COMMONIZER_DISABLE_KEY, "false")
     } else {
         KMM_LOG.error("Failed to update gradle.properties during KMM module instantiation")
     }
