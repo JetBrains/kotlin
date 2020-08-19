@@ -38,12 +38,27 @@ abstract class KonanPropertiesLoader(override val target: KonanTarget,
                                      val properties: Properties,
                                      private val baseDir: String? = null,
                                      private val host: KonanTarget = HostManager.host) : Configurables {
-    open val dependencies get() = hostTargetList("dependencies")
+    private val predefinedLlvmDistributions: Set<String> =
+            properties.propertyList("predefinedLlvmDistributions").toSet()
+
+    private fun llvmDependencies(): List<String> {
+        // Store into variable to avoid repeated resolve.
+        val llvmHome = llvmHome
+                ?: error("Undefined LLVM home!")
+        return when (llvmHome) {
+            in predefinedLlvmDistributions -> llvmHome
+            else -> null
+        }.let(::listOfNotNull)
+    }
+
+    open val dependencies: List<String>
+        get() = hostTargetList("dependencies") + llvmDependencies()
 
     override fun downloadDependencies() {
         dependencyProcessor!!.run()
     }
 
+    // TODO: We may want to add caching to avoid repeated resolve.
     override fun targetString(key: String): String? 
         = properties.targetString(key, target)
     override fun targetList(key: String): List<String>
