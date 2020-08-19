@@ -56,3 +56,6 @@ org.jetbrains.kotlin.idea.quickfix.QuickFixTestGenerated.CreateFromUsage.CreateF
 org.jetbrains.kotlin.idea.decompiler.navigation.NavigateJavaToLibrarySourceTestGenerated.testClassAndConstuctors, Unprocessed,,
 org.jetbrains.kotlin.idea.decompiler.navigation.NavigateJavaToLibrarySourceTestGenerated.testOverloadedFun, Unprocessed,,
 org.jetbrains.kotlin.idea.decompiler.navigation.NavigateJavaToLibrarySourceTestGenerated.testRenamedElements, Unprocessed,,
+org.jetbrains.kotlin.idea.navigation.GotoWithMultipleLibrariesTest.testOneHasSourceAndOneDoesNot,,, FLAKY
+org.jetbrains.kotlin.idea.navigation.GotoWithMultipleLibrariesTest.testOneHasSourceAndManyDoNot,,, FLAKY
+org.jetbrains.kotlin.idea.navigation.GotoWithMultipleLibrariesTest.testSeveralWithSource,,, FLAKY
