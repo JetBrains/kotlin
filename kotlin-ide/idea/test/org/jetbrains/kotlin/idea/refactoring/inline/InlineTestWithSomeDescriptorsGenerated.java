@@ -26,16 +26,6 @@ public class InlineTestWithSomeDescriptorsGenerated extends AbstractInlineTestWi
         KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
     }
 
-    @TestMetadata("fieldFromJdk.kt")
-    public void testFieldFromJdk() throws Exception {
-        runTest("testData/refactoring/inline/withFullJdk/fieldFromJdk.kt");
-    }
-
-    @TestMetadata("functionFromJdk.kt")
-    public void testFunctionFromJdk() throws Exception {
-        runTest("testData/refactoring/inline/withFullJdk/functionFromJdk.kt");
-    }
-
     @TestMetadata("functionFromJdkWithoutSources.kt")
     public void testFunctionFromJdkWithoutSources() throws Exception {
         runTest("testData/refactoring/inline/withFullJdk/functionFromJdkWithoutSources.kt");
