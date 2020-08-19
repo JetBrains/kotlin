@@ -32,7 +32,7 @@ object Versions {
     }
 
     object GRADLE_PLUGINS {
-        val ANDROID = version("3.5.2")
+        val ANDROID = version("4.0.1")
     }
 }
 
