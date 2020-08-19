@@ -3642,6 +3642,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Classes extends AbstractLightAnalysisModeTest {
+        @TestMetadata("kt40332.kt")
+        public void ignoreKt40332() throws Exception {
+            runTest("compiler/testData/codegen/box/classes/kt40332.kt");
+        }
+
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
