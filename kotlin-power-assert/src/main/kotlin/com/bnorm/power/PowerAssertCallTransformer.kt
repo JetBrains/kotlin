@@ -167,6 +167,7 @@ class PowerAssertCallTransformer(
           isStringFunction(parameters[1].type) -> {
             object : FunctionDelegate {
               override fun buildCall(builder: IrBuilderWithScope, message: IrExpression): IrExpression = with(builder) {
+                val scope = this
                 val lambda = buildFun {
                   name = Name.special("<anonymous>")
                   returnType = context.irBuiltIns.stringType
@@ -177,6 +178,7 @@ class PowerAssertCallTransformer(
                   body = bodyBuilder.irBlockBody {
                     +irReturn(message)
                   }
+                  parent = scope.parent
                 }
                 val expression = IrFunctionExpressionImpl(-1, -1, context.irBuiltIns.stringType, lambda, IrStatementOrigin.LAMBDA)
                 irCall(overload, type = overload.descriptor.returnType!!.toIrType()).apply {
