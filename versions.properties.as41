@@ -16,7 +16,7 @@ versions.clion=201.7223.86
 versions.clion.strict=true
 versions.clion.repo=ijplatform_IjPlatform201_CIDR_CLion_PublicInstallers
 
-versions.LLDB.framework=106
+versions.LLDB.framework=245
 versions.LLDB.framework.repo=ijplatform_master_CIDR_ExternalTools_LldbMac
 
 versions.kotlinNativeBackend=1.4-M3-dev-15369
