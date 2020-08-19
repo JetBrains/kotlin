@@ -2,7 +2,12 @@ expect class A()
 
 // Lifted up type aliases:
 typealias B = A // class at the RHS
-typealias C = B // TA at the RHS
+typealias C = A // TA at the RHS, expanded to the same class
+typealias C2 = A // 2x TA at the RHS, expanded to the same class
+typealias C3 = A // 3x TA at the RHS, expanded to the same class
+
+typealias D = A // class/TA expanded to the same class at the RHS
+typealias E = A // different TAs expanded to the same class at the RHS
 
 typealias F = List<String> // parameterized type at the RHS
 typealias H<T> = List<T> // TA with own parameters
@@ -21,5 +26,5 @@ expect class T
 // Nullability:
 typealias U = A // same nullability of the RHS class
 expect class V // different nullability of the RHS class
-typealias W = U // same nullability of the RHS TA
+typealias W = A // same nullability of the RHS TA
 typealias Y = V // TA at the RHS with the different nullability of own RHS

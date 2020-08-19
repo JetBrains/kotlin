@@ -70,10 +70,14 @@ private fun CirTypeAlias.buildDescriptor(
         typeAliasDescriptor
     )
 
+    val lazyUnderlyingType = storageManager.createLazyValue {
+        underlyingType.buildType(targetComponents, typeParameterResolver)
+    }
+
     typeAliasDescriptor.initialize(
         declaredTypeParameters = declaredTypeParameters,
-        underlyingType = storageManager.createLazyValue { underlyingType.buildType(targetComponents, typeParameterResolver) },
-        expandedType = storageManager.createLazyValue { expandedType.buildType(targetComponents, typeParameterResolver) }
+        underlyingType = lazyUnderlyingType,
+        expandedType = lazyUnderlyingType
     )
 
     // cache created type alias descriptor:

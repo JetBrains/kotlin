@@ -1,9 +1,6 @@
 actual class A actual constructor()
 
 // Lifted up type aliases:
-typealias D = B // class/TA at the RHS
-typealias E = C // different TAs at the RHS
-
 typealias G = List<Int> // different parameterized types at the RHS
 
 typealias I<T> = List<T> // TAs with own parameters with different names
