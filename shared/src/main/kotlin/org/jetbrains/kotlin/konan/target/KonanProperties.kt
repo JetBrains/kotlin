@@ -58,7 +58,7 @@ abstract class KonanPropertiesLoader(override val target: KonanTarget,
         = properties.hostTargetList(key, target, host)
 
     override fun absolute(value: String?): String =
-            dependencyProcessor!!.resolveRelative(value!!).absolutePath
+            dependencyProcessor!!.resolve(value!!).absolutePath
     private val dependencyProcessor  by lazy {
         baseDir?.let {
             DependencyProcessor(

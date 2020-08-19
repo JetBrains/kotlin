@@ -98,7 +98,7 @@ platformManager.filteredOutEnabledButNotSupported.each { target ->
     DependencyKind.values().each { kind ->
         def dir = kind.getDirectory(loader)
         if (dir != null) {
-            String path = dependencyProcessor.resolveRelative(dir).canonicalPath
+            String path = dependencyProcessor.resolve(dir).canonicalPath
             rootProject.ext.set(kind.getPropertyName(target), path)
         }
     }
