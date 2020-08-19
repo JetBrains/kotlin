@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.jvm.compiler
 
 import com.intellij.openapi.util.io.FileUtil
-import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -58,6 +57,23 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
 
     private fun checkKotlinOutput(moduleName: String): (String) -> Unit = { actual ->
         KotlinTestUtils.assertEqualsToFile(File(testDataDirectory, "$moduleName.txt"), actual)
+    }
+
+    private data class ModuleRunResult(val stdout: String, val stderr: String)
+
+    private fun runModule(className: String, modulePath: List<File>): ModuleRunResult {
+        val command = listOf(
+            File(KotlinTestUtils.getJdk9Home(), "bin/java").path,
+            "-p", (modulePath + ForTestCompileRuntime.runtimeJarForTests()).joinToString(File.pathSeparator, transform = File::getPath),
+            "-m", className
+        )
+
+        val process = ProcessBuilder().command(command).start()
+        process.waitFor(1, TimeUnit.MINUTES)
+        return ModuleRunResult(
+            process.inputStream.reader().readText().trimEnd(),
+            process.errorStream.reader().readText().trimEnd()
+        )
     }
 
     private fun createMultiReleaseJar(jdk9Home: File, destination: File, mainRoot: File, java9Root: File): File {
@@ -244,19 +260,17 @@ class Java9ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     }
 
     fun testCoroutinesDebugMetadata() {
-        val jar = module("usage", listOf(ForTestCompileRuntime.runtimeJarForTests()))
+        val usage = module("usage")
+        val (stdout, stderr) = runModule("usage/some.module.withsome.packages.UsageKt", listOf(usage))
+        assertEquals("", stderr)
+        assertEquals("usage/some.module.withsome.packages.Test", stdout)
+    }
 
-        val command = listOf<String>(
-            File(KotlinTestUtils.getJdk9Home(), "bin/java").path,
-            "-p",
-            "${ForTestCompileRuntime.runtimeJarForTests().path}${File.pathSeparator}${jar.path}",
-            "-m",
-            "usage/some.module.withsome.packages.UsageKt"
-        )
-
-        val process = ProcessBuilder().command(command).start()
-        process.waitFor(1, TimeUnit.MINUTES)
-        val got = process.inputStream.reader().readText()
-        KotlinTestUtils.assertEqualsToFile(File("$testDataDirectory/stdout.txt"), got)
+    fun testReflection() {
+        val reflect = ForTestCompileRuntime.reflectJarForTests()
+        val usage = module("usage", listOf(reflect))
+        val (stdout, stderr) = runModule("usage/usage.test.UsageKt", listOf(usage, reflect))
+        assertEquals("", stderr)
+        assertEquals("OK", stdout)
     }
 }
