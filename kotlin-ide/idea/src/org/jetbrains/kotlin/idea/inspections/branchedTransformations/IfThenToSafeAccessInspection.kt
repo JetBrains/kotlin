@@ -9,6 +9,7 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.imports.importableFqName
@@ -100,6 +101,8 @@ private fun IfThenToSelectData.clausesReplaceableBySafeCall(): Boolean = when {
     baseClause == null -> false
     negatedClause == null && baseClause.isUsedAsExpression(context) -> false
     negatedClause != null && !negatedClause.isNullExpression() -> false
+    context.diagnostics.forElement(condition)
+        .any { it.factory == Errors.SENSELESS_COMPARISON || it.factory == Errors.USELESS_IS_CHECK } -> false
     baseClause.evaluatesTo(receiverExpression) -> true
     baseClause.hasFirstReceiverOf(receiverExpression) -> withoutResultInCallChain(baseClause, context)
     baseClause.anyArgumentEvaluatesTo(receiverExpression) -> true

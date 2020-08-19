@@ -704,6 +704,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("testData/inspectionsLocal/branched/ifThenToSafeAccess/rhsNotEqualsNull.kt");
             }
 
+            @TestMetadata("senselessComparison.kt")
+            public void testSenselessComparison() throws Exception {
+                runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/senselessComparison.kt");
+            }
+
             @TestMetadata("thenAndElseBothNull.kt")
             public void testThenAndElseBothNull() throws Exception {
                 runTest("testData/inspectionsLocal/branched/ifThenToSafeAccess/thenAndElseBothNull.kt");
@@ -732,6 +737,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("unacceptableNoThenBlock.kt")
             public void testUnacceptableNoThenBlock() throws Exception {
                 runTest("testData/inspectionsLocal/branched/ifThenToSafeAccess/unacceptableNoThenBlock.kt");
+            }
+
+            @TestMetadata("uselessIsCheck.kt")
+            public void testUselessIsCheck() throws Exception {
+                runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/uselessIsCheck.kt");
             }
 
             @TestMetadata("willNotInlineClassProperty.kt")
