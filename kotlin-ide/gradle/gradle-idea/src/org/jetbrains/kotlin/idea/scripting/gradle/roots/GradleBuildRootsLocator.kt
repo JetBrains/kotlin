@@ -14,7 +14,7 @@ import com.intellij.openapi.vfs.VirtualFile
  *
  * @see GradleBuildRootsManager for details.
  */
-abstract class GradleBuildRootsLocator(project: Project) {
+abstract class GradleBuildRootsLocator(private val project: Project) {
     protected val roots = GradleBuildRootIndex(project)
 
     abstract fun getScriptInfo(localPath: String): GradleScriptInfo?
@@ -127,6 +127,11 @@ abstract class GradleBuildRootsLocator(project: Project) {
         findScriptBuildRoot(gradleKtsFile.path)
 
     fun findScriptBuildRoot(filePath: String, searchNearestLegacy: Boolean = true): ScriptUnderRoot? {
+        if (project.isDisposed) {
+            // This is not really correct as this check should be under a read/write action. Still, better than nothing.
+            return null
+        }
+
         if (!filePath.endsWith(".gradle.kts")) return null
 
         val scriptInfo = getScriptInfo(filePath)
