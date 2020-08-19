@@ -23,9 +23,12 @@ import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder.Result.KotlinClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInsResourceLoader
 import java.io.InputStream
 
 class ReflectKotlinClassFinder(private val classLoader: ClassLoader) : KotlinClassFinder {
+    private val builtInsResourceLoader = BuiltInsResourceLoader()
+
     private fun findKotlinClass(fqName: String): KotlinClassFinder.Result? {
         return classLoader.tryLoadClass(fqName)?.let { ReflectKotlinClass.create(it) }?.let(::KotlinClass)
     }
@@ -46,7 +49,7 @@ class ReflectKotlinClassFinder(private val classLoader: ClassLoader) : KotlinCla
     override fun findBuiltInsData(packageFqName: FqName): InputStream? {
         if (!packageFqName.startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) return null
 
-        return classLoader.getResourceAsStream(BuiltInSerializerProtocol.getBuiltInsFilePath(packageFqName))
+        return builtInsResourceLoader.loadResource(BuiltInSerializerProtocol.getBuiltInsFilePath(packageFqName))
     }
 }
 
