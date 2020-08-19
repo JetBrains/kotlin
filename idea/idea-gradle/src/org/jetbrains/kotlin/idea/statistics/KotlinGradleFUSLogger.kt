@@ -101,7 +101,8 @@ class KotlinGradleFUSLogger : StartupActivity, DumbAware, Runnable {
 
             container.log(
                 GradleStatisticsEvents.JS,
-                BooleanMetrics.JS_GENERATE_EXTERNALS
+                BooleanMetrics.JS_GENERATE_EXTERNALS,
+                StringMetrics.JS_GENERATE_EXECUTABLE_DEFAULT
             )
 
             container.log(
