@@ -26,6 +26,7 @@ enum class GradleStatisticsEvents {
     Kapt,
     CompilerPlugins,
     MPP,
+    JS,
     Libraries,
     GradleConfiguration,
     ComponentVersions,
