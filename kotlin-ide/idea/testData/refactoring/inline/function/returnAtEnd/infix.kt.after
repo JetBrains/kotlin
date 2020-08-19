@@ -1,0 +1,6 @@
+fun main() {
+    "Bob" newFunction "Doug"
+}
+
+infix fun Any.newFunction(that: Any) = print("$that and $this")
+

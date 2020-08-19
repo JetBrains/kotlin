@@ -348,7 +348,11 @@ class CodeInliner<TCallElement : KtElement>(
                     arrayExpression.shouldKeepValue(usageCount) ||
                     indexExpressions.any { it.shouldKeepValue(usageCount) }
 
-            is KtBinaryExpression -> !sideEffectOnly || left.shouldKeepValue(usageCount) || right.shouldKeepValue(usageCount)
+            is KtBinaryExpression -> !sideEffectOnly ||
+                    operationToken == KtTokens.IDENTIFIER ||
+                    left.shouldKeepValue(usageCount) ||
+                    right.shouldKeepValue(usageCount)
+
             is KtIfExpression -> !sideEffectOnly ||
                     condition.shouldKeepValue(usageCount) ||
                     then.shouldKeepValue(usageCount) ||
