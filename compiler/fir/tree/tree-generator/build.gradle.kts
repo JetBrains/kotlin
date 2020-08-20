@@ -11,7 +11,6 @@ val compileOnly by configurations
 runtimeOnly.extendsFrom(compileOnly)
 
 dependencies {
-    implementation(project(":core:deserialization:deserialization.common"))
     implementation(project(":core:descriptors.common"))
     implementation(project(":compiler:frontend.common"))
     implementation(project(":compiler:fir:cones"))

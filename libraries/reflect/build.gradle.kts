@@ -52,7 +52,6 @@ dependencies {
     embedded(project(":core:descriptors.common"))
     embedded(project(":core:descriptors.jvm"))
     embedded(project(":core:deserialization"))
-    embedded(project(":core:deserialization:deserialization.common"))
     embedded(project(":core:descriptors.runtime"))
     embedded(project(":core:util.runtime"))
     embedded("javax.inject:javax.inject:1")
