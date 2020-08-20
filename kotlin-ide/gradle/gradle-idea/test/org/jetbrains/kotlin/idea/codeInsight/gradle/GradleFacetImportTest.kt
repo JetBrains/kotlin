@@ -570,6 +570,7 @@ class GradleFacetImportTest : KotlinGradleImportingTestCase() {
     }
 
     @Test
+    @Ignore // android.sdk needed
     fun testAndroidGradleJsDetection() {
         configureByFiles()
         createProjectSubFile(
@@ -594,6 +595,7 @@ class GradleFacetImportTest : KotlinGradleImportingTestCase() {
     }
 
     @Test
+    @Ignore // android.sdk needed
     fun testKotlinAndroidPluginDetection() {
         configureByFiles()
         createProjectSubFile(

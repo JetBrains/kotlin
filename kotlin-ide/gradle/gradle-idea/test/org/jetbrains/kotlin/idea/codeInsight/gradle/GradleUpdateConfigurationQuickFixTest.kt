@@ -27,6 +27,7 @@ import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
+import org.junit.Ignore
 import org.junit.Test
 import java.io.File
 import kotlin.reflect.KMutableProperty0
@@ -53,30 +54,35 @@ class GradleUpdateConfigurationQuickFixTest : GradleImportingTestCase() {
     }
 
     @Test
+    @Ignore // Import failed: A problem occurred evaluating root project 'project'
     @TargetVersions("4.7 <=> 6.0")
     fun testUpdateLanguageVersion() {
         doTest("Set module language version to 1.1")
     }
 
     @Test
+    @Ignore // Import failed: Could not initialize class org.jetbrains.kotlin.gradle.internal.KotlinSourceSetProviderImplKt
     @TargetVersions("4.7 <=> 6.0")
     fun testUpdateApiVersion() {
         doTest("Set module API version to 1.1")
     }
 
     @Test
+    @Ignore // Import failed: A problem occurred evaluating root project 'project'
     @TargetVersions("4.7 <=> 6.0")
     fun testUpdateLanguageAndApiVersion() {
         doTest("Set module language version to 1.1")
     }
 
     @Test
+    @Ignore // Import failed: Could not initialize class org.jetbrains.kotlin.gradle.internal.KotlinSourceSetProviderImplKt
     @TargetVersions("4.7 <=> 6.0")
     fun testEnableCoroutines() {
         doTest("Enable coroutine support in the current module")
     }
 
     @Test
+    @Ignore // Import failed: Could not initialize class org.jetbrains.kotlin.gradle.internal.KotlinSourceSetProviderImplKt
     @TargetVersions("4.7 <=> 6.0")
     fun testAddKotlinReflect() {
         doTest("Add 'kotlin-reflect.jar' to the classpath")

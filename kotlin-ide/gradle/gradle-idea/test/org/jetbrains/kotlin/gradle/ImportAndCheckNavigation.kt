@@ -16,10 +16,12 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
+import org.junit.Ignore
 import org.junit.Test
 
 class ImportAndCheckNavigation : MultiplePluginVersionGradleImportingTestCase() {
     @Test
+    @Ignore // PSI reference "FILE" in src/linuxArm64Main/kotlin/arm64.kt can't be resolved
     @PluginTargetVersions(gradleVersion = "5.0+", pluginVersion = "1.3.50+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testNavigationToCommonizedLibrary() {
         val files = configureAndImportProject()

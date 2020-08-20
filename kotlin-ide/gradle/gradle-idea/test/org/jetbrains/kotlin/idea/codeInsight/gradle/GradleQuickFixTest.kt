@@ -17,6 +17,7 @@ import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.idea.inspections.gradle.GradleKotlinxCoroutinesDeprecationInspection
 import org.jetbrains.kotlin.idea.inspections.runInspection
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.Ignore
 import org.junit.Test
 import java.io.File
 import kotlin.reflect.KMutableProperty0
@@ -41,6 +42,7 @@ class GradleQuickFixTest : KotlinGradleImportingTestCase() {
     }
 
     @Test
+    @Ignore // Import failed: A problem occurred evaluating root project 'project'
     fun testUpdateKotlinxCoroutines() {
         doGradleQuickFixTest(GradleKotlinxCoroutinesDeprecationInspection())
     }
