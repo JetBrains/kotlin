@@ -25,8 +25,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperclassesWithoutAny
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.utils.ErrorLexicalScope
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.utils.addIfNotNull
-import java.util.*
 
 class ClassResolutionScopesSupport(
     private val classDescriptor: ClassDescriptor,
@@ -69,7 +67,7 @@ class ClassResolutionScopesSupport(
             scopeWithGenerics,
             classDescriptor,
             true,
-            listOf(classDescriptor.thisAsReceiverParameter),
+            classDescriptor.contextReceivers + classDescriptor.thisAsReceiverParameter,
             LexicalScopeKind.CLASS_MEMBER_SCOPE
         )
     }
