@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.jps.build
 
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.jps.builders.*
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
 import org.jetbrains.jps.cmdline.ProjectDescriptor
 import org.jetbrains.jps.incremental.ModuleBuildTarget
-import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.incremental.KOTLIN_CACHE_DIRECTORY_NAME
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
 import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
@@ -31,9 +32,11 @@ class RelocatableJpsCachesTest : BaseKotlinJpsBuildTestCase() {
     }
 
     override fun tearDown() {
-        workingDir.deleteRecursively()
-        enableICFixture.tearDown()
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { workingDir.deleteRecursively() },
+            ThrowableRunnable { enableICFixture.tearDown() },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     fun testRelocatableCaches() {

@@ -22,22 +22,25 @@ import org.jetbrains.jps.model.library.JpsLibrary
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
 import org.jetbrains.kotlin.test.runTest
+import org.jetbrains.kotlin.idea.test.runAll
 
 @WithMutedInDatabaseRunTest
 abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
-    @Throws(Exception::class)
     override fun setUp() {
         super.setUp()
         System.setProperty("kotlin.jps.tests", "true")
     }
 
-    @Throws(Exception::class)
     override fun tearDown() {
-        System.clearProperty("kotlin.jps.tests")
-        myModel = null
-        myBuildParams.clear()
-        JpsKotlinCompilerRunner.releaseCompileServiceSession()
-        super.tearDown()
+        runAll(
+            ThrowableRunnable {
+                System.clearProperty("kotlin.jps.tests")
+                myModel = null
+                myBuildParams.clear()
+            },
+            ThrowableRunnable { JpsKotlinCompilerRunner.releaseCompileServiceSession() },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     private val libraries = mutableMapOf<String, JpsLibrary>()
