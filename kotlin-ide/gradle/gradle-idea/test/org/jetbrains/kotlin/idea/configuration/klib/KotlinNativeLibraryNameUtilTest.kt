@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.
 import org.jetbrains.kotlin.idea.configuration.klib.KotlinNativeLibraryNameUtil.parseIDELibraryName
 
 class KotlinNativeLibraryNameUtilTest : TestCase() {
-
     fun testBuildIDELibraryName() {
         assertEquals(
             "Kotlin/Native 1.3.60 - stdlib",

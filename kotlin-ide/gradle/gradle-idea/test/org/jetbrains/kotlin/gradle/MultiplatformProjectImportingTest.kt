@@ -34,7 +34,6 @@ import org.junit.Ignore
 import org.junit.Test
 
 class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTestCase() {
-
     private fun legacyMode() = gradleVersion.split(".")[0].toInt() < 4
     private fun getDependencyLibraryUrls(moduleName: String) =
         getRootManager(moduleName)

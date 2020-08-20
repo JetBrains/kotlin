@@ -27,7 +27,6 @@ import java.io.File
 
 
 class GradleNativeLibrariesInIDENamingTest : TestCaseWithFakeKotlinNative() {
-
     // Test naming of Kotlin/Native libraries
     @Test
     fun testLibrariesNaming() {

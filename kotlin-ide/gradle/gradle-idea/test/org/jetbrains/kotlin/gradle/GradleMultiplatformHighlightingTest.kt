@@ -37,7 +37,6 @@ import org.junit.Test
 import java.io.File
 
 class GradleMultiplatformHighlightingTest : MultiplePluginVersionGradleImportingTestCase() {
-
     @Test
     @PluginTargetVersions(gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testFirst() {
@@ -130,9 +129,7 @@ abstract class GradleDaemonAnalyzerTestCase(
 
     protected open fun renderAdditionalAttributeForTag(tag: TagInfo<*>): String? = null
 
-    override fun getTestRootDisposable(): Disposable {
-        return rootDisposable;
-    }
+    override fun getTestRootDisposable() = rootDisposable
 }
 
 internal fun checkFiles(

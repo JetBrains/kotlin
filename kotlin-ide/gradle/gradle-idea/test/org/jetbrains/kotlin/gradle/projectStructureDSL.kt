@@ -61,6 +61,7 @@ class ProjectInfo(
             messageCollector.report("No module found: '$name' in ${moduleManager.modules.map { it.name }}")
             return
         }
+
         val moduleInfo = ModuleInfo(module, this)
         allModulesAsserter?.let { moduleInfo.it() }
         moduleInfo.run(body)
@@ -161,6 +162,7 @@ class ModuleInfo(val module: Module, private val projectInfo: ProjectInfo) {
         if (libraryEntries.size > 1) {
             report("Multiple root entries for library $libraryName")
         }
+
         if (libraryEntries.isEmpty()) {
             val candidate = rootModel.orderEntries
                 .filterIsInstance<LibraryOrderEntry>()
@@ -173,6 +175,7 @@ class ModuleInfo(val module: Module, private val projectInfo: ProjectInfo) {
             val candidateName = candidate?.libraryName
             report("Expected library dependency $libraryName, found nothing. Most probably candidate: $candidateName")
         }
+
         checkLibrary(libraryEntries.singleOrNull(), libraryName, scope)
     }
 
@@ -180,9 +183,11 @@ class ModuleInfo(val module: Module, private val projectInfo: ProjectInfo) {
         val libraryEntries = rootModel.orderEntries.filterIsInstance<LibraryOrderEntry>().filter { entry ->
             entry.library?.getUrls(OrderRootType.CLASSES)?.any { it == classesUrl } ?: false
         }
+
         if (libraryEntries.size > 1) {
             report("Multiple entries for library $classesUrl")
         }
+
         checkLibrary(libraryEntries.singleOrNull(), classesUrl, scope)
     }
 
@@ -191,6 +196,7 @@ class ModuleInfo(val module: Module, private val projectInfo: ProjectInfo) {
             report("No library dependency found for $id")
             return
         }
+
         checkDependencyScope(libraryEntry, scope)
         expectedDependencyNames += libraryEntry.debugText
     }
@@ -213,6 +219,7 @@ class ModuleInfo(val module: Module, private val projectInfo: ProjectInfo) {
             report("Module dependency ${moduleName} (${scope.displayName}) not found. All module dependencies: $allModules")
             return
         }
+
         checkDependencyScope(moduleEntry, scope)
         checkProductionOnTest(moduleEntry, productionOnTest)
         expectedDependencyNames += moduleEntry.debugText
@@ -226,9 +233,11 @@ class ModuleInfo(val module: Module, private val projectInfo: ProjectInfo) {
             report("No source root found: '$pathInProject' among $sourceFolderByPath")
             return
         }
+
         if (packagePrefix != ANY_PACKAGE_PREFIX && sourceFolder.packagePrefix != packagePrefix) {
             report("Source root '$pathInProject': Expected package prefix $packagePrefix, got: ${sourceFolder.packagePrefix}")
         }
+
         expectedSourceRoots += pathInProject
         val actualRootType = sourceFolder.rootType
         if (actualRootType != rootType) {
@@ -311,7 +320,6 @@ class ModuleInfo(val module: Module, private val projectInfo: ProjectInfo) {
                 report("Dependency '${library.presentableName}': expected productionOnTest '$productionOnTest', got '$actualFlag'")
             }
         }
-
     }
 }
 

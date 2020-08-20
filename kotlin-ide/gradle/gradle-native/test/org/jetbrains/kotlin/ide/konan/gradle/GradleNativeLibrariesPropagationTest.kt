@@ -14,7 +14,6 @@ import org.junit.Test
 import org.junit.runners.Parameterized
 
 class GradleNativeLibrariesPropagationTest : TestCaseWithFakeKotlinNative() {
-
     override fun getExternalSystemConfigFileName() = GradleConstants.KOTLIN_DSL_SCRIPT_NAME
 
     override fun testDataDirName() = "nativeLibraries"

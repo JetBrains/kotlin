@@ -8,10 +8,6 @@ package org.jetbrains.kotlin.idea.scripting.gradle.roots
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsLocator.NotificationKind.dontCare
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsLocator.NotificationKind.wasNotImportedAfterCreation
 import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 class GradleBuildRootsLocatorTest : AbstractGradleBuildRootsLocatorTest() {
     @Test

@@ -12,7 +12,6 @@ import org.junit.Test
 
 
 class ImportAndCheckHighlighting : MultiplePluginVersionGradleImportingTestCase() {
-
     @Test
     @PluginTargetVersions(pluginVersion = "1.3.40+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testMultiplatformLibrary() {

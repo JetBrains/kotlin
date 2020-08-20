@@ -11,10 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
 public @interface PluginTargetVersions {
-
     String gradleVersion() default "4.0+";
-
     String pluginVersion() default "1.3.50+";
-
     String gradleVersionForLatestPlugin() default "";
 }

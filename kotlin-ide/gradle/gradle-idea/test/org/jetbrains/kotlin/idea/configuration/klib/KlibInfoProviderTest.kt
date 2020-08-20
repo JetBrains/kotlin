@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.test.KotlinRoot
 import java.io.File
 
 class KlibInfoProviderTest : TestCase() {
-
     fun testOldStyleKlibsFromNativeDistributionRecognized() = doTest(
         ::generateExpectedKlibsFromDistribution
     )
