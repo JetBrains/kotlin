@@ -26,7 +26,8 @@ open class FirNamedFunctionSymbol(
     callableId: CallableId,
     override val isFakeOverride: Boolean = false,
     // Actual for fake override only
-    override val overriddenSymbol: FirNamedFunctionSymbol? = null
+    override val overriddenSymbol: FirNamedFunctionSymbol? = null,
+    override val isIntersectionOverride: Boolean = false,
 ) : FirFunctionSymbol<FirSimpleFunction>(callableId), PossiblyFirFakeOverrideSymbol<FirSimpleFunction, FirNamedFunctionSymbol>
 
 class FirConstructorSymbol(

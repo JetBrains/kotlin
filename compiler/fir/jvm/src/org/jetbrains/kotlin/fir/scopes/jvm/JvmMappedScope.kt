@@ -34,12 +34,9 @@ class JvmMappedScope(
         declaredMemberScope.processFunctionsByName(name, processor)
     }
 
-    // JvmMappedScope is basically used as declaration scope but it's being wrapped into substitution scopes where
-    // a use-site (FirOverrideAwareScope) is expected
-    // So, we put here a stub implementation
-    override fun processOverriddenFunctionsWithDepth(
+    override fun processDirectOverriddenFunctionsWithBaseScope(
         functionSymbol: FirFunctionSymbol<*>,
-        processor: (FirFunctionSymbol<*>, Int) -> ProcessorAction
+        processor: (FirFunctionSymbol<*>, FirTypeScope) -> ProcessorAction
     ) = ProcessorAction.NONE
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
@@ -65,9 +62,9 @@ class JvmMappedScope(
         declaredMemberScope.processPropertiesByName(name, processor)
     }
 
-    override fun processOverriddenPropertiesWithDepth(
+    override fun processDirectOverriddenPropertiesWithBaseScope(
         propertySymbol: FirPropertySymbol,
-        processor: (FirPropertySymbol, Int) -> ProcessorAction
+        processor: (FirPropertySymbol, FirTypeScope) -> ProcessorAction
     ): ProcessorAction = ProcessorAction.NONE
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {

@@ -101,22 +101,22 @@ abstract class AbstractFirUseSiteMemberScope(
         return newSymbol
     }
 
-    override fun processOverriddenFunctionsWithDepth(
+    override fun processDirectOverriddenFunctionsWithBaseScope(
         functionSymbol: FirFunctionSymbol<*>,
-        processor: (FirFunctionSymbol<*>, Int) -> ProcessorAction
+        processor: (FirFunctionSymbol<*>, FirTypeScope) -> ProcessorAction
     ): ProcessorAction =
-        doProcessOverriddenCallables(
+        doProcessDirectOverriddenCallables(
             functionSymbol, processor, directOverriddenFunctions, superTypesScope,
-            FirTypeScope::processOverriddenFunctionsWithDepth
+            FirTypeScope::processDirectOverriddenFunctionsWithBaseScope
         )
 
-    override fun processOverriddenPropertiesWithDepth(
+    override fun processDirectOverriddenPropertiesWithBaseScope(
         propertySymbol: FirPropertySymbol,
-        processor: (FirPropertySymbol, Int) -> ProcessorAction
+        processor: (FirPropertySymbol, FirTypeScope) -> ProcessorAction
     ): ProcessorAction =
-        doProcessOverriddenCallables(
+        doProcessDirectOverriddenCallables(
             propertySymbol, processor, directOverriddenProperties, superTypesScope,
-            FirTypeScope::processOverriddenPropertiesWithDepth
+            FirTypeScope::processDirectOverriddenPropertiesWithBaseScope
         )
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {

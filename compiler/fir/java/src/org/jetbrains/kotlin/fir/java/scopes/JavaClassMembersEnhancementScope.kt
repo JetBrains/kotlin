@@ -85,20 +85,21 @@ class JavaClassMembersEnhancementScope(
         }
     }
 
-    override fun processOverriddenFunctionsWithDepth(
+    override fun processDirectOverriddenFunctionsWithBaseScope(
         functionSymbol: FirFunctionSymbol<*>,
-        processor: (FirFunctionSymbol<*>, Int) -> ProcessorAction
-    ): ProcessorAction = doProcessOverriddenCallables(
-        functionSymbol, processor, overriddenFunctions, useSiteMemberScope,
-        FirTypeScope::processOverriddenFunctionsWithDepth
-    )
+        processor: (FirFunctionSymbol<*>, FirTypeScope) -> ProcessorAction
+    ): ProcessorAction =
+        doProcessDirectOverriddenCallables(
+            functionSymbol, processor, overriddenFunctions, useSiteMemberScope,
+            FirTypeScope::processDirectOverriddenFunctionsWithBaseScope
+        )
 
-    override fun processOverriddenPropertiesWithDepth(
+    override fun processDirectOverriddenPropertiesWithBaseScope(
         propertySymbol: FirPropertySymbol,
-        processor: (FirPropertySymbol, Int) -> ProcessorAction
-    ): ProcessorAction = doProcessOverriddenCallables(
+        processor: (FirPropertySymbol, FirTypeScope) -> ProcessorAction
+    ): ProcessorAction = doProcessDirectOverriddenCallables(
         propertySymbol, processor, overriddenProperties, useSiteMemberScope,
-        FirTypeScope::processOverriddenPropertiesWithDepth
+        FirTypeScope::processDirectOverriddenPropertiesWithBaseScope
     )
 
     override fun getCallableNames(): Set<Name> {

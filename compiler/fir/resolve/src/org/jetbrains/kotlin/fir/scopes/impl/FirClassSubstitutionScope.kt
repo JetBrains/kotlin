@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.fir.fakeElement
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -42,9 +41,7 @@ class FirClassSubstitutionScope(
 
     private val fakeOverrideFunctions = mutableMapOf<FirFunctionSymbol<*>, FirFunctionSymbol<*>>()
     private val fakeOverrideConstructors = mutableMapOf<FirConstructorSymbol, FirConstructorSymbol>()
-    private val fakeOverrideProperties = mutableMapOf<FirPropertySymbol, FirPropertySymbol>()
-    private val fakeOverrideFields = mutableMapOf<FirFieldSymbol, FirFieldSymbol>()
-    private val fakeOverrideAccessors = mutableMapOf<FirAccessorSymbol, FirAccessorSymbol>()
+    private val fakeOverrideVariables = mutableMapOf<FirVariableSymbol<*>, FirVariableSymbol<*>>()
 
     constructor(
         session: FirSession, useSiteMemberScope: FirTypeScope, scopeSession: ScopeSession,
@@ -61,35 +58,41 @@ class FirClassSubstitutionScope(
         return super.processFunctionsByName(name, processor)
     }
 
-    override fun processOverriddenFunctionsWithDepth(
+    override fun processDirectOverriddenFunctionsWithBaseScope(
         functionSymbol: FirFunctionSymbol<*>,
-        processor: (FirFunctionSymbol<*>, Int) -> ProcessorAction
+        processor: (FirFunctionSymbol<*>, FirTypeScope) -> ProcessorAction
+    ): ProcessorAction =
+        processDirectOverriddenWithBaseScope(
+            functionSymbol, processor, FirTypeScope::processDirectOverriddenFunctionsWithBaseScope, fakeOverrideFunctions
+        )
+
+    private inline fun <reified D : FirCallableSymbol<*>> processDirectOverriddenWithBaseScope(
+        callableSymbol: D,
+        noinline processor: (D, FirTypeScope) -> ProcessorAction,
+        processDirectOverriddenCallablesWithBaseScope: FirTypeScope.(D, ((D, FirTypeScope) -> ProcessorAction)) -> ProcessorAction,
+        fakeOverridesMap: Map<out FirCallableSymbol<*>, FirCallableSymbol<*>>
     ): ProcessorAction {
-        if (!useSiteMemberScope.processOverriddenFunctionsWithDepth(functionSymbol, processor)) {
-            return ProcessorAction.STOP
-        }
-        val unwrapped = functionSymbol.overriddenSymbol as FirFunctionSymbol<*>? ?: return ProcessorAction.NEXT
-        if (!processor(unwrapped, 1)) {
-            return ProcessorAction.STOP
-        }
-        return useSiteMemberScope.processOverriddenFunctionsWithDepth(unwrapped) { symbol, depth ->
-            processor(symbol, depth + 1)
-        }
+        val original = (callableSymbol.overriddenSymbol as? D)?.takeIf { it in fakeOverridesMap }
+            ?: return useSiteMemberScope.processDirectOverriddenCallablesWithBaseScope(callableSymbol, processor)
+
+        if (!processor(original, useSiteMemberScope)) return ProcessorAction.STOP
+
+        return useSiteMemberScope.processDirectOverriddenCallablesWithBaseScope(original, processor)
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         return useSiteMemberScope.processPropertiesByName(name) process@{ original ->
             when (original) {
                 is FirPropertySymbol -> {
-                    val property = fakeOverrideProperties.getOrPut(original) { createFakeOverrideProperty(original) }
+                    val property = fakeOverrideVariables.getOrPut(original) { createFakeOverrideProperty(original) }
                     processor(property)
                 }
                 is FirFieldSymbol -> {
-                    val field = fakeOverrideFields.getOrPut(original) { createFakeOverrideField(original) }
+                    val field = fakeOverrideVariables.getOrPut(original) { createFakeOverrideField(original) }
                     processor(field)
                 }
                 is FirAccessorSymbol -> {
-                    val accessor = fakeOverrideAccessors.getOrPut(original) { createFakeOverrideAccessor(original) }
+                    val accessor = fakeOverrideVariables.getOrPut(original) { createFakeOverrideAccessor(original) }
                     processor(accessor)
                 }
                 else -> {
@@ -99,21 +102,14 @@ class FirClassSubstitutionScope(
         }
     }
 
-    override fun processOverriddenPropertiesWithDepth(
+    override fun processDirectOverriddenPropertiesWithBaseScope(
         propertySymbol: FirPropertySymbol,
-        processor: (FirPropertySymbol, Int) -> ProcessorAction
-    ): ProcessorAction {
-        if (!useSiteMemberScope.processOverriddenPropertiesWithDepth(propertySymbol, processor)) {
-            return ProcessorAction.STOP
-        }
-        val unwrapped = propertySymbol.overriddenSymbol ?: return ProcessorAction.NEXT
-        if (!processor(unwrapped, 1)) {
-            return ProcessorAction.STOP
-        }
-        return useSiteMemberScope.processOverriddenPropertiesWithDepth(unwrapped) { symbol, depth ->
-            processor(symbol, depth + 1)
-        }
-    }
+        processor: (FirPropertySymbol, FirTypeScope) -> ProcessorAction
+    ): ProcessorAction =
+        processDirectOverriddenWithBaseScope(
+            propertySymbol, processor, FirTypeScope::processDirectOverriddenPropertiesWithBaseScope,
+            fakeOverrideVariables
+        )
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
         useSiteMemberScope.processClassifiersByNameWithSubstitution(name) { symbol, substitutor ->
