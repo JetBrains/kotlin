@@ -55,19 +55,17 @@ private fun <I : ControlFlowInfo<I, K, V>, K : Any, V : Any> ControlFlowGraph.co
 ) {
     val nodes = getNodesInOrder(direction)
     for (node in nodes) {
-        if (!(node.isEnterNode(direction) && node.owner.owner == null)) {
-            val previousNodes = when (direction) {
-                TraverseDirection.Forward -> node.previousCfgNodes
-                TraverseDirection.Backward -> node.followingCfgNodes
-            }
-            val previousData = previousNodes.mapNotNull { nodeMap[it] }
-            val data = nodeMap[node]
-            val newData = node.accept(visitor, previousData)
-            val hasChanged = newData != data
-            changed[node] = hasChanged
-            if (hasChanged) {
-                nodeMap[node] = newData
-            }
+        val previousNodes = when (direction) {
+            TraverseDirection.Forward -> node.previousCfgNodes
+            TraverseDirection.Backward -> node.followingCfgNodes
+        }
+        val previousData = previousNodes.mapNotNull { nodeMap[it] }
+        val data = nodeMap[node]
+        val newData = node.accept(visitor, previousData)
+        val hasChanged = newData != data
+        changed[node] = hasChanged
+        if (hasChanged) {
+            nodeMap[node] = newData
         }
         if (node is CFGNodeWithCfgOwner<*>) {
             node.subGraphs.forEach { it.collectDataForNodeInternal(direction, initialInfo, visitor, nodeMap, changed) }
