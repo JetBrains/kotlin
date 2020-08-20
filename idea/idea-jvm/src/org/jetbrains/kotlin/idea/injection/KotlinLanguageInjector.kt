@@ -347,9 +347,14 @@ class KotlinLanguageInjector(
     }
 
     private fun injectionForKotlinCall(argument: KtValueArgument, ktFunction: KtFunction, reference: PsiReference): InjectionInfo? {
+        val argumentName = argument.getArgumentName()?.asName
         val argumentIndex = (argument.parent as KtValueArgumentList).arguments.indexOf(argument)
-        val ktParameter = ktFunction.valueParameters.getOrNull(argumentIndex) ?: return null
-
+        // Prefer using argument name if present
+        val ktParameter = if (argumentName != null) {
+            ktFunction.valueParameters.firstOrNull { it.nameAsName == argumentName }
+        } else {
+            ktFunction.valueParameters.getOrNull(argumentIndex)
+        } ?: return null
         val patternInjection = findInjection(ktParameter, configuration.getInjections(KOTLIN_SUPPORT_ID))
         if (patternInjection != null) {
             return patternInjection
@@ -363,7 +368,11 @@ class KotlinLanguageInjector(
             ktReference.resolveToDescriptors(bindingContext).singleOrNull() as? FunctionDescriptor
         } ?: return null
 
-        val parameterDescriptor = functionDescriptor.valueParameters.getOrNull(argumentIndex) ?: return null
+        val parameterDescriptor = if (argumentName != null) {
+            functionDescriptor.valueParameters.firstOrNull { it.name == argumentName }
+        } else {
+            functionDescriptor.valueParameters.getOrNull(argumentIndex)
+        } ?: return null
         return injectionInfoByAnnotation(parameterDescriptor)
     }
 
