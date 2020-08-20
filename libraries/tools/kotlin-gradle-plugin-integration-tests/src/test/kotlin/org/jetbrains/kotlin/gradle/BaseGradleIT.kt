@@ -13,18 +13,20 @@ import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.RunnerWithMuteInDatabase
+import org.jetbrains.kotlin.test.util.trimTrailingWhitespaces
 import org.junit.After
 import org.junit.AfterClass
 import org.junit.Assert
 import org.junit.Before
+import org.junit.runner.RunWith
 import java.io.File
 import java.util.regex.Pattern
 import kotlin.test.*
 
-import org.jetbrains.kotlin.test.util.trimTrailingWhitespaces
-
 val SYSTEM_LINE_SEPARATOR: String = System.getProperty("line.separator")
 
+@RunWith(value = RunnerWithMuteInDatabase::class)
 abstract class BaseGradleIT {
 
     protected var workingDir = File(".")

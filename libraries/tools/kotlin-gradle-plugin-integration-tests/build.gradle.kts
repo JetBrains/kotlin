@@ -39,6 +39,7 @@ dependencies {
     testCompile(gradleApi())
 
     testRuntime(projectRuntimeJar(":kotlin-android-extensions"))
+    testRuntime(project(":compiler:tests-mutes"))
 
     // Workaround for missing transitive import of the common(project `kotlin-test-common`
     // for `kotlin-test-jvm` into the IDE:

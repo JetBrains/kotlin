@@ -28,10 +28,22 @@ private fun loadMutedSet(files: List<File>): MutedSet {
 }
 
 val mutedSet by lazy {
+    val currentRootDir = File("")
+    val projectRootDir =
+        (currentRootDir.goUp("libraries/tools/kotlin-gradle-plugin-integration-tests") ?: currentRootDir).absoluteFile
+
     loadMutedSet(
         listOf(
-            File("tests/mute-common.csv"),
-            File("tests/mute-platform.csv")
-        )
+            "tests/mute-common.csv",
+            "tests/mute-platform.csv"
+        ).map { File(projectRootDir, it) }
     )
+}
+
+private tailrec fun File.goUp(path: String): File? {
+    if (!isAbsolute) return absoluteFile.goUp(path)
+    if (path.isEmpty()) return this
+    val dirName = path.substringAfterLast('/')
+    val parentPath = path.substringBeforeLast('/', "")
+    return if (dirName.isEmpty() || name == dirName) parentFile.goUp(parentPath) else null
 }
