@@ -1,7 +1,6 @@
 package org.jetbrains.dokka.base.parsers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.dokka.model.doc.*
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.ast.ASTNode
@@ -13,8 +12,10 @@ import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import org.intellij.markdown.flavours.gfm.GFMTokenTypes
 import org.jetbrains.dokka.analysis.DokkaResolutionFacade
 import org.jetbrains.dokka.analysis.from
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.base.parsers.factories.DocTagsFromIElementFactory
+import org.jetbrains.dokka.links.DRI
+import org.jetbrains.dokka.model.doc.*
+import org.jetbrains.dokka.model.doc.Suppress
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 import java.net.MalformedURLException
+import java.net.URL
 import org.intellij.markdown.parser.MarkdownParser as IntellijMarkdownParser
 
 class MarkdownParser(
@@ -159,17 +161,37 @@ class MarkdownParser(
 
         private fun linksHandler(linkText: ASTNode, link: String, linkTitle: ASTNode? = null): DocTag {
             val dri: DRI? = resolveDRI(link)
+            val linkTextString =
+                if (linkTitle == null) link else text.substring(linkTitle.startOffset + 1, linkTitle.endOffset - 1)
+
             val params = if (linkTitle == null)
                 mapOf("href" to link)
             else
-                mapOf("href" to link, "title" to text.substring(linkTitle.startOffset + 1, linkTitle.endOffset - 1))
+                mapOf("href" to link, "title" to linkTextString)
 
-            return DocTagsFromIElementFactory.getInstance(
-                MarkdownElementTypes.INLINE_LINK,
-                params = params,
-                children = linkText.children.drop(1).dropLast(1).evaluateChildren(),
-                dri = dri
-            )
+
+            return if (dri == null && !link.isRemoteLink()) {
+                DocTagsFromIElementFactory.getInstance(
+                    MarkdownTokenTypes.TEXT,
+                    params = params,
+                    children = linkText.children.drop(1).dropLast(1).evaluateChildren(),
+                    body = linkTextString.removeSurrounding("[", "]")
+                )
+            } else {
+                DocTagsFromIElementFactory.getInstance(
+                    MarkdownElementTypes.INLINE_LINK,
+                    params = params,
+                    children = linkText.children.drop(1).dropLast(1).evaluateChildren(),
+                    dri = dri
+                )
+            }
+        }
+
+        private fun String.isRemoteLink() = try {
+            URL(this)
+            true
+        } catch(e: MalformedURLException){
+            false
         }
 
         private fun imagesHandler(node: ASTNode): DocTag {
