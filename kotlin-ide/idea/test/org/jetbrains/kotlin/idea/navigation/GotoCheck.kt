@@ -38,7 +38,7 @@ object GotoCheck {
         val searchText = searchTextList.first()
 
         val foundSymbols = model.getNames(includeNonProjectSymbols).filter { it?.startsWith(searchText) ?: false }.flatMap {
-            model.getElementsByName(it, includeNonProjectSymbols, "$it*").toList()
+            model.getElementsByName(it, includeNonProjectSymbols, "$it*").toSet()
         }
 
         val inexactMatching = InTextDirectivesUtils.isDirectiveDefined(documentText, "// ALLOW_MORE_RESULTS")
