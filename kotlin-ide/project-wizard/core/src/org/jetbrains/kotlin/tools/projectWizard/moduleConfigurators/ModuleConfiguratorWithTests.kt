@@ -86,7 +86,7 @@ enum class KotlinTestFramework(
     ),
     JUNIT4(
         KotlinNewProjectWizardBundle.message("module.configurator.tests.setting.framework.junit4"),
-        listOf(ModuleType.jvm),
+        listOf(ModuleType.jvm, ModuleType.android),
         listOf("test-junit")
     ),
     JUNIT5(
