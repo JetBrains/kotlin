@@ -32,7 +32,7 @@ sealed class Node {
   val children: List<Node> get() = mutableChildren
 
   protected fun dump(builder: StringBuilder, indent: Int) {
-    builder.append("  ".repeat(indent)).append(this).appendln()
+    builder.append("  ".repeat(indent)).append(this).appendLine()
     for (child in children) {
       child.dump(builder, indent + 1)
     }
@@ -102,7 +102,7 @@ fun buildAssertTree(expression: IrExpression): RootNode {
     }
 
     override fun visitCall(expression: IrCall, data: Node) {
-      if (expression.symbol.descriptor.name.asString() == "EQEQ" && expression.origin == IrStatementOrigin.EXCLEQ) {
+      if (expression.symbol.owner.name.asString() == "EQEQ" && expression.origin == IrStatementOrigin.EXCLEQ) {
         // Skip the EQEQ part of a EXCLEQ call
         expression.acceptChildren(this, data)
       } else {
