@@ -819,6 +819,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/crossModuleRefIR/constructor.kt");
         }
 
+        @TestMetadata("crossModuleJsExport.kt")
+        public void testCrossModuleJsExport() throws Exception {
+            runTest("js/js.translator/testData/box/crossModuleRefIR/crossModuleJsExport.kt");
+        }
+
         @TestMetadata("export.kt")
         public void testExport() throws Exception {
             runTest("js/js.translator/testData/box/crossModuleRefIR/export.kt");
