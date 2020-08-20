@@ -52,12 +52,6 @@ public class PluginTestCaseBase {
         return getSdk(new File(PathManager.getCommunityHomePath(), "java/mockJDK-1.8/jre").getPath(), "1.6");
     }
 
-    @NotNull
-    public static Sdk mockJdk8() {
-        // Using JDK 6, but with version 1.8
-        return getSdk(new File(PathManager.getCommunityHomePath(), "java/mockJDK-1.8/jre").getPath(), "1.8");
-    }
-
     @TestOnly
     @NotNull
     public static Sdk mockJdk9() {

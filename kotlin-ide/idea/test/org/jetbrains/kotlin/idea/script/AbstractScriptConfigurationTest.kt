@@ -79,7 +79,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
 
     private val sdk by lazy {
         runWriteAction {
-            val sdk = PluginTestCaseBase.addJdk(testRootDisposable) { PluginTestCaseBase.jdk(TestJdkKind.MOCK_JDK) }
+            val sdk = PluginTestCaseBase.addJdk(testRootDisposable) { IdeaTestUtil.getMockJdk18() }
             ProjectRootManager.getInstance(project).projectSdk = sdk
             sdk
         }

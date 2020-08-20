@@ -9,11 +9,12 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.OrderRootType
+import com.intellij.testFramework.IdeaTestUtil
 import org.jetbrains.kotlin.idea.artifacts.AdditionalKotlinArtifacts
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 
 class KotlinJdkAndMultiplatformStdlibDescriptor private constructor(private val withSources: Boolean) : KotlinLightProjectDescriptor() {
-    override fun getSdk(): Sdk? = PluginTestCaseBase.mockJdk8()
+    override fun getSdk(): Sdk? = IdeaTestUtil.getMockJdk18()
 
     override fun configureModule(module: Module, model: ModifiableRootModel) {
         ConfigLibraryUtil.addLibrary(model, STDLIB_COMMON_LIB_NAME) {

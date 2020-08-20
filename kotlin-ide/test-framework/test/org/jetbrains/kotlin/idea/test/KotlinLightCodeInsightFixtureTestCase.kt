@@ -32,11 +32,13 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.ProjectScope
+import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.LoggedErrorProcessor
 import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.util.ThrowableRunnable
+import com.intellij.util.lang.JavaVersion
 import org.apache.log4j.Logger
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.config.*
@@ -229,11 +231,11 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
         }
     }
 
-    private fun sdk(javaVersion: Int): Sdk =
-        when (javaVersion) {
-            6 -> PluginTestCaseBase.mockJdk6()
-            8 -> PluginTestCaseBase.mockJdk8()
-            9 -> PluginTestCaseBase.mockJdk9()
+    private fun sdk(javaVersion: Int): Sdk {
+        return when (javaVersion) {
+            6 -> IdeaTestUtil.getMockJdk(JavaVersion.compose(6))
+            8 -> IdeaTestUtil.getMockJdk18()
+            9 -> IdeaTestUtil.getMockJdk9()
             11 -> {
                 if (SystemInfo.isJavaVersionAtLeast(javaVersion, 0, 0)) {
                     PluginTestCaseBase.fullJdk()
@@ -244,6 +246,7 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
             }
             else -> error("Unsupported JDK version $javaVersion")
         }
+    }
 
     protected open fun getDefaultProjectDescriptor(): KotlinLightProjectDescriptor = KotlinLightProjectDescriptor.INSTANCE
 

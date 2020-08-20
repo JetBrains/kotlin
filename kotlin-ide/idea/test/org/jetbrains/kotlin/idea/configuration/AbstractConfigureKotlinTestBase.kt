@@ -7,6 +7,8 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.testFramework.HeavyPlatformTestCase
+import com.intellij.testFramework.IdeaTestUtil
+import com.intellij.util.lang.JavaVersion
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
 import org.jetbrains.kotlin.test.KotlinRoot
@@ -56,9 +58,9 @@ abstract class AbstractConfigureKotlinTestBase : HeavyPlatformTestCase() {
         KotlinSdkType.setUpIfNeeded(testRootDisposable)
 
         ApplicationManager.getApplication().runWriteAction {
-            addJdk(testRootDisposable, ::mockJdk6)
-            addJdk(testRootDisposable, ::mockJdk8)
-            addJdk(testRootDisposable, ::mockJdk9)
+            addJdk(testRootDisposable) { IdeaTestUtil.getMockJdk(JavaVersion.compose(6)) }
+            addJdk(testRootDisposable, IdeaTestUtil::getMockJdk18)
+            addJdk(testRootDisposable, IdeaTestUtil::getMockJdk9)
         }
     }
 
