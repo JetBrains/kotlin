@@ -4,6 +4,7 @@
       <w>clinit</w>
       <w>codegen</w>
       <w>destructured</w>
+      <w>hmpp</w>
       <w>kapt</w>
       <w>kjsm</w>
       <w>kotlinc</w>
