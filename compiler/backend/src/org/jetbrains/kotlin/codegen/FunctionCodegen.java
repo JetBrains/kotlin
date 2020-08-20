@@ -1060,7 +1060,7 @@ public class FunctionCodegen {
         // or all return types are supertypes of inline class (and can't be inline classes).
 
         for (DescriptorBasedFunctionHandleForJvm handle : bridge.getOriginalFunctions()) {
-            return state.getTypeMapper().getReturnValueType(handle.getDescriptor());
+            return handle.getDescriptor().getReturnType();
         }
 
         if (state.getClassBuilderMode().mightBeIncorrectCode) {
@@ -1457,7 +1457,7 @@ public class FunctionCodegen {
             }
         }
 
-        KotlinType returnValueType = state.getTypeMapper().getReturnValueType(descriptor);
+        KotlinType returnValueType = descriptor.getReturnType();
         StackValue.coerce(delegateTo.getReturnType(), returnValueType, bridge.getReturnType(), bridgeReturnType, iv);
         iv.areturn(bridge.getReturnType());
 

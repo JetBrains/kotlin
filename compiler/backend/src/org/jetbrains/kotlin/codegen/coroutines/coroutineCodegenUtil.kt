@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.inline.addFakeContinuationMarker
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.coroutines.isSuspendLambda
 import org.jetbrains.kotlin.descriptors.*
@@ -32,15 +33,14 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.types.TypeConstructorSubstitution
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Label
@@ -452,6 +452,33 @@ fun FunctionDescriptor.getOriginalSuspendFunctionView(bindingContext: BindingCon
 
 fun FunctionDescriptor.getOriginalSuspendFunctionView(bindingContext: BindingContext, state: GenerationState) =
     getOriginalSuspendFunctionView(bindingContext, state.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines))
+
+// For each suspend function, we have a corresponding JVM view function that has an extra continuation parameter,
+// and, more importantly, returns 'kotlin.Any' (so that it can return as a reference value or a special COROUTINE_SUSPENDED object).
+// This also causes boxing of primitives and inline class values.
+// If we have a function returning an inline class value that is mapped to a reference type, we want to avoid boxing.
+// However, we have to do that consistently both on declaration site and on call site.
+fun FunctionDescriptor.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass(typeMapper: KotlinTypeMapper): KotlinType? {
+    if (!isSuspend) return null
+    // Suspend lambdas cannot return unboxed inline class
+    if (this is AnonymousFunctionDescriptor) return null
+    val originalDescriptor = unwrapInitialDescriptorForSuspendFunction().original
+    val originalReturnType = originalDescriptor.returnType ?: return null
+    if (!originalReturnType.isInlineClassType()) return null
+    // Force boxing for primitives
+    if (AsmUtil.isPrimitive(typeMapper.mapType(originalReturnType))) return null
+    // Force boxing for nullable inline class types with nullable underlying type
+    if (originalReturnType.isMarkedNullable && originalReturnType.isNullableUnderlyingType()) return null
+    // Force boxing if the function overrides function with return type Any
+    if (originalDescriptor.overriddenDescriptors.any {
+            (it.original.returnType?.isMarkedNullable == true && it.original.returnType?.isNullableUnderlyingType() == true) ||
+                    it.original.returnType?.makeNotNullable() != originalReturnType.makeNotNullable()
+        }) return null
+    // TODO: Do not box `Result`
+    if (originalReturnType.constructor.declarationDescriptor?.fqNameSafe == StandardNames.RESULT_FQ_NAME) return null
+    // Don't box other inline classes
+    return originalReturnType
+}
 
 fun InstructionAdapter.loadCoroutineSuspendedMarker(languageVersionSettings: LanguageVersionSettings) {
     invokestatic(

@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.isStaticMethod
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.*
-import org.jetbrains.kotlin.codegen.coroutines.getOrCreateJvmSuspendFunctionView
-import org.jetbrains.kotlin.codegen.coroutines.isSuspendFunctionNotSuspensionView
-import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspendFunction
+import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.inline.FictitiousArrayConstructor
 import org.jetbrains.kotlin.codegen.signature.AsmTypeFactory
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
@@ -356,43 +354,6 @@ class KotlinTypeMapper @JvmOverloads constructor(
         }
     }
 
-    fun getReturnValueType(functionDescriptor: FunctionDescriptor): KotlinType =
-        getActualReturnTypeForSuspendFunctionWithInlineClassReturnTypeHack(functionDescriptor)
-            ?: functionDescriptor.returnType!!
-
-    private fun getActualReturnTypeForSuspendFunctionWithInlineClassReturnTypeHack(functionDescriptor: FunctionDescriptor): KotlinType? {
-        // For each suspend function, we have a corresponding JVM view function that has an extra continuation parameter,
-        // and, more importantly, returns 'kotlin.Any' (so that it can return as a reference value or a special COROUTINE_SUSPENDED object).
-        // This also causes boxing of primitives and inline class values.
-        // If we have a function returning an inline class value that is mapped to a reference type, we want to avoid boxing.
-        // However, we have to do that consistently both on declaration site and on call site.
-
-        if (!functionDescriptor.isSuspend) return null
-
-        val originalSuspendFunction = functionDescriptor.unwrapInitialDescriptorForSuspendFunction()
-        val originalReturnType = originalSuspendFunction.returnType!!
-
-        if (!originalReturnType.isInlineClassType()) return null
-
-        // Force boxing for primitives
-        if (AsmUtil.isPrimitive(mapType(originalReturnType))) {
-            return functionDescriptor.builtIns.nullableAnyType
-        }
-
-        // Force boxing for nullable inline class types with nullable underlying type
-        if (originalReturnType.isMarkedNullable && originalReturnType.isNullableUnderlyingType()) {
-            return functionDescriptor.builtIns.nullableAnyType
-        }
-
-        // Force boxing for Result type, otherwise, the coroutines machinery will break
-        if (originalReturnType.constructor.declarationDescriptor?.fqNameSafe == RESULT_FQ_NAME) {
-            return functionDescriptor.builtIns.nullableAnyType
-        }
-
-        // Don't box other inline classes
-        return originalReturnType
-    }
-
     @JvmOverloads
     fun mapToCallableMethod(
         descriptor: FunctionDescriptor,
@@ -464,7 +425,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
                     invokeOpcode = INVOKESTATIC
                     val originalDescriptor = descriptor.original
                     signature = mapSignatureSkipGeneric(originalDescriptor, OwnerKind.DEFAULT_IMPLS)
-                    returnKotlinType = getReturnValueType(originalDescriptor)
+                    returnKotlinType = originalDescriptor.returnType
                     if (descriptor is AccessorForCallableDescriptor<*> && descriptor.calleeDescriptor.isCompiledToJvmDefault(jvmDefaultMode)) {
                         owner = mapClass(functionParent)
                         isInterfaceMember = true
@@ -515,7 +476,11 @@ class KotlinTypeMapper @JvmOverloads constructor(
                         skipGenericSignature = true,
                         hasSpecialBridge = false
                     )
-                returnKotlinType = getReturnValueType(functionToCall)
+
+                returnKotlinType =
+                    (if (functionToCall.isSuspend &&
+                        functionToCall.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass(this) == null
+                    ) functionDescriptor.builtIns.nullableAnyType else functionToCall.returnType)
 
                 val receiver = if (currentIsInterface && !originalIsInterface || functionParent is FunctionClassDescriptor)
                     declarationOwner
@@ -528,7 +493,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
         } else {
             val originalDescriptor = functionDescriptor.original
             signature = mapSignatureSkipGeneric(originalDescriptor)
-            returnKotlinType = getReturnValueType(originalDescriptor)
+            returnKotlinType = originalDescriptor.returnType
             owner = mapOwner(functionDescriptor)
             ownerForDefaultImpl = owner
             baseMethodDescriptor = functionDescriptor
