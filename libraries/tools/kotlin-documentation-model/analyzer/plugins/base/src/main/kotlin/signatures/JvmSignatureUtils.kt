@@ -136,9 +136,11 @@ interface JvmSignatureUtils {
                         || it.dri == DRI("java.lang", "Deprecated")
             } == true) setOf(TextStyle.Strikethrough) else emptySet()
 
-    infix fun DFunction.uses(t: DTypeParameter): Boolean =
-        t.dri in (listOfNotNull(receiver?.type?.drisOfAllNestedBounds, receiver?.dri) +
+    infix fun DFunction.uses(t: DTypeParameter): Boolean {
+        val allDris: List<DRI> = (listOfNotNull(receiver?.dri, *receiver?.type?.drisOfAllNestedBounds?.toTypedArray() ?: emptyArray()) +
                 parameters.flatMap { listOf(it.dri) + it.type.drisOfAllNestedBounds })
+        return t.dri in allDris
+    }
 }
 
 sealed class AtStrategy
