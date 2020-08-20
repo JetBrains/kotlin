@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.Coroutines
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
+import org.jetbrains.kotlin.gradle.plugin.Kotlin2JsPlugin.Companion.NOWARN_2JS_FLAG
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.Companion.jsCompilerProperty
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
@@ -211,6 +212,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
      */
     val jsGenerateExecutableDefault: Boolean
         get() = booleanProperty("kotlin.js.generate.executable.default") ?: true
+
+    val noWarn2JsPlugin: Boolean
+        get() = booleanProperty(NOWARN_2JS_FLAG) ?: false
 
     val stdlibDefaultDependency: Boolean
         get() = booleanProperty("kotlin.stdlib.default.dependency") ?: true
