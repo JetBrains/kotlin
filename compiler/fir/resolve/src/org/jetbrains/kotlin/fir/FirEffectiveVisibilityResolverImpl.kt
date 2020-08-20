@@ -81,7 +81,9 @@ class FirEffectiveVisibilityResolverImpl(private val session: FirSession) : FirE
 
         if (!succeededToGetSymbol) {
             if (parentClassId?.isLocal == false) {
+                // ?: is needed to get enum from enum entry
                 parentSymbol = session.firSymbolProvider.getClassLikeSymbolByFqName(parentClassId)
+                    ?: parentClassId.outerClassId?.let { session.firSymbolProvider.getClassLikeSymbolByFqName(it) }
                 parentSymbol?.fir.safeAs<FirMemberDeclaration>()?.let {
                     parentEffectiveVisibility = resolveFor(it, null, scopeSession)
                 }
