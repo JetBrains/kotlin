@@ -46,7 +46,7 @@ import java.util.*
 import com.intellij.codeInsight.daemon.impl.quickfix.ClassKind as IdeaClassKind
 
 enum class ClassKind(@NonNls val keyword: String, @Nls val description: String) {
-    PLAIN_CLASS("class", KotlinBundle.message("find.usages.class")),
+    PLAIN_CLASS("class", KotlinBundle.message("text.class")),
     ENUM_CLASS("enum class", KotlinBundle.message("text.enum")),
     ENUM_ENTRY("", KotlinBundle.message("text.enum.constant")),
     ANNOTATION_CLASS("annotation class", KotlinBundle.message("text.annotation")),
