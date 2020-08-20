@@ -50,7 +50,7 @@ object FirConflictingProjectionChecker : FirBasicDeclarationChecker() {
 
     private fun checkTypeRef(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
         val declaration = typeRef.safeAs<FirResolvedTypeRef>()
-            ?.type.safeAs<ConeClassLikeType>()
+            ?.coneTypeSafe<ConeClassLikeType>()
             ?.lookupTag
             ?.toSymbol(context.session)
             ?.fir.safeAs<FirRegularClass>()

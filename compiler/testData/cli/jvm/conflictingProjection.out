@@ -1,100 +1,16 @@
-compiler/testData/cli/jvm/conflictingProjection.kt:11:18: error: projection is conflicting with variance of the corresponding type parameter of In. Remove the projection or replace it with '*'
-fun a6(value: In<out Int>) {}
-                 ^
-compiler/testData/cli/jvm/conflictingProjection.kt:14:19: error: projection is conflicting with variance of the corresponding type parameter of Out. Remove the projection or replace it with '*'
+compiler/testData/cli/jvm/conflictingProjection.kt:10:15: error: projection is conflicting with variance of the corresponding type parameter of Out<in kotlin/Int>. Remove the projection or replace it with '*'
 fun a8(value: Out<in Int>) {}
-                  ^
-compiler/testData/cli/jvm/conflictingProjection.kt:21:14: error: variance annotations are only allowed for type parameters of classes and interfaces
-typealias A4<in K> = None<K>
-             ^
-compiler/testData/cli/jvm/conflictingProjection.kt:22:14: error: variance annotations are only allowed for type parameters of classes and interfaces
-typealias A5<in K> = None<in K>
-             ^
-compiler/testData/cli/jvm/conflictingProjection.kt:23:14: error: variance annotations are only allowed for type parameters of classes and interfaces
-typealias A6<in K> = None<out K>
-             ^
-compiler/testData/cli/jvm/conflictingProjection.kt:25:14: error: variance annotations are only allowed for type parameters of classes and interfaces
-typealias A7<out K> = None<K>
-             ^
-compiler/testData/cli/jvm/conflictingProjection.kt:26:14: error: variance annotations are only allowed for type parameters of classes and interfaces
-typealias A8<out K> = None<in K>
-             ^
-compiler/testData/cli/jvm/conflictingProjection.kt:27:14: error: variance annotations are only allowed for type parameters of classes and interfaces
-typealias A9<out K> = None<out K>
-             ^
-compiler/testData/cli/jvm/conflictingProjection.kt:31:23: error: projection is conflicting with variance of the corresponding type parameter of In. Remove the projection or replace it with '*'
-typealias A12<K> = In<out K>
-                      ^
-compiler/testData/cli/jvm/conflictingProjection.kt:33:15: error: variance annotations are only allowed for type parameters of classes and interfaces
+              ^
+compiler/testData/cli/jvm/conflictingProjection.kt:17:15: error: variance annotations are only allowed for type parameters of classes and interfaces
 typealias A13<in K> = In<K>
               ^
-compiler/testData/cli/jvm/conflictingProjection.kt:34:15: error: variance annotations are only allowed for type parameters of classes and interfaces
+compiler/testData/cli/jvm/conflictingProjection.kt:18:15: error: variance annotations are only allowed for type parameters of classes and interfaces
 typealias A14<in K> = In<in K>
               ^
-compiler/testData/cli/jvm/conflictingProjection.kt:35:15: error: variance annotations are only allowed for type parameters of classes and interfaces
+compiler/testData/cli/jvm/conflictingProjection.kt:19:15: error: variance annotations are only allowed for type parameters of classes and interfaces
 typealias A15<in K> = In<out K>
               ^
-compiler/testData/cli/jvm/conflictingProjection.kt:35:26: error: projection is conflicting with variance of the corresponding type parameter of In. Remove the projection or replace it with '*'
+compiler/testData/cli/jvm/conflictingProjection.kt:19:23: error: projection is conflicting with variance of the corresponding type parameter of In<out K>. Remove the projection or replace it with '*'
 typealias A15<in K> = In<out K>
-                         ^
-compiler/testData/cli/jvm/conflictingProjection.kt:37:15: error: variance annotations are only allowed for type parameters of classes and interfaces
-typealias A16<out K> = In<K>
-              ^
-compiler/testData/cli/jvm/conflictingProjection.kt:38:15: error: variance annotations are only allowed for type parameters of classes and interfaces
-typealias A17<out K> = In<in K>
-              ^
-compiler/testData/cli/jvm/conflictingProjection.kt:39:15: error: variance annotations are only allowed for type parameters of classes and interfaces
-typealias A18<out K> = In<out K>
-              ^
-compiler/testData/cli/jvm/conflictingProjection.kt:39:27: error: projection is conflicting with variance of the corresponding type parameter of In. Remove the projection or replace it with '*'
-typealias A18<out K> = In<out K>
-                          ^
-compiler/testData/cli/jvm/conflictingProjection.kt:42:24: error: projection is conflicting with variance of the corresponding type parameter of Out. Remove the projection or replace it with '*'
-typealias A20<K> = Out<in K>
-                       ^
-compiler/testData/cli/jvm/conflictingProjection.kt:45:15: error: variance annotations are only allowed for type parameters of classes and interfaces
-typealias A22<in K> = Out<K>
-              ^
-compiler/testData/cli/jvm/conflictingProjection.kt:46:15: error: variance annotations are only allowed for type parameters of classes and interfaces
-typealias A23<in K> = Out<in K>
-              ^
-compiler/testData/cli/jvm/conflictingProjection.kt:46:27: error: projection is conflicting with variance of the corresponding type parameter of Out. Remove the projection or replace it with '*'
-typealias A23<in K> = Out<in K>
-                          ^
-compiler/testData/cli/jvm/conflictingProjection.kt:47:15: error: variance annotations are only allowed for type parameters of classes and interfaces
-typealias A24<in K> = Out<out K>
-              ^
-compiler/testData/cli/jvm/conflictingProjection.kt:49:15: error: variance annotations are only allowed for type parameters of classes and interfaces
-typealias A25<out K> = Out<K>
-              ^
-compiler/testData/cli/jvm/conflictingProjection.kt:50:15: error: variance annotations are only allowed for type parameters of classes and interfaces
-typealias A26<out K> = Out<in K>
-              ^
-compiler/testData/cli/jvm/conflictingProjection.kt:50:28: error: projection is conflicting with variance of the corresponding type parameter of Out. Remove the projection or replace it with '*'
-typealias A26<out K> = Out<in K>
-                           ^
-compiler/testData/cli/jvm/conflictingProjection.kt:51:15: error: variance annotations are only allowed for type parameters of classes and interfaces
-typealias A27<out K> = Out<out K>
-              ^
-compiler/testData/cli/jvm/conflictingProjection.kt:86:23: error: projection is conflicting with variance of the corresponding type parameter of InInner. Remove the projection or replace it with '*'
-fun test12(): InOuter<out Int>.OutIntermediate<String>.InInner<Char> = InOuter<Int>().OutIntermediate<String>().InInner()
                       ^
-compiler/testData/cli/jvm/conflictingProjection.kt:88:44: error: projection is conflicting with variance of the corresponding type parameter of InInner. Remove the projection or replace it with '*'
-fun test13(): InOuter<Int>.OutIntermediate<in String>.InInner<Char> = InOuter<Int>().OutIntermediate<String>().InInner()
-                                           ^
-compiler/testData/cli/jvm/conflictingProjection.kt:92:60: error: projection is conflicting with variance of the corresponding type parameter of InInner. Remove the projection or replace it with '*'
-fun test16(): InOuter<Int>.OutIntermediate<String>.InInner<out Char> = InOuter<Int>().OutIntermediate<String>().InInner()
-                                                           ^
-compiler/testData/cli/jvm/conflictingProjection.kt:92:113: error: not enough information to infer type variable G
-fun test16(): InOuter<Int>.OutIntermediate<String>.InInner<out Char> = InOuter<Int>().OutIntermediate<String>().InInner()
-                                                                                                                ^
-compiler/testData/cli/jvm/conflictingProjection.kt:95:44: error: projection is conflicting with variance of the corresponding type parameter of InInner. Remove the projection or replace it with '*'
-fun test18(): InOuter<Int>.OutIntermediate<in String>.InInner<out Char> = InOuter<Int>().OutIntermediate<String>().InInner()
-                                           ^
-compiler/testData/cli/jvm/conflictingProjection.kt:95:63: error: projection is conflicting with variance of the corresponding type parameter of InInner. Remove the projection or replace it with '*'
-fun test18(): InOuter<Int>.OutIntermediate<in String>.InInner<out Char> = InOuter<Int>().OutIntermediate<String>().InInner()
-                                                              ^
-compiler/testData/cli/jvm/conflictingProjection.kt:95:116: error: not enough information to infer type variable G
-fun test18(): InOuter<Int>.OutIntermediate<in String>.InInner<out Char> = InOuter<Int>().OutIntermediate<String>().InInner()
-                                                                                                                   ^
 COMPILATION_ERROR
