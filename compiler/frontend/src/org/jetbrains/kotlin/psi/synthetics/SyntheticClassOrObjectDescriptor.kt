@@ -167,6 +167,7 @@ class SyntheticClassOrObjectDescriptor(
         override fun getPrimaryConstructorModifierList(): KtModifierList? = null
         override fun getPrimaryConstructorParameters(): List<KtParameter> = emptyList()
         override fun getSecondaryConstructors(): List<KtSecondaryConstructor> = emptyList()
+        override fun getContextReceiverTypeReferences(): List<KtTypeReference> = emptyList()
 
         override fun getPsiOrParent() = _parent.psiOrParent
         override fun getParent() = _parent.psiOrParent

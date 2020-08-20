@@ -25,6 +25,7 @@ import com.intellij.psi.impl.CheckUtil
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -185,6 +186,23 @@ abstract class KtClassOrObject :
         }
         parts.reverse()
         return parts.joinToString(separator = ".")
+    }
+
+    override fun getContextReceiverTypeReferences(): List<KtTypeReference> {
+        val stub = stub
+        if (stub != null) {
+            return getStubOrPsiChildrenAsList(KtStubElementTypes.TYPE_REFERENCE)
+        }
+        var node = node.firstChildNode
+        while (node != null) {
+            val tt = node.elementType
+            if (tt === KtNodeTypes.CONTEXT_RECEIVER) {
+                val contextReceiver = node.psi as KtContextReceiver
+                return contextReceiver.typeReferences()
+            }
+            node = node.treeNext
+        }
+        return emptyList()
     }
 }
 
