@@ -42,7 +42,8 @@ internal object ArrayOf : IntrinsicBase() {
     }
 
     override fun evaluate(irFunction: IrFunction, stack: Stack, interpret: IrElement.() -> ExecutionResult): ExecutionResult {
-        val array = irFunction.getArgsForMethodInvocation(stack.getAll()).toTypedArray()
+        val elementsVariable = irFunction.valueParameters.single().symbol
+        val array = irFunction.getArgsForMethodInvocation(listOf(stack.getVariable(elementsVariable))).toTypedArray()
         val typeArguments = irFunction.typeParameters.map { stack.getVariable(it.symbol) }
         stack.pushReturnValue(array.toState(irFunction.returnType).apply { addTypeArguments(typeArguments) })
         return Next
