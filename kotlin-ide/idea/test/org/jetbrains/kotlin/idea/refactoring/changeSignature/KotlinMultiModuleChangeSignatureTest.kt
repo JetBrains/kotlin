@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.util.toPsiFile
+import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.extractMarkerOffset
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.jetbrains.kotlin.types.KotlinType
 import org.junit.runner.RunWith
-import java.io.File
 
 @RunWith(JUnit38ClassRunner::class)
 class KotlinMultiModuleChangeSignatureTest : KotlinMultiFileTestCase() {

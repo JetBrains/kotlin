@@ -19,6 +19,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.util.PlatformUtils
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
+import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith

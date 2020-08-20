@@ -27,16 +27,12 @@ import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.idea.util.IjPlatformUtil;
-import org.jetbrains.kotlin.test.KotlinRoot;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
 
 import java.io.File;
 
 public class PluginTestCaseBase {
-    @NotNull
-    public static final File IDEA_TEST_DATA_DIR = new File(KotlinRoot.DIR, "idea/testData");
-
     private PluginTestCaseBase() {
     }
 

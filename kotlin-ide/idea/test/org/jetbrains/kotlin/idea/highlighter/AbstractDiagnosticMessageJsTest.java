@@ -27,7 +27,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR;
+import static org.jetbrains.kotlin.idea.test.TestUtilsKt.IDEA_TEST_DATA_DIR;
 
 public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnosticMessageTest {
     protected AnalysisResult analyze(Collection<KtFile> files, CompilerConfiguration configuration) {

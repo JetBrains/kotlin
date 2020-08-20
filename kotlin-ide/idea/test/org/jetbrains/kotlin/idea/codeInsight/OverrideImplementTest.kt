@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
+import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.withCustomLanguageAndApiVersion
 import org.junit.internal.runners.JUnit38ClassRunner
@@ -12,7 +13,7 @@ import org.junit.runner.RunWith
 
 @RunWith(JUnit38ClassRunner::class)
 class OverrideImplementTest : AbstractOverrideImplementTest() {
-    override fun getTestDataDirectory() = PluginTestCaseBase.IDEA_TEST_DATA_DIR.resolve("codeInsight/overrideImplement")
+    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("codeInsight/overrideImplement")
 
     fun testAndroidxNotNull() {
         doOverrideDirectoryTest("foo")

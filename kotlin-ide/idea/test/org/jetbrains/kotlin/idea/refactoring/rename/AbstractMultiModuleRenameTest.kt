@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.idea.refactoring.rename
 import com.intellij.psi.PsiManager
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.jsonUtils.getString
+import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import java.io.File
 
 abstract class AbstractMultiModuleRenameTest : KotlinMultiFileTestCase() {

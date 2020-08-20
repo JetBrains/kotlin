@@ -11,7 +11,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.VfsTestUtil
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
 import org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
@@ -26,7 +26,7 @@ abstract class KotlinGradleImportingTestCase : GradleImportingTestCase() {
     protected open fun testDataDirName(): String = ""
 
     protected open fun testDataDirectory(): File {
-        val baseDir = PluginTestCaseBase.IDEA_TEST_DATA_DIR.resolve("gradle/${testDataDirName()}")
+        val baseDir = IDEA_TEST_DATA_DIR.resolve("gradle/${testDataDirName()}")
         return File(baseDir, getTestName(true).substringBefore("_"))
     }
 

@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.run.script.standalone.KotlinStandaloneScriptRunConfiguration
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinScriptFqnIndex
+import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.junit.internal.runners.JUnit38ClassRunner
-import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import org.junit.runner.RunWith
 import kotlin.test.assertNotEquals
@@ -142,6 +142,6 @@ class StandaloneScriptRunConfigurationTest : KotlinCodeInsightTestCase() {
         ).run()
     }
 
-    override fun getTestDataDirectory() = PluginTestCaseBase.IDEA_TEST_DATA_DIR.resolve("run/StandaloneScript")
+    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("run/StandaloneScript")
     override fun getTestProjectJdk() = PluginTestCaseBase.mockJdk()
 }

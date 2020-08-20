@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 
 import java.io.File;
 
-import static org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR;
+import static org.jetbrains.kotlin.idea.test.TestUtilsKt.IDEA_TEST_DATA_DIR;
 
 // This test is quite old and is partially failing after IDEA 2018.2
 // ALLOW_AST_ACCESS is added to 'util.kt' in test data to mute the failure

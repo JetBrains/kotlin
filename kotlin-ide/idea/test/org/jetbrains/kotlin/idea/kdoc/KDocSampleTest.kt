@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractQuickDocProviderTest.wrapToFileComparisonFailure
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext.DECLARATION_TO_DESCRIPTOR
@@ -24,7 +24,7 @@ import java.io.File
 
 @RunWith(JUnit38ClassRunner::class)
 class KDocSampleTest : AbstractMultiModuleTest() {
-    override fun getTestDataDirectory() = PluginTestCaseBase.IDEA_TEST_DATA_DIR.resolve("kdoc/multiModuleSamples")
+    override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("kdoc/multiModuleSamples")
 
     fun testSimple() {
         val code = module("code")

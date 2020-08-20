@@ -185,7 +185,7 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
             }
             return when {
                 withLibraryDirective.isNotEmpty() ->
-                    SdkAndMockLibraryProjectDescriptor(PluginTestCaseBase.IDEA_TEST_DATA_DIR.resolve(withLibraryDirective[0]).path, true)
+                    SdkAndMockLibraryProjectDescriptor(IDEA_TEST_DATA_DIR.resolve(withLibraryDirective[0]).path, true)
 
                 InTextDirectivesUtils.isDirectiveDefined(fileText, "RUNTIME_WITH_SOURCES") ->
                     ProjectDescriptorWithStdlibSources.INSTANCE

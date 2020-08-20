@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.idea.refactoring.copy
 
 import org.jetbrains.kotlin.idea.refactoring.rename.loadTestConfiguration
+import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import java.io.File
 
 abstract class AbstractMultiModuleCopyTest : KotlinMultiFileTestCase() {

@@ -33,7 +33,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.*;
 
-import static org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR;
+import static org.jetbrains.kotlin.idea.test.TestUtilsKt.IDEA_TEST_DATA_DIR;
 
 public abstract class AbstractDiagnosticMessageTest extends KotlinLightCodeInsightFixtureTestCase {
     private static final String DIAGNOSTICS_NUMBER_DIRECTIVE = "DIAGNOSTICS_NUMBER";

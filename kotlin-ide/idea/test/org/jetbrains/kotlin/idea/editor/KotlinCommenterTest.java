@@ -17,7 +17,7 @@ import org.junit.runner.RunWith;
 
 import java.io.File;
 
-import static org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR;
+import static org.jetbrains.kotlin.idea.test.TestUtilsKt.IDEA_TEST_DATA_DIR;
 
 @SuppressWarnings("deprecation")
 @RunWith(JUnit38ClassRunner.class)
