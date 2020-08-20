@@ -66,7 +66,15 @@ class KotlinMultiplatformPlugin(
         checkGradleCompatibility("the Kotlin Multiplatform plugin", GradleVersion.version("6.0"))
 
         project.plugins.apply(JavaBasePlugin::class.java)
-        SingleWarningPerBuild.show(project, "Kotlin Multiplatform Projects are an Alpha feature.")
+
+        if (PropertiesProvider(project).mppStabilityNoWarn != true) {
+            SingleWarningPerBuild.show(
+                project,
+                "Kotlin Multiplatform Projects are an Alpha feature. " +
+                        "See: https://kotlinlang.org/docs/reference/evolution/components-stability.html. " +
+                        "To hide this message, add '$STABILITY_NOWARN_FLAG=true' to the Gradle properties.\n"
+            )
+        }
 
         val targetsContainer = project.container(KotlinTarget::class.java)
         val kotlinMultiplatformExtension = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
@@ -294,6 +302,8 @@ class KotlinMultiplatformPlugin(
 
         internal fun sourceSetFreeCompilerArgsPropertyName(sourceSetName: String) =
             "kotlin.mpp.freeCompilerArgsForSourceSet.$sourceSetName"
+
+        internal const val STABILITY_NOWARN_FLAG = "kotlin.mpp.stability.nowarn"
     }
 }
 
