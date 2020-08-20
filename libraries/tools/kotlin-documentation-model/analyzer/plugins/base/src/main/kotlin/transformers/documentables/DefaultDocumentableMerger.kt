@@ -10,7 +10,7 @@ import org.jetbrains.dokka.transformers.documentation.DocumentableMerger
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-internal class DefaultDocumentableMerger(context: DokkaContext) : DocumentableMerger {
+internal class DefaultDocumentableMerger(val context: DokkaContext) : DocumentableMerger {
     private val dependencyInfo = context.getDependencyInfo()
 
 
@@ -79,33 +79,43 @@ internal class DefaultDocumentableMerger(context: DokkaContext) : DocumentableMe
         reducer: (T, T) -> T
     ): List<T> where T : Documentable, T : WithExpectActual {
 
-        fun analyzeExpectActual(sameDriElements: List<T>) = sameDriElements
-            .partition { it.expectPresentInSet != null }
-            .let { (expects, actuals) ->
-                expects.map { expect ->
-                    listOf(expect) + actuals.filter { actual ->
-                        dependencyInfo[actual.sourceSets.single()]
-                            ?.contains(expect.expectPresentInSet!!)
-                            ?: throw IllegalStateException("Cannot resolve expect/actual relation for ${actual.name}")
-                    }
-                }.map { it.reduce(reducer) }
-            }
-
         fun T.isExpectActual(): Boolean =
             this.safeAs<WithExtraProperties<T>>().let { it != null && it.extra[IsExpectActual] != null }
 
-        fun mergeClashingElements(elements: List<T>) = if(elements.size <= 1) elements else elements.map {
-            when(it) {
-                is DClass -> it.copy(name = "${it.name}(${it.sourceSets.single().analysisPlatform.key})")
-                is DObject -> it.copy(name = "${it.name}(${it.sourceSets.single().analysisPlatform.key})")
-                is DAnnotation -> it.copy(name = "${it.name}(${it.sourceSets.single().analysisPlatform.key})")
-                is DInterface -> it.copy(name = "${it.name}(${it.sourceSets.single().analysisPlatform.key})")
-                is DEnum -> it.copy(name = "${it.name}(${it.sourceSets.single().analysisPlatform.key})")
-                is DFunction -> it.copy(name = "${it.name}(${it.sourceSets.single().analysisPlatform.key})")
-                is DProperty -> it.copy(name = "${it.name}(${it.sourceSets.single().analysisPlatform.key})")
-                else -> elements
+        fun Set<DokkaConfiguration.DokkaSourceSet>.parentSourceSet(): String = singleOrNull {
+            it.dependentSourceSets.all { it !in this.map { it.sourceSetID } }
+        }?.displayName
+            ?: "unresolved".also { context.logger.error("Ill-defined dependency between sourceSets") }
+
+        fun mergeClashingElements(elements: List<T>): List<T> = elements.groupBy { it.name }.values.flatMap {
+            if(it.size > 1) it.map {
+                when(it) {
+                    is DClass -> it.copy(name = "${it.name}(${it.sourceSets.parentSourceSet()})")
+                    is DObject -> it.copy(name = "${it.name}(${it.sourceSets.parentSourceSet()})")
+                    is DAnnotation -> it.copy(name = "${it.name}(${it.sourceSets.parentSourceSet()})")
+                    is DInterface -> it.copy(name = "${it.name}(${it.sourceSets.parentSourceSet()})")
+                    is DEnum -> it.copy(name = "${it.name}(${it.sourceSets.parentSourceSet()})")
+                    is DFunction -> it.copy(name = "${it.name}(${it.sourceSets.parentSourceSet()})")
+                    is DProperty -> it.copy(name = "${it.name}(${it.sourceSets.parentSourceSet()})")
+                    else -> it
+                }
+            } as List<T> else it
+        }
+
+        fun analyzeExpectActual(sameDriElements: List<T>): List<T> {
+            val (expects, actuals) = sameDriElements.partition { it.expectPresentInSet != null }
+            val groupedByOwnExpect = expects.map { expect ->
+                listOf(expect) + actuals.filter { actual ->
+                    dependencyInfo[actual.sourceSets.single()]
+                        ?.contains(expect.expectPresentInSet!!)
+                        ?: throw IllegalStateException("Cannot resolve expect/actual relation for ${actual.name}")
+                }
             }
-        } as List<T>
+            val reducedToOneDocumentable = groupedByOwnExpect.map { it.reduce(reducer) }
+            val uniqueNamedDocumentables = reducedToOneDocumentable.let(::mergeClashingElements)
+            return uniqueNamedDocumentables
+        }
+
 
         return elements.partition {
             it.isExpectActual()
