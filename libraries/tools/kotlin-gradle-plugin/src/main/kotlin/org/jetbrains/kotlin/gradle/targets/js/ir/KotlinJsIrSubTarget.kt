@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Task
 import org.gradle.api.plugins.ExtensionAware
+import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
@@ -16,12 +17,16 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
+import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.targets.js.subtargets.BrowserDistribution
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
+import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
@@ -41,6 +46,13 @@ abstract class KotlinJsIrSubTarget(
         private set
 
     protected val taskGroupName = "Kotlin $disambiguationClassifier"
+
+    protected val distribution: Distribution = BrowserDistribution(project)
+
+    @ExperimentalDistributionDsl
+    override fun distribution(body: Distribution.() -> Unit) {
+        distribution.body()
+    }
 
     internal fun configure() {
         NpmResolverPlugin.apply(project)
@@ -170,6 +182,30 @@ abstract class KotlinJsIrSubTarget(
 
     protected abstract fun configureBuild(compilation: KotlinJsIrCompilation)
 
+    protected fun configureLibrary(compilation: KotlinJsIrCompilation) {
+
+    }
+
+    protected fun configureDistributeTasks(compilation: KotlinJsIrCompilation): TaskProvider<out Copy> {
+        val project = compilation.target.project
+
+        val processResourcesTask = target.project.tasks.named(compilation.processResourcesTaskName)
+
+        val distributeResourcesTask = registerSubTargetTask<Copy>(
+            disambiguateCamelCased(
+                DISTRIBUTE_RESOURCES_TASK_NAME
+            )
+        ) {
+            it.from(processResourcesTask)
+            it.into(distribution.directory)
+        }
+
+        val assembleTaskProvider = project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
+        assembleTaskProvider.dependsOn(distributeResourcesTask)
+
+        return distributeResourcesTask
+    }
+
     internal inline fun <reified T : Task> registerSubTargetTask(
         name: String,
         args: List<Any> = emptyList(),
@@ -182,5 +218,8 @@ abstract class KotlinJsIrSubTarget(
 
     companion object {
         const val RUN_TASK_NAME = "run"
+
+        const val DISTRIBUTE_RESOURCES_TASK_NAME = "distributeResources"
+        const val DISTRIBUTION_TASK_NAME = "distribution"
     }
 }

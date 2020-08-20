@@ -73,6 +73,16 @@ interface KotlinJsTargetDsl : KotlinTarget {
 }
 
 interface KotlinJsSubTargetDsl {
+    @ExperimentalDistributionDsl
+    fun distribution(body: Distribution.() -> Unit)
+
+    @ExperimentalDistributionDsl
+    fun distribution(fn: Closure<*>) {
+        distribution {
+            ConfigureUtil.configure(fn, this)
+        }
+    }
+
     fun testTask(body: KotlinJsTest.() -> Unit)
     fun testTask(fn: Closure<*>) {
         testTask {
@@ -94,16 +104,6 @@ interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
     fun runTask(body: KotlinWebpack.() -> Unit)
     fun runTask(fn: Closure<*>) {
         runTask {
-            ConfigureUtil.configure(fn, this)
-        }
-    }
-
-    @ExperimentalDistributionDsl
-    fun distribution(body: Distribution.() -> Unit)
-
-    @ExperimentalDistributionDsl
-    fun distribution(fn: Closure<*>) {
-        distribution {
             ConfigureUtil.configure(fn, this)
         }
     }

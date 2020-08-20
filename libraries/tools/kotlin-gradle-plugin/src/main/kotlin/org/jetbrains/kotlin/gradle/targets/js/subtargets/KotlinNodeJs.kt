@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDistributionDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
@@ -23,6 +25,11 @@ open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
 
     override fun runTask(body: NodeJsExec.() -> Unit) {
         project.tasks.withType<NodeJsExec>().named(runTaskName).configure(body)
+    }
+
+    @ExperimentalDistributionDsl
+    override fun distribution(body: Distribution.() -> Unit) {
+        TODO("Not yet implemented")
     }
 
     override fun testTask(body: KotlinJsTest.() -> Unit) {

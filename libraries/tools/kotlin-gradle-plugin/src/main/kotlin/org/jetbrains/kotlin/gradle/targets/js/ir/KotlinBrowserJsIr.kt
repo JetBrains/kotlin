@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Task
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
-import org.jetbrains.kotlin.gradle.targets.js.subtargets.BrowserDistribution
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
@@ -36,7 +34,6 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
     private val webpackTaskConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
     private val runTaskConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
-    private val distribution: Distribution = BrowserDistribution(project)
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
@@ -65,11 +62,6 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
     override fun runTask(body: KotlinWebpack.() -> Unit) {
         runTaskConfigurations.add(body)
-    }
-
-    @ExperimentalDistributionDsl
-    override fun distribution(body: Distribution.() -> Unit) {
-        distribution.body()
     }
 
     override fun webpackTask(body: KotlinWebpack.() -> Unit) {
@@ -146,19 +138,8 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         val project = compilation.target.project
         val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
-        val processResourcesTask = target.project.tasks.named(compilation.processResourcesTaskName)
-
-        val distributeResourcesTask = registerSubTargetTask<Copy>(
-            disambiguateCamelCased(
-                DISTRIBUTE_RESOURCES_TASK_NAME
-            )
-        ) {
-            it.from(processResourcesTask)
-            it.into(distribution.directory)
-        }
-
+        val distributeResourcesTask = configureDistributeTasks(compilation)
         val assembleTaskProvider = project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
-        assembleTaskProvider.dependsOn(distributeResourcesTask)
 
         compilation.binaries
             .matching { it is Executable }
@@ -281,8 +262,6 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
     companion object {
         private const val WEBPACK_TASK_NAME = "webpack"
-        private const val DISTRIBUTE_RESOURCES_TASK_NAME = "distributeResources"
-        private const val DISTRIBUTION_TASK_NAME = "distribution"
 
         private const val RUN_COMPILE_COPY = "runCompileSync"
     }
