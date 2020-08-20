@@ -271,7 +271,6 @@ extra["compilerModules"] = arrayOf(
     ":core:descriptors.runtime",
     ":core:deserialization",
     ":core:util.runtime",
-    ":core:type-system",
     ":compiler:fir:cones",
     ":compiler:fir:resolve",
     ":compiler:fir:fir-serialization",
@@ -288,7 +287,6 @@ extra["compilerModules"] = arrayOf(
 )
 
 extra["compilerModulesForJps"] = listOf(
-    ":core:type-system",
     ":kotlin-build-common",
     ":kotlin-util-io",
     ":kotlin-util-klib",

@@ -8,7 +8,7 @@ dependencies {
 
     compileOnly(project(":compiler:psi"))
     compileOnly(project(":compiler:frontend"))
-    compileOnly(project(":core:type-system"))
+    compileOnly(project(":core:descriptors.common"))
     compileOnly(project(":idea:idea-frontend-independent"))
     compileOnly(project(":compiler:psi"))
     compileOnly(intellijCoreDep())

@@ -44,7 +44,6 @@ dependencies {
     proguardDeps(kotlinStdlib())
     proguardAdditionalInJars(project(":kotlin-annotations-jvm"))
 
-    embedded(project(":core:type-system"))
     embedded(project(":kotlin-reflect-api"))
     embedded(project(":core:metadata"))
     embedded(project(":core:metadata.jvm"))
