@@ -13852,6 +13852,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inference/noCoercionToUniForNullableLambdaReturnType.kt");
         }
 
+        @TestMetadata("noCoercionToUnitWithEqualityConstraintForNullableReturnType.kt")
+        public void testNoCoercionToUnitWithEqualityConstraintForNullableReturnType() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/noCoercionToUnitWithEqualityConstraintForNullableReturnType.kt");
+        }
+
         @TestMetadata("noNothingValueInsideSpecialCall.kt")
         public void testNoNothingValueInsideSpecialCall() throws Exception {
             runTest("compiler/testData/codegen/box/inference/noNothingValueInsideSpecialCall.kt");
