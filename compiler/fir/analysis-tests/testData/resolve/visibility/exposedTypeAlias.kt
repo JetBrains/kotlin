@@ -12,3 +12,7 @@ class C {
 
 typealias <!EXPOSED_TYPEALIAS_EXPANDED_TYPE!>AInner0<!> = A.Inner
 typealias BInner0 = B.Inner
+
+private typealias MyString = String
+
+fun foo(): MyString = ""
