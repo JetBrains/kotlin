@@ -46,7 +46,16 @@ object IrStarProjectionImpl : IrStarProjection {
     override fun hashCode(): Int = System.identityHashCode(this)
 }
 
-@Deprecated("Hack to temporary cover late type initialization")
+/**
+ * An instance which should be used when creating an IR element whose type cannot be determined at the moment of creation.
+ *
+ * Example: when translating generic functions in psi2ir, we're creating an IrFunction first, then adding IrTypeParameter instances to it,
+ * and only then translating the function's return type with respect to those created type parameters.
+ *
+ * Instead of using this special instance, we could just make IrFunction/IrConstructor constructors allow to accept no return type,
+ * however this could lead to a situation where we forget to set return type sometimes. This would result in crashes at unexpected moments,
+ * especially in Kotlin/JS where function return types are not present in the resulting binary files.
+ */
 object IrUninitializedType : IrType {
     override val annotations: List<IrConstructorCall> = emptyList()
 
