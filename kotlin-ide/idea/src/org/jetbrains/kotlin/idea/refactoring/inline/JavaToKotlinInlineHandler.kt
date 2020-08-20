@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.calls.tower.isSynthesized
 
-private val LOG = Logger.getInstance(JavaToKotlinInlineHandler::class.java)
 
 class JavaToKotlinInlineHandler : AbstractCrossLanguageInlineHandler() {
     override fun prepareReference(reference: PsiReference, referenced: PsiElement): MultiMap<PsiElement, String> {
@@ -77,6 +76,10 @@ class JavaToKotlinInlineHandler : AbstractCrossLanguageInlineHandler() {
         }
 
         replacementStrategy.createReplacer(unwrappedElement)?.invoke()
+    }
+
+    companion object {
+        private val LOG = Logger.getInstance(JavaToKotlinInlineHandler::class.java)
     }
 }
 

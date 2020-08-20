@@ -225,9 +225,8 @@ internal class ChangeMethodParameters(
     companion object {
         fun create(ktNamedFunction: KtNamedFunction, request: ChangeParametersRequest): ChangeMethodParameters? =
             ChangeMethodParameters(ktNamedFunction, request)
+
+        private val LOG = Logger.getInstance(ChangeMethodParameters::class.java)
     }
-
-
 }
 
-private val LOG = Logger.getInstance(ChangeMethodParameters::class.java)

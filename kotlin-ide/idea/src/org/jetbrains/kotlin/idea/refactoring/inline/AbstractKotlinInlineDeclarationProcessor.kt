@@ -47,8 +47,6 @@ import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingElem
 import org.jetbrains.kotlin.psi.*
 import java.util.*
 
-private val LOG = Logger.getInstance(AbstractKotlinInlineDeclarationProcessor::class.java)
-
 abstract class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDeclaration>(
     protected val declaration: TDeclaration,
     private val reference: PsiReference?,
@@ -204,6 +202,9 @@ abstract class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDe
         else -> emptyList()
     }
 
+    companion object {
+        private val LOG = Logger.getInstance(AbstractKotlinInlineDeclarationProcessor::class.java)
+    }
 }
 
 private class OverrideUsageInfo(element: PsiElement) : UsageInfo(element)
