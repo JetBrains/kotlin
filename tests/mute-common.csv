@@ -70,3 +70,6 @@ org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.test
 org.jetbrains.kotlin.idea.debugger.test.ContinuationStackTraceTestGenerated.testSuspendFunWithInner,,, FLAKY
 org.jetbrains.kotlin.idea.debugger.test.XCoroutinesStackTraceTestGenerated.testSuspendMain,,, FLAKY
 org.jetbrains.kotlin.gradle.SubpluginsIT.testKotlinVersionDowngradeInSupbrojectKt39809,,, FLAKY
+org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibrarySecondaryConstructorUsages,,, FLAKY
+org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryNestedClassSecondaryConstructorUsages,,, FLAKY
+org.jetbrains.kotlin.findUsages.FindUsagesTestGenerated.Java.FindJavaMethodUsages.testJavaInvokeWithStaticImport,,, FLAKY
