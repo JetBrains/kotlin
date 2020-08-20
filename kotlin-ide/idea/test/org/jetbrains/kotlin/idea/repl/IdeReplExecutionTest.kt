@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.idea.repl
 import com.intellij.execution.console.LanguageConsoleImpl
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.testFramework.PlatformTestCase
+import com.intellij.util.ThrowableRunnable
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 import org.jetbrains.kotlin.console.KotlinConsoleRunner
 import org.jetbrains.kotlin.idea.run.createLibraryWithLongPaths
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.Test
@@ -31,9 +33,11 @@ class IdeReplExecutionTest : PlatformTestCase() {
     }
 
     override fun tearDown() {
-        consoleRunner.dispose()
-        (this::consoleRunner as KMutableProperty0<KotlinConsoleRunner?>).set(null)
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { consoleRunner.dispose() },
+            ThrowableRunnable { (this::consoleRunner as KMutableProperty0<KotlinConsoleRunner?>).set(null) },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     private fun sendCommand(command: String) {

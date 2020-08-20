@@ -54,11 +54,13 @@ abstract class AbstractJavaToKotlinConverterTest : KotlinLightCodeInsightFixture
         addFile("JavaApi.java", "javaApi")
     }
 
-    override fun tearDown() = runAll(
-        ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
-        ThrowableRunnable { project.DEBUG_LOG_ENABLE_PerModulePackageCache = false },
-        ThrowableRunnable { super.tearDown() },
-    )
+    override fun tearDown() {
+        runAll(
+            ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
+            ThrowableRunnable { project.DEBUG_LOG_ENABLE_PerModulePackageCache = false },
+            ThrowableRunnable { super.tearDown() },
+        )
+    }
 
     protected fun addFile(fileName: String, dirName: String? = null) {
         addFile(File(KotlinRoot.DIR, "j2k/old/testData/$fileName"), dirName)

@@ -18,6 +18,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.LightProjectDescriptor;
+import com.intellij.testFramework.RunAll;
 import com.sun.jdi.Location;
 import com.sun.jdi.ReferenceType;
 import kotlin.collections.CollectionsKt;
@@ -157,12 +158,20 @@ public abstract class AbstractPositionManagerTest extends KotlinLightCodeInsight
 
     @Override
     public void tearDown() {
-        if (debugProcess != null) {
-            debugProcess.stop(true);
-            debugProcess.dispose();
-            debugProcess = null;
-        }
-        super.tearDown();
+        RunAll.runAll(
+                () -> {
+                    if (debugProcess != null) {
+                        debugProcess.stop(true);
+                    }
+                },
+                () -> {
+                    if (debugProcess != null) {
+                        debugProcess.dispose();
+                        debugProcess = null;
+                    }
+                },
+                () -> super.tearDown()
+        );
     }
 
     private static Collection<Breakpoint> extractBreakpointsInfo(KtFile file, String fileContent) {

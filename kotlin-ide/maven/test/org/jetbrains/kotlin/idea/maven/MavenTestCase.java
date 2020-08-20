@@ -30,6 +30,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.PsiTestUtil;
+import com.intellij.testFramework.RunAll;
 import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
@@ -148,28 +149,21 @@ public abstract class MavenTestCase extends UsefulTestCase {
 
     @Override
     protected void tearDown() throws Exception {
-        try {
-            MavenServerManager.getInstance().shutdown(true);
-            MavenArtifactDownloader.awaitQuiescence(100, TimeUnit.SECONDS);
-            myProject = null;
-            UIUtil.invokeAndWaitIfNeeded(new Runnable() {
-                @Override
-                public void run() {
+        RunAll.runAll(
+                () -> MavenServerManager.getInstance().shutdown(true),
+                () -> MavenArtifactDownloader.awaitQuiescence(100, TimeUnit.SECONDS),
+                () -> myProject = null,
+                () -> UIUtil.invokeAndWaitIfNeeded((Runnable) () -> {
                     try {
                         tearDownFixtures();
                     }
                     catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-                }
-            });
-
-            MavenIndicesManager.getInstance().clear();
-        }
-        finally {
-            super.tearDown();
-            resetClassFields(getClass());
-        }
+                }),
+                () -> super.tearDown(),
+                () -> resetClassFields(getClass())
+        );
     }
 
     private static void printDirectoryContent(File dir) {
@@ -186,8 +180,10 @@ public abstract class MavenTestCase extends UsefulTestCase {
     }
 
     protected void tearDownFixtures() throws Exception {
-        myTestFixture.tearDown();
-        myTestFixture = null;
+        RunAll.runAll(
+                () -> myTestFixture.tearDown(),
+                () -> myTestFixture = null
+        );
     }
 
     private void resetClassFields(final Class<?> aClass) {

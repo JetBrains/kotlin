@@ -14,6 +14,7 @@ import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.PlatformTestCase
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.idea.core.script.configuration.utils.getKtFile
 import org.jetbrains.kotlin.idea.scripting.gradle.getGradleProjectSettings
 import org.jetbrains.kotlin.idea.test.KotlinSdkCreationChecker
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.tools.projectWizard.cli.*
 import org.jetbrains.kotlin.tools.projectWizard.core.service.Services
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager
@@ -57,11 +59,15 @@ abstract class AbstractNewWizardProjectImportTest : PlatformTestCase() {
     }
 
     override fun tearDown() {
-        sdkCreationChecker.removeNewKotlinSdk()
-        super.tearDown()
-        runWriteAction {
-            ProjectJdkTable.getInstance().findJdk(SDK_NAME)?.let(ProjectJdkTable.getInstance()::removeJdk)
-        }
+        runAll(
+            ThrowableRunnable { sdkCreationChecker.removeNewKotlinSdk() },
+            ThrowableRunnable { super.tearDown() },
+            ThrowableRunnable {
+                runWriteAction {
+                    ProjectJdkTable.getInstance().findJdk(SDK_NAME)?.let(ProjectJdkTable.getInstance()::removeJdk)
+                }
+            }
+        )
     }
 
     fun doTestGradleKts(directoryPath: String) {

@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.jps.build
 
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.module.JpsModule
 import org.jetbrains.jps.util.JpsPathUtil
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.test.KotlinRoot
 import java.io.File
 import java.nio.file.Paths
@@ -41,8 +43,10 @@ abstract class KotlinJpsBuildTestBase : AbstractKotlinJpsBuildTestCase() {
     }
 
     override fun tearDown() {
-        workDir.deleteRecursively()
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { workDir.deleteRecursively() },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     override fun doGetProjectDir(): File = workDir

@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.impl.ResolveScopeManager
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.MockLibraryFacility
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.TestRoot
 import org.junit.internal.runners.JUnit38ClassRunner
@@ -39,8 +41,10 @@ class LightClassesClasspathSortingTest : KotlinLightCodeInsightFixtureTestCase()
     }
 
     override fun tearDown() {
-        mockLibraryFacility.tearDown(module)
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { mockLibraryFacility.tearDown(module) },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     private fun doTest(fqName: String) {

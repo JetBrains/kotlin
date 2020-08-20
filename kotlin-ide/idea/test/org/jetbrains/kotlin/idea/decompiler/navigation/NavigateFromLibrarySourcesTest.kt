@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.idea.decompiler.navigation
 
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.MockLibraryFacility
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.junit.internal.runners.JUnit38ClassRunner
@@ -55,8 +57,10 @@ class NavigateFromLibrarySourcesTest : AbstractNavigateFromLibrarySourcesTest() 
     }
 
     override fun tearDown() {
-        mockLibraryFacility.tearDown(module)
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { mockLibraryFacility.tearDown(module) },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     private fun checkNavigationElement(element: PsiElement, expectedFqName: String) {

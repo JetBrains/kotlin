@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.idea.completion.test
 
 import com.intellij.codeInsight.completion.CompletionType
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.test.MockLibraryFacility
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import java.io.File
 
@@ -24,8 +26,10 @@ abstract class AbstractCompiledKotlinInJavaCompletionTest : KotlinFixtureComplet
     }
 
     override fun tearDown() {
-        mockLibraryFacility.tearDown(module)
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { mockLibraryFacility.tearDown(module) },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     override fun defaultCompletionType() = CompletionType.BASIC

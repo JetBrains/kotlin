@@ -12,6 +12,7 @@ import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.idea.core.script.configuration.loader.FileContentsDe
 import org.jetbrains.kotlin.idea.core.script.configuration.testingBackgroundExecutor
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.testScriptConfigurationNotification
 import org.jetbrains.kotlin.idea.core.script.isScriptChangesNotifierDisabled
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinRoot
@@ -51,11 +53,15 @@ abstract class AbstractScriptConfigurationLoadingTest : AbstractScriptConfigurat
     }
 
     override fun tearDown() {
-        super.tearDown()
-        testScriptConfigurationNotification = false
-        ApplicationManager.getApplication().isScriptChangesNotifierDisabled = true
-        occurredLoadings = 0
-        currentLoadingScriptConfigurationCallback = null
+        runAll(
+            ThrowableRunnable { super.tearDown() },
+            ThrowableRunnable { testScriptConfigurationNotification = false },
+            ThrowableRunnable { ApplicationManager.getApplication().isScriptChangesNotifierDisabled = true },
+            ThrowableRunnable { 
+                occurredLoadings = 0
+                currentLoadingScriptConfigurationCallback = null
+            }
+        )
     }
 
     override fun setUpTestProject() {

@@ -12,10 +12,12 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.completion.test.AbstractJvmBasicCompletionTest
 import org.jetbrains.kotlin.idea.completion.test.testCompletion
 import org.jetbrains.kotlin.idea.debugger.getContextElement
 import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
@@ -43,8 +45,10 @@ class CodeFragmentCompletionInLibraryTest : AbstractJvmBasicCompletionTest() {
     }
 
     override fun tearDown() {
-        SdkAndMockLibraryProjectDescriptor.tearDown(module)
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { SdkAndMockLibraryProjectDescriptor.tearDown(module) },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     fun testCompletionInCustomLibrary() {

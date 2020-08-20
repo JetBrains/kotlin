@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.idea.codeInsight
 
 import com.intellij.testFramework.TestDataPath
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.MockLibraryFacility
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.TestRoot
 import org.junit.internal.runners.JUnit38ClassRunner
@@ -31,8 +33,10 @@ class OverrideImplementWithLibTest : AbstractOverrideImplementTest() {
     }
 
     override fun tearDown() {
-        mockLibraryFacility.tearDown(module)
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { mockLibraryFacility.tearDown(module) },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     fun testFakeOverride() {

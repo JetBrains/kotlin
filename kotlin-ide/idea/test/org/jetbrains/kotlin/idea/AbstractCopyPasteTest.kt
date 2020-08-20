@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.idea
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiFile
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.psi.KtFile
 
 abstract class AbstractCopyPasteTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -22,8 +24,10 @@ abstract class AbstractCopyPasteTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     override fun tearDown() {
-        CodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE = savedImportsOnPasteSetting
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { CodeInsightSettings.getInstance().ADD_IMPORTS_ON_PASTE = savedImportsOnPasteSetting },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     protected fun configureByDependencyIfExists(dependencyFileName: String): PsiFile? {

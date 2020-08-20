@@ -9,6 +9,7 @@ import com.intellij.application.options.CodeStyle
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
 import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
 import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHandlerTest.Companion.CODE_STYLE_SETTING_PREFIX
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.idea.formatter.kotlinCommonSettings
 import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.configureCodeStyleAndRun
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.idea.test.withCustomCompilerOptions
 import org.jetbrains.kotlin.idea.testFramework.commitAllDocuments
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -53,8 +55,10 @@ abstract class AbstractPerformanceCompletionHandlerTests(
     }
 
     override fun tearDown() {
-        commitAllDocuments()
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { commitAllDocuments() },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     protected open fun doPerfTest(unused: String) {

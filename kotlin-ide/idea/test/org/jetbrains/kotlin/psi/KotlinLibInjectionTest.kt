@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.html.HTMLLanguage
+import com.intellij.util.ThrowableRunnable
 import org.intellij.lang.annotations.Language
 import org.intellij.lang.regexp.RegExpLanguage
 import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.MockLibraryFacility
+import org.jetbrains.kotlin.idea.test.runAll
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 
@@ -50,7 +52,9 @@ class KotlinLibInjectionTest : AbstractInjectionTest() {
     }
 
     override fun tearDown() {
-        mockLibraryFacility.tearDown(module)
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { mockLibraryFacility.tearDown(module) },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 }

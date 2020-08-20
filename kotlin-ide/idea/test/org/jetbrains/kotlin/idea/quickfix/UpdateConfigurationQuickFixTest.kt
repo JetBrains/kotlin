@@ -12,6 +12,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments.Companion.DEFAULT
 import org.jetbrains.kotlin.config.CompilerSettings.Companion.DEFAULT_ADDITIONAL_ARGUMENTS
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.configureKotlinFacet
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
@@ -217,11 +219,15 @@ class UpdateConfigurationQuickFixTest : BasePlatformTestCase() {
         get() = project.getLanguageVersionSettings().getFeatureSupport(LanguageFeature.InlineClasses)
 
     override fun tearDown() {
-        resetProjectSettings(LanguageVersion.LATEST_STABLE)
-        FacetManager.getInstance(module).getFacetByType(KotlinFacetType.TYPE_ID)?.let {
-            FacetUtil.deleteFacet(it)
-        }
-        ConfigLibraryUtil.removeLibrary(module, "KotlinJavaRuntime")
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { resetProjectSettings(LanguageVersion.LATEST_STABLE) },
+            ThrowableRunnable {
+                FacetManager.getInstance(module).getFacetByType(KotlinFacetType.TYPE_ID)?.let {
+                    FacetUtil.deleteFacet(it)
+                }
+            },
+            ThrowableRunnable { ConfigLibraryUtil.removeLibrary(module, "KotlinJavaRuntime") },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 }

@@ -26,6 +26,8 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
 import org.junit.internal.runners.JUnit38ClassRunner
 import com.intellij.testFramework.runInEdtAndWait
+import com.intellij.util.ThrowableRunnable
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.test.KotlinRoot
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -47,10 +49,14 @@ class MavenUpdateConfigurationQuickFixTest : MavenImportingTestCase() {
     }
 
     override fun tearDownFixtures() {
-        codeInsightTestFixture.tearDown()
-        @Suppress("UNCHECKED_CAST")
-        (this::codeInsightTestFixture as KMutableProperty0<CodeInsightTestFixture?>).set(null)
-        myTestFixture = null
+        runAll(
+            ThrowableRunnable { codeInsightTestFixture.tearDown() },
+            ThrowableRunnable {
+                @Suppress("UNCHECKED_CAST")
+                (this::codeInsightTestFixture as KMutableProperty0<CodeInsightTestFixture?>).set(null)
+            },
+            ThrowableRunnable { myTestFixture = null }
+        )
     }
 
     @Test

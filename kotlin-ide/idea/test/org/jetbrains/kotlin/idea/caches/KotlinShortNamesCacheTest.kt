@@ -13,11 +13,13 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.psi.util.PsiUtil
 import com.intellij.testFramework.LightProjectDescriptor
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtProperty
@@ -43,8 +45,10 @@ class KotlinShortNamesCacheTest : KotlinLightCodeInsightFixtureTestCase() {
     }
 
     override fun tearDown() {
-        (this::cacheInstance as KMutableProperty0<GlobalSearchScope?>).set(null)
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { (this::cacheInstance as KMutableProperty0<GlobalSearchScope?>).set(null) },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     fun testGetMethodsByNameIfNotMoreThanLimits() {

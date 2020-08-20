@@ -329,15 +329,17 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         PluginTestCaseBase.addJdk(myFixture.projectDisposable) { PluginTestCaseBase.fullJdk() }
     }
 
-    override fun tearDown() = runAll(
-        ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
-        ThrowableRunnable { super.tearDown() },
-        ThrowableRunnable {
-            for (scratchFile in scratchFiles) {
-                runWriteAction { scratchFile.delete(this) }
-            }
-        },
-    )
+    override fun tearDown() {
+        runAll(
+            ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
+            ThrowableRunnable { super.tearDown() },
+            ThrowableRunnable {
+                for (scratchFile in scratchFiles) {
+                    runWriteAction { scratchFile.delete(this) }
+                }
+            },
+        )
+    }
 
     companion object {
         private val TIME_OUT = TimeUnit.MINUTES.toMillis(1)

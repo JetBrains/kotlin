@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.idea.codeInsight.postfix
 
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
 
@@ -42,7 +44,9 @@ abstract class AbstractPostfixTemplateProviderTest : KotlinLightCodeInsightFixtu
     }
 
     override fun tearDown() {
-        super.tearDown()
-        KtPostfixTemplateProvider.previouslySuggestedExpressions = emptyList()
+        runAll(
+            ThrowableRunnable { super.tearDown() },
+            ThrowableRunnable { KtPostfixTemplateProvider.previouslySuggestedExpressions = emptyList() }
+        )
     }
 }

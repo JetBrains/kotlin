@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.idea.conversion.copy
 
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.ide.CopyPasteManager
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.editor.KotlinEditorOptions
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.awt.datatransfer.StringSelection
@@ -27,8 +29,10 @@ abstract class AbstractTextJavaToKotlinCopyPasteConversionTest : AbstractJ2kCopy
     }
 
     override fun tearDown() {
-        oldEditorOptions?.let { KotlinEditorOptions.getInstance().loadState(it) }
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { oldEditorOptions?.let { KotlinEditorOptions.getInstance().loadState(it) } },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     fun doTest(unused: String) {

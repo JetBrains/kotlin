@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.idea.index
 
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.stubindex.KotlinTypeAliasByExpansionShortNameIndex
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import kotlin.reflect.KMutableProperty0
 
@@ -22,9 +23,13 @@ abstract class AbstractKotlinTypeAliasByExpansionShortNameIndexTest : KotlinLigh
     }
 
     override fun tearDown() {
-        @Suppress("UNCHECKED_CAST")
-        (this::scope as KMutableProperty0<GlobalSearchScope?>).set(null)
-        super.tearDown()
+        runAll(
+            ThrowableRunnable {
+                @Suppress("UNCHECKED_CAST")
+                (this::scope as KMutableProperty0<GlobalSearchScope?>).set(null)
+            },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     override fun getProjectDescriptor() = super.getProjectDescriptorFromTestName()

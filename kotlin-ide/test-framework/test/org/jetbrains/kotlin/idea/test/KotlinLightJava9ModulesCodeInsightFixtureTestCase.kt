@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.EditorTestUtil
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.VfsTestUtil
+import com.intellij.util.ThrowableRunnable
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.idea.test.KotlinMultiModuleJava9ProjectDescriptor.ModuleDescriptor
 
@@ -16,8 +17,10 @@ abstract class KotlinLightJava9ModulesCodeInsightFixtureTestCase : KotlinLightCo
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinMultiModuleJava9ProjectDescriptor
 
     override fun tearDown() {
-        KotlinMultiModuleJava9ProjectDescriptor.cleanupSourceRoots()
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { KotlinMultiModuleJava9ProjectDescriptor.cleanupSourceRoots() },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     protected fun addFile(path: String, text: String, module: ModuleDescriptor = ModuleDescriptor.MAIN): VirtualFile =

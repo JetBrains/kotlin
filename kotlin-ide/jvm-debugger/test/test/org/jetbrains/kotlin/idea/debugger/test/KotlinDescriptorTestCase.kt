@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.idea.debugger.test.util.LogPropagator
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.addRoot
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.KotlinBaseTest.TestFile
 import org.jetbrains.kotlin.test.KotlinTestUtils.*
@@ -79,17 +80,15 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
     }
 
     override fun tearDown() {
-        KotlinDebuggerCaches.LOG_COMPILATIONS = false
-
-        oldValues?.revertValues()
-        oldValues = null
-
-        detachLibraries()
-
-        logPropagator?.detach()
-        logPropagator = null
-
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { KotlinDebuggerCaches.LOG_COMPILATIONS = false },
+            ThrowableRunnable { oldValues?.revertValues() },
+            ThrowableRunnable { oldValues = null },
+            ThrowableRunnable { detachLibraries() },
+            ThrowableRunnable { logPropagator?.detach() },
+            ThrowableRunnable { logPropagator = null },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     protected fun testDataFile(fileName: String): File = File(getTestDataPath(), fileName)

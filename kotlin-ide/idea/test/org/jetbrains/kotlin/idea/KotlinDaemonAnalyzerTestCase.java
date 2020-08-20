@@ -21,7 +21,7 @@ abstract public class KotlinDaemonAnalyzerTestCase extends DaemonAnalyzerTestCas
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    protected void tearDown() {
         runAll(
                 () -> super.tearDown(),
                 () -> KotlinTestUtils.disposeVfsRootAccess(vfsDisposable)

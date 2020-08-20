@@ -26,10 +26,12 @@ abstract class KotlinLightPlatformCodeInsightFixtureTestCase : LightPlatformCode
         }
     }
 
-    override fun tearDown() = runAll(
-        ThrowableRunnable { disableKotlinOfficialCodeStyle(project) },
-        ThrowableRunnable { super.tearDown() },
-    )
+    override fun tearDown() {
+        runAll(
+            ThrowableRunnable { disableKotlinOfficialCodeStyle(project) },
+            ThrowableRunnable { super.tearDown() },
+        )
+    }
 
     protected fun testDataFile(fileName: String): File = File(testDataPath, fileName)
 

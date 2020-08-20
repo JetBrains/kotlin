@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.decompiler.navigation
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
+import com.intellij.util.ThrowableRunnable
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.navigation.NavigationTestUtils
 import org.jetbrains.kotlin.idea.references.KtReference
@@ -26,8 +27,10 @@ abstract class AbstractNavigateToLibraryTest : KotlinLightCodeInsightFixtureTest
     }
 
     override fun tearDown() {
-        SourceNavigationHelper.setForceResolve(false)
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { SourceNavigationHelper.setForceResolve(false) },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 }
 
@@ -37,8 +40,10 @@ abstract class AbstractNavigateToDecompiledLibraryTest : AbstractNavigateToLibra
     override fun getProjectDescriptor(): KotlinLightProjectDescriptor = PROJECT_DESCRIPTOR
 
     override fun tearDown() {
-        SdkAndMockLibraryProjectDescriptor.tearDown(module)
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { SdkAndMockLibraryProjectDescriptor.tearDown(module) },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     companion object {
@@ -61,8 +66,10 @@ abstract class AbstractNavigateToLibrarySourceTest : AbstractNavigateToLibraryTe
     }
 
     override fun tearDown() {
-        mockLibraryFacility.tearDown(module)
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { mockLibraryFacility.tearDown(module) },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 }
 
@@ -79,8 +86,10 @@ abstract class AbstractNavigateJavaToLibrarySourceTest : AbstractNavigateToLibra
     }
 
     override fun tearDown() {
-        mockLibraryFacility.tearDown(module)
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { mockLibraryFacility.tearDown(module) },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 }
 

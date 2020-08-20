@@ -75,8 +75,8 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
     }
 
     override fun tearDown() {
-        commitAllDocuments()
         RunAll(
+            ThrowableRunnable { commitAllDocuments() },
             ThrowableRunnable { super.tearDown() },
             ThrowableRunnable {
                 myProject?.let { project ->

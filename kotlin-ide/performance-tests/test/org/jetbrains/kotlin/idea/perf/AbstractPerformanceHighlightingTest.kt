@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.idea.perf
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl.ensureIndexesUpToDate
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.WARM_UP
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.idea.testFramework.commitAllDocuments
 
 /**
@@ -41,8 +43,10 @@ abstract class AbstractPerformanceHighlightingTest : KotlinLightCodeInsightFixtu
     }
 
     override fun tearDown() {
-        commitAllDocuments()
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { commitAllDocuments() },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     private fun doWarmUpPerfTest() {

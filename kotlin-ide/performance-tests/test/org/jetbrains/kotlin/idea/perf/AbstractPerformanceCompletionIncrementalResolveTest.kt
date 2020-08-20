@@ -9,11 +9,13 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.WARM_UP
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.idea.testFramework.commitAllDocuments
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -52,8 +54,10 @@ abstract class AbstractPerformanceCompletionIncrementalResolveTest : KotlinLight
     }
 
     override fun tearDown() {
-        commitAllDocuments()
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { commitAllDocuments() },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     private fun doWarmUpPerfTest() {

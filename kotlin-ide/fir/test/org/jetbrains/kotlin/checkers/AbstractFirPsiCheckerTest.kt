@@ -16,10 +16,6 @@ abstract class AbstractFirPsiCheckerTest : AbstractPsiCheckerTest() {
 
     override fun isFirPlugin(): Boolean = true
 
-    override fun setUp() {
-        super.setUp()
-    }
-
     override fun doTest(filePath: String) {
         myFixture.configureByFile(fileName())
         checkHighlighting(checkWarnings = false, checkInfos = false, checkWeakWarnings = false)
@@ -48,9 +44,5 @@ abstract class AbstractFirPsiCheckerTest : AbstractPsiCheckerTest() {
                 }
             }
         }
-    }
-
-    override fun tearDown() {
-        super.tearDown()
     }
 }

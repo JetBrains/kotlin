@@ -69,11 +69,13 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
         return moduleWithSrcRootSet
     }
 
-    override fun tearDown() = runAll(
-        ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
-        ThrowableRunnable { disableKotlinOfficialCodeStyle(project) },
-        ThrowableRunnable { super.tearDown() },
-    )
+    override fun tearDown() {
+        runAll(
+            ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
+            ThrowableRunnable { disableKotlinOfficialCodeStyle(project) },
+            ThrowableRunnable { super.tearDown() }
+        )
+    }
 
     public override fun createModule(path: String, moduleType: ModuleType<*>): Module {
         return super.createModule(path, moduleType)

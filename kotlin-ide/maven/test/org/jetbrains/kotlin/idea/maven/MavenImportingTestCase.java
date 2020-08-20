@@ -37,6 +37,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.testFramework.IdeaTestUtil;
+import com.intellij.testFramework.RunAll;
 import com.intellij.util.Consumer;
 import com.intellij.util.PathUtil;
 import com.intellij.util.ui.UIUtil;
@@ -84,15 +85,14 @@ public abstract class MavenImportingTestCase extends MavenTestCase {
 
     @Override
     protected void tearDown() throws Exception {
-        try {
-            JavaAwareProjectJdkTableImpl.removeInternalJdkInTests();
-            TestDialogManager.setTestDialog(TestDialog.DEFAULT);
-            removeFromLocalRepository("test");
-            FileUtil.delete(BuildManager.getInstance().getBuildSystemDirectory().toFile());
-            sdkCreationChecker.removeNewKotlinSdk();
-        } finally {
-            super.tearDown();
-        }
+        RunAll.runAll(
+                () -> JavaAwareProjectJdkTableImpl.removeInternalJdkInTests(),
+                () -> TestDialogManager.setTestDialog(TestDialog.DEFAULT),
+                () -> removeFromLocalRepository("test"),
+                () -> FileUtil.delete(BuildManager.getInstance().getBuildSystemDirectory().toFile()),
+                () -> sdkCreationChecker.removeNewKotlinSdk(),
+                () -> super.tearDown()
+        );
     }
 
     protected void assertModules(String... expectedNames) {

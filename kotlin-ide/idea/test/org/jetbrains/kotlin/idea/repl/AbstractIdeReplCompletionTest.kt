@@ -35,14 +35,16 @@ abstract class AbstractIdeReplCompletionTest : KotlinFixtureCompletionBaseTestCa
         ScriptConfigurationManager.updateScriptDependenciesSynchronously(consoleRunner!!.consoleFile)
     }
 
-    override fun tearDown() = runAll(
-        ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
-        ThrowableRunnable {
-            consoleRunner?.dispose()
-            consoleRunner = null
-        },
-        ThrowableRunnable { super.tearDown() },
-    )
+    override fun tearDown() {
+        runAll(
+            ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
+            ThrowableRunnable {
+                consoleRunner?.dispose()
+                consoleRunner = null
+            },
+            ThrowableRunnable { super.tearDown() }
+        )
+    }
 
     override fun getPlatform() = JvmPlatforms.unspecifiedJvmPlatform
     override fun defaultCompletionType() = CompletionType.BASIC

@@ -49,7 +49,7 @@ public abstract class KotlinCodeInsightTestCase extends CodeInsightTestCase {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    protected void tearDown() {
         runAll(
                 () -> super.tearDown(),
                 () -> KotlinTestUtils.disposeVfsRootAccess(vfsDisposable)

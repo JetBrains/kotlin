@@ -11,6 +11,7 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.testFramework.RunAll;
 import com.intellij.testFramework.TempFiles;
 import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase;
 import com.intellij.util.ThrowableRunnable;
@@ -51,8 +52,10 @@ public abstract class KotlinLightCodeInsightFixtureTestCaseBase extends LightJav
 
     @Override
     protected void tearDown() throws Exception {
-        myTempFiles.deleteAll();
-        super.tearDown();
+        RunAll.runAll(
+                () -> myTempFiles.deleteAll(),
+                () -> super.tearDown()
+        );
     }
 
     @NotNull

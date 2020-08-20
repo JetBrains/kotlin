@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.nj2k
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.codeStyle.JavaCodeStyleSettings
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.idea.test.withCustomCompilerOptions
 import org.jetbrains.kotlin.j2k.AbstractJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.j2k.ConverterSettings
@@ -41,8 +43,10 @@ abstract class AbstractNewJavaToKotlinConverterSingleFileTest : AbstractJavaToKo
     }
 
     override fun tearDown() {
-        JavaCodeStyleSettings.getInstance(project).USE_EXTERNAL_ANNOTATIONS = false
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { JavaCodeStyleSettings.getInstance(project).USE_EXTERNAL_ANNOTATIONS = false },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     override fun fileToKotlin(text: String, settings: ConverterSettings, project: Project): String {

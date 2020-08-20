@@ -12,10 +12,12 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.ExpectedHighlightingData
+import com.intellij.util.ThrowableRunnable
 import com.intellij.util.io.createFile
 import com.intellij.util.io.write
 import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.SdkAndMockLibraryProjectDescriptor
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import java.io.File
 import java.nio.file.Files
@@ -78,9 +80,10 @@ abstract class AbstractLineMarkersTestInLibrarySources : AbstractLineMarkersTest
     }
 
     override fun tearDown() {
-        libraryClean?.deleteRecursively()
-        SdkAndMockLibraryProjectDescriptor.tearDown(module)
-
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { libraryClean?.deleteRecursively() },
+            ThrowableRunnable { SdkAndMockLibraryProjectDescriptor.tearDown(module) },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 }

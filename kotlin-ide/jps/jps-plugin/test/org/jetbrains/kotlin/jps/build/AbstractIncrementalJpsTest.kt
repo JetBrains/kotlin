@@ -22,6 +22,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.testFramework.TestLoggerFactory
 import com.intellij.testFramework.UsefulTestCase
+import com.intellij.util.ThrowableRunnable
 import junit.framework.TestCase
 import org.apache.log4j.ConsoleAppender
 import org.apache.log4j.Level
@@ -46,6 +47,7 @@ import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.testingUtils.*
 import org.jetbrains.kotlin.jps.build.dependeciestxt.ModulesTxt
@@ -136,15 +138,19 @@ abstract class AbstractIncrementalJpsTest(
     }
 
     override fun tearDown() {
-        restoreSystemProperties()
+        try {
+            restoreSystemProperties()
 
-        (AbstractIncrementalJpsTest::myProject).javaField!![this] = null
-        (AbstractIncrementalJpsTest::projectDescriptor).javaField!![this] = null
-        (AbstractIncrementalJpsTest::systemPropertiesBackup).javaField!![this] = null
-
-        lookupsDuringTest.clear()
-        enableICFixture.tearDown()
-        super.tearDown()
+            (AbstractIncrementalJpsTest::myProject).javaField!![this] = null
+            (AbstractIncrementalJpsTest::projectDescriptor).javaField!![this] = null
+            (AbstractIncrementalJpsTest::systemPropertiesBackup).javaField!![this] = null
+        } finally {
+            runAll(
+                ThrowableRunnable { lookupsDuringTest.clear() },
+                ThrowableRunnable { enableICFixture.tearDown() },
+                ThrowableRunnable { super.tearDown() }
+            )
+        }
     }
 
     // JPS forces rebuild of all files when JVM constant has been changed and Callbacks.ConstantAffectionResolver

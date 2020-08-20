@@ -17,21 +17,19 @@
 package org.jetbrains.kotlin.jps.build
 
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.jps.builders.CompileScopeTestBuilder
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.jps.builders.JpsBuildTestCase
-import org.jetbrains.jps.builders.logging.BuildLoggingManager
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.config.LanguageVersion
 import kotlin.reflect.KMutableProperty1
 import org.jetbrains.kotlin.daemon.common.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS
 import org.jetbrains.kotlin.daemon.common.COMPILE_DAEMON_ENABLED_PROPERTY
 import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
-import org.jetbrains.kotlin.incremental.LookupSymbol
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
 import org.jetbrains.kotlin.jps.model.kotlinCommonCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerArguments
-import org.junit.Assert
 import java.io.File
 
 class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
@@ -43,8 +41,10 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
     }
 
     override fun tearDown() {
-        enableICFixture.tearDown()
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { enableICFixture.tearDown() },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     fun testKotlinJavaScriptChangePackage() {

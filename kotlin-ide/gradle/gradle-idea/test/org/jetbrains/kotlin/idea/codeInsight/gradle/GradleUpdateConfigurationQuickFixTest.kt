@@ -24,7 +24,9 @@ import com.intellij.rt.execution.junit.FileComparisonFailure
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
 import com.intellij.testFramework.runInEdtAndWait
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.Ignore
@@ -46,11 +48,14 @@ class GradleUpdateConfigurationQuickFixTest : GradleImportingTestCase() {
     }
 
     override fun tearDownFixtures() {
-        codeInsightTestFixture.tearDown()
-        @Suppress("UNCHECKED_CAST")
-
-        (this::codeInsightTestFixture as KMutableProperty0<CodeInsightTestFixture?>).set(null)
-        myTestFixture = null
+        runAll(
+            ThrowableRunnable { codeInsightTestFixture.tearDown() },
+            ThrowableRunnable {
+                @Suppress("UNCHECKED_CAST")
+                (this::codeInsightTestFixture as KMutableProperty0<CodeInsightTestFixture?>).set(null)
+            },
+            ThrowableRunnable { myTestFixture = null }
+        )
     }
 
     @Test

@@ -11,8 +11,10 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.testFramework.FileStructureTestFixture
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.UsefulTestCase
+import com.intellij.util.ThrowableRunnable
 import com.intellij.util.ui.tree.TreeUtil
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.runAll
 
 abstract class KotlinFileStructureTestBase : KotlinLightCodeInsightFixtureTestCase() {
 
@@ -34,12 +36,11 @@ abstract class KotlinFileStructureTestBase : KotlinLightCodeInsightFixtureTestCa
     }
 
     public override fun tearDown() {
-        try {
-            Disposer.dispose(popupFixture)
-            myPopupFixture = null
-        } finally {
-            super.tearDown()
-        }
+        runAll(
+            ThrowableRunnable { Disposer.dispose(popupFixture) },
+            ThrowableRunnable { myPopupFixture = null },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     protected fun getFileName(ext: String): String {

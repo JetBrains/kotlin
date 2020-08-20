@@ -14,8 +14,10 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
 import com.intellij.testFramework.runInEdtAndWait
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.inspections.gradle.GradleKotlinxCoroutinesDeprecationInspection
 import org.jetbrains.kotlin.idea.inspections.runInspection
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Ignore
 import org.junit.Test
@@ -34,11 +36,14 @@ class GradleQuickFixTest : KotlinGradleImportingTestCase() {
     }
 
     override fun tearDownFixtures() {
-        codeInsightTestFixture.tearDown()
-
-        @Suppress("UNCHECKED_CAST")
-        (this::codeInsightTestFixture as KMutableProperty0<CodeInsightTestFixture?>).set(null)
-        myTestFixture = null
+        runAll(
+            ThrowableRunnable { codeInsightTestFixture.tearDown() },
+            ThrowableRunnable {
+                @Suppress("UNCHECKED_CAST")
+                (this::codeInsightTestFixture as KMutableProperty0<CodeInsightTestFixture?>).set(null)
+            },
+            ThrowableRunnable { myTestFixture = null }
+        )
     }
 
     @Test

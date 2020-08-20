@@ -88,8 +88,10 @@ abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
         }
     }
 
-    override fun tearDown() = runAll(
-        ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
-        ThrowableRunnable { super.tearDown() },
-    )
+    override fun tearDown() {
+        runAll(
+            ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
+            ThrowableRunnable { super.tearDown() },
+        )
+    }
 }

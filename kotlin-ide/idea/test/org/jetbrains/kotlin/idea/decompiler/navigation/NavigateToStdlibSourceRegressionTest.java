@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.idea.test.TestUtilsKt;
 import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.RunWith;
 
+import static com.intellij.testFramework.RunAll.runAll;
+
 @RunWith(JUnit38ClassRunner.class)
 public class NavigateToStdlibSourceRegressionTest extends NavigateToLibraryRegressionTest {
     /**
@@ -24,12 +26,16 @@ public class NavigateToStdlibSourceRegressionTest extends NavigateToLibraryRegre
     }
 
     @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-        // Workaround for IDEA's bug during tests.
-        // After tests IDEA disposes VirtualFiles within LocalFileSystem, but doesn't rebuild indices.
-        // This causes library source files to be impossible to find via indices
-        TestUtilsKt.closeAndDeleteProject();
+    protected void tearDown() {
+        runAll(
+                () -> super.tearDown(),
+                () -> {
+                    // Workaround for IDEA's bug during tests.
+                    // After tests IDEA disposes VirtualFiles within LocalFileSystem, but doesn't rebuild indices.
+                    // This causes library source files to be impossible to find via indices
+                    TestUtilsKt.closeAndDeleteProject();
+                }
+        );
     }
 
     @NotNull

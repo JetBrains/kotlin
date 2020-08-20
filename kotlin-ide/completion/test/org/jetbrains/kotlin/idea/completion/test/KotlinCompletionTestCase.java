@@ -30,7 +30,7 @@ abstract public class KotlinCompletionTestCase extends CompletionTestCase {
     }
 
     @Override
-    protected void tearDown() throws Exception {
+    protected void tearDown() {
         runAll(
                 () -> CodeInsightSettings.getInstance().EXCLUDED_PACKAGES = ArrayUtil.EMPTY_STRING_ARRAY,
                 () -> KotlinTestUtils.disposeVfsRootAccess(vfsDisposable),

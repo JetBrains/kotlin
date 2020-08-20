@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.idea.decompiler
 
 import com.intellij.psi.ClassFileViewProvider
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.MockLibraryFacility
+import org.jetbrains.kotlin.idea.test.runAll
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 
@@ -32,7 +34,9 @@ class InternalCompiledClassesTest : AbstractInternalCompiledClassesTest() {
     }
 
     override fun tearDown() {
-        mockLibraryFacility.tearDown(module)
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { mockLibraryFacility.tearDown(module) },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 }

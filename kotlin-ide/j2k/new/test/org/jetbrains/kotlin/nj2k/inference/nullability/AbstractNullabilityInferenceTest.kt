@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.nj2k.inference.nullability
 
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.psi.codeStyle.JavaCodeStyleSettings
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.nj2k.descriptorByFileDirective
 import org.jetbrains.kotlin.nj2k.inference.AbstractConstraintCollectorTest
 import org.jetbrains.kotlin.nj2k.inference.common.*
@@ -66,8 +68,10 @@ abstract class AbstractNullabilityInferenceTest : AbstractConstraintCollectorTes
     }
 
     override fun tearDown() {
-        JavaCodeStyleSettings.getInstance(project).USE_EXTERNAL_ANNOTATIONS = false
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { JavaCodeStyleSettings.getInstance(project).USE_EXTERNAL_ANNOTATIONS = false },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     override fun getProjectDescriptor() = descriptorByFileDirective(File(testDataPath, fileName()))

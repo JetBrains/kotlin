@@ -9,12 +9,14 @@ import com.intellij.mock.MockProject
 import com.intellij.pom.PomModel
 import com.intellij.pom.core.impl.PomModelImpl
 import com.intellij.pom.tree.TreeAspect
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.psi.KtAnonymousInitializer
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtPsiUtil
@@ -35,9 +37,10 @@ abstract class AbstractAdditionalResolveDescriptorRendererTest : AbstractDescrip
     }
 
     override fun tearDown() {
-        unregisterKotlinCodeBlockModificationListener(project as MockProject)
-
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { unregisterKotlinCodeBlockModificationListener(project as MockProject) },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     override fun getDescriptor(declaration: KtDeclaration, container: ComponentProvider): DeclarationDescriptor {

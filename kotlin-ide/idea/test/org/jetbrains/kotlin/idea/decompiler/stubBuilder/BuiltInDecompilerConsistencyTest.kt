@@ -9,6 +9,7 @@ import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.util.ThrowableRunnable
 import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
 import org.jetbrains.kotlin.idea.decompiler.builtIns.BuiltInDefinitionFile
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.idea.decompiler.classFile.KotlinClassFileDecompiler
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtClassElementType
@@ -36,8 +38,10 @@ class BuiltInDecompilerConsistencyTest : KotlinLightCodeInsightFixtureTestCase()
     }
 
     override fun tearDown() {
-        BuiltInDefinitionFile.FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES = true
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { BuiltInDefinitionFile.FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES = true },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     fun testSameAsClsDecompilerForCompiledBuiltInClasses() {

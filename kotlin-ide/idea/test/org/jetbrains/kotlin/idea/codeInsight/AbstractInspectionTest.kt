@@ -10,6 +10,7 @@ import com.intellij.openapi.fileTypes.FileTypeManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.TestLoggerFactory
+import com.intellij.util.ThrowableRunnable
 import org.jdom.Document
 import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.formatter.FormatSettingsUtil
@@ -40,8 +41,10 @@ abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() 
     }
 
     override fun tearDown() {
-        EntryPointsManagerBase.getInstance(project).ADDITIONAL_ANNOTATIONS.remove(ENTRY_POINT_ANNOTATION)
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { EntryPointsManagerBase.getInstance(project).ADDITIONAL_ANNOTATIONS.remove(ENTRY_POINT_ANNOTATION) },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     protected open fun configExtra(psiFiles: List<PsiFile>, options: String) {

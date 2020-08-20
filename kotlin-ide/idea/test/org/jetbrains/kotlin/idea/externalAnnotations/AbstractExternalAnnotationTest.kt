@@ -7,8 +7,10 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.codeStyle.JavaCodeStyleSettings
 import com.intellij.testFramework.LightPlatformTestCase
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import java.io.File
 
@@ -21,8 +23,10 @@ abstract class AbstractExternalAnnotationTest: KotlinLightCodeInsightFixtureTest
     }
 
     override fun tearDown() {
-        JavaCodeStyleSettings.getInstance(project).USE_EXTERNAL_ANNOTATIONS = false
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { JavaCodeStyleSettings.getInstance(project).USE_EXTERNAL_ANNOTATIONS = false },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     private fun addFile(path: String) {

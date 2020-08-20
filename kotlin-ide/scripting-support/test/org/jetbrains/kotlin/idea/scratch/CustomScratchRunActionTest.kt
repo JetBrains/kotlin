@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.idea.scratch
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable
 import com.intellij.openapi.roots.libraries.Library
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.run.createLibraryWithLongPaths
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
@@ -55,9 +57,10 @@ class CustomScratchRunActionTest : AbstractScratchRunActionTest() {
     }
 
     override fun tearDown() {
-        removeLibraryWithLongPaths()
-
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { removeLibraryWithLongPaths() },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     private fun removeLibraryWithLongPaths() {

@@ -8,9 +8,11 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.testFramework.HeavyPlatformTestCase
 import com.intellij.testFramework.IdeaTestUtil
+import com.intellij.util.ThrowableRunnable
 import com.intellij.util.lang.JavaVersion
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.test.KotlinRoot
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils.disposeVfsRootAccess
@@ -48,8 +50,10 @@ abstract class AbstractConfigureKotlinTestBase : HeavyPlatformTestCase() {
     }
 
     override fun tearDown() {
-        disposeVfsRootAccess(vfsDisposable)
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     override fun initApplication() {

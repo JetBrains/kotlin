@@ -17,6 +17,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.PsiTestUtil
+import com.intellij.util.ThrowableRunnable
 import com.intellij.util.ui.UIUtil
 import org.jdom.Element
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingUtil
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationTest.Companion.useDefaultTemplate
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.getModuleDir
 import org.jetbrains.kotlin.psi.KtFile
@@ -170,13 +172,15 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
     }
 
     override fun tearDown() {
-        System.setProperty("kotlin.script.classpath", oldScripClasspath ?: "")
-
-        settings?.let {
-            KotlinScriptingSettings.getInstance(project).loadState(it)
-        }
-
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { System.setProperty("kotlin.script.classpath", oldScripClasspath ?: "") },
+            ThrowableRunnable {
+                settings?.let {
+                    KotlinScriptingSettings.getInstance(project).loadState(it)
+                }
+            },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     override fun getTestProjectJdk(): Sdk {

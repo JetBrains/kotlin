@@ -11,6 +11,7 @@ import com.intellij.openapi.util.Conditions
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
+import com.intellij.util.ThrowableRunnable
 import com.intellij.util.io.exists
 import org.jetbrains.kotlin.checkers.API_VERSION_DIRECTIVE
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory0
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.allKotlinFiles
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.idea.util.sourceRoots
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.Directives
@@ -209,7 +211,11 @@ abstract class AbstractMultiplatformAnalysisTest : AbstractMultiModuleIdeResolve
     }
 
     override fun tearDown() {
-        KotlinMultiplatformAnalysisModeComponent.setMode(project, KotlinMultiplatformAnalysisModeComponent.Mode.SEPARATE)
-        super.tearDown()
+        runAll(
+            ThrowableRunnable {
+                KotlinMultiplatformAnalysisModeComponent.setMode(project, KotlinMultiplatformAnalysisModeComponent.Mode.SEPARATE)
+            },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 }

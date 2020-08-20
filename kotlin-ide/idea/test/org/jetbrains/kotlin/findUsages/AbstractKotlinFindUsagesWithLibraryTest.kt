@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.findUsages
 
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.MockLibraryFacility
+import org.jetbrains.kotlin.idea.test.runAll
 
 abstract class AbstractKotlinFindUsagesWithLibraryTest : AbstractFindUsagesTest() {
     private val mockLibraryFacility = MockLibraryFacility(
@@ -19,7 +21,9 @@ abstract class AbstractKotlinFindUsagesWithLibraryTest : AbstractFindUsagesTest(
     }
 
     override fun tearDown() {
-        mockLibraryFacility.tearDown(module)
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { mockLibraryFacility.tearDown(module) },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 }

@@ -499,8 +499,10 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         vfsDisposable = allowProjectRootAccess(this)
     }
 
-    override fun tearDown() = runAll(
-        ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
-        ThrowableRunnable { super.tearDown() },
-    )
+    override fun tearDown() {
+        runAll(
+            ThrowableRunnable { disposeVfsRootAccess(vfsDisposable) },
+            ThrowableRunnable { super.tearDown() },
+        )
+    }
 }

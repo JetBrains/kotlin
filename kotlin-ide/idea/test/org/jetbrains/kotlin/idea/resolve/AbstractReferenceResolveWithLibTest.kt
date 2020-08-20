@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.idea.resolve
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.resolve.reference.impl.PsiDelegateReference
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.test.AstAccessControl.ALLOW_AST_ACCESS_DIRECTIVE
 import org.jetbrains.kotlin.idea.test.AstAccessControl.execute
 import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.MockLibraryFacility
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
 
@@ -28,8 +30,10 @@ abstract class AbstractReferenceResolveWithLibTest : AbstractReferenceResolveTes
     }
 
     override fun tearDown() {
-        mockLibraryFacility.tearDown(module)
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { mockLibraryFacility.tearDown(module) },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     override fun wrapReference(reference: PsiReference?): PsiReference? {

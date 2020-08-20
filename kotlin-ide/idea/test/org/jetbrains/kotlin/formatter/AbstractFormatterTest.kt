@@ -14,10 +14,12 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.testFramework.LightIdeaTestCase
 import com.intellij.util.IncorrectOperationException
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
 import org.jetbrains.kotlin.idea.test.configureCodeStyleAndRun
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -56,8 +58,10 @@ abstract class AbstractFormatterTest : LightIdeaTestCase() {
     }
 
     override fun tearDown() {
-        super.tearDown()
-        Registry.get("kotlin.formatter.allowTrailingCommaInAnyProject").resetToDefault()
+        runAll(
+            ThrowableRunnable { Registry.get("kotlin.formatter.allowTrailingCommaInAnyProject").resetToDefault() },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     fun doTextTest(@NonNls text: String, fileAfter: File?, extension: String) {

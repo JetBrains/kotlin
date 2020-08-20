@@ -15,8 +15,10 @@ abstract class KotlinLightPlatformCodeInsightTestCase : LightPlatformCodeInsight
         enableKotlinOfficialCodeStyle(project)
     }
 
-    override fun tearDown() = runAll(
-        ThrowableRunnable { disableKotlinOfficialCodeStyle(project) },
-        ThrowableRunnable { super.tearDown() },
-    )
+    override fun tearDown() {
+        runAll(
+            ThrowableRunnable { disableKotlinOfficialCodeStyle(project) },
+            ThrowableRunnable { super.tearDown() },
+        )
+    }
 }

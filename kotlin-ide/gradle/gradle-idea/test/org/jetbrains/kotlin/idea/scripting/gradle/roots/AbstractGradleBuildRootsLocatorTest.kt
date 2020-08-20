@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.idea.scripting.gradle.roots
 import com.intellij.mock.MockProjectEx
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
+import com.intellij.util.ThrowableRunnable
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleKotlinScriptConfigurationInputs
 import org.jetbrains.kotlin.idea.scripting.gradle.LastModifiedFiles
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
+import org.jetbrains.kotlin.idea.test.runAll
 
 abstract class AbstractGradleBuildRootsLocatorTest : TestCase() {
     private val scripts = mutableMapOf<String, ScriptFixture>()
@@ -29,8 +31,10 @@ abstract class AbstractGradleBuildRootsLocatorTest : TestCase() {
     }
 
     override fun tearDown() {
-        Disposer.dispose(disposable)
-        super.tearDown()
+        runAll(
+            ThrowableRunnable { Disposer.dispose(disposable) },
+            ThrowableRunnable { super.tearDown() }
+        )
     }
 
     private inner class MyRootsLocator : GradleBuildRootsLocator(MockProjectEx(disposable)) {

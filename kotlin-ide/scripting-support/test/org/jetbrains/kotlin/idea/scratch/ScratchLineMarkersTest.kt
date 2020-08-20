@@ -15,10 +15,12 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.ExpectedHighlightingData
 import com.intellij.testFramework.FileEditorManagerTestCase
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.codeInsight.AbstractLineMarkersTest
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.scratch.AbstractScratchRunActionTest.Companion.configureOptions
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
@@ -61,11 +63,14 @@ abstract class AbstractScratchLineMarkersTest : FileEditorManagerTestCase() {
     }
 
     override fun tearDown() {
-        super.tearDown()
-
-        for (scratchFile in scratchFiles) {
-            runWriteAction { scratchFile.delete(this) }
-        }
+        runAll(
+            ThrowableRunnable { super.tearDown() },
+            ThrowableRunnable {
+                for (scratchFile in scratchFiles) {
+                    runWriteAction { scratchFile.delete(this) }
+                }
+            }
+        )
     }
 
     private fun doAndCheckHighlighting(
