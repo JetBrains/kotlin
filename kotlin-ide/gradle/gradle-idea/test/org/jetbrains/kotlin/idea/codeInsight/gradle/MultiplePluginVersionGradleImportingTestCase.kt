@@ -9,7 +9,6 @@
  */
 package org.jetbrains.kotlin.idea.codeInsight.gradle
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.junit.Rule
 import org.junit.runners.Parameterized
@@ -19,21 +18,10 @@ import java.util.*
 const val mppImportTestMinVersionForMaster = "6.0+"
 const val legacyMppImportTestMinVersionForMaster = "5.3+"
 
-abstract class MultiplePluginVersionGradleImportingTestCase : GradleImportingTestCase() {
+abstract class MultiplePluginVersionGradleImportingTestCase : KotlinGradleImportingTestCase() {
     @Rule
     @JvmField
     var pluginVersionMatchingRule = PluginTargetVersionsRule()
-
-    val project: Project
-        get() = myProject
-
-
-    override fun isApplicableTest(): Boolean {
-        return pluginVersionMatchingRule.matches(
-            gradleVersion, gradleKotlinPluginVersion,
-            gradleKotlinPluginVersionType == LATEST_SUPPORTED_VERSION
-        )
-    }
 
     @JvmField
     @Parameterized.Parameter(1)
@@ -43,15 +31,15 @@ abstract class MultiplePluginVersionGradleImportingTestCase : GradleImportingTes
         get() = KOTLIN_GRADLE_PLUGIN_VERSION_DESCRIPTION_TO_VERSION[gradleKotlinPluginVersionType] ?: gradleKotlinPluginVersionType
 
     companion object {
-        const val MINIMAL_SUPPORTED_VERSION = "minimal"// minimal supported version
-        const val LATEST_STABLE_VERSUON = "latest stable"
-        const val LATEST_SUPPORTED_VERSION = "master"// gradle plugin from current build
+        const val MINIMAL_SUPPORTED_VERSION = "minimal"// Minimal supported version
+        private const val LATEST_STABLE_VERSION = "latest stable" // Latest stable version of Kotlin
+        const val LATEST_SUPPORTED_VERSION = "master" // Gradle plugin from master of JetBrains/kotlin repository
 
         //should be extended with LATEST_SUPPORTED_VERSION - KT-40899
-        private val KOTLIN_GRADLE_PLUGIN_VERSIONS = listOf(MINIMAL_SUPPORTED_VERSION, LATEST_STABLE_VERSUON)
+        private val KOTLIN_GRADLE_PLUGIN_VERSIONS = listOf(MINIMAL_SUPPORTED_VERSION, LATEST_STABLE_VERSION)
         private val KOTLIN_GRADLE_PLUGIN_VERSION_DESCRIPTION_TO_VERSION = mapOf(
             MINIMAL_SUPPORTED_VERSION to MINIMAL_SUPPORTED_GRADLE_PLUGIN_VERSION,
-            LATEST_STABLE_VERSUON to LATEST_STABLE_GRADLE_PLUGIN_VERSION,
+            LATEST_STABLE_VERSION to LATEST_STABLE_GRADLE_PLUGIN_VERSION,
             LATEST_SUPPORTED_VERSION to readPluginVersion()
         )
 
@@ -63,32 +51,33 @@ abstract class MultiplePluginVersionGradleImportingTestCase : GradleImportingTes
                 )?.replace("-original.jar", "") ?: "1.4.255-SNAPSHOT"
 
         @JvmStatic
+        @Suppress("ACCIDENTAL_OVERRIDE")
         @Parameterized.Parameters(name = "{index}: Gradle-{0}, KotlinGradlePlugin-{1}")
         fun data(): Collection<Array<Any>> {
-            return (AbstractModelBuilderTest.SUPPORTED_GRADLE_VERSIONS).flatMap { gradleVersion ->
+            return (SUPPORTED_GRADLE_VERSIONS).flatMap { gradleVersion ->
                 KOTLIN_GRADLE_PLUGIN_VERSIONS.map { kotlinVersion ->
-                    arrayOf<Any>(
-                        gradleVersion[0],
-                        kotlinVersion
-                    )
+                    arrayOf(gradleVersion[0], kotlinVersion)
                 }
             }.toList()
         }
     }
 
-    fun repositories(useKts: Boolean): String {
-        val customRepositories = arrayOf(
-            "https://dl.bintray.com/kotlin/kotlin-dev",
-            "http://dl.bintray.com/kotlin/kotlin-eap"
+    private fun repositories(useKts: Boolean): String {
+        val repositories = mutableListOf(
+            "mavenCentral()",
+            "mavenLocal()",
+            "google()",
+            "jcenter()"
         )
-        val customMavenRepositories = customRepositories.map { if (useKts) "maven(\"$it\")" else "maven { url '$it' } " }.joinToString("\n")
-        return """
-            mavenCentral()
-            mavenLocal()
-            google()
-            jcenter()
-            $customMavenRepositories
-        """.trimIndent()
+
+        fun addCustomRepository(url: String) {
+            repositories += if (useKts) "maven(\"$url\")" else "maven { url '$url' }"
+        }
+
+        addCustomRepository("https://dl.bintray.com/kotlin/kotlin-dev")
+        addCustomRepository("http://dl.bintray.com/kotlin/kotlin-eap")
+
+        return repositories.joinToString("\n")
     }
 
     override fun configureByFiles(properties: Map<String, String>?): List<VirtualFile> {

@@ -202,7 +202,7 @@ internal fun configureEditorByExistingFile(
  * Note that it's different from physical file used in project during test run (which is usually a copy in temporary folder)
  *
  * All inheritors of GradleImportingTestCase should normally have PsiFiles with properly attached UserData to them
- * (see [GradleImportingTestCase.configureByFiles])
+ * (see [org.jetbrains.kotlin.idea.codeInsight.gradle.KotlinGradleImportingTestCase.configureByFiles])
  */
 internal val VirtualFile.testDataFileByUserData: File
     get() {

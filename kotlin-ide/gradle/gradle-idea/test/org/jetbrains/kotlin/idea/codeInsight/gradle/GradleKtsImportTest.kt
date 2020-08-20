@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.idea.core.script.configuration.loader.DefaultScriptC
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoadingContext
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.areSimilar
 import org.jetbrains.kotlin.idea.core.script.configuration.utils.getKtFile
-import org.jetbrains.kotlin.idea.core.script.hasSuggestedScriptConfiguration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
@@ -28,15 +27,19 @@ import org.junit.runners.Parameterized.Parameters
 import java.io.File
 
 @RunWith(value = Parameterized::class)
-class GradleKtsImportTest : GradleImportingTestCase() {
+class GradleKtsImportTest : KotlinGradleImportingTestCase() {
     companion object {
         @JvmStatic
+        @Suppress("ACCIDENTAL_OVERRIDE")
         @Parameters(name = "{index}: with Gradle-{0}")
-        fun data(): Collection<Array<Any?>> = listOf(arrayOf<Any?>("6.0.1"))
+        fun data(): Collection<Array<Any?>> = listOf(arrayOf("6.0.1"))
     }
 
-    val scriptConfigurationManager get() = ScriptConfigurationManager.getInstance(myProject) as CompositeScriptConfigurationManager
-    val projectDir get() = File(GradleSettings.getInstance(myProject).linkedProjectsSettings.first().externalProjectPath)
+    val projectDir: File
+        get() = File(GradleSettings.getInstance(myProject).linkedProjectsSettings.first().externalProjectPath)
+
+    private val scriptConfigurationManager: CompositeScriptConfigurationManager
+        get() = ScriptConfigurationManager.getInstance(myProject) as CompositeScriptConfigurationManager
 
     override fun testDataDirName(): String {
         return "gradleKtsImportTest"
@@ -134,14 +137,6 @@ class GradleKtsImportTest : GradleImportingTestCase() {
         val psiFile get() = myProject.getKtFile(virtualFile)!!
 
         lateinit var imported: ScriptCompilationConfigurationWrapper
-
-        fun assertSuggestedConfiguration() {
-            assertTrue(virtualFile.hasSuggestedScriptConfiguration(myProject))
-        }
-
-        fun assertAndApplySuggestedConfiguration() {
-            assertTrue(virtualFile.applySuggestedScriptConfiguration(myProject))
-        }
 
         fun assertNoSuggestedConfiguration() {
             assertFalse(virtualFile.applySuggestedScriptConfiguration(myProject))

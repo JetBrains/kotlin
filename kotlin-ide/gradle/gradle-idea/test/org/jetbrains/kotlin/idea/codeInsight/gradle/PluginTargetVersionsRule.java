@@ -11,14 +11,18 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions;
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions;
 import org.jetbrains.plugins.gradle.tooling.util.VersionMatcher;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
+import org.junit.AssumptionViolatedException;
+import org.junit.rules.MethodRule;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.Statement;
+
 import java.lang.annotation.Annotation;
 
-// modified copy of org.jetbrains.plugins.gradle.tooling.VersionMatcherRule
-public class PluginTargetVersionsRule extends TestWatcher {
+import static org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase.LATEST_SUPPORTED_VERSION;
 
-    private class TargetVersionsImpl implements TargetVersions {
+public class PluginTargetVersionsRule implements MethodRule {
+    @SuppressWarnings("ClassExplicitlyAnnotation")
+    private static class TargetVersionsImpl implements TargetVersions {
         private final String value;
 
         TargetVersionsImpl(String value) {
@@ -41,40 +45,64 @@ public class PluginTargetVersionsRule extends TestWatcher {
         }
     }
 
+    @Override
+    public Statement apply(Statement base, FrameworkMethod method, Object target) {
+        final PluginTargetVersions targetVersions = method.getAnnotation(PluginTargetVersions.class);
+        if (method.getAnnotation(TargetVersions.class) != null && targetVersions != null) {
+            throw new IllegalArgumentException(
+                    String.format("Annotations %s and %s could not be used together. ",
+                                  TargetVersions.class.getName(), PluginTargetVersions.class.getName())
+            );
+        }
 
-    @Nullable
-    private CustomMatcher gradleVersionMatcher;
+        MultiplePluginVersionGradleImportingTestCase testCase = (MultiplePluginVersionGradleImportingTestCase) target;
+        if (targetVersions != null && !shouldRun(targetVersions, testCase)) {
+            return new Statement() {
+                @Override
+                public void evaluate() {
+                    throw new AssumptionViolatedException("Test is ignored");
+                }
+            };
+        }
 
-    @Nullable
-    private CustomMatcher pluginVersionMatcher;
+        return base;
+    }
 
-    @Nullable
-    private CustomMatcher gradleVersionMatcherForLatestPlugin;
+    private static boolean shouldRun(PluginTargetVersions targetVersions, MultiplePluginVersionGradleImportingTestCase testCase) {
+        boolean isLatestPluginVersion = testCase.gradleKotlinPluginVersionType == LATEST_SUPPORTED_VERSION;
+        var pluginVersion = testCase.getGradleKotlinPluginVersion();
+        var gradleVersion = testCase.gradleVersion;
 
-    @NotNull
-    public boolean matches(String gradleVersion, String pluginVersion, boolean isLatestPluginVersion) {
+        var gradleVersionMatcher = createMatcher("Gradle", targetVersions.gradleVersion());
+        var pluginVersionMatcher = createMatcher("Plugin", targetVersions.pluginVersion());
+        var gradleVersionMatcherForLatestPlugin = createMatcher("Gradle for latest plugin", targetVersions.gradleVersionForLatestPlugin());
+
         boolean matchGradleVersion = gradleVersionMatcher == null || gradleVersionMatcher.matches(gradleVersion);
+
         if (isLatestPluginVersion) {
             if (gradleVersionMatcherForLatestPlugin != null) {
                 return gradleVersionMatcherForLatestPlugin.matches(gradleVersion);
             }
             return matchGradleVersion;
         }
+
         boolean pluginVersionMatches = pluginVersionMatcher == null || pluginVersionMatcher.matches(pluginVersion);
         return matchGradleVersion && pluginVersionMatches;
     }
 
-    @Override
-    protected void starting(Description d) {
-        final PluginTargetVersions pluginTargetVersions = d.getAnnotation(PluginTargetVersions.class);
-        if (d.getAnnotation(TargetVersions.class) != null && pluginTargetVersions != null) {
-            throw new IllegalArgumentException(String.format("Annotations %s and %s could not be used together. ",
-                                                             TargetVersions.class.getName(), PluginTargetVersions.class.getName()));
+    @Nullable
+    private static CustomMatcher<String> createMatcher(@NotNull String caption, @NotNull String version) {
+        if (version.isEmpty()) {
+            return null;
         }
-        if (pluginTargetVersions == null) return;
 
-        gradleVersionMatcher = pluginTargetVersions.gradleVersion().isEmpty() ? null : VersionMatcherRule.produceMatcher("Gradle", new TargetVersionsImpl(pluginTargetVersions.gradleVersion()));
-        pluginVersionMatcher = pluginTargetVersions.pluginVersion().isEmpty() ? null : VersionMatcherRule.produceMatcher("Plugin", new TargetVersionsImpl(pluginTargetVersions.pluginVersion()));
-        gradleVersionMatcherForLatestPlugin = pluginTargetVersions.gradleVersionForLatestPlugin().isEmpty() ? null : VersionMatcherRule.produceMatcher("Gradle for latest plugin", new TargetVersionsImpl(pluginTargetVersions.gradleVersionForLatestPlugin()));
+        TargetVersions targetVersions = new TargetVersionsImpl(version);
+
+        return new CustomMatcher<>(caption + " version '" + targetVersions.value() + "'") {
+            @Override
+            public boolean matches(Object item) {
+                return item instanceof String && new VersionMatcher(GradleVersion.version(item.toString())).isVersionMatch(targetVersions);
+            }
+        };
     }
 }

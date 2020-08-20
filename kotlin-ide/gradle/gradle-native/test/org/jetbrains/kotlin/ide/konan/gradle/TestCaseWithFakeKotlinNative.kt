@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.ide.konan.gradle
 
-import org.jetbrains.kotlin.idea.codeInsight.gradle.GradleImportingTestCase
+import org.jetbrains.kotlin.idea.codeInsight.gradle.KotlinGradleImportingTestCase
 import java.io.File
 
-abstract class TestCaseWithFakeKotlinNative : GradleImportingTestCase() {
+abstract class TestCaseWithFakeKotlinNative : KotlinGradleImportingTestCase() {
     protected fun configureProject() {
         configureByFiles()
 

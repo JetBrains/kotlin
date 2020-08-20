@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle
 
+import com.intellij.openapi.externalSystem.importing.ImportSpec
+import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.roots.DependencyScope
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
@@ -14,7 +16,6 @@ import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.junit.Test
 
 class KaptImportingTest : MultiplePluginVersionGradleImportingTestCase() {
-
     fun importProject(modulePerSourceSet: Boolean) {
         currentExternalProjectSettings.isResolveModulePerSourceSet = modulePerSourceSet
         val isCreateEmptyContentRootDirectories = currentExternalProjectSettings.isCreateEmptyContentRootDirectories
@@ -80,11 +81,13 @@ class KaptImportingTest : MultiplePluginVersionGradleImportingTestCase() {
                 libraryDependency("Gradle: kaptGeneratedClasses", DependencyScope.COMPILE)
             }
 
-        }
+    override fun createImportSpec(): ImportSpec {
+        return ImportSpecBuilder(super.createImportSpec())
+            .createDirectoriesForEmptyContentRoots()
+            .build()
     }
 
     override fun testDataDirName(): String {
         return "kaptImportingTest"
     }
-
 }

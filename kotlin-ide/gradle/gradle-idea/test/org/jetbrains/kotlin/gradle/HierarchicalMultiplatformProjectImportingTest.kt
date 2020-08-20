@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.gradle
 
+import com.intellij.openapi.externalSystem.importing.ImportSpec
+import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.roots.DependencyScope
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
 import org.jetbrains.kotlin.idea.codeInsight.gradle.mppImportTestMinVersionForMaster
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.platform.js.JsPlatforms
@@ -20,11 +21,10 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTestCase() {
-
+class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTestCaseWithSdkChecker() {
     @Before
     fun saveSdksBeforeTest() {
-        val kotlinSdks = sdkCreationChecker?.getKotlinSdks() ?: emptyList()
+        val kotlinSdks = sdkCreationChecker.getKotlinSdks()
         if (kotlinSdks.isNotEmpty()) {
             fail("Found Kotlin SDK before importing test. Sdk list: $kotlinSdks")
         }
@@ -32,7 +32,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
 
     @After
     fun checkSdkCreated() {
-        if (sdkCreationChecker?.isKotlinSdkCreated() == false) {
+        if (!sdkCreationChecker.isKotlinSdkCreated()) {
             fail("Kotlin SDK was not created during import of HMPP Project.")
         }
     }
@@ -60,6 +60,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
 
         checkProjectStructure {
             module("my-app")
+
             module("my-app.commonMain") {
                 isHMPP(true)
                 targetPlatform(JsPlatforms.defaultJsPlatform, JvmPlatforms.jvm16, NativePlatforms.unspecifiedNativePlatform)
@@ -245,6 +246,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.jvmMain", DependencyScope.COMPILE)
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.main", DependencyScope.COMPILE)
             }
+
             module("jvm-on-mpp.jvm-mod.test") {
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.COMPILE)
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.jvmAndJsMain", DependencyScope.COMPILE)
@@ -260,13 +262,13 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
             }
             module("jvm-on-mpp.hmpp-mod-a.commonTest") {
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.TEST)
-
             }
             module("jvm-on-mpp.hmpp-mod-a.jsMain") {
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.COMPILE)
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.jvmAndJsMain", DependencyScope.COMPILE)
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.linuxAndJsMain", DependencyScope.COMPILE)
             }
+
             module("jvm-on-mpp.hmpp-mod-a.jsTest") {
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.TEST)
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.commonTest", DependencyScope.TEST)
@@ -277,22 +279,22 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.linuxAndJsMain", DependencyScope.TEST)
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.linuxAndJsTest", DependencyScope.TEST)
             }
+
             module("jvm-on-mpp.hmpp-mod-a.jvmAndJsMain") {
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.COMPILE)
-
-
             }
+
             module("jvm-on-mpp.hmpp-mod-a.jvmAndJsTest") {
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.TEST)
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.commonTest", DependencyScope.TEST)
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.jvmAndJsMain", DependencyScope.TEST)
-
             }
+
             module("jvm-on-mpp.hmpp-mod-a.jvmMain") {
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.COMPILE)
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.jvmAndJsMain", DependencyScope.COMPILE)
-
             }
+
             module("jvm-on-mpp.hmpp-mod-a.jvmTest") {
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.TEST)
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.commonTest", DependencyScope.TEST)
@@ -301,16 +303,17 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.jvmMain", DependencyScope.TEST)
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
             }
+
             module("jvm-on-mpp.hmpp-mod-a.linuxAndJsMain") {
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.COMPILE)
-
             }
+
             module("jvm-on-mpp.hmpp-mod-a.linuxAndJsTest") {
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.TEST)
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.commonTest", DependencyScope.TEST)
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.linuxAndJsMain", DependencyScope.TEST)
-
             }
+
             module("jvm-on-mpp.hmpp-mod-a.linuxX64Main") {
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.COMPILE)
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.linuxAndJsMain", DependencyScope.COMPILE)
@@ -321,6 +324,7 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
                 libraryDependency("Kotlin/Native ${gradleKotlinPluginVersion} - stdlib", DependencyScope.PROVIDED)
                 libraryDependency("Kotlin/Native ${gradleKotlinPluginVersion} - zlib [linux_x64]", DependencyScope.PROVIDED)
             }
+
             module("jvm-on-mpp.hmpp-mod-a.linuxX64Test") {
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.TEST)
                 moduleDependency("jvm-on-mpp.hmpp-mod-a.commonTest", DependencyScope.TEST)
@@ -357,15 +361,18 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
         )
     }
 
+    override fun createImportSpec(): ImportSpec {
+        return ImportSpecBuilder(super.createImportSpec())
+            .createDirectoriesForEmptyContentRoots()
+            .build()
+    }
+
     override fun importProject() {
         val isUseQualifiedModuleNames = currentExternalProjectSettings.isUseQualifiedModuleNames
         currentExternalProjectSettings.isUseQualifiedModuleNames = true
-        val isCreateEmptyContentRootDirectories = currentExternalProjectSettings.isCreateEmptyContentRootDirectories
-        currentExternalProjectSettings.isCreateEmptyContentRootDirectories = true
         try {
             super.importProject()
         } finally {
-            currentExternalProjectSettings.isCreateEmptyContentRootDirectories = isCreateEmptyContentRootDirectories
             currentExternalProjectSettings.isUseQualifiedModuleNames = isUseQualifiedModuleNames
         }
     }

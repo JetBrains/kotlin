@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle
 
+import com.intellij.openapi.externalSystem.importing.ImportSpec
+import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
@@ -13,7 +15,6 @@ import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.junit.Test
 
 class PackagePrefixImportingTest : MultiplePluginVersionGradleImportingTestCase() {
-
     @Test
     @PluginTargetVersions(gradleVersionForLatestPlugin = legacyMppImportTestMinVersionForMaster)
     fun testPackagePrefixNonMPP() {
@@ -21,7 +22,7 @@ class PackagePrefixImportingTest : MultiplePluginVersionGradleImportingTestCase(
         importProject()
 
         checkProjectStructure(
-            project,
+            myProject,
             projectPath,
             exhaustiveModuleList = true,
             exhaustiveSourceSourceRootList = true,
@@ -43,14 +44,10 @@ class PackagePrefixImportingTest : MultiplePluginVersionGradleImportingTestCase(
         }
     }
 
-    override fun importProject() {
-        val isCreateEmptyContentRootDirectories = currentExternalProjectSettings.isCreateEmptyContentRootDirectories
-        currentExternalProjectSettings.isCreateEmptyContentRootDirectories = true
-        try {
-            super.importProject()
-        } finally {
-            currentExternalProjectSettings.isCreateEmptyContentRootDirectories = isCreateEmptyContentRootDirectories
-        }
+    override fun createImportSpec(): ImportSpec {
+        return ImportSpecBuilder(super.createImportSpec())
+            .createDirectoriesForEmptyContentRoots()
+            .build()
     }
 
     override fun testDataDirName(): String {

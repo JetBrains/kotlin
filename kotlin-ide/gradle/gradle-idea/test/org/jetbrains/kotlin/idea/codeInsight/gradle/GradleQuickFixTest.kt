@@ -16,13 +16,12 @@ import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory
 import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.idea.inspections.gradle.GradleKotlinxCoroutinesDeprecationInspection
 import org.jetbrains.kotlin.idea.inspections.runInspection
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import java.io.File
 import kotlin.reflect.KMutableProperty0
 
-class GradleQuickFixTest : GradleImportingTestCase() {
+class GradleQuickFixTest : KotlinGradleImportingTestCase() {
     private lateinit var codeInsightTestFixture: CodeInsightTestFixture
 
     override fun testDataDirName() = "fixes"
@@ -35,6 +34,7 @@ class GradleQuickFixTest : GradleImportingTestCase() {
 
     override fun tearDownFixtures() {
         codeInsightTestFixture.tearDown()
+
         @Suppress("UNCHECKED_CAST")
         (this::codeInsightTestFixture as KMutableProperty0<CodeInsightTestFixture?>).set(null)
         myTestFixture = null
@@ -77,10 +77,8 @@ class GradleQuickFixTest : GradleImportingTestCase() {
     }
 
     private fun checkResult(file: VirtualFile) {
-        KotlinTestUtils.assertEqualsToFile(
-            File(testDataDirectory(), "build.gradle.after"),
-            configureKotlinVersionAndProperties(LoadTextUtil.loadText(file).toString())
-        )
-        { s -> configureKotlinVersionAndProperties(s) }
+        val expectedFile = File(testDataDirectory(), "build.gradle.after")
+        val actualText = configureKotlinVersionAndProperties(LoadTextUtil.loadText(file).toString())
+        KotlinTestUtils.assertEqualsToFile(expectedFile, actualText) { s -> configureKotlinVersionAndProperties(s) }
     }
 }

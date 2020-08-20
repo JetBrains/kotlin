@@ -20,6 +20,8 @@ import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.application.Result
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.application.runReadAction
+import com.intellij.openapi.externalSystem.importing.ImportSpec
+import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
@@ -66,14 +68,7 @@ internal val GradleImportingTestCase.facetSettings: KotlinFacetSettings
 internal val GradleImportingTestCase.testFacetSettings: KotlinFacetSettings
     get() = facetSettings("project_test")
 
-internal fun GradleImportingTestCase.getSourceRootInfos(moduleName: String): List<Pair<String, JpsModuleSourceRootType<*>>> {
-    return ModuleRootManager.getInstance(getModule(moduleName)).contentEntries.flatMap {
-        it.sourceFolders.map { it.url.replace(projectPath, "") to it.rootType }
-    }
-}
-
-class GradleFacetImportTest : GradleImportingTestCase() {
-
+class GradleFacetImportTest : KotlinGradleImportingTestCase() {
     private fun assertSameKotlinSdks(vararg moduleNames: String) {
         val sdks = moduleNames.map { getModule(it).sdk!! }
         val refSdk = sdks.firstOrNull() ?: return
@@ -98,6 +93,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
                 compilerSettings!!.additionalArguments
             )
         }
+
         with(testFacetSettings) {
             Assert.assertEquals("1.3", languageLevel!!.versionString)
             Assert.assertEquals("1.0", apiLevel!!.versionString)
@@ -283,6 +279,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
             .filterIsInstance<LibraryOrderEntry>()
             .map { it.library as LibraryEx }
             .first { "kotlin-stdlib-js" in it.name!! }
+
         assertEquals(JSLibraryKind, stdlib.kind)
 
         assertAllModulesConfigured()
@@ -835,7 +832,6 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         configureByFiles()
 
         val holder = KotlinCommonCompilerArgumentsHolder.getInstance(myProject)
-
         holder.update { languageVersion = "1.1" }
 
         importProject()
@@ -847,7 +843,6 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     fun testNonSharedLanguageVersion() {
         configureByFiles()
         val holder = KotlinCommonCompilerArgumentsHolder.getInstance(myProject)
-
         holder.update { languageVersion = "1.1" }
 
         importProject()
@@ -862,7 +857,6 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         with(facetSettings("project_main")) {
             Assert.assertEquals("1.8", (mergedCompilerArguments as K2JVMCompilerArguments).jvmTarget)
         }
-
     }
 
     private fun checkStableModuleName(projectName: String, expectedName: String, platform: TargetPlatform, isProduction: Boolean) {
@@ -886,14 +880,10 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         }
     }
 
-    override fun importProject() {
-        val isCreateEmptyContentRootDirectories = currentExternalProjectSettings.isCreateEmptyContentRootDirectories
-        try {
-            currentExternalProjectSettings.isCreateEmptyContentRootDirectories = true
-            super.importProject()
-        } finally {
-            currentExternalProjectSettings.isCreateEmptyContentRootDirectories = isCreateEmptyContentRootDirectories
-        }
+    override fun createImportSpec(): ImportSpec {
+        return ImportSpecBuilder(super.createImportSpec())
+            .createDirectoriesForEmptyContentRoots()
+            .build()
     }
 
     override fun testDataDirName(): String {

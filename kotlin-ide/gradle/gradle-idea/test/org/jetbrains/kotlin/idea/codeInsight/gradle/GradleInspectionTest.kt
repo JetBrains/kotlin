@@ -28,12 +28,7 @@ import org.junit.Assert
 import org.junit.Test
 import java.io.File
 
-class GradleInspectionTest : GradleImportingTestCase() {
-
-    // Disable gradle inspection tests in AndroidStudio as they are disabled in distribution
-    override fun isApplicableTest(): Boolean = isGradleInspectionTestApplicable()
-
-
+class GradleInspectionTest : KotlinGradleImportingTestCase() {
     @Test
     fun testDifferentStdlibGradleVersion() {
         val problems = getInspectionResultFromTestDataProject()

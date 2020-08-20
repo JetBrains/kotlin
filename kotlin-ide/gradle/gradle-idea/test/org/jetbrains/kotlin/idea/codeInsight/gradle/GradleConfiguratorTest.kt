@@ -21,8 +21,7 @@ import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.Assert
 import org.junit.Test
 
-class GradleConfiguratorTest : GradleImportingTestCase() {
-
+class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
     @Test
     fun testProjectWithModule() {
         importProjectFromTestData()
@@ -333,7 +332,9 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
     fun testTestTasksAreImported() {
         importProjectFromTestData()
 
+        @Suppress("DEPRECATION")
         val testTasks = GradleTestRunConfigurationProducer.getTasksToRun(myTestFixture.module)
+
         assertTrue("There should be at least one test task", testTasks.isNotEmpty())
     }
 
@@ -536,8 +537,8 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         }
     }
 
-    @TargetVersions("4.7+")
     @Test
+    @TargetVersions("4.7+")
     fun testChangeFeatureSupportWithXFlag() = testChangeFeatureSupport()
 
     @Test
@@ -555,8 +556,8 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         }
     }
 
-    @TargetVersions("4.7+")
     @Test
+    @TargetVersions("4.7+")
     fun testDisableFeatureSupportWithXFlag() = testDisableFeatureSupport()
 
     @Test
@@ -574,8 +575,8 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         }
     }
 
-    @TargetVersions("4.7+")
     @Test
+    @TargetVersions("4.7+")
     @JvmName("testEnableFeatureSupportWithXFlag")
     fun testEnableFeatureSupportWithXFlag() = testEnableFeatureSupport()
 
@@ -628,8 +629,8 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         }
     }
 
-    @TargetVersions("4.7+")
     @Test
+    @TargetVersions("4.7+")
     fun testChangeFeatureSupportGSKWithXFlag() = testChangeFeatureSupportGSK()
 
     @Test
@@ -647,8 +648,8 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         }
     }
 
-    @TargetVersions("4.7+")
     @Test
+    @TargetVersions("4.7+")
     fun testDisableFeatureSupportGSKWithXFlag() = testDisableFeatureSupportGSK()
 
     @Test
@@ -666,16 +667,16 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
         }
     }
 
-    @TargetVersions("4.7+")
     @Test
+    @TargetVersions("4.7+")
     fun testEnableFeatureSupportGSKWithXFlag() = testEnableFeatureSupportGSK()
 
-    @TargetVersions("4.7+")
     @Test
+    @TargetVersions("4.7+")
     fun testEnableFeatureSupportGSKWithNotInfixVersionCallAndXFlag() = testEnableFeatureSupportGSK()
 
-    @TargetVersions("4.7+")
     @Test
+    @TargetVersions("4.7+")
     fun testEnableFeatureSupportGSKWithSpecifyingPluginThroughIdAndXFlag() = testEnableFeatureSupportGSK()
 
     override fun testDataDirName(): String {

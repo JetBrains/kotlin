@@ -7,28 +7,29 @@ package org.jetbrains.kotlin.idea.scripting.gradle.roots
 
 import com.intellij.mock.MockProjectEx
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleKotlinScriptConfigurationInputs
 import org.jetbrains.kotlin.idea.scripting.gradle.LastModifiedFiles
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
 
-open class AbstractGradleBuildRootsLocatorTest : TestCase() {
+abstract class AbstractGradleBuildRootsLocatorTest : TestCase() {
     private val scripts = mutableMapOf<String, ScriptFixture>()
-    private val locator = MyRootsLocator()
 
     class ScriptFixture(val introductionTs: Long, val info: GradleScriptInfo)
 
-    lateinit var disposable: Disposable
+    private lateinit var locator: MyRootsLocator
+    private lateinit var disposable: Disposable
 
     override fun setUp() {
         super.setUp()
 
-        disposable = Disposable { }
+        disposable = Disposable {}
+        locator = MyRootsLocator()
     }
 
     override fun tearDown() {
-        disposable.dispose()
-
+        Disposer.dispose(disposable)
         super.tearDown()
     }
 
@@ -83,8 +84,9 @@ open class AbstractGradleBuildRootsLocatorTest : TestCase() {
         }
     }
 
-    fun findScriptBuildRoot(filePath: String, searchNearestLegacy: Boolean = true) =
-        locator.findScriptBuildRoot(filePath, searchNearestLegacy)
+    private fun findScriptBuildRoot(filePath: String, searchNearestLegacy: Boolean = true): GradleBuildRootsLocator.ScriptUnderRoot? {
+        return locator.findScriptBuildRoot(filePath, searchNearestLegacy)
+    }
 
     fun assertNotificationKind(filePath: String, notificationKind: GradleBuildRootsLocator.NotificationKind) {
         assertEquals(notificationKind, findScriptBuildRoot(filePath)?.notificationKind)

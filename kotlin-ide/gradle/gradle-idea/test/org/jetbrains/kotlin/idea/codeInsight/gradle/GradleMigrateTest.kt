@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectService
 import org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectService.MigrationTestState
 import org.jetbrains.kotlin.idea.configuration.MigrationInfo
+import org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.Assert
 import org.junit.Test
@@ -69,9 +70,9 @@ class GradleMigrateTest : GradleImportingTestCase() {
             """
         )
 
-        Assert.assertEquals(false, migrateComponentState?.hasApplicableTools)
+        assertEquals(false, migrateComponentState?.hasApplicableTools)
 
-        Assert.assertEquals(
+        assertEquals(
             MigrationInfo.create(
                 oldStdlibVersion = "1.3.40",
                 oldApiVersion = ApiVersion.KOTLIN_1_3,
@@ -84,6 +85,7 @@ class GradleMigrateTest : GradleImportingTestCase() {
         )
     }
 
+    @Suppress("SameParameterValue")
     private fun doMigrationTest(beforeText: String, afterText: String): MigrationTestState? {
         createProjectSubFile("settings.gradle", "include ':app'")
         val gradleFile = createProjectSubFile("app/build.gradle", beforeText.trimIndent())

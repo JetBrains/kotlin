@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle
 
+import com.intellij.openapi.externalSystem.importing.ImportSpec
+import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.jps.model.java.JavaResourceRootType
@@ -22,9 +24,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-//ToDo: Need to remove RUNTIME dependencies when KT-40551 is resolved
-class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTestCase() {
-
+class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTestCaseWithSdkChecker() {
     @Before
     fun saveSdksBeforeTest() {
         val kotlinSdks = sdkCreationChecker?.getKotlinSdks() ?: emptyList()
@@ -433,7 +433,6 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
         }
     }
 
-
     @Test
     @PluginTargetVersions(gradleVersion = "5.0+", pluginVersion = "1.3.50+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testSingleAndroidTarget() {
@@ -497,7 +496,6 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
         configureByFiles()
         importProject()
         checkProjectStructure(exhaustiveSourceSourceRootList = false) {
-
             module("project")
             module("project_commonMain")
             module("project_commonTest") {
@@ -537,7 +535,6 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("subproject_jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
             }
         }
-
     }
 
     @Test
@@ -653,10 +650,13 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
 
         checkProjectStructure(exhaustiveSourceSourceRootList = false) {
             module("project")
+
             module("project.commonMain")
+
             module("project.commonTest") {
                 moduleDependency("project.commonMain", DependencyScope.TEST)
             }
+
             module("project.jvmMain") {
                 moduleDependency("project.commonMain", DependencyScope.COMPILE)
             }
@@ -668,10 +668,13 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             }
 
             module("toInclude")
+
             module("toInclude.commonMain")
+
             module("toInclude.commonTest") {
                 moduleDependency("toInclude.commonMain", DependencyScope.TEST)
             }
+
             module("toInclude.jsMain") {
                 moduleDependency("toInclude.commonMain", DependencyScope.COMPILE)
             }
@@ -682,9 +685,11 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("toInclude.jsMain", DependencyScope.TEST)
                 moduleDependency("toInclude.jsMain", DependencyScope.RUNTIME)
             }
+
             module("toInclude.jvmMain") {
                 moduleDependency("toInclude.commonMain", DependencyScope.COMPILE)
             }
+
             module("toInclude.jvmTest") {
                 moduleDependency("toInclude.commonMain", DependencyScope.TEST)
                 moduleDependency("toInclude.commonTest", DependencyScope.TEST)
@@ -712,6 +717,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("project.mpp.jvmMain", DependencyScope.COMPILE)
                 moduleDependency("project.mpp.commonMain", DependencyScope.COMPILE)
             }
+
             module("project.jvm.test") {
                 moduleDependency("project.jvm.main", DependencyScope.COMPILE)
                 moduleDependency("project.mpp-base.jvmMain", DependencyScope.COMPILE)
@@ -723,15 +729,18 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             module("project.mpp.commonMain") {
                 moduleDependency("project.mpp-base.commonMain", DependencyScope.COMPILE)
             }
+
             module("project.mpp.commonTest") {
                 moduleDependency("project.mpp-base.commonMain", DependencyScope.TEST)
                 moduleDependency("project.mpp.commonMain", DependencyScope.TEST)
             }
+
             module("project.mpp.jvmMain") {
                 moduleDependency("project.mpp.commonMain", DependencyScope.COMPILE)
                 moduleDependency("project.mpp-base.commonMain", DependencyScope.COMPILE)
                 moduleDependency("project.mpp-base.jvmMain", DependencyScope.COMPILE)
             }
+
             module("project.mpp.jvmTest") {
                 moduleDependency("project.mpp.commonMain", DependencyScope.TEST)
                 moduleDependency("project.mpp.commonTest", DependencyScope.TEST, true)
@@ -748,9 +757,11 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             module("project.mpp-base.commonTest") {
                 moduleDependency("project.mpp-base.commonMain", DependencyScope.TEST)
             }
+
             module("project.mpp-base.jvmMain") {
                 moduleDependency("project.mpp-base.commonMain", DependencyScope.COMPILE)
             }
+
             module("project.mpp-base.jvmTest") {
                 moduleDependency("project.mpp-base.commonMain", DependencyScope.TEST)
                 moduleDependency("project.mpp-base.jvmMain", DependencyScope.TEST)
@@ -779,6 +790,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("mpp-jardep.library2.commonMain", DependencyScope.COMPILE)
 
             }
+
             module("mpp-jardep.java-project.test") {
                 moduleDependency("mpp-jardep.java-project.main", DependencyScope.COMPILE)
                 moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.COMPILE)
@@ -793,10 +805,12 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.TEST)
 
             }
+
             module("mpp-jardep.library1.jvmMain") {
                 moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.COMPILE)
 
             }
+
             module("mpp-jardep.library1.jvmTest") {
                 moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.TEST)
                 moduleDependency("mpp-jardep.library1.commonTest", DependencyScope.TEST, true)
@@ -808,14 +822,14 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             module("mpp-jardep.library2.commonMain") {}
             module("mpp-jardep.library2.commonTest") {
                 moduleDependency("mpp-jardep.library2.commonMain", DependencyScope.TEST)
-
             }
+
             module("mpp-jardep.library2.jvmMain") {
                 moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.COMPILE)
                 moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.COMPILE)
                 moduleDependency("mpp-jardep.library2.commonMain", DependencyScope.COMPILE)
-
             }
+
             module("mpp-jardep.library2.jvmTest") {
                 moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.TEST)
                 moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
@@ -828,7 +842,6 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             }
         }
     }
-
 
     @Test
     @PluginTargetVersions(pluginVersion = "1.3.20+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
@@ -857,6 +870,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.COMPILE, false)
                 moduleDependency("jvm-on-mpp.mpp-mod-a.main", DependencyScope.COMPILE, false)
             }
+
             module("jvm-on-mpp.jvm-mod.test") {
                 moduleDependency("jvm-on-mpp.jvm-mod.main", DependencyScope.COMPILE, false)
                 moduleDependency("jvm-on-mpp.mpp-mod-a.jvmMain", DependencyScope.COMPILE, false)
@@ -871,18 +885,22 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             module("jvm-on-mpp.mpp-mod-a.commonTest") {
                 moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.TEST, false)
             }
+
             module("jvm-on-mpp.mpp-mod-a.jsMain") {
                 moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.COMPILE, false)
             }
+
             module("jvm-on-mpp.mpp-mod-a.jsTest") {
                 moduleDependency("jvm-on-mpp.mpp-mod-a.jsMain", DependencyScope.TEST, false)
                 moduleDependency("jvm-on-mpp.mpp-mod-a.jsMain", DependencyScope.RUNTIME, false)  // Temporary dependency, need to remove after KT-40551 is solved
                 moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.TEST, false)
                 moduleDependency("jvm-on-mpp.mpp-mod-a.commonTest", DependencyScope.TEST, true)
             }
+
             module("jvm-on-mpp.mpp-mod-a.jvmMain") {
                 moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.COMPILE, false)
             }
+
             module("jvm-on-mpp.mpp-mod-a.jvmTest") {
                 moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.TEST, false)
                 moduleDependency("jvm-on-mpp.mpp-mod-a.commonTest", DependencyScope.TEST, true)
@@ -1016,6 +1034,18 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             body)
     }
 
+    private fun findTasksToRun(file: VirtualFile): List<String>? {
+        return GradleTestRunConfigurationProducer.findAllTestsTaskToRun(file, myProject)
+            .flatMap { it.tasks }
+            .sorted()
+    }
+
+    override fun createImportSpec(): ImportSpec {
+        return ImportSpecBuilder(super.createImportSpec())
+            .createDirectoriesForEmptyContentRoots()
+            .build()
+    }
+
     fun importProject(useQualifiedNames: Boolean) {
         val isUseQualifiedModuleNames = currentExternalProjectSettings.isUseQualifiedModuleNames
         currentExternalProjectSettings.isUseQualifiedModuleNames = useQualifiedNames
@@ -1023,16 +1053,6 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             importProject()
         } finally {
             currentExternalProjectSettings.isUseQualifiedModuleNames = isUseQualifiedModuleNames
-        }
-    }
-
-    override fun importProject() {
-        val isCreateEmptyContentRootDirectories = currentExternalProjectSettings.isCreateEmptyContentRootDirectories
-        currentExternalProjectSettings.isCreateEmptyContentRootDirectories = true
-        try {
-            super.importProject()
-        } finally {
-            currentExternalProjectSettings.isCreateEmptyContentRootDirectories = isCreateEmptyContentRootDirectories
         }
     }
 

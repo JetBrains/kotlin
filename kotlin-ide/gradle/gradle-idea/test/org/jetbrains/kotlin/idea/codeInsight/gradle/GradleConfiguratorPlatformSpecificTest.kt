@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.Test
 
-class GradleConfiguratorPlatformSpecificTest : GradleImportingTestCase() {
+class GradleConfiguratorPlatformSpecificTest : KotlinGradleImportingTestCase() {
     @TargetVersions("4.7+")
     @Test
     fun testEnableFeatureSupportMultiplatform() {
@@ -32,12 +32,12 @@ class GradleConfiguratorPlatformSpecificTest : GradleImportingTestCase() {
         }
     }
 
-    @TargetVersions("4.7+")
     @Test
+    @TargetVersions("4.7+")
     fun testEnableFeatureSupportMultiplatformWithXFlag() = testEnableFeatureSupportMultiplatform()
 
-    @TargetVersions("4.7+")
     @Test
+    @TargetVersions("4.7+")
     fun testEnableFeatureSupportMultiplatform2() {
         val files = importProjectFromTestData()
 
@@ -52,8 +52,8 @@ class GradleConfiguratorPlatformSpecificTest : GradleImportingTestCase() {
         }
     }
 
-    @TargetVersions("4.7+")
     @Test
+    @TargetVersions("4.7+")
     fun testEnableFeatureSupportMultiplatformToExistentArguments() {
         val files = importProjectFromTestData()
 
@@ -68,8 +68,8 @@ class GradleConfiguratorPlatformSpecificTest : GradleImportingTestCase() {
         }
     }
 
-    @TargetVersions("4.7+")
     @Test
+    @TargetVersions("4.7+")
     fun testEnableFeatureSupportMultiplatformKts() {
         val files = importProjectFromTestData()
 
@@ -84,28 +84,28 @@ class GradleConfiguratorPlatformSpecificTest : GradleImportingTestCase() {
         }
     }
 
-    @TargetVersions("4.7+")
     @Test
+    @TargetVersions("4.7+")
     fun testAddLibraryMultiplatform() = doTestAddLibrary()
 
-    @TargetVersions("4.7+")
     @Test
+    @TargetVersions("4.7+")
     fun testAddLibraryMultiplatformGSK() = doTestAddLibrary()
 
-    @TargetVersions("4.7+")
     @Test
+    @TargetVersions("4.7+")
     fun testAddLibraryMultiplatformGSK2() = doTestAddLibrary()
 
-    @TargetVersions("4.7+")
     @Test
+    @TargetVersions("4.7+")
     fun testAddLibraryMultiplatformGSK3() = doTestAddLibrary()
 
-    @TargetVersions("4.7+")
     @Test
+    @TargetVersions("4.7+")
     fun testAddLibraryMultiplatformGSK4() = doTestAddLibrary()
 
-    @TargetVersions("4.7+")
     @Test
+    @TargetVersions("4.7+")
     fun testAddLibraryMultiplatformGSK5() = doTestAddLibrary()
 
     private fun doTestAddLibrary() {

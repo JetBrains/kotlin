@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.gradle
 
+import com.intellij.openapi.externalSystem.test.ExternalSystemTestCase
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.runInEdtAndWait
-import com.intellij.util.PlatformUtils
 import org.jetbrains.kotlin.gradle.textWithoutTags
 import org.jetbrains.kotlin.idea.run.KotlinJvmTestClassGradleConfigurationProducer
 import org.jetbrains.kotlin.idea.run.KotlinJvmTestMethodGradleConfigurationProducer
@@ -18,14 +18,10 @@ import org.jetbrains.plugins.gradle.execution.test.runner.TestMethodGradleConfig
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.Test
 
-class GradleTestRunConfigurationCustomTest : GradleImportingTestCase() {
+class GradleTestRunConfigurationCustomTest : KotlinGradleImportingTestCase() {
     @Test
     @TargetVersions("4.7+")
     fun testPreferredConfigurations() {
-        if (!PlatformUtils.isIntelliJ()) {
-            return
-        }
-
         val files = importProjectFromTestData()
 
         runInEdtAndWait {

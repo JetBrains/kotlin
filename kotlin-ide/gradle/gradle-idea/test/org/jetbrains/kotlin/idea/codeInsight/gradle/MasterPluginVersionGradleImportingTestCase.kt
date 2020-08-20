@@ -12,18 +12,14 @@ package org.jetbrains.kotlin.idea.codeInsight.gradle
 import org.junit.runners.Parameterized
 
 abstract class MasterPluginVersionGradleImportingTestCase : MultiplePluginVersionGradleImportingTestCase() {
-
     companion object {
         @JvmStatic
+        @Suppress("ACCIDENTAL_OVERRIDE")
         @Parameterized.Parameters(name = "{index}: Gradle-{0}, KotlinGradlePlugin-{1}")
         fun data(): Collection<Array<Any>> {
-            return (AbstractModelBuilderTest.SUPPORTED_GRADLE_VERSIONS).map { gradleVersion ->
-                arrayOf<Any>(
-                    gradleVersion[0],
-                    LATEST_SUPPORTED_VERSION
-                )
+            return (SUPPORTED_GRADLE_VERSIONS).map { gradleVersion ->
+                arrayOf(gradleVersion[0], LATEST_SUPPORTED_VERSION)
             }.toList()
         }
     }
 }
-

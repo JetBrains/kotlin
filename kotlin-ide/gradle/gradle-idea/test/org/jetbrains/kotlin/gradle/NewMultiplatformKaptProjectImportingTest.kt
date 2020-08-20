@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle
 
+import com.intellij.openapi.externalSystem.importing.ImportSpec
+import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.*
@@ -18,7 +20,6 @@ import org.junit.Test
 import java.io.File
 
 class NewMultiplatformKaptProjectImportingTest : MultiplePluginVersionGradleImportingTestCase() {
-
     @Test
     @PluginTargetVersions(pluginVersion = "1.3.40+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testKaptPaths() {
@@ -26,7 +27,7 @@ class NewMultiplatformKaptProjectImportingTest : MultiplePluginVersionGradleImpo
         importProject()
 
         checkProjectStructure(
-            project,
+            myProject,
             projectPath,
             exhaustiveModuleList = true,
             exhaustiveSourceSourceRootList = false,
@@ -92,7 +93,7 @@ class NewMultiplatformKaptProjectImportingTest : MultiplePluginVersionGradleImpo
 
         val jvmMainModule = ModuleManager.getInstance(project).modules.first { it.name == "project_jvmMain" }
 
-        val enumerator = ProjectRootManager.getInstance(project).orderEntries(listOf(jvmMainModule))
+        val enumerator = ProjectRootManager.getInstance(myProject).orderEntries(listOf(jvmMainModule))
         val roots = enumerator.classesRoots
 
         fun isRootPresent(file: File) = roots.any { it.path == ExternalSystemApiUtil.toCanonicalPath(file.path) }
@@ -104,14 +105,10 @@ class NewMultiplatformKaptProjectImportingTest : MultiplePluginVersionGradleImpo
         }
     }
 
-    override fun importProject() {
-        val isCreateEmptyContentRootDirectories = currentExternalProjectSettings.isCreateEmptyContentRootDirectories
-        currentExternalProjectSettings.isCreateEmptyContentRootDirectories = true
-        try {
-            super.importProject()
-        } finally {
-            currentExternalProjectSettings.isCreateEmptyContentRootDirectories = isCreateEmptyContentRootDirectories
-        }
+    override fun createImportSpec(): ImportSpec {
+        return ImportSpecBuilder(super.createImportSpec())
+            .createDirectoriesForEmptyContentRoots()
+            .build()
     }
 
     override fun testDataDirName(): String {
