@@ -7,7 +7,7 @@ jvmTarget = "1.6"
 javaHome = rootProject.extra["JDK_16"] as String
 
 dependencies {
-    compile(project(":core:descriptors.common"))
+    compile(project(":core:compiler.common"))
     compile(project(":core:util.runtime"))
     compile(kotlinStdlib())
     compile(project(":kotlin-annotations-jvm"))
