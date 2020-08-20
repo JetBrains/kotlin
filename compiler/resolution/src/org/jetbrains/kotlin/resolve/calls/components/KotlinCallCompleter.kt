@@ -115,6 +115,7 @@ class KotlinCallCompleter(
             firstCandidate.getSystem().asPostponedArgumentsAnalyzerContext(),
             resolutionCallbacks,
             firstAtom,
+            ConstraintSystemCompletionMode.FULL,
             diagnosticHolderForLambda,
         )
 
@@ -124,6 +125,7 @@ class KotlinCallCompleter(
                 candidate.getSystem().asPostponedArgumentsAnalyzerContext(),
                 atom,
                 results,
+                ConstraintSystemCompletionMode.FULL,
                 diagnosticHolderForLambda
             )
         }
@@ -228,6 +230,7 @@ class KotlinCallCompleter(
                     constraintSystem.asPostponedArgumentsAnalyzerContext(),
                     resolutionCallbacks,
                     it,
+                    completionMode,
                     diagnosticsHolder
                 )
             }
