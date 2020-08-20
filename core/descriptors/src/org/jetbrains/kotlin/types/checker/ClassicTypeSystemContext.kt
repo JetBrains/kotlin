@@ -401,10 +401,6 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         errorSupportedOnlyInTypeInference()
     }
 
-    override fun KotlinTypeMarker.mayBeTypeVariable(): Boolean {
-        errorSupportedOnlyInTypeInference()
-    }
-
     override fun CapturedTypeMarker.typeConstructorProjection(): TypeArgumentMarker {
         require(this is NewCapturedType, this::errorMessage)
         return this.constructor.projection
