@@ -5,10 +5,15 @@
 
 package org.jetbrains.kotlin.idea.completion.test.handlers
 
+import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElementPresentation
 import com.intellij.testFramework.TestDataPath
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.completion.test.COMPLETION_TEST_DATA_BASE
 import org.jetbrains.kotlin.idea.completion.test.KotlinCompletionTestCase
+import org.jetbrains.kotlin.idea.completion.test.KotlinFixtureCompletionBaseTestCase
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.TestRoot
 import org.junit.internal.runners.JUnit38ClassRunner
@@ -19,7 +24,7 @@ import java.io.File
 @TestRoot("idea")
 @TestDataPath("\$CONTENT_ROOT")
 @TestMetadata("testData/handlers/multifile")
-class CompletionMultiFileHandlerTest : KotlinCompletionTestCase() {
+class CompletionMultiFileHandlerTest : KotlinFixtureCompletionBaseTestCase() {
     fun testExtensionFunctionImport() = doTest()
     fun testExtensionPropertyImport() = doTest()
     fun testImportAlreadyImportedObject() = doTest()
@@ -49,29 +54,33 @@ class CompletionMultiFileHandlerTest : KotlinCompletionTestCase() {
     fun doTest(completionChar: Char = '\n', vararg extraFileNames: String, tailText: String? = null) {
         val fileNameBase = getTestName(false)
         val defaultFiles = listOf("$fileNameBase-1.kt", "$fileNameBase-2.kt")
-        val filteredFiles = defaultFiles.filter { File(testDataDirectory, it).exists() }
+        val filteredFiles = defaultFiles.filter { File(getTestDataDirectory(), it).exists() }
 
         require(filteredFiles.isNotEmpty()) { "At least one of $defaultFiles should exist!" }
 
-        configureByFiles(null, *extraFileNames)
-        configureByFiles(null, *filteredFiles.toTypedArray())
-        complete(2)
+        myFixture.configureByFiles(*extraFileNames)
+        myFixture.configureByFiles(*filteredFiles.toTypedArray())
+        val items = complete(CompletionType.BASIC, 2)
 
-        if (myItems != null) {
+        if (items != null) {
             val item = if (tailText == null)
-                myItems.singleOrNull() ?: error("Multiple items in completion")
+                items.singleOrNull() ?: error("Multiple items in completion")
             else {
                 val presentation = LookupElementPresentation()
-                myItems.first {
+                items.first {
                     it.renderElement(presentation)
                     presentation.tailText == tailText
-                } ?: error("Tail text not found")
+                }
             }
 
-            selectItem(item, completionChar)
+            CompletionHandlerTestBase.selectItem(myFixture, item, completionChar)
         }
-        checkResultByFile("$fileNameBase.kt.after")
+        myFixture.checkResultByFile("$fileNameBase.kt.after")
     }
 
     override fun getTestDataDirectory() = COMPLETION_TEST_DATA_BASE.resolve("handlers/multifile")
+
+    override fun defaultCompletionType(): CompletionType = CompletionType.BASIC
+    override fun getPlatform(): TargetPlatform = JvmPlatforms.unspecifiedJvmPlatform
+    override fun getProjectDescriptor() = LightJavaCodeInsightFixtureTestCase.JAVA_LATEST
 }
