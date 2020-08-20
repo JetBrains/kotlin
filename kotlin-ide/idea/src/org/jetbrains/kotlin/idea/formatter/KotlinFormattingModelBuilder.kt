@@ -5,22 +5,19 @@
 
 package org.jetbrains.kotlin.idea.formatter
 
-import com.intellij.formatting.FormattingModel
-import com.intellij.formatting.FormattingModelBuilder
-import com.intellij.formatting.FormattingModelProvider
-import com.intellij.formatting.Indent
+import com.intellij.formatting.*
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.editor.impl.DocumentImpl
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.formatter.FormattingDocumentModelImpl
 import com.intellij.psi.formatter.PsiBasedFormattingModel
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
 class KotlinFormattingModelBuilder : FormattingModelBuilder {
-    override fun createModel(element: PsiElement, settings: CodeStyleSettings): FormattingModel {
+    override fun createModel(formattingContext: FormattingContext): FormattingModel {
+        val settings = formattingContext.codeStyleSettings
+        val element = formattingContext.psiElement
         val containingFile = element.containingFile.viewProvider.getPsi(KotlinLanguage.INSTANCE)
         val block = KotlinBlock(
             containingFile.node, NodeAlignmentStrategy.getNullStrategy(), Indent.getNoneIndent(), null, settings,
