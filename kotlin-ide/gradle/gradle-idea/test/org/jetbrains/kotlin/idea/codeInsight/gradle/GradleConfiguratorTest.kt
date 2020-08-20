@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.codeInsight.gradle
 
 import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.roots.DependencyScope
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.plugins.gradle.execution.test.runner.GradleTestRunConfigurationProducer
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
-import org.junit.Assert
 import org.junit.Test
 
 class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
@@ -31,7 +29,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
                 // Create not configured build.gradle for project
                 myProject.guessProjectDir()!!.createChildData(null, "build.gradle")
 
-                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val module = ModuleManager.getInstance(myProject).findModuleByName("project.app")!!
                 val moduleGroup = module.toModuleGroup()
                 // We have a Kotlin runtime in build.gradle but not in the classpath, so it doesn't make sense
                 // to suggest configuring it
@@ -41,11 +39,11 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
             }
         }
 
-        Assert.assertEquals(
+        assertEquals(
             """
             <p>The compiler bundled to Kotlin plugin (1.0.0) is older than external compiler used for building modules:</p>
             <ul>
-            <li>app (${LATEST_STABLE_GRADLE_PLUGIN_VERSION})</li>
+            <li>project.app (${LATEST_STABLE_GRADLE_PLUGIN_VERSION})</li>
             </ul>
             <p>This may cause different set of errors and warnings reported in IDE.</p>
             <p><a href="update">Update</a>  <a href="ignore">Ignore</a></p>
@@ -60,7 +58,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
 
         runInEdtAndWait {
             runWriteAction {
-                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val module = ModuleManager.getInstance(myProject).findModuleByName("project.app")!!
                 val configurator = findGradleModuleConfigurator()
                 val collector = createConfigureKotlinNotificationCollector(myProject)
                 configurator.configureWithVersion(myProject, listOf(module), "1.0.6", collector)
@@ -76,7 +74,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
 
         runInEdtAndWait {
             runWriteAction {
-                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val module = ModuleManager.getInstance(myProject).findModuleByName("project.app")!!
                 val configurator = findGradleModuleConfigurator()
                 val collector = createConfigureKotlinNotificationCollector(myProject)
                 configurator.configureWithVersion(myProject, listOf(module), "1.0.6", collector)
@@ -91,8 +89,8 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
         val files = importProjectFromTestData()
 
         runInEdtAndWait {
-            runWriteAction {
-                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+            myTestFixture.project.executeWriteCommand("") {
+                val module = ModuleManager.getInstance(myProject).findModuleByName("project.app")!!
                 val configurator = findGradleModuleConfigurator()
                 val collector = createConfigureKotlinNotificationCollector(myProject)
                 configurator.configureWithVersion(myProject, listOf(module), "1.2.60-dev-286", collector)
@@ -108,7 +106,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
 
         runInEdtAndWait {
             runWriteAction {
-                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val module = ModuleManager.getInstance(myProject).findModuleByName("project.app")!!
                 val configurator = findGradleModuleConfigurator()
                 val collector = createConfigureKotlinNotificationCollector(myProject)
                 configurator.configureWithVersion(myProject, listOf(module), "1.2.60-dev-286", collector)
@@ -125,7 +123,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
 
         runInEdtAndWait {
             runWriteAction {
-                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val module = ModuleManager.getInstance(myProject).findModuleByName("project.app")!!
                 val configurator = findGradleModuleConfigurator()
                 val collector = createConfigureKotlinNotificationCollector(myProject)
                 configurator.configureWithVersion(myProject, listOf(module), "1.2.40", collector)
@@ -142,7 +140,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
 
         runInEdtAndWait {
             runWriteAction {
-                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val module = ModuleManager.getInstance(myProject).findModuleByName("project.app")!!
                 val configurator = findGradleModuleConfigurator()
                 val collector = createConfigureKotlinNotificationCollector(myProject)
                 configurator.configureWithVersion(myProject, listOf(module), "1.2.40", collector)
@@ -159,7 +157,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
 
         runInEdtAndWait {
             runWriteAction {
-                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val module = ModuleManager.getInstance(myProject).findModuleByName("project.app")!!
                 val configurator = findGradleModuleConfigurator()
                 val collector = createConfigureKotlinNotificationCollector(myProject)
                 configurator.configureWithVersion(myProject, listOf(module), "1.2.40-eap-62", collector)
@@ -176,7 +174,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
 
         runInEdtAndWait {
             runWriteAction {
-                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val module = ModuleManager.getInstance(myProject).findModuleByName("project.app")!!
                 val configurator = findGradleModuleConfigurator()
                 val collector = createConfigureKotlinNotificationCollector(myProject)
                 configurator.configureWithVersion(myProject, listOf(module), "1.2.40-eap-62", collector)
@@ -193,7 +191,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
 
         runInEdtAndWait {
             runWriteAction {
-                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val module = ModuleManager.getInstance(myProject).findModuleByName("project.app")!!
                 val configurator = findJsGradleModuleConfigurator()
                 val collector = createConfigureKotlinNotificationCollector(myProject)
                 configurator.configureWithVersion(myProject, listOf(module), "1.2.40", collector)
@@ -210,7 +208,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
 
         runInEdtAndWait {
             runWriteAction {
-                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val module = ModuleManager.getInstance(myProject).findModuleByName("project.app")!!
                 val configurator = findJsGradleModuleConfigurator()
                 val collector = createConfigureKotlinNotificationCollector(myProject)
                 configurator.configureWithVersion(myProject, listOf(module), "1.2.40", collector)
@@ -227,7 +225,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
 
         runInEdtAndWait {
             runWriteAction {
-                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val module = ModuleManager.getInstance(myProject).findModuleByName("project.app")!!
                 val configurator = findJsGradleModuleConfigurator()
                 val collector = createConfigureKotlinNotificationCollector(myProject)
                 configurator.configureWithVersion(myProject, listOf(module), "1.2.40-eap-62", collector)
@@ -244,7 +242,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
 
         runInEdtAndWait {
             runWriteAction {
-                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+                val module = ModuleManager.getInstance(myProject).findModuleByName("project.app")!!
                 val configurator = findJsGradleModuleConfigurator()
                 val collector = createConfigureKotlinNotificationCollector(myProject)
                 configurator.configureWithVersion(myProject, listOf(module), "1.2.40-eap-62", collector)
@@ -254,23 +252,21 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
         }
     }
 
-    private fun findGradleModuleConfigurator() = Extensions.findExtension(
-        KotlinProjectConfigurator.EP_NAME,
-        KotlinGradleModuleConfigurator::class.java
-    )
+    private fun findGradleModuleConfigurator(): KotlinGradleModuleConfigurator {
+        return KotlinProjectConfigurator.EP_NAME.findExtensionOrFail(KotlinGradleModuleConfigurator::class.java)
+    }
 
-    private fun findJsGradleModuleConfigurator() = Extensions.findExtension(
-        KotlinProjectConfigurator.EP_NAME,
-        KotlinJsGradleModuleConfigurator::class.java
-    )
+    private fun findJsGradleModuleConfigurator(): KotlinJsGradleModuleConfigurator {
+        return KotlinProjectConfigurator.EP_NAME.findExtensionOrFail(KotlinJsGradleModuleConfigurator::class.java)
+    }
 
     @Test
     fun testConfigureGSK() {
         val files = importProjectFromTestData()
 
         runInEdtAndWait {
-            runWriteAction {
-                val module = ModuleManager.getInstance(myProject).findModuleByName("app")!!
+            myTestFixture.project.executeWriteCommand("") {
+                val module = ModuleManager.getInstance(myProject).findModuleByName("project.app")!!
                 val configurator = findGradleModuleConfigurator()
                 val collector = createConfigureKotlinNotificationCollector(myProject)
                 configurator.configureWithVersion(myProject, listOf(module), "1.1.2", collector)
@@ -291,13 +287,13 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
             assertTrue(ableToRunConfigurators.any { it is KotlinGradleModuleConfigurator })
             assertTrue(ableToRunConfigurators.any { it is KotlinJsGradleModuleConfigurator })
             val moduleNames = modules.map { it.baseModule.name }
-            assertSameElements(moduleNames, "app")
+            assertSameElements(moduleNames, "project.app")
 
             val moduleNamesFromConfigurator = getCanBeConfiguredModules(myProject, configurator).map { it.name }
-            assertSameElements(moduleNamesFromConfigurator, "app")
+            assertSameElements(moduleNamesFromConfigurator, "project.app")
 
             val moduleNamesWithKotlinFiles = getCanBeConfiguredModulesWithKotlinFiles(myProject, configurator).map { it.name }
-            assertSameElements(moduleNamesWithKotlinFiles, "app")
+            assertSameElements(moduleNamesWithKotlinFiles, "project.app")
         }
     }
 
@@ -404,7 +400,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
         val files = importProjectFromTestData()
 
         runInEdtAndWait {
-            myTestFixture.project.executeWriteCommand("") {
+            runWriteAction {
                 KotlinWithGradleConfigurator.changeCoroutineConfiguration(myTestFixture.module, "enable")
             }
 
@@ -417,7 +413,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
         val files = importProjectFromTestData()
 
         runInEdtAndWait {
-            myTestFixture.project.executeWriteCommand("") {
+            runWriteAction {
                 KotlinWithGradleConfigurator.changeCoroutineConfiguration(myTestFixture.module, "enable")
             }
 
@@ -430,7 +426,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
         val files = importProjectFromTestData()
 
         runInEdtAndWait {
-            myTestFixture.project.executeWriteCommand("") {
+            runWriteAction {
                 KotlinWithGradleConfigurator.changeCoroutineConfiguration(myTestFixture.module, "enable")
             }
 
@@ -444,7 +440,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
         val files = importProjectFromTestData()
 
         runInEdtAndWait {
-            myTestFixture.project.executeWriteCommand("") {
+            runWriteAction {
                 KotlinWithGradleConfigurator.changeCoroutineConfiguration(myTestFixture.module, "enable")
             }
 
@@ -457,7 +453,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
         val files = importProjectFromTestData()
 
         runInEdtAndWait {
-            myTestFixture.project.executeWriteCommand("") {
+            runWriteAction {
                 KotlinWithGradleConfigurator.changeLanguageVersion(myTestFixture.module, "1.1", null, false)
             }
 
@@ -470,7 +466,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
         val files = importProjectFromTestData()
 
         runInEdtAndWait {
-            myTestFixture.project.executeWriteCommand("") {
+            runWriteAction {
                 KotlinWithGradleConfigurator.changeLanguageVersion(myTestFixture.module, "1.1", null, false)
             }
 
@@ -483,7 +479,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
         val files = importProjectFromTestData()
 
         runInEdtAndWait {
-            myTestFixture.project.executeWriteCommand("") {
+            runWriteAction {
                 KotlinWithGradleConfigurator.changeLanguageVersion(myTestFixture.module, "1.1", null, false)
             }
 
@@ -496,7 +492,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
         val files = importProjectFromTestData()
 
         runInEdtAndWait {
-            myTestFixture.project.executeWriteCommand("") {
+            runWriteAction {
                 KotlinWithGradleConfigurator.changeLanguageVersion(myTestFixture.module, "1.1", null, false)
             }
 
@@ -527,7 +523,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
         val files = importProjectFromTestData()
 
         runInEdtAndWait {
-            myTestFixture.project.executeWriteCommand("") {
+            runWriteAction {
                 KotlinWithGradleConfigurator.changeFeatureConfiguration(
                     myTestFixture.module, LanguageFeature.InlineClasses, LanguageFeature.State.ENABLED, false
                 )
@@ -546,7 +542,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
         val files = importProjectFromTestData()
 
         runInEdtAndWait {
-            myTestFixture.project.executeWriteCommand("") {
+            runWriteAction {
                 KotlinWithGradleConfigurator.changeFeatureConfiguration(
                     myTestFixture.module, LanguageFeature.InlineClasses, LanguageFeature.State.DISABLED, false
                 )
@@ -565,7 +561,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
         val files = importProjectFromTestData()
 
         runInEdtAndWait {
-            myTestFixture.project.executeWriteCommand("") {
+            runWriteAction {
                 KotlinWithGradleConfigurator.changeFeatureConfiguration(
                     myTestFixture.module, LanguageFeature.InlineClasses, LanguageFeature.State.ENABLED, false
                 )
@@ -585,7 +581,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
         val files = importProjectFromTestData()
 
         runInEdtAndWait {
-            myTestFixture.project.executeWriteCommand("") {
+            runWriteAction {
                 KotlinWithGradleConfigurator.changeFeatureConfiguration(
                     myTestFixture.module, LanguageFeature.InlineClasses, LanguageFeature.State.ENABLED, false
                 )
@@ -600,7 +596,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
         val files = importProjectFromTestData()
 
         runInEdtAndWait {
-            myTestFixture.project.executeWriteCommand("") {
+            runWriteAction {
                 KotlinWithGradleConfigurator.changeFeatureConfiguration(
                     myTestFixture.module, LanguageFeature.InlineClasses, LanguageFeature.State.ENABLED, false
                 )
@@ -619,7 +615,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
         val files = importProjectFromTestData()
 
         runInEdtAndWait {
-            myTestFixture.project.executeWriteCommand("") {
+            runWriteAction {
                 KotlinWithGradleConfigurator.changeFeatureConfiguration(
                     myTestFixture.module, LanguageFeature.InlineClasses, LanguageFeature.State.DISABLED, false
                 )
@@ -638,7 +634,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
         val files = importProjectFromTestData()
 
         runInEdtAndWait {
-            myTestFixture.project.executeWriteCommand("") {
+            runWriteAction {
                 KotlinWithGradleConfigurator.changeFeatureConfiguration(
                     myTestFixture.module, LanguageFeature.InlineClasses, LanguageFeature.State.DISABLED, false
                 )
@@ -657,7 +653,7 @@ class GradleConfiguratorTest : KotlinGradleImportingTestCase() {
         val files = importProjectFromTestData()
 
         runInEdtAndWait {
-            myTestFixture.project.executeWriteCommand("") {
+            runWriteAction {
                 KotlinWithGradleConfigurator.changeFeatureConfiguration(
                     myTestFixture.module, LanguageFeature.InlineClasses, LanguageFeature.State.ENABLED, false
                 )

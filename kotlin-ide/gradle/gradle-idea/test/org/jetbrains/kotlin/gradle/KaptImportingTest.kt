@@ -40,7 +40,7 @@ class KaptImportingTest : MultiplePluginVersionGradleImportingTestCase() {
 
         checkProjectStructure(myProject, projectPath, true, true, true, false) {
             module("project")
-            module("project_main") {
+            module("project.main") {
                 sourceFolder("build/generated/source/kapt/main", JavaSourceRootType.SOURCE)
                 sourceFolder("build/generated/source/kaptKotlin/main", JavaSourceRootType.SOURCE)
                 sourceFolder("src/main/java", JavaSourceRootType.SOURCE)
@@ -48,13 +48,13 @@ class KaptImportingTest : MultiplePluginVersionGradleImportingTestCase() {
                 sourceFolder("src/main/resources", JavaResourceRootType.RESOURCE)
                 libraryDependency("Gradle: kaptGeneratedClasses", DependencyScope.COMPILE)
             }
-            module("project_test") {
+            module("project.test") {
                 sourceFolder("build/generated/source/kapt/test", JavaSourceRootType.TEST_SOURCE)
                 sourceFolder("build/generated/source/kaptKotlin/test", JavaSourceRootType.TEST_SOURCE)
                 sourceFolder("src/test/java", JavaSourceRootType.TEST_SOURCE)
                 sourceFolder("src/test/kotlin", JavaSourceRootType.TEST_SOURCE)
                 sourceFolder("src/test/resources", JavaResourceRootType.TEST_RESOURCE)
-                moduleDependency("project_main", DependencyScope.COMPILE)
+                moduleDependency("project.main", DependencyScope.COMPILE)
                 libraryDependency("Gradle: kaptGeneratedClasses", DependencyScope.COMPILE)
             }
         }
@@ -80,6 +80,8 @@ class KaptImportingTest : MultiplePluginVersionGradleImportingTestCase() {
                 sourceFolder("src/test/resources", JavaResourceRootType.TEST_RESOURCE)
                 libraryDependency("Gradle: kaptGeneratedClasses", DependencyScope.COMPILE)
             }
+        }
+    }
 
     override fun createImportSpec(): ImportSpec {
         return ImportSpecBuilder(super.createImportSpec())

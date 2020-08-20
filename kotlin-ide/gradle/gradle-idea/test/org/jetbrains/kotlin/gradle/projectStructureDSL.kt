@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.idea.project.isHMPPEnabled
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.presentableDescription
+import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
 
 class MessageCollector {
     private val builder = StringBuilder()
@@ -82,12 +82,9 @@ class ProjectInfo(
     }
 }
 
-class ModuleInfo(
-    val module: Module,
-    val projectInfo: ProjectInfo
-) {
+class ModuleInfo(val module: Module, private val projectInfo: ProjectInfo) {
     private val rootModel = module.rootManager
-    private val expectedDependencyNames = ArrayList<String>()
+    private val expectedDependencyNames = HashSet<String>()
     private val expectedSourceRoots = HashSet<String>()
     private val expectedExternalSystemTestTasks = ArrayList<ExternalSystemTestRunTask>()
 
@@ -101,61 +98,13 @@ class ModuleInfo(
             .toMap()
     }
 
-    fun languageVersion(version: String) {
-        val actualVersion = module.languageVersionSettings.languageVersion.versionString
-        if (actualVersion != version) {
-            projectInfo.messageCollector.report("Module '${module.name}': expected language version '$version' but found '$actualVersion'")
-        }
+    private fun report(text: String) {
+        projectInfo.messageCollector.report("Module '${module.name}': $text")
     }
 
-    fun isHMPP(value: Boolean) {
-        val actualValue = module.isHMPPEnabled
-        if (actualValue != value) {
-            projectInfo.messageCollector.report("Module '${module.name}': expected isHMPP '$value' but found '$actualValue'")
-        }
-    }
-
-    fun targetPlatform(vararg platforms: TargetPlatform) {
-        val expected = platforms.flatMap { it.componentPlatforms }.toSet()
-        val actual = module.platform?.componentPlatforms
-
-        if (actual == null) {
-            projectInfo.messageCollector.report("Module '${module.name}': actual target platform is null")
-            return
-        }
-
-        val notFound = expected.subtract(actual)
-        if (notFound.isNotEmpty()) {
-            projectInfo.messageCollector.report("Module '${module.name}': not found target platforms: " + notFound.joinToString(","))
-        }
-        val notExpected = actual.subtract(expected)
-        if (notExpected.isNotEmpty()) {
-            projectInfo.messageCollector.report("Module '${module.name}': found unexpected target platforms: " + notExpected.joinToString(","))
-        }
-    }
-
-    fun apiVersion(version: String) {
-        val actualVersion = module.languageVersionSettings.apiVersion.versionString
-        if (actualVersion != version) {
-            projectInfo.messageCollector.report("Module '${module.name}': expected API version '$version' but found '$actualVersion'")
-        }
-    }
-
-    fun platform(platform: TargetPlatform) {
-        val actualPlatform = module.platform
-        if (actualPlatform != platform) {
-            projectInfo.messageCollector.report(
-                "Module '${module.name}': expected platform '${platform.presentableDescription}' but found '${actualPlatform?.presentableDescription}'"
-            )
-        }
-    }
-
-    fun additionalArguments(arguments: String?) {
-        val actualArguments = KotlinFacet.get(module)?.configuration?.settings?.compilerSettings?.additionalArguments
-        if (actualArguments != arguments) {
-            projectInfo.messageCollector.report(
-                "Module '${module.name}': expected additional arguments '$arguments' but found '$actualArguments'"
-            )
+    private fun checkReport(subject: String, expected: Any?, actual: Any?) {
+        if (expected != actual) {
+            report("$subject differs: expected $expected, got $actual")
         }
     }
 
@@ -163,19 +112,66 @@ class ModuleInfo(
         expectedExternalSystemTestTasks.add(ExternalSystemTestRunTask(taskName, projectId, targetName))
     }
 
+    fun languageVersion(expectedVersion: String) {
+        val actualVersion = module.languageVersionSettings.languageVersion.versionString
+        checkReport("Language version", expectedVersion, actualVersion)
+    }
+
+    fun isHMPP(expectedValue: Boolean) {
+        checkReport("isHMPP", expectedValue, module.isHMPPEnabled)
+    }
+
+    fun targetPlatform(vararg platforms: TargetPlatform) {
+        val expected = platforms.flatMap { it.componentPlatforms }.toSet()
+        val actual = module.platform?.componentPlatforms
+
+        if (actual == null) {
+            report("Actual target platform is null")
+            return
+        }
+
+        val notFound = expected.subtract(actual)
+        if (notFound.isNotEmpty()) {
+            report("These target platforms were not found: " + notFound.joinToString())
+        }
+
+        val unexpected = actual.subtract(expected)
+        if (unexpected.isNotEmpty()) {
+            report("Unexpected target platforms found: " + unexpected.joinToString())
+        }
+    }
+
+    fun apiVersion(expectedVersion: String) {
+        val actualVersion = module.languageVersionSettings.apiVersion.versionString
+        checkReport("API version", expectedVersion, actualVersion)
+    }
+
+    fun platform(expectedPlatform: TargetPlatform) {
+        val actualPlatform = module.platform
+        checkReport("Platform", expectedPlatform, actualPlatform)
+    }
+
+    fun additionalArguments(arguments: String?) {
+        val actualArguments = KotlinFacet.get(module)?.configuration?.settings?.compilerSettings?.additionalArguments
+        checkReport("Additional arguments", arguments, actualArguments)
+    }
+
     fun libraryDependency(libraryName: String, scope: DependencyScope) {
         val libraryEntries = rootModel.orderEntries.filterIsInstance<LibraryOrderEntry>().filter { it.libraryName == libraryName }
         if (libraryEntries.size > 1) {
-            projectInfo.messageCollector.report("Module '${module.name}': multiple entries for library $libraryName")
+            report("Multiple root entries for library $libraryName")
         }
         if (libraryEntries.isEmpty()) {
-            val mostProbableCandidate =
-                rootModel.orderEntries.filterIsInstance<LibraryOrderEntry>().sortedWith(Comparator<LibraryOrderEntry> { o1, o2 ->
+            val candidate = rootModel.orderEntries
+                .filterIsInstance<LibraryOrderEntry>()
+                .sortedWith(Comparator { o1, o2 ->
                     val o1len = o1?.libraryName?.commonPrefixWith(libraryName)?.length ?: 0
                     val o2len = o2?.libraryName?.commonPrefixWith(libraryName)?.length ?: 0
                     o2len - o1len
-                }).first()
-            projectInfo.messageCollector.report("Module '${module.name}': expected library dependency [$libraryName] but the most probable candidate [${mostProbableCandidate.libraryName}]")
+                }).firstOrNull()
+
+            val candidateName = candidate?.libraryName
+            report("Expected library dependency $libraryName, found nothing. Most probably candidate: $candidateName")
         }
         checkLibrary(libraryEntries.singleOrNull(), libraryName, scope)
     }
@@ -185,39 +181,41 @@ class ModuleInfo(
             entry.library?.getUrls(OrderRootType.CLASSES)?.any { it == classesUrl } ?: false
         }
         if (libraryEntries.size > 1) {
-            projectInfo.messageCollector.report("Module '${module.name}': multiple entries for library $classesUrl")
+            report("Multiple entries for library $classesUrl")
         }
         checkLibrary(libraryEntries.singleOrNull(), classesUrl, scope)
     }
 
     private fun checkLibrary(libraryEntry: LibraryOrderEntry?, id: String, scope: DependencyScope) {
         if (libraryEntry == null) {
-            projectInfo.messageCollector.report("Module '${module.name}': No library dependency found: '$id'")
+            report("No library dependency found for $id")
             return
         }
         checkDependencyScope(libraryEntry, scope)
-        expectedDependencyNames += libraryEntry.presentableName
+        expectedDependencyNames += libraryEntry.debugText
     }
 
-    fun moduleDependency(moduleName: String, scope: DependencyScope, productionOnTest: Boolean? = null) {
-        val moduleEntries =
-            rootModel.orderEntries.filterIsInstance<ModuleOrderEntry>().filter { it.moduleName == moduleName && it.scope == scope}
-        if (moduleEntries.size > 1) {
-            projectInfo.messageCollector.report(
-                "Found multiple order entries for module $moduleName: ${rootModel.orderEntries.filterIsInstance<ModuleOrderEntry>()}"
-            )
+    fun moduleDependency(moduleName: String, scope: DependencyScope, productionOnTest: Boolean? = null, allowMultiple: Boolean = false) {
+        val moduleEntries = rootModel.orderEntries.asList()
+            .filterIsInstanceWithChecker<ModuleOrderEntry> { it.moduleName == moduleName && it.scope == scope }
+
+        // In normal conditions, 'allowMultiple' should always be 'false'. In reality, however, a lot of tests fails because of it.
+        if (!allowMultiple && moduleEntries.size > 1) {
+            val allEntries = rootModel.orderEntries.filterIsInstance<ModuleOrderEntry>().joinToString { it.debugText }
+            report("Multiple order entries found for module $moduleName: $allEntries")
             return
         }
-        val moduleEntry = moduleEntries.singleOrNull()
+
+        val moduleEntry = moduleEntries.firstOrNull()
 
         if (moduleEntry == null) {
-            val allModules = rootModel.orderEntries.filterIsInstance<ModuleOrderEntry>().map { it.moduleName }.joinToString(", ")
-            projectInfo.messageCollector.report("Module '${module.name}': No module dependency found: '$moduleName'. All module names: $allModules")
+            val allModules = rootModel.orderEntries.filterIsInstance<ModuleOrderEntry>().joinToString { it.debugText }
+            report("Module dependency ${moduleName} (${scope.displayName}) not found. All module dependencies: $allModules")
             return
         }
         checkDependencyScope(moduleEntry, scope)
         checkProductionOnTest(moduleEntry, productionOnTest)
-        expectedDependencyNames += moduleEntry.presentableName
+        expectedDependencyNames += moduleEntry.debugText
     }
 
     private val ANY_PACKAGE_PREFIX = "any_package_prefix"
@@ -225,20 +223,16 @@ class ModuleInfo(
     fun sourceFolder(pathInProject: String, rootType: JpsModuleSourceRootType<*>, packagePrefix: String? = ANY_PACKAGE_PREFIX) {
         val sourceFolder = sourceFolderByPath[pathInProject]
         if (sourceFolder == null) {
-            projectInfo.messageCollector.report("Module '${module.name}': No source folder found: '$pathInProject' among $sourceFolderByPath")
+            report("No source root found: '$pathInProject' among $sourceFolderByPath")
             return
         }
         if (packagePrefix != ANY_PACKAGE_PREFIX && sourceFolder.packagePrefix != packagePrefix) {
-            projectInfo.messageCollector.report(
-                "Module '${module.name}', source root '$pathInProject': Expected package prefix $packagePrefix doesn't match the actual one: ${sourceFolder.packagePrefix}"
-            )
+            report("Source root '$pathInProject': Expected package prefix $packagePrefix, got: ${sourceFolder.packagePrefix}")
         }
         expectedSourceRoots += pathInProject
         val actualRootType = sourceFolder.rootType
         if (actualRootType != rootType) {
-            projectInfo.messageCollector.report(
-                "Module '${module.name}', source root '$pathInProject': Expected root type $rootType doesn't match the actual one: $actualRootType"
-            )
+            report("Source root '$pathInProject': Expected root type $rootType, got: $actualRootType")
             return
         }
     }
@@ -246,7 +240,7 @@ class ModuleInfo(
     fun inheritProjectOutput() {
         val isInherited = CompilerModuleExtension.getInstance(module)?.isCompilerOutputPathInherited ?: true
         if (!isInherited) {
-            projectInfo.messageCollector.report("Module '${module.name}': project output is not inherited")
+            report("Project output is not inherited")
         }
     }
 
@@ -262,12 +256,8 @@ class ModuleInfo(
                 '/'
             )
         }
-        if (actualPathInProject != pathInProject) {
-            projectInfo.messageCollector.report(
-                "Module '${module.name}': Expected output path $pathInProject doesn't match the actual one: $actualPathInProject"
-            )
-            return
-        }
+
+        checkReport("Output path", pathInProject, actualPathInProject)
     }
 
     fun run(body: ModuleInfo.() -> Unit = {}) {
@@ -275,60 +265,50 @@ class ModuleInfo(
 
         if (projectInfo.exhaustiveDependencyList) {
             val actualDependencyNames = rootModel
-                .orderEntries
-                .filter { it is ModuleOrderEntry || it is LibraryOrderEntry }
-                .map { it.presentableName }
+                .orderEntries.asList()
+                .filterIsInstanceWithChecker<ExportableOrderEntry> { it is ModuleOrderEntry || it is LibraryOrderEntry }
+                .map { it.debugText }
                 .sorted()
+                .distinct()
+
             val expectedDependencyNames = expectedDependencyNames.sorted()
-            if (actualDependencyNames != expectedDependencyNames) {
-                projectInfo.messageCollector.report(
-                    "Module '${module.name}': Expected dependency list $expectedDependencyNames doesn't match the actual one: $actualDependencyNames"
-                )
-            }
+            checkReport("Dependency list", expectedDependencyNames, actualDependencyNames)
         }
 
-        if ((!module.externalSystemTestRunTasks().containsAll(expectedExternalSystemTestTasks)) || (projectInfo.exhaustiveTestsList && (module.externalSystemTestRunTasks() != expectedExternalSystemTestTasks))) {
-            projectInfo.messageCollector.report(
-                "Module '${module.name}': Expected tests list $expectedExternalSystemTestTasks doesn't match the actual one: ${module.externalSystemTestRunTasks()}"
-            )
+        val actualTasks = module.externalSystemTestRunTasks()
+
+        val containsAllTasks = actualTasks.containsAll(expectedExternalSystemTestTasks)
+        val containsSameTasks = actualTasks == expectedExternalSystemTestTasks
+
+        if ((!containsAllTasks) || (projectInfo.exhaustiveTestsList && !containsSameTasks)) {
+            report("Expected tests list $expectedExternalSystemTestTasks, got: $actualTasks")
         }
 
         if (projectInfo.exhaustiveSourceSourceRootList) {
             val actualSourceRoots = sourceFolderByPath.keys.sorted()
             val expectedSourceRoots = expectedSourceRoots.sorted()
             if (actualSourceRoots != expectedSourceRoots) {
-                projectInfo.messageCollector.report(
-                    "Module '${module.name}': Expected source root list $expectedSourceRoots doesn't match the actual one: $actualSourceRoots"
-                )
+                report("Expected source root list $expectedSourceRoots, got: $actualSourceRoots")
             }
         }
 
         if (rootModel.sdk == null) {
-            projectInfo.messageCollector.report("Module '${module.name}': No SDK defined")
+            report("No SDK defined")
         }
     }
 
-    private fun checkDependencyScope(library: ExportableOrderEntry, scope: DependencyScope) {
-        val actualScope = library.scope
-        if (actualScope != scope) {
-            projectInfo.messageCollector.report(
-                "Module '${module.name}': Dependency '${library.presentableName}': expected scope '$scope' but found '$actualScope'"
-            )
-        }
+    private fun checkDependencyScope(library: ExportableOrderEntry, expectedScope: DependencyScope) {
+        checkReport("Dependency scope", expectedScope, library.scope)
     }
 
     private fun checkProductionOnTest(library: ExportableOrderEntry, productionOnTest: Boolean?) {
         if (productionOnTest == null) return
         val actualFlag = (library as? ModuleOrderEntry)?.isProductionOnTestDependency
         if (actualFlag == null) {
-            projectInfo.messageCollector.report(
-                "Module '${module.name}': Dependency '${library.presentableName}' has no productionOnTest property"
-            )
+            report("Dependency '${library.presentableName}' has no 'productionOnTest' property")
         } else {
             if (actualFlag != productionOnTest) {
-                projectInfo.messageCollector.report(
-                    "Module '${module.name}': Dependency '${library.presentableName}': expected productionOnTest '$productionOnTest' but found '$actualFlag'"
-                )
+                report("Dependency '${library.presentableName}': expected productionOnTest '$productionOnTest', got '$actualFlag'")
             }
         }
 
@@ -353,3 +333,6 @@ fun checkProjectStructure(
         exhaustiveTestsList
     ).run(body)
 }
+
+private val ExportableOrderEntry.debugText: String
+    get() = "$presentableName (${scope.displayName})"

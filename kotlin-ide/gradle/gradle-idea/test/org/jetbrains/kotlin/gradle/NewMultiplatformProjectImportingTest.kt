@@ -8,17 +8,18 @@ package org.jetbrains.kotlin.gradle
 import com.intellij.openapi.externalSystem.importing.ImportSpec
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.roots.DependencyScope
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.text.VersionComparatorUtil
 import org.jetbrains.jps.model.java.JavaResourceRootType
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
 import org.jetbrains.kotlin.idea.codeInsight.gradle.mppImportTestMinVersionForMaster
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.plugins.gradle.execution.test.runner.GradleTestRunConfigurationProducer
 import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.junit.After
 import org.junit.Before
@@ -28,7 +29,7 @@ import org.junit.Test
 class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTestCaseWithSdkChecker() {
     @Before
     fun saveSdksBeforeTest() {
-        val kotlinSdks = sdkCreationChecker?.getKotlinSdks() ?: emptyList()
+        val kotlinSdks = sdkCreationChecker.getKotlinSdks()
         if (kotlinSdks.isNotEmpty()) {
             fail("Found Kotlin SDK before importing test. Sdk list: $kotlinSdks")
         }
@@ -36,7 +37,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
 
     @After
     fun checkSdkCreated() {
-        if (sdkCreationChecker?.isKotlinSdkCreated() == false) {
+        if (!sdkCreationChecker.isKotlinSdkCreated()) {
             fail("Kotlin SDK was not created during import of MPP Project.")
         }
     }
@@ -47,13 +48,13 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
         configureByFiles()
         importProject()
 
-        checkProjectStructure() {
+        checkProjectStructure {
             allModules {
                 languageVersion("1.3")
                 apiVersion("1.3")
                 when (module.name) {
-                    "project", "app", "lib" -> additionalArguments(null)
-                    "app_jvmMain", "app_jvmTest", "lib_jvmMain", "lib_jvmTest" ->
+                    "project", "project.app", "project.lib" -> additionalArguments(null)
+                    "project.app.jvmMain", "project.app.jvmTest", "project.lib.jvmMain", "project.lib.jvmTest" ->
                         additionalArguments(
                             if (VersionComparatorUtil.compare(gradleKotlinPluginVersion, "1.3.50") < 0)
                                 "-version"
@@ -65,156 +66,172 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             }
 
             module("project")
-            module("app")
-            module("app_commonMain") {
+
+            module("project.app")
+
+            module("project.app.commonMain") {
                 platform(CommonPlatforms.defaultCommonPlatform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
-                moduleDependency("lib_commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.lib.commonMain", DependencyScope.COMPILE)
                 sourceFolder("app/src/commonMain/kotlin", SourceKotlinRootType)
                 sourceFolder("app/src/commonMain/resources", ResourceKotlinRootType)
                 inheritProjectOutput()
             }
-            module("app_commonTest") {
+
+            module("project.app.commonTest") {
                 platform(CommonPlatforms.defaultCommonPlatform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
-                moduleDependency("lib_commonMain", DependencyScope.TEST)
-                moduleDependency("app_commonMain", DependencyScope.TEST)
+                moduleDependency("project.lib.commonMain", DependencyScope.TEST)
+                moduleDependency("project.app.commonMain", DependencyScope.TEST)
                 sourceFolder("app/src/commonTest/kotlin", TestSourceKotlinRootType)
                 sourceFolder("app/src/commonTest/resources", TestResourceKotlinRootType)
                 inheritProjectOutput()
             }
-            module("app_jsMain") {
+
+            module("project.app.jsMain") {
                 platform(JsPlatforms.defaultJsPlatform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-js:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
-                moduleDependency("lib_jsMain", DependencyScope.COMPILE)
-                moduleDependency("lib_commonMain", DependencyScope.COMPILE)
-                moduleDependency("app_commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.lib.jsMain", DependencyScope.COMPILE)
+                moduleDependency("project.lib.commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.app.commonMain", DependencyScope.COMPILE)
                 sourceFolder("app/src/jsMain/kotlin", SourceKotlinRootType)
                 sourceFolder("app/src/jsMain/resources", ResourceKotlinRootType)
                 outputPath("app/build/classes/kotlin/js/main", true)
             }
-            module("app_jsTest") {
+
+            module("project.app.jsTest") {
                 platform(JsPlatforms.defaultJsPlatform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-js:${gradleKotlinPluginVersion}", DependencyScope.TEST)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
-                moduleDependency("lib_jsMain", DependencyScope.TEST)
-                moduleDependency("lib_commonMain", DependencyScope.TEST)
-                moduleDependency("app_commonMain", DependencyScope.TEST)
-                moduleDependency("app_commonTest", DependencyScope.TEST)
-                moduleDependency("app_jsMain", DependencyScope.TEST)
-                moduleDependency("app_jsMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
+                moduleDependency("project.lib.jsMain", DependencyScope.TEST)
+                moduleDependency("project.lib.commonMain", DependencyScope.TEST, allowMultiple = true)
+                moduleDependency("project.app.commonMain", DependencyScope.TEST)
+                moduleDependency("project.app.commonTest", DependencyScope.TEST)
+                moduleDependency("project.app.jsMain", DependencyScope.RUNTIME) // Temporary dependency, need to remove after KT-40551 is solved
+                moduleDependency("project.app.jsMain", DependencyScope.TEST)
                 sourceFolder("app/src/jsTest/kotlin", TestSourceKotlinRootType)
                 sourceFolder("app/src/jsTest/resources", TestResourceKotlinRootType)
                 outputPath("app/build/classes/kotlin/js/test", false)
             }
-            module("app_jvmMain") {
+
+            module("project.app.jvmMain") {
                 platform(JvmPlatforms.jvm16)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.COMPILE)
-                moduleDependency("lib_jvmMain", DependencyScope.COMPILE)
-                moduleDependency("lib_commonMain", DependencyScope.COMPILE)
-                moduleDependency("app_main", DependencyScope.COMPILE)
-                moduleDependency("app_commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.lib.jvmMain", DependencyScope.COMPILE)
+                moduleDependency("project.lib.commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.app.main", DependencyScope.COMPILE)
+                moduleDependency("project.app.commonMain", DependencyScope.COMPILE)
                 sourceFolder("app/src/jvmMain/kotlin", JavaSourceRootType.SOURCE)
                 sourceFolder("app/src/jvmMain/resources", JavaResourceRootType.RESOURCE)
                 outputPath("app/build/classes/kotlin/jvm/main", true)
             }
-            module("app_jvmTest") {
+
+            module("project.app.jvmTest") {
                 platform(JvmPlatforms.jvm16)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:${gradleKotlinPluginVersion}", DependencyScope.TEST)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
                 libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.TEST)
-                moduleDependency("lib_jvmMain", DependencyScope.TEST)
-                moduleDependency("lib_commonMain", DependencyScope.TEST)
-                moduleDependency("app_test", DependencyScope.TEST)
-                moduleDependency("app_jvmMain", DependencyScope.TEST)
-                moduleDependency("app_commonMain", DependencyScope.TEST)
-                moduleDependency("app_commonTest", DependencyScope.TEST)
+                moduleDependency("project.lib.jvmMain", DependencyScope.TEST)
+                moduleDependency("project.lib.commonMain", DependencyScope.TEST)
+                moduleDependency("project.app.test", DependencyScope.TEST)
+                moduleDependency("project.app.jvmMain", DependencyScope.TEST)
+                moduleDependency("project.app.commonMain", DependencyScope.TEST)
+                moduleDependency("project.app.commonTest", DependencyScope.TEST)
                 sourceFolder("app/src/jvmTest/kotlin", JavaSourceRootType.TEST_SOURCE)
                 sourceFolder("app/src/jvmTest/resources", JavaResourceRootType.TEST_RESOURCE)
                 outputPath("app/build/classes/kotlin/jvm/test", false)
             }
-            module("app_main") {
+
+            module("project.app.main") {
                 platform(JvmPlatforms.jvm18)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.COMPILE)
-                moduleDependency("lib_commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.lib.commonMain", DependencyScope.COMPILE)
                 sourceFolder("app/src/main/java", JavaSourceRootType.SOURCE)
                 sourceFolder("app/src/main/kotlin", JavaSourceRootType.SOURCE)
                 sourceFolder("app/src/main/resources", JavaResourceRootType.RESOURCE)
                 inheritProjectOutput()
             }
-            module("app_test") {
+
+            module("project.app.test") {
                 platform(JvmPlatforms.jvm18)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:${gradleKotlinPluginVersion}", DependencyScope.TEST)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
                 libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.TEST)
-                moduleDependency("lib_commonMain", DependencyScope.TEST)
-                moduleDependency("app_main", DependencyScope.TEST)
+                moduleDependency("project.lib.commonMain", DependencyScope.TEST)
+                moduleDependency("project.app.main", DependencyScope.TEST)
                 sourceFolder("app/src/test/java", JavaSourceRootType.TEST_SOURCE)
                 sourceFolder("app/src/test/kotlin", JavaSourceRootType.TEST_SOURCE)
                 sourceFolder("app/src/test/resources", JavaResourceRootType.TEST_RESOURCE)
                 inheritProjectOutput()
             }
-            module("lib")
-            module("lib_commonMain") {
+
+            module("project.lib")
+
+            module("project.lib.commonMain") {
                 platform(CommonPlatforms.defaultCommonPlatform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
                 sourceFolder("lib/src/commonMain/kotlin", SourceKotlinRootType)
                 sourceFolder("lib/src/commonMain/resources", ResourceKotlinRootType)
                 inheritProjectOutput()
             }
-            module("lib_commonTest") {
+
+            module("project.lib.commonTest") {
                 platform(CommonPlatforms.defaultCommonPlatform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
-                moduleDependency("lib_commonMain", DependencyScope.TEST)
+                moduleDependency("project.lib.commonMain", DependencyScope.TEST)
                 sourceFolder("lib/src/commonTest/kotlin", TestSourceKotlinRootType)
                 sourceFolder("lib/src/commonTest/resources", TestResourceKotlinRootType)
                 inheritProjectOutput()
             }
-            module("lib_jsMain") {
+
+            module("project.lib.jsMain") {
                 platform(JsPlatforms.defaultJsPlatform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-js:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
-                moduleDependency("lib_commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.lib.commonMain", DependencyScope.COMPILE)
                 sourceFolder("lib/src/jsMain/kotlin", SourceKotlinRootType)
                 sourceFolder("lib/src/jsMain/resources", ResourceKotlinRootType)
                 outputPath("lib/build/classes/kotlin/js/main", true)
             }
-            module("lib_jsTest") {
+
+            module("project.lib.jsTest") {
                 platform(JsPlatforms.defaultJsPlatform)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-js:${gradleKotlinPluginVersion}", DependencyScope.TEST)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
-                moduleDependency("lib_commonMain", DependencyScope.TEST)
-                moduleDependency("lib_commonTest", DependencyScope.TEST)
-                moduleDependency("lib_jsMain", DependencyScope.TEST)
-                moduleDependency("lib_jsMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
+                moduleDependency("project.lib.commonMain", DependencyScope.TEST)
+                moduleDependency("project.lib.commonTest", DependencyScope.TEST)
+                moduleDependency("project.lib.jsMain", DependencyScope.RUNTIME) // Temporary dependency, need to remove after KT-40551 is solved
+                moduleDependency("project.lib.jsMain", DependencyScope.TEST)
                 sourceFolder("lib/src/jsTest/kotlin", TestSourceKotlinRootType)
                 sourceFolder("lib/src/jsTest/resources", TestResourceKotlinRootType)
                 outputPath("lib/build/classes/kotlin/js/test", false)
             }
-            module("lib_jvmMain") {
+
+            module("project.lib.jvmMain") {
                 platform(JvmPlatforms.jvm16)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.COMPILE)
-                moduleDependency("lib_commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.lib.commonMain", DependencyScope.COMPILE)
                 sourceFolder("lib/src/jvmMain/kotlin", JavaSourceRootType.SOURCE)
                 sourceFolder("lib/src/jvmMain/resources", JavaResourceRootType.RESOURCE)
                 outputPath("lib/build/classes/kotlin/jvm/main", true)
             }
-            module("lib_jvmTest") {
+
+            module("project.lib.jvmTest") {
                 platform(JvmPlatforms.jvm16)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:${gradleKotlinPluginVersion}", DependencyScope.TEST)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
                 libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.TEST)
-                moduleDependency("lib_commonTest", DependencyScope.TEST)
-                moduleDependency("lib_commonMain", DependencyScope.TEST)
-                moduleDependency("lib_jvmMain", DependencyScope.TEST)
-                moduleDependency("lib_jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
+                moduleDependency("project.lib.commonTest", DependencyScope.TEST)
+                moduleDependency("project.lib.commonMain", DependencyScope.TEST)
+                moduleDependency("project.lib.jvmMain", DependencyScope.RUNTIME) // Temporary dependency, need to remove after KT-40551 is solved
+                moduleDependency("project.lib.jvmMain", DependencyScope.TEST)
                 sourceFolder("lib/src/jvmTest/kotlin", JavaSourceRootType.TEST_SOURCE)
                 sourceFolder("lib/src/jvmTest/resources", JavaResourceRootType.TEST_RESOURCE)
                 outputPath("lib/build/classes/kotlin/jvm/test", false)
@@ -232,11 +249,11 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             exhaustiveModuleList = false,
             exhaustiveSourceSourceRootList = false
         ) {
-            module("project_jvmMain") {
+            module("project.jvmMain") {
                 libraryDependencyByUrl("file://$projectPath/a", DependencyScope.COMPILE)
                 libraryDependencyByUrl("file://$projectPath/b", DependencyScope.COMPILE)
-                moduleDependency("project_commonMain", DependencyScope.COMPILE)
-                moduleDependency("project_main", DependencyScope.COMPILE)
+                moduleDependency("project.commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.main", DependencyScope.COMPILE)
             }
         }
     }
@@ -252,12 +269,12 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             exhaustiveDependencyList = false
         ) {
             module("project")
-            module("project_commonMain")
-            module("project_commonTest")
-            module("project_jvmMain")
-            module("project_jvmTest")
-            module("project_main")
-            module("project_test")
+            module("project.commonMain")
+            module("project.commonTest")
+            module("project.jvmMain")
+            module("project.jvmTest")
+            module("project.main")
+            module("project.test")
         }
     }
 
@@ -274,7 +291,8 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
 
         checkProjectStructure {
             module("project")
-            module("app") {
+
+            module("project.app") {
                 libraryDependency("Gradle: android.arch.core:common:1.1.0@jar", DependencyScope.COMPILE)
                 libraryDependency("Gradle: android.arch.core:runtime:1.1.0@aar", DependencyScope.COMPILE)
                 libraryDependency("Gradle: android.arch.lifecycle:common:1.1.0@jar", DependencyScope.COMPILE)
@@ -310,56 +328,64 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk7:${gradleKotlinPluginVersion}@jar", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:${gradleKotlinPluginVersion}@jar", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains:annotations:13.0@jar", DependencyScope.COMPILE)
-                moduleDependency("shared", DependencyScope.COMPILE)
-                moduleDependency("shared_androidMain", DependencyScope.COMPILE)
-                moduleDependency("shared_androidTest", DependencyScope.TEST)
-                moduleDependency("shared_commonMain", DependencyScope.COMPILE)
-                moduleDependency("shared_commonTest", DependencyScope.TEST)
+                moduleDependency("project.shared", DependencyScope.COMPILE)
+                moduleDependency("project.shared.androidMain", DependencyScope.COMPILE)
+                moduleDependency("project.shared.androidTest", DependencyScope.TEST)
+                moduleDependency("project.shared.commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.shared.commonTest", DependencyScope.TEST)
             }
-            module("shared")
-            module("shared_commonMain") {
+
+            module("project.shared")
+
+            module("project.shared.commonMain") {
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
                 sourceFolder("shared/src/commonMain/kotlin", SourceKotlinRootType)
                 sourceFolder("shared/src/commonMain/resources", ResourceKotlinRootType)
             }
-            module("shared_commonTest") {
+
+            module("project.shared.commonTest") {
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
-                moduleDependency("shared_commonMain", DependencyScope.TEST)
+                moduleDependency("project.shared.commonMain", DependencyScope.TEST)
                 sourceFolder("shared/src/commonTest/kotlin", TestSourceKotlinRootType)
                 sourceFolder("shared/src/commonTest/resources", TestResourceKotlinRootType)
             }
-            module("shared_androidMain") {
+
+            module("shared.androidMain") {
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
                 libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.COMPILE)
-                moduleDependency("shared_commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.shared.commonMain", DependencyScope.COMPILE)
                 sourceFolder("shared/src/androidMain/kotlin", JavaSourceRootType.SOURCE)
                 sourceFolder("shared/src/androidMain/resources", JavaResourceRootType.RESOURCE)
             }
-            module("shared_androidTest") {
+
+            module("project.shared.androidTest") {
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib:${gradleKotlinPluginVersion}", DependencyScope.TEST)
                 libraryDependency("Gradle: org.jetbrains:annotations:13.0", DependencyScope.TEST)
-                moduleDependency("shared_androidMain", DependencyScope.TEST)
-                moduleDependency("shared_commonMain", DependencyScope.TEST)
-                moduleDependency("shared_commonTest", DependencyScope.TEST)
+                moduleDependency("project.shared.androidMain", DependencyScope.TEST)
+                moduleDependency("project.shared.commonMain", DependencyScope.TEST)
+                moduleDependency("project.shared.commonTest", DependencyScope.TEST)
                 sourceFolder("shared/src/androidTest/kotlin", JavaSourceRootType.TEST_SOURCE)
                 sourceFolder("shared/src/androidTest/resources", JavaResourceRootType.TEST_RESOURCE)
             }
-            var nativeVersion = gradleKotlinPluginVersion
-            module("shared_iOSMain") {
+
+            val nativeVersion = gradleKotlinPluginVersion
+
+            module("project.shared.iOSMain") {
                 libraryDependency("Kotlin/Native $nativeVersion - stdlib", DependencyScope.PROVIDED)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
-                moduleDependency("shared_commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.shared.commonMain", DependencyScope.COMPILE)
                 sourceFolder("shared/src/iOSMain/kotlin", SourceKotlinRootType)
                 sourceFolder("shared/src/iOSMain/resources", ResourceKotlinRootType)
             }
-            module("shared_iOSTest") {
+
+            module("project.shared.iOSTest") {
                 libraryDependency("Kotlin/Native $nativeVersion - stdlib", DependencyScope.PROVIDED)
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
-                moduleDependency("shared_iOSMain", DependencyScope.TEST)
-                moduleDependency("shared_commonMain", DependencyScope.TEST)
-                moduleDependency("shared_commonTest", DependencyScope.TEST)
+                moduleDependency("project.shared.iOSMain", DependencyScope.TEST)
+                moduleDependency("project.shared.commonMain", DependencyScope.TEST)
+                moduleDependency("project.shared.commonTest", DependencyScope.TEST)
                 sourceFolder("shared/src/iOSTest/kotlin", TestSourceKotlinRootType)
                 sourceFolder("shared/src/iOSTest/resources", TestResourceKotlinRootType)
             }
@@ -374,24 +400,24 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
 
         checkProjectStructure(exhaustiveSourceSourceRootList = false) {
             module("project")
-            module("common")
-            module("jvm")
-            module("js")
+            module("project.common")
+            module("project.jvm")
+            module("project.js")
 
-            module("project_commonMain")
-            module("project_commonTest") {
-                moduleDependency("project_commonMain", DependencyScope.TEST)
+            module("project.commonMain")
+            module("project.commonTest") {
+                moduleDependency("project.commonMain", DependencyScope.TEST)
             }
 
-            module("project_jvmMain") {
-                moduleDependency("project_commonMain", DependencyScope.COMPILE)
+            module("project.jvmMain") {
+                moduleDependency("project.commonMain", DependencyScope.COMPILE)
             }
 
-            module("project_jvmTest") {
-                moduleDependency("project_commonMain", DependencyScope.TEST)
-                moduleDependency("project_commonTest", DependencyScope.TEST)
-                moduleDependency("project_jvmMain", DependencyScope.TEST)
-                moduleDependency("project_jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
+            module("project.jvmTest") {
+                moduleDependency("project.commonMain", DependencyScope.TEST)
+                moduleDependency("project.commonTest", DependencyScope.TEST)
+                moduleDependency("project.jvmMain", DependencyScope.RUNTIME) // Temporary dependency, need to remove after KT-40551 is solved
+                moduleDependency("project.jvmMain", DependencyScope.TEST)
             }
         }
 
@@ -417,19 +443,19 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
 
         checkProjectStructure(exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false, exhaustiveTestsList = true) {
             module("project")
-            module("project_commonMain")
-            module("project_commonTest") {
+            module("project.commonMain")
+            module("project.commonTest") {
                 externalSystemTestTask("jsBrowserTest", "project:jsTest", "js")
                 externalSystemTestTask("jsNodeTest", "project:jsTest", "js")
                 externalSystemTestTask("jvmTest", "project:jvmTest", "jvm")
             }
-            module("project_jsMain")
-            module("project_jsTest") {
+            module("project.jsMain")
+            module("project.jsTest") {
                 externalSystemTestTask("jsBrowserTest", "project:jsTest", "js")
                 externalSystemTestTask("jsNodeTest", "project:jsTest", "js")
             }
-            module("project_jvmMain")
-            module("project_jvmTest") {
+            module("project.jvmMain")
+            module("project.jvmTest") {
                 externalSystemTestTask("jvmTest", "project:jvmTest", "jvm")
             }
         }
@@ -442,7 +468,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
         configureByFiles()
         importProject()
         checkProjectStructure(exhaustiveDependencyList = false) {
-            module("app") {
+            module("project.app") {
                 sourceFolder("app/src/androidAndroidTest/kotlin", JavaSourceRootType.TEST_SOURCE)
                 sourceFolder("app/src/androidAndroidTestDebug/kotlin", JavaSourceRootType.TEST_SOURCE)
                 sourceFolder("app/src/androidDebug/kotlin", JavaSourceRootType.SOURCE)
@@ -481,11 +507,11 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 sourceFolder("app/src/androidTestDebug/resources", JavaResourceRootType.TEST_RESOURCE)
                 sourceFolder("app/src/androidTestRelease/resources", JavaResourceRootType.TEST_RESOURCE)
             }
-            module("app_commonMain") {
+            module("project.app.commonMain") {
                 sourceFolder("app/src/commonMain/kotlin", SourceKotlinRootType)
                 sourceFolder("app/src/commonMain/resources", ResourceKotlinRootType)
             }
-            module("app_commonTest") {
+            module("project.app.commonTest") {
                 sourceFolder("app/src/commonTest/kotlin", TestSourceKotlinRootType)
                 sourceFolder("app/src/commonTest/resources", TestResourceKotlinRootType)
             }
@@ -500,42 +526,48 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
         importProject()
         checkProjectStructure(exhaustiveSourceSourceRootList = false) {
             module("project")
-            module("project_commonMain")
-            module("project_commonTest") {
-                moduleDependency("project_commonMain", DependencyScope.TEST)
-            }
-            module("project_jvmMain") {
-                moduleDependency("project_commonMain", DependencyScope.COMPILE)
-            }
-            module("project_jvmTest") {
-                moduleDependency("project_commonMain", DependencyScope.TEST)
-                moduleDependency("project_commonTest", DependencyScope.TEST)
-                moduleDependency("project_jvmMain", DependencyScope.TEST)
-                moduleDependency("project_jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
+
+            module("project.commonMain")
+
+            module("project.commonTest") {
+                moduleDependency("project.commonMain", DependencyScope.TEST)
             }
 
-            module("subproject")
-            module("subproject_commonMain") {
-                moduleDependency("project_commonMain", DependencyScope.COMPILE)
+            module("project.jvmMain") {
+                moduleDependency("project.commonMain", DependencyScope.COMPILE)
             }
-            module("subproject_commonTest") {
-                moduleDependency("project_commonMain", DependencyScope.TEST)
-                moduleDependency("subproject_commonMain", DependencyScope.TEST)
+
+            module("project.jvmTest") {
+                moduleDependency("project.commonMain", DependencyScope.TEST)
+                moduleDependency("project.commonTest", DependencyScope.TEST)
+                moduleDependency("project.jvmMain", DependencyScope.RUNTIME)
+                moduleDependency("project.jvmMain", DependencyScope.TEST)
             }
-            module("subproject_jvmMain") {
-                moduleDependency("project_commonMain", DependencyScope.COMPILE)
-                moduleDependency("subproject_commonMain", DependencyScope.COMPILE)
-                moduleDependency("project_jvmMain", DependencyScope.COMPILE)
+
+            module("project.subproject")
+
+            module("project.subproject.commonMain") {
+                moduleDependency("project.commonMain", DependencyScope.COMPILE)
             }
-            module("subproject_jvmTest") {
-                moduleDependency("project_commonMain", DependencyScope.TEST)
-                moduleDependency("project_commonMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
-                moduleDependency("subproject_commonMain", DependencyScope.TEST)
-                moduleDependency("subproject_commonTest", DependencyScope.TEST)
-                moduleDependency("project_jvmMain", DependencyScope.TEST)
-                moduleDependency("project_jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
-                moduleDependency("subproject_jvmMain", DependencyScope.TEST)
-                moduleDependency("subproject_jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
+
+            module("project.subproject.commonTest") {
+                moduleDependency("project.commonMain", DependencyScope.TEST)
+                moduleDependency("project.subproject.commonMain", DependencyScope.TEST)
+            }
+
+            module("project.subproject.jvmMain") {
+                moduleDependency("project.commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.subproject.commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.jvmMain", DependencyScope.COMPILE)
+            }
+
+            module("project.subproject.jvmTest") {
+                moduleDependency("project.commonMain", DependencyScope.TEST, allowMultiple = true)
+                moduleDependency("project.jvmMain", DependencyScope.TEST)
+                moduleDependency("project.subproject.commonMain", DependencyScope.TEST)
+                moduleDependency("project.subproject.commonTest", DependencyScope.TEST)
+                moduleDependency("project.subproject.jvmMain", DependencyScope.RUNTIME) // Temporary dependency, need to remove after KT-40551 is solved
+                moduleDependency("project.subproject.jvmMain", DependencyScope.TEST)
             }
         }
     }
@@ -548,77 +580,95 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
 
         checkProjectStructure(exhaustiveSourceSourceRootList = false) {
             module("project")
-            module("aaa")
-            module("aaa_commonMain") {
+
+            module("project.aaa")
+
+            module("project.aaa.commonMain") {
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
-                moduleDependency("bbb_commonMain", DependencyScope.COMPILE)
-                moduleDependency("ccc_commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.bbb.commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.ccc.commonMain", DependencyScope.COMPILE)
             }
-            module("aaa_commonTest") {
+
+            module("project.aaa.commonTest") {
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
-                moduleDependency("aaa_commonMain", DependencyScope.TEST)
-                moduleDependency("bbb_commonMain", DependencyScope.TEST)
-                moduleDependency("ccc_commonMain", DependencyScope.TEST)
+                moduleDependency("project.aaa.commonMain", DependencyScope.TEST)
+                moduleDependency("project.bbb.commonMain", DependencyScope.TEST)
+                moduleDependency("project.ccc.commonMain", DependencyScope.TEST)
             }
-            module("aaa_jvmMain") {
+
+            module("project.aaa.jvmMain") {
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
-                moduleDependency("aaa_commonMain", DependencyScope.COMPILE)
-                moduleDependency("bbb_commonMain", DependencyScope.COMPILE)
-                moduleDependency("bbb_jvmMain", DependencyScope.COMPILE)
-                moduleDependency("ccc_commonMain", DependencyScope.COMPILE)
-                moduleDependency("ccc_jvmMain", DependencyScope.COMPILE)
+                moduleDependency("project.aaa.commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.bbb.commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.bbb.jvmMain", DependencyScope.COMPILE)
+                moduleDependency("project.ccc.commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.ccc.jvmMain", DependencyScope.COMPILE)
             }
-            module("aaa_jvmTest") {
+
+            module("project.aaa.jvmTest") {
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
-                moduleDependency("aaa_commonMain", DependencyScope.TEST)
-                moduleDependency("aaa_commonTest", DependencyScope.TEST)
-                moduleDependency("aaa_jvmMain", DependencyScope.TEST)
-                moduleDependency("bbb_commonMain", DependencyScope.TEST)
-                moduleDependency("bbb_jvmMain", DependencyScope.TEST)
-                moduleDependency("ccc_commonMain", DependencyScope.TEST)
-                moduleDependency("ccc_jvmMain", DependencyScope.TEST)
+                moduleDependency("project.aaa.commonMain", DependencyScope.TEST)
+                moduleDependency("project.aaa.commonTest", DependencyScope.TEST)
+                moduleDependency("project.aaa.jvmMain", DependencyScope.RUNTIME)
+                moduleDependency("project.aaa.jvmMain", DependencyScope.TEST)
+                moduleDependency("project.bbb.commonMain", DependencyScope.TEST, allowMultiple = true)
+                moduleDependency("project.bbb.jvmMain", DependencyScope.TEST)
+                moduleDependency("project.ccc.commonMain", DependencyScope.TEST, allowMultiple = true)
+                moduleDependency("project.ccc.jvmMain", DependencyScope.TEST)
             }
-            module("bbb")
-            module("bbb_commonMain") {
+
+            module("project.bbb")
+
+            module("project.bbb.commonMain") {
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
-                moduleDependency("ccc_commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.ccc.commonMain", DependencyScope.COMPILE)
             }
-            module("bbb_commonTest") {
+
+            module("project.bbb.commonTest") {
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
-                moduleDependency("bbb_commonMain", DependencyScope.TEST)
-                moduleDependency("ccc_commonMain", DependencyScope.TEST)
+                moduleDependency("project.bbb.commonMain", DependencyScope.TEST)
+                moduleDependency("project.ccc.commonMain", DependencyScope.TEST)
             }
-            module("bbb_jvmMain") {
+
+            module("project.bbb.jvmMain") {
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
-                moduleDependency("bbb_commonMain", DependencyScope.COMPILE)
-                moduleDependency("ccc_commonMain", DependencyScope.COMPILE)
-                moduleDependency("ccc_jvmMain", DependencyScope.COMPILE)
+                moduleDependency("project.bbb.commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.ccc.commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.ccc.jvmMain", DependencyScope.COMPILE)
             }
-            module("bbb_jvmTest") {
+
+            module("project.bbb.jvmTest") {
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
-                moduleDependency("bbb_commonMain", DependencyScope.TEST)
-                moduleDependency("bbb_commonTest", DependencyScope.TEST)
-                moduleDependency("bbb_jvmMain", DependencyScope.TEST)
-                moduleDependency("ccc_commonMain", DependencyScope.TEST)
-                moduleDependency("ccc_jvmMain", DependencyScope.TEST)
+                moduleDependency("project.bbb.commonMain", DependencyScope.TEST)
+                moduleDependency("project.bbb.commonTest", DependencyScope.TEST)
+                moduleDependency("project.bbb.jvmMain", DependencyScope.RUNTIME)
+                moduleDependency("project.bbb.jvmMain", DependencyScope.TEST)
+                moduleDependency("project.ccc.commonMain", DependencyScope.TEST, allowMultiple = true)
+                moduleDependency("project.ccc.jvmMain", DependencyScope.TEST)
             }
-            module("ccc")
-            module("ccc_commonMain") {
+
+            module("project.ccc")
+
+            module("project.ccc.commonMain") {
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
             }
-            module("ccc_commonTest") {
+
+            module("project.ccc.commonTest") {
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
-                moduleDependency("ccc_commonMain", DependencyScope.TEST)
+                moduleDependency("project.ccc.commonMain", DependencyScope.TEST)
             }
-            module("ccc_jvmMain") {
+
+            module("project.ccc.jvmMain") {
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.COMPILE)
-                moduleDependency("ccc_commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.ccc.commonMain", DependencyScope.COMPILE)
             }
-            module("ccc_jvmTest") {
+
+            module("project.ccc.jvmTest") {
                 libraryDependency("Gradle: org.jetbrains.kotlin:kotlin-stdlib-common:${gradleKotlinPluginVersion}", DependencyScope.TEST)
-                moduleDependency("ccc_commonMain", DependencyScope.TEST)
-                moduleDependency("ccc_commonTest", DependencyScope.TEST)
-                moduleDependency("ccc_jvmMain", DependencyScope.TEST)
+                moduleDependency("project.ccc.commonMain", DependencyScope.TEST)
+                moduleDependency("project.ccc.commonTest", DependencyScope.TEST)
+                moduleDependency("project.ccc.jvmMain", DependencyScope.RUNTIME)
+                moduleDependency("project.ccc.jvmMain", DependencyScope.TEST)
             }
         }
     }
@@ -686,6 +736,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             module("toInclude.jsTest") {
                 moduleDependency("toInclude.commonMain", DependencyScope.TEST)
                 moduleDependency("toInclude.commonTest", DependencyScope.TEST)
+                moduleDependency("toInclude.jsMain", DependencyScope.RUNTIME)
                 moduleDependency("toInclude.jsMain", DependencyScope.TEST)
                 moduleDependency("toInclude.jsMain", DependencyScope.RUNTIME)
             }
@@ -697,6 +748,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             module("toInclude.jvmTest") {
                 moduleDependency("toInclude.commonMain", DependencyScope.TEST)
                 moduleDependency("toInclude.commonTest", DependencyScope.TEST)
+                moduleDependency("toInclude.jvmMain", DependencyScope.RUNTIME)
                 moduleDependency("toInclude.jvmMain", DependencyScope.TEST)
                 moduleDependency("toInclude.jvmMain", DependencyScope.RUNTIME)
             }
@@ -713,8 +765,10 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
         importProject(true)
 
         checkProjectStructure(true, false, true) {
-            module("project") {}
-            module("project.jvm") {}
+            module("project")
+
+            module("project.jvm")
+
             module("project.jvm.main") {
                 moduleDependency("project.mpp-base.jvmMain", DependencyScope.COMPILE)
                 moduleDependency("project.mpp-base.commonMain", DependencyScope.COMPILE)
@@ -729,7 +783,9 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("project.mpp.jvmMain", DependencyScope.COMPILE)
                 moduleDependency("project.mpp.commonMain", DependencyScope.COMPILE)
             }
-            module("project.mpp") {}
+
+            module("project.mpp")
+
             module("project.mpp.commonMain") {
                 moduleDependency("project.mpp-base.commonMain", DependencyScope.COMPILE)
             }
@@ -747,17 +803,17 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
 
             module("project.mpp.jvmTest") {
                 moduleDependency("project.mpp.commonMain", DependencyScope.TEST)
-                moduleDependency("project.mpp.commonTest", DependencyScope.TEST, true)
-                moduleDependency("project.mpp-base.commonMain", DependencyScope.TEST)
-                moduleDependency("project.mpp-base.commonMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
+                moduleDependency("project.mpp.commonTest", DependencyScope.TEST, productionOnTest = true)
+                moduleDependency("project.mpp-base.commonMain", DependencyScope.TEST, allowMultiple = true)
                 moduleDependency("project.mpp-base.jvmMain", DependencyScope.TEST)
-                moduleDependency("project.mpp-base.jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
+                moduleDependency("project.mpp.jvmMain", DependencyScope.RUNTIME) // Temporary dependency, need to remove after KT-40551 is solved
                 moduleDependency("project.mpp.jvmMain", DependencyScope.TEST)
-                moduleDependency("project.mpp.jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
             }
 
-            module("project.mpp-base") {}
-            module("project.mpp-base.commonMain") {}
+            module("project.mpp-base")
+
+            module("project.mpp-base.commonMain")
+
             module("project.mpp-base.commonTest") {
                 moduleDependency("project.mpp-base.commonMain", DependencyScope.TEST)
             }
@@ -768,9 +824,9 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
 
             module("project.mpp-base.jvmTest") {
                 moduleDependency("project.mpp-base.commonMain", DependencyScope.TEST)
+                moduleDependency("project.mpp-base.jvmMain", DependencyScope.RUNTIME) // Temporary dependency, need to remove after KT-40551 is solved
                 moduleDependency("project.mpp-base.jvmMain", DependencyScope.TEST)
-                moduleDependency("project.mpp-base.jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
-                moduleDependency("project.mpp-base.commonTest", DependencyScope.TEST, true)
+                moduleDependency("project.mpp-base.commonTest", DependencyScope.TEST, productionOnTest = true)
             }
         }
     }
@@ -785,8 +841,10 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
         importProject(true)
 
         checkProjectStructure(true, false, true) {
-            module("mpp-jardep") {}
-            module("mpp-jardep.java-project") {}
+            module("mpp-jardep")
+
+            module("mpp-jardep.java-project")
+
             module("mpp-jardep.java-project.main") {
                 moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.COMPILE)
                 moduleDependency("mpp-jardep.library2.jvmMain", DependencyScope.COMPILE)
@@ -803,8 +861,10 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 moduleDependency("mpp-jardep.library2.commonMain", DependencyScope.COMPILE)
             }
 
-            module("mpp-jardep.library1") {}
-            module("mpp-jardep.library1.commonMain") {}
+            module("mpp-jardep.library1")
+
+            module("mpp-jardep.library1.commonMain")
+
             module("mpp-jardep.library1.commonTest") {
                 moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.TEST)
 
@@ -817,32 +877,32 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
 
             module("mpp-jardep.library1.jvmTest") {
                 moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.TEST)
-                moduleDependency("mpp-jardep.library1.commonTest", DependencyScope.TEST, true)
+                moduleDependency("mpp-jardep.library1.commonTest", DependencyScope.TEST, productionOnTest = true)
+                moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.RUNTIME) // Temporary dependency, need to remove after KT-40551 is solved
                 moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.TEST)
-                moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
             }
 
-            module("mpp-jardep.library2") {}
-            module("mpp-jardep.library2.commonMain") {}
+            module("mpp-jardep.library2")
+
+            module("mpp-jardep.library2.commonMain")
+
             module("mpp-jardep.library2.commonTest") {
                 moduleDependency("mpp-jardep.library2.commonMain", DependencyScope.TEST)
             }
 
             module("mpp-jardep.library2.jvmMain") {
-                moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.COMPILE)
+                moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.COMPILE, allowMultiple = true)
                 moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.COMPILE)
                 moduleDependency("mpp-jardep.library2.commonMain", DependencyScope.COMPILE)
             }
 
             module("mpp-jardep.library2.jvmTest") {
-                moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.TEST)
-                moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
+                moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.TEST, allowMultiple = true)
                 moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.TEST)
-                moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
                 moduleDependency("mpp-jardep.library2.commonMain", DependencyScope.TEST)
-                moduleDependency("mpp-jardep.library2.commonTest", DependencyScope.TEST, true)
+                moduleDependency("mpp-jardep.library2.commonTest", DependencyScope.TEST, productionOnTest = true)
+                moduleDependency("mpp-jardep.library2.jvmMain", DependencyScope.RUNTIME) // Temporary dependency, need to remove after KT-40551 is solved
                 moduleDependency("mpp-jardep.library2.jvmMain", DependencyScope.TEST)
-                moduleDependency("mpp-jardep.library2.jvmMain", DependencyScope.RUNTIME)  // Temporary dependency, need to remove after KT-40551 is solved
             }
         }
     }
@@ -855,7 +915,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
 
         checkProjectStructure(false, false, false ) {
             module("project.javaModule.test") {
-                moduleDependency("project.mppModule.jvmTest", DependencyScope.COMPILE, true)
+                moduleDependency("project.mppModule.jvmTest", DependencyScope.COMPILE, productionOnTest = true)
             }
         }
     }
@@ -867,56 +927,55 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
         importProject(true)
 
         checkProjectStructure(true, false, true) {
-            module("jvm-on-mpp") {}
-            module("jvm-on-mpp.jvm-mod") {}
+            module("jvm-on-mpp")
+
+            module("jvm-on-mpp.jvm-mod")
+
             module("jvm-on-mpp.jvm-mod.main") {
-                moduleDependency("jvm-on-mpp.mpp-mod-a.jvmMain", DependencyScope.COMPILE, false)
-                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.COMPILE, false)
-                moduleDependency("jvm-on-mpp.mpp-mod-a.main", DependencyScope.COMPILE, false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.jvmMain", DependencyScope.COMPILE, productionOnTest = false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.COMPILE, productionOnTest = false)
             }
 
             module("jvm-on-mpp.jvm-mod.test") {
-                moduleDependency("jvm-on-mpp.jvm-mod.main", DependencyScope.COMPILE, false)
-                moduleDependency("jvm-on-mpp.mpp-mod-a.jvmMain", DependencyScope.COMPILE, false)
-                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.COMPILE, false)
-                moduleDependency("jvm-on-mpp.mpp-mod-a.main", DependencyScope.COMPILE, false)
+                moduleDependency("jvm-on-mpp.jvm-mod.main", DependencyScope.COMPILE, productionOnTest = false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.jvmMain", DependencyScope.COMPILE, productionOnTest = false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.COMPILE, productionOnTest = false)
             }
 
-            module("jvm-on-mpp.mpp-mod-a") {
-            }
-            module("jvm-on-mpp.mpp-mod-a.commonMain") {
-            }
+            module("jvm-on-mpp.mpp-mod-a")
+
+            module("jvm-on-mpp.mpp-mod-a.commonMain")
+
             module("jvm-on-mpp.mpp-mod-a.commonTest") {
-                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.TEST, false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.TEST, productionOnTest = false)
             }
 
             module("jvm-on-mpp.mpp-mod-a.jsMain") {
-                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.COMPILE, false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.COMPILE, productionOnTest = false)
             }
 
             module("jvm-on-mpp.mpp-mod-a.jsTest") {
-                moduleDependency("jvm-on-mpp.mpp-mod-a.jsMain", DependencyScope.TEST, false)
-                moduleDependency("jvm-on-mpp.mpp-mod-a.jsMain", DependencyScope.RUNTIME, false)  // Temporary dependency, need to remove after KT-40551 is solved
-                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.TEST, false)
-                moduleDependency("jvm-on-mpp.mpp-mod-a.commonTest", DependencyScope.TEST, true)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.TEST, productionOnTest = false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonTest", DependencyScope.TEST, productionOnTest = true)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.jsMain", DependencyScope.RUNTIME) // Temporary dependency, need to remove after KT-40551 is solved
+                moduleDependency("jvm-on-mpp.mpp-mod-a.jsMain", DependencyScope.TEST, productionOnTest = false)
             }
 
             module("jvm-on-mpp.mpp-mod-a.jvmMain") {
-                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.COMPILE, false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.COMPILE, productionOnTest = false)
             }
 
             module("jvm-on-mpp.mpp-mod-a.jvmTest") {
-                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.TEST, false)
-                moduleDependency("jvm-on-mpp.mpp-mod-a.commonTest", DependencyScope.TEST, true)
-                moduleDependency("jvm-on-mpp.mpp-mod-a.jvmMain", DependencyScope.TEST, false)
-                moduleDependency("jvm-on-mpp.mpp-mod-a.jvmMain", DependencyScope.RUNTIME, false)  // Temporary dependency, need to remove after KT-40551 is solved
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.TEST, productionOnTest = false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonTest", DependencyScope.TEST, productionOnTest = true)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.jvmMain", DependencyScope.RUNTIME) // Temporary dependency, need to remove after KT-40551 is solved
+                moduleDependency("jvm-on-mpp.mpp-mod-a.jvmMain", DependencyScope.TEST, productionOnTest = false)
             }
 
             //At the moment this is 'fake' source roots and they have no explicit dependencies.
-            module("jvm-on-mpp.mpp-mod-a.main") {
-            }
-            module("jvm-on-mpp.mpp-mod-a.test") {
-            }
+            module("jvm-on-mpp.mpp-mod-a.main")
+
+            module("jvm-on-mpp.mpp-mod-a.test")
         }
     }
 
@@ -950,10 +1009,10 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
 
         checkProjectStructure(exhaustiveSourceSourceRootList = false, exhaustiveDependencyList = false, exhaustiveTestsList = true) {
             module("project")
-            module("project_commonMain") {
 
-            }
-            module("project_commonTest") {
+            module("project.commonMain")
+
+            module("project.commonTest") {
                 externalSystemTestTask("jsBrowserTest", "project:jsTest", "js")
                 externalSystemTestTask("jsNodeTest", "project:jsTest", "js")
                 externalSystemTestTask("jvmTest", "project:jvmTest", "jvm")
@@ -965,32 +1024,34 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
                 }
             }
 
-            module("project_jsMain")
-            module("project_jsTest") {
+            module("project.jsMain")
+
+            module("project.jsTest") {
                 externalSystemTestTask("jsBrowserTest", "project:jsTest", "js")
                 externalSystemTestTask("jsNodeTest", "project:jsTest", "js")
             }
 
-            module("project_jvmMain")
-            module("project_jvmTest") {
+            module("project.jvmMain")
+
+            module("project.jvmTest") {
                 externalSystemTestTask("jvmTest", "project:jvmTest", "jvm")
             }
 
-            module("project_macosMain") {
-            }
-            module("project_macosTest") {
+            module("project.macosMain")
+
+            module("project.macosTest") {
                 if (HostManager.hostIsMac) externalSystemTestTask("macosTest", "project:macosTest", "macos")
             }
 
-            module("project_winMain") {
-            }
-            module("project_winTest") {
+            module("project.winMain")
+
+            module("project.winTest") {
                 if (HostManager.hostIsMingw) externalSystemTestTask("winTest", "project:winTest", "win")
             }
 
-            module("project_linuxMain") {
-            }
-            module("project_linuxTest") {
+            module("project.linuxMain")
+
+            module("project.linuxTest") {
                 if (HostManager.hostIsLinux) externalSystemTestTask("linuxTest", "project:linuxTest", "linux")
             }
         }

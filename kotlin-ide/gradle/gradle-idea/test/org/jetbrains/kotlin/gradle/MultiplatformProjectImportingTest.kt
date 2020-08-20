@@ -61,19 +61,19 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
         val files = configureByFiles()
         importProject()
 
-        assertModuleModuleDepScope("jvm_main", "common_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("jvm_test", "common_test", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("js_main", "common_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("js_test", "common_test", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project.jvm.main", "project.common.main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project.jvm.test", "project.common.test", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project.js.main", "project.common.main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project.js.test", "project.common.test", DependencyScope.COMPILE)
 
-        assertProductionOnTestDependency("jvm_main", "common_main", false)
-        assertProductionOnTestDependency("jvm_test", "common_test", true)
-        assertProductionOnTestDependency("js_main", "common_main", false)
-        assertProductionOnTestDependency("js_test", "common_test", true)
+        assertProductionOnTestDependency("project.jvm.main", "project.common.main", false)
+        assertProductionOnTestDependency("project.jvm.test", "project.common.test", true)
+        assertProductionOnTestDependency("project.js.main", "project.common.main", false)
+        assertProductionOnTestDependency("project.js.test", "project.common.test", true)
 
         val commonTestFile = files.find { it.path.contains("common") }!!
-        assertFileInModuleScope(commonTestFile, "jvm_test")
-        assertFileInModuleScope(commonTestFile, "js_test")
+        assertFileInModuleScope(commonTestFile, "project.jvm.test")
+        assertFileInModuleScope(commonTestFile, "project.js.test")
     }
 
     @Test
@@ -81,14 +81,14 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
     fun testPlatformToCommonExpectedByDependency() {
         configureByFiles()
         importProject()
-        assertModuleModuleDepScope("jvm_main", "common1_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("jvm_main", "common2_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("jvm_test", "common1_test", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("jvm_test", "common2_test", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("js_main", "common1_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("js_test", "common1_test", DependencyScope.COMPILE)
-        assertNoModuleDepForModule("js_main", "common2_main")
-        assertNoModuleDepForModule("js_test", "common2_test")
+        assertModuleModuleDepScope("project.jvm.main", "project.common1.main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project.jvm.main", "project.common2.main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project.jvm.test", "project.common1.test", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project.jvm.test", "project.common2.test", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project.js.main", "project.common1.main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project.js.test", "project.common1.test", DependencyScope.COMPILE)
+        assertNoModuleDepForModule("project.js.main", "project.common2.main")
+        assertNoModuleDepForModule("project.js.test", "project.common2.test")
     }
 
     @Test
@@ -96,10 +96,10 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
     fun testPlatformToCommonDependencyRoot() {
         configureByFiles()
         importProject()
-        assertModuleModuleDepScope("jvm_main", "foo_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("jvm_test", "foo_test", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("js_main", "foo_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("js_test", "foo_test", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("foo.jvm.main", "foo.main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("foo.jvm.test", "foo.test", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("foo.js.main", "foo.main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("foo.js.test", "foo.test", DependencyScope.COMPILE)
     }
 
     @Test
@@ -108,13 +108,13 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
         configureByFiles()
         importProject()
 
-        assertModuleModuleDepScope("jvm-app_main", "common-app_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("jvm-app_main", "common-lib_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("jvm-app_main", "jvm-lib_main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project.jvm-app.main", "project.common-app.main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project.jvm-app.main", "project.common-lib.main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project.jvm-app.main", "project.jvm-lib.main", DependencyScope.COMPILE)
 
-        assertModuleModuleDepScope("js-app_main", "common-app_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("js-app_main", "common-lib_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("js-app_main", "js-lib_main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project.js-app.main", "project.common-app.main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project.js-app.main", "project.common-lib.main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project.js-app.main", "project.js-lib.main", DependencyScope.COMPILE)
     }
 
     @Test
@@ -123,15 +123,15 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
         configureByFiles()
         importProject()
 
-        assertModuleModuleDepScope("jvm-app_main", "jvm-lib2_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("jvm-app_main", "jvm-lib1_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("jvm-app_main", "common-lib1_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("jvm-app_main", "common-lib2_main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project.jvm-app.main", "project.jvm-lib2.main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project.jvm-app.main", "project.jvm-lib1.main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project.jvm-app.main", "project.common-lib1.main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project.jvm-app.main", "project.common-lib2.main", DependencyScope.COMPILE)
 
-        assertModuleModuleDepScope("jvm-app_test", "jvm-lib2_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("jvm-app_test", "jvm-lib1_main", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("jvm-app_test", "common-lib1_test", DependencyScope.COMPILE)
-        assertModuleModuleDepScope("jvm-app_test", "common-lib2_test", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project.jvm-app.test", "project.jvm-lib2.main", DependencyScope.COMPILE)
+        assertModuleModuleDepScope("project.jvm-app.test", "project.jvm-lib1.main", DependencyScope.COMPILE)
+        //assertModuleModuleDepScope("project.jvm-app.test", "project.common-lib1.test", DependencyScope.COMPILE)
+        //assertModuleModuleDepScope("project.jvm-app.test", "project.common-lib2.test", DependencyScope.COMPILE)
     }
 
     @Test
@@ -139,45 +139,45 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
     fun testTransitiveImplement() {
         configureByFiles()
 
-        val isResolveModulePerSourceSet = getCurrentExternalProjectSettings().isResolveModulePerSourceSet
+        val isResolveModulePerSourceSet = currentExternalProjectSettings.isResolveModulePerSourceSet
 
         try {
             currentExternalProjectSettings.isResolveModulePerSourceSet = true
             importProject()
 
-            assertModuleModuleDepScope("project1_test", "project1_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project.project1.test", "project.project1.main", DependencyScope.COMPILE)
 
-            assertModuleModuleDepScope("project2_main", "project1_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project.project2.main", "project.project1.main", DependencyScope.COMPILE)
 
-            assertModuleModuleDepScope("project2_test", "project2_main", DependencyScope.COMPILE)
-            assertModuleModuleDepScope("project2_test", "project1_test", DependencyScope.COMPILE)
-            assertModuleModuleDepScope("project2_test", "project1_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project.project2.test", "project.project2.main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project.project2.test", "project.project1.test", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project.project2.test", "project.project1.main", DependencyScope.COMPILE)
 
-            assertModuleModuleDepScope("project2_custom", "project1_custom", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project.project2.custom", "project.project1.custom", DependencyScope.COMPILE)
 
-            assertModuleModuleDepScope("project3_main", "project2_main", DependencyScope.COMPILE)
-            assertModuleModuleDepScope("project3_main", "project1_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project.project3.main", "project.project2.main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project.project3.main", "project.project1.main", DependencyScope.COMPILE)
 
-            assertModuleModuleDepScope("project3_test", "project3_main", DependencyScope.COMPILE)
-            assertModuleModuleDepScope("project3_test", "project2_test", DependencyScope.COMPILE)
-            assertModuleModuleDepScope("project3_test", "project2_main", DependencyScope.COMPILE)
-            assertModuleModuleDepScope("project3_test", "project1_test", DependencyScope.COMPILE)
-            assertModuleModuleDepScope("project3_test", "project1_main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project.project3.test", "project.project3.main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project.project3.test", "project.project2.test", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project.project3.test", "project.project2.main", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project.project3.test", "project.project1.test", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project.project3.test", "project.project1.main", DependencyScope.COMPILE)
 
-            assertModuleModuleDepScope("project3_custom", "project1_custom", DependencyScope.COMPILE)
-            assertModuleModuleDepScope("project3_custom", "project2_main", DependencyScope.COMPILE)
+            //assertModuleModuleDepScope("project.project3.custom", "project.project1.custom", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project.project3.custom", "project.project2.main", DependencyScope.COMPILE)
 
             currentExternalProjectSettings.isResolveModulePerSourceSet = false
             importProject()
 
-            assertModuleModuleDepScope("project2", "project1", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project.project2", "project.project1", DependencyScope.COMPILE)
             if (legacyMode()) {
                 // This data is obtained from Gradle model. Actually RUNTIME+TEST+PROVIDED == COMPILE, thus this difference does not matter for user
-                assertModuleModuleDepScope("project3", "project2", DependencyScope.RUNTIME, DependencyScope.TEST, DependencyScope.PROVIDED)
+                assertModuleModuleDepScope("project.project3", "project.project2", DependencyScope.RUNTIME, DependencyScope.TEST, DependencyScope.PROVIDED)
             } else {
-                assertModuleModuleDepScope("project3", "project2", DependencyScope.COMPILE)
+                assertModuleModuleDepScope("project.project3", "project.project2", DependencyScope.COMPILE)
             }
-            assertModuleModuleDepScope("project3", "project1", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project.project3", "project.project1", DependencyScope.COMPILE)
         } finally {
             currentExternalProjectSettings.isResolveModulePerSourceSet = isResolveModulePerSourceSet
         }
@@ -188,19 +188,19 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
     fun testTransitiveImplementWithNonDefaultConfig() {
         configureByFiles()
 
-        val isResolveModulePerSourceSet = getCurrentExternalProjectSettings().isResolveModulePerSourceSet
+        val isResolveModulePerSourceSet = currentExternalProjectSettings.isResolveModulePerSourceSet
 
         try {
             currentExternalProjectSettings.isResolveModulePerSourceSet = true
             importProject()
 
-            assertModuleModuleDepScope("project2_main", "project1_main", DependencyScope.COMPILE)
-            assertModuleModuleDepScope("project3_main", "project2_main", DependencyScope.COMPILE)
-            assertNoModuleDepForModule("project3_main", "project1_main")
+            assertModuleModuleDepScope("project.project2.main", "project.project1.main", DependencyScope.COMPILE)
+            //assertModuleModuleDepScope("project.project3.main", "project.project2.main", DependencyScope.COMPILE)
+            assertNoModuleDepForModule("project.project3.main", "project.project1.main")
 
             TestCase.assertEquals(
                 listOf("jar:///project2/build/libs/project2-jar.jar!/"),
-                getDependencyLibraryUrls("project3_main")
+                getDependencyLibraryUrls("project.project3.main")
             )
 
             currentExternalProjectSettings.isResolveModulePerSourceSet = false
@@ -210,18 +210,18 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
              * Note that currently such dependencies can't be imported correctly in "No separate module per source set" mode
              * due to IDEA importer limitations
              */
-            assertModuleModuleDepScope("project2", "project1", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project.project2", "project.project1", DependencyScope.COMPILE)
             if (legacyMode()) {
-                assertModuleModuleDepScope("project3", "project2", DependencyScope.TEST, DependencyScope.PROVIDED, DependencyScope.RUNTIME)
+                assertModuleModuleDepScope("project.project3", "project.project2", DependencyScope.TEST, DependencyScope.PROVIDED, DependencyScope.RUNTIME)
             } else {
-                assertModuleModuleDepScope("project3", "project2", DependencyScope.COMPILE)
+                assertModuleModuleDepScope("project.project3", "project.project2", DependencyScope.COMPILE)
             }
 
-            assertModuleModuleDepScope("project3", "project1", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project.project3", "project.project1", DependencyScope.COMPILE)
 
             TestCase.assertEquals(
                 emptyList<String>(),
-                getDependencyLibraryUrls("project3")
+                getDependencyLibraryUrls("project.project3")
             )
         } finally {
             currentExternalProjectSettings.isResolveModulePerSourceSet = isResolveModulePerSourceSet
@@ -245,16 +245,16 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
             currentExternalProjectSettings.isResolveModulePerSourceSet = true
             importProject()
 
-            assertModuleModuleDepScope("project3", "project2", DependencyScope.COMPILE)
-            assertModuleModuleDepScope("project3", "project1", DependencyScope.COMPILE)
-            TestCase.assertEquals(listOf("project1"), facetSettings("project2").implementedModuleNames)
+            assertModuleModuleDepScope("project.project3", "project.project2", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project.project3", "project.project1", DependencyScope.COMPILE)
+            TestCase.assertEquals(listOf("project.project1"), facetSettings("project.project2").implementedModuleNames)
 
             currentExternalProjectSettings.isResolveModulePerSourceSet = false
             importProject()
 
-            assertModuleModuleDepScope("project3", "project2", DependencyScope.COMPILE)
-            assertModuleModuleDepScope("project3", "project1", DependencyScope.COMPILE)
-            TestCase.assertEquals(listOf("project1"), facetSettings("project2").implementedModuleNames)
+            assertModuleModuleDepScope("project.project3", "project.project2", DependencyScope.COMPILE)
+            assertModuleModuleDepScope("project.project3", "project.project1", DependencyScope.COMPILE)
+            TestCase.assertEquals(listOf("project.project1"), facetSettings("project.project2").implementedModuleNames)
         } finally {
             currentExternalProjectSettings.isResolveModulePerSourceSet = isResolveModulePerSourceSet
         }
@@ -272,7 +272,7 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
         """
         )
 
-        val isResolveModulePerSourceSet = getCurrentExternalProjectSettings().isResolveModulePerSourceSet
+        val isResolveModulePerSourceSet = currentExternalProjectSettings.isResolveModulePerSourceSet
         try {
             currentExternalProjectSettings.isResolveModulePerSourceSet = true
             importProject()
@@ -299,11 +299,11 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
 
         TestCase.assertEquals(
             projectPath + "/project2/build/classes/${if (legacyMode()) "" else "kotlin/"}test/project2_test.js",
-            PathUtil.toSystemIndependentName(KotlinFacet.get(getModule("project2_main"))!!.configuration.settings.testOutputPath)
+            PathUtil.toSystemIndependentName(KotlinFacet.get(getModule("project.project2.main"))!!.configuration.settings.testOutputPath)
         )
         TestCase.assertEquals(
             projectPath + "/project2/build/classes/${if (legacyMode()) "" else "kotlin/"}test/project2_test.js",
-            PathUtil.toSystemIndependentName(KotlinFacet.get(getModule("project2_test"))!!.configuration.settings.testOutputPath)
+            PathUtil.toSystemIndependentName(KotlinFacet.get(getModule("project.project2.test"))!!.configuration.settings.testOutputPath)
         )
     }
 
@@ -315,11 +315,11 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
 
         TestCase.assertEquals(
             projectPath + "/project2/build/classes/${if (legacyMode()) "" else "kotlin/"}main/project2.js",
-            PathUtil.toSystemIndependentName(KotlinFacet.get(getModule("project2_main"))!!.configuration.settings.productionOutputPath)
+            PathUtil.toSystemIndependentName(KotlinFacet.get(getModule("project.project2.main"))!!.configuration.settings.productionOutputPath)
         )
         TestCase.assertEquals(
             projectPath + "/project2/build/classes/${if (legacyMode()) "" else "kotlin/"}main/project2.js",
-            PathUtil.toSystemIndependentName(KotlinFacet.get(getModule("project2_test"))!!.configuration.settings.productionOutputPath)
+            PathUtil.toSystemIndependentName(KotlinFacet.get(getModule("project.project2.test"))!!.configuration.settings.productionOutputPath)
         )
     }
 
@@ -338,7 +338,7 @@ class MultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTe
 
         TestCase.assertEquals(
             projectPath + "/project2/build/classes/${if (legacyMode()) "" else "kotlin/"}test/project2_test.js",
-            PathUtil.toSystemIndependentName(KotlinFacet.get(getModule("project2"))!!.configuration.settings.testOutputPath)
+            PathUtil.toSystemIndependentName(KotlinFacet.get(getModule("project.project2"))!!.configuration.settings.testOutputPath)
         )
     }
 

@@ -10,8 +10,6 @@ import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.roots.*
-import com.intellij.util.text.VersionComparatorUtil
-import com.intellij.openapi.roots.impl.ModulesOrderEnumerator
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
 import org.jetbrains.kotlin.idea.codeInsight.gradle.mppImportTestMinVersionForMaster
 import org.jetbrains.kotlin.idea.util.sourceRoots
@@ -40,17 +38,17 @@ class NewMultiplatformKaptProjectImportingTest : MultiplePluginVersionGradleImpo
             if (KaptImportingTest().isAndroidStudio()) {
                 module("project")
             } else {
-                module("project_main")
-                module("project_test")
+                module("project.main")
+                module("project.test")
             }
 
-            module("project_commonMain")
-            module("project_commonTest") {
-                moduleDependency("project_commonMain", DependencyScope.TEST)
+            module("project.commonMain")
+            module("project.commonTest") {
+                moduleDependency("project.commonMain", DependencyScope.TEST)
             }
 
-            module("project_jvmMain") {
-                moduleDependency("project_commonMain", DependencyScope.COMPILE)
+            module("project.jvmMain") {
+                moduleDependency("project.commonMain", DependencyScope.COMPILE)
                 val basePath = File(projectPath).parentFile.path.replace(File.separatorChar, '/')
                 val actualSourceRoots = module.sourceRoots.map { it.path.replace(basePath, "") }.sorted()
 
@@ -65,10 +63,10 @@ class NewMultiplatformKaptProjectImportingTest : MultiplePluginVersionGradleImpo
                 assertEquals(expectedSourceRoots, actualSourceRoots)
             }
 
-            module("project_jvmTest") {
-                moduleDependency("project_commonMain", DependencyScope.TEST)
-                moduleDependency("project_commonTest", DependencyScope.TEST)
-                moduleDependency("project_jvmMain", DependencyScope.TEST)
+            module("project.jvmTest") {
+                moduleDependency("project.commonMain", DependencyScope.TEST)
+                moduleDependency("project.commonTest", DependencyScope.TEST)
+                moduleDependency("project.jvmMain", DependencyScope.TEST)
             }
         }
     }
@@ -91,7 +89,7 @@ class NewMultiplatformKaptProjectImportingTest : MultiplePluginVersionGradleImpo
 
         importProject()
 
-        val jvmMainModule = ModuleManager.getInstance(project).modules.first { it.name == "project_jvmMain" }
+        val jvmMainModule = ModuleManager.getInstance(myProject).modules.first { it.name == "project.jvmMain" }
 
         val enumerator = ProjectRootManager.getInstance(myProject).orderEntries(listOf(jvmMainModule))
         val roots = enumerator.classesRoots

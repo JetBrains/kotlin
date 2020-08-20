@@ -36,13 +36,13 @@ class GradleNativeLibrariesPropagationTest : TestCaseWithFakeKotlinNative() {
         ) {
 
             // No platform libraries should be propagated to commonMain since we have a JVM target.
-            module("project_commonMain") {
+            module("project.commonMain") {
                 noPlatformLibrary("Foundation")
                 noPlatformLibrary("CFNetwork")
                 noPlatformLibrary("WatchKit")
             }
 
-            module("project_appleMain") {
+            module("project.appleMain") {
                 // Common iOS/watchOS libraries are propagated.
                 hasPlatformLibrary("Foundation", "watchos_arm32")
 
@@ -51,7 +51,7 @@ class GradleNativeLibrariesPropagationTest : TestCaseWithFakeKotlinNative() {
                 noPlatformLibrary("WatchKit")
             }
 
-            module("project_iosMain") {
+            module("project.iosMain") {
                 // iOS libraries are propagated.
                 hasPlatformLibrary("Foundation", "ios_arm64")
                 hasPlatformLibrary("CFNetwork", "ios_arm64")
@@ -77,19 +77,19 @@ class GradleNativeLibrariesPropagationTest : TestCaseWithFakeKotlinNative() {
             exhaustiveTestsList = false
         ) {
 
-            module("project_commonMain") {
+            module("project.commonMain") {
                 noPlatformLibrary("Foundation")
                 noPlatformLibrary("CFNetwork")
                 noPlatformLibrary("WatchKit")
             }
 
-            module("project_appleMain") {
+            module("project.appleMain") {
                 noPlatformLibrary("Foundation")
                 noPlatformLibrary("CFNetwork")
                 noPlatformLibrary("WatchKit")
             }
 
-            module("project_iosMain") {
+            module("project.iosMain") {
                 noPlatformLibrary("Foundation")
                 noPlatformLibrary("CFNetwork")
                 noPlatformLibrary("WatchKit")

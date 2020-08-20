@@ -29,14 +29,15 @@ class PackagePrefixImportingTest : MultiplePluginVersionGradleImportingTestCase(
             exhaustiveDependencyList = false,
             exhaustiveTestsList = false
         ) {
-            module("project") {
-            }
-            module("project_main") {
+            module("project")
+
+            module("project.main") {
                 sourceFolder("src/main/java", JavaSourceRootType.SOURCE, "package.prefix.main")
                 sourceFolder("src/main/kotlin", JavaSourceRootType.SOURCE, "package.prefix.main")
                 sourceFolder("src/main/resources", JavaResourceRootType.RESOURCE)
             }
-            module("project_test") {
+
+            module("project.test") {
                 sourceFolder("src/test/java", JavaSourceRootType.TEST_SOURCE, "package.prefix.test")
                 sourceFolder("src/test/kotlin", JavaSourceRootType.TEST_SOURCE, "package.prefix.test")
                 sourceFolder("src/test/resources", JavaResourceRootType.TEST_RESOURCE)
