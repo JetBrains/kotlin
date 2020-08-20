@@ -31,7 +31,7 @@ fun descriptorByFileDirective(testDataFile: File): KotlinWithJdkAndRuntimeLightP
         override fun getSdk(): Sdk? {
             val sdk = projectDescriptorByFileDirective().sdk ?: return null
             runWriteAction {
-                val modificator: SdkModificator = sdk.sdkModificator
+                val modificator: SdkModificator = (sdk.clone() as Sdk).sdkModificator
                 JavaSdkImpl.attachJdkAnnotations(modificator)
                 modificator.commitChanges()
             }
