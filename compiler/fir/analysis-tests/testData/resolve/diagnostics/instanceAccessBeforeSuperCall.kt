@@ -4,7 +4,7 @@ class A {
     var keker = "test"
 }
 
-class B(other: B = <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>)
+class B(other: B = <!NO_THIS!>this<!>)
 
 class C() {
     constructor(x: Int) : <!INAPPLICABLE_CANDIDATE!>this<!>({

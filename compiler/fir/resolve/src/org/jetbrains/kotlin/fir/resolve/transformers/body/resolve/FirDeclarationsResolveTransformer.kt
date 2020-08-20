@@ -558,7 +558,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
              * Default values of constructor can't access members of constructing class
              */
             context.withTowerDataContext(context.getTowerDataContextForConstructorResolution()) {
-                owningClass?.let {
+                if (owningClass != null && !constructor.isPrimary) {
                     context.addReceiver(
                         null,
                         InaccessibleImplicitReceiverValue(

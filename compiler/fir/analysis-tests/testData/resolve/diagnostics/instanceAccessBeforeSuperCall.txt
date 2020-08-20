@@ -14,7 +14,7 @@ FILE: instanceAccessBeforeSuperCall.kt
 
     }
     public final class B : R|kotlin/Any| {
-        public constructor(other: R|B| = this@R|/B|): R|B| {
+        public constructor(other: R|B| = this#): R|B| {
             super<R|kotlin/Any|>()
         }
 
