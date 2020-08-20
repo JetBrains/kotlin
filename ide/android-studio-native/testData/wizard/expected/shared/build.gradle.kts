@@ -41,6 +41,7 @@ kotlin {
         }
         val androidTest by getting {
             dependencies {
+                implementation(kotlin("test-junit"))
                 implementation("junit:junit:4.12")
             }
         }
