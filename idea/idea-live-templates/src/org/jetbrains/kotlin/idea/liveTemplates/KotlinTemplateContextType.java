@@ -83,6 +83,12 @@ public abstract class KotlinTemplateContextType extends TemplateContextType {
         return element != null && isInContext(element);
     }
 
+    @Nullable
+    @Override
+    public SyntaxHighlighter createHighlighter() {
+        return SyntaxHighlighterFactory.getSyntaxHighlighter(KotlinLanguage.INSTANCE, null, null);
+    }
+
     protected boolean isCommentInContext() {
         return false;
     }
