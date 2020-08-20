@@ -9,6 +9,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.components.ComponentManager
 import com.intellij.openapi.progress.impl.CancellationCheck
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 
 fun <T> runReadAction(action: () -> T): T {
@@ -55,3 +56,8 @@ inline fun isUnitTestMode(): Boolean = ApplicationManager.getApplication().isUni
 
 inline fun <reified T : Any> ComponentManager.getServiceSafe(): T =
     this.getService(T::class.java) ?: error("Unable to locate service ${T::class.java.name}")
+
+fun <T> Project.runReadActionInSmartMode(action: () -> T): T {
+    if (ApplicationManager.getApplication().isReadAccessAllowed) return action()
+    return DumbService.getInstance(this).runReadActionInSmartMode<T>(action)
+}
