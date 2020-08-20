@@ -68,7 +68,10 @@ object MppModuleConfigurator : ModuleConfigurator,
     ): TaskResult<Unit> = compute {
         createMppFiles(module, modulePath).ensure()
         createSimpleFiles(module, modulePath).ensure()
-        GradlePlugin.gradleProperties.addValues("kotlin.mpp.enableGranularSourceSetsMetadata" to true)
+        GradlePlugin.gradleProperties.addValues(
+            "kotlin.mpp.enableGranularSourceSetsMetadata" to true,
+            "kotlin.native.enableDependencyPropagation" to false
+        )
     }
 
     private fun Writer.createMppFiles(
