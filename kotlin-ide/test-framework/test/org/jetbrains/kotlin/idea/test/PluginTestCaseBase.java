@@ -23,6 +23,7 @@ import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
+import com.intellij.testFramework.IdeaTestUtil;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
@@ -44,11 +45,6 @@ public class PluginTestCaseBase {
             return existing;
         }
         return JavaSdk.getInstance().createJdk(name, sdkHome, true);
-    }
-
-    @NotNull
-    public static Sdk mockJdk() {
-        return getSdk(new File(PathManager.getCommunityHomePath(), "java/mockJDK-1.8/jre").getPath(), "Mock JDK");
     }
 
     @NotNull
@@ -92,7 +88,7 @@ public class PluginTestCaseBase {
     public static Sdk jdk(@NotNull TestJdkKind kind) {
         switch (kind) {
             case MOCK_JDK:
-                return mockJdk();
+                return IdeaTestUtil.getMockJdk18();
             case FULL_JDK_9:
                 String jre9 = KotlinTestUtils.getJdk9Home().getPath();
                 VfsRootAccess.allowRootAccess(jre9);

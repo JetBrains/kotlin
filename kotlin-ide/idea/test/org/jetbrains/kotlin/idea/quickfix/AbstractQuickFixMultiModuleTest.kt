@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.daemon.quickFix.ActionHint
 import com.intellij.codeInsight.daemon.quickFix.LightQuickFixTestCase
 import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
@@ -15,7 +16,6 @@ import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromDirStructure
 import org.jetbrains.kotlin.idea.inspections.findExistingEditor
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.allKotlinFiles
 import org.jetbrains.kotlin.idea.test.findFileWithCaret
 import org.jetbrains.kotlin.idea.util.application.executeCommand
@@ -140,5 +140,5 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), Quic
             return LightQuickFixTestCase.getAvailableActions(editor, file)
         }
 
-    override fun getTestProjectJdk() = PluginTestCaseBase.mockJdk()
+    override fun getTestProjectJdk() = IdeaTestUtil.getMockJdk18()
 }

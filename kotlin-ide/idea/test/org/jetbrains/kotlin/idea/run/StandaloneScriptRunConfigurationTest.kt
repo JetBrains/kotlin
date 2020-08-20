@@ -10,6 +10,7 @@ import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiFile
 import com.intellij.refactoring.RefactoringFactory
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor
+import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.util.ActionRunner
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinScriptFqnIndex
 import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.Assert
 import org.junit.runner.RunWith
@@ -143,5 +143,5 @@ class StandaloneScriptRunConfigurationTest : KotlinCodeInsightTestCase() {
     }
 
     override fun getTestDataDirectory() = IDEA_TEST_DATA_DIR.resolve("run/StandaloneScript")
-    override fun getTestProjectJdk() = PluginTestCaseBase.mockJdk()
+    override fun getTestProjectJdk() = IdeaTestUtil.getMockJdk18()
 }

@@ -14,6 +14,7 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.util.ui.UIUtil
@@ -179,7 +180,7 @@ abstract class AbstractScriptConfigurationTest : KotlinCompletionTestCase() {
     }
 
     override fun getTestProjectJdk(): Sdk {
-        return PluginTestCaseBase.mockJdk()
+        return IdeaTestUtil.getMockJdk18()
     }
 
     private fun createTestModuleByName(name: String): Module {

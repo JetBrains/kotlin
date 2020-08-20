@@ -21,6 +21,7 @@ import com.intellij.openapi.module.ModuleTypeId;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
+import com.intellij.testFramework.IdeaTestUtil;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,7 +39,7 @@ public class KotlinLightProjectDescriptor extends LightProjectDescriptor {
 
     @Override
     public Sdk getSdk() {
-        return PluginTestCaseBase.mockJdk();
+        return IdeaTestUtil.getMockJdk18();
     }
 
     @Override

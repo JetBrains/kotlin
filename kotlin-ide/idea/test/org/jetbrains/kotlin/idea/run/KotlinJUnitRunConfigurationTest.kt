@@ -16,6 +16,7 @@ import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
+import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.util.PlatformUtils
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
@@ -36,7 +37,7 @@ class KotlinJUnitRunConfigurationTest : AbstractRunConfigurationTest() {
         val createResult = configureModule(moduleDirPath("module"), projectBaseDir)
         val testDir = createResult.testDir!!
 
-        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(module, addJdk(testRootDisposable, ::mockJdk))
+        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(module, addJdk(testRootDisposable, IdeaTestUtil::getMockJdk18))
 
         try {
             attachJUnitLibrary()

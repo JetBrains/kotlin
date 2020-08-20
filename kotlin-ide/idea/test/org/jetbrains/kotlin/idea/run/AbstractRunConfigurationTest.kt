@@ -9,10 +9,10 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.PsiTestUtil
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
 import java.io.File
 import java.nio.file.Path
 
@@ -78,7 +78,7 @@ abstract class AbstractRunConfigurationTest : @Suppress("DEPRECATION") KotlinCod
     )
 
     protected fun moduleDirPath(moduleName: String) = "${testDataPath}${getTestName(false)}/$moduleName"
-    override fun getTestProjectJdk() = mockJdk()
+    override fun getTestProjectJdk() = IdeaTestUtil.getMockJdk18()
 
     protected class TestFileContext {
         val filesToDelete: MutableList<Path> = mutableListOf()

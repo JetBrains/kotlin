@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.codeInsight
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.testFramework.IdeaTestUtil
 import org.jetbrains.kotlin.idea.inspections.runInspection
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
@@ -15,7 +16,6 @@ import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.jetbrains.kotlin.idea.test.KotlinMultiFileTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
-import org.jetbrains.kotlin.test.util.slashedPath
 import java.io.File
 
 abstract class AbstractMultiFileInspectionTest : KotlinMultiFileTestCase() {
@@ -33,7 +33,7 @@ abstract class AbstractMultiFileInspectionTest : KotlinMultiFileTestCase() {
 
         doTest(
             { _, _ ->
-                val sdk = if (withFullJdk) fullJdk() else mockJdk()
+                val sdk = if (withFullJdk) fullJdk() else IdeaTestUtil.getMockJdk18()
                 addJdk(testRootDisposable) { sdk }
 
                 try {

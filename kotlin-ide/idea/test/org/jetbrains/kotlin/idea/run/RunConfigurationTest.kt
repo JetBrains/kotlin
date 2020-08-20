@@ -16,6 +16,7 @@ import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiManager
 import com.intellij.refactoring.RefactoringFactory
+import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.PlatformTestUtil
 import org.jetbrains.kotlin.checkers.languageVersionSettingsFromText
@@ -51,7 +52,7 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
             createModuleResult.module.project, createModuleResult.module,
             LanguageVersionSettingsImpl.DEFAULT.languageVersion.versionString, apiVersion = null
         ) {
-            ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createModuleResult.module, addJdk(testRootDisposable, ::mockJdk))
+            ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createModuleResult.module, addJdk(testRootDisposable, IdeaTestUtil::getMockJdk18))
 
             val runConfiguration = createConfigurationFromMain(getTestProject(), "some.main")
             val javaParameters = getJavaRunParameters(runConfiguration)
@@ -104,7 +105,7 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
     fun testLongCommandLine() = withTestFiles {
         val baseDir = PlatformTestUtil.getOrCreateProjectBaseDir(project)
         val myModule = configureModule(moduleDirPath("module"), baseDir).module
-        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(module, addJdk(testRootDisposable, ::mockJdk))
+        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(module, addJdk(testRootDisposable, IdeaTestUtil::getMockJdk18))
 
         ModuleRootModificationUtil.addDependency(myModule, createLibraryWithLongPaths(project))
 
@@ -132,7 +133,7 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
     fun testUpdateOnClassRename() = withTestFiles {
         val baseDir = PlatformTestUtil.getOrCreateProjectBaseDir(project)
         val createModuleResult = configureModule(moduleDirPath("module"), baseDir)
-        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createModuleResult.module, addJdk(testRootDisposable, ::mockJdk))
+        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createModuleResult.module, addJdk(testRootDisposable, IdeaTestUtil::getMockJdk18))
 
         val runConfiguration = createConfigurationFromObject("renameTest.Foo", save = true)
 
@@ -146,7 +147,7 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
     fun testUpdateOnPackageRename() = withTestFiles {
         val baseDir = PlatformTestUtil.getOrCreateProjectBaseDir(project)
         val createModuleResult = configureModule(moduleDirPath("module"), baseDir)
-        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createModuleResult.module, addJdk(testRootDisposable, ::mockJdk))
+        ConfigLibraryUtil.configureKotlinRuntimeAndSdk(createModuleResult.module, addJdk(testRootDisposable, IdeaTestUtil::getMockJdk18))
 
         val runConfiguration = createConfigurationFromObject("renameTest.Foo", save = true)
 
@@ -158,7 +159,7 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
     }
 
     fun testWithModuleForJdk6() = withTestFiles {
-        checkModuleInfoName(null, addJdk(testRootDisposable, ::mockJdk))
+        checkModuleInfoName(null, addJdk(testRootDisposable, IdeaTestUtil::getMockJdk18))
     }
 
     fun testWithModuleForJdk9() = withTestFiles {
@@ -184,7 +185,7 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
         val createModuleResult = configureModule(moduleDirPath("module"), baseDir)
         val srcDir = createModuleResult.srcDir!!
 
-        configureRuntime(createModuleResult.module, addJdk(testRootDisposable, ::mockJdk))
+        configureRuntime(createModuleResult.module, addJdk(testRootDisposable, IdeaTestUtil::getMockJdk18))
 
         try {
             val expectedClasses = ArrayList<String>()
@@ -213,7 +214,7 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
             )
             assertEquals(expectedClasses, actualClasses)
         } finally {
-            ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(createModuleResult.module, mockJdk())
+            ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(createModuleResult.module, IdeaTestUtil.getMockJdk18())
         }
     }
 

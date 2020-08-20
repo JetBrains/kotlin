@@ -24,6 +24,7 @@ import com.intellij.refactoring.introduceParameter.Util
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.DocCommentPolicy
 import com.intellij.refactoring.util.occurrences.ExpressionOccurrenceManager
+import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
@@ -316,7 +317,7 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
     protected fun doTest(checkAdditionalAfterdata: Boolean = false, action: (PsiFile) -> Unit) {
         val mainFile = File(testDataPath, fileName())
 
-        PluginTestCaseBase.addJdk(myFixture.projectDisposable, PluginTestCaseBase::mockJdk)
+        PluginTestCaseBase.addJdk(myFixture.projectDisposable, IdeaTestUtil::getMockJdk18)
 
         if (mainFile.extension == KotlinParserDefinition.STD_SCRIPT_SUFFIX) {
             val virtualFile = VfsUtil.findFileByIoFile(mainFile, true)!!
@@ -340,7 +341,7 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
 
             val addKotlinRuntime = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// WITH_RUNTIME") != null
             if (addKotlinRuntime) {
-                ConfigLibraryUtil.configureKotlinRuntimeAndSdk(module, PluginTestCaseBase.mockJdk())
+                ConfigLibraryUtil.configureKotlinRuntimeAndSdk(module, IdeaTestUtil.getMockJdk18())
             }
 
             try {
@@ -349,7 +350,7 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
                 ConfigLibraryUtil.unconfigureLibrariesByDirective(module, fileText)
 
                 if (addKotlinRuntime) {
-                    ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(module, PluginTestCaseBase.mockJdk())
+                    ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(module, IdeaTestUtil.getMockJdk18())
                 }
             }
         }

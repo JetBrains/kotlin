@@ -25,6 +25,7 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx;
 import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.roots.libraries.LibraryTable;
 import com.intellij.openapi.util.io.FileUtilRt;
+import com.intellij.testFramework.IdeaTestUtil;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts;
@@ -123,7 +124,7 @@ public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
 
     @Override
     public Sdk getSdk() {
-        return isJsLibrary ? KotlinSdkType.INSTANCE.createSdkWithUniqueName(emptyList()) : PluginTestCaseBase.mockJdk();
+        return isJsLibrary ? KotlinSdkType.INSTANCE.createSdkWithUniqueName(emptyList()) : IdeaTestUtil.getMockJdk18();
     }
 
     @NotNull

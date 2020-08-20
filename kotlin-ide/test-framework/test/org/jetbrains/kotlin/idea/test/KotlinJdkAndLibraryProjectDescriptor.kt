@@ -20,6 +20,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.OrderRootType
+import com.intellij.testFramework.IdeaTestUtil
 import java.io.File
 
 open class KotlinJdkAndLibraryProjectDescriptor(val libraryFiles: List<File>, val librarySourceFiles: List<File> = emptyList()) :
@@ -33,7 +34,7 @@ open class KotlinJdkAndLibraryProjectDescriptor(val libraryFiles: List<File>, va
         }
     }
 
-    override fun getSdk(): Sdk? = PluginTestCaseBase.mockJdk()
+    override fun getSdk(): Sdk? = IdeaTestUtil.getMockJdk18()
 
     override fun configureModule(module: Module, model: ModifiableRootModel) {
         ConfigLibraryUtil.addLibrary(model, LIBRARY_NAME) {

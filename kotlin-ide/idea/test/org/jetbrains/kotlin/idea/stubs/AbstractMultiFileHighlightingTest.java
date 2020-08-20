@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.idea.stubs;
 
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.testFramework.IdeaTestUtil;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.AstAccessControl;
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 
 import java.io.File;
 
@@ -46,6 +46,6 @@ public abstract class AbstractMultiFileHighlightingTest extends AbstractMultiHig
 
     @Override
     protected Sdk getTestProjectJdk() {
-        return PluginTestCaseBase.mockJdk();
+        return IdeaTestUtil.getMockJdk18();
     }
 }
