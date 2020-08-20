@@ -67,3 +67,4 @@ org.jetbrains.kotlin.nj2k.NewJavaToKotlinConverterMultiFileTestGenerated.testNul
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testJvmOverloadsFunctions,,, FLAKY
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testReturnInnerClasses,,, FLAKY
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testThrowsOnGenericMethod,,, FLAKY
+org.jetbrains.kotlin.idea.debugger.test.ContinuationStackTraceTestGenerated.testSuspendFunWithInner,,, FLAKY
