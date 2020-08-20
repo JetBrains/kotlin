@@ -183,7 +183,7 @@ fun FirDeclaration.resolveStatus(
     containingClass: FirClass<*>?,
     isLocal: Boolean
 ): FirDeclarationStatus {
-    if (status.visibility == Visibilities.UNKNOWN || status.modality == null) {
+    if (status.visibility == Visibilities.UNKNOWN || status.modality == null || status.modality == Modality.OPEN) {
         val visibility = when (status.visibility) {
             Visibilities.UNKNOWN -> when {
                 isLocal -> Visibilities.LOCAL
@@ -192,10 +192,24 @@ fun FirDeclaration.resolveStatus(
             }
             else -> status.visibility
         }
-        val modality = status.modality ?: resolveModality(containingClass)
+        val modality = status.modality?.let {
+            if (it == Modality.OPEN && containingClass?.classKind == ClassKind.INTERFACE && !hasOwnBodyOrAccessorBody()) {
+                Modality.ABSTRACT
+            } else {
+                it
+            }
+        } ?: resolveModality(containingClass)
         return (status as FirDeclarationStatusImpl).resolved(visibility, modality)
     }
     return status
+}
+
+private fun FirDeclaration.hasOwnBodyOrAccessorBody(): Boolean {
+    return when (this) {
+        is FirSimpleFunction -> this.body != null
+        is FirProperty -> this.initializer != null || this.getter?.body != null || this.setter?.body != null
+        else -> true
+    }
 }
 
 private fun FirDeclaration.resolveVisibility(containingClass: FirClass<*>?): Visibility {
@@ -221,9 +235,7 @@ private fun FirDeclaration.resolveModality(containingClass: FirClass<*>?): Modal
                     when {
                         visibility == Visibilities.PRIVATE ->
                             Modality.FINAL
-                        this is FirSimpleFunction && body == null ->
-                            Modality.ABSTRACT
-                        this is FirProperty && initializer == null && getter?.body == null && setter?.body == null ->
+                        !this.hasOwnBodyOrAccessorBody() ->
                             Modality.ABSTRACT
                         else ->
                             Modality.OPEN

@@ -313,6 +313,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         runTest("compiler/fir/analysis-tests/testData/resolve/offOrderMultiBoundGenericOverride.kt");
     }
 
+    @TestMetadata("openInInterface.kt")
+    public void testOpenInInterface() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/openInInterface.kt");
+    }
+
     @TestMetadata("problems2.kt")
     public void testProblems2() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/problems2.kt");
