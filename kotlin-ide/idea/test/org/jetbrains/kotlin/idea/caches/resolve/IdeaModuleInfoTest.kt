@@ -17,10 +17,12 @@ import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
+import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.ModuleTestCase
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ThrowableRunnable
+import com.intellij.util.lang.JavaVersion
 
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.idea.artifacts.AdditionalKotlinArtifacts
@@ -356,7 +358,7 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     fun testSdkForScript() {
         // The first known jdk will be used for scripting if there is no jdk in the project
         runWriteAction {
-            addJdk(testRootDisposable, ::mockJdk6)
+            addJdk(testRootDisposable, IdeaTestUtil::getMockJdk16)
             addJdk(testRootDisposable, ::mockJdk9)
 
             ProjectRootManager.getInstance(project).projectSdk = null
@@ -371,7 +373,7 @@ class IdeaModuleInfoTest : ModuleTestCase() {
 
     fun testSdkForScriptProjectSdk() {
         runWriteAction {
-            addJdk(testRootDisposable, ::mockJdk6)
+            addJdk(testRootDisposable, IdeaTestUtil::getMockJdk16)
             addJdk(testRootDisposable, ::mockJdk9)
 
             ProjectRootManager.getInstance(project).projectSdk = mockJdk9()
@@ -386,10 +388,10 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         val a = module("a")
 
         runWriteAction {
-            addJdk(testRootDisposable, ::mockJdk6)
+            addJdk(testRootDisposable, IdeaTestUtil::getMockJdk16)
             addJdk(testRootDisposable, ::mockJdk9)
 
-            ProjectRootManager.getInstance(project).projectSdk = mockJdk6()
+            ProjectRootManager.getInstance(project).projectSdk = IdeaTestUtil.getMockJdk16()
             with(ModuleRootManager.getInstance(a).modifiableModel) {
                 sdk = mockJdk9()
                 commit()

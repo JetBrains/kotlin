@@ -16,6 +16,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.refactoring.MultiFileTestCase
+import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -31,8 +32,9 @@ abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
         vfsDisposable = allowProjectRootAccess(this)
 
         runWriteAction {
-            PluginTestCaseBase.addJdk(testRootDisposable, PluginTestCaseBase::mockJdk6)
-            ProjectRootManager.getInstance(project).projectSdk = PluginTestCaseBase.mockJdk6()
+            val mockJdk16 = IdeaTestUtil.getMockJdk16()
+            PluginTestCaseBase.addJdk(testRootDisposable) { mockJdk16 }
+            ProjectRootManager.getInstance(project).projectSdk = mockJdk16
         }
     }
 

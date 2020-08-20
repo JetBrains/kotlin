@@ -58,7 +58,7 @@ abstract class AbstractConfigureKotlinTestBase : HeavyPlatformTestCase() {
         KotlinSdkType.setUpIfNeeded(testRootDisposable)
 
         ApplicationManager.getApplication().runWriteAction {
-            addJdk(testRootDisposable) { IdeaTestUtil.getMockJdk(JavaVersion.compose(6)) }
+            addJdk(testRootDisposable, IdeaTestUtil::getMockJdk16)
             addJdk(testRootDisposable, IdeaTestUtil::getMockJdk18)
             addJdk(testRootDisposable, IdeaTestUtil::getMockJdk9)
         }
