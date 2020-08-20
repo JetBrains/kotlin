@@ -20,10 +20,10 @@ import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.psi.PsiFile
+import com.intellij.testFramework.IdeaTestUtil
 import org.jetbrains.idea.maven.model.MavenConstants
 import org.jetbrains.kotlin.idea.configuration.AbstractConfigureProjectByChangingFileTest
 import org.jetbrains.kotlin.idea.configuration.NotificationMessageCollector
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
@@ -57,7 +57,7 @@ abstract class AbstractMavenConfigureProjectByChangingFileTest : AbstractConfigu
         val pomFile = File("$root/$dir", MavenConstants.POM_XML)
 
         if (pomFile.readText().contains("<target>9</target>")) {
-            return PluginTestCaseBase.mockJdk9()
+            return IdeaTestUtil.getMockJdk9()
         } else {
             return super.getProjectJDK()
         }

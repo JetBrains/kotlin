@@ -10,12 +10,12 @@ import com.intellij.debugger.streams.wrapper.StreamChainBuilder
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable
+import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.testFramework.PsiTestUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.debugger.test.DEBUGGER_TESTDATA_PATH_BASE
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 
 abstract class KotlinPsiChainBuilderTestCase(private val relativePath: String) : StreamChainBuilderTestCase() {
     override fun getTestDataPath(): String = "$DEBUGGER_TESTDATA_PATH_BASE/sequence/psi/$relativeTestPath"
@@ -43,7 +43,7 @@ abstract class KotlinPsiChainBuilderTestCase(private val relativePath: String) :
 
 
     override fun getProjectJDK(): Sdk {
-        return PluginTestCaseBase.mockJdk9()
+        return IdeaTestUtil.getMockJdk9()
     }
 
     abstract class Positive(relativePath: String) : KotlinPsiChainBuilderTestCase(relativePath) {

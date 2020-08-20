@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.test;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.ProjectJdkTable;
 import com.intellij.openapi.projectRoots.Sdk;
@@ -26,7 +25,6 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.testFramework.IdeaTestUtil;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.idea.util.IjPlatformUtil;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
@@ -45,12 +43,6 @@ public class PluginTestCaseBase {
             return existing;
         }
         return JavaSdk.getInstance().createJdk(name, sdkHome, true);
-    }
-
-    @TestOnly
-    @NotNull
-    public static Sdk mockJdk9() {
-        return getSdk(new File(PathManager.getCommunityHomePath(), "java/mockJDK-1.9/jre").getPath(), "9");
     }
 
     @NotNull

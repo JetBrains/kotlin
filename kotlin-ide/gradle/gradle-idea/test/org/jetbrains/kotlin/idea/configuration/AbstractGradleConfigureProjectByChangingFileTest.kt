@@ -19,9 +19,8 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.psi.PsiFile
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import com.intellij.testFramework.IdeaTestUtil
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.KotlinTestUtils.*
 import org.jetbrains.plugins.groovy.lang.psi.GroovyFile
 import java.io.File
 
@@ -75,7 +74,7 @@ abstract class AbstractGradleConfigureProjectByChangingFileTest :
         val gradleFile = File(testDataPath, before)
 
         if (gradleFile.readText().contains("1.9")) {
-            return PluginTestCaseBase.mockJdk9()
+            return IdeaTestUtil.getMockJdk9()
         } else {
             return super.getProjectJDK()
         }

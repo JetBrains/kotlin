@@ -22,8 +22,6 @@ import com.intellij.testFramework.ModuleTestCase
 import com.intellij.testFramework.PsiTestUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ThrowableRunnable
-import com.intellij.util.lang.JavaVersion
-
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
 import org.jetbrains.kotlin.idea.artifacts.AdditionalKotlinArtifacts
 import org.jetbrains.kotlin.idea.caches.project.*
@@ -359,7 +357,7 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         // The first known jdk will be used for scripting if there is no jdk in the project
         runWriteAction {
             addJdk(testRootDisposable, IdeaTestUtil::getMockJdk16)
-            addJdk(testRootDisposable, ::mockJdk9)
+            addJdk(testRootDisposable, IdeaTestUtil::getMockJdk9)
 
             ProjectRootManager.getInstance(project).projectSdk = null
         }
@@ -372,34 +370,40 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     }
 
     fun testSdkForScriptProjectSdk() {
-        runWriteAction {
-            addJdk(testRootDisposable, IdeaTestUtil::getMockJdk16)
-            addJdk(testRootDisposable, ::mockJdk9)
+        val mockJdk16 = IdeaTestUtil.getMockJdk16()
+        val mockJdk9 = IdeaTestUtil.getMockJdk9()
 
-            ProjectRootManager.getInstance(project).projectSdk = mockJdk9()
+        runWriteAction {
+            addJdk(testRootDisposable) { mockJdk16 }
+            addJdk(testRootDisposable) { mockJdk9 }
+
+            ProjectRootManager.getInstance(project).projectSdk = mockJdk9
         }
 
         with(createFileInProject("script.kts").moduleInfo) {
-            dependencies().filterIsInstance<SdkInfo>().single { it.sdk == mockJdk9() }
+            dependencies().filterIsInstance<SdkInfo>().single { it.sdk == mockJdk9 }
         }
     }
 
     fun testSdkForScriptModuleSdk() {
+        val mockJdk16 = IdeaTestUtil.getMockJdk16()
+        val mockJdk9 = IdeaTestUtil.getMockJdk9()
+
         val a = module("a")
 
         runWriteAction {
-            addJdk(testRootDisposable, IdeaTestUtil::getMockJdk16)
-            addJdk(testRootDisposable, ::mockJdk9)
+            addJdk(testRootDisposable) { mockJdk16 }
+            addJdk(testRootDisposable) { mockJdk9 }
 
-            ProjectRootManager.getInstance(project).projectSdk = IdeaTestUtil.getMockJdk16()
+            ProjectRootManager.getInstance(project).projectSdk = mockJdk16
             with(ModuleRootManager.getInstance(a).modifiableModel) {
-                sdk = mockJdk9()
+                sdk = mockJdk9
                 commit()
             }
         }
 
         with(createFileInModule(a, "script.kts").moduleInfo) {
-            dependencies().filterIsInstance<SdkInfo>().first { it.sdk == mockJdk9() }
+            dependencies().filterIsInstance<SdkInfo>().first { it.sdk == mockJdk9 }
         }
     }
 

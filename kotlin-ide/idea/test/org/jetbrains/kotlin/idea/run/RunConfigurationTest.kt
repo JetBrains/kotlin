@@ -163,11 +163,11 @@ class RunConfigurationTest : AbstractRunConfigurationTest() {
     }
 
     fun testWithModuleForJdk9() = withTestFiles {
-        checkModuleInfoName("MAIN", addJdk(testRootDisposable, ::mockJdk9))
+        checkModuleInfoName("MAIN", addJdk(testRootDisposable, IdeaTestUtil::getMockJdk9))
     }
 
     fun testWithModuleForJdk9WithoutModuleInfo() = withTestFiles {
-        checkModuleInfoName(null, addJdk(testRootDisposable, ::mockJdk9))
+        checkModuleInfoName(null, addJdk(testRootDisposable, IdeaTestUtil::getMockJdk9))
     }
 
     private fun TestFileContext.checkModuleInfoName(moduleName: String?, sdk: Sdk) {
