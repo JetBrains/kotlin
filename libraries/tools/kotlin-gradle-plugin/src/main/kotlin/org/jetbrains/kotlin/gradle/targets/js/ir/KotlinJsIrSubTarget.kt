@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Task
 import org.gradle.api.plugins.ExtensionAware
+import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.BrowserDistribution
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
+import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
@@ -174,6 +176,7 @@ abstract class KotlinJsIrSubTarget(
     private fun configureMain(compilation: KotlinJsIrCompilation) {
         configureRun(compilation)
         configureBuild(compilation)
+        configureLibrary(compilation)
     }
 
     protected abstract fun configureRun(compilation: KotlinJsIrCompilation)
@@ -181,7 +184,49 @@ abstract class KotlinJsIrSubTarget(
     protected abstract fun configureBuild(compilation: KotlinJsIrCompilation)
 
     protected fun configureLibrary(compilation: KotlinJsIrCompilation) {
+        val project = compilation.target.project
 
+        val processResourcesTask = target.project.tasks.named(compilation.processResourcesTaskName)
+
+        val assembleTaskProvider = project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
+
+        val npmProject = compilation.npmProject
+
+        compilation.binaries
+            .matching { it is Library }
+            .all { binary ->
+                binary as Library
+
+                val mode = binary.mode
+
+                val prepareJsLibrary = registerSubTargetTask<Copy>(
+                    disambiguateCamelCased(
+                        binary.name,
+                        PREPARE_JS_LIBRARY_TASK_NAME
+                    )
+                ) {
+                    it.from(processResourcesTask)
+                    it.from(project.tasks.named(npmProject.publicPackageJsonTaskName))
+                    it.from(binary.linkTask)
+
+                    it.into(binary.distribution.directory)
+                }
+
+                if (mode == KotlinJsBinaryMode.PRODUCTION) {
+                    assembleTaskProvider.dependsOn(prepareJsLibrary)
+
+                    registerSubTargetTask<Task>(
+                        disambiguateCamelCased(
+                            binary.name,
+                            DISTRIBUTION_TASK_NAME
+                        )
+                    ) {
+                        it.dependsOn(prepareJsLibrary)
+
+                        it.outputs.dir(distribution.directory)
+                    }
+                }
+            }
     }
 
     internal inline fun <reified T : Task> registerSubTargetTask(
@@ -199,5 +244,7 @@ abstract class KotlinJsIrSubTarget(
 
         const val DISTRIBUTE_RESOURCES_TASK_NAME = "distributeResources"
         const val DISTRIBUTION_TASK_NAME = "distribution"
+
+        const val PREPARE_JS_LIBRARY_TASK_NAME = "prepareJsLibrary"
     }
 }
