@@ -72,7 +72,7 @@ class LinkableContentTest : AbstractCoreTest() {
                     sourceRoots = listOf("$testDataDir/jsMain/kotlin")
                     sourceLinks = listOf(
                         SourceLinkDefinitionImpl(
-                            localDirectory = "jsMain/kotlin",
+                            localDirectory = "$testDataDir/jsMain/kotlin",
                             remoteUrl = URL("https://github.com/user/repo/tree/master/src/jsMain/kotlin"),
                             remoteLineSuffix = "#L"
                         )
@@ -85,7 +85,7 @@ class LinkableContentTest : AbstractCoreTest() {
                     sourceRoots = listOf("$testDataDir/jvmMain/kotlin")
                     sourceLinks = listOf(
                         SourceLinkDefinitionImpl(
-                            localDirectory = "jvmMain/kotlin",
+                            localDirectory = "$testDataDir/jvmMain/kotlin",
                             remoteUrl = URL("https://github.com/user/repo/tree/master/src/jvmMain/kotlin"),
                             remoteLineSuffix = "#L"
                         )
@@ -221,7 +221,10 @@ class LinkableContentTest : AbstractCoreTest() {
                     child?.text == "S"
                 }?.safeAs<ContentDRILink>()
 
-                Assertions.assertEquals((sample.documentable as WithGenerics).generics.first().dri, returnTypeNode?.address)
+                Assertions.assertEquals(
+                    (sample.documentable as WithGenerics).generics.first().dri,
+                    returnTypeNode?.address
+                )
             }
         }
     }
