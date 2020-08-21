@@ -40,6 +40,7 @@ abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTo
     protected abstract val containingDeclarationProvider: KtSymbolContainingDeclarationProvider
     protected abstract val symbolProvider: KtSymbolProvider
     protected abstract val callResolver: KtCallResolver
+    protected abstract val completionCandidateChecker: KtCompletionCandidateChecker
 
 
     /// TODO: get rid of
@@ -119,10 +120,16 @@ abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTo
         return resolveToSymbols().singleOrNull()
     }
 
-    abstract fun resolveAndCheckReceivers(
-        firSymbolForCandidate: KtCallableSymbol,
-        originalFile: KtFile,
-        nameExpression: KtSimpleNameExpression,
-        possibleReceiver: KtExpression?,
-    ): Boolean
+    fun KtCallableSymbol.checkExtensionIsSuitable(
+        originalPsiFile: KtFile,
+        originalPosition: PsiElement?,
+        psiFakeCompletionExpression: KtSimpleNameExpression,
+        psiReceiverExpression: KtExpression?,
+    ): Boolean = completionCandidateChecker.checkExtensionFitsCandidate(
+        this,
+        originalPsiFile,
+        originalPosition,
+        psiFakeCompletionExpression,
+        psiReceiverExpression
+    )
 }
