@@ -15,19 +15,13 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenProperties
-import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.constructedClassType
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
@@ -61,32 +55,7 @@ internal class ClassMemberGenerator(
                     convertFunctionContent(irPrimaryConstructor, primaryConstructor, containingClass = klass)
                 }
             }
-            val processedCallableNames = klass.declarations.mapNotNullTo(mutableSetOf()) {
-                when (it) {
-                    is FirSimpleFunction -> it.name
-                    is FirProperty -> it.name
-                    else -> null
-                }
-            }
-            // Add delegated members *before* fake override generations.
-            // Otherwise, fake overrides for delegated members, which are redundant, will be added.
-            irClass.declarations.filter {
-                it.origin == IrDeclarationOrigin.DELEGATED_MEMBER
-            }.forEach {
-                when (it) {
-                    is IrSimpleFunction -> processedCallableNames += it.name
-                    is IrProperty -> processedCallableNames += it.name
-                }
-            }
-            // Add synthetic members *before* fake override generations.
-            // Otherwise, redundant members, e.g., synthetic toString _and_ fake override toString, will be added.
-            if (irClass.isInline && klass.getPrimaryConstructorIfAny() != null) {
-                processedCallableNames += DataClassMembersGenerator(components).generateInlineClassMembers(klass, irClass)
-            }
-            if (irClass.isData && klass.getPrimaryConstructorIfAny() != null) {
-                processedCallableNames += DataClassMembersGenerator(components).generateDataClassMembers(klass, irClass)
-            }
-            with(fakeOverrideGenerator) { irClass.addFakeOverrides(klass, processedCallableNames) }
+            fakeOverrideGenerator.bindOverriddenSymbols(irClass.declarations)
             klass.declarations.forEach { declaration ->
                 when {
                     declaration is FirTypeAlias -> {

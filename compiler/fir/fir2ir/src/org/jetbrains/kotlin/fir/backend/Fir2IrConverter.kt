@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.evaluate.evaluateConstants
 import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
 import org.jetbrains.kotlin.fir.backend.generators.CallAndReferenceGenerator
+import org.jetbrains.kotlin.fir.backend.generators.DataClassMembersGenerator
 import org.jetbrains.kotlin.fir.backend.generators.FakeOverrideGenerator
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.descriptors.WrappedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
@@ -89,38 +91,88 @@ class Fir2IrConverter(
                 it, irClass, isLocal = true
             )
         }
+        val processedCallableNames = mutableSetOf<Name>()
         for (declaration in sortBySynthetic(anonymousObject.declarations)) {
             if (declaration is FirRegularClass) {
                 registerClassAndNestedClasses(declaration, irClass)
                 processClassAndNestedClassHeaders(declaration)
             }
             val irDeclaration = processMemberDeclaration(declaration, anonymousObject, irClass) ?: continue
+            when (declaration) {
+                is FirSimpleFunction -> processedCallableNames += declaration.name
+                is FirProperty -> processedCallableNames += declaration.name
+            }
             irClass.declarations += irDeclaration
         }
-        return irClass
-    }
+        // Add delegated members *before* fake override generations.
+        // Otherwise, fake overrides for delegated members, which are redundant, will be added.
+        processedCallableNames += delegatedMemberNames(irClass)
+        with(fakeOverrideGenerator) {
+            irClass.addFakeOverrides(anonymousObject, processedCallableNames)
+        }
 
-    // Sort declarations so that all non-synthetic declarations are before synthetic ones.
-    // This is needed because converting synthetic fields for implementation delegation needs to know
-    // existing declarations in the class to avoid adding redundant delegated members.
-    private fun sortBySynthetic(declarations: List<FirDeclaration>) : Iterable<FirDeclaration> {
-        return declarations.sortedBy { it.isSynthetic }
+        return irClass
     }
 
     private fun processClassMembers(
         regularClass: FirRegularClass,
         irClass: IrClass = classifierStorage.getCachedIrClass(regularClass)!!
     ): IrClass {
-        regularClass.getPrimaryConstructorIfAny()?.let {
-            irClass.declarations += declarationStorage.createIrConstructor(
-                it, irClass, isLocal = regularClass.isLocal
-            )
+        val irConstructor = regularClass.getPrimaryConstructorIfAny()?.let {
+            declarationStorage.createIrConstructor(it, irClass, isLocal = regularClass.isLocal)
         }
+        if (irConstructor != null) {
+            irClass.declarations += irConstructor
+        }
+        val processedCallableNames = mutableSetOf<Name>()
         for (declaration in sortBySynthetic(regularClass.declarations)) {
             val irDeclaration = processMemberDeclaration(declaration, regularClass, irClass) ?: continue
+            when (declaration) {
+                is FirSimpleFunction -> processedCallableNames += declaration.name
+                is FirProperty -> processedCallableNames += declaration.name
+            }
             irClass.declarations += irDeclaration
         }
+        // Add delegated members *before* fake override generations.
+        // Otherwise, fake overrides for delegated members, which are redundant, will be added.
+        processedCallableNames += delegatedMemberNames(irClass)
+        // Add synthetic members *before* fake override generations.
+        // Otherwise, redundant members, e.g., synthetic toString _and_ fake override toString, will be added.
+        if (irConstructor != null && (irClass.isInline || irClass.isData)) {
+            declarationStorage.enterScope(irConstructor)
+            val dataClassMembersGenerator = DataClassMembersGenerator(components)
+            if (irClass.isInline) {
+                processedCallableNames += dataClassMembersGenerator.generateInlineClassMembers(regularClass, irClass)
+            }
+            if (irClass.isData) {
+                processedCallableNames += dataClassMembersGenerator.generateDataClassMembers(regularClass, irClass)
+            }
+            declarationStorage.leaveScope(irConstructor)
+        }
+        with(fakeOverrideGenerator) {
+            irClass.addFakeOverrides(regularClass, processedCallableNames)
+        }
+
         return irClass
+    }
+
+    private fun delegatedMemberNames(irClass: IrClass): List<Name> {
+        return irClass.declarations.filter {
+            it.origin == IrDeclarationOrigin.DELEGATED_MEMBER
+        }.mapNotNull {
+            when (it) {
+                is IrSimpleFunction -> it.name
+                is IrProperty -> it.name
+                else -> null
+            }
+        }
+    }
+
+    // Sort declarations so that all non-synthetic declarations are before synthetic ones.
+    // This is needed because converting synthetic fields for implementation delegation needs to know
+    // existing declarations in the class to avoid adding redundant delegated members.
+    private fun sortBySynthetic(declarations: List<FirDeclaration>): Iterable<FirDeclaration> {
+        return declarations.sortedBy { it.isSynthetic }
     }
 
     private fun registerClassAndNestedClasses(regularClass: FirRegularClass, parent: IrDeclarationParent): IrClass {
