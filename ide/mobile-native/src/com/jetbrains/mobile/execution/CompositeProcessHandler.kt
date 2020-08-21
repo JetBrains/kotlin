@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger
 class CompositeProcessHandler(val handlers: List<ProcessHandler>) : ProcessHandler() {
     private val terminatedCount = AtomicInteger()
 
-    inner class EachListener : ProcessAdapter() {
+    private inner class EachListener : ProcessAdapter() {
         override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
             this@CompositeProcessHandler.notifyTextAvailable(event.text, outputType)
         }
