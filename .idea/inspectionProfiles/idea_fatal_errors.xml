@@ -3622,7 +3622,6 @@
           <module name="intellij.platform.duplicates.analysis" />
         </modules-set>
         <modules-set>
-          <module name="intellij.java.jps.javacRefScanner8" />
           <module name="intellij.platform.jps.build.javac.rt" />
         </modules-set>
         <modules-set>

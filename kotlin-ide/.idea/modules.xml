@@ -157,7 +157,6 @@
     <module old-name="javaFX" new-name="intellij.javaFX" />
     <module old-name="javaFX-CE" new-name="intellij.javaFX.community" />
     <module old-name="javaFX-jps-plugin" new-name="intellij.javaFX.jps" />
-    <module old-name="javac-ref-scanner-8" new-name="intellij.java.jps.javacRefScanner8" />
     <module old-name="javac2" new-name="intellij.java.compiler.antTasks" />
     <module old-name="javacvs-src" new-name="intellij.vcs.cvs.javacvs" />
     <module old-name="jetgroovy" new-name="intellij.groovy" />
@@ -554,7 +553,6 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/java/java-impl/intellij.java.impl.iml" filepath="$PROJECT_DIR$/intellij/java/java-impl/intellij.java.impl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/java/java-indexing-api/intellij.java.indexing.iml" filepath="$PROJECT_DIR$/intellij/java/java-indexing-api/intellij.java.indexing.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/java/java-indexing-impl/intellij.java.indexing.impl.iml" filepath="$PROJECT_DIR$/intellij/java/java-indexing-impl/intellij.java.indexing.impl.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/jps/javac-ref-scanner-8/intellij.java.jps.javacRefScanner8.iml" filepath="$PROJECT_DIR$/intellij/jps/javac-ref-scanner-8/intellij.java.jps.javacRefScanner8.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/java/execution/jshell-frontend/intellij.java.jshell.frontend.iml" filepath="$PROJECT_DIR$/intellij/java/execution/jshell-frontend/intellij.java.jshell.frontend.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/java/execution/jshell-protocol/intellij.java.jshell.protocol.iml" filepath="$PROJECT_DIR$/intellij/java/execution/jshell-protocol/intellij.java.jshell.protocol.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/IntelliLang/intellij.java.langInjection.iml" filepath="$PROJECT_DIR$/intellij/plugins/IntelliLang/intellij.java.langInjection.iml" />

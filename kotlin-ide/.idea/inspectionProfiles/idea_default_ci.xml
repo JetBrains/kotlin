@@ -3132,7 +3132,6 @@
           <module name="intellij.java.indexing.impl" />
           <module name="intellij.java.jam" />
           <module name="intellij.java.jam.impl" />
-          <module name="intellij.java.jps.javacRefScanner8" />
           <module name="intellij.java.jshell.protocol" />
           <module name="intellij.java.manifest" />
           <module name="intellij.java.psi" />

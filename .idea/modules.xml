@@ -403,7 +403,6 @@
     <module old-name="javaFX-CE" new-name="intellij.javaFX.community" />
     <module old-name="javaFX-CSS" new-name="intellij.javaFX.css" />
     <module old-name="javaFX-jps-plugin" new-name="intellij.javaFX.jps" />
-    <module old-name="javac-ref-scanner-8" new-name="intellij.java.jps.javacRefScanner8" />
     <module old-name="javac2" new-name="intellij.java.compiler.antTasks" />
     <module old-name="javacvs-src" new-name="intellij.vcs.cvs.javacvs" />
     <module old-name="javaee-api" new-name="intellij.javaee.platform" />
