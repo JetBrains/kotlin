@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.builders.IrStatementsBuilder
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irTemporary
+import org.jetbrains.kotlin.ir.builders.parent
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrWhen
@@ -75,13 +76,13 @@ abstract class PowerAssertGenerator {
     node: ExpressionNode,
     thenPart: IrStatementsBuilder<*>.(subStack: MutableList<IrStackVariable>) -> IrExpression
   ): IrWhen {
-    val expressions = node.getExpressionsCopy()
+    val expressions = node.getExpressionsCopy(this.parent)
     val stackTransformer = StackBuilder(this, stack, expressions)
     val transformed = expressions.first().transform(stackTransformer, null)
     return irIfThen(irNot(transformed), thenPart(stack.toMutableList()))
   }
 
-  inner class StackBuilder(
+  class StackBuilder(
     private val builder: IrStatementsBuilder<*>,
     private val stack: MutableList<IrStackVariable>,
     private val transform: List<IrExpression>

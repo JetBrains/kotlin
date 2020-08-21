@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   id("java-gradle-plugin")
   kotlin("jvm")
-  kotlin("kapt")
 
   id("com.gradle.plugin-publish")
 }
@@ -11,9 +10,6 @@ plugins {
 dependencies {
   implementation(kotlin("stdlib"))
   implementation(kotlin("gradle-plugin-api"))
-
-  kapt("com.google.auto.service:auto-service:1.0-rc6")
-  compileOnly("com.google.auto.service:auto-service-annotations:1.0-rc6")
 }
 
 pluginBundle {

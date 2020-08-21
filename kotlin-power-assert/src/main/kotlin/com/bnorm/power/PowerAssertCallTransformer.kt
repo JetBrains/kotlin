@@ -23,11 +23,7 @@ import org.jetbrains.kotlin.backend.common.ir.asSimpleLambda
 import org.jetbrains.kotlin.backend.common.ir.inline
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.at
-import org.jetbrains.kotlin.backend.common.serialization.findPackage
-import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -37,6 +33,7 @@ import org.jetbrains.kotlin.ir.builders.irCallOp
 import org.jetbrains.kotlin.ir.builders.irFalse
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.builders.irString
+import org.jetbrains.kotlin.ir.builders.parent
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.path
@@ -47,18 +44,21 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.IrTypeArgument
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.types.isBoolean
+import org.jetbrains.kotlin.ir.types.isSubtypeOf
 import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.referenceFunction
+import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.isBoolean
-import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.io.File
 
@@ -90,16 +90,18 @@ class PowerAssertCallTransformer(
   }
 
   override fun visitCall(expression: IrCall): IrExpression {
-    val function = expression.symbol.descriptor
-    if (functions.none { function.fqNameSafe == it })
+    // TODO expression.symbol.owner.fqNameSafe includes the wrapping ClassKt while descriptor doesn't
+    val fqName = expression.symbol.descriptor.fqNameSafe
+    if (functions.none { fqName == it })
       return super.visitCall(expression)
 
-    val delegate = findDelegate(function) ?: run {
+    val delegate = findDelegate(fqName) ?: run {
       // Find a valid delegate function or do not translate
       // TODO log a warning
       return super.visitCall(expression)
     }
 
+    val function = expression.symbol.owner
     val assertionArgument = expression.getValueArgument(0)!!
     val messageArgument = if (function.valueParameters.size == 2) expression.getValueArgument(1) else null
 
@@ -114,7 +116,7 @@ class PowerAssertCallTransformer(
           val title = when {
             messageArgument is IrConst<*> -> messageArgument
             messageArgument is IrStringConcatenation -> messageArgument
-            lambda != null -> lambda.inline()
+            lambda != null -> lambda.inline(parent)
             messageArgument != null -> {
               val invoke = messageArgument.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INVOKE }
               irCallOp(invoke.symbol, invoke.returnType, messageArgument)
@@ -142,13 +144,11 @@ class PowerAssertCallTransformer(
     fun buildCall(builder: IrBuilderWithScope, message: IrExpression): IrExpression
   }
 
-  private fun findDelegate(function: FunctionDescriptor): FunctionDelegate? {
-    fun KotlinType.toIrType() = context.typeTranslator.translateType(this)
-
-    return context.findOverloads(function)
+  private fun findDelegate(fqName: FqName): FunctionDelegate? {
+    return context.findOverloads(fqName)
       .mapNotNull { overload ->
         // TODO allow other signatures than (Boolean, String) and (Boolean, () -> String))
-        val parameters = overload.descriptor.valueParameters
+        val parameters = overload.owner.valueParameters
         if (parameters.size != 2) return@mapNotNull null
         if (!parameters[0].type.isBoolean()) return@mapNotNull null
 
@@ -156,7 +156,7 @@ class PowerAssertCallTransformer(
           isStringSupertype(parameters[1].type) -> {
             object : FunctionDelegate {
               override fun buildCall(builder: IrBuilderWithScope, message: IrExpression): IrExpression = with(builder) {
-                irCall(overload, type = overload.descriptor.returnType!!.toIrType()).apply {
+                irCall(overload, type = overload.owner.returnType).apply {
                   putValueArgument(0, irFalse())
                   putValueArgument(1, message)
                 }
@@ -166,6 +166,7 @@ class PowerAssertCallTransformer(
           isStringFunction(parameters[1].type) -> {
             object : FunctionDelegate {
               override fun buildCall(builder: IrBuilderWithScope, message: IrExpression): IrExpression = with(builder) {
+                val scope = this
                 val lambda = buildFun {
                   name = Name.special("<anonymous>")
                   returnType = context.irBuiltIns.stringType
@@ -176,30 +177,35 @@ class PowerAssertCallTransformer(
                   body = bodyBuilder.irBlockBody {
                     +irReturn(message)
                   }
+                  parent = scope.parent
                 }
                 val expression = IrFunctionExpressionImpl(-1, -1, context.irBuiltIns.stringType, lambda, IrStatementOrigin.LAMBDA)
-                irCall(overload, type = overload.descriptor.returnType!!.toIrType()).apply {
+                irCall(overload, type = overload.owner.returnType).apply {
                   putValueArgument(0, irFalse())
                   putValueArgument(1, expression)
                 }
               }
             }
           }
-          else -> null
+          else -> {
+            null
+          }
         }
       }
       .singleOrNull()
   }
 
-  private fun isStringFunction(type: KotlinType): Boolean =
-    type.isBuiltinFunctionalType && type.arguments.size == 1 && isStringSupertype(type.arguments.first().type)
+  private fun isStringFunction(type: IrType): Boolean =
+    type.isFunctionOrKFunction() && type is IrSimpleType && (type.arguments.size == 1 && isStringSupertype(type.arguments.first()))
 
-  private fun isStringSupertype(type: KotlinType): Boolean =
-    context.builtIns.stringType.isSubtypeOf(type)
+  private fun isStringSupertype(argument: IrTypeArgument): Boolean =
+    argument is IrTypeProjection && isStringSupertype(argument.type)
+
+  private fun isStringSupertype(type: IrType): Boolean =
+    context.irBuiltIns.stringType.isSubtypeOf(type, context.irBuiltIns)
 }
 
 // TODO is this the best way to find overload functions?
-private fun IrPluginContext.findOverloads(function: FunctionDescriptor): List<IrFunctionSymbol> =
-  function.findPackage().getMemberScope()
-    .getContributedFunctions(function.name, NoLookupLocation.FROM_BACKEND)
-    .map { symbolTable.referenceFunction(it) }
+private fun IrPluginContext.findOverloads(fqName: FqName): List<IrFunctionSymbol> {
+  return referenceFunctions(fqName).toList()
+}

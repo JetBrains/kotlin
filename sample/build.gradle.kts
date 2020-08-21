@@ -5,7 +5,7 @@ buildscript {
 }
 
 plugins {
-  kotlin("multiplatform") version "1.3.70"
+  kotlin("multiplatform") version "1.4.0"
 }
 apply(plugin = "com.bnorm.power.kotlin-power-assert")
 
@@ -23,15 +23,9 @@ kotlin {
       }
     }
   }
-  js {
+  js(IR) {
     browser()
     nodejs()
-
-    compilations.all {
-      kotlinOptions {
-        kotlinOptions.freeCompilerArgs += listOf("-Xir-produce-klib-dir", "-Xir-produce-js")
-      }
-    }
   }
 
   val osName = System.getProperty("os.name")
@@ -43,9 +37,6 @@ kotlin {
 
   sourceSets {
     val commonMain by getting {
-      dependencies {
-        implementation(kotlin("stdlib"))
-      }
     }
     val commonTest by getting {
       dependencies {
@@ -53,19 +44,9 @@ kotlin {
         implementation(kotlin("test-annotations-common"))
       }
     }
-    val jvmMain by getting {
-      dependencies {
-        implementation(kotlin("stdlib-jdk8"))
-      }
-    }
     val jvmTest by getting {
       dependencies {
         implementation(kotlin("test-junit"))
-      }
-    }
-    val jsMain by getting {
-      dependencies {
-        implementation(kotlin("stdlib-js"))
       }
     }
     val jsTest by getting {

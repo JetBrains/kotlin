@@ -16,13 +16,14 @@
 
 package com.bnorm.power
 
-import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrWhen
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 sealed class Node {
@@ -31,7 +32,7 @@ sealed class Node {
   val children: List<Node> get() = mutableChildren
 
   protected fun dump(builder: StringBuilder, indent: Int) {
-    builder.append("  ".repeat(indent)).append(this).appendln()
+    builder.append("  ".repeat(indent)).append(this).appendLine()
     for (child in children) {
       child.dump(builder, indent + 1)
     }
@@ -67,10 +68,10 @@ class ExpressionNode(
     _expressions.add(expression)
   }
 
-  fun getExpressionsCopy(): List<IrExpression> {
+  fun getExpressionsCopy(initialParent: IrDeclarationParent?): List<IrExpression> {
     // Return a copy of all the expression by creating a deep copy of the head
     // expression and running back through the assertion tree builder
-    val headCopy = _expressions.first().deepCopyWithVariables()
+    val headCopy = _expressions.first().deepCopyWithSymbols(initialParent)
     return (buildAssertTree(headCopy).children.single() as ExpressionNode)._expressions
   }
 
@@ -101,7 +102,7 @@ fun buildAssertTree(expression: IrExpression): RootNode {
     }
 
     override fun visitCall(expression: IrCall, data: Node) {
-      if (expression.symbol.descriptor.name.asString() == "EQEQ" && expression.origin == IrStatementOrigin.EXCLEQ) {
+      if (expression.symbol.owner.name.asString() == "EQEQ" && expression.origin == IrStatementOrigin.EXCLEQ) {
         // Skip the EQEQ part of a EXCLEQ call
         expression.acceptChildren(this, data)
       } else {

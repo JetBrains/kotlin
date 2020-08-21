@@ -63,6 +63,7 @@ fun IrBuilderWithScope.buildMessage(
 
     val columnOffset: Int = when (original) {
       is IrMemberAccessExpression -> {
+        // TODO IrFunction doesn't have 'isInfix' as a property
         val descriptor = original.symbol.descriptor
         when {
           descriptor is FunctionDescriptor && descriptor.isInfix -> source.indexOf(descriptor.name.asString())
