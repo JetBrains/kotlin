@@ -18,6 +18,7 @@
       <option name="STATIC_FIELD_NAME_PREFIX" value="our" />
       <option name="PREFER_LONGER_NAMES" value="false" />
       <option name="VISIBILITY" value="EscalateVisible" />
+      <option name="USE_EXTERNAL_ANNOTATIONS" value="true" />
       <option name="PACKAGES_TO_USE_IMPORT_ON_DEMAND">
         <value>
           <package name="java.awt" withSubpackages="false" static="false" />
@@ -29,9 +30,18 @@
     <JetCodeStyleSettings>
       <option name="PACKAGES_TO_USE_STAR_IMPORTS">
         <value>
-          <package name="java.util" withSubpackages="false" static="false" />
-          <package name="com.intellij.ui.layout" withSubpackages="true" static="false" />
-          <package name="kotlinx.android.synthetic" withSubpackages="true" static="false" />
+          <package name="java.util" alias="false" withSubpackages="false" />
+          <package name="com.intellij.ui.layout" alias="false" withSubpackages="true" />
+          <package name="kotlinx.android.synthetic" alias="false" withSubpackages="true" />
+        </value>
+      </option>
+      <option name="PACKAGES_IMPORT_LAYOUT">
+        <value>
+          <package name="" alias="false" withSubpackages="true" />
+          <package name="java" alias="false" withSubpackages="true" />
+          <package name="javax" alias="false" withSubpackages="true" />
+          <package name="kotlin" alias="false" withSubpackages="true" />
+          <package name="" alias="true" withSubpackages="true" />
         </value>
       </option>
     </JetCodeStyleSettings>
