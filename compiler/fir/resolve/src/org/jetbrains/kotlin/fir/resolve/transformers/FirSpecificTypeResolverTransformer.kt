@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.PrivateForInline
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.typeResolver
@@ -69,9 +67,20 @@ class FirSpecificTypeResolverTransformer(
             }
         } else {
             buildErrorTypeRef {
-                source = resolvedType.diagnostic.safeAs<ConeUnexpectedTypeArgumentsError>()
-                    ?.source.safeAs()
-                    ?: typeRef.source
+                val typeRefSourceKind = typeRef.source?.kind
+                val diagnosticSource = resolvedType.diagnostic.safeAs<ConeUnexpectedTypeArgumentsError>()
+                    ?.source.safeAs<FirSourceElement>()
+
+                source = if (diagnosticSource != null) {
+                    if (typeRefSourceKind is FirFakeSourceElementKind) {
+                        diagnosticSource.fakeElement(typeRefSourceKind)
+                    } else {
+                        diagnosticSource
+                    }
+                } else {
+                    typeRef.source
+                }
+
                 diagnostic = resolvedType.diagnostic
             }
         }.compose()

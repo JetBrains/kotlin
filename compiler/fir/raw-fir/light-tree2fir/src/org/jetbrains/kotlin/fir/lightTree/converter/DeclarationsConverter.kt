@@ -711,7 +711,7 @@ class DeclarationsConverter(
         val defaultVisibility = classWrapper.defaultConstructorVisibility()
         val firDelegatedCall = buildDelegatedConstructorCall {
             source = delegatedConstructorSource ?: selfTypeSource?.fakeElement(FirFakeSourceElementKind.DelegatingConstructorCall)
-            constructedTypeRef = classWrapper.delegatedSuperTypeRef
+            constructedTypeRef = classWrapper.delegatedSuperTypeRef.copyWithNewSourceKind(FirFakeSourceElementKind.ImplicitTypeRef)
             isThis = false
             extractArgumentsFrom(classWrapper.superTypeCallEntry, stubMode)
         }
@@ -845,7 +845,7 @@ class DeclarationsConverter(
             } else {
                 constructorDelegationCall.toFirSourceElement()
             }
-            constructedTypeRef = delegatedType
+            constructedTypeRef = delegatedType.copyWithNewSourceKind(FirFakeSourceElementKind.ImplicitTypeRef)
             this.isThis = isThis
             extractArgumentsFrom(firValueArguments, stubMode)
         }

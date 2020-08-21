@@ -42,3 +42,9 @@ class F(var a: Int, b: Int, closure: () -> Unit, instance: F?) {
         this.a = 30
     }
 }
+
+open class Base(val x: Int)
+
+class Derived : Base(<!NO_THIS!>this<!>.<!UNRESOLVED_REFERENCE!>y<!>) { // FE 1.0 reports NO_THIS here
+    val y = 42
+}

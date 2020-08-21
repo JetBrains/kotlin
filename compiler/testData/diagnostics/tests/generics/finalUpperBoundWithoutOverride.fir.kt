@@ -59,7 +59,7 @@ class MessageManager11<A> : <!UNRESOLVED_REFERENCE!>Message5<Message5<A>><!>() {
     fun <T : <!UNRESOLVED_REFERENCE!>Message5<A><!>> execute() {}
 }
 
-data class MessageManager12(val x: Int) : <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>Message5<Message2><!>() {
+data class MessageManager12(val x: Int) : <!UNRESOLVED_REFERENCE!>Message5<Message2><!>() {
     fun <T : Message2> execute() {}
 }
 

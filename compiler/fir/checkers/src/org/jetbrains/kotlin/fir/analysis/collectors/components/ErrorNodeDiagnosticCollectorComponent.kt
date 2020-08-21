@@ -33,15 +33,6 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
     }
 
     override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: CheckerContext) {
-        when (val lastContainingDeclaration = data.containingDeclarations.lastOrNull()) {
-            is FirDefaultPropertyAccessor -> {
-                // It always uses the same type ref as the corresponding property
-                return
-            }
-            else -> if (lastContainingDeclaration?.source?.kind is FirFakeSourceElementKind) {
-                return
-            }
-        }
         val source = errorTypeRef.source ?: return
         runCheck { reportFirDiagnostic(errorTypeRef.diagnostic, source, it) }
     }

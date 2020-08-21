@@ -86,3 +86,21 @@ FILE: instanceAccessBeforeSuperCall.kt
         }
 
     }
+    public open class Base : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+    }
+    public final class Derived : R|Base| {
+        public constructor(): R|Derived| {
+            super<R|Base|>(this#.<Unresolved name: y>#)
+        }
+
+        public final val y: R|kotlin/Int| = Int(42)
+            public get(): R|kotlin/Int|
+
+    }

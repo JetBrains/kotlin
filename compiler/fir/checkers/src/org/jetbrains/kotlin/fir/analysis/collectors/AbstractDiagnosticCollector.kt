@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.collectors.components.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
@@ -122,8 +123,10 @@ abstract class AbstractDiagnosticCollector(
         }
 
         override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: Nothing?) {
-            val property = context.containingDeclarations.last() as FirProperty
-            visitWithDeclarationAndReceiver(propertyAccessor, property.name, property.receiverTypeRef)
+            if (propertyAccessor !is FirDefaultPropertyAccessor) {
+                val property = context.containingDeclarations.last() as FirProperty
+                visitWithDeclarationAndReceiver(propertyAccessor, property.name, property.receiverTypeRef)
+            }
         }
 
         override fun visitValueParameter(valueParameter: FirValueParameter, data: Nothing?) {
