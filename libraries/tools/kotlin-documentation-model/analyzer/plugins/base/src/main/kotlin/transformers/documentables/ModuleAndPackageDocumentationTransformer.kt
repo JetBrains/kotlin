@@ -37,12 +37,7 @@ internal class ModuleAndPackageDocumentationTransformer(
                                         .readText()
                                         .split(Regex("(\n|^)# (?=(Module|Package))")) // Matches heading with Module/Package to split by
                                         .filter { it.isNotEmpty() }
-                                        .map {
-                                            it.split(
-                                                Regex(" "),
-                                                2
-                                            )
-                                        } // Matches space between Module/Package and fully qualified name
+                                        .map { it.split(Regex(" "), 2) } // Matches space between Module/Package and fully qualified name
                                 }.groupBy({ it[0] }, {
                                     it[1].split(Regex("\n"), 2) // Matches new line after fully qualified name
                                         .let { it[0].trim() to it[1].trim() }
@@ -99,7 +94,7 @@ internal class ModuleAndPackageDocumentationTransformer(
         }
     }
 
-    private fun mergeDocumentation(origin: Map<DokkaSourceSet, DocumentationNode>, new: Map<DokkaSourceSet, DocumentationNode>) =
+    private fun mergeDocumentation(origin: Map<DokkaSourceSet, DocumentationNode>, new: Map<DokkaSourceSet, DocumentationNode>): Map<DokkaSourceSet, DocumentationNode> =
         (origin.asSequence() + new.asSequence())
             .distinct()
             .groupBy({ it.key }, { it.value })
