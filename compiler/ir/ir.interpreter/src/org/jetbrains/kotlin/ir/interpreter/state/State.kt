@@ -53,7 +53,7 @@ internal fun State.isSubtypeOf(other: IrType): Boolean {
         val thisClass = this.typeArguments.single().state.irClass.symbol
         val otherArgument = (other as IrSimpleType).arguments.single()
         if (otherArgument is IrStarProjection) return true
-        return thisClass.isSubtypeOfClass(otherArgument.typeOrNull!!.classOrNull!!)
+        return otherArgument.typeOrNull?.classOrNull?.let { thisClass.isSubtypeOfClass(it) } ?: true
     }
 
     if (this is Lambda) {

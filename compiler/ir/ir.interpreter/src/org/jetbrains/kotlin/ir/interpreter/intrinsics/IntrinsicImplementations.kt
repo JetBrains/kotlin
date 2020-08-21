@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.interpreter.exceptions.throwAsUserException
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.isCharArray
 import org.jetbrains.kotlin.ir.util.*
 
 internal sealed class IntrinsicBase {
@@ -170,7 +171,7 @@ internal object ArrayConstructor : IntrinsicBase() {
     override fun evaluate(irFunction: IrFunction, stack: Stack, interpret: IrElement.() -> ExecutionResult): ExecutionResult {
         val sizeDescriptor = irFunction.valueParameters[0].symbol
         val size = stack.getVariable(sizeDescriptor).state.asInt()
-        val arrayValue = MutableList<Any>(size) { 0 }
+        val arrayValue = MutableList<Any>(size) { if (irFunction.returnType.isCharArray()) 0.toChar() else 0 }
 
         if (irFunction.valueParameters.size == 2) {
             val initDescriptor = irFunction.valueParameters[1].symbol

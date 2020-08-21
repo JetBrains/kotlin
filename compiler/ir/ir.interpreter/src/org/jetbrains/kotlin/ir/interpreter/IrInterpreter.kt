@@ -152,7 +152,8 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
 
     private fun MethodHandle?.invokeMethod(irFunction: IrFunction): ExecutionResult {
         this ?: return handleIntrinsicMethods(irFunction)
-        val result = withExceptionHandler { this.invokeWithArguments(irFunction.getArgsForMethodInvocation(stack.getAll())) }
+        val argsForMethodInvocation = irFunction.getArgsForMethodInvocation(stack.getAll())
+        val result = withExceptionHandler { this.invokeWithArguments(argsForMethodInvocation) }
         stack.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
 
         return Next
@@ -220,8 +221,8 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
                 else -> throw InterpreterError("Unsupported number of arguments for invocation as builtin functions")
             }
         }
-
-        stack.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
+        val typeArguments = if (methodName == "CHECK_NOT_NULL") args.single().typeArguments else listOf()
+        stack.pushReturnValue(result.toState(result.getType(irFunction.returnType)).apply { addTypeArguments(typeArguments) })
         return Next
     }
 
@@ -731,7 +732,13 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
                     fields.add(Variable(storageProperty.symbol, unsignedArray))
                 }
             }
-            else -> args.toPrimitiveStateArray(expression.type)
+            else -> args.toPrimitiveStateArray(expression.type).apply {
+                if (expression.type.isArray()) {
+                    val arrayTypeArgument = expression.varargElementType.classOrNull?.let { Common(it.owner) }
+                        ?: stack.getVariable(expression.varargElementType.classifierOrFail).state
+                    this.addTypeArguments(listOf(Variable(irBuiltIns.arrayClass.owner.typeParameters.single().symbol, arrayTypeArgument)))
+                }
+            }
         }
         stack.pushReturnValue(array)
         return Next
