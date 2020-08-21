@@ -81,48 +81,20 @@ class KotlinExprTypePredicate(
 
     companion object {
         private fun matchTypeReference(
-            type: KotlinType?,
-            typeReference: KtTypeReference?,
-            project: Project,
-            scope: GlobalSearchScope
+            type: KotlinType?, typeReference: KtTypeReference?, project: Project, scope: GlobalSearchScope
         ): Boolean {
             if (type == null || typeReference == null) return type == null && typeReference == null
-            val element = typeReference.typeElement ?: return false
+            val element = typeReference.typeElement
             return matchTypeElement(type, element, project, scope)
         }
 
         private fun matchTypeElement(
-            type: KotlinType?,
-            typeElement: KtTypeElement?,
-            project: Project,
-            scope: GlobalSearchScope
+            type: KotlinType, typeElement: KtTypeElement?, project: Project, scope: GlobalSearchScope
         ): Boolean {
-            if (type == null || typeElement == null) return type == null && typeElement == null
-
-            val matchArguments = typeElement.typeArgumentsAsTypes.isEmpty() ||
-                    type.arguments.size == typeElement.typeArgumentsAsTypes.size
-                    && type.arguments.zip(typeElement.typeArgumentsAsTypes).all { (projection, reference) ->
-                compareProjections(projection, reference) && matchTypeReference(
-                    projection.type,
-                    reference,
-                    project,
-                    scope
-                )
-            }
-
-            val matchSpecific = when (typeElement) {
-                is KtFunctionType ->
-                    matchNames(type, typeElement)
-                            && matchTypeReference(
-                        type.getReceiverTypeFromFunctionType(),
-                        typeElement.receiverTypeReference,
-                        project,
-                        scope
-                    ) && !type.isMarkedNullable
-                is KtUserType -> {
-                    val className = typeElement.referencedName ?: return false
-                    matchTypeWithString(type, className, project, scope) && !type.isMarkedNullable
-                }
+            if (typeElement == null) return false
+            return when (typeElement) {
+                is KtFunctionType -> !type.isMarkedNullable && matchFunctionType(type, typeElement, project, scope)
+                is KtUserType -> !type.isMarkedNullable && matchUserType(type, typeElement, project, scope)
                 is KtNullableType -> type.isMarkedNullable && matchTypeElement(
                     type.makeNotNullable(),
                     typeElement.innerType,
@@ -131,12 +103,48 @@ class KotlinExprTypePredicate(
                 )
                 else -> throw Error("Malformed type: $typeElement")
             }
-
-            return matchArguments
-                    && matchSpecific
         }
 
-        private fun matchNames(type: KotlinType, typeElement: KtTypeElement): Boolean {
+        private fun matchFunctionType(
+            type: KotlinType, functionType: KtFunctionType, project: Project, scope: GlobalSearchScope
+        ): Boolean {
+            val matchArguments = functionType.typeArgumentsAsTypes.isEmpty() ||
+                    type.arguments.size == functionType.typeArgumentsAsTypes.size
+                    && type.arguments.zip(functionType.typeArgumentsAsTypes).all { (projection, reference) ->
+                compareProjections(projection, reference) && matchTypeReference(
+                    projection.type,
+                    reference,
+                    project,
+                    scope
+                )
+            }
+
+            return matchArguments && matchFunctionName(type, functionType) && matchTypeReference(
+                type.getReceiverTypeFromFunctionType(),
+                functionType.receiverTypeReference,
+                project,
+                scope
+            )
+        }
+
+        private fun matchUserType(type: KotlinType, userType: KtUserType, project: Project, scope: GlobalSearchScope): Boolean {
+            val className = userType.referencedName ?: return false
+
+            val matchArguments = userType.typeArgumentsAsTypes.isEmpty() ||
+                    type.arguments.size == userType.typeArgumentsAsTypes.size
+                    && type.arguments.zip(userType.typeArgumentsAsTypes).all { (projection, reference) ->
+                compareProjections(projection, reference) && matchTypeReference(
+                    projection.type,
+                    reference,
+                    project,
+                    scope
+                )
+            }
+
+            return matchArguments && matchString(type, className, project, scope)
+        }
+
+        private fun matchFunctionName(type: KotlinType, typeElement: KtTypeElement): Boolean {
             val parent = typeElement.parent
             val typeArguments = typeElement.typeArgumentsAsTypes
             return when {
@@ -148,7 +156,7 @@ class KotlinExprTypePredicate(
             }
         }
 
-        private fun matchTypeWithString(type: KotlinType, className: String, project: Project, scope: GlobalSearchScope): Boolean {
+        private fun matchString(type: KotlinType, className: String, project: Project, scope: GlobalSearchScope): Boolean {
             val fq = className.contains(".")
 
             // Kotlin indexes
