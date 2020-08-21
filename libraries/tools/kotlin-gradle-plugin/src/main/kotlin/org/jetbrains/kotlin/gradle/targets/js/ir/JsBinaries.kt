@@ -9,21 +9,27 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer.Companion.generateBinaryName
+import org.jetbrains.kotlin.gradle.targets.js.subtargets.BrowserDistribution
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 interface JsBinary {
     val compilation: KotlinJsCompilation
     val name: String
     val mode: KotlinJsBinaryMode
+    val distribution: Distribution
 }
 
 sealed class JsIrBinary(
-    override val compilation: KotlinJsCompilation,
+    final override val compilation: KotlinJsCompilation,
     override val name: String,
     override val mode: KotlinJsBinaryMode
 ) : JsBinary {
+    override val distribution: Distribution =
+        BrowserDistribution(compilation.target.project)
+
     val linkTaskName: String = linkTaskName()
 
     val linkTask: TaskProvider<KotlinJsIrLink>

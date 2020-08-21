@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Task
 import org.gradle.api.plugins.ExtensionAware
-import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.BrowserDistribution
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
-import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
@@ -184,26 +182,6 @@ abstract class KotlinJsIrSubTarget(
 
     protected fun configureLibrary(compilation: KotlinJsIrCompilation) {
 
-    }
-
-    protected fun configureDistributeTasks(compilation: KotlinJsIrCompilation): TaskProvider<out Copy> {
-        val project = compilation.target.project
-
-        val processResourcesTask = target.project.tasks.named(compilation.processResourcesTaskName)
-
-        val distributeResourcesTask = registerSubTargetTask<Copy>(
-            disambiguateCamelCased(
-                DISTRIBUTE_RESOURCES_TASK_NAME
-            )
-        ) {
-            it.from(processResourcesTask)
-            it.into(distribution.directory)
-        }
-
-        val assembleTaskProvider = project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
-        assembleTaskProvider.dependsOn(distributeResourcesTask)
-
-        return distributeResourcesTask
     }
 
     internal inline fun <reified T : Task> registerSubTargetTask(

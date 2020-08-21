@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.DomainObjectSet
+import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -13,9 +14,11 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetWithBinaries
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.PRODUCTION
+import org.jetbrains.kotlin.gradle.targets.js.subtargets.BrowserDistribution
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinJsSubTarget
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
@@ -39,7 +42,7 @@ constructor(
     @JvmOverloads
     fun executable(
         compilation: KotlinJsCompilation = defaultCompilation
-    ) {
+    ): List<JsBinary> {
         if (target is KotlinJsIrTarget) {
             target.whenBrowserConfigured {
                 (this as KotlinJsIrSubTarget).produceExecutable()
@@ -49,7 +52,7 @@ constructor(
                 (this as KotlinJsIrSubTarget).produceExecutable()
             }
 
-            compilation.binaries.executableIrInternal(compilation)
+            return compilation.binaries.executableIrInternal(compilation)
         }
 
         if (target is KotlinJsTarget) {
@@ -64,11 +67,13 @@ constructor(
                 (this as KotlinJsSubTarget).produceExecutable()
             }
 
-            compilation.binaries.executableLegacyInternal(compilation)
+            return compilation.binaries.executableLegacyInternal(compilation)
         }
+
+        throw GradleException("Target should be either KotlinJsTarget or KotlinJsIrTarget, but found $target")
     }
 
-    internal fun executableIrInternal(compilation: KotlinJsCompilation) = createBinaries(
+    internal fun executableIrInternal(compilation: KotlinJsCompilation): List<JsBinary> = createBinaries(
         compilation = compilation,
         jsBinaryType = KotlinJsBinaryType.EXECUTABLE,
         create = ::Executable
@@ -82,6 +87,7 @@ constructor(
                 override val compilation: KotlinJsCompilation = compilation
                 override val name: String = name
                 override val mode: KotlinJsBinaryMode = type
+                override val distribution: Distribution = BrowserDistribution(compilation.target.project)
             }
         }
     )
@@ -97,8 +103,8 @@ constructor(
         modes: Collection<KotlinJsBinaryMode> = listOf(PRODUCTION, DEVELOPMENT),
         jsBinaryType: KotlinJsBinaryType,
         create: (compilation: KotlinJsCompilation, name: String, mode: KotlinJsBinaryMode) -> T
-    ) {
-        modes.forEach {
+    ) =
+        modes.map {
             createBinary(
                 compilation,
                 it,
@@ -106,14 +112,13 @@ constructor(
                 create
             )
         }
-    }
 
     private fun <T : JsBinary> createBinary(
         compilation: KotlinJsCompilation,
         mode: KotlinJsBinaryMode,
         jsBinaryType: KotlinJsBinaryType,
         create: (compilation: KotlinJsCompilation, name: String, mode: KotlinJsBinaryMode) -> T
-    ) {
+    ): JsBinary {
         val name = generateBinaryName(
             compilation,
             mode,
@@ -121,7 +126,7 @@ constructor(
         )
 
         if (name in binaryNames) {
-            return
+            return single { it.name == name }
         }
 
         binaryNames.add(name)
@@ -132,6 +137,8 @@ constructor(
         if (this is ExtensionAware) {
             extensions.add(binary.name, binary)
         }
+
+        return binary
     }
 
     companion object {
