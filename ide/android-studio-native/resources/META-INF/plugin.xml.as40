@@ -48,7 +48,7 @@
     <stepsBeforeRunProvider implementation="com.jetbrains.kmm.ios.BuildIOSAppTaskProvider"/>
     <externalSystem.debuggerBackend implementation="com.jetbrains.kmm.ios.LLDBBackend" />
     <configurationType implementation="com.jetbrains.kmm.ios.execution.BinaryRunConfigurationType"/>
-    <postStartupActivity implementation="com.jetbrains.kmm.versions.KmmPluginStartupActivity"/>
+    <postStartupActivity implementation="com.jetbrains.kmm.KmmPluginStartupActivity"/>
   </extensions>
 
   <extensions defaultExtensionNs="cidr.debugger">

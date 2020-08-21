@@ -52,7 +52,7 @@
     <externalSystem.debuggerBackend implementation="com.jetbrains.kmm.ios.LLDBBackend"/>
     <externalExecutionAware key="GRADLE" implementationClass="com.jetbrains.kmm.ios.execution.KmmDebugExecutionAware" />
     <configurationType implementation="com.jetbrains.kmm.ios.execution.BinaryRunConfigurationType"/>
-    <postStartupActivity implementation="com.jetbrains.kmm.versions.KmmPluginStartupActivity"/>
+    <postStartupActivity implementation="com.jetbrains.kmm.KmmPluginStartupActivity"/>
   </extensions>
 
   <extensions defaultExtensionNs="cidr.debugger">

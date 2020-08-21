@@ -3,5 +3,5 @@ package com.jetbrains.kmm.versions
 import com.intellij.ide.plugins.PluginManagerCore
 
 internal fun disablePlugin(id: String) {
-    PluginManagerCore.disablePlugin("com.jetbrains.kmm")
+    PluginManagerCore.disablePlugin(id)
 }

@@ -12,19 +12,12 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.options.ShowSettingsUtil
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.startup.StartupActivity
 import com.jetbrains.kmm.KMM_LOG
 import com.jetbrains.kmm.KmmBundle
 import com.jetbrains.kmm.UserNotification
 import com.jetbrains.kmm.versions.KmmCompatibilityChecker.CompatibilityCheckResult.*
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.KotlinPluginVersion
-
-class KmmPluginStartupActivity : StartupActivity.DumbAware {
-    override fun runActivity(project: Project) {
-        KmmCompatibilityChecker.checkCompatibilityAgainstBigKotlin(project)
-    }
-}
 
 private val VERSIONS_INFO = listOf(
     KmmBundle.message("version.kotlinPlugin", KotlinPluginUtil.getPluginVersion()),
