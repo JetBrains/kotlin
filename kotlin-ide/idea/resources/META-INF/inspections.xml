@@ -2517,7 +2517,7 @@
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantInnerClassModifierInspection"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
-                     enabledByDefault="true"
+                     enabledByDefault="false"
                      level="WARNING"
                      language="kotlin"
                      key="inspection.redundant.inner.class.modifier.display.name" bundle="messages.KotlinBundle"/>
