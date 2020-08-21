@@ -6,7 +6,7 @@ FILE: lambdas.kt
         when () {
             (R|<local>/x| is R|kotlin/Int|) ->  {
                 R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
-                    ^ R|<local>/x|.R|kotlin/Int.inc|()
+                    R|<local>/x|.R|kotlin/Int.inc|()
                 }
                 )
             }

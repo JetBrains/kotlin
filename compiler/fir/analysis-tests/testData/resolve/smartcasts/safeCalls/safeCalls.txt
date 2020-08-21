@@ -21,7 +21,7 @@ FILE: safeCalls.kt
     }
     public final fun test_3(x: R|kotlin/Any|): R|kotlin/Unit| {
         (R|<local>/x| as? R|A|)?.{ $subj$.R|/A.bar|(R|<local>/x|) }?.{ $subj$.R|/foo|(R|<local>/x|.R|/A.bool|()) }?.{ $subj$.R|/let|(<L> = let@fun <anonymous>(): R|kotlin/Unit| {
-            ^ R|<local>/x|.R|/A.bool|()
+            R|<local>/x|.R|/A.bool|()
         }
         ) }
         R|<local>/x|.<Unresolved name: bool>#()

@@ -60,7 +60,7 @@ FILE: RedundantReturnUnitTypeChecker.kt
 
         public final fun foo(): R|kotlin/Unit| {
             ^foo this@R|/B|.R|/B.run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| {
-                ^ this@R|/B|.R|/B.bar|()
+                this@R|/B|.R|/B.bar|()
             }
             )
         }
@@ -89,7 +89,7 @@ FILE: RedundantReturnUnitTypeChecker.kt
 
         public final fun goo(): R|kotlin/Unit| {
             ^goo (this@R|/B|, Int(1)).R|/B.let|<R|kotlin/Int|, R|kotlin/Int|>(<L> = let@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| {
-                ^ this@R|/B|.R|/B.bar|()
+                this@R|/B|.R|/B.bar|()
             }
             )
         }
