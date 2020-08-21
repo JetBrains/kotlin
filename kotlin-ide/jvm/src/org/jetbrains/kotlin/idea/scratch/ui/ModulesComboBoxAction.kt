@@ -12,6 +12,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.module.ModuleType
 import com.intellij.openapi.project.DumbAwareAction
+import com.intellij.openapi.util.NlsActions
 import com.intellij.openapi.vcs.changes.committed.LabeledComboBoxAction
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.annotations.TestOnly
@@ -39,7 +40,7 @@ class ModulesComboBoxAction(private val scratchFile: ScratchFile) :
 
     /**
      * By default this action uses big font for label, so we have to decrease it
-     * to make it look the same as in [CheckboxAction].
+     * to make it look the same as in [com.intellij.openapi.actionSystem.ex.CheckboxAction].
      */
     override fun createCustomComponent(presentation: Presentation, place: String): JComponent {
         val customComponent = super.createCustomComponent(presentation, place)
@@ -64,7 +65,7 @@ class ModulesComboBoxAction(private val scratchFile: ScratchFile) :
         return !scratchFile.file.isKotlinWorksheet
     }
 
-    private inner class ModuleIsNotSelectedAction(placeholder: String) : DumbAwareAction(placeholder) {
+    private inner class ModuleIsNotSelectedAction(@NlsActions.ActionText placeholder: String) : DumbAwareAction(placeholder) {
         override fun actionPerformed(e: AnActionEvent) {
             scratchFile.setModule(null)
         }
