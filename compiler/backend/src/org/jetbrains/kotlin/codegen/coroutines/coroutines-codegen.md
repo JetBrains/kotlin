@@ -3038,3 +3038,106 @@ Here is the full list of all possible combinations, excluding invalid ones. Now 
 |suspend |no lambda     |variable     |ordinary      |call     |state-machine                                  |
 +--------+--------------+-------------+--------------+---------+-----------------------------------------------+
 ```
+
+## Callable Reference
+Consider the following simple example of a callable reference to a suspend function:
+```kotlin
+import kotlin.coroutines.*
+
+var c: Continuation<String>? = null
+
+suspend fun callMe() = suspendCoroutine<String> { c = it }
+
+fun builder(c: suspend () -> Unit) {
+    c.startCoroutine(Continuation(EmptyCoroutineContext) { it.getOrThrow() })
+}
+
+suspend fun callSuspend(c: suspend () -> String) = c()
+
+fun main() {
+    builder {
+        println(callSuspend(::callMe))
+    }
+    c?.resume("OK")
+}
+```
+Instead of passing a lambda to the `callSuspend` function, we pass the callable reference. Inside the function, we call its
+`invoke` method as if it were lambda. So, we need to generate an object with the method. However, unlike suspend lambda, the method
+always calls only one function. Thus it can be tail-call. Since it is tail-call, we cannot use `BaseContinuationImpl` as a superclass.
+Instead, we use `FunctionReferenceImpl`, which all callable references inherit. Additionally, since there is the `invoke` method, which
+the object overrides, the object implements `Function{N+1}` interface, where `N` is the arity of the suspend function. Finally, it should
+override the `SuspendFunction` marker interface as well, to support `is` and `as` suspend functional type checks.
+
+Ideally, the object is a singleton, since it has no internal state. JVM_IR BE does so: it generates all callable references as singletons.
+The old BE, however, does not generate callable references to suspend functions as singletons, which is a slip-up. Nevertheless, it is
+unlikely to be addressed, since the new BE is going to replace the old one in the future and the slip-up is not critical enough to fix it
+right away.
+
+Finally, the old JVM BE generates suspending markers around the function call in the `invoke` method. It is a bug that is again fixed in
+the JVM_IR BE and remains unfixed in the old BE.
+
+### Inlining
+
+Inlining of callable references to suspend functions is straightforward: from the inliner's point of view, a callable reference to suspend
+function is as an inline lambda with a call. So, it should behave like a suspend lambda with only one call.
+
+FIXME: Support suspend -> inline function conversions for callable references. Otherwise, even simple versions, like
+`something?.let(MyClass::mySuspendMethod)` produce an error.
+
+### Ordinary -> Suspend conversion
+Consider the following example:
+```kotlin
+import kotlin.coroutines.*
+
+fun callMe(): String = "OK"
+
+var c: Continuation<Unit>? = null
+
+suspend fun suspendMe() = suspendCoroutine<Unit> { c = it }
+
+suspend fun callSuspend(c: suspend () -> String): String {
+    suspendMe()
+    return c()
+}
+
+fun builder(c: suspend () -> Unit) {
+    c.startCoroutine(Continuation(EmptyCoroutineContext) { it.getOrThrow() })
+}
+
+fun main() {
+    builder {
+        println(callSuspend(::callMe))
+    }
+    c?.resume(Unit)
+}
+```
+Here, we pass a callable reference to an ordinary function to a function that expects suspend functional type. So, we cannot just pass
+the callable reference object. Instead, we generate a so-called adapted function reference. It should not inherit `FunctionReference`
+since adapted function references are not supported in reflection. So, instead of `FunctionReferenceImpl`, these objects inherit
+`AdaptedFunctionReference`.
+
+Unlike usual callable references, the one in the example should accept the continuation parameter, but it should ignore it since the
+function is ordinary.
+
+FIXME: These adapted references shall use the `SuspendFunction` marker as well. Otherwise, the user can get funny behavior as in the
+example:
+```kotlin
+fun callMe(): String = "OK"
+
+suspend fun isSuspend(c: suspend () -> String) = c is suspend () -> String
+suspend fun callSuspend(c: suspend () -> String) = (c as suspend () -> String)()
+
+suspend fun main() {
+    println(isSuspend(::callMe))
+    println(callSuspend(::callMe))
+}
+```
+Yep, `c` is both not suspend functional type and non-suspend functional type.
+
+### Start
+Unlike suspend lambdas, we cannot just call `create` when we start a coroutine (in a broad sense) from a callable reference. Since the
+object does not have a `create` method and is not a continuation.
+
+Hence, instead, we write the continuation by hand, and in the `invokeSuspend` function, we write a state-machine by hand as well. See `createCoroutineFromSuspendFunction` for specifics.
+
+FIXME: As explained in the tail-call suspend lambdas section, we can reuse this mechanism for tail-call suspend lambdas.
