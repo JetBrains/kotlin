@@ -65,7 +65,7 @@ import java.util.*
 import kotlin.math.min
 
 object KotlinIntroduceVariableHandler : RefactoringActionHandler {
-    val INTRODUCE_VARIABLE = KotlinBundle.message("introduce.variable")
+    val INTRODUCE_VARIABLE get() = KotlinBundle.message("introduce.variable")
 
     private val EXPRESSION_KEY = Key.create<Boolean>("EXPRESSION_KEY")
     private val REPLACE_KEY = Key.create<Boolean>("REPLACE_KEY")
