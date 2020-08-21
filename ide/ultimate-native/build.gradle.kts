@@ -10,6 +10,7 @@ dependencies {
     compileOnly(kotlinStdlib("jdk8"))
     compileOnly(project(":compiler:cli-common")) { isTransitive = false }
     compileOnly(project(":compiler:psi")) { isTransitive = false }
+    compileOnly(project(":core:compiler.common")) { isTransitive = false }
     compileOnly(project(":core:descriptors")) { isTransitive = false }
     compileOnly(project(":idea:kotlin-gradle-tooling")) { isTransitive = false }
     compileOnly(project(":idea:idea-core")) { isTransitive = false }

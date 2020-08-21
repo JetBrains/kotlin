@@ -23,7 +23,7 @@ dependencies {
     compile(project(":core:descriptors.jvm")) { isTransitive = false }
     compile(project(":core:util.runtime")) { isTransitive = false }
     compile(project(":compiler:light-classes")) { isTransitive = false }
-    compile(project(":core:type-system")) { isTransitive = false }
+    compile(project(":core:compiler.common")) { isTransitive = false }
     compile(project(":compiler:cli-common")) { isTransitive = false }
     compile(project(":compiler:frontend")) { isTransitive = false }
     compile(project(":compiler:frontend.common")) { isTransitive = false }
