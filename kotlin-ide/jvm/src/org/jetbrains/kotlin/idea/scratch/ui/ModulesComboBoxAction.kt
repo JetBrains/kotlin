@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.scratch.ui
 
-import com.intellij.execution.ui.ConfigurationModuleSelector
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.actionSystem.Presentation
@@ -24,11 +23,10 @@ import org.jetbrains.kotlin.idea.scratch.isKotlinWorksheet
 import javax.swing.JComponent
 
 class ModulesComboBoxAction(private val scratchFile: ScratchFile) :
-    LabeledComboBoxAction(KotlinJvmBundle.message("scratch.module.combobox"))
-{
+    LabeledComboBoxAction(KotlinJvmBundle.message("scratch.module.combobox")) {
     override fun createPopupActionGroup(button: JComponent): DefaultActionGroup {
         val actionGroup = DefaultActionGroup()
-        actionGroup.add(ModuleIsNotSelectedAction(ConfigurationModuleSelector.NO_MODULE_TEXT))
+        actionGroup.add(ModuleIsNotSelectedAction(KotlinJvmBundle.message("list.item.no.module")))
 
         val modules = ModuleManager.getInstance(scratchFile.project).modules.filter {
             it.productionSourceInfo() != null || it.testSourceInfo() != null
@@ -55,7 +53,7 @@ class ModulesComboBoxAction(private val scratchFile: ScratchFile) :
 
         e.presentation.apply {
             icon = selectedModule?.let { ModuleType.get(it).icon }
-            text = selectedModule?.name ?: ConfigurationModuleSelector.NO_MODULE_TEXT
+            text = selectedModule?.name ?: KotlinJvmBundle.message("list.item.no.module")
         }
 
         e.presentation.isVisible = isModuleSelectorVisible()
