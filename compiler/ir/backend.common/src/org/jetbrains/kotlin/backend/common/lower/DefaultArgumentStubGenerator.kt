@@ -46,7 +46,7 @@ open class DefaultArgumentStubGenerator(
     }
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        if (declaration is IrFunction) {
+        if (declaration is IrFunction && !declaration.isFakeOverride) {
             return lower(declaration)
         }
 
