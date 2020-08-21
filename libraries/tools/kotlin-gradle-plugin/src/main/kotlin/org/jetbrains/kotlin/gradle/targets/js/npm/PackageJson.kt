@@ -33,6 +33,8 @@ class PackageJson(
 
     var resolutions: Map<String, String>? = null
 
+    var types: String? = null
+
     @Suppress("USELESS_ELVIS")
     val devDependencies = mutableMapOf<String, String>()
         get() = field ?: mutableMapOf()

@@ -11,6 +11,8 @@ import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.ir.GENERATE_D_TS
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
@@ -53,7 +55,14 @@ constructor(
 
     @TaskAction
     fun resolve() {
+        val compilation = npmProject.compilation
+
         packageJson(npmProject, realExternalDependencies).let { packageJson ->
+            packageJson.main = "${npmProject.name}.js"
+
+            if (compilation is KotlinJsIrCompilation) {
+                packageJson.types = "${npmProject.name}.d.ts"
+            }
 
             packageJson.apply {
                 listOf(
