@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   id("java-gradle-plugin")
   kotlin("jvm")
-  kotlin("kapt")
 
   id("com.gradle.plugin-publish")
 }
