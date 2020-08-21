@@ -5,19 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.providers
 
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateForInline
-import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-
-abstract class AbstractFirSymbolProviderWithCache<C : FirClassLikeSymbol<*>>(session: FirSession) : FirSymbolProvider(session) {
-    protected val classCache = SymbolProviderCache<ClassId, C>()
-    protected val topLevelCallableCache = SymbolProviderCache<CallableId, List<FirCallableSymbol<*>>>()
-    protected val packageCache = SymbolProviderCache<FqName, FqName>()
-}
 
 @Suppress("EXPERIMENTAL_FEATURE_WARNING")
 inline class SymbolProviderCache<K, V : Any> @PrivateForInline constructor(@PrivateForInline val cache: HashMap<K, Any>) {

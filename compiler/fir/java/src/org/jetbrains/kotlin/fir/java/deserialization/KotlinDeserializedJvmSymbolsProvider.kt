@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.AbstractFirSymbolProviderWithCache
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
-import org.jetbrains.kotlin.fir.resolve.providers.SymbolProviderCache
-import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredCallableSymbols
+import org.jetbrains.kotlin.fir.resolve.providers.*
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -61,7 +58,8 @@ class KotlinDeserializedJvmSymbolsProvider(
     private val kotlinClassFinder: KotlinClassFinder,
     private val javaClassFinder: JavaClassFinder,
     private val kotlinScopeProvider: KotlinScopeProvider,
-) : AbstractFirSymbolProviderWithCache<FirRegularClassSymbol>(session) {
+) : FirSymbolProvider(session) {
+    private val classCache = SymbolProviderCache<ClassId, FirRegularClassSymbol>()
     private val typeAliasCache = SymbolProviderCache<ClassId, FirTypeAliasSymbol>()
     private val packagePartsCache = SymbolProviderCache<FqName, Collection<PackagePartsCacheData>>()
 

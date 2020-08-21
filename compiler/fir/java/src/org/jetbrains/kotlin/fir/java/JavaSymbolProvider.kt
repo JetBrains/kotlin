@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.resolve.constructType
-import org.jetbrains.kotlin.fir.resolve.providers.AbstractFirSymbolProviderWithCache
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.SymbolProviderCache
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
@@ -45,10 +45,13 @@ class JavaSymbolProvider(
     session: FirSession,
     val project: Project,
     private val searchScope: GlobalSearchScope,
-) : AbstractFirSymbolProviderWithCache<FirRegularClassSymbol>(session) {
+) : FirSymbolProvider(session) {
     companion object {
         private val VALUE_METHOD_NAME = Name.identifier("value")
     }
+
+    private val classCache = SymbolProviderCache<ClassId, FirRegularClassSymbol>()
+    private val packageCache = SymbolProviderCache<FqName, FqName>()
 
     private val scopeProvider = JavaScopeProvider(::wrapScopeWithJvmMapped, this)
 
