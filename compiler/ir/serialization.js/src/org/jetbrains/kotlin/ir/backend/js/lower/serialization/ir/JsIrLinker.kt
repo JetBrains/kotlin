@@ -11,16 +11,21 @@ import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideControl
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrAbstractFunctionFactory
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.SerializedIrFile
+import org.jetbrains.kotlin.resolve.BindingContext
 
 class JsIrLinker(
     private val currentModule: ModuleDescriptor?, logger: LoggingContext, builtIns: IrBuiltIns, symbolTable: SymbolTable,
     override val functionalInterfaceFactory: IrAbstractFunctionFactory,
+    override val translationPluginContext: TranslationPluginContext?,
     private val icData: List<SerializedIrFile>? = null,
     deserializeFakeOverrides: Boolean = FakeOverrideControl.deserializeFakeOverrides
 ) : KotlinIrLinker(currentModule, logger, builtIns, symbolTable, emptyList(), deserializeFakeOverrides) {
@@ -45,8 +50,17 @@ class JsIrLinker(
         }
         return currentModuleDeserializer
     }
+
     val modules
         get() = deserializersForModules.values
             .map { it.moduleFragment }
             .filter { it.descriptor !== currentModule }
+
+    class JsFePluginContext(
+        override val moduleDescriptor: ModuleDescriptor,
+        override val bindingContext: BindingContext,
+        override val symbolTable: ReferenceSymbolTable,
+        override val typeTranslator: TypeTranslator,
+        override val irBuiltIns: IrBuiltIns,
+    ) : TranslationPluginContext
 }
