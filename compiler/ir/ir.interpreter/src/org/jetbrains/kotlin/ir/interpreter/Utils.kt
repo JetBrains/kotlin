@@ -214,6 +214,13 @@ internal fun State?.getCorrectReceiverByFunction(irFunction: IrFunction): State?
 
 internal fun IrFunction.getCapitalizedFileName() = this.file.name.replace(".kt", "Kt").capitalizeAsciiOnly()
 
+internal fun IrType.isUnsigned() = this.isUByte() || this.isUShort() || this.isUInt() || this.isULong()
+internal fun IrType.isUnsignedArray(): Boolean {
+    if (this !is IrSimpleType || classifier !is IrClassSymbol) return false
+    val fqName = (classifier.owner as IrDeclarationWithName).fqNameWhenAvailable?.asString()
+    return fqName in setOf("kotlin.UByteArray", "kotlin.UShortArray", "kotlin.UIntArray", "kotlin.ULongArray")
+}
+
 internal fun IrType.isPrimitiveArray(): Boolean {
     return this.getClass()?.fqNameWhenAvailable?.toUnsafe()?.let { StandardNames.isPrimitiveArray(it) } ?: false
 }

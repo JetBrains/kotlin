@@ -700,32 +700,44 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
     }
 
     private fun interpretVararg(expression: IrVararg): ExecutionResult {
+        fun arrayToList(value: Any?): List<Any?> {
+            return when (value) {
+                is ByteArray -> value.toList()
+                is CharArray -> value.toList()
+                is ShortArray -> value.toList()
+                is IntArray -> value.toList()
+                is LongArray -> value.toList()
+                is FloatArray -> value.toList()
+                is DoubleArray -> value.toList()
+                is BooleanArray -> value.toList()
+                is Array<*> -> value.toList()
+                else -> listOf(value)
+            }
+        }
+
         val args = expression.elements.flatMap {
             it.interpret().check { executionResult -> return executionResult }
             return@flatMap when (val result = stack.popReturnValue()) {
                 is Wrapper -> listOf(result.value)
-                is Primitive<*> ->
-                    when (val value = result.value) {
-                        is ByteArray -> value.toList()
-                        is CharArray -> value.toList()
-                        is ShortArray -> value.toList()
-                        is IntArray -> value.toList()
-                        is LongArray -> value.toList()
-                        is FloatArray -> value.toList()
-                        is DoubleArray -> value.toList()
-                        is BooleanArray -> value.toList()
-                        is Array<*> -> value.toList()
-                        else -> listOf(value)
-                    }
+                is Primitive<*> -> arrayToList(result.value)
+                is Common -> when {
+                    result.irClass.defaultType.isUnsignedArray() -> arrayToList((result.fields.single().state as Primitive<*>).value)
+                    else -> listOf(result)
+                }
                 else -> listOf(result)
             }
         }
 
-        val array = when ((expression.type.classifierOrFail.owner as? IrDeclaration)?.nameForIrSerialization?.asString()) {
-            "UByteArray", "UShortArray", "UIntArray", "ULongArray" -> {
+        val array = when {
+            expression.type.isUnsignedArray() -> {
                 val owner = expression.type.classOrNull!!.owner
                 val storageProperty = owner.declarations.filterIsInstance<IrProperty>().first { it.name.asString() == "storage" }
-                val primitiveArray = args.map { ((it as Common).fields.single().state as Primitive<*>).value }
+                val primitiveArray = args.map {
+                    when (it) {
+                        is Common -> (it.fields.single().state as Primitive<*>).value   // is unsigned number
+                        else -> it                                                      // is primitive number
+                    }
+                }
                 val unsignedArray = primitiveArray.toPrimitiveStateArray(storageProperty.backingField!!.type)
                 Common(owner).apply {
                     setSuperClassRecursive()
