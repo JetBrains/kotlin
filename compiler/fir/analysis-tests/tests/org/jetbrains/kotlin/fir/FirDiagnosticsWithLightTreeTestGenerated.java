@@ -1041,6 +1041,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/repeatedModifier.kt");
         }
 
+        @TestMetadata("returnTypeMismatchOnOverride.kt")
+        public void testReturnTypeMismatchOnOverride() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/returnTypeMismatchOnOverride.kt");
+        }
+
         @TestMetadata("sealedClassConstructorCall.kt")
         public void testSealedClassConstructorCall() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/sealedClassConstructorCall.kt");
@@ -1049,11 +1054,6 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         @TestMetadata("sealedSupertype.kt")
         public void testSealedSupertype() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/sealedSupertype.kt");
-        }
-
-        @TestMetadata("returnTypeMismatchOnOverride.kt")
-        public void testReturnTypeMismatchOnOverride() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/returnTypeMismatchOnOverride.kt");
         }
 
         @TestMetadata("superIsNotAnExpression.kt")

@@ -48,7 +48,7 @@ class ValueParameter(
             source = firValueParameter.source
             this.session = session
             origin = FirDeclarationOrigin.Source
-            returnTypeRef = type.copyWithNewSourceKind(FirFakeSourceElementKind.ImplicitTypeRef)
+            returnTypeRef = type.copyWithNewSourceKind(FirFakeSourceElementKind.PropertyFromParameter)
             this.name = name
             initializer = buildQualifiedAccessExpression {
                 calleeReference = buildPropertyFromParameterResolvedNamedReference {
@@ -67,8 +67,20 @@ class ValueParameter(
                 isLateInit = false
             }
             annotations += this@ValueParameter.firValueParameter.annotations
-            getter = FirDefaultPropertyGetter(null, session, FirDeclarationOrigin.Source, type, modifiers.getVisibility())
-            setter = if (this.isVar) FirDefaultPropertySetter(null, session, FirDeclarationOrigin.Source, type, modifiers.getVisibility()) else null
+            getter = FirDefaultPropertyGetter(
+                null,
+                session,
+                FirDeclarationOrigin.Source,
+                type.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
+                modifiers.getVisibility()
+            )
+            setter = if (this.isVar) FirDefaultPropertySetter(
+                null,
+                session,
+                FirDeclarationOrigin.Source,
+                type.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
+                modifiers.getVisibility()
+            ) else null
         }.apply {
             this.isFromVararg = firValueParameter.isVararg
         }

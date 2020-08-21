@@ -399,12 +399,18 @@ class RawFirBuilder(
                 isLocal = false
                 this.status = status
                 val defaultAccessorSource = propertySource.fakeElement(FirFakeSourceElementKind.DefaultAccessor)
-                getter = FirDefaultPropertyGetter(defaultAccessorSource, baseSession, FirDeclarationOrigin.Source, type, visibility)
+                getter = FirDefaultPropertyGetter(
+                    defaultAccessorSource,
+                    baseSession,
+                    FirDeclarationOrigin.Source,
+                    type.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
+                    visibility
+                )
                 setter = if (isMutable) FirDefaultPropertySetter(
                     defaultAccessorSource,
                     baseSession,
                     FirDeclarationOrigin.Source,
-                    type,
+                    type.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
                     visibility
                 ) else null
                 extractAnnotationsTo(this)
