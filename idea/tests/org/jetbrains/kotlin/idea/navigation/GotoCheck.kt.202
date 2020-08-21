@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.util.renderAsGotoImplementation
 import org.junit.Assert
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 object GotoCheck {
     @JvmStatic
@@ -38,11 +39,11 @@ object GotoCheck {
         val searchText = searchTextList.first()
 
         val foundSymbols = model.getNames(includeNonProjectSymbols).filter { it?.startsWith(searchText) ?: false }.flatMap {
-            model.getElementsByName(it, includeNonProjectSymbols, "$it*").toSet()
+            model.getElementsByName(it, includeNonProjectSymbols, "$it*").toList()
         }
 
         val inexactMatching = InTextDirectivesUtils.isDirectiveDefined(documentText, "// ALLOW_MORE_RESULTS")
-        val renderedSymbols = foundSymbols.map { (it as PsiElement).renderAsGotoImplementation() }
+        val renderedSymbols = foundSymbols.map { (it as PsiElement).renderAsGotoImplementation() }.toSet()
 
         if (checkNavigation && (expectedReferences.size != 1 || inexactMatching)) {
             error("Cannot check navigation targets when multiple references are expected")
@@ -55,7 +56,10 @@ object GotoCheck {
         }
         if (!checkNavigation) return
 
-        assertNavigationElementMatches(foundSymbols.single() as PsiElement, documentText)
+        assertTrue(foundSymbols.isNotEmpty())
+        foundSymbols.forEach {
+            assertNavigationElementMatches(it as PsiElement, documentText)
+        }
     }
 
     @JvmStatic
