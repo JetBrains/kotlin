@@ -22,7 +22,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.impl.JavaAwareProjectJdkTableImpl;
 import com.intellij.openapi.roots.*;
@@ -56,6 +55,8 @@ import org.jetbrains.kotlin.idea.test.KotlinSdkCreationChecker;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class MavenImportingTestCase extends MavenTestCase {
@@ -513,14 +514,20 @@ public abstract class MavenImportingTestCase extends MavenTestCase {
         myProjectsManager.waitForPostImportTasksCompletion();
     }
 
-    protected void executeGoal(String relativePath, String goal) {
+    protected void executeGoal(String relativePath, String goal) throws InterruptedException {
         VirtualFile dir = myProjectRoot.findFileByRelativePath(relativePath);
 
         MavenRunnerParameters rp = new MavenRunnerParameters(true, dir.getPath(), Arrays.asList(goal), Collections.<String>emptyList());
         MavenRunnerSettings rs = new MavenRunnerSettings();
-        MavenExecutor e = new MavenExternalExecutor(myProject, rp, getMavenGeneralSettings(), rs, new SoutMavenConsole());
 
-        e.execute(new EmptyProgressIndicator());
+        Semaphore wait = new Semaphore(1);
+        wait.acquire();
+        MavenRunner.getInstance(myProject).run(rp, rs, () -> {
+            wait.release();
+        });
+
+        boolean tryAcquire = wait.tryAcquire(10, TimeUnit.SECONDS);
+        assertTrue( "Maven execution failed", tryAcquire);
     }
 
     protected void removeFromLocalRepository(String relativePath) throws IOException {
