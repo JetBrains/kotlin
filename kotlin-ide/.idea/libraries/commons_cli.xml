@@ -2,6 +2,9 @@
 <component name="libraryTable">
   <library name="commons-cli" type="repository">
     <properties maven-id="commons-cli:commons-cli:1.4" />
+    <ANNOTATIONS>
+      <root url="file://$PROJECT_DIR$/intellij/lib/annotations/commons-cli" />
+    </ANNOTATIONS>
     <CLASSES>
       <root url="jar://$MAVEN_REPOSITORY$/commons-cli/commons-cli/1.4/commons-cli-1.4.jar!/" />
     </CLASSES>
