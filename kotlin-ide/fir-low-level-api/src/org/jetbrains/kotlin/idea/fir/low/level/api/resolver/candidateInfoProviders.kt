@@ -35,7 +35,7 @@ abstract class AbstractCandidateInfoProvider(
     protected val firSession: FirSession,
 ) : CandidateInfoProvider {
     override fun callInfo(): CallInfo = with(resolutionParameters) {
-        return CallInfo(
+        CallInfo(
             callKind = callKind(),
             name = callableSymbol.callableId.callableName,
             explicitReceiver = explicitReceiver,
@@ -82,7 +82,7 @@ class CheckExtensionForCompletionCandidateInfoProvider(
     // Passing them through can lead to false positives.
     override fun shouldFailBeforeResolve(): Boolean = with(resolutionParameters) {
         val callHasExtensionReceiver = explicitReceiverKind() == ExplicitReceiverKind.EXTENSION_RECEIVER
-                    || implicitExtensionReceiverValue() != null
+                || implicitExtensionReceiverValue() != null
         val candidateHasExtensionReceiver = callableSymbol.fir.receiverTypeRef != null
         callHasExtensionReceiver != candidateHasExtensionReceiver
     }

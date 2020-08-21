@@ -53,14 +53,14 @@ class SingleCandidateResolver(
         resolutionParameters: ResolutionParameters
     ): FirFunctionCall? {
 
-        val partProvider = createCandidatePartsProvider(resolutionParameters)
-        if (partProvider.shouldFailBeforeResolve())
+        val infoProvider = createCandidateInfoProvider(resolutionParameters)
+        if (infoProvider.shouldFailBeforeResolve())
             return null
 
-        val callInfo = partProvider.callInfo()
-        val explicitReceiverKind = partProvider.explicitReceiverKind()
-        val dispatchReceiverValue = partProvider.dispatchReceiverValue()
-        val implicitExtensionReceiverValue = partProvider.implicitExtensionReceiverValue()
+        val callInfo = infoProvider.callInfo()
+        val explicitReceiverKind = infoProvider.explicitReceiverKind()
+        val dispatchReceiverValue = infoProvider.dispatchReceiverValue()
+        val implicitExtensionReceiverValue = infoProvider.implicitExtensionReceiverValue()
 
         val resolutionContext = stubBodyResolveTransformer.resolutionContext
 
@@ -79,7 +79,7 @@ class SingleCandidateResolver(
         return null
     }
 
-    private fun createCandidatePartsProvider(resolutionParameters: ResolutionParameters): CandidateInfoProvider {
+    private fun createCandidateInfoProvider(resolutionParameters: ResolutionParameters): CandidateInfoProvider {
         return when (resolutionParameters.singleCandidateResolutionMode) {
             SingleCandidateResolutionMode.CHECK_EXTENSION_FOR_COMPLETION -> CheckExtensionForCompletionCandidateInfoProvider(
                 resolutionParameters,
