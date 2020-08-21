@@ -16290,6 +16290,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/javaInterop/genericSamProjectedOutWithNewInference.kt");
         }
 
+        @TestMetadata("genericSamSmartcast.kt")
+        public void testGenericSamSmartcast() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/genericSamSmartcast.kt");
+        }
+
         @TestMetadata("lambdaInstanceOf.kt")
         public void testLambdaInstanceOf() throws Exception {
             runTest("compiler/testData/codegen/box/javaInterop/lambdaInstanceOf.kt");

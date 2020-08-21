@@ -613,12 +613,13 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
     for (i in underlyingValueParameters.indices) {
         val underlyingValueParameter = underlyingValueParameters[i]
 
-        val expectedSamConversionTypesForVararg = ArrayList<KotlinType?>()
-        if (expectSamConvertedArgumentToBeAvailableInResolvedCall && resolvedCall is NewResolvedCallImpl<*>) {
-            val arguments = resolvedCall.valueArguments[originalValueParameters[i]]?.arguments ?: continue
-            arguments.mapTo(expectedSamConversionTypesForVararg) { resolvedCall.getExpectedTypeForSamConvertedArgument(it) }
-            if (expectedSamConversionTypesForVararg.all { it == null }) continue
-        } else {
+        val expectedSamConversionTypesForVararg =
+            if (expectSamConvertedArgumentToBeAvailableInResolvedCall && resolvedCall is NewResolvedCallImpl<*>) {
+                val arguments = resolvedCall.valueArguments[originalValueParameters[i]]?.arguments
+                arguments?.map { resolvedCall.getExpectedTypeForSamConvertedArgument(it) }
+            } else null
+
+        if (expectedSamConversionTypesForVararg?.all { it == null } != false) {
             // When the method is `f(T)` with `T` = a SAM type, the substituted type is a SAM while the original is not;
             // when the method is `f(X<T>)` with `T` = `out V` where `X` is a SAM type, the substituted type is `Nothing`
             // while the original is a SAM interface. Thus, if *either* of those is a SAM type then it's fine.
@@ -675,8 +676,7 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
                 ).apply {
                     originalArgument.elements.mapIndexedTo(elements) { index, element ->
                         if (element is IrExpression) {
-                            val samType = expectedSamConversionTypesForVararg[index]
-                            if (samType != null)
+                            if (expectedSamConversionTypesForVararg?.get(index) != null)
                                 samConvertScalarExpression(element)
                             else
                                 element
