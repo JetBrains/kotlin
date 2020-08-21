@@ -92,6 +92,30 @@ constructor(
         }
     )
 
+    // For Groovy DSL
+    @JvmOverloads
+    fun library(
+        compilation: KotlinJsCompilation = defaultCompilation
+    ): List<JsBinary> {
+        if (target is KotlinJsIrTarget) {
+            target.whenBrowserConfigured {
+                (this as KotlinJsIrSubTarget).produceLibrary()
+            }
+
+            target.whenNodejsConfigured {
+                (this as KotlinJsIrSubTarget).produceLibrary()
+            }
+
+            return createBinaries(
+                compilation = compilation,
+                jsBinaryType = KotlinJsBinaryType.LIBRARY,
+                create = ::Library
+            )
+        }
+
+        throw GradleException("Library can be produced only for IR compiler")
+    }
+
     internal fun getIrBinaries(
         mode: KotlinJsBinaryMode
     ): DomainObjectSet<JsIrBinary> =

@@ -79,6 +79,14 @@ abstract class KotlinJsIrSubTarget(
         produceExecutable
     }
 
+    private val produceLibrary: Unit by lazy {
+        configureLibrary()
+    }
+
+    internal fun produceLibrary() {
+        produceLibrary
+    }
+
     override fun testTask(body: KotlinJsTest.() -> Unit) {
         testRuns.getByName(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME).executionTask.configure(body)
     }
@@ -176,14 +184,21 @@ abstract class KotlinJsIrSubTarget(
     private fun configureMain(compilation: KotlinJsIrCompilation) {
         configureRun(compilation)
         configureBuild(compilation)
-        configureLibrary(compilation)
     }
 
     protected abstract fun configureRun(compilation: KotlinJsIrCompilation)
 
     protected abstract fun configureBuild(compilation: KotlinJsIrCompilation)
 
-    protected fun configureLibrary(compilation: KotlinJsIrCompilation) {
+    private fun configureLibrary() {
+        target.compilations.all { compilation ->
+            if (compilation.isMain()) {
+                configureLibrary(compilation)
+            }
+        }
+    }
+
+    private fun configureLibrary(compilation: KotlinJsIrCompilation) {
         val project = compilation.target.project
 
         val processResourcesTask = target.project.tasks.named(compilation.processResourcesTaskName)
