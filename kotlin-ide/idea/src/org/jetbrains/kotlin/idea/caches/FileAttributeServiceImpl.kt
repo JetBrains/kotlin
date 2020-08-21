@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.idea.caches
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileWithId
 import com.intellij.openapi.vfs.newvfs.FileAttribute
-import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.io.DataInputOutputUtil
 import java.io.DataInput
 import java.io.DataOutput
+import java.util.concurrent.ConcurrentHashMap
 
 class FileAttributeServiceImpl : FileAttributeService {
-    val attributes: MutableMap<String, FileAttribute> = ContainerUtil.newConcurrentMap()
+    val attributes: MutableMap<String, FileAttribute> = ConcurrentHashMap()
 
     override fun register(id: String, version: Int, fixedSize: Boolean) {
         attributes[id] = FileAttribute(id, version, fixedSize)
