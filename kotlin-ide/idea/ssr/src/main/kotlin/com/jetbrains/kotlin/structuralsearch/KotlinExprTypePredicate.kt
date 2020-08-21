@@ -111,7 +111,7 @@ class KotlinExprTypePredicate(
             val matchArguments = functionType.typeArgumentsAsTypes.isEmpty() ||
                     type.arguments.size == functionType.typeArgumentsAsTypes.size
                     && type.arguments.zip(functionType.typeArgumentsAsTypes).all { (projection, reference) ->
-                compareProjections(projection, reference) && matchTypeReference(
+                matchProjection(projection, reference) && matchTypeReference(
                     projection.type,
                     reference,
                     project,
@@ -130,15 +130,15 @@ class KotlinExprTypePredicate(
         private fun matchUserType(type: KotlinType, userType: KtUserType, project: Project, scope: GlobalSearchScope): Boolean {
             val className = userType.referencedName ?: return false
 
-            val matchArguments = userType.typeArgumentsAsTypes.isEmpty() ||
-                    type.arguments.size == userType.typeArgumentsAsTypes.size
-                    && type.arguments.zip(userType.typeArgumentsAsTypes).all { (projection, reference) ->
-                compareProjections(projection, reference) && matchTypeReference(
+            val matchArguments = userType.typeArguments.isEmpty() ||
+                    type.arguments.size == userType.typeArguments.size
+                    && type.arguments.zip(userType.typeArguments).all { (projection, reference) ->
+                compareProjectionKind(projection, reference.projectionKind) && (projection.isStarProjection || matchTypeReference(
                     projection.type,
-                    reference,
+                    reference.typeReference,
                     project,
                     scope
-                )
+                ))
             }
 
             return matchArguments && matchString(type, className, project, scope)
@@ -182,17 +182,17 @@ class KotlinExprTypePredicate(
             return false
         }
 
-        private fun compareProjections(projection: TypeProjection, typeReference: KtTypeReference?): Boolean {
+        private fun matchProjection(projection: TypeProjection, typeReference: KtTypeReference?): Boolean {
             val parent = typeReference?.parent
             if (parent !is KtTypeProjection) return projection.projectionKind == Variance.INVARIANT
+            return compareProjectionKind(projection, parent.projectionKind)
+        }
 
-            // TODO: Match star projections
-            return when (parent.projectionKind) {
-                KtProjectionKind.IN -> projection.projectionKind == Variance.IN_VARIANCE
-                KtProjectionKind.OUT -> projection.projectionKind == Variance.OUT_VARIANCE
-                KtProjectionKind.NONE -> projection.projectionKind == Variance.INVARIANT
-                else -> false
-            }
+        private fun compareProjectionKind(projection: TypeProjection, projectionKind: KtProjectionKind) = when (projectionKind) {
+            KtProjectionKind.IN -> projection.projectionKind == Variance.IN_VARIANCE
+            KtProjectionKind.OUT -> projection.projectionKind == Variance.OUT_VARIANCE
+            KtProjectionKind.STAR -> projection.isStarProjection
+            KtProjectionKind.NONE -> projection.projectionKind == Variance.INVARIANT
         }
     }
 

@@ -40,6 +40,8 @@ class KotlinSSTypeFilterTest : KotlinSSResourceInspectionTest() {
     fun testSuspendFunctionType() { doTest("val '_ = '_:[exprtype(suspend \\(\\) -> Unit)]") }
 
     fun testFunctionTypeSupertype() { doTest("val '_:[exprtype(*\\(\\) -> Unit)]") }
+
+    fun testStarProjection() { doTest("fun '_('_ : Foo<*>)") }
     
     // Elements where type filter is enabled
 
