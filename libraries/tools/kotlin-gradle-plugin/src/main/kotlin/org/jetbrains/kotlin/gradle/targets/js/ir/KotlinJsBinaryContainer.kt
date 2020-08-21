@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.PRODUCTION
-import org.jetbrains.kotlin.gradle.targets.js.subtargets.BrowserDistribution
+import org.jetbrains.kotlin.gradle.targets.js.subtargets.DefaultDistribution
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinJsSubTarget
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
@@ -87,7 +87,7 @@ constructor(
                 override val compilation: KotlinJsCompilation = compilation
                 override val name: String = name
                 override val mode: KotlinJsBinaryMode = type
-                override val distribution: Distribution = BrowserDistribution(compilation.target.project)
+                override val distribution: Distribution = DefaultDistribution(compilation.target.project)
             }
         }
     )

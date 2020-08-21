@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-import org.jetbrains.kotlin.gradle.targets.js.subtargets.BrowserDistribution
+import org.jetbrains.kotlin.gradle.targets.js.subtargets.DefaultDistribution
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -47,7 +47,7 @@ abstract class KotlinJsIrSubTarget(
 
     protected val taskGroupName = "Kotlin $disambiguationClassifier"
 
-    protected val distribution: Distribution = BrowserDistribution(project)
+    protected val distribution: Distribution = DefaultDistribution(project)
 
     @ExperimentalDistributionDsl
     override fun distribution(body: Distribution.() -> Unit) {

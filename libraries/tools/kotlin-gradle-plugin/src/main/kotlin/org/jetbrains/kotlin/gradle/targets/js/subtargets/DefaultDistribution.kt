@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 
-class BrowserDistribution(private val project: Project) : Distribution {
+class DefaultDistribution(private val project: Project) : Distribution {
 
     private val basePluginConvention: BasePluginConvention
         get() = project.convention.plugins["base"] as BasePluginConvention
