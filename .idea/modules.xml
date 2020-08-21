@@ -1396,7 +1396,6 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/community/java/java-indexing-impl/intellij.java.indexing.impl.iml" filepath="$PROJECT_DIR$/intellij/community/java/java-indexing-impl/intellij.java.indexing.impl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/jam-support/intellij.java.jam.iml" filepath="$PROJECT_DIR$/intellij/platform/jam-support/intellij.java.jam.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/jam-support/intellij.java.jam.impl.iml" filepath="$PROJECT_DIR$/intellij/platform/jam-support/intellij.java.jam.impl.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/community/jps/javac-ref-scanner-8/intellij.java.jps.javacRefScanner8.iml" filepath="$PROJECT_DIR$/intellij/community/jps/javac-ref-scanner-8/intellij.java.jps.javacRefScanner8.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/java/execution/jshell-frontend/intellij.java.jshell.frontend.iml" filepath="$PROJECT_DIR$/intellij/community/java/execution/jshell-frontend/intellij.java.jshell.frontend.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/java/execution/jshell-protocol/intellij.java.jshell.protocol.iml" filepath="$PROJECT_DIR$/intellij/community/java/execution/jshell-protocol/intellij.java.jshell.protocol.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/IntelliLang/intellij.java.langInjection.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/IntelliLang/intellij.java.langInjection.iml" />
