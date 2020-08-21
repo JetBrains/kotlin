@@ -1,6 +1,6 @@
 buildscript {
   dependencies {
-    classpath("gradle.plugin.com.bnorm.power:kotlin-power-assert-gradle:0.3.0")
+    classpath("gradle.plugin.com.bnorm.power:kotlin-power-assert-gradle:0.4.0")
   }
 }
 
