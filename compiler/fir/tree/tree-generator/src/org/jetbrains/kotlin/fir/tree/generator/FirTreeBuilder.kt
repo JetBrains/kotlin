@@ -90,8 +90,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val equalityOperatorCall = element("EqualityOperatorCall", Expression, expression, call)
     val whenExpression = element("WhenExpression", Expression, expression, resolvable)
     val whenBranch = element("WhenBranch", Expression)
-    val qualifiedAccessWithoutCallee = element("QualifiedAccessWithoutCallee", Expression, statement)
-    val qualifiedAccess = element("QualifiedAccess", Expression, qualifiedAccessWithoutCallee, resolvable)
+    val qualifiedAccess = element("QualifiedAccess", Expression, resolvable, statement)
     val checkNotNullCall = element("CheckNotNullCall", Expression, expression, call, resolvable)
     val elvisExpression = element("ElvisExpression", Expression, expression, resolvable)
 

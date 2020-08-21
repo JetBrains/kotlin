@@ -24,7 +24,7 @@ object FieldSets {
     val calleeReference = field("calleeReference", reference, withReplace = true)
 
     val receivers = fieldSet(
-        field("explicitReceiver", expression, nullable = true).withTransform(),
+        field("explicitReceiver", expression, nullable = true, withReplace = true).withTransform(),
         field("dispatchReceiver", expression).withTransform(),
         field("extensionReceiver", expression).withTransform()
     )

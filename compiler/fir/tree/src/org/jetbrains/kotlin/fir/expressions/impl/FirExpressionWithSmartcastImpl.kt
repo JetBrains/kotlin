@@ -78,5 +78,9 @@ internal class FirExpressionWithSmartcastImpl(
         throw IllegalStateException()
     }
 
+    override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {
+        throw IllegalStateException()
+    }
+
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
 }

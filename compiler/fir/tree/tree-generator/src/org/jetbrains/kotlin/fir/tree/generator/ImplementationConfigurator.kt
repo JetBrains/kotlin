@@ -74,11 +74,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(arrayOfCall)
 
-        val modifiableQualifiedAccess = impl(qualifiedAccessWithoutCallee, "FirModifiableQualifiedAccess") {}
-
-        impl(callableReferenceAccess) {
-            parents += modifiableQualifiedAccess
-        }
+        impl(callableReferenceAccess)
 
         impl(componentCall) {
             default("calleeReference", "FirSimpleNamedReference(source, Name.identifier(\"component\$componentIndex\"), null)")
@@ -128,14 +124,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(functionCall) {
-            parents += modifiableQualifiedAccess
             kind = OpenClass
         }
 
-        impl(qualifiedAccessExpression) {
-            parents += modifiableQualifiedAccess
-        }
-
+        impl(qualifiedAccessExpression)
 
         noImpl(expressionWithSmartcast)
 
@@ -269,7 +261,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(thisReceiverExpression) {
-            parents += modifiableQualifiedAccess
             defaultNoReceivers()
         }
 
@@ -280,8 +271,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(variableAssignment) {
-            parents += modifiableQualifiedAccess
-
             default("lValue") {
                 value = "calleeReference"
                 customSetter = "calleeReference = value"

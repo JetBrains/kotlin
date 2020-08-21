@@ -84,15 +84,15 @@ fun SmartPrinter.printElement(element: Element) {
             override()
             println("fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visit$name(this, data)")
 
-            fun Field.replaceDeclaration(override: Boolean, overridenType: Importable? = null) {
+            fun Field.replaceDeclaration(override: Boolean, overridenType: Importable? = null, forceNullable: Boolean = false) {
                 println()
                 abstract()
                 if (override) print("override ")
-                println(replaceFunctionDeclaration(overridenType))
+                println(replaceFunctionDeclaration(overridenType, forceNullable))
             }
 
             allFields.filter { it.withReplace }.forEach {
-                it.replaceDeclaration(overridenFields[it, it])
+                it.replaceDeclaration(overridenFields[it, it], forceNullable = it.useNullableForReplace)
                 for (overridenType in it.overridenTypes) {
                     it.replaceDeclaration(true, overridenType)
                 }

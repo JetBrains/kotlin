@@ -303,10 +303,15 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                 }
             }
 
-            fun generateReplace(field: Field, overridenType: Importable? = null, body: () -> Unit) {
+            fun generateReplace(
+                field: Field,
+                overridenType: Importable? = null,
+                forceNullable: Boolean = false,
+                body: () -> Unit,
+            ) {
                 println()
                 abstract()
-                print("override ${field.replaceFunctionDeclaration(overridenType)}")
+                print("override ${field.replaceFunctionDeclaration(overridenType, forceNullable)}")
                 if (isInterface || isAbstract) {
                     println()
                     return
@@ -326,7 +331,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
             for (field in allFields.filter { it.withReplace }) {
                 val capitalizedFieldName = field.name.capitalize()
                 val newValue = "new$capitalizedFieldName"
-                generateReplace(field) {
+                generateReplace(field, forceNullable = field.useNullableForReplace) {
                     when {
                         field.withGetter -> {}
 
@@ -336,6 +341,9 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                         }
 
                         else -> {
+                            if (field.useNullableForReplace) {
+                                println("require($newValue != null)")
+                            }
                             println("${field.name} = $newValue")
                         }
                     }

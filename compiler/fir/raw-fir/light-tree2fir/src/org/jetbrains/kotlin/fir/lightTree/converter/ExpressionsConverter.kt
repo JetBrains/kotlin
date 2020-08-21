@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
@@ -475,12 +474,12 @@ class ExpressionsConverter(
             }
         }
 
-        (firSelector as? FirModifiableQualifiedAccess)?.let {
+        (firSelector as? FirQualifiedAccess)?.let {
             if (isSafe) {
                 return it.wrapWithSafeCall(firReceiver!!)
             }
 
-            it.explicitReceiver = firReceiver
+            it.replaceExplicitReceiver(firReceiver)
         }
         return firSelector
     }

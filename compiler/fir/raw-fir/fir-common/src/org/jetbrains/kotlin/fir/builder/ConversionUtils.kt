@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
 import org.jetbrains.kotlin.fir.references.FirNamedReference
@@ -462,12 +461,7 @@ private fun FirExpression.checkReceiver(name: String?): Boolean {
 }
 
 
-fun FirModifiableQualifiedAccess.wrapWithSafeCall(receiver: FirExpression): FirSafeCallExpression {
-    // TODO: Refactor tree to make FirModifiableQualifiedAccess inherit FirQualifiedAccess
-    require(this is FirQualifiedAccess) {
-        "Safe-call instances are expected to be FirQualifiedAccess, but ${this::class} was found"
-    }
-
+fun FirQualifiedAccess.wrapWithSafeCall(receiver: FirExpression): FirSafeCallExpression {
     val checkedSafeCallSubject = buildCheckedSafeCallSubject {
         @OptIn(FirContractViolation::class)
         this.originalReceiverRef = FirExpressionRef<FirExpression>().apply {
@@ -475,7 +469,7 @@ fun FirModifiableQualifiedAccess.wrapWithSafeCall(receiver: FirExpression): FirS
         }
     }
 
-    explicitReceiver = checkedSafeCallSubject
+    replaceExplicitReceiver(checkedSafeCallSubject)
     return buildSafeCallExpression {
         this.receiver = receiver
         @OptIn(FirContractViolation::class)
