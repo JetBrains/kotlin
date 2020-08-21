@@ -72,6 +72,11 @@ abstract class AbstractCoreTest(
                     }.toSet(),
                     suppressedFiles = sourceSet.suppressedFiles.map { file ->
                         testDirPath.toFile().resolve(file)
+                    }.toSet(),
+                    sourceLinks = sourceSet.sourceLinks.map { link ->
+                        link.copy(
+                            localDirectory = testDirPath.toFile().resolve(link.localDirectory).canonicalPath
+                        )
                     }.toSet()
                 )
             }
