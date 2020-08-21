@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.fir.resolve.providers
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
-import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTagWithFixedSymbol
+import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -51,28 +49,4 @@ fun FirSymbolProvider.getClassDeclaredCallableSymbols(classId: ClassId, name: Na
 inline fun <reified T : AbstractFirBasedSymbol<*>> FirSymbolProvider.getSymbolByTypeRef(typeRef: FirTypeRef): T? {
     val lookupTag = typeRef.coneTypeSafe<ConeLookupTagBasedType>()?.lookupTag ?: return null
     return getSymbolByLookupTag(lookupTag) as? T
-}
-
-@OptIn(LookupTagInternals::class)
-fun ConeClassLikeLookupTagImpl.bindSymbolToLookupTag(session: FirSession, symbol: FirClassLikeSymbol<*>?) {
-    boundSymbol = OneElementWeakMap(session, symbol)
-}
-
-fun FirSymbolProvider.getSymbolByLookupTag(lookupTag: ConeClassifierLookupTag): FirClassifierSymbol<*>? {
-    return when (lookupTag) {
-        is ConeClassLikeLookupTag -> getSymbolByLookupTag(lookupTag)
-        is ConeClassifierLookupTagWithFixedSymbol -> lookupTag.symbol
-        else -> error("Unknown lookupTag type: ${lookupTag::class}")
-    }
-}
-
-@OptIn(LookupTagInternals::class)
-fun FirSymbolProvider.getSymbolByLookupTag(lookupTag: ConeClassLikeLookupTag): FirClassLikeSymbol<*>? {
-    (lookupTag as? ConeClassLikeLookupTagImpl)
-        ?.boundSymbol?.takeIf { it.key === this.session }?.let { return it.value }
-
-    return getClassLikeSymbolByFqName(lookupTag.classId)
-        .also {
-            (lookupTag as? ConeClassLikeLookupTagImpl)?.bindSymbolToLookupTag(session, it)
-        }
 }
