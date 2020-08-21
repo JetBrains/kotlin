@@ -2226,3 +2226,240 @@ INVOKESTATIC kotlin/jvm/internal/InlineMarker.mark
 POP
 ARETURN
 ```
+
+### Ordinary Inline Functions
+
+Since ordinary inline functions do not have a state-machine, they can be both called directly and inlined. Thus, there is no difference 
+between `call,` and `inline` `call kind`s for `ordinary` functions. That reduces the number of distinct combinations even further.
+
+There is, however, one notable exception.
+
+### Ordinary Inline Parameter Of Ordinary Inline Function
+
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|ordinary|inline        |block        |ordinary      |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|inline        |variable     |ordinary      |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|inline        |variable     |ordinary      |call     |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
+
+Suppose, we have code like
+```kotlin
+suspend fun isFoo(): Boolean = TODO()
+
+suspend fun main() {
+    println(listOf(1, 2, 3).filter { isFoo() })
+}
+```
+As one sees, we use a suspend function inside ordinary inline lambda block argument of an ordinary inline function. The inliner inlines the 
+lambda into the function, and then the function is inlined into call-site, which is a suspend context. Thus, we should support it. This way, 
+we can retrieve continuation from the context to pass it to the call. Note that if either the function or the argument is not inlined, there 
+would be no continuation in the context. Thus we forbid the cases.
+
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|ordinary|inline        |block        |ordinary      |inline   |suspend calls in block allowed                 |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|inline        |variable     |ordinary      |inline   |no suspend calls allowed                       |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|inline        |variable     |ordinary      |call     |no suspend calls allowed                       |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
+
+### Ordinary Inline Parameter of Suspend Inline Function
+
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|suspend |inline        |block        |ordinary      |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |inline        |variable     |ordinary      |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |inline        |variable     |ordinary      |call     |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
+
+Since the lambda is inlined, there is a continuation in context. Thus, we can call suspend functions. Also, this is a suspend inline 
+function. Thus we duplicate it.
+
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|suspend |inline        |block        |ordinary      |inline   |suspend calls in block allowed,                |
+|        |              |             |              |         |markers without state-machine                  |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |inline        |variable     |ordinary      |inline   |no suspend call in argument allowed,           |
+|        |              |             |              |         |markers without state-machine                  |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |inline        |variable     |ordinary      |call     |no suspend call in argument allowed,           |
+|        |              |             |              |         |state-machine                                  |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
+
+### Suspend Inline Parameter of Suspend Inline Function
+
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|suspend |inline        |block        |suspend       |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |inline        |variable     |suspend       |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |inline        |variable     |suspend       |call     |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
+
+If the parameter is inlined into the function, the lambda's calls use the function's continuation. Thus, it is not necessary to define it 
+as suspend. So, we generate a warning for a suspend inline functions with inline suspending lambda parameters, asking the programmer to 
+remove `suspend` keyword. The programmer is free to ignore the warning in other cases. Since the most common case is inlining, the warning
+makes sense, and we decided to keep it when we discovered that there are cases of no inlining.
+
+Suspension points cannot be nested, so, we generate different suspend markers: inline suspend markers. They are either removed by the 
+inliner, if it inlines the lambda, or replaced by real suspend markers when there is no lambda inlining.
+
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|suspend |inline        |block        |suspend       |inline   |WARNING to remove `suspend` keyword            |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |inline        |variable     |suspend       |inline   |WARNING should be ignored,                     |
+|        |              |             |              |         |no state-machine with markers                  |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |inline        |variable     |suspend       |call     |WARNING should be ignored, state-machine       |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
+
+### Inline Suspend Parameter of Ordinary Inline Function
+
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|ordinary|inline        |block        |suspend       |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|inline        |variable     |suspend       |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|inline        |variable     |suspend       |call     |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
+
+Since the suspend lambda parameter's body should be inlined into the body of an ordinary inline function, which, in turn, can be inlined 
+into a non-suspend context, there is no way we can retrieve continuation to pass to suspend calls, which the lambda could have. In other 
+words, we forbid this combination.
+
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|ordinary|inline        |block        |suspend       |inline   |FORBIDDEN                                      |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|inline        |variable     |suspend       |inline   |FORBIDDEN                                      |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|inline        |variable     |suspend       |call     |FORBIDDEN                                      |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
+
+### Noinline Suspend Parameter of Suspend Inline Function
+
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|suspend |noinline      |block        |suspend       |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |noinline      |variable     |suspend       |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |noinline      |variable     |suspend       |call     |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
+
+Before we get to inline suspend lambdas, or crossinline suspend lambdas,  let us see how noinline suspend lambda parameters of inline 
+functions work. For example, if we have even the simplest function possible:
+```kotlin
+suspend inline fun inlineMe(noinline c: suspend () -> Unit) { c() }
+```
+we need to wrap the call of the parameter with suspending markers; otherwise, the call will not have a state in the state-machine. Thus, 
+the compiler generates code like
+```text
+ALOAD 0 // lambda parameter
+ALOAD 1 // continuation
+ICONST_0 // before suspending call marker
+INVOKESTATIC kotlin/jvm/internal/InlineMarker.mark
+INVOKEINTERFACE Function1.invoke (Ljava/lang/Object;)Ljava/lang/Object;
+ICONST_2 // returns Unit marker
+INVOKESTATIC kotlin/jvm/internal/InlineMarker.mark
+ICONST_1 // after suspending call marker
+INVOKESTATIC kotlin/jvm/internal/InlineMarker.mark
+POP
+GETSTATIC kotlin/Unit.INSTANCE
+ARETURN
+```
+
+Of course, for `call`, we also generate a state-machine.
+
+Note, that we can call `noinline` parameter inside inner lambda or object, like
+```kotlin
+suspend inline fun inlineMe(noinline c: suspend () -> Unit) = suspend { c() }
+```
+in this case, we just generate a state-machine for the lambda, and the inliner copies it when it inlines the function.
+
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|suspend |noinline      |block        |suspend       |inline   |if called in function, markers around invoke   |
+|        |              |             |              |         |if called in inner function, state-machine     |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |noinline      |variable     |suspend       |inline   |if called in function, markers around invoke   |
+|        |              |             |              |         |if called in inner function, state-machine     |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |noinline      |variable     |suspend       |call     |state-machine with parameter invoke in a state |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
+
+### Noinline Suspend Parameter of Ordinary Inline Function
+
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|ordinary|noinline      |block        |suspend       |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|noinline      |variable     |suspend       |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|noinline      |variable     |suspend       |call     |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
+
+In order to call suspend noinline parameter, we need a suspend context. The easiest way to do this is to wrap the call in a suspend lambda:
+```kotlin
+inline fun inlineMe(noinline c: suspend () -> Unit) = suspend { c() }
+```
+
+The result is the same as in the previous section: the call is inside a separate state, but this time it is not inside the function itself, 
+it is inside the lambda. Since this is an ordinary inline function, it has no state-machine, the lambda does. The inliner copies its class 
+when it inlines the function and leaves the state-machine. This way, either we both inline the function and call it, semantics are the same.
+
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|ordinary|noinline      |block        |suspend       |inline   |state-machine with parameter invoke in a state |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|noinline      |variable     |suspend       |inline   |state-machine with parameter invoke in a state |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|noinline      |variable     |suspend       |call     |state-machine with parameter invoke in a state |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
+
