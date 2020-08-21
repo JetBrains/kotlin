@@ -1,3 +1,4 @@
+// Fake override in B not bridging between I.g(String) and A.g(Object)
 // IGNORE_BACKEND_FIR: JVM_IR
 
 interface I<T> {
