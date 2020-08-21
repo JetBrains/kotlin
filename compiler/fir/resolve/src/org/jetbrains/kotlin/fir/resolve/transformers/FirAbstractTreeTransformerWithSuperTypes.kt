@@ -61,7 +61,7 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
                 useSiteSession = session
             ).asReversed()
             for (superType in superTypes) {
-                session.getNestedClassifierScope(superType.lookupTag, scopeSession)?.let { nestedClassifierScope ->
+                superType.lookupTag.getNestedClassifierScope(session, scopeSession)?.let { nestedClassifierScope ->
                     val scope = nestedClassifierScope.wrapNestedClassifierScopeWithSubstitutionForSuperType(superType, session)
                     scopes.add(scope)
                 }

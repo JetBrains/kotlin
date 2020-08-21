@@ -66,10 +66,10 @@ private fun doCreateImportingScopes(
 
 private val PACKAGE_MEMBER = scopeSessionKey<FqName, FirPackageMemberScope>()
 
-fun FirSession.getNestedClassifierScope(lookupTag: ConeClassLikeLookupTag, scopeSession: ScopeSession): FirScope? {
-    val klass = when (lookupTag) {
-        is ConeClassLookupTagWithFixedSymbol -> lookupTag.symbol.fir
-        else -> firSymbolProvider.getClassLikeSymbolByFqName(lookupTag.classId)?.fir as? FirRegularClass ?: return null
+fun ConeClassLikeLookupTag.getNestedClassifierScope(session: FirSession, scopeSession: ScopeSession): FirScope? {
+    val klass = when (this) {
+        is ConeClassLookupTagWithFixedSymbol -> symbol.fir
+        else -> session.firSymbolProvider.getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass ?: return null
     }
-    return klass.scopeProvider.getNestedClassifierScope(klass, this, scopeSession)
+    return klass.scopeProvider.getNestedClassifierScope(klass, session, scopeSession)
 }

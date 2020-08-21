@@ -150,7 +150,7 @@ private fun createScopesForNestedClasses(
             lookupInterfaces = false, deep = true, substituteTypes = true, useSiteSession = session,
             supertypeSupplier = supertypeComputationSession.supertypesSupplier
         ).asReversed().mapNotNullTo(this) {
-            session.getNestedClassifierScope(it.lookupTag, scopeSession)
+            it.lookupTag.getNestedClassifierScope(session, scopeSession)
                 ?.wrapNestedClassifierScopeWithSubstitutionForSuperType(it, session)
         }
         addIfNotNull(klass.typeParametersScope())
