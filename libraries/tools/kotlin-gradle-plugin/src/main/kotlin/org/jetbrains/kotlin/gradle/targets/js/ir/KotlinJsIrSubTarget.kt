@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.newFileProperty
 
 abstract class KotlinJsIrSubTarget(
     val target: KotlinJsIrTarget,
@@ -238,7 +239,7 @@ abstract class KotlinJsIrSubTarget(
                     ) {
                         it.dependsOn(prepareJsLibrary)
 
-                        it.outputs.dir(distribution.directory)
+                        it.outputs.dir(project.newFileProperty { distribution.directory })
                     }
                 }
             }
