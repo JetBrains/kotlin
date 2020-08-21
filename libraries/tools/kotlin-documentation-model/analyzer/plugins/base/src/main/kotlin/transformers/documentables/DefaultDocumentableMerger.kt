@@ -3,6 +3,8 @@ package org.jetbrains.dokka.base.transformers.documentables
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.DokkaSourceSetID
 import org.jetbrains.dokka.model.*
+import org.jetbrains.dokka.model.properties.ExtraProperty
+import org.jetbrains.dokka.model.properties.MergeStrategy
 import org.jetbrains.dokka.model.properties.WithExtraProperties
 import org.jetbrains.dokka.model.properties.mergeExtras
 import org.jetbrains.dokka.plugability.DokkaContext
@@ -36,14 +38,14 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
             allModules.groupBy { it.sourceSets.single().sourceSetID }
 
         //this returns representation of graph where directed edges are leading from module to modules that depend on it
-        val graph: Map<ModuleOfDifferentTranslators?, List<ModuleOfDifferentTranslators>> = modulesMap.flatMap { (_, module) ->
-            module.first().sourceSets.single().dependentSourceSets.map { sourceSet ->
-                modulesMap[sourceSet] to module
+        val graph: Map<ModuleOfDifferentTranslators, List<ModuleOfDifferentTranslators>> =
+            modulesMap.flatMap { (_, module) ->
+                module.first().sourceSets.single().dependentSourceSets.map { sourceSet ->
+                    modulesMap[sourceSet]!! to module
+                }
+            }.groupingBy { it.first }.fold({ _, value -> listOf(value.second) }) { _, accumulator, value ->
+                accumulator + listOf(value.second)
             }
-        }.groupBy { it.first }.entries
-            .map { it.key to it.value.map { it.second } }
-            .toMap()
-
 
         val visited = modulesMap.map { it.value to false }.toMap().toMutableMap()
         val topologicalSortedList: MutableList<ModuleOfDifferentTranslators> = mutableListOf()
@@ -82,37 +84,64 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
         fun T.isExpectActual(): Boolean =
             this.safeAs<WithExtraProperties<T>>().let { it != null && it.extra[IsExpectActual] != null }
 
-        fun Set<DokkaConfiguration.DokkaSourceSet>.parentSourceSet(): String = singleOrNull {
-            it.dependentSourceSets.all { it !in this.map { it.sourceSetID } }
-        }?.displayName
-            ?: "unresolved".also { context.logger.error("Ill-defined dependency between sourceSets") }
+        fun mergeClashingElements(elements: List<Pair<T, Set<DokkaConfiguration.DokkaSourceSet>>>): List<T> =
+            elements.groupBy { it.first.name }.values.flatMap { listOfDocumentableToSSIds ->
+                listOfDocumentableToSSIds.map { (documentable, sourceSets) ->
+                    when (documentable) {
+                        is DClass -> documentable.copy(
+                            extra = documentable.extra + ClashingDriIdentifier(
+                                sourceSets + (documentable.extra[ClashingDriIdentifier]?.value ?: emptySet())
+                            )
+                        )
+                        is DObject -> documentable.copy(
+                            extra = documentable.extra + ClashingDriIdentifier(
+                                sourceSets + (documentable.extra[ClashingDriIdentifier]?.value ?: emptySet())
+                            )
+                        )
+                        is DAnnotation -> documentable.copy(
+                            extra = documentable.extra + ClashingDriIdentifier(
+                                sourceSets + (documentable.extra[ClashingDriIdentifier]?.value ?: emptySet())
+                            )
+                        )
+                        is DInterface -> documentable.copy(
+                            extra = documentable.extra + ClashingDriIdentifier(
+                                sourceSets + (documentable.extra[ClashingDriIdentifier]?.value ?: emptySet())
+                            )
+                        )
+                        is DEnum -> documentable.copy(
+                            extra = documentable.extra + ClashingDriIdentifier(
+                                sourceSets + (documentable.extra[ClashingDriIdentifier]?.value ?: emptySet())
+                            )
+                        )
+                        is DFunction -> documentable.copy(
+                            extra = documentable.extra + ClashingDriIdentifier(
+                                sourceSets + (documentable.extra[ClashingDriIdentifier]?.value ?: emptySet())
+                            )
+                        )
+                        is DProperty -> documentable.copy(
+                            extra = documentable.extra + ClashingDriIdentifier(
+                                sourceSets + (documentable.extra[ClashingDriIdentifier]?.value ?: emptySet())
+                            )
+                        )
+                        else -> documentable
+                    }
+                } as List<T>
+            }
 
-        fun mergeClashingElements(elements: List<T>): List<T> = elements.groupBy { it.name }.values.flatMap {
-            if(it.size > 1) it.map {
-                when(it) {
-                    is DClass -> it.copy(name = "${it.name}(${it.sourceSets.parentSourceSet()})")
-                    is DObject -> it.copy(name = "${it.name}(${it.sourceSets.parentSourceSet()})")
-                    is DAnnotation -> it.copy(name = "${it.name}(${it.sourceSets.parentSourceSet()})")
-                    is DInterface -> it.copy(name = "${it.name}(${it.sourceSets.parentSourceSet()})")
-                    is DEnum -> it.copy(name = "${it.name}(${it.sourceSets.parentSourceSet()})")
-                    is DFunction -> it.copy(name = "${it.name}(${it.sourceSets.parentSourceSet()})")
-                    is DProperty -> it.copy(name = "${it.name}(${it.sourceSets.parentSourceSet()})")
-                    else -> it
-                }
-            } as List<T> else it
-        }
 
         fun analyzeExpectActual(sameDriElements: List<T>): List<T> {
             val (expects, actuals) = sameDriElements.partition { it.expectPresentInSet != null }
-            val groupedByOwnExpect = expects.map { expect ->
-                listOf(expect) + actuals.filter { actual ->
+            val groupedByOwnExpectWithActualSourceSetIds = expects.map { expect ->
+                val actualsForGivenExpect = actuals.filter { actual ->
                     dependencyInfo[actual.sourceSets.single()]
                         ?.contains(expect.expectPresentInSet!!)
                         ?: throw IllegalStateException("Cannot resolve expect/actual relation for ${actual.name}")
                 }
+                (listOf(expect) + actualsForGivenExpect) to actualsForGivenExpect.flatMap { it.sourceSets }.toSet()
             }
-            val reducedToOneDocumentable = groupedByOwnExpect.map { it.reduce(reducer) }
-            val uniqueNamedDocumentables = reducedToOneDocumentable.let(::mergeClashingElements)
+            val reducedToOneDocumentableWithActualSourceSetIds =
+                groupedByOwnExpectWithActualSourceSetIds.map { it.first.reduce(reducer) to it.second }
+            val uniqueNamedDocumentables = reducedToOneDocumentableWithActualSourceSetIds.let(::mergeClashingElements)
             return uniqueNamedDocumentables
         }
 
@@ -120,8 +149,9 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
         return elements.partition {
             it.isExpectActual()
         }.let { (expectActuals, notExpectActuals) ->
-            notExpectActuals.groupBy { it.dri }.values.flatMap(::mergeClashingElements) +
-                expectActuals.groupBy { it.dri }.values.flatMap(::analyzeExpectActual)
+            notExpectActuals.map { it to it.sourceSets }
+                .groupBy { it.first.dri }.values.flatMap(::mergeClashingElements) +
+                    expectActuals.groupBy { it.dri }.values.flatMap(::analyzeExpectActual)
         }
     }
 
@@ -277,3 +307,15 @@ internal class DefaultDocumentableMerger(val context: DokkaContext) : Documentab
 }
 
 private typealias ModuleOfDifferentTranslators = List<DModule>
+
+data class ClashingDriIdentifier(val value: Set<DokkaConfiguration.DokkaSourceSet>) : ExtraProperty<Documentable> {
+    companion object : ExtraProperty.Key<Documentable, ClashingDriIdentifier> {
+        override fun mergeStrategyFor(
+            left: ClashingDriIdentifier,
+            right: ClashingDriIdentifier
+        ): MergeStrategy<Documentable> =
+            MergeStrategy.Replace(ClashingDriIdentifier(left.value + right.value))
+    }
+
+    override val key: ExtraProperty.Key<Documentable, *> = ClashingDriIdentifier
+}
