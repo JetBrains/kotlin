@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.utils.decamelize
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import java.io.File
 import javax.inject.Inject
 
@@ -200,7 +201,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                         it.dependsOn(webpackCommonTask)
                         it.dependsOn(distributeResourcesTask)
 
-                        it.outputs.dir(distribution.directory)
+                        it.outputs.dir(project.newFileProperty { distribution.directory })
                     }
                 }
             }
