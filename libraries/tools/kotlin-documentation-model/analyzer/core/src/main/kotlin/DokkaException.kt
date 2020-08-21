@@ -1,3 +1,3 @@
 package org.jetbrains.dokka
 
-class DokkaException(message: String) : RuntimeException(message)
+open class DokkaException(message: String) : RuntimeException(message)
