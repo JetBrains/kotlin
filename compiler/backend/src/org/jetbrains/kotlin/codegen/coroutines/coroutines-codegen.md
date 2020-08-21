@@ -2463,3 +2463,414 @@ when it inlines the function and leaves the state-machine. This way, either we b
 +--------+--------------+-------------+--------------+---------+-----------------------------------------------+
 ```
 
+### Crossroutines
+
+Finally, the trickiest part of coroutines codegen: crossinline lambdas captured inside suspend functions or lambdas, or `crossroutines`.
+
+Let us begin with a simple example:
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|ordinary|crossinine    |block        |suspend       |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
+
+```kotlin
+interface SuspendRunnable {
+    suspend fun run()
+}
+
+suspend fun dummy() {}
+
+inline fun crossinlineMe(crossinline c: suspend () -> Unit): SuspendRunnable =
+    object : SuspendRunnable {
+        override suspend fun run() {
+            dummy()
+            c()
+        }
+    }
+```
+
+The compiler generated code for the inline function will look like
+```kotlin
+public final class crossilineMe$1($captured_local_variable$0: Function1<Continuation<Unit>, Unit>) {
+    final /*package-local*/ $c : Function1<Continuation<Unit>, Unit>
+
+    init {
+        $c = $captured_local_variable$0
+    }
+
+    public override fun run($completion: Continuation) {
+        beforeFakeContinuationConstructionCall()
+        run$1()
+        afterFakeContinuationConstructionCall()
+        dummy()
+        this.$c.invoke($completion)
+    }
+
+    public final class run$1 {
+        // Partially built continuation.
+    }
+}
+
+public final fun crossinlineMe(c: Function1<Continuation<Unit>, Unit>): SuspendRunnable {
+    return crossinlineMe$1(c)
+}
+```
+When the inliner inlines the `crossinlineMe` function, it first inlines its lambda into the object in the process, which is called anonymous 
+object transformation, replaces the usages of the object, and finally inlines the function.
+
+Note `run$1` class. It is `fake continuation`, continuation class, generated for the inliner by codegen. If it were not present, the inliner
+would need to generate the continuation class. However, with fake continuation, it just needs to transform fake continuation, like it 
+transforms any other inner object. Fake continuation is simply a continuation class without spilled variables.
+
+For example, if we use the function, like:
+```kotlin
+suspend fun main() {
+    crossinlineMe {
+        pritln("OK")
+    }.run()
+}
+```
+Firstly, we transform the object:
+```kotlin
+public final class main$1 {
+    public override fun run($completion: Continuation) {
+        val $continuation = if ($completion is run$1 && $completion.label.sign_bit.is_set) {
+            $completion.label.sign_bit.unset
+            $completion
+        } else {
+            run$1($completion)
+        }
+        when ($continuation.label) {
+            0 -> {
+                dummy()
+                // error handling is omitted
+            }
+            1 -> {
+                println("OK")
+                return
+            }
+            else -> {
+                error(...)
+            }
+        }
+    }
+
+    public final run$1: Continuation {
+        // Continuation's content
+    }
+}
+```
+as one sees, we generate state-machine during the transformation, and the inliner transforms the fake continuation. The state-machine 
+builder removes the fake continuation constructor call. To do this, it looks for before and after fake continuation constructor call 
+markers, which have values `4` and `5` respectively.
+
+Then we replace the object usages:
+```kotlin
+public final fun tmp(): SuspendRunnable {
+    return main$1()
+}
+```
+and finally, we inline the function:
+```kotlin
+public final fun main$$$($completion: Continuation<Unit>) {
+    main$1().run()
+}
+```
+
+Since we inline the lambda into the `run` function, we cannot generate the state-machine for it during codegen, only during the 
+transformation.
+
+Because the parameter is declared as `suspend`, and the function itself is not, we cannot call the parameter inside the function; we need 
+to have some suspend context, i.e., inner lambda or inner object with a suspend function.
+
+Note, if the lambda does not contain suspending calls, we should not put the inlined lambda into a separate state; in other words, we 
+should remove suspend markers around the inlined code. To do this, we introduced new suspend markers: before and after inline suspend call 
+markers. Their values are `6` and `7`, respectively. If the lambda is inlined, after lambda inlining, before building the state-machine, 
+the inliner removes the markers. Otherwise, it replaces the inline suspend markers with real suspend markers if the argument is not inlined.
+
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|ordinary|crossinine    |block        |suspend       |inline   |inline suspend markers around invoke           |
+|        |              |             |              |         |fake continuation for inliner to transform     |
+|        |              |             |              |         |state-machine is built after inlining          |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
+
+Let us now assume that we do not inline the parameter:
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|ordinary|crossinine    |variable     |suspend       |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|crossinine    |variable     |suspend       |call     |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
+We cannot call the function, since it has no state-machine inside the object's suspend function. This dilemma of needing the state-machine 
+and needing not to have one is the same as inline suspend functions. Thus the solution is also the same: we duplicate the suspend function, 
+in this case, `run`:
+```kotlin
+public final class crossilineMe$1($captured_local_variable$0: Function1<Continuation<Unit>, Unit>) {
+    final /*package-local*/ $c : Function1<Continuation<Unit>, Unit>
+
+    init {
+        $c = $captured_local_variable$0
+    }
+
+    public override fun run$$forInline($completion: Continuation) {
+        beforeFakeContinuationConstructionCall()
+        run$1()
+        afterFakeContinuationConstructionCall()
+        dummy()
+        this.$c.invoke($completion)
+    }
+
+    public override fun run($completion: Continuation) {
+        val $continuation = if ($completion is run$1 && $completion.label.sign_bit.is_set) {
+            $completion.label.sign_bit.unset
+            $completion
+        } else {
+            run$1($completion)
+        }
+        when ($continuation.label) {
+            0 -> {
+                dummy()
+                // error handling is omitted
+            }
+            1 -> {
+                println("OK")
+                return
+            }
+            else -> {
+                error(...)
+            }
+        }
+    }
+
+    public final run$1: Continuation {
+        // Continuation's content
+    }
+}
+
+public final fun crossinlineMe(c: Function1<Continuation<Unit>, Unit>): SuspendRunnable {
+    return crossinlineMe$1(c)
+}
+```
+FIXME: we do not need fake continuation anymore unless the function is tail-call or inline-only. The inliner transforms `run`'s continuation 
+instead. It can retrieve the continuation from the `run`'s function header.
+
+As one sees, we have both versions: one with a state-machine, which the inliner throws away when it transforms the object, and the other is 
+for inlining, which is used as a template to generate 'real' state-machine.
+
+In the case of suspending lambdas, we duplicate its `invokeSuspend` method.
+
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|ordinary|crossinine    |variable     |suspend       |inline   |suspend function duplication                   |
+|        |              |             |              |         |inline suspend markers replaced with real ones |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|crossinine    |variable     |suspend       |call     |suspend function duplication                   |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
+
+Let's now see, what happens, when we inline the function into another inline function:
+```kotlin
+inline fun crossinlineMe2(crossinline c: suspend () -> Unit): SuspendRunnable =
+    object : SuspendRunnable {
+        override suspend fun run() {
+            crossinlineMe { c() }
+        }
+    }
+```
+In this case, we cannot just throw away the state-machine template (a version of the function passed to the state-machine builder). So, if 
+the inliner inlines the function into another inline function, it keeps the template (after inlining, of course).
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|ordinary|crossinine    |block        |suspend       |inline   |inline suspend markers around invoke           |
+|        |              |             |              |         |if inline-site is inline, keep the template    |
+|        |              |             |              |         |fake continuation for inliner to transform     |
+|        |              |             |              |         |state-machine is built after inlining          |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
+
+Let us now make the function itself suspend:
+
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|suspend |crossinine    |block        |suspend       |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
+
+```kotlin
+suspend inline fun crossinlineMe(crossinline c: suspend () -> Unit): SuspendRunnable =
+    object : SuspendRunnable {
+        override suspend fun run() {
+            c()
+        }
+    }
+```
+The codegen, of course, duplicates it, but it does not duplicate the object. So, it is merely a combination of inline suspend and 
+crossinline suspend.
+
+There is one difference. You see, like `noinline` parameters, `crossinline` can be called in the function itself:
+```kotlin
+suspend inline fun inlineMe(crossinline c: suspend () -> Unit) {
+    c()
+}
+```
+In this example, `inlineMe`'s parameter, albeit being declared as `crossinline`, is inline. By the way, this is how parameters of 
+`suspendCoroutineUninterceptedOrReturn` and `suspendCoroutine` behave.
+
+Since the parameter is inline, the behavior is the same, as there was no `crossinline` keyword, but without warning of redundant suspend 
+modifier.
+
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|suspend |crossinine    |block        |suspend       |inline   |inline suspend markers around invoke           |
+|        |              |             |              |         |if inline-site is inline, keep the template    |
+|        |              |             |              |         |fake continuation for inliner to transform     |
+|        |              |             |              |         |state-machine is built after inlining          |
+|        |              |             |              |         |function is duplicated                         |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
+
+To streamline the process of a suspend function transformation, since it is already tricky enough, we do not support ordinary crossinline 
+parameters in different ways. If its call-site is suspending, we duplicate it and then transform the object.
+
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|ordinary|crossinine    |variable     |ordinary      |inline   |if lambda call-site is suspend, duplicate it   |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |crossinine    |block        |ordinary      |inline   |if lambda call-site is suspend, duplicate it   |
+|        |              |             |              |         |function is duplicated                         |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |crossinine    |variable     |ordinary      |inline   |if lambda call-site is suspend, duplicate it   |
+|        |              |             |              |         |function is duplicated                         |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |crossinine    |variable     |ordinary      |call     |if lambda call-site is suspend, duplicate it   |
+|        |              |             |              |         |function is duplicated                         |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
+
+### Summary
+
+Here is the full list of all possible combinations, excluding invalid ones. Now one can see why coroutines inlining is a tricky business.
+
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|ordinary|noinline      |block        |ordinary      |inline   |no suspend call allowed                        |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|noinline      |block        |suspend       |inline   |state-machine with parameter invoke in a state |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|noinline      |variable     |ordinary      |inline   |no suspend call allowed                        |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|noinline      |variable     |ordinary      |call     |no suspend call allowed                        |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|noinline      |variable     |suspend       |inline   |state-machine with parameter invoke in a state |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|noinline      |variable     |suspend       |call     |state-machine with parameter invoke in a state |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|inline        |block        |ordinary      |inline   |suspend calls in block allowed                 |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|inline        |block        |suspend       |inline   |FORBIDDEN                                      |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|inline        |variable     |ordinary      |inline   |no suspend calls allowed                       |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|inline        |variable     |ordinary      |call     |no suspend calls allowed                       |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|inline        |variable     |suspend       |inline   |FORBIDDEN                                      |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|inline        |variable     |suspend       |call     |FORBIDDEN                                      |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|crossinine    |block        |ordinary      |inline   |no suspend call allowed                        |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|crossinine    |block        |suspend       |inline   |inline suspend markers around invoke           |
+|        |              |             |              |         |if inline-site is inline, keep the template    |
+|        |              |             |              |         |fake continuation for inliner to transform     |
+|        |              |             |              |         |state-machine is built after inlining          |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|crossinine    |variable     |ordinary      |inline   |if lambda call-site is suspend, duplicate it   |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|crossinine    |variable     |ordinary      |call     |if lambda call-site is suspend, duplicate it   |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|crossinine    |variable     |suspend       |inline   |suspend function duplication                   |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|crossinine    |variable     |suspend       |call     |suspend function duplication                   |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|no lambda     |variable     |ordinary      |inline   |no suspend call allowed                        |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|no lambda     |variable     |ordinary      |call     |no suspend call allowed                        |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |noinline      |block        |ordinary      |inline   |no state-machine with markers                  |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |noinline      |block        |suspend       |inline   |if called in a function, markers around invoke |
+|        |              |             |              |         |if called in inner function, state-machine     |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |noinline      |variable     |ordinary      |inline   |no state-machine with markers                  |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |noinline      |variable     |ordinary      |call     |state-machine                                  |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |noinline      |variable     |suspend       |inline   |if called in a function, markers around invoke |
+|        |              |             |              |         |if called in inner function, state-machine     |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |noinline      |variable     |suspend       |call     |state-machine with parameter's invoke in state |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |inline        |block        |ordinary      |inline   |suspend calls in block allowed,                |
+|        |              |             |              |         |markers without state-machine                  |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |inline        |block        |suspend       |inline   |WARNING to remove `suspend` keyword            |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |inline        |variable     |ordinary      |inline   |no suspend call in argument allowed,           |
+|        |              |             |              |         |markers without state-machine                  |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |inline        |variable     |ordinary      |call     |no suspend call in argument allowed,           |
+|        |              |             |              |         |state-machine                                  |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |inline        |variable     |suspend       |inline   |WARNING should be ignored,                     |
+|        |              |             |              |         |no state-machine with markers                  |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |inline        |variable     |suspend       |call     |WARNING should be ignored, state-machine       |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |crossinine    |block        |ordinary      |inline   |if lambda call-site is suspend, duplicate it   |
+|        |              |             |              |         |function is duplicated                         |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |crossinine    |block        |suspend       |inline   |inline suspend markers around invoke           |
+|        |              |             |              |         |if inline-site is inline, keep the template    |
+|        |              |             |              |         |fake continuation for inliner to transform     |
+|        |              |             |              |         |state-machine is built after inlining          |
+|        |              |             |              |         |function is duplicated                         |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |crossinine    |variable     |ordinary      |inline   |if lambda call-site is suspend, duplicate it   |
+|        |              |             |              |         |function is duplicated                         |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |crossinine    |variable     |ordinary      |call     |if lambda call-site is suspend, duplicate it   |
+|        |              |             |              |         |function is duplicated                         |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |crossinine    |variable     |suspend       |inline   |suspend function duplication                   |
+|        |              |             |              |         |function is duplicated                         |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |crossinine    |variable     |suspend       |call     |suspend function duplication                   |
+|        |              |             |              |         |function is duplicated                         |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |no lambda     |variable     |ordinary      |inline   |no state-machine with markers                  |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |no lambda     |variable     |ordinary      |call     |state-machine                                  |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
