@@ -1920,3 +1920,309 @@ way, we do the same in `callSuspend` and `callSuspendBy` functions.
 However, in this example, we cannot be sure that `generic` returns `Unit`. In this case, the compiler disables tail-call optimization. More 
 generally, the compiler disables tail-call optimization for functions returning `Unit` if the function overrides a function, returning 
 non-`Unit` type.
+
+## Inline
+
+Inlining a suspend function is a tricky business.
+
+Before we get further, let us explain that there are 64 possible combinations of inline functions with parameter:
+1. The function can be either suspend or ordinary
+2. A parameter can be noinline, inline or crossinline lambda; or no lambda at all
+3. An argument can be a block, which we inline, or a variable, which we cannot inline
+4. The parameter can be suspendable or ordinary
+5. We can inline the function or call it via reflection
+
+Some of them are ill-formed, of course, because there are no suspend non-functional parameters in Kotlin. Suspend parameters can have only
+functional types. Also, we cannot inline variable when we call it via reflection.
+
+Let us draw a table with all possible combinations, which are valid and fill it one row at a time:
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|ordinary|noinline      |block        |ordinary      |inline   |no suspend call allowed                        |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|noinline      |block        |suspend       |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|noinline      |variable     |ordinary      |inline   |no suspend call allowed                        |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|noinline      |variable     |ordinary      |call     |no suspend call allowed                        |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|noinline      |variable     |suspend       |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|noinline      |variable     |suspend       |call     |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|inline        |block        |ordinary      |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|inline        |block        |suspend       |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|inline        |variable     |ordinary      |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|inline        |variable     |ordinary      |call     |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|inline        |variable     |suspend       |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|inline        |variable     |suspend       |call     |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|crossinine    |block        |ordinary      |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|crossinine    |block        |suspend       |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|crossinine    |variable     |ordinary      |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|crossinine    |variable     |ordinary      |call     |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|crossinine    |variable     |suspend       |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|crossinine    |variable     |suspend       |call     |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|no lambda     |variable     |ordinary      |inline   |no suspend call allowed                        |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|ordinary|no lambda     |variable     |ordinary      |call     |no suspend call allowed                        |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |noinline      |block        |ordinary      |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |noinline      |block        |suspend       |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |noinline      |variable     |ordinary      |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |noinline      |variable     |ordinary      |call     |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |noinline      |variable     |suspend       |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |noinline      |variable     |suspend       |call     |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |inline        |block        |ordinary      |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |inline        |block        |suspend       |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |inline        |variable     |ordinary      |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |inline        |variable     |ordinary      |call     |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |inline        |variable     |suspend       |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |inline        |variable     |suspend       |call     |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |crossinine    |block        |ordinary      |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |crossinine    |block        |suspend       |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |crossinine    |variable     |ordinary      |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |crossinine    |variable     |ordinary      |call     |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |crossinine    |variable     |suspend       |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |crossinine    |variable     |suspend       |call     |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |no lambda     |variable     |ordinary      |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |no lambda     |variable     |ordinary      |call     |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
+
+Note that not all ordinary functions with ordinary parameters are out of the scope of the document.
+
+Let us explain what `block` and `variable` of `argument kind` mean. We can call an inline function with lambda parameter in a couple of 
+ways: by providing a block or passing a variable of lambda type:
+```kotlin
+inline fun inlineMe(c: () -> Unit) { c() }
+
+fun main() {
+    // block
+    inlineMe { println("block") }
+
+    // variable
+    val variable = { println("block") }
+    inlineMe(variable)
+}
+```
+
+With this out of the way, let us now consider suspend inline functions with no lambda parameter.
+
+### Inline Suspend Functions with Ordinary Parameters
+
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|suspend |no lambda     |variable     |ordinary      |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |noinline      |block        |ordinary      |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |noinline      |variable     |ordinary      |inline   |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
+
+Suspend functions should have a state-machine unless they are tail-call, and we cannot inline a state-machine into another state-machine, 
+since it will reset the label field.
+
+We generate them as if they are ordinary functions, but they have all the markers already generated. In other words, if we have an inline 
+suspend function like:
+```kotlin
+suspend fun returnsUnit() = suspendCoroutine<Unit> { it.resume(Unit) }
+
+suspend inline fun inlineMe() {
+    returnsUnit()
+}
+```
+
+The compiler generates the following bytecode:
+```text
+ALOAD 1 // continuation
+ICONST 0 // before suspending marker
+INVOKESTATIC InlineMarker.mark
+INVOKESTATIC returnsUnit()
+ICONST_2 // returns unit marker
+INVOKESTATIC InlineMarker.mark
+ICONST 1 // after suspending marker
+INVOKESTATIC InlineMarker.mark
+POP
+GETSTATIC kotlin/Unit.INSTANCE
+ARETURN
+```
+if one looks closely, this is exactly the bytecode that would come to `CoroutineTransformerMethodVisitor` if we would not have declared the 
+function inline, but without stack spilling markers, since the inliner spills the stack for us.
+
+Now, let us have another inline function, which calls this one.
+```kotlin
+suspend inline fun inlineMe2() {
+    inlineMe()
+    inlineMe()
+}
+```
+the generated bytecode would look like:
+```text
+ALOAD 1 // continuation
+ICONST 0 // before suspending marker
+INVOKESTATIC InlineMarker.mark
+INVOKESTATIC returnsUnit()
+ICONST_2 // returns unit marker
+INVOKESTATIC InlineMarker.mark
+ICONST 1 // after suspending marker
+INVOKESTATIC InlineMarker.mark
+POP
+
+ALOAD 1 // continuation
+ICONST 0 // before suspend marker
+INVOKESTATIC InlineMarker.mark
+INVOKESTATIC returnsUnit()
+ICONST_2 // returns unit marker
+INVOKESTATIC InlineMarker.mark
+ICONST 1 // after suspend marker
+INVOKESTATIC InlineMarker.mark
+POP
+
+GETSTATIC kotlin/Unit.INSTANCE
+ARETURN
+```
+as one sees, it inlines the inline functions. However, it does not generate a state-machine since the function will be inlined later. Note 
+that the compiler does not generate suspending markers around inlined bytecode, since the state-machine should be flat, so nested suspension 
+points are not allowed.
+
+When lambda parameters are ordinary, there are no markers around the parameter call.
+
+Now we can fill the rows:
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|suspend |no lambda     |variable     |ordinary      |inline   |no state-machine with markers                  |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |noinline      |block        |ordinary      |inline   |no state-machine with markers                  |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |noinline      |variable     |ordinary      |inline   |no state-machine with markers                  |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
+
+### Java Interop and Reflection
+
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|suspend |no lambda     |variable     |ordinary      |call     |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |noinline      |variable     |ordinary      |call     |                                               |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
+
+However, it, of course, is not that simple. Coroutine inlining is notorious for its complexity, simply because of the number of corner cases 
+it needs to support. Backward interop with Java (calling Kotlin code from Java) is one of them. It should be possible to call inline 
+functions from Java. Since javac does not inline them, generated code calls them directly. Yes, even inline suspend function. The reason 
+for backward compatibility support is simple: reflection works the same as calling from Java. It does not inline the functions but calls 
+them. For inline suspend functions, it means that when we call the function using reflection or Java, it should have a state-machine. 
+However, on the other hand, we should not have it, since we cannot inline a state-machine into state-machine.
+
+Thus, we cannot suffice by generating only one function. Instead, we generate two versions of the inline function: one of them is for 
+inliner, the other is to call directly and via reflection. The name of the version for the direct call is left unchanged and has a 
+state-machine and a continuation. The version for the inliner has no state-machine but has the suspend
+calls marked and name with `$$forInline` suffix.
+
+For example, for code like
+```kotlin
+suspend fun returnsUnit() = suspendCoroutine<Unit> { it.resume(Unit) }
+
+suspend inline fun inlineMe() {
+    returnsUnit()
+}
+
+suspend inline fun inlineMe2() {
+    inlineMe()
+    inlineMe()
+}
+```
+the compiler generates the following methods:
+```text
+// Can be called directly, have state-machine, unless tail-call
+public returnsUnit(L/kotlin/coroutines/Continuation;)Ljava/lang/Object;
+public inlineMe(L/kotlin/coroutines/Continuation;)Ljava/lang/Object;
+public inlineMe2(L/kotlin/coroutines/Continuation;)Ljava/lang/Object;
+// For inliner use only, no state-machine, suspend calls are marked
+private inlineMe$$forInline(L/kotlin/coroutines/Continuation;)Ljava/lang/Object;
+private inlineMe2$$forInline(L/kotlin/coroutines/Continuation;)Ljava/lang/Object;
+```
+Note that `$$forInline` versions have private visibility, so tools like proguard can easily remove them. This whole function duplication is 
+to preserve the semantics of the code, no matter whether we inline the function or call it via reflection.
+
+```text
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|function|parameter kind|argument kind|parameter type|call kind|notes                                          |
++========+==============+=============+==============+=========+===============================================+
+|suspend |no lambda     |variable     |ordinary      |call     |state-machine                                  |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+|suspend |noinline      |variable     |ordinary      |call     |state-machine                                  |
++--------+--------------+-------------+--------------+---------+-----------------------------------------------+
+```
+
+### Inline-Only Functions
+
+One exception to the rule of two functions is inline-only functions. For example, if they are annotated with `@kotlin.internal.InlineOnly` 
+annotation or have reified type parameters. Since they cannot be called via reflection or from Java, we do not need to duplicate them. Thus, 
+there is only one version - for inliner. However, since there is no version for
+reflection, we do not need to mangle these functions. In other words, we keep the name of the function. For example, if we have an 
+inline-only function:
+```kotlin
+suspend fun blackhole() {}
+
+suspend inline fun <reified T> inlineMe(t: T): T {
+    blackhole()
+    return t
+}
+```
+generated bytecode will look like:
+```text
+synthtic public inlineMe(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+ALOAC 0 // parameter
+ALOAD 1 // continuation
+ICONST_0 // before suspend call marker
+INVOKESTATIC kotlin/jvm/internal/InlineMarker.mark
+INVOKESTATIC blackhole (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+ICONST_2 // returns Unit marker
+INVOKESTATIC kotlin/jvm/internal/InlineMarker.mark
+ICONST_1 // after suspend call marker
+INVOKESTATIC kotlin/jvm/internal/InlineMarker.mark
+POP
+ARETURN
+```
