@@ -68,8 +68,8 @@ data class TypeConstructor(
             (if (params.isNotEmpty()) "[${params.joinToString(",")}]" else "")
 }
 
-object SelfType : TypeReference() {
-    override fun toString() = "^"
+data class RecursiveType(val rank: Int): TypeReference() {
+    override fun toString() = "^".repeat(rank + 1)
 }
 
 data class Nullable(val wrapped: TypeReference) : TypeReference() {

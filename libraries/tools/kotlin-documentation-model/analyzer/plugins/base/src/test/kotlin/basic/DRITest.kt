@@ -38,7 +38,7 @@ class DRITest : AbstractCoreTest() {
                 val expected = TypeConstructor(
                     "kotlin.Function1", listOf(
                         TypeParam(listOf(Nullable(TypeConstructor("kotlin.Any", emptyList())))),
-                        Nullable(TypeParam(listOf(TypeConstructor("kotlin.Comparable", listOf(SelfType)))))
+                        Nullable(TypeParam(listOf(TypeConstructor("kotlin.Comparable", listOf(RecursiveType(0))))))
                     )
                 )
                 val actual = module.packages.single()
@@ -70,7 +70,7 @@ class DRITest : AbstractCoreTest() {
             configuration
         ) {
             documentablesMergingStage = { module ->
-                val expected = Nullable(TypeParam(listOf(TypeConstructor("kotlin.Comparable", listOf(SelfType)))))
+                val expected = Nullable(TypeParam(listOf(TypeConstructor("kotlin.Comparable", listOf(RecursiveType(0))))))
                 val actual = module.packages.single()
                     .functions.single()
                     .dri.callable?.params?.single()
@@ -100,7 +100,7 @@ class DRITest : AbstractCoreTest() {
             configuration
         ) {
             documentablesMergingStage = { module ->
-                val expected = Nullable(TypeParam(listOf(TypeConstructor("kotlin.Comparable", listOf(SelfType)))))
+                val expected = Nullable(TypeParam(listOf(TypeConstructor("kotlin.Comparable", listOf(RecursiveType(0))))))
                 val actual = module.packages.single()
                     .functions.single()
                     .dri.callable?.receiver
@@ -311,6 +311,35 @@ class DRITest : AbstractCoreTest() {
                      documentable.generics.first().dri.toString()
                 )
 
+            }
+        }
+    }
+
+    @Test
+    fun `deep recursive typebound #1342`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/")
+                }
+            }
+        }
+        testInline(
+            """
+            |/src/main/kotlin/Test.kt
+            |package example
+            |
+            | fun <T, S, R> recursiveBound(t: T, s: S, r: R) where T: List<S>, S: List<R>, R: List<S> = Unit
+            |
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val function = module.dfs { it.name == "recursiveBound" }
+                assertEquals(
+                    "example//recursiveBound/#TypeParam(bounds=[kotlin.collections.List[TypeParam(bounds=[kotlin.collections.List[TypeParam(bounds=[kotlin.collections.List[^^]])]])]])#TypeParam(bounds=[kotlin.collections.List[TypeParam(bounds=[kotlin.collections.List[^]])]])#TypeParam(bounds=[kotlin.collections.List[TypeParam(bounds=[kotlin.collections.List[^]])]])/PointingToDeclaration/",
+                    function?.dri?.toString(),
+                )
             }
         }
     }
