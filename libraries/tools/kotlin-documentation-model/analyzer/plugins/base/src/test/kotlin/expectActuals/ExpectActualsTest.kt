@@ -12,7 +12,7 @@ class ExpectActualsTest : AbstractCoreTest() {
     fun PageNode.childrenRec(): List<PageNode> = listOf(this) + children.flatMap { it.childrenRec() }
 
     @Test
-    fun `two same named expect actual classes`() {
+    fun `three same named expect actual classes`() {
 
         val configuration = dokkaConfiguration {
             sourceSets {
@@ -31,12 +31,20 @@ class ExpectActualsTest : AbstractCoreTest() {
                     sourceRoots = listOf("src/commonJMain/kotlin/pageMerger/Test.kt")
                     dependentSourceSets = setOf(common.sourceSetID)
                 }
-                val commonN = sourceSet {
+                val commonN1 = sourceSet {
                     moduleName = "example"
-                    name = "commonN"
-                    displayName = "commonN"
+                    name = "commonN1"
+                    displayName = "commonN1"
                     analysisPlatform = "common"
-                    sourceRoots = listOf("src/commonNMain/kotlin/pageMerger/Test.kt")
+                    sourceRoots = listOf("src/commonN1Main/kotlin/pageMerger/Test.kt")
+                    dependentSourceSets = setOf(common.sourceSetID)
+                }
+                val commonN2 = sourceSet {
+                    moduleName = "example"
+                    name = "commonN2"
+                    displayName = "commonN2"
+                    analysisPlatform = "common"
+                    sourceRoots = listOf("src/commonN2Main/kotlin/pageMerger/Test.kt")
                     dependentSourceSets = setOf(common.sourceSetID)
                 }
                 val js = sourceSet {
@@ -60,7 +68,7 @@ class ExpectActualsTest : AbstractCoreTest() {
                     name = "linuxX64"
                     displayName = "linuxX64"
                     analysisPlatform = "native"
-                    dependentSourceSets = setOf(commonN.sourceSetID)
+                    dependentSourceSets = setOf(commonN1.sourceSetID)
                     sourceRoots = listOf("src/linuxX64Main/kotlin/pageMerger/Test.kt")
                 }
                 val mingwX64 = sourceSet {
@@ -68,8 +76,24 @@ class ExpectActualsTest : AbstractCoreTest() {
                     name = "mingwX64"
                     displayName = "mingwX64"
                     analysisPlatform = "native"
-                    dependentSourceSets = setOf(commonN.sourceSetID)
+                    dependentSourceSets = setOf(commonN1.sourceSetID)
                     sourceRoots = listOf("src/mingwX64Main/kotlin/pageMerger/Test.kt")
+                }
+                val iosArm64 = sourceSet {
+                    moduleName = "example"
+                    name = "iosArm64"
+                    displayName = "iosArm64"
+                    analysisPlatform = "native"
+                    dependentSourceSets = setOf(commonN2.sourceSetID)
+                    sourceRoots = listOf("src/iosArm64Main/kotlin/pageMerger/Test.kt")
+                }
+                val iosX64 = sourceSet {
+                    moduleName = "example"
+                    name = "iosX64"
+                    displayName = "iosX64"
+                    analysisPlatform = "native"
+                    dependentSourceSets = setOf(commonN2.sourceSetID)
+                    sourceRoots = listOf("src/iosX64Main/kotlin/pageMerger/Test.kt")
                 }
             }
         }
@@ -84,7 +108,12 @@ class ExpectActualsTest : AbstractCoreTest() {
                 |
                 |expect class A
                 |
-                |/src/commonNMain/kotlin/pageMerger/Test.kt
+                |/src/commonN1Main/kotlin/pageMerger/Test.kt
+                |package pageMerger
+                |
+                |expect class A
+                |
+                |/src/commonN2Main/kotlin/pageMerger/Test.kt
                 |package pageMerger
                 |
                 |expect class A
@@ -99,7 +128,7 @@ class ExpectActualsTest : AbstractCoreTest() {
                 |
                 |actual class A
                 |
-                |/src/linuxX64/kotlin/pageMerger/Test.kt
+                |/src/linuxX64Main/kotlin/pageMerger/Test.kt
                 |package pageMerger
                 |
                 |actual class A
@@ -109,22 +138,44 @@ class ExpectActualsTest : AbstractCoreTest() {
                 |
                 |actual class A
                 |
+                |/src/iosArm64Main/kotlin/pageMerger/Test.kt
+                |package pageMerger
+                |
+                |actual class A
+                |
+                |/src/iosX64Main/kotlin/pageMerger/Test.kt
+                |package pageMerger
+                |
+                |actual class A
+                |
             """.trimMargin(),
             configuration
         ) {
             pagesTransformationStage = {
-                println(it)
                 val allChildren = it.childrenRec().filterIsInstance<ClasslikePageNode>()
-                val jvmClass = allChildren.filter { it.name == "DoNotMerge(jvm)" }
-                val jsClass = allChildren.filter { it.name == "DoNotMerge(js)" }
-                val noClass = allChildren.filter { it.name == "DoNotMerge" }
-                assertTrue(jvmClass.size == 1) { "There can be only one DoNotMerge(jvm) page" }
-                assertTrue(jvmClass.first().documentable?.sourceSets?.single()?.analysisPlatform?.key == "jvm") { "DoNotMerge(jvm) should have only jvm sources" }
+                val commonJ = allChildren.filter { it.name == "A(js, jvm)" }
+                val commonN1 = allChildren.filter { it.name == "A(linuxX64, mingwX64)" }
+                val commonN2 = allChildren.filter { it.name == "A(iosArm64, iosX64)" }
+                val noClass = allChildren.filter { it.name == "A" }
+                assertTrue(commonJ.size == 1) { "There can be only one A(js, jvm) page" }
+                assertTrue(
+                    commonJ.first().documentable?.sourceSets?.map { it.displayName }
+                        ?.containsAll(listOf("commonJ", "js", "jvm")) ?: false
+                ) { "A(js, jvm)should have commonJ, js, jvm sources" }
 
-                assertTrue(jsClass.size == 1) { "There can be only one DoNotMerge(js) page" }
-                assertTrue(jsClass.first().documentable?.sourceSets?.single()?.analysisPlatform?.key == "js") { "DoNotMerge(js) should have only js sources" }
+                assertTrue(commonN1.size == 1) { "There can be only one A(linuxX64, mingwX64) page" }
+                assertTrue(
+                    commonN1.first().documentable?.sourceSets?.map { it.displayName }
+                        ?.containsAll(listOf("commonN1", "linuxX64", "mingwX64")) ?: false
+                ) { "A(linuxX64, mingwX64) should have commonN1, linuxX64, mingwX64 sources" }
 
-                assertTrue(noClass.isEmpty()) { "There can't be any DoNotMerge page" }
+                assertTrue(commonN2.size == 1) { "There can be only one A(iosArm64, iosX64) page" }
+                assertTrue(
+                    commonN2.first().documentable?.sourceSets?.map { it.displayName }
+                        ?.containsAll(listOf("commonN2", "iosArm64", "iosX64")) ?: false
+                ) { "A(iosArm64, iosX64) should have commonN2, iosArm64, iosX64 sources" }
+
+                assertTrue(noClass.isEmpty()) { "There can't be any A page" }
             }
         }
     }
