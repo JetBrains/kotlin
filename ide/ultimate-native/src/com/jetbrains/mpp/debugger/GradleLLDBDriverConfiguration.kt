@@ -47,6 +47,8 @@ class GradleLLDBDriverConfiguration(private val lldbHome: File) : LLDBDriverConf
         }
     }
 
+    override fun useSTLRenderers(): Boolean = false
+
     private fun copyToKonan(binaryInPlugin: File): File {
         val binaryInKonan = this.lldbHome.resolve("bin/LLDBFrontend")
         binaryInPlugin.copyTo(binaryInKonan, true)
