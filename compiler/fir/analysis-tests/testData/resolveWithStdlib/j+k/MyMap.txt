@@ -9,7 +9,7 @@ FILE: test.kt
         R|<local>/map|.R|FakeOverride</MyMap.forEach: R|kotlin/Unit|>|(<L> = forEach@fun <anonymous>(key: R|ft<kotlin/String, kotlin/String?>!|, value: R|ft<kotlin/String, kotlin/String?>!|): R|kotlin/Unit| {
             R|kotlin/io/println|(<strcat>(R|<local>/key|.R|kotlin/Any.toString|(), String(: ), R|<local>/value|.R|kotlin/Any.toString|()))
             R|<local>/key|.R|kotlin/String.length|
-            ^ R|<local>/value|.R|kotlin/String.length|
+            R|<local>/value|.R|kotlin/String.length|
         }
         )
         R|<local>/map|.R|kotlin/collections/forEach|<R|ft<kotlin/String, kotlin/String?>!|, R|ft<kotlin/String, kotlin/String?>!|>(<L> = forEach@fun <anonymous>(<destruct>: R|kotlin/collections/Map.Entry<ft<kotlin/String, kotlin/String?>!, ft<kotlin/String, kotlin/String?>!>|): R|kotlin/Unit| <kind=UNKNOWN>  {
@@ -17,7 +17,7 @@ FILE: test.kt
             lval value: R|ft<kotlin/String, kotlin/String?>!| = R|<local>/<destruct>|.R|kotlin/collections/component2|<R|ft<kotlin/String, kotlin/String?>!|, R|ft<kotlin/String, kotlin/String?>!|>()
             R|kotlin/io/println|(<strcat>(R|<local>/key|.R|kotlin/Any.toString|(), String(: ), R|<local>/value|.R|kotlin/Any.toString|()))
             R|<local>/key|.R|kotlin/String.length|
-            ^ R|<local>/value|.R|kotlin/String.length|
+            R|<local>/value|.R|kotlin/String.length|
         }
         )
     }
@@ -31,7 +31,7 @@ FILE: test.kt
         R|<local>/map|.R|FakeOverride<kotlin/collections/MutableMap.forEach: R|kotlin/Unit|>|(<L> = forEach@fun <anonymous>(key: R|ft<kotlin/String, kotlin/String?>!|, value: R|ft<kotlin/String, kotlin/String?>!|): R|kotlin/Unit| {
             R|kotlin/io/println|(<strcat>(R|<local>/key|.R|kotlin/Any.toString|(), String(: ), R|<local>/value|.R|kotlin/Any.toString|()))
             R|<local>/key|.R|kotlin/String.length|
-            ^ R|<local>/value|.R|kotlin/String.length|
+            R|<local>/value|.R|kotlin/String.length|
         }
         )
         R|<local>/map|.R|kotlin/collections/forEach|<R|kotlin/String|, R|kotlin/String|>(<L> = forEach@fun <anonymous>(<destruct>: R|kotlin/collections/Map.Entry<kotlin/String, kotlin/String>|): R|kotlin/Unit| <kind=UNKNOWN>  {
@@ -39,7 +39,7 @@ FILE: test.kt
             lval value: R|kotlin/String| = R|<local>/<destruct>|.R|kotlin/collections/component2|<R|kotlin/String|, R|kotlin/String|>()
             R|kotlin/io/println|(<strcat>(R|<local>/key|.R|kotlin/Any.toString|(), String(: ), R|<local>/value|.R|kotlin/Any.toString|()))
             R|<local>/key|.R|kotlin/String.length|
-            ^ R|<local>/value|.R|kotlin/String.length|
+            R|<local>/value|.R|kotlin/String.length|
         }
         )
     }
