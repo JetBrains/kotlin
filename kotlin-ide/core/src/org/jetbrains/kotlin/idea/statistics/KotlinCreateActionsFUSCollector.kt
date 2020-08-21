@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.idea.statistics
 
-import com.intellij.internal.statistic.eventLog.EventFields
 import com.intellij.internal.statistic.eventLog.EventLogGroup
+import com.intellij.internal.statistic.eventLog.events.EventFields
 import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesCollector
 import com.intellij.internal.statistic.utils.getPluginInfoById
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
@@ -15,11 +15,14 @@ class KotlinCreateActionsFUSCollector : CounterUsagesCollector() {
         val newFileEvent = GROUP.registerEvent(
             "NewFile",
             EventFields.Enum("FileTemplate", NewFileTemplates::class.java),
-            EventFields.PluginInfo)
+            EventFields.PluginInfo
+        )
 
         fun logFileTemplate(template: String) {
-            newFileEvent.log(NewFileTemplates.getFullName(template),
-                             getPluginInfoById(KotlinPluginUtil.KOTLIN_PLUGIN_ID))
+            newFileEvent.log(
+                NewFileTemplates.getFullName(template),
+                getPluginInfoById(KotlinPluginUtil.KOTLIN_PLUGIN_ID)
+            )
         }
     }
 
