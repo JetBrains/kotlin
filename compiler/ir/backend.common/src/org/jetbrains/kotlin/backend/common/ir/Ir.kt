@@ -308,6 +308,8 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, irBuiltIns:
 
     abstract val returnIfSuspended: IrSimpleFunctionSymbol
 
+    abstract val functionAdapter: IrClassSymbol
+
     open val unsafeCoerceIntrinsic: IrSimpleFunctionSymbol? = null
 
     companion object {

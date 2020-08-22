@@ -28,6 +28,8 @@ class JsSingleAbstractMethodLowering(context: JsIrBackendContext) : SingleAbstra
         return Visibilities.PRIVATE
     }
 
+    override val IrType.needEqualsHashCodeMethods get() = false
+
     private var enclosingBodyContainer: IrDeclaration? = null
 
     override fun lower(irFile: IrFile) {

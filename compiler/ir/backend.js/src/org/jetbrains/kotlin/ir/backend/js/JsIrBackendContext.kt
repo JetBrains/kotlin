@@ -215,6 +215,9 @@ class JsIrBackendContext(
             override val coroutineGetContext = symbolTable.referenceSimpleFunction(getJsInternalFunction(GET_COROUTINE_CONTEXT_NAME))
 
             override val returnIfSuspended = symbolTable.referenceSimpleFunction(getJsInternalFunction("returnIfSuspended"))
+
+            override val functionAdapter: IrClassSymbol
+                get() = TODO("Not implemented")
         }
 
         override fun unfoldInlineClassType(irType: IrType): IrType? {

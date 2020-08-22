@@ -59,6 +59,9 @@ class WasmSymbols(
     override val returnIfSuspended
         get() = TODO()
 
+    override val functionAdapter: IrClassSymbol
+        get() = TODO()
+
     private val wasmInternalPackage = context.module.getPackage(FqName("kotlin.wasm.internal"))
 
     val equalityFunctions = mapOf(
