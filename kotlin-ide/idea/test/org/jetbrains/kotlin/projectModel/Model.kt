@@ -165,6 +165,13 @@ object FullJdk : ResolveLibrary(
     null
 )
 
+object MockJdk : ResolveLibrary(
+    "mock-jdk",
+    File("fake file for mock jdk"),
+    JvmPlatforms.defaultJvmPlatform,
+    null
+)
+
 open class ResolveDependency(val to: ResolveModule, val kind: Kind) {
     open class Builder {
         var to: ResolveModule.Builder = ResolveModule.Builder()

@@ -1,5 +1,7 @@
+// !RENDER_DIAGNOSTICS_MESSAGES
+
 package sample
 
 fun test() {
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>arrayListOf<!>(1, 2, 3)
+    arrayListOf(1, 2, 3)
 }

@@ -101,6 +101,10 @@ fun AbstractMultiModuleTest.doSetup(projectModel: ProjectResolveModel) {
                     PluginTestCaseBase.jdk(TestJdkKind.FULL_JDK)
                 })
 
+                MockJdk -> ConfigLibraryUtil.configureSdk(ideaModule, PluginTestCaseBase.addJdk(testRootDisposable) {
+                    PluginTestCaseBase.jdk(TestJdkKind.MOCK_JDK)
+                })
+
                 is ResolveLibrary -> ideaModule.addLibrary(to.root, to.name, to.kind)
 
                 else -> ideaModule.addDependency(resolveModulesToIdeaModules[to]!!)
