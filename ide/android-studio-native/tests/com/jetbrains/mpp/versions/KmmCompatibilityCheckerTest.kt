@@ -17,26 +17,26 @@ class KmmCompatibilityCheckerUnitTests {
     @Test
     fun `compatibilty range is exactly two versions of Kotlin forward`() {
         check(
-            actualKotlinVersion = "1.3.60-release-Studio3.5.1-1",
-            compiledAgainstKotlinVersion = "1.3.70-release-Studio3.5.1-1",
+            actualKotlinVersion = "1.4.0-release-Studio3.5.1-1",
+            compiledAgainstKotlinVersion = "1.4.10-release-Studio3.5.1-1",
             expectedResult = OUTDATED_KOTLIN
         )
 
         check(
-            actualKotlinVersion = "1.3.70-release-Studio3.5.1-1",
-            compiledAgainstKotlinVersion = "1.3.70-release-Studio3.5.1-1",
+            actualKotlinVersion = "1.4.10-release-Studio3.5.1-1",
+            compiledAgainstKotlinVersion = "1.4.10-release-Studio3.5.1-1",
             expectedResult = COMPATIBLE
         )
 
         check(
-            actualKotlinVersion = "1.3.80-release-Studio3.5.1-1",
-            compiledAgainstKotlinVersion = "1.3.70-release-Studio3.5.1-1",
+            actualKotlinVersion = "1.4.20-release-Studio3.5.1-1",
+            compiledAgainstKotlinVersion = "1.4.10-release-Studio3.5.1-1",
             expectedResult = COMPATIBLE
         )
 
         check(
-            actualKotlinVersion = "1.3.90-dev-1333-Studio3.5.1-2",
-            compiledAgainstKotlinVersion = "1.3.70-release-Studio3.5.1-1",
+            actualKotlinVersion = "1.4.30-dev-1333-Studio3.5.1-2",
+            compiledAgainstKotlinVersion = "1.4.10-release-Studio3.5.1-1",
             expectedResult = OUTDATED_KMM_PLUGIN
         )
     }
@@ -44,26 +44,26 @@ class KmmCompatibilityCheckerUnitTests {
     @Test
     fun `dev, eap or release of actual Kotlin doesnt matter`() {
         check(
-            actualKotlinVersion = "1.3.80-dev-543-Studio3.5.1-1",
-            compiledAgainstKotlinVersion = "1.3.70-release-Studio3.5.1-1",
+            actualKotlinVersion = "1.4.20-dev-543-Studio3.5.1-1",
+            compiledAgainstKotlinVersion = "1.4.10-release-Studio3.5.1-1",
             expectedResult = COMPATIBLE
         )
 
         check(
-            actualKotlinVersion = "1.3.90-eap-322-Studio3.5.1-1",
-            compiledAgainstKotlinVersion = "1.3.70-release-Studio3.5.1-1",
+            actualKotlinVersion = "1.4.30-eap-322-Studio3.5.1-1",
+            compiledAgainstKotlinVersion = "1.4.10-release-Studio3.5.1-1",
             expectedResult = OUTDATED_KMM_PLUGIN
         )
 
         check(
-            actualKotlinVersion = "1.3.60-release-Studio3.5.1-1",
-            compiledAgainstKotlinVersion = "1.3.70-dev-Studio3.5.1-1",
+            actualKotlinVersion = "1.4.0-release-Studio3.5.1-1",
+            compiledAgainstKotlinVersion = "1.4.10-dev-Studio3.5.1-1",
             expectedResult = OUTDATED_KOTLIN
         )
 
         check(
-            actualKotlinVersion = "1.3.90-dev-Studio3.5.1-1",
-            compiledAgainstKotlinVersion = "1.3.70-dev-Studio3.5.1-1",
+            actualKotlinVersion = "1.4.30-dev-Studio3.5.1-1",
+            compiledAgainstKotlinVersion = "1.4.10-dev-Studio3.5.1-1",
             expectedResult = OUTDATED_KMM_PLUGIN
         )
     }
@@ -71,26 +71,26 @@ class KmmCompatibilityCheckerUnitTests {
     @Test
     fun `patch update of actual Kotlin doesnt matter`() {
         check(
-            actualKotlinVersion = "1.3.62-release-Studio3.5.1-1",
-            compiledAgainstKotlinVersion = "1.3.70-release-Studio3.5.1-1",
+            actualKotlinVersion = "1.4.02-release-Studio3.5.1-1",
+            compiledAgainstKotlinVersion = "1.4.10-release-Studio3.5.1-1",
             expectedResult = OUTDATED_KOTLIN
         )
 
         check(
-            actualKotlinVersion = "1.3.72-release-Studio3.5.1-1",
-            compiledAgainstKotlinVersion = "1.3.70-release-Studio3.5.1-1",
+            actualKotlinVersion = "1.4.12-release-Studio3.5.1-1",
+            compiledAgainstKotlinVersion = "1.4.10-release-Studio3.5.1-1",
             expectedResult = COMPATIBLE
         )
 
         check(
-            actualKotlinVersion = "1.3.82-release-Studio3.5.1-1",
-            compiledAgainstKotlinVersion = "1.3.70-release-Studio3.5.1-1",
+            actualKotlinVersion = "1.4.22-release-Studio3.5.1-1",
+            compiledAgainstKotlinVersion = "1.4.10-release-Studio3.5.1-1",
             expectedResult = COMPATIBLE
         )
 
         check(
-            actualKotlinVersion = "1.3.92-release-Studio3.5.1-1",
-            compiledAgainstKotlinVersion = "1.3.70-release-Studio3.5.1-1",
+            actualKotlinVersion = "1.4.32-release-Studio3.5.1-1",
+            compiledAgainstKotlinVersion = "1.4.10-release-Studio3.5.1-1",
             expectedResult = OUTDATED_KMM_PLUGIN
         )
     }
@@ -98,32 +98,32 @@ class KmmCompatibilityCheckerUnitTests {
     @Test
     fun `patch version against which we compiled doesnt matter`() {
         check(
-            actualKotlinVersion = "1.3.60-release-Studio3.5.1-1",
-            compiledAgainstKotlinVersion = "1.3.72-release-Studio3.5.1-1",
+            actualKotlinVersion = "1.4.0-release-Studio3.5.1-1",
+            compiledAgainstKotlinVersion = "1.4.12-release-Studio3.5.1-1",
             expectedResult = OUTDATED_KOTLIN
         )
 
         check(
-            actualKotlinVersion = "1.3.70-release-Studio3.5.1-1",
-            compiledAgainstKotlinVersion = "1.3.72-release-Studio3.5.1-1",
+            actualKotlinVersion = "1.4.10-release-Studio3.5.1-1",
+            compiledAgainstKotlinVersion = "1.4.12-release-Studio3.5.1-1",
             expectedResult = COMPATIBLE
         )
 
         check(
-            actualKotlinVersion = "1.3.73-release-Studio3.5.1-1",
-            compiledAgainstKotlinVersion = "1.3.72-release-Studio3.5.1-1",
+            actualKotlinVersion = "1.4.13-release-Studio3.5.1-1",
+            compiledAgainstKotlinVersion = "1.4.12-release-Studio3.5.1-1",
             expectedResult = COMPATIBLE
         )
 
         check(
-            actualKotlinVersion = "1.3.80-release-Studio3.5.1-1",
-            compiledAgainstKotlinVersion = "1.3.72-release-Studio3.5.1-1",
+            actualKotlinVersion = "1.4.20-release-Studio3.5.1-1",
+            compiledAgainstKotlinVersion = "1.4.12-release-Studio3.5.1-1",
             expectedResult = COMPATIBLE
         )
 
         check(
-            actualKotlinVersion = "1.3.90-release-Studio3.5.1-1",
-            compiledAgainstKotlinVersion = "1.3.72-release-Studio3.5.1-1",
+            actualKotlinVersion = "1.4.30-release-Studio3.5.1-1",
+            compiledAgainstKotlinVersion = "1.4.12-release-Studio3.5.1-1",
             expectedResult = OUTDATED_KMM_PLUGIN
         )
     }
@@ -132,13 +132,13 @@ class KmmCompatibilityCheckerUnitTests {
     fun `minor version should be the same`() {
         check(
             actualKotlinVersion = "1.4.70-release-Studio3.5.1-1",
-            compiledAgainstKotlinVersion = "1.3.70-release-Studio3.5.1-1",
+            compiledAgainstKotlinVersion = "1.4.10-release-Studio3.5.1-1",
             expectedResult = OUTDATED_KMM_PLUGIN
         )
 
         check(
             actualKotlinVersion = "1.2.70-release-Studio3.5.1-1",
-            compiledAgainstKotlinVersion = "1.3.70-release-Studio3.5.1-1",
+            compiledAgainstKotlinVersion = "1.4.10-release-Studio3.5.1-1",
             expectedResult = OUTDATED_KOTLIN
         )
     }
@@ -146,27 +146,48 @@ class KmmCompatibilityCheckerUnitTests {
     @Test
     fun `ide version doesnt matter`() {
         check(
-            actualKotlinVersion = "1.3.60-release-Studio4.0.1-1",
-            compiledAgainstKotlinVersion = "1.3.70-release-Studio3.5.1-1",
+            actualKotlinVersion = "1.4.0-release-Studio4.0.1-1",
+            compiledAgainstKotlinVersion = "1.4.10-release-Studio3.5.1-1",
             expectedResult = OUTDATED_KOTLIN
         )
 
         check(
-            actualKotlinVersion = "1.3.70-release-Studio4.0.1-1",
-            compiledAgainstKotlinVersion = "1.3.70-release-Studio3.5.1-1",
+            actualKotlinVersion = "1.4.10-release-Studio4.0.1-1",
+            compiledAgainstKotlinVersion = "1.4.10-release-Studio3.5.1-1",
             expectedResult = COMPATIBLE
         )
 
         check(
-            actualKotlinVersion = "1.3.80-release-Studio4.0.1-1",
-            compiledAgainstKotlinVersion = "1.3.70-release-Studio3.5.1-1",
+            actualKotlinVersion = "1.4.20-release-Studio4.0.1-1",
+            compiledAgainstKotlinVersion = "1.4.10-release-Studio3.5.1-1",
             expectedResult = COMPATIBLE
         )
 
         check(
-            actualKotlinVersion = "1.3.90-release-Studio4.0.1-1",
-            compiledAgainstKotlinVersion = "1.3.70-release-Studio3.5.1-1",
+            actualKotlinVersion = "1.4.30-release-Studio4.0.1-1",
+            compiledAgainstKotlinVersion = "1.4.10-release-Studio3.5.1-1",
             expectedResult = OUTDATED_KMM_PLUGIN
+        )
+    }
+
+    @Test
+    fun `1-3-7X versions are a special case and always incompatible`() {
+        check(
+            actualKotlinVersion = "1.3.70-release-Studio4.0.1-1",
+            compiledAgainstKotlinVersion = "1.4.0-release-Studio3.5.1-1",
+            expectedResult = OUTDATED_KOTLIN
+        )
+
+        check(
+            actualKotlinVersion = "1.3.71-release-Studio4.0.1-1",
+            compiledAgainstKotlinVersion = "1.4.0-release-Studio3.5.1-1",
+            expectedResult = OUTDATED_KOTLIN
+        )
+
+        check(
+            actualKotlinVersion = "1.3.72-release-Studio4.0.1-1",
+            compiledAgainstKotlinVersion = "1.4.0-release-Studio3.5.1-1",
+            expectedResult = OUTDATED_KOTLIN
         )
     }
 
