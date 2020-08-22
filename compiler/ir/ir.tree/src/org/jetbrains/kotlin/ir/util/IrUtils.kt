@@ -537,6 +537,9 @@ fun IrExpression.isSafeToUseWithoutCopying() =
             this is IrConst<*> ||
             this is IrGetValue && symbol.isBound && symbol.owner.isImmutable
 
+val IrStatementOrigin?.isLambda: Boolean
+    get() = this == IrStatementOrigin.LAMBDA || this == IrStatementOrigin.ANONYMOUS_FUNCTION
+
 val IrFunction.originalFunction: IrFunction
     get() = (this as? IrAttributeContainer)?.attributeOwnerId as? IrFunction ?: this
 

@@ -178,9 +178,6 @@ fun IrValueParameter.isInlineParameter() =
             // making this return `false` requires using `@Suppress`.
             (!type.isNullable() || defaultValue?.expression?.type?.isNullable() == false)
 
-val IrStatementOrigin?.isLambda: Boolean
-    get() = this == IrStatementOrigin.LAMBDA || this == IrStatementOrigin.ANONYMOUS_FUNCTION
-
 // An IR builder with a reference to the JvmBackendContext
 class JvmIrBuilder(
     val backendContext: JvmBackendContext,
