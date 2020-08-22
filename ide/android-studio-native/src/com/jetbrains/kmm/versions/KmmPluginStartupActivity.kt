@@ -42,7 +42,7 @@ object KmmCompatibilityChecker {
         val unparsedCompiledAgainstKotlinPluginVersion = MobileMultiplatformPluginVersionsInfo.compiledAgainstKotlin
         val errorText = when (checkVersions(KotlinPluginUtil.getPluginVersion(), unparsedCompiledAgainstKotlinPluginVersion)) {
             COMPATIBLE -> null
-            OUTDATED_KOTLIN -> KmmBundle.message("startup.error.outdatedKotlin")
+            OUTDATED_KOTLIN -> KmmBundle.message("startup.error.outdatedKotlin", unparsedCompiledAgainstKotlinPluginVersion)
             OUTDATED_KMM_PLUGIN -> KmmBundle.message("startup.error.outdatedPlugin")
             UNKNOWN -> KmmBundle.message("startup.error.unknown") + VERSIONS_INFO.joinToString("<br/>")
         }
