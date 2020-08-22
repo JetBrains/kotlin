@@ -10,6 +10,7 @@ import com.intellij.openapi.components.Storage
 import com.intellij.openapi.components.StoragePathMacros
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
+import com.jetbrains.kmm.KMM_LOG
 import com.jetbrains.kmm.ios.execution.BinaryRunConfigurationType
 import com.jetbrains.konan.WorkspaceXML
 import com.jetbrains.mpp.workspace.WorkspaceBase
@@ -84,11 +85,15 @@ class ProjectWorkspace(project: Project) : WorkspaceBase(project) {
     }
 
     override fun loadState(stateElement: Element) {
-        super.loadState(stateElement)
-        stateElement.getChildren(WorkspaceXML.XCProject.nodeName).firstOrNull()?.let { element ->
-            element.getAttributeValue(WorkspaceXML.XCProject.attributePath)?.let { value ->
-                locateXCProject(value)
+        try {
+            super.loadState(stateElement)
+            stateElement.getChildren(WorkspaceXML.XCProject.nodeName).firstOrNull()?.let { element ->
+                element.getAttributeValue(WorkspaceXML.XCProject.attributePath)?.let { value ->
+                    locateXCProject(value)
+                }
             }
+        } catch (e: LinkageError) {
+            KMM_LOG.error(e)
         }
     }
 
