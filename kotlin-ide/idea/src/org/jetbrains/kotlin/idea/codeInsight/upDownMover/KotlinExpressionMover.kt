@@ -119,6 +119,7 @@ class KotlinExpressionMover : AbstractKotlinUpDownMover() {
     }
 
     private var parametersOrArgsToMove: Pair<PsiElement, PsiElement>? = null
+
     override fun beforeMove(
         editor: Editor,
         info: MoveInfo,
@@ -126,6 +127,8 @@ class KotlinExpressionMover : AbstractKotlinUpDownMover() {
     ) {
         if (parametersOrArgsToMove != null) {
             val (first, second) = parametersOrArgsToMove ?: return
+            parametersOrArgsToMove = null
+
             val lastElementOnFirstLine = getLastSiblingOfSameTypeInLine(first, editor)
             val lastElementOnSecondLine = getLastSiblingOfSameTypeInLine(second, editor)
             val withTrailingComma = lastElementOnFirstLine.parent
