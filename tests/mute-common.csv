@@ -73,3 +73,4 @@ org.jetbrains.kotlin.gradle.SubpluginsIT.testKotlinVersionDowngradeInSupbrojectK
 org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibrarySecondaryConstructorUsages,,, FLAKY
 org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryNestedClassSecondaryConstructorUsages,,, FLAKY
 org.jetbrains.kotlin.findUsages.FindUsagesTestGenerated.Java.FindJavaMethodUsages.testJavaInvokeWithStaticImport,,, FLAKY
+org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testEnumStaticImportInJava,,, FLAKY
