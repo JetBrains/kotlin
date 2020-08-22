@@ -156,6 +156,11 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
         runTest("testData/multiplatform/jvmDefaultNonMpp/");
     }
 
+    @TestMetadata("kt41218")
+    public void testKt41218() throws Exception {
+        runTest("testData/multiplatform/kt41218/");
+    }
+
     @TestMetadata("lambdas")
     public void testLambdas() throws Exception {
         runTest("testData/multiplatform/lambdas/");
