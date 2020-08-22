@@ -105,6 +105,7 @@ sourceSets {
 testsJar()
 
 projectTest(parallel = false) {
+    dependsOn(":dist")
     dependsOnKotlinPluginInstall()
     workingDir = rootDir
     useAndroidSdk()
