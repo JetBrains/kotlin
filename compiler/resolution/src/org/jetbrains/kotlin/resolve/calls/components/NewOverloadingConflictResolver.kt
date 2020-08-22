@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadingConflictResolver
 import org.jetbrains.kotlin.resolve.calls.results.PlatformOverloadsSpecificityComparator
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.util.CancellationChecker
 import java.util.*
 
@@ -37,7 +38,8 @@ class NewOverloadingConflictResolver(
     platformOverloadsSpecificityComparator: PlatformOverloadsSpecificityComparator,
     cancellationChecker: CancellationChecker,
     statelessCallbacks: KotlinResolutionStatelessCallbacks,
-    constraintInjector: ConstraintInjector
+    constraintInjector: ConstraintInjector,
+    kotlinTypeRefiner: KotlinTypeRefiner,
 ) : OverloadingConflictResolver<KotlinResolutionCandidate>(
     builtIns,
     module,
@@ -52,7 +54,8 @@ class NewOverloadingConflictResolver(
     Companion::createFlatSignature,
     { it.variableCandidateIfInvoke },
     { statelessCallbacks.isDescriptorFromSource(it) },
-    { it.resolvedCall.hasSamConversion }
+    { it.resolvedCall.hasSamConversion },
+    kotlinTypeRefiner,
 ) {
 
     companion object {

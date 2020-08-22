@@ -33,6 +33,8 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.KotlinTypeRefinerImpl
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 
 interface IdentifierInfo {
 
@@ -63,7 +65,7 @@ interface IdentifierInfo {
         override fun equals(other: Any?) =
             other is Variable &&
                     DescriptorEquivalenceForOverrides.areCallableDescriptorsEquivalent(
-                        variable, other.variable, allowCopiesFromTheSameDeclaration = true
+                        variable, other.variable, allowCopiesFromTheSameDeclaration = true, kotlinTypeRefiner = KotlinTypeRefiner.Default
                     )
 
         override fun hashCode() = variable.name.hashCode() * 31 + variable.containingDeclaration.original.hashCode()
