@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.calls.tower.TowerUtilsKt;
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 import org.jetbrains.kotlin.util.CancellationChecker;
 
 import java.util.*;
@@ -46,10 +47,11 @@ public class ResolutionResultsHandler {
             @NotNull ModuleDescriptor module,
             @NotNull TypeSpecificityComparator specificityComparator,
             @NotNull PlatformOverloadsSpecificityComparator platformOverloadsSpecificityComparator,
-            @NotNull CancellationChecker cancellationChecker
+            @NotNull CancellationChecker cancellationChecker,
+            @NotNull KotlinTypeRefiner kotlinTypeRefiner
     ) {
         overloadingConflictResolver = FlatSignatureForResolvedCallKt.createOverloadingConflictResolver(
-                builtIns, module, specificityComparator, platformOverloadsSpecificityComparator, cancellationChecker
+                builtIns, module, specificityComparator, platformOverloadsSpecificityComparator, cancellationChecker, kotlinTypeRefiner
         );
     }
 
