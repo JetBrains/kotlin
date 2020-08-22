@@ -111,7 +111,7 @@ abstract class AbstractMultiModuleIdeResolveTest : AbstractMultiModuleTest() {
             getFileText = { it.text },
             uncheckedDiagnostics = emptyList(),
             withNewInferenceDirective = false,
-            renderDiagnosticMessages = true
+            renderDiagnosticMessages = directives.contains(RENDER_DIAGNOSTICS_MESSAGES)
         ).toString()
 
         KotlinTestUtils.assertEqualsToFile(expectedFile, actualTextWithDiagnostics)
@@ -119,6 +119,7 @@ abstract class AbstractMultiModuleIdeResolveTest : AbstractMultiModuleTest() {
 
     companion object {
         private const val DIAGNOSTICS_DIRECTIVE = "DIAGNOSTICS"
+        private const val RENDER_DIAGNOSTICS_MESSAGES = "RENDER_DIAGNOSTICS_MESSAGES"
         private val DIAGNOSTICS_PATTERN: Pattern = Pattern.compile("([+\\-!])(\\w+)\\s*")
         private val DIAGNOSTICS_TO_INCLUDE_ANYWAY: Set<DiagnosticFactory<*>> = setOf(
                 Errors.UNRESOLVED_REFERENCE,
