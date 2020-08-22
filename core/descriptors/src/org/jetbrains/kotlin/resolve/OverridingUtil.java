@@ -77,6 +77,14 @@ public class OverridingUtil {
         return new OverridingUtil(DEFAULT_TYPE_CONSTRUCTOR_EQUALITY, kotlinTypeRefiner);
     }
 
+    @NotNull
+    public static OverridingUtil create(
+            @NotNull KotlinTypeRefiner kotlinTypeRefiner,
+            @NotNull KotlinTypeChecker.TypeConstructorEquality equalityAxioms
+    ) {
+            return new OverridingUtil(equalityAxioms, kotlinTypeRefiner);
+    }
+
     private final KotlinTypeRefiner kotlinTypeRefiner;
     private final KotlinTypeChecker.TypeConstructorEquality equalityAxioms;
 

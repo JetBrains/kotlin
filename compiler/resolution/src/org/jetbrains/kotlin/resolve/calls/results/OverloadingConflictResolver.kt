@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isTypeRefinementEnabled
 import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.requireOrDescribe
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.util.CancellationChecker
@@ -46,7 +47,8 @@ open class OverloadingConflictResolver<C : Any>(
     private val createFlatSignature: (C) -> FlatSignature<C>,
     private val getVariableCandidates: (C) -> C?, // for variable WithInvoke
     private val isFromSources: (CallableDescriptor) -> Boolean,
-    private val hasSAMConversion: ((C) -> Boolean)?
+    private val hasSAMConversion: ((C) -> Boolean)?,
+    private val kotlinTypeRefiner: KotlinTypeRefiner,
 ) {
 
     private val isTypeRefinementEnabled by lazy { module.isTypeRefinementEnabled() }
@@ -137,7 +139,8 @@ open class OverloadingConflictResolver<C : Any>(
                         me,
                         other,
                         allowCopiesFromTheSameDeclaration = isTypeRefinementEnabled,
-                        ignoreReturnType = ignoreReturnType
+                        ignoreReturnType = ignoreReturnType,
+                        kotlinTypeRefiner = kotlinTypeRefiner
                     )
                 ) {
                     continue@outerLoop

@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.calls.tower.TowerResolver
 import org.jetbrains.kotlin.resolve.calls.tower.isInapplicable
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.util.CancellationChecker
 
 
@@ -42,7 +43,8 @@ class CallableReferenceOverloadConflictResolver(
     platformOverloadsSpecificityComparator: PlatformOverloadsSpecificityComparator,
     cancellationChecker: CancellationChecker,
     statelessCallbacks: KotlinResolutionStatelessCallbacks,
-    constraintInjector: ConstraintInjector
+    constraintInjector: ConstraintInjector,
+    kotlinTypeRefiner: KotlinTypeRefiner,
 ) : OverloadingConflictResolver<CallableReferenceCandidate>(
     builtIns,
     module,
@@ -54,7 +56,8 @@ class CallableReferenceOverloadConflictResolver(
     Companion::createFlatSignature,
     { null },
     { statelessCallbacks.isDescriptorFromSource(it) },
-    null
+    null,
+    kotlinTypeRefiner,
 ) {
     companion object {
         private fun createFlatSignature(candidate: CallableReferenceCandidate) =
