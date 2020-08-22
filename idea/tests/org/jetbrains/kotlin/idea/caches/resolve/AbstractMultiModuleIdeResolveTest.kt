@@ -99,7 +99,7 @@ abstract class AbstractMultiModuleIdeResolveTest : AbstractMultiModuleTest() {
             getFileText = { it.text },
             uncheckedDiagnostics = emptyList(),
             withNewInferenceDirective = false,
-            renderDiagnosticMessages = true
+            renderDiagnosticMessages = directives.contains(BaseDiagnosticsTest.RENDER_DIAGNOSTICS_MESSAGES)
         ).toString()
 
         KotlinTestUtils.assertEqualsToFile(expectedFile, actualTextWithDiagnostics)
