@@ -903,6 +903,8 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/backend/build/fleet.backend.build.iml" filepath="$PROJECT_DIR$/intellij/fleet/backend/build/fleet.backend.build.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/backend/fleet.backend.main.iml" filepath="$PROJECT_DIR$/intellij/fleet/backend/fleet.backend.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/backend/nio.fs/fleet.backend.nio.fs.iml" filepath="$PROJECT_DIR$/intellij/fleet/backend/nio.fs/fleet.backend.nio.fs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/backend/plugins/fleet.backend.plugins.iml" filepath="$PROJECT_DIR$/intellij/fleet/backend/plugins/fleet.backend.plugins.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/backend/plugins/go/fleet.backend.plugins.go.iml" filepath="$PROJECT_DIR$/intellij/fleet/backend/plugins/go/fleet.backend.plugins.go.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/controller/fleet.controller.iml" filepath="$PROJECT_DIR$/intellij/fleet/controller/fleet.controller.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/frontend/fleet.frontend.iml" filepath="$PROJECT_DIR$/intellij/fleet/frontend/fleet.frontend.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/frontend.ui/fleet.frontend.ui.iml" filepath="$PROJECT_DIR$/intellij/fleet/frontend.ui/fleet.frontend.ui.iml" />
