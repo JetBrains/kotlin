@@ -225,6 +225,12 @@ internal val innerClassPhase = makeKonanFileLoweringPhase(
         prerequisite = setOf(defaultParameterExtentPhase)
 )
 
+internal val rangeContainsLoweringPhase = makeKonanFileLoweringPhase(
+        ::RangeContainsLowering,
+        name = "RangeContains",
+        description = "Optimizes calls to contains() for ClosedRanges"
+)
+
 internal val forLoopsPhase = makeKonanFileLoweringPhase(
         ::ForLoopsLowering,
         name = "ForLoops",
