@@ -34,7 +34,7 @@ kotlin {
         }
         val androidMain by getting {
             dependencies {
-                implementation("androidx.core:core-ktx:1.2.0")
+                implementation("com.google.android.material:material:1.2.0")
             }
         }
         val androidTest by getting {
