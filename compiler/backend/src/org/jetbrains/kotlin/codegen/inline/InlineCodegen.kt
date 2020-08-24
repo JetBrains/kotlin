@@ -658,6 +658,10 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 if (nameWithoutManglingSuffix != null) {
                     methodNode = getMethodNode(bytes, nameWithoutManglingSuffix, asmMethod.descriptor, classType)
                 }
+                if (methodNode == null) {
+                    val nameWithImplSuffix = "$nameWithoutManglingSuffix-impl"
+                    methodNode = getMethodNode(bytes, nameWithImplSuffix, asmMethod.descriptor, classType)
+                }
             }
             return methodNode
         }
