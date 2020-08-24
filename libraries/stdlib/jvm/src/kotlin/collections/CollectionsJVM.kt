@@ -12,6 +12,8 @@ import kotlin.collections.builders.ListBuilder
 import kotlin.internal.InlineOnly
 import kotlin.internal.apiVersionIsAtLeast
 
+public actual fun <T> emptyList(): List<T> = java.util.Collections.emptyList()
+
 /**
  * Returns an immutable list containing only the specified object [element].
  * The returned list is serializable.

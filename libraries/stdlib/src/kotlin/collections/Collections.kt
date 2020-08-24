@@ -65,12 +65,6 @@ private class ArrayAsCollection<T>(val values: Array<out T>, val isVarargs: Bool
 }
 
 /**
- * Returns an empty read-only list.  The returned list is serializable (JVM).
- * @sample samples.collections.Collections.Lists.emptyReadOnlyList
- */
-public fun <T> emptyList(): List<T> = EmptyList
-
-/**
  * Returns a new read-only list of given elements.  The returned list is serializable (JVM).
  * @sample samples.collections.Collections.Lists.readOnlyList
  */

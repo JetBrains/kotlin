@@ -15,6 +15,7 @@ import java.util.TreeMap
 import java.util.concurrent.ConcurrentMap
 import kotlin.collections.builders.MapBuilder
 
+public actual fun <K, V> emptyMap(): Map<K, V> = java.util.Collections.emptyMap()
 
 /**
  * Returns an immutable map, mapping only the specified key to the

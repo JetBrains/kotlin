@@ -11,7 +11,7 @@ package kotlin.collections
 
 import kotlin.contracts.*
 
-private object EmptyMap : Map<Any?, Nothing>, Serializable {
+internal object EmptyMap : Map<Any?, Nothing>, Serializable {
     private const val serialVersionUID: Long = 8246714829545688274
 
     override fun equals(other: Any?): Boolean = other is Map<*, *> && other.isEmpty()
@@ -30,14 +30,6 @@ private object EmptyMap : Map<Any?, Nothing>, Serializable {
 
     private fun readResolve(): Any = EmptyMap
 }
-
-/**
- * Returns an empty read-only map of specified type.
- *
- * The returned map is serializable (JVM).
- * @sample samples.collections.Maps.Instantiation.emptyReadOnlyMap
- */
-public fun <K, V> emptyMap(): Map<K, V> = @Suppress("UNCHECKED_CAST") (EmptyMap as Map<K, V>)
 
 /**
  * Returns a new read-only map with the specified contents, given as a list of pairs
