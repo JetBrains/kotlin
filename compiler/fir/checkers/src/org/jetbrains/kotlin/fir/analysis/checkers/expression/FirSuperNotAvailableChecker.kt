@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.KtNodeTypes.CLASS
-import org.jetbrains.kotlin.KtNodeTypes.OBJECT_LITERAL
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -20,7 +19,7 @@ object FirSuperNotAvailableChecker : FirQualifiedAccessChecker() {
         if (functionCall.calleeReference.safeAs<FirSuperReference>()?.hadExplicitTypeInSource() != true) return
 
         val isInsideClass = context.containingDeclarations.any {
-            it.source?.elementType == CLASS || it.source?.elementType == OBJECT_LITERAL
+            it is FirClass<*>
         }
 
         if (!isInsideClass) {
