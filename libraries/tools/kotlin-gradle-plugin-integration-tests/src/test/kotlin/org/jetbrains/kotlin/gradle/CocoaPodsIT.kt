@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Compan
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_SETUP_BUILD_TASK_NAME
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.junit.Assume.assumeFalse
 import org.junit.Assume.assumeTrue
 import org.junit.Test
 import java.io.File
@@ -169,28 +168,6 @@ class CocoaPodsIT : BaseGradleIT() {
         mapOf("kotlin-library" to "foobaz")
     )
 
-    @Test
-    fun testSkippingTasksOnOtherHosts() {
-        assumeFalse(HostManager.hostIsMac)
-
-        with(transformProjectWithPluginsDsl(cocoapodsSingleKtPod, gradleVersion)) {
-            val syntheticTasks = arrayOf(
-                ":podInstall",
-                ":kotlin-library:generateDummyFramework",
-                ":kotlin-library:podGenIOS",
-                ":kotlin-library:podSetupBuildIOS",
-                ":kotlin-library:podBuildDependenciesIOS",
-                ":kotlin-library:podImport"
-            )
-
-            build(*syntheticTasks, "-Pkotlin.native.cocoapods.generate.wrapper=true") {
-                // Check that tasks working with synthetic projects are skipped on non-mac hosts.
-                assertSuccessful()
-                assertTasksSkipped(*syntheticTasks)
-            }
-        }
-    }
-
     private fun BaseGradleIT.Project.useCustomFrameworkName(subproject: String, frameworkName: String, iosAppLocation: String? = null) {
         // Change the name at the Gradle side.
         gradleBuildScript(subproject).appendText(
@@ -257,7 +234,7 @@ class CocoaPodsIT : BaseGradleIT() {
         subprojectsToFrameworkNamesMap: Map<String, String?>,
     ) {
         assumeTrue(HostManager.hostIsMac)
-        assumeTrue(KotlinCocoapodsPlugin.isAvailableToProduceSynthetic)
+        assumeTrue(KotlinCocoapodsPlugin.isAvailableToProduceSynthetic())
 
         val subprojects = subprojectsToFrameworkNamesMap.keys
         val gradleProject = transformProjectWithPluginsDsl(projectName, gradleVersion)
