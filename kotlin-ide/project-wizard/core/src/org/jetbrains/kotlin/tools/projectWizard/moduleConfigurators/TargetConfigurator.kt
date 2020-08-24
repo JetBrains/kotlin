@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleStri
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.irsList
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.DefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.TargetAccessIR
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JSConfigurator.Companion.cssSupport
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsBrowserBasedConfigurator.Companion.browserSubTarget
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsBrowserBasedConfigurator.Companion.cssSupport
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsNodeBasedConfigurator.Companion.nodejsSubTarget
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.buildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
