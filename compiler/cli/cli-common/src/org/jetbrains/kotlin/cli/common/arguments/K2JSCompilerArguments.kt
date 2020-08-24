@@ -135,6 +135,12 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     )
     var irModuleName: String? by NullableStringFreezableVar(null)
 
+    @Argument(value = "-Xir-trace-methods", description = "Logs method invocations")
+    var traceMethods: Boolean by FreezableVar(false)
+
+    @Argument(value = "-Xir-focus-on-test", description = "Only execute this test")
+    var irFocusOnTest: String? by NullableStringFreezableVar(null)
+
     @Argument(value = "-Xir-per-module", description = "Splits generated .js per-module")
     var irPerModule: Boolean by FreezableVar(false)
 

@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.isOverridable
-import org.jetbrains.kotlin.js.backend.ast.JsExpression
-import org.jetbrains.kotlin.js.backend.ast.JsName
+import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.expression.translateAndAliasParameters
 import org.jetbrains.kotlin.js.translate.expression.translateFunction
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.js.translate.expression.wrapWithInlineMetadata
 import org.jetbrains.kotlin.js.translate.general.TranslatorVisitor
 import org.jetbrains.kotlin.js.translate.utils.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 
 abstract class AbstractDeclarationVisitor : TranslatorVisitor<Unit>()  {
@@ -113,6 +114,13 @@ abstract class AbstractDeclarationVisitor : TranslatorVisitor<Unit>()  {
 
         if (descriptor.isSuspend) {
             function.fillCoroutineMetadata(innerContext, descriptor, hasController = false)
+        }
+
+        if (context.config.configuration.get(JSConfigurationKeys.TRACE_METHOD_INVOCATIONS) == true) {
+            val nameToLog = descriptor.fqNameUnsafe.asString()
+            if (!nameToLog.startsWith("kotlin")) {
+                function.body.statements += JsInvocation(JsNameRef("log", JsNameRef("console")), JsStringLiteral("$nameToLog\n")).makeStmt()
+            }
         }
 
         if (!descriptor.isOverridable) {

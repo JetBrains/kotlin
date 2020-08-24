@@ -45,6 +45,15 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
     val functionParams = declaration.valueParameters.map { functionContext.getNameForValueDeclaration(it) }
     val body = declaration.body?.accept(IrElementToJsStatementTransformer(), functionContext) as? JsBlock ?: JsBlock()
 
+    if (context.staticContext.traceMethods) {
+        val nameToLog = declaration.fqNameWhenAvailable?.asString() ?: declaration.name.asString()
+        if (!nameToLog.startsWith("kotlin")) {
+            val logName = JsInvocation(JsNameRef("log", JsName("console").makeRef()), JsStringLiteral("$nameToLog\n")).makeStmt()
+            body.statements.add(0, logName)
+        }
+    }
+
+
     val function = JsFunction(emptyScope, body, "member function ${name ?: "annon"}")
 
     function.name = name

@@ -31,7 +31,8 @@ class IrModuleToJsTransformer(
     private val fullJs: Boolean = true,
     private val dceJs: Boolean = false,
     private val multiModule: Boolean = false,
-    private val relativeRequirePath: Boolean = false
+    private val relativeRequirePath: Boolean = false,
+    private val traceMethods: Boolean = false,
 ) {
     private val generateRegionComments = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_REGION_COMMENTS)
 
@@ -132,7 +133,8 @@ class IrModuleToJsTransformer(
         )
         val staticContext = JsStaticContext(
             backendContext = backendContext,
-            irNamer = nameGenerator
+            irNamer = nameGenerator,
+            traceMethods = traceMethods,
         )
         val rootContext = JsGenerationContext(
             currentFunction = null,

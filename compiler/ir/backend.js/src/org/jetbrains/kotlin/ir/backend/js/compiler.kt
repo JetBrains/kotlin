@@ -48,7 +48,9 @@ fun compile(
     dceDriven: Boolean = false,
     es6mode: Boolean = false,
     multiModule: Boolean = false,
-    relativeRequirePath: Boolean = false
+    relativeRequirePath: Boolean = false,
+    traceMethods: Boolean = false,
+    focusOnTest: String? = null,
 ): CompilerResult {
     stageController = StageController()
 
@@ -76,7 +78,7 @@ fun compile(
     }
 
     // TODO should be done incrementally
-    generateTests(context, allModules.last())
+    generateTests(context, allModules.last(), focusOnTest)
 
     if (dceDriven) {
         val controller = MutableController(context, pirLowerings)
@@ -106,7 +108,8 @@ fun compile(
             fullJs = generateFullJs,
             dceJs = generateDceJs,
             multiModule = multiModule,
-            relativeRequirePath = relativeRequirePath
+            relativeRequirePath = relativeRequirePath,
+            traceMethods = traceMethods,
         )
         return transformer.generateModule(allModules)
     }
