@@ -909,6 +909,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/frontend/fleet.frontend.iml" filepath="$PROJECT_DIR$/intellij/fleet/frontend/fleet.frontend.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/frontend.ui/fleet.frontend.ui.iml" filepath="$PROJECT_DIR$/intellij/fleet/frontend.ui/fleet.frontend.ui.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/ij.connector/fleet.ij.connector.iml" filepath="$PROJECT_DIR$/intellij/fleet/ij.connector/fleet.ij.connector.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/fleet/ij.parsing/fleet.ij.parsing.iml" filepath="$PROJECT_DIR$/intellij/fleet/ij.parsing/fleet.ij.parsing.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/jsitter/fleet.jsitter.iml" filepath="$PROJECT_DIR$/intellij/fleet/jsitter/fleet.jsitter.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/language/fleet.language.iml" filepath="$PROJECT_DIR$/intellij/fleet/language/fleet.language.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/fleet/language/go/fleet.language.go.iml" filepath="$PROJECT_DIR$/intellij/fleet/language/go/fleet.language.go.iml" />
