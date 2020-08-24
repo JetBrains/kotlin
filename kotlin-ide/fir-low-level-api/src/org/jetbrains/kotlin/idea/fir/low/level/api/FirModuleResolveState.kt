@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.PsiToFirCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSessionProvider
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
