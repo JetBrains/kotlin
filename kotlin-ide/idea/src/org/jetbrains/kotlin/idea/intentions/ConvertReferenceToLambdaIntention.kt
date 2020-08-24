@@ -39,19 +39,25 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
         applyTo(element)
     }
 
-    override fun isApplicableTo(element: KtCallableReferenceExpression): Boolean {
-        val context = element.analyze(BodyResolveMode.PARTIAL)
-        val expectedType = context[BindingContext.EXPECTED_EXPRESSION_TYPE, element] ?: return true
-        val expectedTypeDescriptor = expectedType.constructor.declarationDescriptor as? ClassDescriptor ?: return true
-        val expectedTypeFqName = expectedTypeDescriptor.fqNameSafe
-        return expectedTypeFqName.isRoot || expectedTypeFqName.parent() != KOTLIN_REFLECT_FQ_NAME
-    }
+    override fun isApplicableTo(element: KtCallableReferenceExpression): Boolean = Companion.isApplicableTo(element)
 
     companion object {
         private val SOURCE_RENDERER = IdeDescriptorRenderers.SOURCE_CODE
 
-        fun applyTo(element: KtCallableReferenceExpression): KtExpression? {
-            val context = element.analyze(BodyResolveMode.PARTIAL)
+        fun isApplicableTo(
+            element: KtCallableReferenceExpression,
+            context: BindingContext = element.analyze(BodyResolveMode.PARTIAL)
+        ): Boolean {
+            val expectedType = context[BindingContext.EXPECTED_EXPRESSION_TYPE, element] ?: return true
+            val expectedTypeDescriptor = expectedType.constructor.declarationDescriptor as? ClassDescriptor ?: return true
+            val expectedTypeFqName = expectedTypeDescriptor.fqNameSafe
+            return expectedTypeFqName.isRoot || expectedTypeFqName.parent() != KOTLIN_REFLECT_FQ_NAME
+        }
+
+        fun applyTo(
+            element: KtCallableReferenceExpression,
+            context: BindingContext = element.analyze(BodyResolveMode.PARTIAL)
+        ): KtExpression? {
             val reference = element.callableReference
             val targetDescriptor = context[REFERENCE_TARGET, reference] as? CallableMemberDescriptor ?: return null
             val valueArgumentParent = element.parent as? KtValueArgument

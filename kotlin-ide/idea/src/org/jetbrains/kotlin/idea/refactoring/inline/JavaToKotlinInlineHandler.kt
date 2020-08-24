@@ -40,24 +40,19 @@ import org.jetbrains.kotlin.resolve.calls.tower.isSynthesized
 class JavaToKotlinInlineHandler : AbstractCrossLanguageInlineHandler() {
     override fun prepareReference(reference: PsiReference, referenced: PsiElement): MultiMap<PsiElement, String> {
         val javaMemberToInline = referenced.javaMemberToInline ?: return super.prepareReference(reference, referenced)
-        javaMemberToInline.validate()?.let { error ->
-            return createMultiMapWithSingleConflict(
-                reference.element,
-                error,
-            )
+        val referenceElement = reference.element
+        validate(javaMemberToInline, referenceElement)?.let { error ->
+            return createMultiMapWithSingleConflict(referenceElement, error)
         }
 
         try {
-            val strategy = findOrCreateUsageReplacementStrategy(javaMemberToInline, reference.element)
+            val strategy = findOrCreateUsageReplacementStrategy(javaMemberToInline, referenceElement)
             if (strategy == null) KotlinBundle.message("failed.to.create.a.wrapper.for.inlining.to.kotlin") else null
         } catch (e: IllegalStateException) {
             LOG.error(e)
             e.message
-        }?.let { errorMessage ->
-            return createMultiMapWithSingleConflict(
-                reference.element,
-                errorMessage,
-            )
+        }?.let { error ->
+            return createMultiMapWithSingleConflict(referenceElement, error)
         }
 
         return MultiMap.empty()
@@ -86,10 +81,10 @@ class JavaToKotlinInlineHandler : AbstractCrossLanguageInlineHandler() {
 private val PsiElement.javaMemberToInline: PsiMember?
     get() = if (language == JavaLanguage.INSTANCE && (this is PsiMethod || this is PsiField)) this as PsiMember else null
 
-private fun PsiMember.validate(): String? = when {
-    this is PsiField && !this.hasInitializer() -> KotlinBundle.message("a.field.without.an.initializer.is.not.yet.supported")
-    this is PsiMethod && this.isConstructor -> KotlinBundle.message("a.constructor.call.is.not.yet.supported")
-    else -> null
+private fun validate(referenced: PsiMember, reference: PsiElement): String? = when {
+    referenced is PsiField && !referenced.hasInitializer() -> KotlinBundle.message("a.field.without.an.initializer.is.not.yet.supported")
+    referenced is PsiMethod && referenced.isConstructor -> KotlinBundle.message("a.constructor.call.is.not.yet.supported")
+    else -> findCallableConflictForUsage(reference)
 }
 
 private fun NewJavaToKotlinConverter.convertToKotlinNamedDeclaration(

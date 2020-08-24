@@ -657,6 +657,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
                 KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
             }
 
+            @TestMetadata("callableReference.kt")
+            public void testCallableReference() throws Exception {
+                runTest("testData/refactoring/inline/function/fromJavaToKotlin/callableReference.kt");
+            }
+
             @TestMetadata("constructorCall.kt")
             public void testConstructorCall() throws Exception {
                 runTest("testData/refactoring/inline/function/fromJavaToKotlin/constructorCall.kt");
@@ -1610,6 +1615,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             @TestMetadata("Basic.kt")
             public void testBasic() throws Exception {
                 runTest("testData/refactoring/inline/inlineVariableOrProperty/property/Basic.kt");
+            }
+
+            @TestMetadata("callableReference.kt")
+            public void testCallableReference() throws Exception {
+                runTest("testData/refactoring/inline/inlineVariableOrProperty/property/callableReference.kt");
             }
 
             @TestMetadata("ClassObjectProperty.kt")

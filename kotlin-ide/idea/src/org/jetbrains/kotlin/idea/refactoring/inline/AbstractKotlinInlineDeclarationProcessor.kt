@@ -110,6 +110,11 @@ abstract class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDe
         val usagesInfo = refUsages.get()
         val conflicts = MultiMap<PsiElement, String>()
         additionalPreprocessUsages(usagesInfo, conflicts)
+        for (usage in usagesInfo) {
+            val element = usage.element ?: continue
+            val callableConflict = findCallableConflictForUsage(element) ?: continue
+            conflicts.putValue(element, callableConflict)
+        }
 
         if (deleteAfter) {
             for (superDeclaration in findSuperMethodsNoWrapping(declaration)) {

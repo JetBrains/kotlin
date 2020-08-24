@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.idea.refactoring.inline
 
 import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.util.NlsContexts
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
@@ -16,6 +18,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInline
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInlineBuilder
+import org.jetbrains.kotlin.idea.intentions.ConvertReferenceToLambdaIntention
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -74,3 +77,10 @@ internal fun buildCodeToInline(
 }
 
 internal fun Editor.findSimpleNameReference(): PsiReference? = TargetElementUtil.findReference(this, caretModel.offset)
+
+fun findCallableConflictForUsage(usage: PsiElement): @NlsContexts.DialogMessage String? {
+    val usageParent = usage.parent as? KtCallableReferenceExpression ?: return null
+    if (usageParent.callableReference != usage) return null
+    if (ConvertReferenceToLambdaIntention.isApplicableTo(usageParent)) return null
+    return KotlinBundle.message("text.reference.cannot.be.converted.to.a.lambda")
+}

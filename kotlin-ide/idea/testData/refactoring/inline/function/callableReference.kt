@@ -1,4 +1,4 @@
-// ERROR: wr
+// ERROR: The reference cannot be converted to a lambda
 
 import kotlin.reflect.KFunction
 
