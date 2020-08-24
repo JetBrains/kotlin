@@ -10,7 +10,7 @@ import com.intellij.execution.runners.ProgramRunner
 import com.intellij.execution.ui.ExecutionConsole
 import com.intellij.util.SmartList
 
-class CompositeCommandLineState(
+open class CompositeCommandLineState(
     environment: ExecutionEnvironment,
     val states: List<CommandLineState>
 ) : CommandLineState(environment) {
@@ -29,9 +29,16 @@ class CompositeCommandLineState(
         }
         val compositeHandler = CompositeProcessHandler(handlers)
         val console = consoles.singleOrNull()
-            ?: createConsole(executor)!!.also { it.attachToProcess(compositeHandler) }
+            ?: {
+                configureConsoleBuilder(consoles)
+                val console = createConsole(executor)!!
+                console.attachToProcess(compositeHandler)
+                console
+            }()
         return DefaultExecutionResult(console, compositeHandler)
     }
+
+    protected open fun configureConsoleBuilder(consoles: List<ExecutionConsole>) {}
 
     override fun startProcess(): ProcessHandler = throw IllegalStateException()
 }

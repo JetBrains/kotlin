@@ -8,7 +8,6 @@ import com.intellij.execution.testframework.sm.runner.SMTRunnerConsoleProperties
 import com.jetbrains.cidr.execution.testing.CidrTestRunConfiguration
 import com.jetbrains.cidr.execution.testing.CidrTestRunConfigurationData
 import com.jetbrains.cidr.execution.testing.CidrTestScope
-import com.jetbrains.mobile.execution.CompositeCommandLineState
 
 class CompositeTestRunConfigurationData(
     configuration: MobileTestRunConfiguration,
@@ -21,7 +20,7 @@ class CompositeTestRunConfigurationData(
 
     override fun createState(environment: ExecutionEnvironment, executor: Executor, testScope: CidrTestScope?): CommandLineState? {
         val states = testDatas.mapNotNull { it.createState(environment, executor, testScope) }
-        return CompositeCommandLineState(environment, states)
+        return CompositeTestCommandLineState(environment, myConfiguration, states)
     }
 
     override fun createTestConsoleProperties(executor: Executor, executionTarget: ExecutionTarget): SMTRunnerConsoleProperties =
