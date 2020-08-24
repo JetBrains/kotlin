@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.fir.low.level.api
+package org.jetbrains.kotlin.idea.fir.low.level.api.sessions
 
 import com.intellij.openapi.module.impl.scopes.ModuleWithDependentsScope
 import com.intellij.openapi.project.Project
@@ -24,16 +24,17 @@ import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.resolve.transformers.PhasedFirFileResolver
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
+import org.jetbrains.kotlin.idea.fir.low.level.api.FirIdeSessionProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
+import org.jetbrains.kotlin.idea.fir.low.level.api.IdePhasedFirFileResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCacheImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
-import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeModuleLibraryDependenciesSession
-import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSession
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.collectTransitiveDependenciesWithSelf
 
 
-internal class FirIdeJavaModuleBasedSession private constructor(
+internal class FirIdeSourcesSession private constructor(
     sessionProvider: FirIdeSessionProvider,
     override val scope: GlobalSearchScope,
     val firFileBuilder: FirFileBuilder,
@@ -50,12 +51,12 @@ internal class FirIdeJavaModuleBasedSession private constructor(
             firPhaseRunner: FirPhaseRunner,
             sessionProvider: FirSessionProvider,
             librariesSession: FirIdeModuleLibraryDependenciesSession,
-        ): FirIdeJavaModuleBasedSession {
+        ): FirIdeSourcesSession {
             val scopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
             val firBuilder = FirFileBuilder(sessionProvider as FirIdeSessionProvider, scopeProvider, firPhaseRunner)
             val dependentModules = moduleInfo.collectTransitiveDependenciesWithSelf().filterIsInstance<ModuleSourceInfo>()
             val searchScope = ModuleWithDependentsScope(project, dependentModules.map { it.module })
-            return FirIdeJavaModuleBasedSession(sessionProvider, searchScope, firBuilder).apply {
+            return FirIdeSourcesSession(sessionProvider, searchScope, firBuilder).apply {
                 val cache = ModuleFileCacheImpl(this)
                 val phasedFirFileResolver = IdePhasedFirFileResolver(firBuilder, cache)
 
