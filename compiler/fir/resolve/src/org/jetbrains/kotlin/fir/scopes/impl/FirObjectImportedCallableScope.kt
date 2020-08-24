@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -19,8 +21,8 @@ import org.jetbrains.kotlin.name.Name
 
 class FirObjectImportedCallableScope(
     private val importedClassId: ClassId,
-    private val objectUseSiteScope: FirScope
-) : FirScope() {
+    private val objectUseSiteScope: FirTypeScope
+) : FirScope(), FirContainingNamesAwareScope {
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         objectUseSiteScope.processFunctionsByName(name) wrapper@{ symbol ->
             if (symbol !is FirNamedFunctionSymbol) {
@@ -71,4 +73,8 @@ class FirObjectImportedCallableScope(
             processor(syntheticFunction.symbol)
         }
     }
+
+    override fun getCallableNames(): Set<Name> = objectUseSiteScope.getCallableNames()
+
+    override fun getClassifierNames(): Set<Name> = emptySet()
 }
