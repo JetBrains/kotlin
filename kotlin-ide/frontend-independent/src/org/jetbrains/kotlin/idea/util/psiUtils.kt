@@ -9,10 +9,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.parentOfType
+import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtImportDirective
-import org.jetbrains.kotlin.psi.KtPackageDirective
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.*
 
 fun KtElement.getElementTextInContext(): String {
     val context = parentOfType<KtImportDirective>()
@@ -33,5 +34,14 @@ fun KtElement.getElementTextInContext(): String {
     })
     return builder.toString().trimIndent().trim()
 }
+
 private const val ELEMENT_TAG = "ELEMENT"
+
+fun KtClassOrObject.classIdIfNonLocal(): ClassId? {
+    if (KtPsiUtil.isLocal(this)) return null
+    val packageName = containingKtFile.packageFqName
+    val classesNames = parentsOfType<KtDeclaration>(withSelf = true).map { it.name }.toList()
+    if (classesNames.any { it == null }) return null
+    return ClassId(packageName, FqName(classesNames.joinToString(separator = ".")), /*local=*/false)
+}
 

@@ -5,9 +5,12 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.element.builder
 
+import com.intellij.psi.util.parentOfType
+import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
@@ -24,6 +27,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.ThreadSafe
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.getContainingFile
+import org.jetbrains.kotlin.idea.util.classIdIfNonLocal
+import org.jetbrains.kotlin.psi.psiUtil.parents
 
 /**
  * Maps [KtElement] to [FirElement]
@@ -86,24 +91,27 @@ internal class FirElementBuilder(
             firFileBuilder.runResolveWithoutLock(containerFirFile, fromPhase = firDeclarationToResolve.resolvePhase, toPhase = nonLazyPhase)
         }
         if (toPhase <= nonLazyPhase) return
-        val designation = mutableListOf<FirDeclaration>(containerFirFile)
-        if (firDeclarationToResolve !is FirFile) {
 
-            val id = when (firDeclarationToResolve) {
+        val nonLocalDeclarationToResolve = firDeclarationToResolve.getNonLocalDeclarationToResolve(provider)
+
+        val designation = mutableListOf<FirDeclaration>(containerFirFile)
+        if (nonLocalDeclarationToResolve !is FirFile) {
+
+            val id = when (nonLocalDeclarationToResolve) {
                 is FirCallableDeclaration<*> -> {
-                    firDeclarationToResolve.symbol.callableId.classId
+                    nonLocalDeclarationToResolve.symbol.callableId.classId
                 }
                 is FirRegularClass -> {
-                    firDeclarationToResolve.symbol.classId
+                    nonLocalDeclarationToResolve.symbol.classId
                 }
-                else -> error("Unsupported: ${firDeclarationToResolve.render()}")
+                else -> error("Unsupported: ${nonLocalDeclarationToResolve.render()}")
             }
             val outerClasses = generateSequence(id) { classId ->
                 classId.outerClassId
             }.mapTo(mutableListOf()) { provider.getFirClassifierByFqName(it)!! }
             designation += outerClasses.asReversed()
-            if (firDeclarationToResolve is FirCallableDeclaration<*>) {
-                designation += firDeclarationToResolve
+            if (nonLocalDeclarationToResolve is FirCallableDeclaration<*>) {
+                designation += nonLocalDeclarationToResolve
             }
         }
         if (designation.all { it.resolvePhase >= toPhase }) {
@@ -131,11 +139,33 @@ internal class FirElementBuilder(
     }
 }
 
+private fun FirDeclaration.getNonLocalDeclarationToResolve(provider: FirProvider): FirDeclaration {
+    if (this is FirFile) return this
+    val ktDeclaration = psi as? KtDeclaration ?: error("FirDeclaration should have a PSI of type KtDeclaration")
+    if (!KtPsiUtil.isLocal(ktDeclaration)) return this
+    return when (val nonLocalPsi = ktDeclaration.getNonLocalContainingDeclarationWithFqName()) {
+        is KtClassOrObject -> provider.getFirClassifierByFqName(
+            nonLocalPsi.classIdIfNonLocal()
+                ?: error("Container classId should not be null for non-local declaration")
+        ) ?: error("Could not find class ${nonLocalPsi.classIdIfNonLocal()}")
+        is KtProperty, is KtNamedFunction -> {
+            val containerClass = nonLocalPsi.containingClassOrObject
+                ?: error("Container class should not be null for non-local declaration")
+            val containerClassId = containerClass.classIdIfNonLocal()
+                ?: error("Container classId should not be null for non-local declaration")
+            val containingFir = provider.getFirClassifierByFqName(containerClassId) as? FirRegularClass
+                ?: error("Could not find class $containerClassId")
+            containingFir.declarations.first { it.psi === nonLocalPsi }
+        }
+        else -> error("Invalid container ${nonLocalPsi?.let { it::class } ?: "null"}")
+    }
+}
 
-private fun KtElement.getNonLocalContainingDeclarationWithFqName(): KtDeclaration? {
+
+private fun KtElement.getNonLocalContainingDeclarationWithFqName(): KtNamedDeclaration? {
     var container = parent
     while (container != null && container !is KtFile) {
-        if (container is KtDeclaration
+        if (container is KtNamedDeclaration
             && (container is KtClassOrObject || container is KtDeclarationWithBody)
             && !KtPsiUtil.isLocal(container)
             && container.name != null
