@@ -144,6 +144,9 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xir-file-region-comments", description = "Comment which file the JS code comes from")
     var irFileRegionComments: Boolean by FreezableVar(false)
 
+    @Argument(value = "-Xir-force-all-js", description = "Compile all the code unconditionally")
+    var irForceAllJs: Boolean by FreezableVar(false)
+
     @Argument(value = "-Xir-per-module", description = "Splits generated .js per-module")
     var irPerModule: Boolean by FreezableVar(false)
 

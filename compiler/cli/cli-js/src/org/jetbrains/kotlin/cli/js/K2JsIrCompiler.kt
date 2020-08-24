@@ -220,6 +220,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 config.configuration.put(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH, true)
             }
 
+            val runDce = arguments.irDce && !arguments.irForceAllJs
+
             val compiledModule = try {
                 compile(
                     projectJs,
@@ -230,19 +232,20 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     allDependencies = resolvedLibraries,
                     friendDependencies = friendDependencies,
                     mainArguments = mainCallArguments,
-                    generateFullJs = !arguments.irDce,
-                    generateDceJs = arguments.irDce,
+                    generateFullJs = !runDce,
+                    generateDceJs = runDce,
                     dceDriven = arguments.irDceDriven,
                     multiModule = arguments.irPerModule,
                     relativeRequirePath = true,
                     traceMethods = arguments.traceMethods,
                     focusOnTest = arguments.irFocusOnTest,
+                    forceAllJs = arguments.irForceAllJs,
                 )
             } catch (e: JsIrCompilationError) {
                 return COMPILATION_ERROR
             }
 
-            val jsCode = if (arguments.irDce && !arguments.irDceDriven) compiledModule.dceJsCode!! else compiledModule.jsCode!!
+            val jsCode = if (runDce && !arguments.irDceDriven) compiledModule.dceJsCode!! else compiledModule.jsCode!!
             outputFile.writeText(jsCode.mainModule)
             jsCode.dependencies.forEach { (name, content) ->
                 outputFile.resolveSibling("$name.js").writeText(content)
