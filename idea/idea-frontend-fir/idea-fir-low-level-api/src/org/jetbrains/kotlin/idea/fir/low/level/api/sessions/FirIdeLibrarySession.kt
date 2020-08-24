@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.sessions
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.fir.FirSession
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
@@ -19,17 +19,19 @@ import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.IDEPackagePartProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.FirIdeSessionProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.IdeSessionComponents
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 
-class FirIdeModuleLibraryDependenciesSession private constructor(
-    sessionProvider: FirProjectSessionProvider,
-) : FirSession(sessionProvider) {
+internal class FirIdeModuleLibraryDependenciesSession private constructor(
+    sessionProvider: FirIdeSessionProvider,
+    override val scope: GlobalSearchScope
+) : FirIdeSession(sessionProvider) {
     companion object {
         fun create(
             moduleInfo: ModuleSourceInfo,
-            sessionProvider: FirProjectSessionProvider,
+            sessionProvider: FirIdeSessionProvider,
             project: Project,
         ): FirIdeModuleLibraryDependenciesSession {
             val searchScope = moduleInfo.module.moduleWithLibrariesScope
@@ -40,7 +42,7 @@ class FirIdeModuleLibraryDependenciesSession private constructor(
             val packagePartProvider = IDEPackagePartProvider(searchScope)
 
             val kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(searchScope)
-            return FirIdeModuleLibraryDependenciesSession(sessionProvider).apply {
+            return FirIdeModuleLibraryDependenciesSession(sessionProvider, searchScope).apply {
                 registerCommonComponents()
 
                 val javaSymbolProvider = JavaSymbolProvider(this, sessionProvider.project, searchScope)

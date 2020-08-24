@@ -16,7 +16,7 @@ abstract class FirModuleBasedSession(
     sessionProvider: FirSessionProvider?
 ) : FirSession(sessionProvider)
 
-fun FirModuleBasedSession.registerResolveComponents() {
+fun FirSession.registerResolveComponents() {
     register(FirQualifierResolver::class, FirQualifierResolverImpl(this))
     register(FirTypeResolver::class, FirTypeResolverImpl(this))
     register(FirEffectiveVisibilityResolver::class, FirEffectiveVisibilityResolverImpl(this))
