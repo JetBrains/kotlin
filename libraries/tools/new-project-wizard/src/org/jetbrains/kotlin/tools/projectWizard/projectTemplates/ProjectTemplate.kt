@@ -274,8 +274,8 @@ object NativeApplicationProjectTemplate : ProjectTemplate() {
 }
 
 object FrontendApplicationProjectTemplate : ProjectTemplate() {
-    override val title = KotlinNewProjectWizardBundle.message("project.template.frontend.title")
-    override val description = KotlinNewProjectWizardBundle.message("project.template.frontend.description")
+    override val title = KotlinNewProjectWizardBundle.message("project.template.browser.title")
+    override val description = KotlinNewProjectWizardBundle.message("project.template.browser.description")
     override val id = "frontendApplication"
 
     @NonNls

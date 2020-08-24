@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.tools.projectWizard.templates
 
 
-import org.jetbrains.annotations.Nls
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
+import org.jetbrains.kotlin.tools.projectWizard.Versions
 import org.jetbrains.kotlin.tools.projectWizard.WizardGradleRunConfiguration
 import org.jetbrains.kotlin.tools.projectWizard.WizardRunConfiguration
 import org.jetbrains.kotlin.tools.projectWizard.core.*
@@ -16,18 +17,15 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatform.DefaultTargetConfigurationIR
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
-import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.TemplateInterceptor
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.interceptTemplate
-import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
-import org.jetbrains.kotlin.tools.projectWizard.Versions
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 
 class SimpleJsClientTemplate : Template() {
     override val title: String = KotlinNewProjectWizardBundle.message("module.template.js.simple.title")
@@ -53,14 +51,14 @@ class SimpleJsClientTemplate : Template() {
         else -> false
     }
 
-    val renderEngine by enumSetting<RenderEngine>(
-        KotlinNewProjectWizardBundle.message("module.template.js.simple.setting.rendering.engine"),
+    val useKotlinxHtml by booleanSetting(
+        KotlinNewProjectWizardBundle.message("module.template.simple.use.kotlinx.html"),
         GenerationPhase.PROJECT_GENERATION
     ) {
-        defaultValue = value(RenderEngine.REACT_WITH_STYLED)
+        defaultValue = value(false)
     }
 
-    override val settings: List<TemplateSetting<*, *>> = listOf(renderEngine)
+    override val settings: List<TemplateSetting<*, *>> = listOf(useKotlinxHtml)
 
     override fun Reader.createRunConfigurations(module: ModuleIR): List<WizardRunConfiguration> = buildList {
         if (module.originalModule.kind == ModuleKind.singleplatformJsBrowser) {
@@ -79,19 +77,12 @@ class SimpleJsClientTemplate : Template() {
 
     override fun Writer.getRequiredLibraries(module: ModuleIR): List<DependencyIR> = withSettingsOf(module.originalModule) {
         buildList {
-            +ArtifactBasedLibraryDependencyIR(
-                MavenArtifact(Repositories.KOTLINX, "org.jetbrains.kotlinx", "kotlinx-html-js"),
-                Versions.KOTLINX.KOTLINX_HTML(KotlinPlugin.version.propertyValue.version),
-                DependencyType.MAIN
-            )
-
-            val kotlinVersion = KotlinPlugin.version.propertyValue
-            if (renderEngine.reference.settingValue != RenderEngine.KOTLINX_HTML) {
-                +Dependencies.KOTLIN_REACT(kotlinVersion.version)
-                +Dependencies.KOTLIN_REACT_DOM(kotlinVersion.version)
-                if (renderEngine.reference.settingValue == RenderEngine.REACT_WITH_STYLED) {
-                    +Dependencies.KOTLIN_STYLED(kotlinVersion.version)
-                }
+            if (useKotlinxHtml.reference.settingValue()) {
+                +ArtifactBasedLibraryDependencyIR(
+                    MavenArtifact(Repositories.KOTLINX, "org.jetbrains.kotlinx", "kotlinx-html"),
+                    Versions.KOTLINX.KOTLINX_HTML(KotlinPlugin.version.propertyValue.version),
+                    DependencyType.MAIN
+                )
             }
         }
     }
@@ -109,23 +100,12 @@ class SimpleJsClientTemplate : Template() {
                 if (!hasKtorServNeighbourTarget) {
                     +(FileTemplateDescriptor("$id/index.html.vm") asResourceOf SourcesetType.main)
                 }
-                if (renderEngine.reference.settingValue == RenderEngine.KOTLINX_HTML) {
+                if (useKotlinxHtml.reference.settingValue()) {
                     +(FileTemplateDescriptor("$id/client.kt.vm") asSrcOf SourcesetType.main)
                     +(FileTemplateDescriptor("$id/TestClient.kt.vm", "TestClient.kt".asPath()) asSrcOf SourcesetType.test)
-                } else {
-                    +(FileTemplateDescriptor("$id/reactClient.kt.vm", "client.kt".asPath()) asSrcOf SourcesetType.main)
-                    +(FileTemplateDescriptor("$id/reactComponent.kt.vm", "welcome.kt".asPath()) asSrcOf SourcesetType.main)
-                }
-
-                if (renderEngine.reference.settingValue == RenderEngine.REACT_WITH_STYLED) {
-                    +(FileTemplateDescriptor("$id/WelcomeStyles.kt.vm") asSrcOf SourcesetType.main)
                 }
             }
         }
-
-    override fun Reader.getAdditionalSettings(module: Module): Map<String, Any> = withSettingsOf(module) {
-        mapOf("useStyledComponents" to (renderEngine.reference.settingValue == RenderEngine.REACT_WITH_STYLED))
-    }
 
     override fun createInterceptors(module: ModuleIR): List<TemplateInterceptor> = buildList {
         +interceptTemplate(KtorServerTemplate()) {
@@ -272,11 +252,5 @@ class SimpleJsClientTemplate : Template() {
                 DependencyType.MAIN
             )
         }
-    }
-
-    enum class RenderEngine(@Nls override val text: String) : DisplayableSettingItem {
-        KOTLINX_HTML(KotlinNewProjectWizardBundle.message("module.template.js.simple.setting.rendering.kotlinx.html")),
-        REACT(KotlinNewProjectWizardBundle.message("module.template.js.simple.setting.rendering.react")),
-        REACT_WITH_STYLED(KotlinNewProjectWizardBundle.message("module.template.js.simple.setting.rendering.react.styled"))
     }
 }
