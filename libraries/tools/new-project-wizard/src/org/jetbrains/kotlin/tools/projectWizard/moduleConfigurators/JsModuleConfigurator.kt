@@ -17,6 +17,11 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildSystemIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.KotlinBuildSystemPluginIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleIRListBuilder
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.irsList
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.BrowserJsSinglePlatformModuleConfigurator.settingsValue
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JSConfigurator.Companion.isApplication
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsBrowserBasedConfigurator.Companion.browserSubTarget
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsBrowserBasedConfigurator.Companion.cssSupport
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsNodeBasedConfigurator.Companion.nodejsSubTarget
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.GradlePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
@@ -40,38 +45,6 @@ interface JSConfigurator : ModuleConfiguratorWithModuleType, ModuleConfiguratorW
     override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> =
         super.getConfiguratorSettings() + kind
 
-    fun Reader.isApplication(module: Module): Boolean =
-        settingsValue(module, kind) == JsTargetKind.APPLICATION
-
-    fun Reader.hasCssSupport(module: Module): Boolean =
-        settingsValue(module, cssSupport)
-
-    fun GradleIRListBuilder.browserSubTarget(module: Module, reader: Reader) {
-        "browser" {
-            if (reader.isApplication(module)) {
-                applicationSupport()
-            }
-            if (reader.hasCssSupport(module)) {
-                if (reader.isApplication(module)) {
-                    applicationCssSupport()
-                }
-            }
-            if (this@JSConfigurator is ModuleConfiguratorWithTests
-                && reader.settingValue(module, ModuleConfiguratorWithTests.testFramework) != KotlinTestFramework.NONE
-            ) {
-                testTask(cssSupport = reader.hasCssSupport(module))
-            }
-        }
-    }
-
-    fun GradleIRListBuilder.nodejsSubTarget(module: Module, reader: Reader) {
-        "nodejs" {
-            if (reader.isApplication(module)) {
-                applicationSupport()
-            }
-        }
-    }
-
     companion object : ModuleConfiguratorSettings() {
         val kind by enumSetting<JsTargetKind>(
             KotlinNewProjectWizardBundle.message("module.configurator.js.target.settings.kind"),
@@ -87,11 +60,48 @@ interface JSConfigurator : ModuleConfiguratorWithModuleType, ModuleConfiguratorW
             }
         }
 
-        val cssSupport by booleanSetting(
+        fun Reader.isApplication(module: Module): Boolean =
+            settingsValue(module, kind) == JsTargetKind.APPLICATION
+    }
+}
+
+interface JsBrowserBasedConfigurator {
+    companion object : ModuleConfiguratorSettings() {
+        val cssSupport by JSConfigurator.booleanSetting(
             KotlinNewProjectWizardBundle.message("module.configurator.js.css"),
             GenerationPhase.PROJECT_GENERATION
         ) {
             defaultValue = value(true)
+        }
+
+        private fun Reader.hasCssSupport(module: Module): Boolean =
+            settingsValue(module, cssSupport)
+
+        fun GradleIRListBuilder.browserSubTarget(module: Module, reader: Reader) {
+            "browser" {
+                if (reader.isApplication(module)) {
+                    applicationSupport()
+                    if (reader.hasCssSupport(module)) {
+                        applicationCssSupport()
+                    }
+                }
+                if (reader.settingValue(module, ModuleConfiguratorWithTests.testFramework) != KotlinTestFramework.NONE
+                ) {
+                    testTask(cssSupport = reader.hasCssSupport(module))
+                }
+            }
+        }
+    }
+}
+
+interface JsNodeBasedConfigurator {
+    companion object : ModuleConfiguratorSettings() {
+        fun GradleIRListBuilder.nodejsSubTarget(module: Module, reader: Reader) {
+            "nodejs" {
+                if (reader.isApplication(module)) {
+                    applicationSupport()
+                }
+            }
         }
     }
 }
@@ -133,7 +143,7 @@ abstract class JsSinglePlatformModuleConfigurator :
     protected abstract fun GradleIRListBuilder.subTarget(module: Module, reader: Reader)
 }
 
-object BrowserJsSinglePlatformModuleConfigurator : JsSinglePlatformModuleConfigurator() {
+object BrowserJsSinglePlatformModuleConfigurator : JsSinglePlatformModuleConfigurator(), JsBrowserBasedConfigurator {
     @NonNls
     override val id = "jsBrowserSinglePlatform"
 
@@ -141,7 +151,7 @@ object BrowserJsSinglePlatformModuleConfigurator : JsSinglePlatformModuleConfigu
 
     override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> {
         return super.getConfiguratorSettings() +
-                JSConfigurator.cssSupport
+                cssSupport
     }
 
     override fun GradleIRListBuilder.subTarget(module: Module, reader: Reader) {
