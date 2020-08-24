@@ -48,8 +48,17 @@ class MarkdownParser(
         private fun emphasisHandler(node: ASTNode): DocTag =
             DocTagsFromIElementFactory.getInstance(
                 node.type,
-                children = listOf(visitNode(node.children[node.children.size / 2]))
+                children = node.children.evaluateChildrenWithDroppedEnclosingTokens(1)
             )
+
+        private fun strongHandler(node: ASTNode): DocTag =
+            DocTagsFromIElementFactory.getInstance(
+                node.type,
+                children = node.children.evaluateChildrenWithDroppedEnclosingTokens(2)
+            )
+
+        private fun List<ASTNode>.evaluateChildrenWithDroppedEnclosingTokens(count: Int) =
+            drop(count).dropLast(count).evaluateChildren()
 
         private fun blockquotesHandler(node: ASTNode): DocTag =
             DocTagsFromIElementFactory.getInstance(
@@ -256,7 +265,7 @@ class MarkdownParser(
                 MarkdownElementTypes.ATX_5,
                 MarkdownElementTypes.ATX_6 -> headersHandler(node)
                 MarkdownTokenTypes.HORIZONTAL_RULE -> horizontalRulesHandler(node)
-                MarkdownElementTypes.STRONG,
+                MarkdownElementTypes.STRONG -> strongHandler(node)
                 MarkdownElementTypes.EMPH -> emphasisHandler(node)
                 MarkdownElementTypes.FULL_REFERENCE_LINK,
                 MarkdownElementTypes.SHORT_REFERENCE_LINK -> referenceLinksHandler(node)
