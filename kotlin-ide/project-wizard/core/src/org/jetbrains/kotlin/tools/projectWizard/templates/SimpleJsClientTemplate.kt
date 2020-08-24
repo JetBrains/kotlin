@@ -57,7 +57,7 @@ class SimpleJsClientTemplate : JsClientTemplate() {
             buildList {
                 val hasKtorServNeighbourTarget = hasKtorServNeighbourTarget(module)
                 if (!hasKtorServNeighbourTarget) {
-                    +(FileTemplateDescriptor("$id/index.html.vm") asResourceOf SourcesetType.main)
+                    +(FileTemplateDescriptor("jsClient/index.html.vm") asResourceOf SourcesetType.main)
                 }
                 if (useKotlinxHtml.reference.settingValue()) {
                     +(FileTemplateDescriptor("$id/client.kt.vm") asSrcOf SourcesetType.main)
