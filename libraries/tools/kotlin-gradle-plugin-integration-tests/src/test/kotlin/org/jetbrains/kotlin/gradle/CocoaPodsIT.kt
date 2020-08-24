@@ -176,7 +176,6 @@ class CocoaPodsIT : BaseGradleIT() {
         with(transformProjectWithPluginsDsl(cocoapodsSingleKtPod, gradleVersion)) {
             val syntheticTasks = arrayOf(
                 ":podInstall",
-                ":kotlin-library:generateDummyFramework",
                 ":kotlin-library:podGenIOS",
                 ":kotlin-library:podSetupBuildIOS",
                 ":kotlin-library:podBuildDependenciesIOS",
