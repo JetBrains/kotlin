@@ -49,6 +49,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/function/apply.kt");
         }
 
+        @TestMetadata("callableReference.kt")
+        public void testCallableReference() throws Exception {
+            runTest("testData/refactoring/inline/function/callableReference.kt");
+        }
+
         @TestMetadata("codeFormat.kt")
         public void testCodeFormat() throws Exception {
             runTest("testData/refactoring/inline/function/codeFormat.kt");

@@ -145,7 +145,7 @@ class ConvertReferenceToLambdaIntention : SelfTargetingOffsetIndependentIntentio
             val lastLambdaExpression = callGrandParent.getLastLambdaExpression()
             if (lastLambdaExpression != result) return result
             lastLambdaExpression.moveFunctionLiteralOutsideParenthesesIfPossible()
-            return callGrandParent.lambdaArguments.lastOrNull()?.getArgumentExpression()
+            return callGrandParent.lambdaArguments.lastOrNull()?.getArgumentExpression() ?: lastLambdaExpression
         }
     }
 }
