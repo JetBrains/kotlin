@@ -39,6 +39,8 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymb
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.scopes.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
@@ -92,7 +94,7 @@ internal class KtFirScopeProvider(
                     packageSymbol.fqName,
                     firResolveState.firIdeSourcesSession/*TODO use correct session here*/
                 ).also(firScopeStorage::register)
-            KtFirPackageScope(firPackageScope, builder, token)
+            KtFirPackageScope(firPackageScope, project, builder, token)
         }
     }
 
@@ -149,7 +151,7 @@ internal class KtFirScopeProvider(
         return when (firScope) {
             is FirAbstractSimpleImportingScope -> KtFirNonStarImportingScope(firScope, builder, token)
             is FirAbstractStarImportingScope -> KtFirStarImportingScope(firScope, builder, project, token)
-            is FirPackageMemberScope -> KtFirPackageScope(firScope, builder, token)
+            is FirPackageMemberScope -> KtFirPackageScope(firScope, project, builder, token)
             is FirContainingNamesAwareScope -> KtFirDelegatingScopeImpl(firScope, builder, token)
             else -> TODO(firScope::class.toString())
         }

@@ -19,7 +19,10 @@ import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
 
-internal class IndexHelper(val project: Project, private val scope: GlobalSearchScope) {
+/*
+* Move to another module
+*/
+public class IndexHelper(val project: Project, private val scope: GlobalSearchScope) {
     private val stubIndex: StubIndex = StubIndex.getInstance()
 
     private inline fun <INDEX_KEY : Any, reified PSI : PsiElement> firstMatchingOrNull(
