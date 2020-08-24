@@ -22,7 +22,10 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.IdeSessionComponents
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 
-internal class FirIdeModuleLibraryDependenciesSession private constructor(
+/**
+ * [org.jetbrains.kotlin.fir.FirSession] responsible for all libraries analysing module transitively depends on
+ */
+internal class FirIdeLibrariesSession private constructor(
     sessionProvider: FirIdeSessionProvider,
     override val scope: GlobalSearchScope
 ) : FirIdeSession(sessionProvider) {
@@ -31,7 +34,7 @@ internal class FirIdeModuleLibraryDependenciesSession private constructor(
             moduleInfo: ModuleSourceInfo,
             sessionProvider: FirIdeSessionProvider,
             project: Project,
-        ): FirIdeModuleLibraryDependenciesSession {
+        ): FirIdeLibrariesSession {
             val searchScope = moduleInfo.module.moduleWithLibrariesScope
             val javaClassFinder = JavaClassFinderImpl().apply {
                 setProjectInstance(project)
@@ -40,7 +43,7 @@ internal class FirIdeModuleLibraryDependenciesSession private constructor(
             val packagePartProvider = IDEPackagePartProvider(searchScope)
 
             val kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(searchScope)
-            return FirIdeModuleLibraryDependenciesSession(sessionProvider, searchScope).apply {
+            return FirIdeLibrariesSession(sessionProvider, searchScope).apply {
                 registerCommonComponents()
 
                 val javaSymbolProvider = JavaSymbolProvider(this, sessionProvider.project, searchScope)
