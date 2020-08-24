@@ -10,7 +10,7 @@ import java.util.*;
 
 abstract class B : MutableList<Int>, AbstractList<Int>() {
     override fun removeAt(index: Int): Int = null!!
-    override fun remove(element: Int): Boolean = null!!
+    override fun remove(element: Int): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Boolean<!> = null!!
 }
 
 abstract class D : AbstractList<Int>() {
@@ -19,7 +19,7 @@ abstract class D : AbstractList<Int>() {
     override fun removeAt(index: Int): Int = null!!
     // AbstractList::remove() should return Int here. No fake overrides created.
     // This may be a bug because the old compiler doesn't report a diagnostic here.
-    override fun remove(element: Int): Boolean = null!!
+    override fun remove(element: Int): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Boolean<!> = null!!
 }
 
 fun main(a: A, b: B, c: ArrayList<Int>) {
