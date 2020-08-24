@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.ThreadSafe
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.lockWithPCECheck
 
 /**
  * Responsible for building [FirFile] by [KtFile]
@@ -43,7 +45,7 @@ internal class FirFileBuilder(
         if (toPhase > FirResolvePhase.RAW_FIR) {
             cache.firFileLockProvider.withLock(firFile) {
                 //add lock for implit type resolve phase & super type
-                runResolveWithoutLock(firFile, fromPhase = firFile.resolvePhase, toPhase = toPhase)
+                runResolveWithoutLockNoPCECheck(firFile, fromPhase = firFile.resolvePhase, toPhase = toPhase)
             }
         }
         return firFile
@@ -52,16 +54,35 @@ internal class FirFileBuilder(
     /**
      * Runs [resolve] function (which is considered to do some resolve on [firFile]) under a lock for [firFile]
      */
-    inline fun <R> runCustomResolve(firFile: FirFile, cache: ModuleFileCache, resolve: () -> R): R =
+    inline fun <R> runCustomResolveUnderLock(firFile: FirFile, cache: ModuleFileCache, resolve: () -> R): R =
         cache.firFileLockProvider.withLock(firFile) { resolve() }
 
-    fun runResolve(firFile: FirFile, cache: ModuleFileCache, fromPhase: FirResolvePhase, toPhase: FirResolvePhase) {
+    inline fun <R : Any> runCustomResolveWithPCECheck(firFile: FirFile, cache: ModuleFileCache, resolve: () -> R): R {
+        val lock = cache.firFileLockProvider.getLockFor(firFile)
+        return lock.lockWithPCECheck(LOCKING_INTERVAL_MS) { resolve() }
+    }
+
+    fun runResolveWithLock(firFile: FirFile, cache: ModuleFileCache, fromPhase: FirResolvePhase, toPhase: FirResolvePhase) {
         cache.firFileLockProvider.withLock(firFile) {
-            runResolveWithoutLock(firFile, fromPhase, toPhase)
+            runResolveWithoutLockNoPCECheck(firFile, fromPhase, toPhase)
         }
     }
 
-    fun runResolveWithoutLock(firFile: FirFile, fromPhase: FirResolvePhase, toPhase: FirResolvePhase) {
+    fun runResolveWithPCECheck(firFile: FirFile, cache: ModuleFileCache, fromPhase: FirResolvePhase, toPhase: FirResolvePhase) {
+        val lock = cache.firFileLockProvider.getLockFor(firFile)
+        lock.lockWithPCECheck(LOCKING_INTERVAL_MS) {
+            val scopeSession = ScopeSession()
+            var currentPhase = fromPhase
+            while (currentPhase < toPhase) {
+                checkCanceled()
+                currentPhase = currentPhase.next
+                firPhaseRunner.runPhase(firFile, currentPhase, scopeSession)
+            }
+        }
+    }
+
+
+    fun runResolveWithoutLockNoPCECheck(firFile: FirFile, fromPhase: FirResolvePhase, toPhase: FirResolvePhase) {
         assert(fromPhase <= toPhase) {
             "Trying to resolve file ${firFile.name} from $fromPhase to $toPhase"
         }
@@ -71,6 +92,10 @@ internal class FirFileBuilder(
             currentPhase = currentPhase.next
             firPhaseRunner.runPhase(firFile, currentPhase, scopeSession)
         }
+    }
+
+    companion object {
+        private const val LOCKING_INTERVAL_MS = 500L
     }
 }
 

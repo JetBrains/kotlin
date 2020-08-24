@@ -16,6 +16,6 @@ internal class IdePhasedFirFileResolver(
     private val cache: ModuleFileCache
 ) : PhasedFirFileResolver() {
     override fun resolveFile(firFile: FirFile, fromPhase: FirResolvePhase, toPhase: FirResolvePhase) {
-        firFileBuilder.runResolve(firFile, cache, fromPhase, toPhase)
+        firFileBuilder.runResolveWithLock(firFile, cache, fromPhase, toPhase)
     }
 }

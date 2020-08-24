@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.createTransformerBasedProcessorByPhase
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.executeWithoutPCE
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
@@ -30,6 +31,6 @@ internal class FirPhaseRunner {
 
     private fun runPhaseWithoutLock(firFile: FirFile, phase: FirResolvePhase, scopeSession: ScopeSession) {
         val phaseProcessor = phase.createTransformerBasedProcessorByPhase(firFile.session, scopeSession)
-        phaseProcessor.processFile(firFile)
+        executeWithoutPCE { phaseProcessor.processFile(firFile) }
     }
 }

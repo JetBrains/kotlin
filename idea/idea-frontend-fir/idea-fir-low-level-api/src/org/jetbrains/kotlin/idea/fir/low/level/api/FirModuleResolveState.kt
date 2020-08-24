@@ -83,7 +83,7 @@ internal open class FirModuleResolveStateImpl(
     }
 
     override fun <D : FirDeclaration> resolvedFirToPhase(declaration: D, toPhase: FirResolvePhase): D {
-        elementBuilder.lazyResolveDeclaration(declaration, fileCache, toPhase)
+        elementBuilder.lazyResolveDeclarationWithPCECheck(declaration, fileCache, toPhase)
         return declaration
     }
 
