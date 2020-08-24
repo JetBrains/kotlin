@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.idea.util.psiModificationTrackerBasedCachedValue
 import java.util.concurrent.ConcurrentHashMap
 import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeModuleLibraryDependenciesSession
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSourcesSession
 
 internal class FirIdeResolveStateService(private val project: Project) {
     private val stateCache by psiModificationTrackerBasedCachedValue(project) {
@@ -23,7 +24,7 @@ internal class FirIdeResolveStateService(private val project: Project) {
 
         val librariesSession = FirIdeModuleLibraryDependenciesSession.create(moduleInfo as ModuleSourceInfo, sessionProvider, project)
 
-        val sourcesSession = FirIdeJavaModuleBasedSession.create(
+        val sourcesSession = FirIdeSourcesSession.create(
             project,
             moduleInfo,
             firPhaseRunner,
