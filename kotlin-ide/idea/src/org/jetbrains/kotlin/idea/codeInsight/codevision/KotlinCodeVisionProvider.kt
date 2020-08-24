@@ -26,6 +26,7 @@ class KotlinCodeVisionProvider : InlayHintsProvider<NoSettings> {
     var showUsages: Boolean = false
     var showInheritors: Boolean = false
 
+    override val isVisibleInSettings: Boolean = false
 
     override fun isLanguageSupported(language: Language): Boolean = language is KotlinLanguage
 
