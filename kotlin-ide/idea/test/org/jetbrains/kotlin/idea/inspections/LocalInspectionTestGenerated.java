@@ -706,7 +706,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
             @TestMetadata("senselessComparison.kt")
             public void testSenselessComparison() throws Exception {
-                runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/senselessComparison.kt");
+                runTest("testData/inspectionsLocal/branched/ifThenToSafeAccess/senselessComparison.kt");
             }
 
             @TestMetadata("thenAndElseBothNull.kt")
@@ -741,7 +741,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
             @TestMetadata("uselessIsCheck.kt")
             public void testUselessIsCheck() throws Exception {
-                runTest("idea/testData/inspectionsLocal/branched/ifThenToSafeAccess/uselessIsCheck.kt");
+                runTest("testData/inspectionsLocal/branched/ifThenToSafeAccess/uselessIsCheck.kt");
             }
 
             @TestMetadata("willNotInlineClassProperty.kt")
@@ -11329,7 +11329,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
             @TestMetadata("noReceiver.kt")
             public void testNoReceiver() throws Exception {
-                runTest("idea/testData/inspectionsLocal/scopeFunctions/runToLet/noReceiver.kt");
+                runTest("testData/inspectionsLocal/scopeFunctions/runToLet/noReceiver.kt");
             }
 
             @TestMetadata("simple.kt")
@@ -12690,7 +12690,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
         @TestMetadata("override.kt")
         public void testOverride() throws Exception {
-            runTest("idea/testData/inspectionsLocal/unnecessaryVariable/override.kt");
+            runTest("testData/inspectionsLocal/unnecessaryVariable/override.kt");
         }
 
         @TestMetadata("paramCopy.kt")

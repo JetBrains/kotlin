@@ -2981,12 +2981,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
                 @TestMetadata("withoutElse.kt")
                 public void testWithoutElse() throws Exception {
-                    runTest("idea/testData/intentions/branched/when/eliminateSubject/withoutElse.kt");
+                    runTest("testData/intentions/branched/when/eliminateSubject/withoutElse.kt");
                 }
 
                 @TestMetadata("withoutElseUsedAsExpression.kt")
                 public void testWithoutElseUsedAsExpression() throws Exception {
-                    runTest("idea/testData/intentions/branched/when/eliminateSubject/withoutElseUsedAsExpression.kt");
+                    runTest("testData/intentions/branched/when/eliminateSubject/withoutElseUsedAsExpression.kt");
                 }
             }
 
@@ -6373,7 +6373,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @TestMetadata("annotatedExpr2.kt")
         public void testAnnotatedExpr2() throws Exception {
-            runTest("idea/testData/intentions/convertToBlockBody/annotatedExpr2.kt");
+            runTest("testData/intentions/convertToBlockBody/annotatedExpr2.kt");
         }
 
         @TestMetadata("explicitlyNonUnitFun.kt")

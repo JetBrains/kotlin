@@ -765,7 +765,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
 
         @TestMetadata("classToObjectWithAnnotations.java")
         public void testClassToObjectWithAnnotations() throws Exception {
-            runTest("nj2k/testData/newJ2k/class/classToObjectWithAnnotations.java");
+            runTest("testData/newJ2k/class/classToObjectWithAnnotations.java");
         }
 
         @TestMetadata("classWithEmptyMethods.java")
@@ -2556,9 +2556,8 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
     }
 
-    @TestMetadata("nj2k/testData/newJ2k/implicitCasts")
-    @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
+    @TestMetadata("testData/newJ2k/implicitCasts")
     public static class ImplicitCasts extends AbstractNewJavaToKotlinConverterSingleFileTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
@@ -2566,7 +2565,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
 
         @TestMetadata("arithmeticInFunctionCall.java")
         public void testArithmeticInFunctionCall() throws Exception {
-            runTest("nj2k/testData/newJ2k/implicitCasts/arithmeticInFunctionCall.java");
+            runTest("testData/newJ2k/implicitCasts/arithmeticInFunctionCall.java");
         }
     }
 
@@ -2878,7 +2877,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
 
         @TestMetadata("kt-20421.java")
         public void testKt_20421() throws Exception {
-            runTest("nj2k/testData/newJ2k/issues/kt-20421.java");
+            runTest("testData/newJ2k/issues/kt-20421.java");
         }
 
         @TestMetadata("kt-21189.java")

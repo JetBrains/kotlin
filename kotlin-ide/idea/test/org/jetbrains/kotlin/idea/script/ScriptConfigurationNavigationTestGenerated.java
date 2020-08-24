@@ -43,7 +43,7 @@ public class ScriptConfigurationNavigationTestGenerated extends AbstractScriptCo
 
     @TestMetadata("includedPluginProblem")
     public void testIncludedPluginProblem() throws Exception {
-        runTest("idea/testData/script/definition/navigation/includedPluginProblem/");
+        runTest("testData/script/definition/navigation/includedPluginProblem/");
     }
 
     @TestMetadata("javaLib")
