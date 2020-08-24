@@ -96,9 +96,11 @@ class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(
 
             project.runSynchronouslyWithProgress(KotlinBundle.message("looking.for.usages.and.conflicts"), true) {
                 runReadAction {
+                    val progressIndicator = ProgressManager.getInstance().progressIndicator
+                    progressIndicator.isIndeterminate = false
                     val progressStep = 1.0 / callables.size
                     for ((i, callable) in callables.withIndex()) {
-                        ProgressManager.getInstance().progressIndicator!!.fraction = (i + 1) * progressStep
+                        progressIndicator.fraction = (i + 1) * progressStep
 
                         if (callable !is PsiNamedElement) continue
 
@@ -173,7 +175,7 @@ class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(
             project.checkConflictsInteractively(conflicts) {
                 project.executeWriteCommand(text) {
                     val kotlinPsiFactory = KtPsiFactory(project)
-                    val javaPsiFactory = PsiElementFactory.SERVICE.getInstance(project)
+                    val javaPsiFactory = PsiElementFactory.getInstance(project)
                     val newKotlinCallExpr = kotlinPsiFactory.createExpression("$newName()")
 
                     kotlinRefsToReplaceWithCall.forEach { it.replace(newKotlinCallExpr) }

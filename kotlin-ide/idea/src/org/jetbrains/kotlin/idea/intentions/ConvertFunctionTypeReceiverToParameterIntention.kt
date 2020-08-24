@@ -114,8 +114,11 @@ class ConvertFunctionTypeReceiverToParameterIntention : SelfTargetingRangeIntent
             project.runSynchronouslyWithProgress(KotlinBundle.message("looking.for.usages.and.conflicts"), true) {
                 runReadAction {
                     val progressStep = 1.0 / callables.size
+                    val progressIndicator = ProgressManager.getInstance().progressIndicator
+                    progressIndicator.isIndeterminate = false
+
                     for ((i, callable) in callables.withIndex()) {
-                        ProgressManager.getInstance().progressIndicator!!.fraction = (i + 1) * progressStep
+                        progressIndicator.fraction = (i + 1) * progressStep
 
                         if (callable !is KtFunction) continue
 
