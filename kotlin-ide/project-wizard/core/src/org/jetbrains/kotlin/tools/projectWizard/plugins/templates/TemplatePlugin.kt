@@ -18,11 +18,5 @@ abstract class TemplatePlugin(context: Context) : Plugin(context) {
 
     companion object : PluginSettingsOwner() {
         override val pluginPath = "template"
-
-        fun addTemplateTask(template: Template) = pipelineTask(GenerationPhase.PREPARE) {
-            withAction {
-                TemplatesPlugin.addTemplate.execute(template)
-            }
-        }
     }
 }
