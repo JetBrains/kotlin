@@ -10,7 +10,7 @@ dependencies {
     runtime(project(":kotlin-scripting-common"))
     runtime(project(":kotlin-scripting-jvm"))
     runtime(kotlinStdlib())
-    runtime(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+    runtime(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
 }
 
 publish()

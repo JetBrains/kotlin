@@ -17,7 +17,7 @@ dependencies {
     compile(project(":kotlin-scripting-jvm"))
     compile(kotlinStdlib())
     compileOnly(project(":kotlin-reflect-api"))
-    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
 
