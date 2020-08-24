@@ -19,11 +19,11 @@ class TCServiceMessageOutputStreamHandlerTest {
     private val client = Mock()
     private val logEvents = ArrayBlockingQueue<SubstituteLoggingEvent>(10)
     private val log = EventRecodingLogger(SubstituteLogger("", logEvents, false), logEvents)
-    private val handler = TCServiceMessageOutputStreamHandler(client, {}, log, 35)
+    private val handler = TCServiceMessageOutputStreamHandler(client, {}, log, messageLimitBytes = 35)
 
     private val clientCalls get() = client.log.toString()
     private val logString get() = logEvents.map { it.message }.toString()
-    
+
     @Test
     fun testLines() {
         handler.write("Test1\n".toByteArray())
