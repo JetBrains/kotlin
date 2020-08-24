@@ -668,8 +668,10 @@ class Fir2IrDeclarationStorage(
                     val setter = property.setter
                     // TODO: this checks are very preliminary, FIR resolve should determine backing field presence itself
                     if (property.isConst || (property.modality != Modality.ABSTRACT && (irParent !is IrClass || !irParent.isInterface))) {
-                        if (initializer != null || getter is FirDefaultPropertyGetter ||
-                            property.isVar && setter is FirDefaultPropertySetter
+                        if (initializer != null ||
+                            getter is FirDefaultPropertyGetter ||
+                            property.isVar && setter is FirDefaultPropertySetter ||
+                            property.backingFieldSymbol.isReferenced
                         ) {
                             backingField = createBackingField(
                                 property, IrDeclarationOrigin.PROPERTY_BACKING_FIELD, descriptor,
