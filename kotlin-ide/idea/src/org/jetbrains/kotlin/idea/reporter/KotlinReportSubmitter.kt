@@ -226,7 +226,7 @@ class KotlinReportSubmitter : ITNReporterCompat() {
         events: Array<IdeaLoggingEvent>,
         additionalInfo: String?,
         parentComponent: Component?,
-        consumer: Consumer<SubmittedReportInfo>
+        consumer: Consumer<in SubmittedReportInfo>
     ): Boolean {
         if (hasUpdate) {
             if (ApplicationManager.getApplication().isInternal) {

@@ -68,7 +68,7 @@ class KotlinSdkType : SdkType("KotlinSDK") {
 
     override fun supportsCustomCreateUI() = true
 
-    override fun showCustomCreateUI(sdkModel: SdkModel, parentComponent: JComponent, selectedSdk: Sdk?, sdkCreatedCallback: Consumer<Sdk>) {
+    override fun showCustomCreateUI(sdkModel: SdkModel, parentComponent: JComponent, selectedSdk: Sdk?, sdkCreatedCallback: Consumer<in Sdk>) {
         sdkCreatedCallback.consume(createSdkWithUniqueName(sdkModel.sdks.toList()))
     }
 
