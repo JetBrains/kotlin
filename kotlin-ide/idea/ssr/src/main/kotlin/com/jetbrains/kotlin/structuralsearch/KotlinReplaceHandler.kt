@@ -3,7 +3,6 @@ package com.jetbrains.kotlin.structuralsearch
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
-import com.intellij.psi.impl.DebugUtil
 import com.intellij.structuralsearch.StructuralReplaceHandler
 import com.intellij.structuralsearch.impl.matcher.MatcherImplUtil
 import com.intellij.structuralsearch.impl.matcher.PatternTreeContext
@@ -27,10 +26,8 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
             info.replacement, PatternTreeContext.Block, options.matchOptions.fileType, project
         ).first()
         replaceTemplate.structuralReplace(searchTemplate, info.matchResult.match)
-        val codeStyleManager = CodeStyleManager.getInstance(project)
         (0 until info.matchesCount).mapNotNull(info::getMatch).forEach {
-            val replacement = it.replace(replaceTemplate)
-            if(options.isToReformatAccordingToStyle) codeStyleManager.reformat(replacement)
+            it.replace(replaceTemplate)
         }
     }
 
