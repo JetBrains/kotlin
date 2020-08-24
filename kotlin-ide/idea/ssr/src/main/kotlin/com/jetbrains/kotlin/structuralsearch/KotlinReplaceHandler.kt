@@ -3,6 +3,7 @@ package com.jetbrains.kotlin.structuralsearch
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.psi.impl.DebugUtil
 import com.intellij.structuralsearch.StructuralReplaceHandler
 import com.intellij.structuralsearch.impl.matcher.MatcherImplUtil
 import com.intellij.structuralsearch.impl.matcher.PatternTreeContext
@@ -11,10 +12,11 @@ import com.intellij.structuralsearch.plugin.replace.ReplaceOptions
 import com.intellij.structuralsearch.plugin.replace.ReplacementInfo
 import org.jetbrains.kotlin.idea.core.addTypeParameter
 import org.jetbrains.kotlin.idea.core.setDefaultValue
+import org.jetbrains.kotlin.js.translate.declaration.hasCustomGetter
+import org.jetbrains.kotlin.js.translate.declaration.hasCustomSetter
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.before
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 
@@ -114,11 +116,13 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         if(receiverTypeReference == null && searchTemplate.receiverTypeReference == null) {
             match.receiverTypeReference?.let(this::setReceiverTypeReference)
         }
-        if(typeReference == null || searchTemplate.typeReference == null) match.typeReference?.let(this::setTypeReference)
+        if(typeReference == null && searchTemplate.typeReference == null) match.typeReference?.let(this::setTypeReference)
         if(!hasDelegate() && !hasInitializer()) {
             if(!searchTemplate.hasInitializer()) initializer = match.initializer
             if(!searchTemplate.hasDelegate()) match.delegate?.let(this::add)
         }
+        if(!hasCustomGetter() && !searchTemplate.hasCustomGetter()) match.getter?.let(this::add)
+        if(!hasCustomSetter() && !searchTemplate.hasCustomSetter()) match.setter?.let(this::add)
         return this
     }
 
