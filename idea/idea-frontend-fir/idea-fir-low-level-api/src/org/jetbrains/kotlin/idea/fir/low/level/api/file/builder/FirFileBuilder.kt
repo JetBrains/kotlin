@@ -9,9 +9,7 @@ import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.createTransformerBasedProcessorByPhase
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
-import org.jetbrains.kotlin.idea.fir.low.level.api.FirIdeSessionProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.ThreadSafe
@@ -22,7 +20,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.ThreadSafe
  */
 @ThreadSafe
 internal class FirFileBuilder(
-    private val sessionProvider: FirIdeSessionProvider,
     private val scopeProvider: FirScopeProvider,
     private val firPhaseRunner: FirPhaseRunner
 ) {

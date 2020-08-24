@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.resolve.transformers.PhasedFirFileResolver
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
-import org.jetbrains.kotlin.idea.fir.low.level.api.FirIdeSessionProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.idea.fir.low.level.api.IdePhasedFirFileResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
@@ -49,11 +48,11 @@ internal class FirIdeSourcesSession private constructor(
             project: Project,
             moduleInfo: ModuleSourceInfo,
             firPhaseRunner: FirPhaseRunner,
-            sessionProvider: FirSessionProvider,
+            sessionProvider: FirIdeSessionProvider,
             librariesSession: FirIdeModuleLibraryDependenciesSession,
         ): FirIdeSourcesSession {
             val scopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
-            val firBuilder = FirFileBuilder(sessionProvider as FirIdeSessionProvider, scopeProvider, firPhaseRunner)
+            val firBuilder = FirFileBuilder(scopeProvider, firPhaseRunner)
             val dependentModules = moduleInfo.collectTransitiveDependenciesWithSelf().filterIsInstance<ModuleSourceInfo>()
             val searchScope = ModuleWithDependentsScope(project, dependentModules.map { it.module })
             return FirIdeSourcesSession(sessionProvider, searchScope, firBuilder).apply {
