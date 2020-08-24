@@ -1,27 +1,34 @@
 rootProject.name = "dokka"
 
 include("core")
-include("plugins:base:search-component")
-include("testApi")
-include("test-tools")
-include("runners:gradle-plugin")
-include("runners:cli")
-include("runners:maven-plugin")
+include("core:test-api")
+include("core:content-matcher-test-utils")
+
 include("kotlin-analysis")
 include("kotlin-analysis:intellij-dependency")
 include("kotlin-analysis:compiler-dependency")
+
+include("runners:gradle-plugin")
+include("runners:cli")
+include("runners:maven-plugin")
+
 include("plugins:base")
 include("plugins:base:frontend")
-include("plugins:base:test-utils")
+include("plugins:base:search-component")
+include("plugins:base:base-test-utils")
+
 include("plugins:mathjax")
 include("plugins:gfm")
 include("plugins:jekyll")
 include("plugins:kotlin-as-java")
 include("plugins:javadoc")
+
 include("integration-tests")
 include("integration-tests:gradle")
 include("integration-tests:cli")
 include("integration-tests:maven")
+
+include("test-utils")
 
 pluginManagement {
     val kotlin_version: String by settings
