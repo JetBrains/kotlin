@@ -167,6 +167,54 @@ class ParserTest : KDocTest() {
     }
 
     @Test
+    fun `Stars as italic bounds`() {
+        val kdoc = "The abstract syntax tree node for a multiplying expression.  A multiplying\n" +
+            "expression is a binary expression where the operator is a multiplying operator\n" +
+            "such as \"*\", \"/\", or \"mod\".  A simple example would be \"5*x\"."
+        val expectedDocumentationNode = DocumentationNode(
+            listOf(
+                Description(
+                    P(
+                        listOf(
+                            Text("The abstract syntax tree node for a multiplying expression.  A multiplying " +
+                                "expression is a binary expression where the operator is a multiplying operator " +
+                                "such as \""
+                            ),
+                            I(listOf(Text("\", \"/\", or \"mod\".  A simple example would be \"5"))),
+                            Text("x\".")
+                        )
+                    )
+                )
+            )
+        )
+        executeTest(kdoc, expectedDocumentationNode)
+    }
+
+    @Test
+    fun `Stars as bold bounds`() {
+        val kdoc = "The abstract syntax tree node for a multiplying expression.  A multiplying\n" +
+                "expression is a binary expression where the operator is a multiplying operator\n" +
+                "such as \"**\", \"/\", or \"mod\".  A simple example would be \"5**x\"."
+        val expectedDocumentationNode = DocumentationNode(
+            listOf(
+                Description(
+                    P(
+                        listOf(
+                            Text("The abstract syntax tree node for a multiplying expression.  A multiplying " +
+                                    "expression is a binary expression where the operator is a multiplying operator " +
+                                    "such as \""
+                            ),
+                            B(listOf(Text("\", \"/\", or \"mod\".  A simple example would be \"5"))),
+                            Text("x\".")
+                        )
+                    )
+                )
+            )
+        )
+        executeTest(kdoc, expectedDocumentationNode)
+    }
+
+    @Test
     fun `Embedded star`() {
         val kdoc = "Embedded*Star"
         val expectedDocumentationNode = DocumentationNode(
