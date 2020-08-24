@@ -515,6 +515,7 @@ class FirCallResolver(
                 val candidate = candidates.single()
                 val coneSymbol = candidate.symbol
                 if (coneSymbol is FirBackingFieldSymbol) {
+                    coneSymbol.isReferenced = true
                     return buildBackingFieldReference {
                         this.source = source
                         resolvedSymbol = coneSymbol

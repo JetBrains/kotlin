@@ -32,7 +32,10 @@ open class FirPropertySymbol(
     constructor(name: Name) : this(CallableId(name))
 }
 
-class FirBackingFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirProperty>(callableId)
+class FirBackingFieldSymbol(
+    callableId: CallableId,
+    var isReferenced: Boolean = false
+) : FirVariableSymbol<FirProperty>(callableId)
 
 class FirDelegateFieldSymbol<D : FirVariable<D>>(callableId: CallableId) : FirVariableSymbol<D>(callableId) {
     val delegate: FirExpression
