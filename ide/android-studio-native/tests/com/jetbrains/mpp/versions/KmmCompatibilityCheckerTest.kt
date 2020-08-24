@@ -173,13 +173,9 @@ class KmmCompatibilityCheckerUnitTests {
 
     private fun check(actualKotlinVersion: String, compiledAgainstKotlinVersion: String, expectedResult: CompatibilityCheckResult) {
         val actualResult = KmmCompatibilityChecker.checkVersions(
-            actualKotlinVersion.toKotlinPluginVersion(),
-            compiledAgainstKotlinVersion.toKotlinPluginVersion()
+            actualKotlinVersion,
+            compiledAgainstKotlinVersion
         )
         assertEquals(expectedResult, actualResult)
-    }
-
-    companion object {
-        private fun String.toKotlinPluginVersion(): KotlinPluginVersion = KotlinPluginVersion.parse(this)!!
     }
 }

@@ -39,10 +39,8 @@ object KmmCompatibilityChecker {
 
         if (MobileMultiplatformPluginVersionsInfo.isDevelopment()) return
 
-        val actualKotlinPluginVersion = KotlinPluginVersion.parse(KotlinPluginUtil.getPluginVersion()) ?: return
-        val compiledAgainstKotlinVersion = KotlinPluginVersion.parse(MobileMultiplatformPluginVersionsInfo.compiledAgainstKotlin) ?: return
-
-        val errorText = when (checkVersions(actualKotlinPluginVersion, compiledAgainstKotlinVersion)) {
+        val unparsedCompiledAgainstKotlinPluginVersion = MobileMultiplatformPluginVersionsInfo.compiledAgainstKotlin
+        val errorText = when (checkVersions(KotlinPluginUtil.getPluginVersion(), unparsedCompiledAgainstKotlinPluginVersion)) {
             COMPATIBLE -> null
             OUTDATED_KOTLIN -> KmmBundle.message("startup.error.outdatedKotlin")
             OUTDATED_KMM_PLUGIN -> KmmBundle.message("startup.error.outdatedPlugin")
@@ -67,11 +65,26 @@ object KmmCompatibilityChecker {
         }
     }
 
-    fun checkVersions(actualKotlinPlugin: KotlinPluginVersion, compiledAgainstKotlinPlugin: KotlinPluginVersion): CompatibilityCheckResult {
+    fun checkVersions(
+        unparsedActualKotlinPluginVersion: String,
+        unparsedCompiledAgainstKotlinPluginVersion: String
+    ): CompatibilityCheckResult {
+        // hack: KotlinPluginVersion comes from Big Kotlin, and in 1.3.7* it had a bug in regex, which would prevent version from being
+        // parsed successfully. Fortunately enough, 1.3.7* isn't supported by any public build of KMM plugin, so we can just check
+        // for 1.3.72 manually
+        if (unparsedActualKotlinPluginVersion.startsWith("1.3.7")) return OUTDATED_KOTLIN
+
+        // Kotlin Plugin Version = e.g. '1.4.20-dev-322-AndroidStudio4.1-2'
+        val actualKotlinPluginVersion =
+            KotlinPluginVersion.parse(unparsedActualKotlinPluginVersion) ?: return UNKNOWN
+        val compiledAgainstKotlinPluginVersion =
+            KotlinPluginVersion.parse(unparsedCompiledAgainstKotlinPluginVersion) ?: return UNKNOWN
+
+        // Kotlin Version = e.g. '1.4.20'
         val actualKotlinVersion =
-            KotlinVersion.parseFromString(actualKotlinPlugin.kotlinVersion)?.stripHotfixes() ?: return UNKNOWN
+            KotlinVersion.parseFromString(actualKotlinPluginVersion.kotlinVersion)?.stripHotfixes() ?: return UNKNOWN
         val compiledAgainstKotlinVersion =
-            KotlinVersion.parseFromString(compiledAgainstKotlinPlugin.kotlinVersion)
+            KotlinVersion.parseFromString(compiledAgainstKotlinPluginVersion.kotlinVersion)
                 ?.stripHotfixes() ?: return UNKNOWN
 
 
