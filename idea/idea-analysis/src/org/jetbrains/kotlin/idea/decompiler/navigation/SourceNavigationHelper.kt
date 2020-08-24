@@ -250,6 +250,7 @@ object SourceNavigationHelper {
             }
 
             override fun contains(file: VirtualFile): Boolean {
+                if (file == vFile) return false
                 val entries = idx.getOrderEntriesForFile(file)
                 return entries.any { orderEntries.contains(it) }
             }
