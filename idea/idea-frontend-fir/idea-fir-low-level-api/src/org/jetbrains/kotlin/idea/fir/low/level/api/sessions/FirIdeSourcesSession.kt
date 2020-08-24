@@ -32,7 +32,9 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.collectTransitiveDependenciesWithSelf
 
-
+/**
+ * [org.jetbrains.kotlin.fir.FirSession] responsible for all Kotlin & Java source modules analysing module transitively depends on
+ */
 internal class FirIdeSourcesSession private constructor(
     sessionProvider: FirIdeSessionProvider,
     override val scope: GlobalSearchScope,
@@ -49,7 +51,7 @@ internal class FirIdeSourcesSession private constructor(
             moduleInfo: ModuleSourceInfo,
             firPhaseRunner: FirPhaseRunner,
             sessionProvider: FirIdeSessionProvider,
-            librariesSession: FirIdeModuleLibraryDependenciesSession,
+            librariesSession: FirIdeLibrariesSession,
         ): FirIdeSourcesSession {
             val scopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
             val firBuilder = FirFileBuilder(scopeProvider, firPhaseRunner)

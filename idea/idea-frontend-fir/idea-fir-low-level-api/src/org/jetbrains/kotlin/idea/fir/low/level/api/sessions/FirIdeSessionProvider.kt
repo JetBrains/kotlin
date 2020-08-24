@@ -9,13 +9,9 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionProvider
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
-import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.isLibraryClasses
-import org.jetbrains.kotlin.psi.KtElement
-import java.util.concurrent.ConcurrentHashMap
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.ThreadSafe
 
 @ThreadSafe
@@ -23,7 +19,7 @@ internal class FirIdeSessionProvider(
     override val project: Project,
 ) : FirSessionProvider {
     private lateinit var sourcesSession: FirIdeSourcesSession
-    private lateinit var librariesSession: FirIdeModuleLibraryDependenciesSession
+    private lateinit var librariesSession: FirIdeLibrariesSession
 
 
     fun setSourcesSession(sourcesSession: FirIdeSourcesSession) {
@@ -31,7 +27,7 @@ internal class FirIdeSessionProvider(
         this.sourcesSession = sourcesSession
     }
 
-    fun setLibrariesSession(librariesSession: FirIdeModuleLibraryDependenciesSession) {
+    fun setLibrariesSession(librariesSession: FirIdeLibrariesSession) {
         check(!this::librariesSession.isInitialized)
         this.librariesSession = librariesSession
     }
