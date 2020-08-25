@@ -6,36 +6,40 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.modality
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
-import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionParameterSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertyGetterSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtCommonSymbolModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 
-internal class KtFirFunctionValueParameterSymbol(
-    fir: FirValueParameter,
+internal class KtFirPropertyGetterSymbol(
+    fir: FirPropertyAccessor,
     resolveState: FirModuleResolveState,
     override val token: ValidityToken,
-    private val builder: KtSymbolByFirBuilder
-) : KtFunctionParameterSymbol(), KtFirSymbol<FirValueParameter> {
+    private val builder: KtSymbolByFirBuilder,
+) : KtPropertyGetterSymbol(), KtFirSymbol<FirPropertyAccessor> {
+    init {
+        require(fir.isGetter)
+    }
+
     override val firRef = firRef(fir, resolveState)
     override val psi: PsiElement? by firRef.withFirAndCache { it.findPsi(fir.session) }
 
-    override val name: Name get() = firRef.withFir { it.name }
-    override val isVararg: Boolean get() = firRef.withFir { it.isVararg }
-    override val type: KtType by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir -> builder.buildKtType(fir.returnTypeRef) }
+    override val isDefault: Boolean get() = firRef.withFir { it is FirDefaultPropertyAccessor }
+    override val type: KtType = firRef.withFir(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) { builder.buildKtType(it.returnTypeRef) }
+    override val modality: KtCommonSymbolModality get() = firRef.withFir { it.modality.getSymbolModality() }
 
-    override val hasDefaultValue: Boolean get() = firRef.withFir { it.defaultValue != null }
-
-    override fun createPointer(): KtSymbolPointer<KtFunctionParameterSymbol> {
+    override fun createPointer(): KtSymbolPointer<KtPropertyGetterSymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
-        TODO("Creating pointers for functions parameters from library is not supported yet")
+        TODO("Creating pointers for getters from library is not supported yet")
     }
 }

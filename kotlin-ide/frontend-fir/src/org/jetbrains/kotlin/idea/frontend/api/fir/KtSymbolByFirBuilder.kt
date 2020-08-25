@@ -92,6 +92,7 @@ internal class KtSymbolByFirBuilder private constructor(
             is FirEnumEntry -> buildEnumEntrySymbol(fir)
             is FirField -> buildFieldSymbol(fir)
             is FirAnonymousFunction -> buildAnonymousFunctionSymbol(fir)
+            is FirPropertyAccessor -> buildPropertyAccessorSymbol(fir)
             else ->
                 TODO(fir::class.toString())
         }
@@ -111,11 +112,14 @@ internal class KtSymbolByFirBuilder private constructor(
 
     // TODO it can be a constructor parameter, which may be split into parameter & property
     // we should handle them both
-    fun buildParameterSymbol(fir: FirValueParameterImpl) =
+    fun buildParameterSymbol(fir: FirValueParameter) =
         symbolsCache.cache(fir) { KtFirFunctionValueParameterSymbol(fir, resolveState, token, this) }
 
-    fun buildFirConstructorParameter(fir: FirValueParameterImpl) =
+    fun buildFirConstructorParameter(fir: FirValueParameter) =
         symbolsCache.cache(fir) { KtFirConstructorValueParameterSymbol(fir, resolveState, token, this) }
+
+    fun buildFirSetterParameter(fir: FirValueParameter): KtFirSetterParameterSymbol =
+        symbolsCache.cache(fir) { KtFirSetterParameterSymbol(fir, resolveState, token, this) }
 
     fun buildFunctionSymbol(fir: FirSimpleFunction) = symbolsCache.cache(fir) {
         KtFirFunctionSymbol(fir, resolveState, token, this)
@@ -134,6 +138,13 @@ internal class KtSymbolByFirBuilder private constructor(
         when {
             fir.isLocal -> KtFirLocalVariableSymbol(fir, resolveState, token, this)
             else -> KtFirPropertySymbol(fir, resolveState, token, this)
+        }
+    }
+
+    fun buildPropertyAccessorSymbol(fir: FirPropertyAccessor): KtPropertyAccessorSymbol = symbolsCache.cache(fir) {
+        when {
+            fir.isGetter -> KtFirPropertyGetterSymbol(fir, resolveState, token, this)
+            else -> KtFirPropertySetterSymbol(fir, resolveState, token, this)
         }
     }
 

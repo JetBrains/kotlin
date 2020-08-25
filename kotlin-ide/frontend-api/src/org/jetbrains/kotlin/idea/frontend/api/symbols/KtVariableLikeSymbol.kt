@@ -21,11 +21,6 @@ abstract class KtEnumEntrySymbol : KtVariableLikeSymbol(), KtSymbolWithKind {
     abstract override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol>
 }
 
-sealed class KtParameterSymbol : KtVariableLikeSymbol() {
-    abstract val hasDefaultValue: Boolean
-
-    abstract override fun createPointer(): KtSymbolPointer<KtParameterSymbol>
-}
 
 sealed class KtVariableSymbol : KtVariableLikeSymbol() {
     abstract val isVal: Boolean
@@ -55,18 +50,30 @@ abstract class KtLocalVariableSymbol : KtVariableSymbol(), KtSymbolWithKind {
     abstract override fun createPointer(): KtSymbolPointer<KtLocalVariableSymbol>
 }
 
-abstract class KtFunctionParameterSymbol : KtParameterSymbol(), KtSymbolWithKind {
+sealed class KtParameterSymbol : KtVariableLikeSymbol(), KtSymbolWithKind {
+    abstract val hasDefaultValue: Boolean
+
+    abstract override fun createPointer(): KtSymbolPointer<KtParameterSymbol>
+}
+
+abstract class KtFunctionParameterSymbol : KtParameterSymbol() {
     abstract val isVararg: Boolean
 
-    override val symbolKind: KtSymbolKind get() = KtSymbolKind.NON_PROPERTY_PARAMETER
+    final override val symbolKind: KtSymbolKind get() = KtSymbolKind.NON_PROPERTY_PARAMETER
 
     abstract override fun createPointer(): KtSymbolPointer<KtFunctionParameterSymbol>
 }
 
-abstract class KtConstructorParameterSymbol : KtParameterSymbol(), KtNamedSymbol, KtSymbolWithKind {
+abstract class KtConstructorParameterSymbol : KtParameterSymbol() {
     abstract val constructorParameterKind: KtConstructorParameterSymbolKind
 
     abstract override fun createPointer(): KtSymbolPointer<KtConstructorParameterSymbol>
+}
+
+abstract class KtSetterParameterSymbol : KtParameterSymbol() {
+    final override val symbolKind: KtSymbolKind get() = KtSymbolKind.NON_PROPERTY_PARAMETER
+
+    abstract override fun createPointer(): KtSymbolPointer<KtSetterParameterSymbol>
 }
 
 enum class KtConstructorParameterSymbolKind {
