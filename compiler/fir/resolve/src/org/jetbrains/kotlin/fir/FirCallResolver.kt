@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.isInner
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
@@ -515,7 +512,7 @@ class FirCallResolver(
                 val candidate = candidates.single()
                 val coneSymbol = candidate.symbol
                 if (coneSymbol is FirBackingFieldSymbol) {
-                    coneSymbol.isReferenced = true
+                    coneSymbol.fir.isReferredViaField = true
                     return buildBackingFieldReference {
                         this.source = source
                         resolvedSymbol = coneSymbol

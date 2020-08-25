@@ -679,7 +679,7 @@ class Fir2IrDeclarationStorage(
                         if (initializer != null ||
                             getter is FirDefaultPropertyGetter ||
                             property.isVar && setter is FirDefaultPropertySetter ||
-                            property.backingFieldSymbol.isReferenced
+                            property.isReferredViaField == true
                         ) {
                             backingField = createBackingField(
                                 property, IrDeclarationOrigin.PROPERTY_BACKING_FIELD, descriptor,

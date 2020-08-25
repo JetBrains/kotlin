@@ -116,6 +116,8 @@ fun FirRegularClass.addDeclaration(declaration: FirDeclaration) {
 
 private object IsFromVarargKey : FirDeclarationDataKey()
 var FirProperty.isFromVararg: Boolean? by FirDeclarationDataRegistry.data(IsFromVarargKey)
+private object IsReferredViaField : FirDeclarationDataKey()
+var FirProperty.isReferredViaField: Boolean? by FirDeclarationDataRegistry.data(IsReferredViaField)
 
 inline val FirProperty.hasJvmFieldAnnotation: Boolean
     get() = annotations.any {
