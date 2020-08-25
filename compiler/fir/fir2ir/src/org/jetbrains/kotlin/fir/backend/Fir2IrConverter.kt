@@ -217,7 +217,7 @@ class Fir2IrConverter(
             }
             is FirField -> {
                 if (declaration.isSynthetic) {
-                    declarationStorage.createIrFieldAndDelegatedMembers(declaration, parent as IrClass)
+                    declarationStorage.createIrFieldAndDelegatedMembers(declaration, containingClass!!, parent as IrClass)
                 } else {
                     throw AssertionError("Unexpected non-synthetic field: ${declaration::class}")
                 }
