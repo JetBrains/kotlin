@@ -22,3 +22,48 @@ fun case1(case1: Case1) {
     val x: Case1 = Case1.valueOf("")
     val y: Array<Case1> = Case1.values()
 }
+
+// TESTCASE NUMBER: 2
+fun case2() {
+    Case2.valueOf("VAL1") checkType { check<Case2>() }
+    Case2.values() checkType { check<Array<Case2>>() }
+}
+
+interface I2 {
+    companion object {
+        fun valueOf(value: String = "def"): String {
+            println("Interface valueOf()")
+            return value
+        }
+
+        fun values(): String {
+            println("Interface values()")
+            return ""
+        }
+    }
+}
+
+
+enum class Case2 : I2 {
+    VAL1, VAL2;
+}
+// TESTCASE NUMBER: 3
+fun case3() {
+    Case3.valueOf("VAL1") checkType { check<Case3>() }
+    Case3.values() checkType { check<Array<Case3>>() }
+}
+enum class Case3 {
+    VAL1, VAL2;
+
+    companion object {
+        fun valueOf(value: String = "def"): String {
+            println("Interface valueOf()")
+            return value
+        }
+
+        fun values(): String {
+            println("Interface values()")
+            return ""
+        }
+    }
+}

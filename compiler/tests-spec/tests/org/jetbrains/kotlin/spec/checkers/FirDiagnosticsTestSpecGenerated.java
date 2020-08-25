@@ -8116,6 +8116,37 @@ public class FirDiagnosticsTestSpecGenerated extends AbstractFirDiagnosticsTestS
                     }
                 }
             }
+
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/declarations/inheritance")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Inheritance extends AbstractFirDiagnosticsTestSpec {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInInheritance() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/declarations/inheritance"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/declarations/inheritance/pos")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Pos extends AbstractFirDiagnosticsTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    @TestMetadata("1.kt")
+                    public void test1() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/declarations/inheritance/pos/1.kt");
+                    }
+
+                    public void testAllFilesPresentInPos() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/declarations/inheritance/pos"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+                }
+            }
         }
 
         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/dfa")

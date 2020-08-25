@@ -1,0 +1,26 @@
+package
+
+public fun case1(): kotlin.Unit
+
+public abstract class A {
+    public constructor A()
+    public final val boo: kotlin.Int = 2
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Case1 : I, A {
+    public constructor Case1()
+    public final override /*2*/ /*fake_override*/ var boo: kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface I {
+    public abstract var boo: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -1,6 +1,8 @@
 package
 
 public fun case1(/*0*/ case1: Case1): kotlin.Unit
+public fun case2(): kotlin.Unit
+public fun case3(): kotlin.Unit
 public fun </*0*/ T> checkSubtype(/*0*/ t: T): T
 public fun </*0*/ E> CheckType<E>.check(): kotlin.Unit
 public infix fun </*0*/ T> T.checkType(/*0*/ f: CheckType<T>.() -> kotlin.Unit): kotlin.Unit
@@ -22,9 +24,75 @@ public final enum class Case1 : kotlin.Enum<Case1> {
     public final /*synthesized*/ fun values(): kotlin.Array<Case1>
 }
 
+public final enum class Case2 : kotlin.Enum<Case2>, I2 {
+    enum entry VAL1
+
+    enum entry VAL2
+
+    private constructor Case2()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: Case2): kotlin.Int
+    public final override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<Case2!>!
+    public final override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Case2
+    public final /*synthesized*/ fun values(): kotlin.Array<Case2>
+}
+
+public final enum class Case3 : kotlin.Enum<Case3> {
+    enum entry VAL1
+
+    enum entry VAL2
+
+    private constructor Case3()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: Case3): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<Case3!>!
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public final fun valueOf(/*0*/ value: kotlin.String = ...): kotlin.String
+        public final fun values(): kotlin.String
+    }
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Case3
+    public final /*synthesized*/ fun values(): kotlin.Array<Case3>
+}
+
 public final class CheckType</*0*/ T> {
     public constructor CheckType</*0*/ T>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface I2 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public final fun valueOf(/*0*/ value: kotlin.String = ...): kotlin.String
+        public final fun values(): kotlin.String
+    }
 }
