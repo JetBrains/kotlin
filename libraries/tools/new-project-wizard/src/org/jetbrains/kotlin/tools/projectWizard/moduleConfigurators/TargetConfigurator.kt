@@ -79,6 +79,12 @@ enum class JsTargetKind(override val text: String) : DisplayableSettingItem {
     APPLICATION(KotlinNewProjectWizardBundle.message("module.configurator.js.target.settings.kind.application"))
 }
 
+enum class JsCompiler(override val text: String) : DisplayableSettingItem {
+    IR("IR"),
+    LEGACY("LEGACY"),
+    BOTH("BOTH")
+}
+
 object JsBrowserTargetConfigurator : JsTargetConfigurator, ModuleConfiguratorWithTests {
     override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> =
         super<ModuleConfiguratorWithTests>.getConfiguratorSettings() +
