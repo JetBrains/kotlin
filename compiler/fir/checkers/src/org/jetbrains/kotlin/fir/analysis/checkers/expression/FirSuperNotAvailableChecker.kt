@@ -15,15 +15,15 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirSuperNotAvailableChecker : FirQualifiedAccessChecker() {
-    override fun check(functionCall: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (functionCall.calleeReference.safeAs<FirSuperReference>()?.hadExplicitTypeInSource() != true) return
+    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (expression.calleeReference.safeAs<FirSuperReference>()?.hadExplicitTypeInSource() != true) return
 
         val isInsideClass = context.containingDeclarations.any {
             it is FirClass<*>
         }
 
         if (!isInsideClass) {
-            reporter.report(functionCall.source)
+            reporter.report(expression.source)
         }
     }
 

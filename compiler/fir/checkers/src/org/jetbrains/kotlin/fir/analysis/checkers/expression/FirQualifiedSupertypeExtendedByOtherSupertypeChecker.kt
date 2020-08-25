@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirQualifiedSupertypeExtendedByOtherSupertypeChecker : FirQualifiedAccessChecker() {
-    override fun check(functionCall: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         // require to be called over a super reference
-        val superReference = functionCall.calleeReference.safeAs<FirSuperReference>()
+        val superReference = expression.calleeReference.safeAs<FirSuperReference>()
             ?.takeIf { it.hadExplicitTypeInSource() }
             ?: return
 

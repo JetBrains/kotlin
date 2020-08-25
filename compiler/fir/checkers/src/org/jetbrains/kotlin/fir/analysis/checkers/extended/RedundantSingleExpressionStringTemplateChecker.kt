@@ -33,7 +33,6 @@ object RedundantSingleExpressionStringTemplateChecker : FirBasicExpresionChecker
 
     private fun PsiElement.findStringParent(): KtStringTemplateExpression? {
         if (this is KtStringTemplateExpression) return this
-        return if (this.parent != null) this.parent.findStringParent()
-        else null
+        return this.parent?.findStringParent()
     }
 }

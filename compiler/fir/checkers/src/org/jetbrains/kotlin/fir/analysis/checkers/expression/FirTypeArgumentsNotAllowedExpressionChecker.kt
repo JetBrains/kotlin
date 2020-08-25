@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.KtTypeArgumentList
 
 object FirTypeArgumentsNotAllowedExpressionChecker : FirQualifiedAccessChecker() {
-    override fun check(functionCall: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         // analyze type parameters near
         // package names
-        val explicitReceiver = functionCall.explicitReceiver
+        val explicitReceiver = expression.explicitReceiver
 
         if (explicitReceiver is FirResolvedQualifier && explicitReceiver.symbol == null) {
             if (explicitReceiver.source?.hasAnyArguments() == true) {

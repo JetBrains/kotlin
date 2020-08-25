@@ -15,7 +15,7 @@ val o = object {
         p.x = 4
 
         val z : Int
-        doSmth(<!UNINITIALIZED_VARIABLE, UNINITIALIZED_VARIABLE!>z<!>)
+        doSmth(<!UNINITIALIZED_VARIABLE!>z<!>)
     }
 }
 

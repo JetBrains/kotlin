@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 
 abstract class FirExpressionChecker<in E : FirStatement> {
-    abstract fun check(functionCall: E, context: CheckerContext, reporter: DiagnosticReporter)
+    abstract fun check(expression: E, context: CheckerContext, reporter: DiagnosticReporter)
 }
 
 typealias FirBasicExpresionChecker = FirExpressionChecker<FirStatement>
