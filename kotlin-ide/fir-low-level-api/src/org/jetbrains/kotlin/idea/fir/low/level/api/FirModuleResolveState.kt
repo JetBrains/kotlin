@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirElementBui
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.PsiToFirCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSessionProvider
 import org.jetbrains.kotlin.psi.KtElement
@@ -63,10 +64,11 @@ internal open class FirModuleResolveStateImpl(
     override val firIdeLibrariesSession: FirSession,
     private val sessionProvider: FirIdeSessionProvider,
     val firFileBuilder: FirFileBuilder,
+    val firLazyDeclarationResolver: FirLazyDeclarationResolver,
     val fileCache: ModuleFileCache,
 ) : FirModuleResolveState() {
     val psiToFirCache = PsiToFirCache(fileCache)
-    val elementBuilder = FirElementBuilder(firFileBuilder)
+    val elementBuilder = FirElementBuilder(firFileBuilder, firLazyDeclarationResolver)
     private val diagnosticsCollector = DiagnosticsCollector(firFileBuilder, fileCache)
 
     override fun getSessionFor(moduleInfo: IdeaModuleInfo): FirSession =
@@ -83,7 +85,7 @@ internal open class FirModuleResolveStateImpl(
     }
 
     override fun <D : FirDeclaration> resolvedFirToPhase(declaration: D, toPhase: FirResolvePhase): D {
-        elementBuilder.lazyResolveDeclarationWithPCECheck(declaration, fileCache, toPhase)
+        firLazyDeclarationResolver.lazyResolveDeclaration(declaration, fileCache, toPhase, checkPCE = true)
         return declaration
     }
 
@@ -97,7 +99,14 @@ internal open class FirModuleResolveStateImpl(
         toPhase: FirResolvePhase,
         towerDataContextForStatement: MutableMap<FirStatement, FirTowerDataContext>
     ) {
-        elementBuilder.runLazyResolveForCompletion(firFunction, containerFirFile, firIdeProvider, toPhase, towerDataContextForStatement)
+        firLazyDeclarationResolver.runLazyResolveWithoutLock(
+            firFunction,
+            containerFirFile,
+            firIdeProvider,
+            toPhase,
+            towerDataContextForStatement,
+            checkPCE = false
+        )
     }
 }
 

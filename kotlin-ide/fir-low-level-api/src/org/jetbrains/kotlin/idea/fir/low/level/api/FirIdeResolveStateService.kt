@@ -10,6 +10,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.util.psiModificationTrackerBasedCachedValue
 import java.util.concurrent.ConcurrentHashMap
 import org.jetbrains.kotlin.idea.caches.project.*
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeLibrariesSession
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSessionProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSourcesSession
@@ -43,6 +44,7 @@ internal class FirIdeResolveStateService(private val project: Project) {
             librariesSession,
             sessionProvider,
             sourcesSession.firFileBuilder,
+            FirLazyDeclarationResolver(sourcesSession.firFileBuilder),
             sourcesSession.cache
         )
     }

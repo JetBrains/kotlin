@@ -39,13 +39,14 @@ internal class FirFileBuilder(
     fun getFirFileResolvedToPhaseWithCaching(
         ktFile: KtFile,
         cache: ModuleFileCache,
-        @Suppress("SameParameterValue") toPhase: FirResolvePhase
+        @Suppress("SameParameterValue") toPhase: FirResolvePhase,
+        checkPCE: Boolean
     ): FirFile {
         val firFile = buildRawFirFileWithCaching(ktFile, cache)
         if (toPhase > FirResolvePhase.RAW_FIR) {
             cache.firFileLockProvider.withLock(firFile) {
                 //add lock for implit type resolve phase & super type
-                runResolveWithoutLockNoPCECheck(firFile, fromPhase = firFile.resolvePhase, toPhase = toPhase)
+                runResolveWithoutLock(firFile, fromPhase = firFile.resolvePhase, toPhase = toPhase, checkPCE = checkPCE)
             }
         }
         return firFile
@@ -62,37 +63,24 @@ internal class FirFileBuilder(
         return lock.lockWithPCECheck(LOCKING_INTERVAL_MS) { resolve() }
     }
 
-    fun runResolveWithLock(firFile: FirFile, cache: ModuleFileCache, fromPhase: FirResolvePhase, toPhase: FirResolvePhase) {
-        cache.firFileLockProvider.withLock(firFile) {
-            runResolveWithoutLockNoPCECheck(firFile, fromPhase, toPhase)
-        }
-    }
-
-    fun runResolveWithPCECheck(firFile: FirFile, cache: ModuleFileCache, fromPhase: FirResolvePhase, toPhase: FirResolvePhase) {
-        val lock = cache.firFileLockProvider.getLockFor(firFile)
-        lock.lockWithPCECheck(LOCKING_INTERVAL_MS) {
-            val scopeSession = ScopeSession()
-            var currentPhase = fromPhase
-            while (currentPhase < toPhase) {
-                checkCanceled()
-                currentPhase = currentPhase.next
-                firPhaseRunner.runPhase(firFile, currentPhase, scopeSession)
-            }
-        }
-    }
-
-
-    fun runResolveWithoutLockNoPCECheck(firFile: FirFile, fromPhase: FirResolvePhase, toPhase: FirResolvePhase) {
+    fun runResolveWithoutLock(
+        firFile: FirFile,
+        fromPhase: FirResolvePhase,
+        toPhase: FirResolvePhase,
+        checkPCE: Boolean
+    ) {
         assert(fromPhase <= toPhase) {
             "Trying to resolve file ${firFile.name} from $fromPhase to $toPhase"
         }
         val scopeSession = ScopeSession()
         var currentPhase = fromPhase
         while (currentPhase < toPhase) {
+            if (checkPCE) checkCanceled()
             currentPhase = currentPhase.next
             firPhaseRunner.runPhase(firFile, currentPhase, scopeSession)
         }
     }
+
 
     companion object {
         private const val LOCKING_INTERVAL_MS = 500L

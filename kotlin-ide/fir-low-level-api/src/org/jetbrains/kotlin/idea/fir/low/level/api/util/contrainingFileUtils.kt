@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.firProvider
 fun FirDeclaration.getContainingFile(): FirFile? {
     val provider = session.firProvider
     return when (this) {
+        is FirFile -> this
         is FirCallableDeclaration<*> -> provider.getFirCallableContainerFile(symbol)
         is FirClassLikeDeclaration<*> -> provider.getFirClassifierContainerFile(symbol)
         else -> error("Unsupported declaration ${this::class.java}")

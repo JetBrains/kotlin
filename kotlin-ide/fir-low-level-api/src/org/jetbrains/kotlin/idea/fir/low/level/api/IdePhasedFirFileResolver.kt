@@ -6,18 +6,16 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.transformers.PhasedFirFileResolver
-import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirElementBuilder
-import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 
 internal class IdePhasedFirFileResolver(
-    private val firFileBuilder: FirElementBuilder,
+    private val lazyDeclarationResolver: FirLazyDeclarationResolver,
     private val cache: ModuleFileCache
 ) : PhasedFirFileResolver() {
     override fun resolveDeclaration(declaration: FirDeclaration, fromPhase: FirResolvePhase, toPhase: FirResolvePhase) {
-        firFileBuilder.lazyResolveDeclarationNoPCECheck(declaration, cache, toPhase)
+        lazyDeclarationResolver.lazyResolveDeclaration(declaration, cache, toPhase, checkPCE = false)
     }
 }
