@@ -604,8 +604,11 @@ class CallAndReferenceGenerator(
                             }
                         }
                         for ((index, argument) in call.arguments.withIndex()) {
+                            val valueParameter = valueParameters?.get(index)
                             val argumentExpression =
-                                visitor.convertToIrExpression(argument).applySamConversionIfNeeded(argument, valueParameters?.get(index))
+                                visitor.convertToIrExpression(argument)
+                                    .applySamConversionIfNeeded(argument, valueParameter)
+                                    .applyAssigningArrayElementsToVarargInNamedForm(argument, valueParameter)
                             putValueArgument(index, argumentExpression)
                         }
                     }
@@ -643,7 +646,10 @@ class CallAndReferenceGenerator(
             return IrBlockImpl(startOffset, endOffset, type, IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL).apply {
                 for ((argument, parameter) in argumentMapping) {
                     val parameterIndex = valueParameters.indexOf(parameter)
-                    val irArgument = visitor.convertToIrExpression(argument).applySamConversionIfNeeded(argument, parameter)
+                    val irArgument =
+                        visitor.convertToIrExpression(argument)
+                            .applySamConversionIfNeeded(argument, parameter)
+                            .applyAssigningArrayElementsToVarargInNamedForm(argument, parameter)
                     if (irArgument.hasNoSideEffects()) {
                         putValueArgument(parameterIndex, irArgument)
                     } else {
@@ -661,6 +667,7 @@ class CallAndReferenceGenerator(
                 val argumentExpression =
                     visitor.convertToIrExpression(argument, annotationMode)
                         .applySamConversionIfNeeded(argument, parameter)
+                        .applyAssigningArrayElementsToVarargInNamedForm(argument, parameter)
                 putValueArgument(valueParameters.indexOf(parameter), argumentExpression)
             }
             if (annotationMode) {
@@ -712,6 +719,30 @@ class CallAndReferenceGenerator(
         }
         // On the other hand, the actual type should be a functional type.
         return argument.isFunctional(session)
+    }
+
+    private fun IrExpression.applyAssigningArrayElementsToVarargInNamedForm(
+        argument: FirExpression,
+        parameter: FirValueParameter?
+    ): IrExpression {
+        // TODO: Need to refer to language feature: AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
+        if (this !is IrVarargImpl ||
+            parameter?.isVararg != true ||
+            argument !is FirVarargArgumentsExpression ||
+            argument.arguments.none { it is FirNamedArgumentExpression }
+        ) {
+            return this
+        }
+        elements.forEachIndexed { i, irVarargElement ->
+            if (irVarargElement !is IrSpreadElement &&
+                argument.arguments[i] is FirNamedArgumentExpression &&
+                irVarargElement is IrExpression &&
+                irVarargElement.type.isArray()
+            ) {
+                elements[i] = IrSpreadElementImpl(irVarargElement.startOffset, irVarargElement.endOffset, irVarargElement)
+            }
+        }
+        return this
     }
 
     private fun IrExpression.applyTypeArguments(access: FirQualifiedAccess): IrExpression {
