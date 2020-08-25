@@ -142,7 +142,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
                 csBuilder.addEqualityConstraint(
                     freshVariable.defaultType,
                     getTypePreservingFlexibilityWrtTypeVariable(knownTypeArgument.unwrap(), freshVariable),
-                    KnownTypeParameterConstraintPosition(knownTypeArgument)
+                    KnownTypeParameterConstraintPositionImpl(knownTypeArgument)
                 )
                 continue
             }
@@ -153,7 +153,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
                 csBuilder.addEqualityConstraint(
                     freshVariable.defaultType,
                     getTypePreservingFlexibilityWrtTypeVariable(typeArgument.type, freshVariable),
-                    ExplicitTypeParameterConstraintPosition(typeArgument)
+                    ExplicitTypeParameterConstraintPositionImpl(typeArgument)
                 )
             } else {
                 assert(typeArgument == TypeArgumentPlaceholder) {
@@ -192,7 +192,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
 
         fun TypeVariableFromCallableDescriptor.addSubtypeConstraint(
             upperBound: KotlinType,
-            position: DeclaredUpperBoundConstraintPosition
+            position: DeclaredUpperBoundConstraintPositionImpl
         ) {
             csBuilder.addSubtypeConstraint(defaultType, toFreshVariables.safeSubstitute(upperBound.unwrap()), position)
         }
@@ -363,7 +363,7 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
         val dependentTypeParameters = getBuilder().currentStorage().notFixedTypeVariables.asSequence()
             .flatMap { (typeConstructor, constraints) ->
                 val upperBounds = constraints.constraints.filter {
-                    it.position.from is DeclaredUpperBoundConstraintPosition && it.kind == ConstraintKind.UPPER
+                    it.position.from is DeclaredUpperBoundConstraintPositionImpl && it.kind == ConstraintKind.UPPER
                 }
 
                 upperBounds.mapNotNull { constraint ->
@@ -403,7 +403,7 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
 
     private fun NewConstraintSystem.getDependingOnTypeParameter(variable: TypeConstructor) =
         getBuilder().currentStorage().notFixedTypeVariables[variable]?.constraints?.mapNotNull {
-            if (it.position.from is DeclaredUpperBoundConstraintPosition && it.kind == ConstraintKind.UPPER) {
+            if (it.position.from is DeclaredUpperBoundConstraintPositionImpl && it.kind == ConstraintKind.UPPER) {
                 it.type.typeConstructor(asConstraintSystemCompleterContext())
             } else null
         } ?: emptyList()
@@ -561,7 +561,7 @@ private fun KotlinResolutionCandidate.shouldRunConversionForConstants(expectedTy
         val variableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[expectedType.constructor] ?: return false
         return variableWithConstraints.constraints.any {
             it.kind == ConstraintKind.EQUALITY &&
-                    it.position.from is ExplicitTypeParameterConstraintPosition &&
+                    it.position.from is ExplicitTypeParameterConstraintPositionImpl &&
                     UnsignedTypes.isUnsignedType(it.type as UnwrappedType)
 
         }

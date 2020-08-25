@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import kotlin.collections.LinkedHashSet
 
 class KotlinConstraintSystemCompleter(
     private val resultTypeResolver: ResultTypeResolver,
@@ -235,7 +234,7 @@ class KotlinConstraintSystemCompleter(
         csBuilder.addSubtypeConstraint(
             expectedType,
             functionalType,
-            ArgumentConstraintPosition(atom.atom)
+            ArgumentConstraintPositionImpl(atom.atom)
         )
         return atom.transformToResolvedLambda(csBuilder, diagnosticsHolder, expectedType, returnVariable)
     }
@@ -314,7 +313,7 @@ class KotlinConstraintSystemCompleter(
         val resolvedAtom = findResolvedAtomBy(typeVariable, topLevelAtoms) ?: topLevelAtoms.firstOrNull()
 
         if (resolvedAtom != null) {
-            c.addError(NotEnoughInformationForTypeParameter(typeVariable, resolvedAtom))
+            c.addError(NotEnoughInformationForTypeParameterImpl(typeVariable, resolvedAtom))
         }
 
         val resultErrorType = when {

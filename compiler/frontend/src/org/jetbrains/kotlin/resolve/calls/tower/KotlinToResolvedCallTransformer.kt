@@ -909,7 +909,7 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
                 is CapturedTypeFromSubtyping -> it.position.originalPosition()
                 is ConstrainingTypeIsError -> it.position.originalPosition()
                 else -> null
-            } as? ArgumentConstraintPosition ?: return@forEach
+            } as? ArgumentConstraintPositionImpl ?: return@forEach
 
             val argument = position.argument.safeAs<PSIKotlinCallArgument>()?.valueArgument ?: return@forEach
             result += argument to it

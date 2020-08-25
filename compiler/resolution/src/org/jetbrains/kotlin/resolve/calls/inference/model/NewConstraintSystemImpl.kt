@@ -302,7 +302,7 @@ class NewConstraintSystemImpl(
         checkState(State.BUILDING, State.COMPLETION)
 
         constraintInjector.addInitialEqualityConstraint(
-            this, variable.defaultType(), resultType, FixVariableConstraintPosition(variable, atom)
+            this, variable.defaultType(), resultType, FixVariableConstraintPositionImpl(variable, atom)
         )
 
         val freshTypeConstructor = variable.freshTypeConstructor()

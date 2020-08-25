@@ -115,7 +115,7 @@ class MutableVariableWithConstraints private constructor(
     private fun newConstraintIsUseless(old: Constraint, new: Constraint): Boolean {
         // Constraints from declared upper bound are quite special -- they aren't considered as a proper ones
         // In other words, user-defined constraints have "higher" priority and here we're trying not to loose them
-        if (old.position.from is DeclaredUpperBoundConstraintPosition && new.position.from !is DeclaredUpperBoundConstraintPosition)
+        if (old.position.from is DeclaredUpperBoundConstraintPosition<*> && new.position.from !is DeclaredUpperBoundConstraintPosition<*>)
             return false
 
         return when (old.kind) {

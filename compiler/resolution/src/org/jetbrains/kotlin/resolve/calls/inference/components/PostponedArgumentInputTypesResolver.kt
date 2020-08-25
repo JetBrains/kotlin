@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.builtins.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.components.transformToResolvedLambda
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.builtIns
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -205,13 +205,13 @@ class PostponedArgumentInputTypesResolver(
                 if (typeWithKind == null) continue
                 when (typeWithKind.direction) {
                     ConstraintKind.EQUALITY -> csBuilder.addEqualityConstraint(
-                        parameterTypeVariable.defaultType, typeWithKind.type, ArgumentConstraintPosition(atom)
+                        parameterTypeVariable.defaultType, typeWithKind.type, ArgumentConstraintPositionImpl(atom)
                     )
                     ConstraintKind.UPPER -> csBuilder.addSubtypeConstraint(
-                        parameterTypeVariable.defaultType, typeWithKind.type, ArgumentConstraintPosition(atom)
+                        parameterTypeVariable.defaultType, typeWithKind.type, ArgumentConstraintPositionImpl(atom)
                     )
                     ConstraintKind.LOWER -> csBuilder.addSubtypeConstraint(
-                        typeWithKind.type, parameterTypeVariable.defaultType, ArgumentConstraintPosition(atom)
+                        typeWithKind.type, parameterTypeVariable.defaultType, ArgumentConstraintPositionImpl(atom)
                     )
                 }
             }
@@ -330,7 +330,7 @@ class PostponedArgumentInputTypesResolver(
         getBuilder().addSubtypeConstraint(
             newExpectedType,
             expectedType,
-            ArgumentConstraintPosition(argument.atom)
+            ArgumentConstraintPositionImpl(argument.atom)
         )
 
         return newExpectedType

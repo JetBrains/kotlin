@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.resolve.calls.inference.model.DelegatedPropertyConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.DelegatedPropertyConstraintPositionImpl
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ManyCandidatesResolver
 import org.jetbrains.kotlin.resolve.calls.tower.PSICallResolver
@@ -54,7 +54,7 @@ class DelegatedPropertyInferenceSession(
 
         val valueParameterForThis = descriptor.valueParameters.getOrNull(0) ?: return
         val substitutedType = freshVariablesSubstitutor.safeSubstitute(valueParameterForThis.type.unwrap())
-        commonSystem.addSubtypeConstraint(typeOfThis.unwrap(), substitutedType, DelegatedPropertyConstraintPosition(atom))
+        commonSystem.addSubtypeConstraint(typeOfThis.unwrap(), substitutedType, DelegatedPropertyConstraintPositionImpl(atom))
     }
 
     private fun ResolvedCallAtom.addConstraintsForGetValueMethod(commonSystem: ConstraintSystemBuilder) {
@@ -62,7 +62,7 @@ class DelegatedPropertyInferenceSession(
             val unsubstitutedReturnType = candidateDescriptor.returnType?.unwrap() ?: return
             val substitutedReturnType = freshVariablesSubstitutor.safeSubstitute(unsubstitutedReturnType)
 
-            commonSystem.addSubtypeConstraint(substitutedReturnType, expectedType, DelegatedPropertyConstraintPosition(atom))
+            commonSystem.addSubtypeConstraint(substitutedReturnType, expectedType, DelegatedPropertyConstraintPositionImpl(atom))
         }
 
         addConstraintForThis(candidateDescriptor, commonSystem)
@@ -73,7 +73,7 @@ class DelegatedPropertyInferenceSession(
             val unsubstitutedParameterType = candidateDescriptor.valueParameters.getOrNull(2)?.type?.unwrap() ?: return
             val substitutedParameterType = freshVariablesSubstitutor.safeSubstitute(unsubstitutedParameterType)
 
-            commonSystem.addSubtypeConstraint(expectedType, substitutedParameterType, DelegatedPropertyConstraintPosition(atom))
+            commonSystem.addSubtypeConstraint(expectedType, substitutedParameterType, DelegatedPropertyConstraintPositionImpl(atom))
         }
 
         addConstraintForThis(candidateDescriptor, commonSystem)

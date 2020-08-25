@@ -142,7 +142,7 @@ class PostponedArgumentsAnalyzer(
                     val variable = variableWithConstraints.typeVariable as ConeTypeVariable
 
                     c.getBuilder().unmarkPostponedVariable(variable)
-                    c.getBuilder().addEqualityConstraint(variable.defaultType, resultType, CoroutinePosition())
+                    c.getBuilder().addEqualityConstraint(variable.defaultType, resultType, CoroutinePosition)
                 }
             }
         }

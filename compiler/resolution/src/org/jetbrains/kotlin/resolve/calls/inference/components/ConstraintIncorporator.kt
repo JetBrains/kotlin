@@ -82,7 +82,7 @@ class ConstraintIncorporator(
             getConstraintsForVariable(typeVariable).forEach {
                 if (it.kind != ConstraintKind.LOWER) {
                     val isFromDeclaredUpperBound =
-                        it.position.from is DeclaredUpperBoundConstraintPosition && it.type.typeConstructor() !is TypeVariableTypeConstructor
+                        it.position.from is DeclaredUpperBoundConstraintPosition<*> && it.type.typeConstructor() !is TypeVariableTypeConstructor
 
                     addNewIncorporatedConstraint(
                         constraint.type,
@@ -227,8 +227,8 @@ class ConstraintIncorporator(
 
         val isUsefulForNullabilityConstraint =
             isPotentialUsefulNullabilityConstraint(newConstraint, otherConstraint.type, otherConstraint.kind)
-        val isFromVariableFixation = baseConstraint.position.from is FixVariableConstraintPosition
-                || otherConstraint.position.from is FixVariableConstraintPosition
+        val isFromVariableFixation = baseConstraint.position.from is FixVariableConstraintPosition<*>
+                || otherConstraint.position.from is FixVariableConstraintPosition<*>
 
         if (!otherConstraint.kind.isEqual() &&
             !isUsefulForNullabilityConstraint &&

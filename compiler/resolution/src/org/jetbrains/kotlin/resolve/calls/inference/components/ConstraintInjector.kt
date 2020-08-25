@@ -124,7 +124,7 @@ class ConstraintInjector(
             return true // T <: T(?!)
         }
 
-        if (constraint.position.from is DeclaredUpperBoundConstraintPosition &&
+        if (constraint.position.from is DeclaredUpperBoundConstraintPosition<*> &&
             constraint.kind == UPPER && constraintType.isNullableAny()
         ) {
             return true // T <: Any?
