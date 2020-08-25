@@ -28,7 +28,9 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
+import org.jetbrains.kotlin.tools.projectWizard.templates.ReactJsClientTemplate
 import org.jetbrains.kotlin.tools.projectWizard.templates.SimpleJsClientTemplate
+import org.jetbrains.kotlin.tools.projectWizard.templates.SimpleNodeJsTemplate
 import java.nio.file.Path
 
 interface JSConfigurator : ModuleConfiguratorWithModuleType, ModuleConfiguratorWithSettings {
@@ -54,7 +56,10 @@ interface JSConfigurator : ModuleConfiguratorWithModuleType, ModuleConfiguratorW
             filter = filter@{ reference, kindCandidate ->
                 when {
                     reference !is ModuleConfiguratorSettingReference<*, *> -> false
-                    kindCandidate == JsTargetKind.LIBRARY && reference.module?.template is SimpleJsClientTemplate -> false
+                    kindCandidate == JsTargetKind.LIBRARY
+                            && (reference.module?.template is SimpleJsClientTemplate ||
+                            reference.module?.template is ReactJsClientTemplate ||
+                            reference.module?.template is SimpleNodeJsTemplate) -> false
                     else -> true
                 }
             }
