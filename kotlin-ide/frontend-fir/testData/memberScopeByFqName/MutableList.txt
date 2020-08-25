@@ -288,7 +288,7 @@ KtFirPropertySymbol:
   modality: ABSTRACT
   name: size
   origin: LIBRARY
-  receiverType: kotlin/Int
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
 

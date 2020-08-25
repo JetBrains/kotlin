@@ -1,6 +1,6 @@
 class A {
     val x: Int = 10
-    val Int.y = this
+    val Int.y get() = this
 }
 
 // SYMBOLS:
@@ -11,8 +11,14 @@ KtFirPropertySymbol:
   modality: FINAL
   name: x
   origin: SOURCE
-  receiverType: kotlin/Int
+  receiverType: null
   symbolKind: MEMBER
+  type: kotlin/Int
+
+KtFirPropertyGetterSymbol:
+  isDefault: false
+  modality: FINAL
+  origin: SOURCE
   type: kotlin/Int
 
 KtFirPropertySymbol:
@@ -22,9 +28,9 @@ KtFirPropertySymbol:
   modality: FINAL
   name: y
   origin: SOURCE
-  receiverType: A
+  receiverType: kotlin/Int
   symbolKind: MEMBER
-  type: A
+  type: kotlin/Int
 
 KtFirClassOrObjectSymbol:
   classIdIfNonLocal: A

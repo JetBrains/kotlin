@@ -12,7 +12,7 @@ KtFirPropertySymbol:
   modality: FINAL
   name: a
   origin: SOURCE
-  receiverType: kotlin/Int
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
 

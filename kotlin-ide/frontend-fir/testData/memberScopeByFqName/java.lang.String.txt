@@ -63,7 +63,7 @@ KtFirPropertySymbol:
   modality: ABSTRACT
   name: length
   origin: LIBRARY
-  receiverType: kotlin/Int
+  receiverType: null
   symbolKind: MEMBER
   type: kotlin/Int
 
@@ -836,12 +836,3 @@ KtFirFunctionSymbol:
   type: kotlin/Char
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(index)]
-
-KtFirClassOrObjectSymbol:
-  classIdIfNonLocal: java/lang/String.CaseInsensitiveComparator
-  classKind: CLASS
-  modality: OPEN
-  name: CaseInsensitiveComparator
-  origin: JAVA
-  symbolKind: MEMBER
-  typeParameters: []
