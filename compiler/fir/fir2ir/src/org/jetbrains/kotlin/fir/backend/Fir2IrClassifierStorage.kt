@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 class Fir2IrClassifierStorage(
@@ -139,6 +140,13 @@ class Fir2IrClassifierStorage(
         } else {
             classCache[klass]
         }
+    }
+
+    internal fun getCachedLocalClass(classId: ClassId): IrClass? {
+        require(classId.isLocal) {
+            "As the function name implies, it ought to be used to look up _local_ classes."
+        }
+        return localStorage.getLocalClass(classId)
     }
 
     private fun FirRegularClass.enumClassModality(): Modality {

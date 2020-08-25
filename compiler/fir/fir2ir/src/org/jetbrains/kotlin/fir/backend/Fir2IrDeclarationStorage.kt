@@ -201,16 +201,21 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    internal fun findIrParent(packageFqName: FqName, parentClassId: ClassId?, firBasedSymbol: FirBasedSymbol<*>): IrDeclarationParent? {
-        return if (parentClassId != null) {
-            // TODO: this will never work for local classes
-            val parentFirSymbol = firSymbolProvider.getClassLikeSymbolByFqName(parentClassId)
-            if (parentFirSymbol is FirClassSymbol) {
-                val parentIrSymbol = classifierStorage.getIrClassSymbol(parentFirSymbol)
-                parentIrSymbol.owner
+    private fun findIrClass(classId: ClassId): IrClass? =
+        if (classId.isLocal) {
+            classifierStorage.getCachedLocalClass(classId)
+        } else {
+            val firSymbol = firSymbolProvider.getClassLikeSymbolByFqName(classId)
+            if (firSymbol is FirClassSymbol) {
+                classifierStorage.getIrClassSymbol(firSymbol).owner
             } else {
                 null
             }
+        }
+
+    internal fun findIrParent(packageFqName: FqName, parentClassId: ClassId?, firBasedSymbol: FirBasedSymbol<*>): IrDeclarationParent? {
+        return if (parentClassId != null) {
+            findIrClass(parentClassId)
         } else {
             val containerFile = when (firBasedSymbol) {
                 is FirCallableSymbol -> firProvider.getFirCallableContainerFile(firBasedSymbol)
@@ -1039,13 +1044,12 @@ class Fir2IrDeclarationStorage(
             is FirEnumEntry -> {
                 classifierStorage.getCachedIrEnumEntry(firDeclaration)?.let { return it.symbol }
                 val containingFile = firProvider.getFirCallableContainerFile(firVariableSymbol)
-                val parentClassSymbol = firVariableSymbol.callableId.classId?.let { firSymbolProvider.getClassLikeSymbolByFqName(it) }
-                val irParentClass = (parentClassSymbol?.fir as? FirClass<*>)?.let { classifierStorage.getCachedIrClass(it) }
+                val irParentClass = firVariableSymbol.callableId.classId?.let { findIrClass(it) }
                 classifierStorage.createIrEnumEntry(
                     firDeclaration,
                     irParent = irParentClass,
                     origin = if (containingFile != null) IrDeclarationOrigin.DEFINED else
-                        (parentClassSymbol?.fir as? FirClass<*>)?.irOrigin(firProvider) ?: IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
+                        irParentClass?.origin ?: IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
                 ).symbol
             }
             is FirValueParameter -> {

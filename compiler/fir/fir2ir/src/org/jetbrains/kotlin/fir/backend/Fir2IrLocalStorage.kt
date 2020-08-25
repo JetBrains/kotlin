@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.name.ClassId
 
 class Fir2IrLocalStorage {
 
@@ -47,6 +45,10 @@ class Fir2IrLocalStorage {
 
     fun getLocalClass(localClass: FirClass<*>): IrClass? {
         return localClassCache[localClass]
+    }
+
+    fun getLocalClass(classId: ClassId): IrClass? {
+        return localClassCache.entries.find { (firClass, _) -> firClass.classId == classId }?.value
     }
 
     fun getLocalFunction(localFunction: FirFunction<*>): IrSimpleFunction? {
