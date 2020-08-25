@@ -1,5 +1,5 @@
 val x: Int = 10
-val Int.y = this
+val Int.y get() = this
 
 // SYMBOLS:
 KtFirPropertySymbol:
@@ -9,8 +9,14 @@ KtFirPropertySymbol:
   modality: FINAL
   name: x
   origin: SOURCE
-  receiverType: kotlin/Int
+  receiverType: null
   symbolKind: TOP_LEVEL
+  type: kotlin/Int
+
+KtFirPropertyGetterSymbol:
+  isDefault: false
+  modality: FINAL
+  origin: SOURCE
   type: kotlin/Int
 
 KtFirPropertySymbol:
@@ -20,6 +26,6 @@ KtFirPropertySymbol:
   modality: FINAL
   name: y
   origin: SOURCE
-  receiverType: ERROR CLASS: Unresolved this@null
+  receiverType: kotlin/Int
   symbolKind: TOP_LEVEL
-  type: ERROR CLASS: Unresolved this@null
+  type: kotlin/Int
