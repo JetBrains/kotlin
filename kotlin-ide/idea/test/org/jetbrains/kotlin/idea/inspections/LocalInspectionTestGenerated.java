@@ -7561,6 +7561,39 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
     }
 
     @RunWith(JUnit3RunnerWithInners.class)
+    @TestMetadata("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction")
+    public static class RedundantLambdaOrAnonymousFunction extends AbstractLocalInspectionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("emptyFunctionWithoutParameters.kt")
+        public void testEmptyFunctionWithoutParameters() throws Exception {
+            runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/emptyFunctionWithoutParameters.kt");
+        }
+
+        @TestMetadata("emptyFunctionWithoutParametersWithExtraParentheses.kt")
+        public void testEmptyFunctionWithoutParametersWithExtraParentheses() throws Exception {
+            runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/emptyFunctionWithoutParametersWithExtraParentheses.kt");
+        }
+
+        @TestMetadata("emptyLambdaWithoutParameters.kt")
+        public void testEmptyLambdaWithoutParameters() throws Exception {
+            runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/emptyLambdaWithoutParameters.kt");
+        }
+
+        @TestMetadata("emptyLambdaWithoutParameters2.kt")
+        public void testEmptyLambdaWithoutParameters2() throws Exception {
+            runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/emptyLambdaWithoutParameters2.kt");
+        }
+
+        @TestMetadata("emptyLambdaWithoutParametersWithExtraParentheses.kt")
+        public void testEmptyLambdaWithoutParametersWithExtraParentheses() throws Exception {
+            runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/emptyLambdaWithoutParametersWithExtraParentheses.kt");
+        }
+    }
+
+    @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/redundantObjectTypeCheck")
     public static class RedundantObjectTypeCheck extends AbstractLocalInspectionTest {
         private void runTest(String testDataFilePath) throws Exception {
