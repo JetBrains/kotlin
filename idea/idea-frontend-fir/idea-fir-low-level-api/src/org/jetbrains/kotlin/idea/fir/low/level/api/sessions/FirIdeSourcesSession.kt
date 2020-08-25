@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.sessions
 import com.intellij.openapi.module.impl.scopes.ModuleWithDependentsScope
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.registerCheckersComponent
 import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.util.collectTransitiveDepende
  * [org.jetbrains.kotlin.fir.FirSession] responsible for all Kotlin & Java source modules analysing module transitively depends on
  */
 internal class FirIdeSourcesSession private constructor(
+    override val moduleInfo: ModuleInfo?,
     sessionProvider: FirIdeSessionProvider,
     override val scope: GlobalSearchScope,
     val firFileBuilder: FirFileBuilder,
@@ -57,7 +59,7 @@ internal class FirIdeSourcesSession private constructor(
             val firBuilder = FirFileBuilder(scopeProvider, firPhaseRunner)
             val dependentModules = moduleInfo.collectTransitiveDependenciesWithSelf().filterIsInstance<ModuleSourceInfo>()
             val searchScope = ModuleWithDependentsScope(project, dependentModules.map { it.module })
-            return FirIdeSourcesSession(sessionProvider, searchScope, firBuilder).apply {
+            return FirIdeSourcesSession(moduleInfo, sessionProvider, searchScope, firBuilder).apply {
                 val cache = ModuleFileCacheImpl(this)
                 val phasedFirFileResolver = IdePhasedFirFileResolver(firBuilder, cache)
 
