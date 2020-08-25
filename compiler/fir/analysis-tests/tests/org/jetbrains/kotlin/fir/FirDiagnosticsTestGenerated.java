@@ -1056,6 +1056,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/sealedSupertype.kt");
         }
 
+        @TestMetadata("someOverridesTest.kt")
+        public void testSomeOverridesTest() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/someOverridesTest.kt");
+        }
+
         @TestMetadata("superIsNotAnExpression.kt")
         public void testSuperIsNotAnExpression() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/superIsNotAnExpression.kt");

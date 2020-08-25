@@ -47,10 +47,13 @@ object FirSupertypeInitializedInInterfaceChecker : FirMemberDeclarationChecker()
         return -1
     }
 
-    private fun PsiElement.findSuperTypeCall() = if (children.isNotEmpty() && children[0] !is PsiErrorElement) {
-        children[0].children.indexOfFirst { it is KtSuperTypeCallEntry }
-    } else {
-        -1
+    private fun PsiElement.findSuperTypeCall(): Int {
+        val children = this.children // this is a method call and it collects children
+        return if (children.isNotEmpty() && children[0] !is PsiErrorElement) {
+            children[0].children.indexOfFirst { it is KtSuperTypeCallEntry }
+        } else {
+            -1
+        }
     }
 
     private fun LighterASTNode.findSuperTypeCall(tree: FlyweightCapableTreeStructure<LighterASTNode>): Int {

@@ -28,7 +28,7 @@ abstract class CheckerContext {
      * T instance or null if no such item could be found.
      */
     inline fun <reified T : FirDeclaration> findClosest(): T? {
-        for (it in containingDeclarations.reversed()) {
+        for (it in containingDeclarations.asReversed()) {
             return it as? T ?: continue
         }
 

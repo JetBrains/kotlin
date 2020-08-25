@@ -50,7 +50,8 @@ object FirTypeArgumentsNotAllowedExpressionChecker : FirQualifiedAccessChecker()
     }
 
     private fun PsiElement.hasAnyArguments(): Boolean {
-        return this.children.size > 1 && this.children[1] is KtTypeArgumentList
+        val children = this.children // this is a method call and it collects children
+        return children.size > 1 && children[1] is KtTypeArgumentList
     }
 
     private fun LighterASTNode.hasAnyArguments(tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {

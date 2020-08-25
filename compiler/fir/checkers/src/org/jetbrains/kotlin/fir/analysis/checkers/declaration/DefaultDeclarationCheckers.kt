@@ -27,7 +27,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirConflictingProjectionChecker,
     )
 
-    override val memberDeclarationCheckers: List<FirMemberDeclarationChecker> = listOf(
+    override val memberDeclarationCheckers: List<FirMemberDeclarationChecker> =listOf(
         FirInfixFunctionDeclarationChecker,
         FirExposedVisibilityDeclarationChecker,
         FirCommonConstructorDelegationIssuesChecker,
@@ -41,11 +41,10 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirEnumClassSimpleChecker,
         FirSealedSupertypeChecker,
         FirInapplicableLateinitChecker,
-        FirTypeMismatchOnOverrideChecker,
     )
 
     override val regularClassCheckers: List<FirRegularClassChecker> = listOf(
-
+        FirTypeMismatchOnOverrideChecker,
     )
 
     override val constructorCheckers: List<FirConstructorChecker> = listOf(

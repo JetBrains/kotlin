@@ -13,25 +13,20 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.addToStdlib.min
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirConflictingProjectionChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        // we can't just check for FirTypedDeclaration
-        // because it leads to duplicate reports for
-        // some cases. Maybe we should fix this via not
-        // visiting the same firs twice instead.
+        if (declaration is FirPropertyAccessor) {
+            return
+        }
+
+        if (declaration is FirTypedDeclaration) {
+            checkTypeRef(declaration.returnTypeRef, context, reporter)
+        }
+
         when (declaration) {
-            is FirPropertyAccessor -> {}
-            is FirProperty -> {
-                checkTypeRef(declaration.returnTypeRef, context, reporter)
-            }
-            is FirFunction<*> -> {
-                for (it in declaration.valueParameters) {
-                    checkTypeRef(it.returnTypeRef, context, reporter)
-                }
-                checkTypeRef(declaration.returnTypeRef, context, reporter)
-            }
             is FirClass<*> -> {
                 for (it in declaration.superTypeRefs) {
                     checkTypeRef(it, context, reporter)
@@ -56,14 +51,19 @@ object FirConflictingProjectionChecker : FirBasicDeclarationChecker() {
             ?.fir.safeAs<FirRegularClass>()
             ?: return
 
-        declaration.typeParameters.zip(typeRef.coneType.typeArguments).forEach { (proto, actual) ->
+        val size = min(declaration.typeParameters.size, typeRef.coneType.typeArguments.size)
+
+        for (it in 0 until size) {
+            val proto = declaration.typeParameters[it]
+            val actual = typeRef.coneType.typeArguments[it]
+
             val protoVariance = proto.safeAs<FirTypeParameterRef>()
                 ?.symbol?.fir
                 ?.variance
-                ?: return@forEach
+                ?: continue
 
             if (protoVariance == Variance.INVARIANT) {
-                return@forEach
+                continue
             }
 
             if (
