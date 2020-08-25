@@ -1328,6 +1328,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builderInference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
+        @TestMetadata("callableReferenceAndCoercionToUnit.kt")
+        public void testCallableReferenceAndCoercionToUnit() throws Exception {
+            runTest("compiler/testData/codegen/box/builderInference/callableReferenceAndCoercionToUnit.kt");
+        }
+
         @TestMetadata("kt41164.kt")
         public void testKt41164() throws Exception {
             runTest("compiler/testData/codegen/box/builderInference/kt41164.kt");
