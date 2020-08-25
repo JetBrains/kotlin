@@ -173,3 +173,7 @@ inline fun <T, R> Collection<T>.foldMap(transform: (T) -> R, operation: (R, R) -
     }
     return result
 }
+
+fun <E> MutableList<E>.trimToSize(newSize: Int) {
+    subList(newSize, size).clear()
+}

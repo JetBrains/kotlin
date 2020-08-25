@@ -16,19 +16,13 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
-import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.resolve.calls.model.CallableReferenceKotlinCallArgument
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
-import org.jetbrains.kotlin.resolve.calls.model.LHSResult
-import org.jetbrains.kotlin.resolve.calls.model.SubKotlinCallArgument
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 interface ConstraintSystemOperation {
     val hasContradiction: Boolean
@@ -50,7 +44,6 @@ interface ConstraintSystemOperation {
 }
 
 interface ConstraintSystemBuilder : ConstraintSystemOperation {
-    //val builtIns: KotlinBuiltIns
     // if runOperations return true, then this operation will be applied, and function return true
     fun runTransaction(runOperations: ConstraintSystemOperation.() -> Boolean): Boolean
 
@@ -63,45 +56,26 @@ fun ConstraintSystemBuilder.addSubtypeConstraintIfCompatible(
     lowerType: KotlinTypeMarker,
     upperType: KotlinTypeMarker,
     position: ConstraintPosition
-): Boolean =
-    addConstraintIfCompatible(lowerType, upperType, position, ConstraintKind.LOWER)
+): Boolean = addConstraintIfCompatible(lowerType, upperType, position, ConstraintKind.LOWER)
 
 fun ConstraintSystemBuilder.addEqualityConstraintIfCompatible(
     lowerType: KotlinTypeMarker,
     upperType: KotlinTypeMarker,
     position: ConstraintPosition
-): Boolean =
-    addConstraintIfCompatible(lowerType, upperType, position, ConstraintKind.EQUALITY)
+): Boolean = addConstraintIfCompatible(lowerType, upperType, position, ConstraintKind.EQUALITY)
 
 private fun ConstraintSystemBuilder.addConstraintIfCompatible(
     lowerType: KotlinTypeMarker,
     upperType: KotlinTypeMarker,
     position: ConstraintPosition,
     kind: ConstraintKind
-) =
-    runTransaction {
-        if (!hasContradiction) {
-            when (kind) {
-                ConstraintKind.LOWER -> addSubtypeConstraint(lowerType, upperType, position)
-                ConstraintKind.UPPER -> addSubtypeConstraint(upperType, lowerType, position)
-                ConstraintKind.EQUALITY -> addEqualityConstraint(lowerType, upperType, position)
-            }
+): Boolean = runTransaction {
+    if (!hasContradiction) {
+        when (kind) {
+            ConstraintKind.LOWER -> addSubtypeConstraint(lowerType, upperType, position)
+            ConstraintKind.UPPER -> addSubtypeConstraint(upperType, lowerType, position)
+            ConstraintKind.EQUALITY -> addEqualityConstraint(lowerType, upperType, position)
         }
-        !hasContradiction
     }
-
-
-fun PostponedArgumentsAnalyzer.Context.addSubsystemFromArgument(argument: KotlinCallArgument?): Boolean {
-    return when (argument) {
-        is SubKotlinCallArgument -> {
-            addOtherSystem(argument.callResult.constraintSystem)
-            true
-        }
-
-        is CallableReferenceKotlinCallArgument -> {
-            addSubsystemFromArgument(argument.lhsResult.safeAs<LHSResult.Expression>()?.lshCallArgument)
-        }
-
-        else -> false
-    }
+    !hasContradiction
 }

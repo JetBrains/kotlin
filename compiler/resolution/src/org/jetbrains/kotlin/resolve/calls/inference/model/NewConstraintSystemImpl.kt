@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.utils.addToStdlib.trimToSize
 import kotlin.math.max
 
 class NewConstraintSystemImpl(
