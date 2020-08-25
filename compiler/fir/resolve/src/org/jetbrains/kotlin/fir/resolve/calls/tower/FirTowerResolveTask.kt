@@ -311,10 +311,8 @@ internal open class FirTowerResolveTask(
         explicitReceiverValue: ReceiverValue?,
         parentGroup: TowerGroup = TowerGroup.EmptyRoot
     ) {
-        val shouldProcessExtensionsBeforeMembers =
-            info.callKind == CallKind.Function && info.name in HIDES_MEMBERS_NAME_LIST
-
-        if (!shouldProcessExtensionsBeforeMembers) return
+        // We will process hides members only for function calls with name in HIDES_MEMBERS_NAME_LIST
+        if (info.callKind != CallKind.Function || info.name !in HIDES_MEMBERS_NAME_LIST) return
 
         val importingScopes = components.fileImportsScope.asReversed()
         for ((index, topLevelScope) in importingScopes.withIndex()) {
