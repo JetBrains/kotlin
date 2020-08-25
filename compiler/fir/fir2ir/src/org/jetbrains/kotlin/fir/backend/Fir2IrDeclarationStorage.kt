@@ -674,30 +674,27 @@ class Fir2IrDeclarationStorage(
                     val delegate = property.delegate
                     val getter = property.getter
                     val setter = property.setter
-                    // TODO: this checks are very preliminary, FIR resolve should determine backing field presence itself
                     if (property.isConst || (property.modality != Modality.ABSTRACT && (irParent !is IrClass || !irParent.isInterface))) {
-                        if (initializer != null ||
-                            getter is FirDefaultPropertyGetter ||
-                            property.isVar && setter is FirDefaultPropertySetter ||
-                            property.isReferredViaField == true
-                        ) {
-                            backingField = createBackingField(
-                                property, IrDeclarationOrigin.PROPERTY_BACKING_FIELD, descriptor,
-                                components.visibilityConverter.convertToOldVisibility(property.fieldVisibility),
-                                property.name, property.isVal, initializer, type
-                            ).also { field ->
-                                if (initializer is FirConstExpression<*>) {
-                                    // TODO: Normally we shouldn't have error type here
-                                    val constType = initializer.typeRef.toIrType().takeIf { it !is IrErrorType } ?: type
-                                    field.initializer = factory.createExpressionBody(initializer.toIrConst(constType))
+                        if (property.hasBackingField) {
+                            backingField = if (delegate != null) {
+                                createBackingField(
+                                    property, IrDeclarationOrigin.PROPERTY_DELEGATE, descriptor,
+                                    components.visibilityConverter.convertToOldVisibility(property.fieldVisibility),
+                                    Name.identifier("${property.name}\$delegate"), true, delegate
+                                )
+                            } else {
+                                createBackingField(
+                                    property, IrDeclarationOrigin.PROPERTY_BACKING_FIELD, descriptor,
+                                    components.visibilityConverter.convertToOldVisibility(property.fieldVisibility),
+                                    property.name, property.isVal, initializer, type
+                                ).also { field ->
+                                    if (initializer is FirConstExpression<*>) {
+                                        // TODO: Normally we shouldn't have error type here
+                                        val constType = initializer.typeRef.toIrType().takeIf { it !is IrErrorType } ?: type
+                                        field.initializer = factory.createExpressionBody(initializer.toIrConst(constType))
+                                    }
                                 }
                             }
-                        } else if (delegate != null) {
-                            backingField = createBackingField(
-                                property, IrDeclarationOrigin.PROPERTY_DELEGATE, descriptor,
-                                components.visibilityConverter.convertToOldVisibility(property.fieldVisibility),
-                                Name.identifier("${property.name}\$delegate"), true, delegate
-                            )
                         }
                         if (irParent != null) {
                             backingField?.parent = irParent
