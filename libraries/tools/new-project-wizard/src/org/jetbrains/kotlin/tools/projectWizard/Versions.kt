@@ -26,9 +26,15 @@ object Versions {
     }
 
     object JS_WRAPPERS {
-        val KOTLIN_REACT: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("16.13.1-pre.110-kotlin-$kotlinVersion") }
+        val KOTLIN_REACT: (kotlinVersion: Version) -> Version = wrapperVersion("16.13.1")
         val KOTLIN_REACT_DOM = KOTLIN_REACT
-        val KOTLIN_STYLED: (kotlinVersion: Version) -> Version = { kotlinVersion -> version("1.0.0-pre.110-kotlin-$kotlinVersion") }
+        val KOTLIN_STYLED: (kotlinVersion: Version) -> Version = wrapperVersion("1.0.0")
+        val KOTLIN_REACT_ROUTER_DOM: (kotlinVersion: Version) -> Version = wrapperVersion("5.1.2")
+        val KOTLIN_REDUX: (kotlinVersion: Version) -> Version = wrapperVersion("4.0.0")
+        val KOTLIN_REACT_REDUX: (kotlinVersion: Version) -> Version = wrapperVersion("5.0.7")
+
+        private fun wrapperVersion(version: String): (Version) -> Version =
+            { kotlinVersion -> version("$version-pre.110-kotlin-$kotlinVersion") }
     }
 
     object GRADLE_PLUGINS {
