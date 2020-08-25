@@ -94,6 +94,8 @@ abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTo
 
     fun KtClassOrObject.getClassOrObjectSymbol(): KtClassOrObjectSymbol = symbolProvider.getClassOrObjectSymbol(this)
 
+    fun KtPropertyAccessor.getPropertyAccessorSymbol(): KtPropertyAccessorSymbol = symbolProvider.getPropertyAccessorSymbol(this)
+
     /**
      * @return symbol with specified [this@getClassOrObjectSymbolByClassId] or `null` in case such symbol is not found
      */

@@ -70,6 +70,10 @@ internal class KtFirSymbolProvider(
         firSymbolBuilder.buildClassSymbol(psi.getOrBuildFirOfType(resolveState))
     }
 
+    override fun getPropertyAccessorSymbol(psi: KtPropertyAccessor): KtPropertyAccessorSymbol = withValidityAssertion {
+        firSymbolBuilder.buildPropertyAccessorSymbol(psi.getOrBuildFirOfType(resolveState))
+    }
+
     override fun getClassOrObjectSymbolByClassId(classId: ClassId): KtClassOrObjectSymbol? = withValidityAssertion {
         val symbol = firSymbolProvider.getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol ?: return null
         firSymbolBuilder.buildClassSymbol(symbol.fir)
