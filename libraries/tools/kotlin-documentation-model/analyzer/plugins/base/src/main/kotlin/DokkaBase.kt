@@ -81,7 +81,9 @@ class DokkaBase : DokkaPlugin() {
 
     val modulesAndPackagesDocumentation by extending {
         CoreExtensions.preMergeDocumentableTransformer providing { ctx ->
-            ModuleAndPackageDocumentationTransformer(ctx, ctx.single(kotlinAnalysis))
+            ModuleAndPackageDocumentationTransformer(
+                ModuleAndPackageDocumentationReader(ctx, ctx.single(kotlinAnalysis))
+            )
         }
     }
 
@@ -127,7 +129,7 @@ class DokkaBase : DokkaPlugin() {
     }
 
     val sourceSetMerger by extending {
-        CoreExtensions.pageTransformer providing  ::SourceSetMergingPageTransformer
+        CoreExtensions.pageTransformer providing ::SourceSetMergingPageTransformer
     }
 
     val fallbackMerger by extending {
