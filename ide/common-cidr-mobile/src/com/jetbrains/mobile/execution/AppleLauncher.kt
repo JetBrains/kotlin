@@ -52,13 +52,15 @@ open class AppleLauncher<T : MobileRunConfiguration>(
 
     protected open fun createInstaller(bundle: File): Installer = AppleInstaller(configuration, device, environment, bundle)
 
-    private fun createDebugProcess(parameters: RunParameters, session: XDebugSession, state: CommandLineState): CidrDebugProcess =
-        when (device) {
+    protected open fun configureDebugProcess(process: CidrDebugProcess) {}
+
+    private fun createDebugProcess(parameters: RunParameters, session: XDebugSession, state: CommandLineState): CidrDebugProcess {
+        val process = when (device) {
             is ApplePhysicalDevice -> object : IPhoneDebugProcess(parameters, device.raw, session, state.consoleBuilder, true) {
                 override fun getBreakpointHandlers(): Array<XBreakpointHandler<*>> =
                     addKotlinHandler(super.getBreakpointHandlers(), session.project)
             }
-            
+
             is AppleSimulator -> object : IPhoneSimulatorDebugProcess(parameters, session, state.consoleBuilder, false) {
                 override fun createSimulatorProcessHandler(params: RunParameters, allowConcurrentSessions: Boolean) =
                     SimulatorProcessHandler(params, null, device.id, true, allowConcurrentSessions, true)
@@ -67,4 +69,9 @@ open class AppleLauncher<T : MobileRunConfiguration>(
                     addKotlinHandler(super.getBreakpointHandlers(), session.project)
             }
         }
+
+        configureDebugProcess(process)
+
+        return process
+    }
 }

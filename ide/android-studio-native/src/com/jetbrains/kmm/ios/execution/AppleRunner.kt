@@ -24,6 +24,7 @@ import com.jetbrains.konan.KonanBundle
 import com.jetbrains.mobile.execution.ApplePhysicalDevice
 import com.jetbrains.mpp.BinaryDebugRunner
 import java.io.File
+import java.nio.file.Path
 
 class AppleRunner : BinaryDebugRunner() {
     override fun getRunnerId(): String = "AppleRunner"
@@ -80,9 +81,20 @@ class AppleRunner : BinaryDebugRunner() {
         }
     }
 
-    private companion object {
-        const val ACTUAL_XC_PROJECT_FILE = "project.pbxproj"
-        const val DEBUG_INFORMATION_FORMAT_KEY = "DEBUG_INFORMATION_FORMAT"
-        const val DEBUG_INFORMATION_FORMAT_VALUE = "dwarf-with-dsym"
+    override fun getPythonBindingsPath(project: Project): Path? = bundledBindingsPath
+
+    companion object {
+        private const val ACTUAL_XC_PROJECT_FILE = "project.pbxproj"
+        private const val DEBUG_INFORMATION_FORMAT_KEY = "DEBUG_INFORMATION_FORMAT"
+        private const val DEBUG_INFORMATION_FORMAT_VALUE = "dwarf-with-dsym"
+
+        val bundledBindingsPath: Path by lazy {
+            val outOfPluginPrettyPrinters = createTempDir().resolve("konan_lldb.py")
+            outOfPluginPrettyPrinters.outputStream().use { outputStream ->
+                AppleRunner::class.java.getResourceAsStream("/scripts/konan_lldb.py").copyTo(outputStream)
+            }
+
+            outOfPluginPrettyPrinters.toPath()
+        }
     }
 }

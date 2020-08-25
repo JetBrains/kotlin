@@ -19,9 +19,12 @@ import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.DialogWrapperDialog
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.ui.ComponentUtil
+import com.jetbrains.cidr.execution.debugger.CidrDebugProcess
 import com.jetbrains.cidr.execution.testing.CidrLauncher
 import com.jetbrains.kmm.KmmBundle
+import com.jetbrains.kmm.ios.execution.AppleRunner.Companion.bundledBindingsPath
 import com.jetbrains.mobile.execution.*
+import com.jetbrains.mpp.loadPythonBindings
 import org.jdom.Element
 import java.io.File
 
@@ -132,6 +135,10 @@ class AppleRunConfiguration(project: Project, configurationFactory: AppleConfigu
     override fun createLauncher(environment: ExecutionEnvironment, device: AppleDevice): CidrLauncher =
         object : AppleLauncher<AppleRunConfiguration>(this, environment, executionTarget) {
             override fun createDebuggerDriverConfiguration() = AppleLLDBDriverConfiguration()
+
+            override fun configureDebugProcess(process: CidrDebugProcess) {
+                process.loadPythonBindings(bundledBindingsPath)
+            }
         }
 
     override fun readExternal(element: Element) {
