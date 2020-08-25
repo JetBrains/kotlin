@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="jcef" type="repository">
-    <properties maven-id="org.jetbrains.intellij.deps.jcef:jcef:81.2.24-gc0b313d-chromium-81.0.4044.113-api-1.1" />
+    <properties maven-id="org.jetbrains.intellij.deps.jcef:jcef:81.2.24-gc0b313d-chromium-81.0.4044.113" />
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/jcef/jcef/81.2.24-gc0b313d-chromium-81.0.4044.113-api-1.1/jcef-81.2.24-gc0b313d-chromium-81.0.4044.113-api-1.1.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/jcef/jcef/81.2.24-gc0b313d-chromium-81.0.4044.113/jcef-81.2.24-gc0b313d-chromium-81.0.4044.113.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/jcef/jcef/81.2.24-gc0b313d-chromium-81.0.4044.113-api-1.1/jcef-81.2.24-gc0b313d-chromium-81.0.4044.113-api-1.1-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/intellij/deps/jcef/jcef/81.2.24-gc0b313d-chromium-81.0.4044.113/jcef-81.2.24-gc0b313d-chromium-81.0.4044.113-sources.jar!/" />
     </SOURCES>
   </library>
 </component>
