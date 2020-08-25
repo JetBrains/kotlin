@@ -13,7 +13,7 @@ UFile (package = ) [public abstract interface Callback {...]
                 UThrowExpression [throw <init>()] : PsiType:Void
                     UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) [<init>()] : PsiType:UnsupportedOperationException
                         UIdentifier (Identifier (UnsupportedOperationException)) [UIdentifier (Identifier (UnsupportedOperationException))]
-                        USimpleNameReferenceExpression (identifier = <init>, resolvesTo = UnsupportedOperationException) [<init>] : PsiType:UnsupportedOperationException
+                        USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: UnsupportedOperationException) [<init>] : PsiType:UnsupportedOperationException
         UMethod (name = Model) [public fun Model() {...}]
             UBlockExpression [{...}]
                 UBlockExpression [{...}] : PsiType:void
@@ -35,6 +35,6 @@ UFile (package = ) [public abstract interface Callback {...]
                                                     UThrowExpression [throw <init>("")] : PsiType:Void
                                                         UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) [<init>("")] : PsiType:UnsupportedOperationException
                                                             UIdentifier (Identifier (UnsupportedOperationException)) [UIdentifier (Identifier (UnsupportedOperationException))]
-                                                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = UnsupportedOperationException) [<init>] : PsiType:UnsupportedOperationException
+                                                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: UnsupportedOperationException) [<init>] : PsiType:UnsupportedOperationException
                                                             ULiteralExpression (value = "") [""] : PsiType:String
                                             UMethod (name = Model$1$1) [fun Model$1$1() = UastEmptyExpression]
