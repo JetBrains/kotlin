@@ -20,11 +20,11 @@ import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 
 interface NewConstraintSystem {
     val hasContradiction: Boolean
-    val diagnostics: List<KotlinCallDiagnostic>
+    val diagnostics: List<ConstraintSystemError>
 
     fun getBuilder(): ConstraintSystemBuilder
 

@@ -237,16 +237,17 @@ sealed class CallResolutionResult(
 
     fun completedDiagnostic(substitutor: NewTypeSubstitutor): List<KotlinCallDiagnostic> {
         return diagnostics.map {
-            if (it !is NewConstraintError) return@map it
-            val lowerType = it.lowerType.safeAs<KotlinType>()?.unwrap() ?: return@map it
+            val error = it.constraintSystemError ?: return@map it
+            if (error !is NewConstraintError) return@map it
+            val lowerType = error.lowerType.safeAs<KotlinType>()?.unwrap() ?: return@map it
             val newLowerType = substitutor.safeSubstitute(lowerType.unCapture())
-            NewConstraintError(newLowerType, it.upperType, it.position)
+            NewConstraintError(newLowerType, error.upperType, error.position).asDiagnostic()
         }
     }
 
     override val atom: ResolutionAtom? get() = null
 
-    override fun toString() = "diagnostics: (${diagnostics.joinToString()})"
+    override fun toString(): String = "diagnostics: (${diagnostics.joinToString()})"
 }
 
 open class SingleCallResolutionResult(

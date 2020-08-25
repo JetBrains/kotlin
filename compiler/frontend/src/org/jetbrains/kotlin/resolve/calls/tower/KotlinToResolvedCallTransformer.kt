@@ -904,10 +904,10 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
             }
 
         diagnostics.forEach {
-            val position = when (it) {
-                is NewConstraintError -> it.position.originalPosition()
-                is CapturedTypeFromSubtyping -> it.position.originalPosition()
-                is ConstrainingTypeIsError -> it.position.originalPosition()
+            val position = when (val error = it.constraintSystemError) {
+                is NewConstraintError -> error.position.originalPosition()
+                is CapturedTypeFromSubtyping -> error.position.originalPosition()
+                is ConstrainingTypeIsError -> error.position.originalPosition()
                 else -> null
             } as? ArgumentConstraintPositionImpl ?: return@forEach
 

@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 /**
  * Every type variable can be in the following states:
@@ -36,7 +38,7 @@ interface ConstraintStorage {
     val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
     val initialConstraints: List<InitialConstraint>
     val maxTypeDepthFromInitialConstraints: Int
-    val errors: List<KotlinCallDiagnostic>
+    val errors: List<ConstraintSystemError>
     val hasContradiction: Boolean
     val fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
     val postponedTypeVariables: List<TypeVariableMarker>
@@ -46,7 +48,7 @@ interface ConstraintStorage {
         override val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints> get() = emptyMap()
         override val initialConstraints: List<InitialConstraint> get() = emptyList()
         override val maxTypeDepthFromInitialConstraints: Int get() = 1
-        override val errors: List<KotlinCallDiagnostic> get() = emptyList()
+        override val errors: List<ConstraintSystemError> get() = emptyList()
         override val hasContradiction: Boolean get() = false
         override val fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker> get() = emptyMap()
         override val postponedTypeVariables: List<TypeVariableMarker> get() = emptyList()

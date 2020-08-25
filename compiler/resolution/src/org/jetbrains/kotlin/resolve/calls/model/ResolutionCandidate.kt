@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.inference.model.LowerPriorityToPreserveCompatibility
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -60,6 +61,10 @@ interface KotlinDiagnosticsHolder {
 
 fun KotlinDiagnosticsHolder.addDiagnosticIfNotNull(diagnostic: KotlinCallDiagnostic?) {
     diagnostic?.let { addDiagnostic(it) }
+}
+
+fun KotlinDiagnosticsHolder.addError(error: ConstraintSystemError) {
+    addDiagnostic(error.asDiagnostic())
 }
 
 /**
@@ -252,10 +257,10 @@ class MutableResolvedCallAtom(
 
 fun KotlinResolutionCandidate.markCandidateForCompatibilityResolve() {
     if (callComponents.languageVersionSettings.supportsFeature(LanguageFeature.DisableCompatibilityModeForNewInference)) return
-    addDiagnostic(LowerPriorityToPreserveCompatibility)
+    addDiagnostic(LowerPriorityToPreserveCompatibility.asDiagnostic())
 }
 
 fun CallableReferencesCandidateFactory.markCandidateForCompatibilityResolve(diagnostics: SmartList<KotlinCallDiagnostic>) {
     if (callComponents.languageVersionSettings.supportsFeature(LanguageFeature.DisableCompatibilityModeForNewInference)) return
-    diagnostics.add(LowerPriorityToPreserveCompatibility)
+    diagnostics.add(LowerPriorityToPreserveCompatibility.asDiagnostic())
 }

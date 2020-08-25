@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceCandidate
-import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.*
 import org.jetbrains.kotlin.types.TypeConstructor
@@ -223,12 +223,6 @@ class ArgumentTypeMismatchDiagnostic(
     }
 }
 
-class OnlyInputTypesDiagnostic(val typeVariable: NewTypeVariable) : KotlinCallDiagnostic(INAPPLICABLE) {
-    override fun report(reporter: DiagnosticReporter) {
-        reporter.onCall(this)
-    }
-}
-
 class ResolvedToSamWithVarargDiagnostic(val argument: KotlinCallArgument) : KotlinCallDiagnostic(RESOLVED_TO_SAM_WITH_VARARG) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCallArgument(argument, this)
@@ -273,3 +267,15 @@ class AdaptedCallableReferenceIsUsedWithReflection(
     }
 
 }
+
+class KotlinConstraintSystemDiagnostic(
+    val error: ConstraintSystemError
+) : KotlinCallDiagnostic(error.applicability) {
+    override fun report(reporter: DiagnosticReporter) = reporter.constraintError(error)
+}
+
+val KotlinCallDiagnostic.constraintSystemError: ConstraintSystemError?
+    get() = (this as? KotlinConstraintSystemDiagnostic)?.error
+
+fun ConstraintSystemError.asDiagnostic(): KotlinConstraintSystemDiagnostic = KotlinConstraintSystemDiagnostic(this)
+fun Collection<ConstraintSystemError>.asDiagnostics(): List<KotlinConstraintSystemDiagnostic> = map(ConstraintSystemError::asDiagnostic)

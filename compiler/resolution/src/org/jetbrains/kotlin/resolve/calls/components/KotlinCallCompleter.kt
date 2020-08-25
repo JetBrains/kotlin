@@ -236,7 +236,7 @@ class KotlinCallCompleter(
             }
         }
 
-        constraintSystem.diagnostics.forEach(diagnosticsHolder::addDiagnostic)
+        constraintSystem.diagnostics.forEach(diagnosticsHolder::addError)
     }
 
     private fun prepareCandidateForCompletion(

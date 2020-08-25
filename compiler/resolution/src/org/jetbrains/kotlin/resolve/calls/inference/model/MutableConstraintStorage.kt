@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -191,8 +190,8 @@ internal class MutableConstraintStorage : ConstraintStorage {
     override val notFixedTypeVariables: MutableMap<TypeConstructorMarker, MutableVariableWithConstraints> = LinkedHashMap()
     override val initialConstraints: MutableList<InitialConstraint> = SmartList()
     override var maxTypeDepthFromInitialConstraints: Int = 1
-    override val errors: MutableList<KotlinCallDiagnostic> = SmartList()
-    override val hasContradiction: Boolean get() = errors.any { !it.candidateApplicability.isSuccess }
+    override val errors: MutableList<ConstraintSystemError> = SmartList()
+    override val hasContradiction: Boolean get() = errors.any { !it.applicability.isSuccess }
     override val fixedTypeVariables: MutableMap<TypeConstructorMarker, KotlinTypeMarker> = LinkedHashMap()
     override val postponedTypeVariables: MutableList<TypeVariableMarker> = SmartList()
 }

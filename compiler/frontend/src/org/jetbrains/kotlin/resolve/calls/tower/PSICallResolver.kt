@@ -281,7 +281,7 @@ class PSICallResolver(
     ): ManyCandidates<D> {
         val resolvedCalls = diagnostic.candidates.map {
             kotlinToResolvedCallTransformer.onlyTransform<D>(
-                it.resolvedCall, it.diagnosticsFromResolutionParts + it.getSystem().diagnostics
+                it.resolvedCall, it.diagnosticsFromResolutionParts + it.getSystem().diagnostics.asDiagnostics()
             )
         }
 

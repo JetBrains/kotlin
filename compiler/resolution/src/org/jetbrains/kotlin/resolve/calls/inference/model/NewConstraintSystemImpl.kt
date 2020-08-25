@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjecto
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver
 import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
-import org.jetbrains.kotlin.resolve.calls.model.OnlyInputTypesDiagnostic
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedAtom
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
@@ -75,7 +73,7 @@ class NewConstraintSystemImpl(
         }
     }
 
-    override val diagnostics: List<KotlinCallDiagnostic>
+    override val diagnostics: List<ConstraintSystemError>
         get() = storage.errors
 
     override fun getBuilder() = apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) }
@@ -291,7 +289,7 @@ class NewConstraintSystemImpl(
         }
 
     // ConstraintInjector.Context, KotlinConstraintSystemCompleter.Context
-    override fun addError(error: KotlinCallDiagnostic) {
+    override fun addError(error: ConstraintSystemError) {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
         storage.errors.add(error)
     }

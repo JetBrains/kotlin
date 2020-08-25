@@ -43,7 +43,7 @@ class KotlinConstraintSystemCompleter(
         fun containsOnlyFixedOrPostponedVariables(type: KotlinTypeMarker): Boolean
 
         // mutable operations
-        fun addError(error: KotlinCallDiagnostic)
+        fun addError(error: ConstraintSystemError)
 
         fun fixVariable(variable: TypeVariableMarker, resultType: KotlinTypeMarker, atom: ResolvedAtom?)
 

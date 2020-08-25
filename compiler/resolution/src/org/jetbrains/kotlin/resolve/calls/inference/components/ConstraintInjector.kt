@@ -20,7 +20,6 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind.*
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.model.*
@@ -43,7 +42,7 @@ class ConstraintInjector(
         val fixedTypeVariables: MutableMap<TypeConstructorMarker, KotlinTypeMarker>
 
         fun addInitialConstraint(initialConstraint: InitialConstraint)
-        fun addError(error: KotlinCallDiagnostic)
+        fun addError(error: ConstraintSystemError)
     }
 
     fun addInitialSubtypeConstraint(c: Context, lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker, position: ConstraintPosition) {

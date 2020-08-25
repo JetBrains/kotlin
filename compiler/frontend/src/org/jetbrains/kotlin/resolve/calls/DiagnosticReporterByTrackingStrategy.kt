@@ -69,15 +69,6 @@ class DiagnosticReporterByTrackingStrategy(
                 val reportOn = (diagnostic as NonApplicableCallForBuilderInferenceDiagnostic).kotlinCall
                 trace.reportDiagnosticOnce(Errors.NON_APPLICABLE_CALL_FOR_BUILDER_INFERENCE.on(reportOn.psiKotlinCall.psiCall.callElement))
             }
-            OnlyInputTypesDiagnostic::class.java -> {
-                val typeVariable = (diagnostic as OnlyInputTypesDiagnostic).typeVariable as? TypeVariableFromCallableDescriptor ?: return
-                psiKotlinCall.psiCall.calleeExpression?.let {
-                    val factory = if (context.languageVersionSettings.supportsFeature(LanguageFeature.NonStrictOnlyInputTypesChecks))
-                        TYPE_INFERENCE_ONLY_INPUT_TYPES_WARNING
-                    else TYPE_INFERENCE_ONLY_INPUT_TYPES
-                    trace.report(factory.on(it, typeVariable.originalTypeParameter))
-                }
-            }
             CandidateChosenUsingOverloadResolutionByLambdaAnnotation::class.java -> {
                 trace.report(CANDIDATE_CHOSEN_USING_OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION.on(psiKotlinCall.psiCall.callElement))
             }
@@ -340,10 +331,10 @@ class DiagnosticReporterByTrackingStrategy(
         )
     }
 
-    override fun constraintError(diagnostic: KotlinCallDiagnostic) {
-        when (diagnostic.javaClass) {
+    override fun constraintError(error: ConstraintSystemError) {
+        when (error.javaClass) {
             NewConstraintError::class.java -> {
-                val constraintError = diagnostic as NewConstraintError
+                val constraintError = error as NewConstraintError
                 val position = constraintError.position.from
                 val argument =
                     when (position) {
@@ -414,7 +405,8 @@ class DiagnosticReporterByTrackingStrategy(
 
                 (position as? FixVariableConstraintPositionImpl)?.let {
                     val morePreciseDiagnosticExists = allDiagnostics.any { other ->
-                        other is NewConstraintError && other.position.from !is FixVariableConstraintPositionImpl
+                        val otherError = other.constraintSystemError ?: return@any false
+                        otherError is NewConstraintError && otherError.position.from !is FixVariableConstraintPositionImpl
                     }
                     if (morePreciseDiagnosticExists) return
 
@@ -432,7 +424,7 @@ class DiagnosticReporterByTrackingStrategy(
             }
 
             CapturedTypeFromSubtyping::class.java -> {
-                val capturedError = diagnostic as CapturedTypeFromSubtyping
+                val capturedError = error as CapturedTypeFromSubtyping
                 val position = capturedError.position
                 val argumentPosition =
                     position.safeAs<ArgumentConstraintPositionImpl>()
@@ -449,11 +441,18 @@ class DiagnosticReporterByTrackingStrategy(
                 }
             }
 
-            NotEnoughInformationForTypeParameter::class.java -> {
-                val error = diagnostic as NotEnoughInformationForTypeParameterImpl
+            NotEnoughInformationForTypeParameterImpl::class.java -> {
+                val error = error as NotEnoughInformationForTypeParameterImpl
                 if (allDiagnostics.any {
-                        (it is ConstrainingTypeIsError && it.typeVariable == error.typeVariable)
-                                || it is NewConstraintError || it is WrongCountOfTypeArguments
+                        when (it) {
+                            is WrongCountOfTypeArguments -> true
+                            is KotlinConstraintSystemDiagnostic -> {
+                                val otherError = it.error
+                                (otherError is ConstrainingTypeIsError && otherError.typeVariable == error.typeVariable)
+                                        || otherError is NewConstraintError
+                            }
+                            else -> false
+                        }
                     }
                 ) return
 
@@ -472,6 +471,16 @@ class DiagnosticReporterByTrackingStrategy(
                     else -> error("Unsupported type variable: $typeVariable")
                 }
                 trace.reportDiagnosticOnce(NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(expression, typeVariableName))
+            }
+
+            OnlyInputTypesDiagnostic::class.java -> {
+                val typeVariable = (error as OnlyInputTypesDiagnostic).typeVariable as? TypeVariableFromCallableDescriptor ?: return
+                psiKotlinCall.psiCall.calleeExpression?.let {
+                    val factory = if (context.languageVersionSettings.supportsFeature(LanguageFeature.NonStrictOnlyInputTypesChecks))
+                        TYPE_INFERENCE_ONLY_INPUT_TYPES_WARNING
+                    else TYPE_INFERENCE_ONLY_INPUT_TYPES
+                    trace.report(factory.on(it, typeVariable.originalTypeParameter))
+                }
             }
         }
     }

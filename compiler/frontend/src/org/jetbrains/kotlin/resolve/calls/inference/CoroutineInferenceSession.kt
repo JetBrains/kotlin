@@ -60,7 +60,6 @@ class CoroutineInferenceSession(
     // Simple calls are calls which might not have gone through type inference, but may contain unsubstituted postponed variables inside their types.
     private val simpleCommonCalls = arrayListOf<KtExpression>()
 
-    private val diagnostics = arrayListOf<KotlinCallDiagnostic>()
     private var hasInapplicableCall = false
 
     override fun shouldRunCompletion(candidate: KotlinResolutionCandidate): Boolean {
@@ -276,20 +275,16 @@ class CoroutineInferenceSession(
             if (hasConstraints) effectivelyEmptyCommonSystem = false
         }
 
-        for (diagnostic in diagnostics) {
-            commonSystem.addError(diagnostic)
-        }
-
         return commonSystem to effectivelyEmptyCommonSystem
     }
 
-    private fun reportDiagnostics(completedCall: CallInfo, resolvedCall: ResolvedCall<*>, diagnostics: List<KotlinCallDiagnostic>) {
+    private fun reportErrors(completedCall: CallInfo, resolvedCall: ResolvedCall<*>, errors: List<ConstraintSystemError>) {
         kotlinToResolvedCallTransformer.reportCallDiagnostic(
             completedCall.context,
             trace,
             completedCall.callResolutionResult.resultCallAtom,
             resolvedCall.resultingDescriptor,
-            diagnostics
+            errors.asDiagnostics()
         )
     }
 
@@ -304,12 +299,12 @@ class CoroutineInferenceSession(
 
         for (completedCall in commonCalls) {
             updateCall(completedCall, nonFixedTypesToResultSubstitutor, nonFixedTypesToResult)
-            reportDiagnostics(completedCall, completedCall.resolvedCall, commonSystem.diagnostics)
+            reportErrors(completedCall, completedCall.resolvedCall, commonSystem.diagnostics)
         }
 
         for (callInfo in partiallyResolvedCallsInfo) {
             val resolvedCall = completeCall(callInfo, atomCompleter) ?: continue
-            reportDiagnostics(callInfo, resolvedCall, commonSystem.diagnostics)
+            reportErrors(callInfo, resolvedCall, commonSystem.diagnostics)
         }
 
         for (simpleCall in simpleCommonCalls) {

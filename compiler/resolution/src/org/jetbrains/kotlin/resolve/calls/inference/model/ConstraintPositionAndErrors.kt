@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
-import org.jetbrains.kotlin.resolve.calls.model.DiagnosticReporter
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -89,31 +87,33 @@ object CoroutinePosition : ConstraintPosition() {
 // TODO: should be used only in SimpleConstraintSystemImpl
 object SimpleConstraintSystemConstraintPosition : ConstraintPosition()
 
-abstract class ConstraintSystemCallDiagnostic(applicability: ResolutionCandidateApplicability) : KotlinCallDiagnostic(applicability) {
-    override fun report(reporter: DiagnosticReporter) = reporter.constraintError(this)
-}
+// ------------------------------------------------ Errors ------------------------------------------------
+
+sealed class ConstraintSystemError(val applicability: ResolutionCandidateApplicability)
 
 class NewConstraintError(
     val lowerType: KotlinTypeMarker,
     val upperType: KotlinTypeMarker,
     val position: IncorporationConstraintPosition
-) : ConstraintSystemCallDiagnostic(if (position.from is ReceiverConstraintPosition<*>) INAPPLICABLE_WRONG_RECEIVER else INAPPLICABLE)
+) : ConstraintSystemError(if (position.from is ReceiverConstraintPosition<*>) INAPPLICABLE_WRONG_RECEIVER else INAPPLICABLE)
 
 class CapturedTypeFromSubtyping(
     val typeVariable: TypeVariableMarker,
     val constraintType: KotlinTypeMarker,
     val position: ConstraintPosition
-) : ConstraintSystemCallDiagnostic(INAPPLICABLE)
+) : ConstraintSystemError(INAPPLICABLE)
 
 abstract class NotEnoughInformationForTypeParameter<T>(
     val typeVariable: TypeVariableMarker,
     val resolvedAtom: T
-) : ConstraintSystemCallDiagnostic(INAPPLICABLE)
+) : ConstraintSystemError(INAPPLICABLE)
 
 class ConstrainingTypeIsError(
     val typeVariable: TypeVariableMarker,
     val constraintType: KotlinTypeMarker,
     val position: IncorporationConstraintPosition
-) : ConstraintSystemCallDiagnostic(INAPPLICABLE)
+) : ConstraintSystemError(INAPPLICABLE)
 
-object LowerPriorityToPreserveCompatibility : ConstraintSystemCallDiagnostic(RESOLVED_NEED_PRESERVE_COMPATIBILITY)
+class OnlyInputTypesDiagnostic(val typeVariable: TypeVariableMarker) : ConstraintSystemError(INAPPLICABLE)
+
+object LowerPriorityToPreserveCompatibility : ConstraintSystemError(RESOLVED_NEED_PRESERVE_COMPATIBILITY)

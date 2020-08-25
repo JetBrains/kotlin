@@ -16,9 +16,8 @@
 
 package org.jetbrains.kotlin.resolve.calls.model
 
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.INAPPLICABLE
-import org.jetbrains.kotlin.types.KotlinType
 
 abstract class KotlinCallDiagnostic(val candidateApplicability: ResolutionCandidateApplicability) {
     abstract fun report(reporter: DiagnosticReporter)
@@ -41,5 +40,5 @@ interface DiagnosticReporter {
     fun onCallArgumentName(callArgument: KotlinCallArgument, diagnostic: KotlinCallDiagnostic)
     fun onCallArgumentSpread(callArgument: KotlinCallArgument, diagnostic: KotlinCallDiagnostic)
 
-    fun constraintError(diagnostic: KotlinCallDiagnostic)
+    fun constraintError(error: ConstraintSystemError)
 }

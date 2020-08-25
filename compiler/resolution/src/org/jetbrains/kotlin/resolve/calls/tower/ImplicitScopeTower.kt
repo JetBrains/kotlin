@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.tower
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.model.DiagnosticReporter
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.*
@@ -88,8 +89,13 @@ class CandidateWithBoundDispatchReceiver(
     val diagnostics: List<ResolutionDiagnostic>
 )
 
-fun getResultApplicability(diagnostics: Collection<KotlinCallDiagnostic>) =
-    diagnostics.maxOfOrNull { it.candidateApplicability } ?: RESOLVED
+@JvmName("getResultApplicabilityForConstraintErrors")
+fun getResultApplicability(diagnostics: Collection<ConstraintSystemError>): ResolutionCandidateApplicability =
+    diagnostics.maxByOrNull { it.applicability }?.applicability ?: RESOLVED
+
+@JvmName("getResultApplicabilityForCallDiagnostics")
+fun getResultApplicability(diagnostics: Collection<KotlinCallDiagnostic>): ResolutionCandidateApplicability =
+    diagnostics.maxByOrNull { it.candidateApplicability }?.candidateApplicability ?: RESOLVED
 
 enum class ResolutionCandidateApplicability {
     RESOLVED, // call success or has uncompleted inference or in other words possible successful candidate
