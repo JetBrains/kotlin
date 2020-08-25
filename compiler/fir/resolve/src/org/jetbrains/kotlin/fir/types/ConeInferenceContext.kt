@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
+import org.jetbrains.kotlin.fir.isPrimitiveNumberOrUnsignedNumberType
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.NoSubstitutor
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -316,6 +317,11 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return this.defaultType
     }
 
+    override fun KotlinTypeMarker.isSpecial(): Boolean {
+        // TODO
+        return false
+    }
+
     override fun TypeConstructorMarker.isTypeVariable(): Boolean {
         return this is ConeTypeVariableTypeConstructor
     }
@@ -361,5 +367,11 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     override fun TypeConstructorMarker.getApproximatedIntegerLiteralType(): KotlinTypeMarker {
         require(this is ConeIntegerLiteralType)
         return this.getApproximatedType()
+    }
+
+    override fun KotlinTypeMarker.isSignedOrUnsignedNumberType(): Boolean {
+        require(this is ConeKotlinType)
+        if (this !is ConeClassLikeType) return false
+        return isPrimitiveNumberOrUnsignedNumberType()
     }
 }

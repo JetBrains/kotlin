@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.types.checker
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
+import org.jetbrains.kotlin.types.typeUtil.isSignedOrUnsignedNumberType as classicIsSignedOrUnsignedNumberType
 
 interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSystemCommonBackendContext {
     override fun TypeConstructorMarker.isDenotable(): Boolean {
@@ -517,12 +518,22 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         errorSupportedOnlyInTypeInference()
     }
 
+    override fun KotlinTypeMarker.isSpecial(): Boolean {
+        require(this is KotlinType)
+        return this is TypeUtils.SpecialType
+    }
+
     override fun TypeConstructorMarker.isTypeVariable(): Boolean {
         errorSupportedOnlyInTypeInference()
     }
 
     override fun TypeVariableTypeConstructorMarker.isContainedInInvariantOrContravariantPositions(): Boolean {
         errorSupportedOnlyInTypeInference()
+    }
+
+    override fun KotlinTypeMarker.isSignedOrUnsignedNumberType(): Boolean {
+        require(this is KotlinType)
+        return classicIsSignedOrUnsignedNumberType()
     }
 
     override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? {

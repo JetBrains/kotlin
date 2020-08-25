@@ -36,9 +36,6 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
     fun TypeParameterMarker.getRepresentativeUpperBound(): KotlinTypeMarker
     fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker?
 
-    fun KotlinTypeMarker.isMarkedNullable(): Boolean =
-        this is SimpleTypeMarker && isMarkedNullable()
-
     fun KotlinTypeMarker.makeNullable(): KotlinTypeMarker =
         asSimpleType()?.withNullability(true) ?: this
 

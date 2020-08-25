@@ -187,8 +187,8 @@ fun main() {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction<kotlin.Any?>")!>select(A3(), <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction2<A3, kotlin.Int, kotlin.Unit>")!>A3::foo1<!>, { a -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>a<!> }, { it -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>it<!> })<!>
     // It's OK because `A3::foo2` is from companion of `A3`
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Int, kotlin.Any>")!>select(A3(), <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit>")!>A3::foo2<!>, { a -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>a<!> }, { it -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!> })<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Int, kotlin.Comparable<kotlin.Float & kotlin.String> & java.io.Serializable>")!>select(A4(), { x: Number -> "" })<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Comparable<kotlin.Float & kotlin.String> & java.io.Serializable>")!>select(A5<Int, Int>(), { x: Number, y: Int -> "" })<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Int, kotlin.Comparable<*> & java.io.Serializable>")!>select(A4(), { x: Number -> "" })<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Comparable<*> & java.io.Serializable>")!>select(A5<Int, Int>(), { x: Number, y: Int -> "" })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("A2")!>select(A2(), id { a, b, c -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>a<!>; <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>b<!>; <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>c<!> })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function<kotlin.Any?>")!>select(id(A3()), { <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Unresolved name: it"), UNRESOLVED_REFERENCE!>it<!> }, { a -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a<!> })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction<kotlin.Any>")!>select(A3(), id(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction2<A3, kotlin.Int, kotlin.Unit>")!>A3::foo1<!>))<!>
@@ -202,7 +202,7 @@ fun main() {
     <!DEBUG_INFO_EXPRESSION_TYPE("A4")!>select(A4(), id { x: Number -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>x<!> })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("A5<kotlin.Int, kotlin.Int>")!>select(id(A5<Int, Int>()), id { x: Number, y: Int -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>x<!>;<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>y<!> })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("A5<kotlin.Int, kotlin.Int>")!>select(id(A5<Int, Int>()), id { x, y -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>;<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>y<!> })<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function2<kotlin.Number, kotlin.Int, kotlin.Number & kotlin.Comparable<kotlin.Float & kotlin.Int>>")!>select(id(<!DEBUG_INFO_EXPRESSION_TYPE("A5<kotlin.Number, kotlin.Int>")!>A5()<!>), id { x: Number, y: Int -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>x<!>;<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>y<!> })<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function2<kotlin.Number, kotlin.Int, kotlin.Number & kotlin.Comparable<*>>")!>select(id(<!DEBUG_INFO_EXPRESSION_TYPE("A5<kotlin.Number, kotlin.Int>")!>A5()<!>), id { x: Number, y: Int -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>x<!>;<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>y<!> })<!>
     val x55: Function2<Number, Int, Float> = select(id(A5()), id { x, y -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>;<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>y<!>; 1f })
 
     // Diffrerent lambda's parameters with proper CST
@@ -212,11 +212,11 @@ fun main() {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Int, kotlin.Unit>")!>select({ x: Int -> }, id { x: Int, y: Number -> })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Int, kotlin.Unit>")!>select(id { x: Int -> }, id { x: String -> })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Int, kotlin.Unit>")!>select(id { x: Int -> }, id { x: Int, y: Number -> })<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Int, kotlin.Comparable<kotlin.Int & kotlin.String> & java.io.Serializable>")!>select({ x: Int -> 1 }, { x: String -> "" })<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Int, kotlin.Number & kotlin.Comparable<kotlin.Int & kotlin.Float>>")!>select({ x: Int -> 1 }, { x: Int, y: Number -> 1f })<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Int, kotlin.Comparable<*> & java.io.Serializable>")!>select({ x: Int -> 1 }, { x: String -> "" })<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Int, kotlin.Number & kotlin.Comparable<*>>")!>select({ x: Int -> 1 }, { x: Int, y: Number -> 1f })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.String, Inv<kotlin.String>>")!>select(id { x: Int -> Inv(10) }, { x: String -> Inv("") })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function<kotlin.Any>")!>select({ x: Int -> TODO() }, id { x: Int, y: Number -> Any() })<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Int & kotlin.String, kotlin.String?>")!>select(id { x: Int -> null }, id { x: String -> "" })<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<*, kotlin.String?>")!>select(id { x: Int -> null }, id { x: String -> "" })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Int, kotlin.Int>")!>select(id { x: Int -> 10 }, id { x: Int, y: Number -> TODO() })<!>
     val x68: String.(String) -> String = select(id { x: String, y: String -> "10" }, id { x: String, y: String -> "TODO()" })
 

@@ -28,6 +28,8 @@ interface TypeVariableTypeConstructorMarker : TypeConstructorMarker
 
 interface CapturedTypeConstructorMarker : TypeConstructorMarker
 
+interface IntersectionTypeConstructorMarker : TypeConstructorMarker
+
 interface TypeSubstitutorMarker
 
 
@@ -174,8 +176,12 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         secondCandidate: KotlinTypeMarker
     ): KotlinTypeMarker
 
+    fun KotlinTypeMarker.isSpecial(): Boolean
+
     fun TypeConstructorMarker.isTypeVariable(): Boolean
     fun TypeVariableTypeConstructorMarker.isContainedInInvariantOrContravariantPositions(): Boolean
+
+    fun KotlinTypeMarker.isSignedOrUnsignedNumberType(): Boolean
 }
 
 
@@ -202,6 +208,9 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun SimpleTypeMarker.asDefinitelyNotNullType(): DefinitelyNotNullTypeMarker?
     fun SimpleTypeMarker.isMarkedNullable(): Boolean
+    fun KotlinTypeMarker.isMarkedNullable(): Boolean =
+        this is SimpleTypeMarker && isMarkedNullable()
+
     fun SimpleTypeMarker.withNullability(nullable: Boolean): SimpleTypeMarker
     fun SimpleTypeMarker.typeConstructor(): TypeConstructorMarker
 
@@ -323,7 +332,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun intersectTypes(types: List<KotlinTypeMarker>): KotlinTypeMarker
     fun intersectTypes(types: List<SimpleTypeMarker>): SimpleTypeMarker
 
-    fun KotlinTypeMarker.isSimpleType() = asSimpleType() != null
+    fun KotlinTypeMarker.isSimpleType(): Boolean = asSimpleType() != null
 
     fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker
 
