@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.*
 import com.intellij.codeInspection.ui.SingleCheckboxOptionsPanel
+import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElementVisitor
@@ -120,8 +121,10 @@ private tailrec fun KtDotQualifiedExpression.firstExpressionWithoutReceiver(): K
 else
     (receiverExpression as? KtDotQualifiedExpression)?.firstExpressionWithoutReceiver()
 
-private tailrec fun <T : KtElement> T.firstApplicableExpression(validator: T.() -> T?, generator: T.() -> T?): T? =
-    validator() ?: generator()?.firstApplicableExpression(validator, generator)
+private tailrec fun <T : KtElement> T.firstApplicableExpression(validator: T.() -> T?, generator: T.() -> T?): T? {
+    ProgressManager.checkCanceled()
+    return validator() ?: generator()?.firstApplicableExpression(validator, generator)
+}
 
 private fun KtDotQualifiedExpression.applicableExpression(
     originalExpression: KtExpression,
