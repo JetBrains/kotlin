@@ -9,9 +9,15 @@ package org.jetbrains.kotlin.tools.projectWizard.templates
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.Versions
-import org.jetbrains.kotlin.tools.projectWizard.core.*
+import org.jetbrains.kotlin.tools.projectWizard.core.Reader
+import org.jetbrains.kotlin.tools.projectWizard.core.Writer
+import org.jetbrains.kotlin.tools.projectWizard.core.asPath
+import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.TemplateSetting
-import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.ArtifactBasedLibraryDependencyIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.DependencyIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.DependencyType
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.ModuleIR
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
@@ -34,7 +40,26 @@ class ReactJsClientTemplate : JsClientTemplate() {
         defaultValue = value(false)
     }
 
-    override val settings: List<TemplateSetting<*, *>> = listOf(useStyledComponents)
+    val useReactRouterDom by booleanSetting(
+        KotlinNewProjectWizardBundle.message("module.template.react.use.react.router.dom"),
+        GenerationPhase.PROJECT_GENERATION
+    ) {
+        defaultValue = value(false)
+    }
+
+    val useReactRedux by booleanSetting(
+        KotlinNewProjectWizardBundle.message("module.template.react.use.react.redux"),
+        GenerationPhase.PROJECT_GENERATION
+    ) {
+        defaultValue = value(false)
+    }
+
+    override val settings: List<TemplateSetting<*, *>> =
+        listOf(
+            useStyledComponents,
+            useReactRouterDom,
+            useReactRedux
+        )
 
     override fun Writer.getRequiredLibraries(module: ModuleIR): List<DependencyIR> = withSettingsOf(module.originalModule) {
         buildList {
@@ -43,6 +68,13 @@ class ReactJsClientTemplate : JsClientTemplate() {
             +Dependencies.KOTLIN_REACT_DOM(kotlinVersion.version)
             if (useStyledComponents.reference.settingValue) {
                 +Dependencies.KOTLIN_STYLED(kotlinVersion.version)
+            }
+            if (useReactRouterDom.reference.settingValue) {
+                +Dependencies.KOTLIN_REACT_ROUTER_DOM(kotlinVersion.version)
+            }
+            if (useReactRedux.reference.settingValue) {
+                +Dependencies.KOTLIN_REDUX(kotlinVersion.version)
+                +Dependencies.KOTLIN_REACT_REDUX(kotlinVersion.version)
             }
         }
     }
@@ -68,24 +100,40 @@ class ReactJsClientTemplate : JsClientTemplate() {
     }
 
     private object Dependencies {
-        val KOTLIN_REACT = { kotlinVersion: Version ->
+        val KOTLIN_REACT = wrapperDependency(
+            "kotlin-react",
+            Versions.JS_WRAPPERS.KOTLIN_REACT
+        )
+
+        val KOTLIN_REACT_DOM = wrapperDependency(
+            "kotlin-react-dom",
+            Versions.JS_WRAPPERS.KOTLIN_REACT_DOM
+        )
+
+        val KOTLIN_STYLED = wrapperDependency(
+            "kotlin-styled",
+            Versions.JS_WRAPPERS.KOTLIN_STYLED
+        )
+
+        val KOTLIN_REACT_ROUTER_DOM = wrapperDependency(
+            "kotlin-react-router-dom",
+            Versions.JS_WRAPPERS.KOTLIN_REACT_ROUTER_DOM
+        )
+
+        val KOTLIN_REDUX = wrapperDependency(
+            "kotlin-redux",
+            Versions.JS_WRAPPERS.KOTLIN_REDUX
+        )
+
+        val KOTLIN_REACT_REDUX = wrapperDependency(
+            "kotlin-react-redux",
+            Versions.JS_WRAPPERS.KOTLIN_REACT_REDUX
+        )
+
+        private fun wrapperDependency(artifact: String, version: (Version) -> Version) = { kotlinVersion: Version ->
             ArtifactBasedLibraryDependencyIR(
-                MavenArtifact(Repositories.KOTLIN_JS_WRAPPERS_BINTRAY, "org.jetbrains", "kotlin-react"),
-                Versions.JS_WRAPPERS.KOTLIN_REACT(kotlinVersion),
-                DependencyType.MAIN
-            )
-        }
-        val KOTLIN_REACT_DOM = { kotlinVersion: Version ->
-            ArtifactBasedLibraryDependencyIR(
-                MavenArtifact(Repositories.KOTLIN_JS_WRAPPERS_BINTRAY, "org.jetbrains", "kotlin-react-dom"),
-                Versions.JS_WRAPPERS.KOTLIN_REACT_DOM(kotlinVersion),
-                DependencyType.MAIN
-            )
-        }
-        val KOTLIN_STYLED = { kotlinVersion: Version ->
-            ArtifactBasedLibraryDependencyIR(
-                MavenArtifact(Repositories.KOTLIN_JS_WRAPPERS_BINTRAY, "org.jetbrains", "kotlin-styled"),
-                Versions.JS_WRAPPERS.KOTLIN_STYLED(kotlinVersion),
+                MavenArtifact(Repositories.KOTLIN_JS_WRAPPERS_BINTRAY, "org.jetbrains", artifact),
+                version(kotlinVersion),
                 DependencyType.MAIN
             )
         }
