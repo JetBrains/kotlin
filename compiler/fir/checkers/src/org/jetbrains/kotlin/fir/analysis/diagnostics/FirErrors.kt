@@ -141,6 +141,8 @@ object FirErrors {
     val WRONG_INVOCATION_KIND by warning3<FirSourceElement, PsiElement, AbstractFirBasedSymbol<*>, EventOccurrencesRange, EventOccurrencesRange>()
     val LEAKED_IN_PLACE_LAMBDA by error1<FirSourceElement, PsiElement, AbstractFirBasedSymbol<*>>()
     val WRONG_IMPLIES_CONDITION by error0<FirSourceElement, PsiElement>()
+    val MISSING_COEFFECT_CONTEXT by error0<FirSourceElement, PsiElement>()
+    val UNEXPECTED_COEFFECT_CONTEXT by error0<FirSourceElement, PsiElement>()
 
     // Extended checkers group
     val REDUNDANT_VISIBILITY_MODIFIER by warning0<FirSourceElement, PsiElement>()

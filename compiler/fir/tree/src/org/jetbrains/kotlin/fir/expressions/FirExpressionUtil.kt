@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
@@ -21,6 +23,8 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.TransformData
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.name.ClassId
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 inline val FirAnnotationCall.coneClassLikeType: ConeClassLikeType?
     get() = ((annotationTypeRef as? FirResolvedTypeRef)?.type as? ConeClassLikeType)
@@ -113,3 +117,12 @@ fun FirBlock.replaceFirstStatement(statement: FirStatement): FirStatement {
     statements[0] = statement
     return existed
 }
+
+@OptIn(ExperimentalContracts::class)
+fun FirElement.isInPlaceLambda(): Boolean {
+    contract {
+        returns(true) implies (this@isInPlaceLambda is FirAnonymousFunction)
+    }
+    return this is FirAnonymousFunction && isLambda && invocationKind != null
+}
+
