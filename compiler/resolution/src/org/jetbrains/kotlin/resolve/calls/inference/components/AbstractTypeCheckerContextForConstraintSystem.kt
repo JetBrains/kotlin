@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
-import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
-import org.jetbrains.kotlin.types.checker.NewCapturedType
 import org.jetbrains.kotlin.types.model.*
 
 abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheckerContext(), TypeSystemInferenceExtensionContext {
@@ -212,9 +210,13 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
                     val typeVariableTypeConstructor = typeVariable.typeConstructor()
                     val subTypeConstructor = subType.typeConstructor()
 
-                    if (subTypeConstructor !is TypeVariableTypeConstructor && typeVariableTypeConstructor is TypeVariableTypeConstructor && typeVariableTypeConstructor.isContainedInInvariantOrContravariantPositions) {
-                        if (subType is NewCapturedType) {
-                            subType.withNotNullProjection()
+                    if (
+                        !subTypeConstructor.isTypeVariable() &&
+                        typeVariableTypeConstructor.isTypeVariable() &&
+                        (typeVariableTypeConstructor as TypeVariableTypeConstructorMarker).isContainedInInvariantOrContravariantPositions()
+                    ) {
+                        if (subType.isCapturedType()) {
+                            (subType as CapturedTypeMarker).withNotNullProjection()
                         } else {
                             subType.withNullability(false)
                         }

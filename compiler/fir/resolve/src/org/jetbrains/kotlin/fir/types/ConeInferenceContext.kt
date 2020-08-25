@@ -316,6 +316,14 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return this.defaultType
     }
 
+    override fun TypeConstructorMarker.isTypeVariable(): Boolean {
+        return this is ConeTypeVariableTypeConstructor
+    }
+
+    override fun TypeVariableTypeConstructorMarker.isContainedInInvariantOrContravariantPositions(): Boolean {
+        return false
+    }
+
     override fun captureFromExpression(type: KotlinTypeMarker): KotlinTypeMarker? {
         return type
     }

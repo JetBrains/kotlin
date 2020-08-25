@@ -76,6 +76,15 @@ class ClassicTypeSystemContextForCS(override val builtIns: KotlinBuiltIns) : Typ
     override fun createStubType(typeVariable: TypeVariableMarker): StubTypeMarker {
         return StubType(typeVariable.freshTypeConstructor() as TypeConstructor, typeVariable.defaultType().isMarkedNullable())
     }
+
+    override fun TypeConstructorMarker.isTypeVariable(): Boolean {
+        return this is TypeVariableTypeConstructor
+    }
+
+    override fun TypeVariableTypeConstructorMarker.isContainedInInvariantOrContravariantPositions(): Boolean {
+        require(this is TypeVariableTypeConstructor)
+        return isContainedInInvariantOrContravariantPositions
+    }
 }
 
 

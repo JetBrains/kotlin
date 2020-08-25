@@ -517,6 +517,14 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         errorSupportedOnlyInTypeInference()
     }
 
+    override fun TypeConstructorMarker.isTypeVariable(): Boolean {
+        errorSupportedOnlyInTypeInference()
+    }
+
+    override fun TypeVariableTypeConstructorMarker.isContainedInInvariantOrContravariantPositions(): Boolean {
+        errorSupportedOnlyInTypeInference()
+    }
+
     override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? {
         @Suppress("UNCHECKED_CAST")
         explicitSupertypes as List<SimpleType>

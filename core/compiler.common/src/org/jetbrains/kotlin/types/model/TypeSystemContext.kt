@@ -173,6 +173,9 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         firstCandidate: KotlinTypeMarker,
         secondCandidate: KotlinTypeMarker
     ): KotlinTypeMarker
+
+    fun TypeConstructorMarker.isTypeVariable(): Boolean
+    fun TypeVariableTypeConstructorMarker.isContainedInInvariantOrContravariantPositions(): Boolean
 }
 
 
