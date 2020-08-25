@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.sessions
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
 import org.jetbrains.kotlin.fir.registerCommonComponents
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
  * [org.jetbrains.kotlin.fir.FirSession] responsible for all libraries analysing module transitively depends on
  */
 internal class FirIdeLibrariesSession private constructor(
+    override val moduleInfo: ModuleInfo,
     sessionProvider: FirIdeSessionProvider,
     override val scope: GlobalSearchScope
 ) : FirIdeSession(sessionProvider) {
@@ -43,7 +45,7 @@ internal class FirIdeLibrariesSession private constructor(
             val packagePartProvider = IDEPackagePartProvider(searchScope)
 
             val kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(searchScope)
-            return FirIdeLibrariesSession(sessionProvider, searchScope).apply {
+            return FirIdeLibrariesSession(moduleInfo, sessionProvider, searchScope).apply {
                 registerCommonComponents()
 
                 val javaSymbolProvider = JavaSymbolProvider(this, sessionProvider.project, searchScope)
