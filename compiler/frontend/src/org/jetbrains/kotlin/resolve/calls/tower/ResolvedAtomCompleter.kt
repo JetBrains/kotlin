@@ -331,7 +331,7 @@ class ResolvedAtomCompleter(
         resolvedAtom: ResolvedCallableReferenceAtom
     ) {
         val callableCandidate = resolvedAtom.candidate
-        if (callableCandidate == null) {
+        if (callableCandidate == null || resolvedAtom.completed) {
             // todo report meanfull diagnostic here
             return
         }
@@ -419,6 +419,7 @@ class ResolvedAtomCompleter(
         )
 
         kotlinToResolvedCallTransformer.runCallCheckers(resolvedCall, topLevelCallCheckerContext)
+        resolvedAtom.completed = true
     }
 
     private fun ReceiverValue.updateReceiverValue(substitutor: TypeSubstitutor): ReceiverValue {

@@ -168,6 +168,8 @@ abstract class ResolvedCallableReferenceAtom(
     var candidate: CallableReferenceCandidate? = null
         private set
 
+    var completed: Boolean = false
+
     fun setAnalyzedResults(
         candidate: CallableReferenceCandidate?,
         subResolvedAtoms: List<ResolvedAtom>

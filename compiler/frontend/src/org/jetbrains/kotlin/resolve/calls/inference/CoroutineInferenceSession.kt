@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.components.CompletedCallInfo
 import org.jetbrains.kotlin.resolve.calls.components.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
+import org.jetbrains.kotlin.resolve.calls.components.stableType
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasBuilderInferenceAnnotation
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.DoubleColonExpressionResolver
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
@@ -72,11 +74,38 @@ class CoroutineInferenceSession(
             return subResolvedAtoms?.any { it.hasPostponed() } == true
         }
 
+        if (!candidate.isSuitableForBuilderInference()) {
+            return true
+        }
+
         return !storage.notFixedTypeVariables.keys.any {
             val variable = storage.allTypeVariables[it]
             val isPostponed = variable != null && variable in storage.postponedTypeVariables
             !isPostponed && !kotlinConstraintSystemCompleter.variableFixationFinder.isTypeVariableHasProperConstraint(system, it)
         } || candidate.getSubResolvedAtoms().any { it.hasPostponed() }
+    }
+
+    private fun KotlinResolutionCandidate.isSuitableForBuilderInference(): Boolean {
+        val extensionReceiver = resolvedCall.extensionReceiverArgument
+        val dispatchReceiver = resolvedCall.dispatchReceiverArgument
+        return when {
+            extensionReceiver == null && dispatchReceiver == null -> false
+            extensionReceiver == null -> true
+            extensionReceiver.receiver.stableType.containsStubType() -> resolvedCall.candidateDescriptor.hasBuilderInferenceAnnotation()
+            else -> true
+        }
+    }
+
+    private fun KotlinType.containsNotFixedTypeVariable(storage: ConstraintStorage): Boolean {
+        return this.contains {
+            it.constructor in storage.notFixedTypeVariables
+        }
+    }
+
+    private fun KotlinType.containsStubType(): Boolean {
+        return this.contains {
+            it is StubType
+        }
     }
 
     fun addSimpleCall(callExpression: KtExpression) {
