@@ -55,7 +55,7 @@ object KotlinSignatureUtils : JvmSignatureUtils {
         is JavaObject -> listOf(DriOfAny)
         is Dynamic -> emptyList()
         is UnresolvedBound -> emptyList()
-        is Variance -> inner.drisOfAllNestedBounds
+        is Variance<*> -> inner.drisOfAllNestedBounds
         is Star -> emptyList()
     }
 
