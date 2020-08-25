@@ -320,6 +320,20 @@
     <inspection_tool class="GtkPreferredJComboBoxRenderer" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="Guava" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="HardCodedStringLiteral" enabled="true" level="WARNING" enabled_by_default="false">
+      <scope name="phpstorm" level="WARNING" enabled="true">
+        <option name="ignoreForAssertStatements" value="true" />
+        <option name="ignoreForExceptionConstructors" value="true" />
+        <option name="ignoreForSpecifiedExceptionConstructors" value="" />
+        <option name="ignoreForJUnitAsserts" value="true" />
+        <option name="ignoreForClassReferences" value="true" />
+        <option name="ignoreForPropertyKeyReferences" value="true" />
+        <option name="ignoreForNonAlpha" value="true" />
+        <option name="ignoreAssignedToConstants" value="false" />
+        <option name="ignoreToString" value="false" />
+        <option name="nonNlsCommentPattern" value="NON-NLS" />
+        <option name="reportUnannotatedReferences" value="true" />
+        <option name="ignoreAllButNls" value="true" />
+      </scope>
       <scope name="test-framework" level="WARNING" enabled="false">
         <option name="ignoreForAssertStatements" value="true" />
         <option name="ignoreForExceptionConstructors" value="true" />
@@ -473,7 +487,6 @@
     <inspection_tool class="JSUnusedLocalSymbols" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="JSValidateJSON" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="JSValidateTypes" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
-    <inspection_tool class="JUnit3StyleTestMethodInJUnit4Class" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="JUnitTestClassNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="m_regex" value="[A-Z][A-Za-z0-9_]*Test" />
       <option name="m_minLength" value="8" />
@@ -1075,7 +1088,7 @@
         <constraint name="Parameter" minCount="0" maxCount="2147483647" within="" contains="" />
       </searchConfiguration>
       <replaceConfiguration name="PsiManager.getInstance(psiElement.getProject())" text="com.intellij.psi.PsiManager.getInstance($psiElement$.getProject())" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="$psiElement$.getManager()">
-        <constraint name="psiElement" script="&quot;&quot;" nameOfExprType="com\.intellij\.psi\.PsiElement" exprTypeWithinHierarchy="true" within="" contains="" expressionTypes="com.intellij.psi.PsiElement" />
+        <constraint name="psiElement" script="&quot;&quot;" nameOfExprType="com\.intellij\.psi\.PsiElement" exprTypeWithinHierarchy="true" within="" contains="" />
       </replaceConfiguration>
       <searchConfiguration name="String.getBytes() is current locale-dependant, use String.getBytes(Charset) instead" text="$s$.getBytes()" recursive="false" caseInsensitive="true" type="JAVA">
         <constraint name="s" script="&quot;&quot;" nameOfExprType="java.lang.String" exprTypeWithinHierarchy="true" within="" contains="" />
@@ -1105,7 +1118,7 @@
         <constraint name="Parameter" within="" contains="" />
       </replaceConfiguration>
       <replaceConfiguration name="new String(byte[]) is default locale dependent; use new String(byte[], Charset) instead" text="new String($b$)" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="new String($b$, com.intellij.openapi.vfs.CharsetToolkit.UTF8_CHARSET)">
-        <constraint name="b" nameOfExprType="byte\[\]" exprTypeWithinHierarchy="true" within="" contains="" expressionTypes="byte[]" />
+        <constraint name="b" nameOfExprType="byte\[\]" exprTypeWithinHierarchy="true" within="" contains="" />
       </replaceConfiguration>
       <searchConfiguration name="Anonymous threads are discouraged; please supply name" text="new Thread()" recursive="true" caseInsensitive="true" type="JAVA" />
       <replaceConfiguration name="&quot;var = volatile = E&quot; should be &quot;volatile = var = E&quot;" text="$var$ = $field$ = $e$;" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" useStaticImport="true" replacement="$field$ = $var$ = $e$;">
@@ -1153,7 +1166,7 @@
       <replaceConfiguration name="use explicit toArray() method" text="com.intellij.util.ArrayUtil.toObjectArray($collection$, $class$.class)" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="false" shortenFQN="false" replacement="$collection$.toArray(new $class$[0])">
         <constraint name="__context__" within="" contains="" />
         <constraint name="class" within="" contains="" />
-        <constraint name="collection" nameOfExprType="java\.util\.Collection" exprTypeWithinHierarchy="true" within="" contains="" expressionTypes="java.util.Collection" />
+        <constraint name="collection" nameOfExprType="java\.util\.Collection" exprTypeWithinHierarchy="true" within="" contains="" />
       </replaceConfiguration>
       <replaceConfiguration name="Arrays.asList() is not immutable" text="public static final $Type$ $Field$ = java.util.Arrays.asList($elements$);" recursive="false" caseInsensitive="true" type="JAVA" reformatAccordingToStyle="true" shortenFQN="true" replacement="public static final $Type$ $Field$ = com.intellij.util.containers.ContainerUtil.immutableList($elements$);">
         <constraint name="__context__" within="" contains="" />
@@ -1190,7 +1203,7 @@
       </replaceConfiguration>
       <replaceConfiguration name="submit() creates unnecessary Future" text="$e$.submit($d$);" recursive="false" caseInsensitive="true" type="JAVA" pattern_context="default" reformatAccordingToStyle="false" shortenFQN="true" replacement="$e$.execute($d$);">
         <constraint name="__context__" within="" contains="" />
-        <constraint name="e" nameOfExprType="java\.util\.concurrent\.ExecutorService" exprTypeWithinHierarchy="true" within="" contains="" expressionTypes="java.util.concurrent.ExecutorService" />
+        <constraint name="e" nameOfExprType="java\.util\.concurrent\.ExecutorService" exprTypeWithinHierarchy="true" within="" contains="" />
         <constraint name="d" within="" contains="" />
       </replaceConfiguration>
       <searchConfiguration name="@HardwareAgentRequired should be applied only for performance tests" text="@com.intellij.idea.HardwareAgentRequired&#10;class $class$ {&#10;  &#10;}" recursive="true" caseInsensitive="true" type="JAVA" pattern_context="default">
