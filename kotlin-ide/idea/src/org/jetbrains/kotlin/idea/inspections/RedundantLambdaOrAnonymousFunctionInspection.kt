@@ -1,32 +1,45 @@
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
-import com.intellij.openapi.editor.Editor
+import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtLambdaExpression
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.blockExpressionsOrSingle
 import org.jetbrains.kotlin.psi2ir.deparenthesize
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-class RedundantLambdaOrAnonymousFunctionInspection : AbstractApplicabilityBasedInspection<KtCallExpression>(KtCallExpression::class.java) {
-    override fun inspectionText(element: KtCallExpression): String =
-        if (element.calleeExpression?.deparenthesize() is KtFunction)
-            KotlinBundle.message("inspection.redundant.anonymous.function.description")
-        else
-            KotlinBundle.message("inspection.redundant.lambda.description")
+class RedundantLambdaOrAnonymousFunctionInspection : AbstractKotlinInspection() {
+    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor = callExpressionVisitor(
+        fun(callExpression: KtCallExpression) {
+            if (!isApplicable(callExpression)) return
+            val message = if (callExpression.calleeExpression?.deparenthesize() is KtFunction)
+                KotlinBundle.message("inspection.redundant.anonymous.function.description")
+            else
+                KotlinBundle.message("inspection.redundant.lambda.description")
 
-    override val defaultFixText: String get() = KotlinBundle.message("inspection.redundant.lambda.or.anonymous.function.fix")
+            holder.registerProblem(
+                callExpression,
+                message,
+                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                RedundantLambdaOrAnonymousFunctionFix()
+            )
+        }
+    )
 
-    override fun isApplicable(element: KtCallExpression): Boolean = Companion.isApplicable(element)
+    private class RedundantLambdaOrAnonymousFunctionFix : LocalQuickFix {
+        override fun getFamilyName(): String = KotlinBundle.message("inspection.redundant.lambda.or.anonymous.function.fix")
 
-    override fun applyTo(element: KtCallExpression, project: Project, editor: Editor?) {
-        Companion.applyTo(element)
+        override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
+            val call = descriptor.psiElement as? KtCallExpression ?: return
+            applyTo(call)
+        }
     }
-
-    override fun inspectionHighlightType(element: KtCallExpression): ProblemHighlightType = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 
     companion object {
         fun isApplicable(callExpression: KtCallExpression): Boolean {
@@ -43,7 +56,7 @@ class RedundantLambdaOrAnonymousFunctionInspection : AbstractApplicabilityBasedI
             val statements = function.bodyExpression?.blockExpressionsOrSingle()?.toList() ?: return false
             if (statements.isNotEmpty()) return false
 
-            return true
+            return callExpression.isUsedAsStatement(callExpression.analyze(BodyResolveMode.PARTIAL_WITH_CFA))
         }
 
         fun applyTo(callExpression: KtCallExpression) {

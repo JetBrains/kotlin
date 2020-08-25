@@ -7567,6 +7567,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
+        @TestMetadata("asExpression.kt")
+        public void testAsExpression() throws Exception {
+            runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/asExpression.kt");
+        }
+
         @TestMetadata("emptyFunctionWithoutParameters.kt")
         public void testEmptyFunctionWithoutParameters() throws Exception {
             runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/emptyFunctionWithoutParameters.kt");
