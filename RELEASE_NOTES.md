@@ -21,7 +21,7 @@ basic runtime shipped along with the translator, we only support a subset of all
 target platforms. Currently _Kotlin/Native_ is being shipped and tested with support for
 the following platforms:
 
- * Mac OS X 11 and later (x86-64), host and target (`-target macos_x64`, default on macOS hosts)
+ * Mac OS X 10.11 and later (x86-64), host and target (`-target macos_x64`, default on macOS hosts)
  * Ubuntu Linux x86-64 (14.04, 16.04 and later), other Linux flavours may work as well, host and target
    (`-target linux_x64`, default on Linux hosts, hosted on Linux, Windows and macOS).
  * Microsoft Windows x86-64 (tested on Windows 7 and Windows 10), host and target (`-target mingw_x64`,
