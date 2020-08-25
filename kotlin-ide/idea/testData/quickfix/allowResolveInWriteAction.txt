@@ -56,6 +56,7 @@ org.jetbrains.kotlin.idea.quickfix.KotlinSuppressIntentionAction
 org.jetbrains.kotlin.idea.quickfix.LetImplementInterfaceFix
 org.jetbrains.kotlin.idea.quickfix.LowPriorityQuickFixWithDelegateFactory
 org.jetbrains.kotlin.idea.quickfix.migration.MigrateExternalExtensionFix
+org.jetbrains.kotlin.idea.quickfix.MakeOverriddenMemberOpenFix
 org.jetbrains.kotlin.idea.quickfix.QuickFixWithDelegateFactory
 org.jetbrains.kotlin.idea.quickfix.RemoveNameFromFunctionExpressionFix
 org.jetbrains.kotlin.idea.quickfix.RemovePartsFromPropertyFix
