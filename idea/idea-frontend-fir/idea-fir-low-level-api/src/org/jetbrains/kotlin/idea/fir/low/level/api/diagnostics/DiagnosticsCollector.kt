@@ -23,7 +23,12 @@ internal class DiagnosticsCollector(
     fun getDiagnosticsFor(element: KtElement): List<Diagnostic> {
         val ktFile = element.containingKtFile
         val diagnostics = diagnosticsForFile.computeIfAbsent(ktFile) {
-            val firFile = firFileBuilder.getFirFileResolvedToPhaseWithCaching(ktFile, cache, toPhase = FirResolvePhase.BODY_RESOLVE)
+            val firFile = firFileBuilder.getFirFileResolvedToPhaseWithCaching(
+                ktFile,
+                cache,
+                toPhase = FirResolvePhase.BODY_RESOLVE,
+                checkPCE = true
+            )
             DiagnosticsForFile.collectDiagnosticsForFile(firFile)
         }
         return diagnostics.getDiagnosticsFor(element)
