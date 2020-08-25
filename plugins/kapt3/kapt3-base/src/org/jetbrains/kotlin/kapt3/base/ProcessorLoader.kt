@@ -100,7 +100,7 @@ open class ProcessorLoader(private val options: KaptOptions, private val logger:
                         processSingleInput(it.inputStream())
                     }
                 }
-                file.isFile -> {
+                file.isFile && file.extension.equals("jar", ignoreCase = true) -> {
                     ZipFile(file).use { zipFile ->
                         zipFile.getEntry(serviceFile)?.let { zipEntry ->
                             zipFile.getInputStream(zipEntry).use {
