@@ -1966,6 +1966,11 @@ public class FirOldFrontendDiagnosticsTestWithStdlibGenerated extends AbstractFi
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/builderInferenceForMaterializeWithExpectedType.kt");
             }
 
+            @TestMetadata("callableReferenceAndCoercionToUnit.kt")
+            public void testCallableReferenceAndCoercionToUnit() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/callableReferenceAndCoercionToUnit.kt");
+            }
+
             @TestMetadata("callableReferenceToASuspendFunction.kt")
             public void testCallableReferenceToASuspendFunction() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/callableReferenceToASuspendFunction.kt");
@@ -2099,6 +2104,11 @@ public class FirOldFrontendDiagnosticsTestWithStdlibGenerated extends AbstractFi
             @TestMetadata("kt41164.kt")
             public void testKt41164() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt41164.kt");
+            }
+
+            @TestMetadata("kt41308.kt")
+            public void testKt41308() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/inference/kt41308.kt");
             }
 
             @TestMetadata("nestedLambdaInferenceWithListMap.kt")
