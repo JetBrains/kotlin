@@ -30,6 +30,7 @@ object SamTypeConversions : ParameterTypeConversion {
 
         if (generatingAdditionalSamCandidateIsEnabled) return true
         if (expectedParameterType.isNothing()) return true
+        if (expectedParameterType.isFunctionType) return true
 
         val samConversionOracle = callComponents.samConversionOracle
         if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionForKotlinFunctions)) {
@@ -46,6 +47,8 @@ object SamTypeConversions : ParameterTypeConversion {
         return when (argument) {
             is SubKotlinCallArgument -> {
                 val stableType = argument.receiver.stableType
+                if (stableType.isFunctionType) return true
+
                 hasNonAnalyzedLambdaAsReturnType(argument.callResult.subResolvedAtoms, stableType)
             }
             is SimpleKotlinCallArgument -> argument.receiver.stableType.isFunctionType
