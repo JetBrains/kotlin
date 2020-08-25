@@ -25,6 +25,7 @@ configurations.getByName("testCompile").extendsFrom(shadows)
 dependencies {
     compile(kotlinStdlib())
     shadows(project(":kotlinx-metadata"))
+    shadows(project(":core:compiler.common"))
     // TODO: Get rid of this heavyweight dependency.
     shadows(project(":core:descriptors"))
     shadows(project(":core:metadata"))
