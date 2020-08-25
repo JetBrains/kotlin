@@ -1682,6 +1682,14 @@
                      language="kotlin"
                      key="inspection.redundant.lambda.arrow.display.name" bundle="messages.KotlinBundle"/>
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantLambdaOrAnonymousFunctionInspection"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+                     key="inspection.redundant.lambda.or.anonymous.function.display.name" bundle="messages.KotlinBundle"/>
+
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.ClassNameInspection"
                      language="kotlin"
                      groupPath="Kotlin"
