@@ -309,14 +309,27 @@ data class DParameter(
 }
 
 data class DTypeParameter(
-    override val dri: DRI,
-    override val name: String,
+    val variantTypeParameter: Variance<TypeParameter>,
     override val documentation: SourceSetDependent<DocumentationNode>,
     override val expectPresentInSet: DokkaSourceSet?,
     val bounds: List<Bound>,
     override val sourceSets: Set<DokkaSourceSet>,
     override val extra: PropertyContainer<DTypeParameter> = PropertyContainer.empty()
 ) : Documentable(), WithExtraProperties<DTypeParameter> {
+
+    constructor(
+        dri: DRI,
+        name: String,
+        documentation: SourceSetDependent<DocumentationNode>,
+        expectPresentInSet: DokkaSourceSet?,
+        bounds: List<Bound>,
+        sourceSets: Set<DokkaSourceSet>,
+        extra: PropertyContainer<DTypeParameter> = PropertyContainer.empty()
+    ) : this(Invariance(TypeParameter(dri, name)), documentation, expectPresentInSet, bounds, sourceSets, extra)
+
+    override val dri: DRI by variantTypeParameter.inner::dri
+    override val name: String by variantTypeParameter.inner::name
+
     override val children: List<Nothing>
         get() = emptyList()
 
@@ -352,8 +365,18 @@ data class TypeConstructor(
 ) : Bound()
 
 data class Nullable(val inner: Bound) : Bound()
-data class Variance(val kind: Kind, val inner: Bound) : Projection() {
-    enum class Kind { In, Out }
+
+sealed class Variance<out T : Bound> : Projection() {
+    abstract val inner: T
+}
+data class Covariance<out T : Bound>(override val inner: T) : Variance<T>() {
+    override fun toString() = "out"
+}
+data class Contravariance<out T : Bound>(override val inner: T) : Variance<T>() {
+    override fun toString() = "in"
+}
+data class Invariance<out T : Bound>(override val inner: T) : Variance<T>() {
+    override fun toString() = ""
 }
 
 data class PrimitiveJavaType(val name: String) : Bound()
@@ -364,6 +387,12 @@ data class UnresolvedBound(val name: String) : Bound()
 
 enum class FunctionModifiers {
     NONE, FUNCTION, EXTENSION
+}
+
+fun Variance<TypeParameter>.withNewDri(dri: DRI) = when(this) {
+    is Contravariance -> Contravariance(TypeParameter(dri, inner.name))
+    is Covariance -> Covariance(TypeParameter(dri, inner.name))
+    is Invariance -> Invariance(TypeParameter(dri, inner.name))
 }
 
 private fun String.shorten(maxLength: Int) = lineSequence().first().let {
