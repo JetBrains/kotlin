@@ -1081,6 +1081,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/supertypeInitializedWithoutPrimaryConstructor.kt");
         }
 
+        @TestMetadata("testIllegalAnnotationClass.kt")
+        public void testTestIllegalAnnotationClass() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/testIllegalAnnotationClass.kt");
+        }
+
         @TestMetadata("typeArgumentsNotAllowed.kt")
         public void testTypeArgumentsNotAllowed() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/typeArgumentsNotAllowed.kt");

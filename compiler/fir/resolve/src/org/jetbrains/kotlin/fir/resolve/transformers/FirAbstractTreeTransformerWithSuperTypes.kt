@@ -52,6 +52,11 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
         data: Nothing?
     ): CompositeTransformResult<FirStatement> {
         return withScopeCleanup {
+            // Otherwise annotations may try to resolve
+            // themselves as inner classes of the `firClass`
+            // if their names match
+            firClass.transformAnnotations(this, null)
+
             // ? Is it Ok to use original file session here ?
             val superTypes = lookupSuperTypes(
                 firClass,
@@ -76,6 +81,8 @@ abstract class FirAbstractTreeTransformerWithSuperTypes(
 
             nestedClassifierScope(firClass)?.let(scopes::add)
 
+            // Note that annotations are still visited here
+            // again, although there's no need in it
             transformElement(firClass, data)
         }
     }
