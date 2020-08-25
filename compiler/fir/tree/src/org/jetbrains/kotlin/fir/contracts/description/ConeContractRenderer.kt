@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.fir.contracts.description
 
-import org.jetbrains.kotlin.contracts.description.expressions.*
+import org.jetbrains.kotlin.contracts.description.expressions.ConstantReference
+import org.jetbrains.kotlin.contracts.description.expressions.VariableReference
 
 class ConeContractRenderer(private val builder: StringBuilder) : ConeContractDescriptionVisitor<Unit, Nothing?>() {
     override fun visitConditionalEffectDeclaration(conditionalEffect: ConeConditionalEffectDeclaration, data: Nothing?) {
@@ -24,6 +25,16 @@ class ConeContractRenderer(private val builder: StringBuilder) : ConeContractDes
         builder.append("CallsInPlace(")
         callsEffect.valueParameterReference.accept(this, data)
         builder.append(", ${callsEffect.kind})")
+    }
+
+    override fun visitThrowsEffectDeclaration(throwsEffect: ConeThrowsEffectDeclaration, data: Nothing?) {
+        builder.append("throws ").append(throwsEffect.exceptionType)
+    }
+
+    override fun visitCalledInTryCatchEffectDeclaration(calledInEffect: ConeCalledInTryCatchEffectDeclaration, data: Nothing?) {
+        builder.append("calledInTryCatch<${calledInEffect.exceptionType}>(")
+        calledInEffect.lambda.accept(this, data)
+        builder.append(")")
     }
 
     override fun visitLogicalBinaryOperationContractExpression(binaryLogicExpression: ConeBinaryLogicExpression, data: Nothing?) {

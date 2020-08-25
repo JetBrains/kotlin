@@ -1,0 +1,65 @@
+FILE: throwsInThrows.kt
+    public final fun <T : R|kotlin/Throwable|> throws(): R|kotlin/Unit| {
+    }
+    public final fun <T : R|kotlin/Throwable|> calledInTryCatch(lambda: R|kotlin/Any|): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        try {
+            R|/throwsREAndDoSomething|()
+        }
+        catch (e: R|java/lang/RuntimeException|) {
+        }
+
+        try {
+            R|/throwsREAndDoSomething|()
+        }
+        catch (e: R|java/lang/Exception|) {
+        }
+
+        try {
+            R|/throwsREAndDoSomething|()
+        }
+        catch (e: R|kotlin/Throwable|) {
+        }
+
+    }
+    public final fun throwsRE(): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            throws java/lang/RuntimeException
+        >
+     {
+        [StubStatement]
+        R|/throwsRE|()
+    }
+    public final fun throwsREAndDoSomething(): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            throws java/lang/RuntimeException
+        >
+     {
+        [StubStatement]
+        R|/throwsREAndDoSomething|()
+        R|/throwsRE|()
+    }
+    public final fun throwsException(): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            throws java/lang/Exception
+        >
+     {
+        [StubStatement]
+        R|/throwsREAndDoSomething|()
+        R|/throwsRE|()
+    }
+    public final fun throwsThrowable(): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            throws kotlin/Throwable
+        >
+     {
+        [StubStatement]
+        R|/throwsException|()
+        R|/throwsREAndDoSomething|()
+        R|/throwsRE|()
+    }

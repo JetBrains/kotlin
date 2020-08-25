@@ -23,6 +23,12 @@ abstract class ConeContractDescriptionVisitor<out R, in D> {
     open fun visitCallsEffectDeclaration(callsEffect: ConeCallsEffectDeclaration, data: D): R =
         visitEffectDeclaration(callsEffect, data)
 
+    open fun visitThrowsEffectDeclaration(throwsEffect: ConeThrowsEffectDeclaration, data: D): R =
+        visitEffectDeclaration(throwsEffect, data)
+
+    open fun visitCalledInTryCatchEffectDeclaration(calledInEffect: ConeCalledInTryCatchEffectDeclaration, data: D): R =
+        visitEffectDeclaration(calledInEffect, data)
+
     // Expressions
     open fun visitBooleanExpression(booleanExpression: ConeBooleanExpression, data: D): R =
         visitContractDescriptionElement(booleanExpression, data)
@@ -48,6 +54,6 @@ abstract class ConeContractDescriptionVisitor<out R, in D> {
     open fun visitValueParameterReference(valueParameterReference: ConeValueParameterReference, data: D): R =
         visitValue(valueParameterReference, data)
 
-   open fun visitBooleanValueParameterReference(booleanValueParameterReference: ConeBooleanValueParameterReference, data: D): R =
+    open fun visitBooleanValueParameterReference(booleanValueParameterReference: ConeBooleanValueParameterReference, data: D): R =
         visitValueParameterReference(booleanValueParameterReference, data)
 }

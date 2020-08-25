@@ -1,0 +1,56 @@
+FILE: tricky.kt
+    public final fun <T : R|kotlin/Throwable|> throws(): R|kotlin/Unit| {
+    }
+    public final fun <T : R|kotlin/Throwable|> calledInTryCatch(lambda: R|kotlin/Any|): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        try {
+            R|/throwsRE|()
+            try {
+                R|/throwsRE|()
+            }
+            catch (e: R|java/lang/RuntimeException|) {
+            }
+
+            R|/throwsRE|()
+            R|/catchRE|(<L> = catchRE@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
+                R|/throwsRE|()
+            }
+            )
+            R|/throwsRE|()
+            try {
+                R|/throwsRE|()
+            }
+            catch (e: R|java/lang/IllegalStateException|) {
+            }
+
+            R|/throwsRE|()
+        }
+        catch (e: R|java/lang/RuntimeException|) {
+        }
+
+    }
+    public final fun throwsRE(): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            throws java/lang/RuntimeException
+        >
+     {
+        [StubStatement]
+        R|/throwsRE|()
+    }
+    public final fun catchRE(block: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            calledInTryCatch<java/lang/RuntimeException>(block)
+            CallsInPlace(block, UNKNOWN)
+        >
+     {
+        [StubStatement]
+        try {
+            R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        }
+        catch (e: R|java/lang/RuntimeException|) {
+        }
+
+    }

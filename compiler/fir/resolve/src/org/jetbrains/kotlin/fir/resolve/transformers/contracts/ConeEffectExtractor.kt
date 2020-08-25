@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.fir.resolve.transformers.contracts
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.contract.contextual.family.checkedexception.asCoeffect
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 
@@ -66,6 +68,17 @@ class ConeEffectExtractor(
                     ?: return null
                 val kind = functionCall.arguments.getOrNull(1)?.parseInvocationKind() ?: EventOccurrencesRange.UNKNOWN
                 ConeCallsEffectDeclaration(reference, kind)
+            }
+
+            FirContractsDslNames.THROWS -> {
+                val exceptionType = (functionCall.typeArguments.first() as? FirTypeProjectionWithVariance)?.typeRef?.coneType ?: return null
+                return asCoeffect(ConeThrowsEffectDeclaration(exceptionType))
+            }
+
+            FirContractsDslNames.CALLED_IN_TRY_CATCH -> {
+                val exceptionType = (functionCall.typeArguments.first() as? FirTypeProjectionWithVariance)?.typeRef?.coneType ?: return null
+                val lambda = functionCall.argument.accept(this, null) as? ConeValueParameterReference ?: return null
+                return asCoeffect(ConeCalledInTryCatchEffectDeclaration(lambda, exceptionType))
             }
 
             BOOLEAN_AND, BOOLEAN_OR -> {

@@ -591,6 +591,29 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
                     }
                 }
 
+                @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/checkedExceptions")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class CheckedExceptions extends AbstractFirDiagnosticsWithStdlibTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInCheckedExceptions() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/checkedExceptions"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                    }
+
+                    @TestMetadata("illegalCalledIn.kt")
+                    public void testIllegalCalledIn() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/checkedExceptions/illegalCalledIn.kt");
+                    }
+
+                    @TestMetadata("noProperContext.kt")
+                    public void testNoProperContext() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/checkedExceptions/noProperContext.kt");
+                    }
+                }
+
                 @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies")
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)
@@ -677,6 +700,39 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
                     @TestMetadata("unknown.kt")
                     public void testUnknown() throws Exception {
                         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/callsInPlace/unknown.kt");
+                    }
+                }
+
+                @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/checkedExceptions")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class CheckedExceptions extends AbstractFirDiagnosticsWithStdlibTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInCheckedExceptions() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/checkedExceptions"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                    }
+
+                    @TestMetadata("calledIn.kt")
+                    public void testCalledIn() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/checkedExceptions/calledIn.kt");
+                    }
+
+                    @TestMetadata("catch.kt")
+                    public void testCatch() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/checkedExceptions/catch.kt");
+                    }
+
+                    @TestMetadata("throwsInThrows.kt")
+                    public void testThrowsInThrows() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/checkedExceptions/throwsInThrows.kt");
+                    }
+
+                    @TestMetadata("tricky.kt")
+                    public void testTricky() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/checkedExceptions/tricky.kt");
                     }
                 }
 

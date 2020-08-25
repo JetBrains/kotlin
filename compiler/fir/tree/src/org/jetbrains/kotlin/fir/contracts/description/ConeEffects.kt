@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.contracts.description
 
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 /**
  * Effect with condition attached to it.
@@ -44,4 +45,22 @@ class ConeReturnsEffectDeclaration(val value: ConeConstantReference) : ConeEffec
 class ConeCallsEffectDeclaration(val valueParameterReference: ConeValueParameterReference, val kind: EventOccurrencesRange) : ConeEffectDeclaration() {
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitCallsEffectDeclaration(this, data)
+}
+
+
+/**
+ * Effect which specifies that owner function can be called only in context where [exceptionType] is checked
+ */
+class ConeThrowsEffectDeclaration(val exceptionType: ConeKotlinType) : ConeEffectDeclaration() {
+    override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
+        contractDescriptionVisitor.visitThrowsEffectDeclaration(this, data)
+}
+
+
+/**
+ * Effect which specifies that [lambda] called only in context where [exceptionType] is checked
+ */
+class ConeCalledInTryCatchEffectDeclaration(val lambda: ConeValueParameterReference, val exceptionType: ConeKotlinType) : ConeEffectDeclaration() {
+    override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
+        contractDescriptionVisitor.visitCalledInTryCatchEffectDeclaration(this, data)
 }

@@ -89,6 +89,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETERS_IN_ENUM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETERS_IN_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_AS_SUPERTYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNCHECKED_EXCEPTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNEXPECTED_COEFFECT_CONTEXT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_VARIABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_LABEL
@@ -277,6 +278,7 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(FirErrors.WRONG_IMPLIES_CONDITION, "Wrong implies condition")
             map.put(MISSING_COEFFECT_CONTEXT, "Missing coeffect context")
             map.put(UNEXPECTED_COEFFECT_CONTEXT, "Unexpected coeffect context")
+            map.put(UNCHECKED_EXCEPTION, "Unchecked exception: {2}", TO_STRING)
 
             // Extended checkers group
 //            map.put(REDUNDANT_VISIBILITY_MODIFIER, ...) // &

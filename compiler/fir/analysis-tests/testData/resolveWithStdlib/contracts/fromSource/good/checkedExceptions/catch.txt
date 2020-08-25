@@ -1,0 +1,34 @@
+FILE: catch.kt
+    public final fun <T : R|kotlin/Throwable|> throws(): R|kotlin/Unit| {
+    }
+    public final fun <T : R|kotlin/Throwable|> calledInTryCatch(lambda: R|kotlin/Any|): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        try {
+            R|/throwsRE|()
+        }
+        catch (e: R|java/lang/RuntimeException|) {
+        }
+
+        try {
+            R|/throwsRE|()
+        }
+        catch (e: R|java/lang/Exception|) {
+        }
+
+        try {
+            R|/throwsRE|()
+        }
+        catch (e: R|kotlin/Throwable|) {
+        }
+
+    }
+    public final fun throwsRE(): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            throws java/lang/RuntimeException
+        >
+     {
+        [StubStatement]
+        R|/throwsRE|()
+    }

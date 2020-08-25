@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -143,6 +142,7 @@ object FirErrors {
     val WRONG_IMPLIES_CONDITION by error0<FirSourceElement, PsiElement>()
     val MISSING_COEFFECT_CONTEXT by error0<FirSourceElement, PsiElement>()
     val UNEXPECTED_COEFFECT_CONTEXT by error0<FirSourceElement, PsiElement>()
+    val UNCHECKED_EXCEPTION by error1<FirSourceElement, PsiElement, ConeKotlinType>()
 
     // Extended checkers group
     val REDUNDANT_VISIBILITY_MODIFIER by warning0<FirSourceElement, PsiElement>()
