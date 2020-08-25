@@ -44,6 +44,16 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/function/also.kt");
         }
 
+        @TestMetadata("anonymousFunction.kt")
+        public void testAnonymousFunction() throws Exception {
+            runTest("testData/refactoring/inline/function/anonymousFunction.kt");
+        }
+
+        @TestMetadata("anonymousFunction2.kt")
+        public void testAnonymousFunction2() throws Exception {
+            runTest("testData/refactoring/inline/function/anonymousFunction2.kt");
+        }
+
         @TestMetadata("apply.kt")
         public void testApply() throws Exception {
             runTest("testData/refactoring/inline/function/apply.kt");

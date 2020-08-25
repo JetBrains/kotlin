@@ -43,8 +43,12 @@ class KotlinInlineFunctionHandler : KotlinInlineActionHandler() {
                 else -> KotlinBundle.message("refactoring.cannot.be.applied.no.sources.attached", refactoringName)
             }
 
-            showErrorHint(project, editor, message)
-            return
+            return showErrorHint(project, editor, message)
+        }
+
+        if (element.name == null) {
+            val message = KotlinBundle.message("refactoring.cannot.be.applied.to.anonymous.function", refactoringName)
+            return showErrorHint(project, editor, message)
         }
 
         val nameReference = editor?.findSimpleNameReference()
@@ -54,8 +58,7 @@ class KotlinInlineFunctionHandler : KotlinInlineActionHandler() {
                 KotlinBundle.message("text.inline.recursive.function.is.supported.only.on.references")
             )
 
-            showErrorHint(project, editor, message)
-            return
+            return showErrorHint(project, editor, message)
         }
 
         val dialog = KotlinInlineFunctionDialog(
