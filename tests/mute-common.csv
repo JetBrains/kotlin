@@ -2,6 +2,7 @@ Test key, Issue, State (optional: MUTE or FAIL), Status (optional: FLAKY)
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAgainstKotlin.testExtendingMutableInterfaces, KT-34105,,
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAgainstKotlin.testExtendingReadOnlyInterfaces, KT-34105,,
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAgainstKotlin.testUsingMutableInterfaces, ERROR: Incompatible types. Found: 'E' required: 'E',, FLAKY
+org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerTestGenerated.JavaAgainstKotlin.testUsingReadOnlyInterfaces, Incompatible types. Found: 'java.util.Set<K>' required: 'java.util.Set<E>',, FLAKY
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerWithoutUltraLightTestGenerated.JavaAgainstKotlin.testExtendingMutableInterfaces, KT-34105,,
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerWithoutUltraLightTestGenerated.JavaAgainstKotlin.testUsingMutableInterfaces,,, FLAKY
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinSourceCheckerWithoutUltraLightTestGenerated.JavaAgainstKotlin.testUsingReadOnlyInterfaces,,, FLAKY
