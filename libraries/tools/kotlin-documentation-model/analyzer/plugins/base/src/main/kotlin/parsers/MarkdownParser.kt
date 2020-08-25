@@ -248,7 +248,12 @@ class MarkdownParser(
             )
 
         private fun codeBlocksHandler(node: ASTNode): DocTag =
-            DocTagsFromIElementFactory.getInstance(node.type, children = node.children.evaluateChildren())
+            DocTagsFromIElementFactory.getInstance(node.type, children = node.children.mergeLeafASTNodes().map {
+                DocTagsFromIElementFactory.getInstance(
+                    MarkdownTokenTypes.TEXT,
+                    body = text.substring(it.startOffset, it.endOffset)
+                )
+            })
 
         private fun defaultHandler(node: ASTNode): DocTag =
             DocTagsFromIElementFactory.getInstance(
@@ -281,7 +286,7 @@ class MarkdownParser(
                 MarkdownTokenTypes.HARD_LINE_BREAK -> DocTagsFromIElementFactory.getInstance(node.type)
                 MarkdownTokenTypes.CODE_FENCE_CONTENT,
                 MarkdownTokenTypes.CODE_LINE -> DocTagsFromIElementFactory.getInstance(
-                    MarkdownTokenTypes.TEXT,
+                    MarkdownElementTypes.CODE_BLOCK,
                     body = text.substring(node.startOffset, node.endOffset)
                 )
                 MarkdownTokenTypes.TEXT -> DocTagsFromIElementFactory.getInstance(
@@ -341,25 +346,34 @@ class MarkdownParser(
                     children += this[index]
                 } else {
                     val startOffset = this[index].startOffset
-                    val type = this[index].type
+                    val sIndex = index
                     while (index < this.lastIndex) {
                         if (this.isNotLeaf(index + 1) || this[index + 1].startOffset != this[index].endOffset) {
-                            val endOffset = this[index].endOffset
-                            if (text.substring(startOffset, endOffset).transform().trim().isNotEmpty())
-                                children += LeafASTNode(type, startOffset, endOffset)
+                            mergedLeafNode(this, index, startOffset, sIndex)?.run {
+                                children += this
+                            }
                             break
                         }
                         index++
                     }
                     if (index == this.lastIndex) {
-                        val endOffset = this[index].endOffset
-                        if (text.substring(startOffset, endOffset).transform().trim().isNotEmpty())
-                            children += LeafASTNode(type, startOffset, endOffset)
+                        mergedLeafNode(this, index, startOffset, sIndex)?.run {
+                            children += this
+                        }
                     }
                 }
                 index++
             }
             return children
+        }
+
+        private fun mergedLeafNode(nodes: List<ASTNode>, index: Int, startOffset: Int, sIndex: Int): LeafASTNode? {
+            val endOffset = nodes[index].endOffset
+            if (text.substring(startOffset, endOffset).transform().trim().isNotEmpty()) {
+                val type = if (nodes.subList(sIndex, index).any { it.type == MarkdownTokenTypes.CODE_LINE }) MarkdownTokenTypes.CODE_LINE else MarkdownTokenTypes.TEXT
+                return LeafASTNode(type, startOffset, endOffset)
+            }
+            return null
         }
 
         private fun String.transform() = this
