@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 
 interface NewConstraintSystem {
     val hasContradiction: Boolean
-    val diagnostics: List<ConstraintSystemError>
+    val errors: List<ConstraintSystemError>
 
     fun getBuilder(): ConstraintSystemBuilder
 

@@ -73,7 +73,7 @@ class NewConstraintSystemImpl(
         }
     }
 
-    override val diagnostics: List<ConstraintSystemError>
+    override val errors: List<ConstraintSystemError>
         get() = storage.errors
 
     override fun getBuilder() = apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) }

@@ -43,7 +43,7 @@ class ConeInapplicableCandidateError(
     constructor(applicability: CandidateApplicability, candidate: Candidate) : this(
         applicability,
         candidate.symbol,
-        candidate.system.diagnostics
+        candidate.system.errors
     )
 
     override val reason: String get() = "Inapplicable($applicability): ${describeSymbol(candidateSymbol)}"

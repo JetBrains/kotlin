@@ -166,7 +166,7 @@ class KotlinResolutionCandidate(
         get() {
             processParts(stopOnFirstError = false)
 
-            val systemApplicability = getResultApplicability(getSystem().diagnostics)
+            val systemApplicability = getResultApplicability(getSystem().errors)
             return maxOf(currentApplicability, systemApplicability, variableApplicability)
         }
 

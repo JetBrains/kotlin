@@ -299,12 +299,12 @@ class CoroutineInferenceSession(
 
         for (completedCall in commonCalls) {
             updateCall(completedCall, nonFixedTypesToResultSubstitutor, nonFixedTypesToResult)
-            reportErrors(completedCall, completedCall.resolvedCall, commonSystem.diagnostics)
+            reportErrors(completedCall, completedCall.resolvedCall, commonSystem.errors)
         }
 
         for (callInfo in partiallyResolvedCallsInfo) {
             val resolvedCall = completeCall(callInfo, atomCompleter) ?: continue
-            reportErrors(callInfo, resolvedCall, commonSystem.diagnostics)
+            reportErrors(callInfo, resolvedCall, commonSystem.errors)
         }
 
         for (simpleCall in simpleCommonCalls) {

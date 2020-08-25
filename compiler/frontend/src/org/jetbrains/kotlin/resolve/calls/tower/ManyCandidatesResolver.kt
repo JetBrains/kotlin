@@ -170,7 +170,7 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
         diagnosticsHolder: KotlinDiagnosticsHolder.SimpleHolder,
         commonSystem: NewConstraintSystem
     ): CallResolutionResult {
-        val diagnostics = diagnosticsHolder.getDiagnostics() + callResolutionResult.diagnostics + commonSystem.diagnostics.asDiagnostics()
+        val diagnostics = diagnosticsHolder.getDiagnostics() + callResolutionResult.diagnostics + commonSystem.errors.asDiagnostics()
         return CompletedCallResolutionResult(callResolutionResult.resultCallAtom, diagnostics, commonSystem.asReadOnlyStorage())
     }
 }
