@@ -75,3 +75,7 @@ org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinL
 org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryNestedClassSecondaryConstructorUsages,,, FLAKY
 org.jetbrains.kotlin.findUsages.FindUsagesTestGenerated.Java.FindJavaMethodUsages.testJavaInvokeWithStaticImport,,, FLAKY
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testEnumStaticImportInJava,,, FLAKY
+org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryClassUsages, KT-34542, FAIL,
+org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryNestedClassUsages, KT-34542, FAIL,
+org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryObjectUsages, KT-34542, FAIL,
+

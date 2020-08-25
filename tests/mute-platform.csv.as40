@@ -1,7 +1,4 @@
 Test key, Issue, State (optional: MUTE or FAIL), Status (optional: FLAKY)
-org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryClassUsages, KT-34542, FAIL,
-org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryNestedClassUsages, KT-34542, FAIL,
-org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryObjectUsages, KT-34542, FAIL,
 org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.simpleAndroidAppWithCommonModule, KT-35225,,
 org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testTransitiveImplementWithAndroid, KT-35225,,
 org.jetbrains.kotlin.idea.caches.resolve.MultiModuleLineMarkerTestGenerated.testKotlinTestAnnotations, No line markers for test run,,
