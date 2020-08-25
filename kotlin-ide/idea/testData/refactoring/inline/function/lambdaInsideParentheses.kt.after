@@ -1,0 +1,10 @@
+fun testWith() {
+    val i: Int = 42
+    val withInside = (fun Int.(): String {
+        return toString()
+    })(i)
+    val withTrailing = (fun Int.(): String {
+        return toString()
+    })(i)
+}
+

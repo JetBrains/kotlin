@@ -159,6 +159,16 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/function/Kt39818.kt");
         }
 
+        @TestMetadata("lambdaInsideParentheses.kt")
+        public void testLambdaInsideParentheses() throws Exception {
+            runTest("testData/refactoring/inline/function/lambdaInsideParentheses.kt");
+        }
+
+        @TestMetadata("lambdaInsideParentheses2.kt")
+        public void testLambdaInsideParentheses2() throws Exception {
+            runTest("testData/refactoring/inline/function/lambdaInsideParentheses2.kt");
+        }
+
         @TestMetadata("let.kt")
         public void testLet() throws Exception {
             runTest("testData/refactoring/inline/function/let.kt");
