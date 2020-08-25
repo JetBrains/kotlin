@@ -42,10 +42,13 @@ interface JSConfigurator : ModuleConfiguratorWithModuleType, ModuleConfiguratorW
         modulePath: Path
     ): TaskResult<Unit> =
         GradlePlugin.gradleProperties
-            .addValues("kotlin.js.generate.executable.default" to "false")
+            .addValues(
+                "kotlin.js.generate.executable.default" to "false",
+                "kotlin.js.compiler" to settingsValue(module, compiler).text.toLowerCase()
+            )
 
     override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> =
-        super.getConfiguratorSettings() + kind
+        super.getConfiguratorSettings() + kind + compiler
 
     companion object : ModuleConfiguratorSettings() {
         val kind by enumSetting<JsTargetKind>(
@@ -60,6 +63,22 @@ interface JSConfigurator : ModuleConfiguratorWithModuleType, ModuleConfiguratorW
                             && (reference.module?.template is SimpleJsClientTemplate ||
                             reference.module?.template is ReactJsClientTemplate ||
                             reference.module?.template is SimpleNodeJsTemplate) -> false
+                    else -> true
+                }
+            }
+        }
+
+        val compiler by enumSetting<JsCompiler>(
+            KotlinNewProjectWizardBundle.message("module.configurator.js.target.settings.compiler"),
+            GenerationPhase.PROJECT_GENERATION
+        ) {
+            defaultValue = value(JsCompiler.IR)
+            filter = filter@{ reference, compilerCandidate ->
+                when {
+                    reference !is ModuleConfiguratorSettingReference<*, *> -> false
+                    reference.module?.let { settingValue(it, kind) } == JsTargetKind.LIBRARY -> true
+                    reference.module?.let { settingValue(it, kind) } == JsTargetKind.APPLICATION
+                            && compilerCandidate == JsCompiler.BOTH -> false
                     else -> true
                 }
             }
