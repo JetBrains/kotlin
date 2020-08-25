@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 
 abstract class PhasedFirFileResolver : FirSessionComponent {
-    abstract fun resolveFile(firFile: FirFile, fromPhase: FirResolvePhase, toPhase: FirResolvePhase)
+    abstract fun resolveDeclaration(declaration: FirDeclaration, fromPhase: FirResolvePhase, toPhase: FirResolvePhase)
 }
 
 internal val FirSession.phasedFirFileResolver: PhasedFirFileResolver? by FirSession.nullableSessionComponentAccessor()

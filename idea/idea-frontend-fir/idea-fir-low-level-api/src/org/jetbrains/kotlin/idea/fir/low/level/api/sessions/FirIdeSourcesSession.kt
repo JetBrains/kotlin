@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.idea.fir.low.level.api.IdePhasedFirFileResolver
+import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirElementBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCacheImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
@@ -61,7 +62,7 @@ internal class FirIdeSourcesSession private constructor(
             val searchScope = ModuleWithDependentsScope(project, dependentModules.map { it.module })
             return FirIdeSourcesSession(moduleInfo, sessionProvider, searchScope, firBuilder).apply {
                 val cache = ModuleFileCacheImpl(this)
-                val phasedFirFileResolver = IdePhasedFirFileResolver(firBuilder, cache)
+                val phasedFirFileResolver = IdePhasedFirFileResolver(FirElementBuilder(firFileBuilder), cache)
 
                 registerCommonComponents()
                 registerResolveComponents()

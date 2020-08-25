@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -28,16 +27,9 @@ fun <D> AbstractFirBasedSymbol<D>.phasedFir(
             "Incorrect resolvePhase: actual: $availablePhase, expected: $requiredPhase\n For: ${fir.render()}"
         }
 
-        val containingFile = when (this) {
-            is FirCallableSymbol<*> -> provider.getFirCallableContainerFile(this)
-            is FirClassLikeSymbol<*> -> provider.getFirClassifierContainerFile(this)
-            else -> null
-        }
-            ?: throw AssertionError("Cannot get container file by symbol: $this (${result.render()})")
-
         val resolver = fir.session.phasedFirFileResolver
             ?: error("phasedFirFileResolver should be defined when working with FIR in phased mode")
-        resolver.resolveFile(containingFile, fromPhase = availablePhase, toPhase = requiredPhase)
+        resolver.resolveDeclaration(fir, fromPhase = availablePhase, toPhase = requiredPhase)
     }
     return result
 }

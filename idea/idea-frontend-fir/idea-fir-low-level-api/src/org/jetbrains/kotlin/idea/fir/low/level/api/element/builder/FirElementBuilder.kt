@@ -68,6 +68,18 @@ internal class FirElementBuilder(
         }
     }
 
+    fun lazyResolveDeclarationNoPCECheck(
+        declaration: FirDeclaration,
+        moduleFileCache: ModuleFileCache,
+        toPhase: FirResolvePhase
+    ) {
+        if (declaration.resolvePhase < toPhase) {
+            val firFile = declaration.getContainingFile() ?: error("FirFile was not found for\n${declaration.render()}")
+            runLazyResolveWithoutPCECheck(declaration, moduleFileCache, firFile, firFile.session.firIdeProvider, toPhase)
+        }
+    }
+
+
     private fun runLazyResolvePhase(
         firDeclarationToResolve: FirDeclaration,
         containerFirFile: FirFile,
@@ -153,6 +165,30 @@ internal class FirElementBuilder(
             runLazyResolvePhase(firDeclarationToResolve, containerFirFile, provider, toPhase, towerDataContextForStatement)
         }
     }
+
+    private fun runLazyResolveWithoutPCECheck(
+        firDeclarationToResolve: FirDeclaration,
+        cache: ModuleFileCache,
+        containerFirFile: FirFile,
+        provider: FirProvider,
+        toPhase: FirResolvePhase,
+        towerDataContextForStatement: MutableMap<FirStatement, FirTowerDataContext>? = null,
+    ) {
+        val nonLazyPhase = minOf(toPhase, FirResolvePhase.DECLARATIONS)
+        if (firDeclarationToResolve.resolvePhase < nonLazyPhase) {
+            firFileBuilder.runResolveWithLock(
+                containerFirFile,
+                fromPhase = firDeclarationToResolve.resolvePhase,
+                toPhase = nonLazyPhase,
+                cache = cache,
+            )
+        }
+        if (toPhase <= nonLazyPhase) return
+        firFileBuilder.runCustomResolveUnderLock(containerFirFile, cache) {
+            runLazyResolvePhase(firDeclarationToResolve, containerFirFile, provider, toPhase, towerDataContextForStatement)
+        }
+    }
+
 
     //TODO for completion only
     fun runLazyResolveForCompletion(
