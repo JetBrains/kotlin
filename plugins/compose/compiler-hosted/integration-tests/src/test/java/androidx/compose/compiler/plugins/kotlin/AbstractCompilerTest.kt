@@ -221,7 +221,7 @@ abstract class AbstractCompilerTest : TestCase() {
 
     companion object {
         val homeDir by lazy { File(computeHomeDirectory()).absolutePath }
-        val projectRoot by lazy { File(homeDir, "../../../../..").absolutePath }
+        val projectRoot by lazy { File(homeDir, "../../../../../..").absolutePath }
         val kotlinHome by lazy {
             File(projectRoot, "prebuilts/androidx/external/org/jetbrains/kotlin/")
         }
@@ -229,8 +229,7 @@ abstract class AbstractCompilerTest : TestCase() {
             File(System.getenv("OUT_DIR") ?: File(projectRoot, "out").absolutePath)
         }
         val composePluginJar by lazy {
-
-            File(outDir, "ui/compose/compose-compiler/build/jarjar/compose-compiler.jar")
+            File(outDir, "ui/compose/compiler/compiler/build/jarjar/compiler.jar")
         }
 
         fun kotlinRuntimeJar(module: String) = File(

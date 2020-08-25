@@ -14,40 +14,54 @@
  * limitations under the License.
  */
 
-
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 import static androidx.build.dependencies.DependenciesKt.*
 import androidx.build.CompilationTarget
 import androidx.build.LibraryGroups
 import androidx.build.LibraryVersions
 import androidx.build.Publish
 
-plugins {
-    id("AndroidXPlugin")
-    id("kotlin")
+buildscript {
+    dependencies {
+        classpath 'org.anarres.jarjar:jarjar-gradle:1.0.1'
+    }
 }
+
+plugins {
+    id("java")
+    id("AndroidXPlugin")
+}
+
+apply plugin: 'org.anarres.jarjar'
 
 dependencies {
-    compileOnly(KOTLIN_STDLIB)
-    compileOnly("org.jetbrains.kotlin:kotlin-compiler:$KOTLIN_VERSION")
+    compileOnly(project(":compose:compiler:compiler-hosted"))
 }
 
-tasks.withType(KotlinCompile).configureEach {
-    kotlinOptions {
-        jvmTarget = "1.8"
-        freeCompilerArgs = ["-Xskip-metadata-version-check", "-Xjvm-default=enable"]
+jarjar.repackage('embeddedPlugin') {
+    destinationName "compiler.jar"
+    from configurations.compileClasspath
+    classRename 'com.intellij.**', 'org.jetbrains.kotlin.com.intellij.@1'
+}
+
+configurations {
+    // replace the standard jar with the one built by 'jarjar.repackage' in both api and runtime variants
+    apiElements.outgoing.artifacts.clear()
+    apiElements.outgoing.artifact(embeddedPlugin.destinationPath) {
+        builtBy embeddedPlugin
+    }
+    runtimeElements.outgoing.artifacts.clear()
+    runtimeElements.outgoing.artifact(embeddedPlugin.destinationPath) {
+        builtBy embeddedPlugin
     }
 }
 
 androidx {
-    name = "AndroidX Compose Hosted Compiler Plugin"
-    // Nobody should ever get this artifact from maven; just from studio or from source
+    name = "Compose Compiler"
     publish = Publish.SNAPSHOT_AND_RELEASE
     toolingProject = true
     mavenVersion = LibraryVersions.COMPOSE
-    mavenGroup = LibraryGroups.COMPOSE
+    mavenGroup = LibraryGroups.Compose.COMPILER
     inceptionYear = "2019"
-    description = "Contains the Kotlin compiler plugin for Compose used in Android Studio and IDEA"
+    description = "Compiler plugin that enables Compose"
     compilationTarget = CompilationTarget.HOST
 }
