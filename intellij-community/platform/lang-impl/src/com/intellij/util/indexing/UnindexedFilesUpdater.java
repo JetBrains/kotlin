@@ -16,6 +16,7 @@ import com.intellij.openapi.roots.ModuleRootListener;
 import com.intellij.openapi.roots.ex.ProjectRootManagerEx;
 import com.intellij.openapi.roots.impl.PushedFilePropertiesUpdater;
 import com.intellij.openapi.roots.impl.PushedFilePropertiesUpdaterImpl;
+import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -52,6 +53,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
   public static final ExecutorService GLOBAL_INDEXING_EXECUTOR = AppExecutorUtil.createBoundedApplicationPoolExecutor(
     "Indexing", getMaxNumberOfIndexingThreads()
   );
+  private static final @NotNull Key<Boolean> CONTENT_SCANNED = Key.create("CONTENT_SCANNED");
 
   private final FileBasedIndexImpl myIndex = (FileBasedIndexImpl)FileBasedIndex.getInstance();
   private final Project myProject;
@@ -71,10 +73,14 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
         DumbService.getInstance(project).cancelTask(UnindexedFilesUpdater.this);
       }
     });
+    myProject.putUserData(CONTENT_SCANNED, null);
   }
 
   public UnindexedFilesUpdater(@NotNull Project project) {
-    this(project, false, false);
+    // If we haven't succeeded to fully scan the project content yet, then we must keep trying to run
+    // file based index extensions for all project files until at least one of UnindexedFilesUpdater-s finishes without cancellation.
+    // This is important, for example, for shared indexes: all files must be associated with their locally available shared index chunks.
+    this(project, false, !isProjectContentFullyScanned(project));
   }
 
   private void updateUnindexedFiles(ProgressIndicator indicator) {
@@ -120,7 +126,7 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
     List<IndexableFilesProvider> orderedProviders = getOrderedProviders();
 
     Map<IndexableFilesProvider, List<VirtualFile>> providerToFiles = collectIndexableFilesConcurrently(myProject, indicator, orderedProviders);
-
+    myProject.putUserData(CONTENT_SCANNED, true);
     projectIndexingHistory.getTimes().setScanFilesEnd(Instant.now());
 
     if (trackResponsiveness) snapshot.logResponsivenessSinceCreation("Indexable file iteration");
@@ -191,6 +197,10 @@ public final class UnindexedFilesUpdater extends DumbModeTask {
 
     FileBasedIndexInfrastructureExtension.EP_NAME.extensions().forEach(ex -> ex.noFilesFoundToProcessIndexingProject(myProject, indicator));
     myIndex.dumpIndexStatistics();
+  }
+
+  static boolean isProjectContentFullyScanned(@NotNull Project project) {
+    return Boolean.TRUE.equals(project.getUserData(CONTENT_SCANNED));
   }
 
   /**
