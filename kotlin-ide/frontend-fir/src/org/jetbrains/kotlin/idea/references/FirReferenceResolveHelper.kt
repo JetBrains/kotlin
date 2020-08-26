@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.calls.SyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeOperatorAmbiguityError
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -218,7 +221,13 @@ internal object FirReferenceResolveHelper {
                 } else emptyList()
             }
             is FirErrorNamedReference -> {
-                return emptyList()
+                val candidates = when (val diagnostic = fir.diagnostic) {
+                    is ConeAmbiguityError -> diagnostic.candidates
+                    is ConeOperatorAmbiguityError -> diagnostic.candidates
+                    is ConeInapplicableCandidateError -> listOf(diagnostic.candidateSymbol)
+                    else -> emptyList()
+                }
+                return candidates.mapNotNull { it.fir.buildSymbol(symbolBuilder) }
             }
             else -> {
                 // Handle situation when we're in the middle/beginning of qualifier
