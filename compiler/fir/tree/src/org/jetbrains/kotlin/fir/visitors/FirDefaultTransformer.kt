@@ -12,10 +12,6 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.*
 
 abstract class FirDefaultTransformer<D> : FirTransformer<D>() {
-    override fun transformDelegatedTypeRef(delegatedTypeRef: FirDelegatedTypeRef, data: D): CompositeTransformResult<FirTypeRef> {
-        return transformTypeRef(delegatedTypeRef, data)
-    }
-
     override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: D): CompositeTransformResult<FirTypeRef> {
         return transformTypeRef(implicitTypeRef, data)
     }

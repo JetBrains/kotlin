@@ -223,10 +223,6 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             withCopy()
         }
 
-        builder(delegatedTypeRef) {
-            withCopy()
-        }
-
         builder(functionTypeRef) {
             withCopy()
         }
@@ -351,7 +347,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         // -----------------------------------------------------------------------
 
         findImplementationsWithElementInParents(annotationContainer) {
-            it.type !in setOf("FirDelegatedTypeRefImpl", "FirImplicitTypeRefImpl")
+            it.type !in setOf("FirImplicitTypeRefImpl")
         }.forEach {
             it.builder?.parents?.add(annotationContainerBuilder)
         }

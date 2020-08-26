@@ -823,12 +823,6 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         visitElement(typeRef)
     }
 
-    override fun visitDelegatedTypeRef(delegatedTypeRef: FirDelegatedTypeRef) {
-        delegatedTypeRef.typeRef.accept(this)
-        print(" by ")
-        delegatedTypeRef.delegate?.accept(this)
-    }
-
     override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {
         visitTypeRef(errorTypeRef)
         print("<ERROR TYPE REF: ${errorTypeRef.diagnostic.reason}>")

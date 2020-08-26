@@ -564,11 +564,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +booleanField("isSuspend")
         }
 
-        delegatedTypeRef.configure {
-            +field("delegate", expression, nullable = true)
-            +field(typeRef)
-        }
-
         typeRefWithNullability.configure {
             +booleanField("isMarkedNullable")
         }

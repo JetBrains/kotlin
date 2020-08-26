@@ -434,14 +434,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             kind = OpenClass
         }
 
-        impl(delegatedTypeRef) {
-            listOf("source", "annotations").forEach {
-                default(it) {
-                    delegate = "typeRef"
-                }
-            }
-        }
-
         impl(safeCallExpression) {
             useTypes(safeCallCheckedSubjectType)
         }
@@ -462,7 +454,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         val implementationWithConfigurableTypeRef = listOf(
-            "FirDelegatedTypeRefImpl",
             "FirTypeProjectionWithVarianceImpl",
             "FirCallableReferenceAccessImpl",
             "FirThisReceiverExpressionImpl",

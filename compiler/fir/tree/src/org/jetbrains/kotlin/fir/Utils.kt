@@ -23,7 +23,6 @@ private val PUBLIC_METHOD_NAMES_IN_OBJECT = setOf("equals", "hashCode", "getClas
 fun <R : FirTypeRef> R.copyWithNewSourceKind(newKind: FirFakeSourceElementKind): R {
     if (source == null) return this
     if (source?.kind == newKind) return this
-    if (this is FirDelegatedTypeRef) return this
     val newSource = source?.fakeElement(newKind)
 
     @Suppress("UNCHECKED_CAST")

@@ -11,10 +11,6 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.types.*
 
 abstract class FirDefaultVisitor<R, D> : FirVisitor<R, D>() {
-    override fun visitDelegatedTypeRef(delegatedTypeRef: FirDelegatedTypeRef, data: D): R {
-        return visitTypeRef(delegatedTypeRef, data)
-    }
-
     override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: D): R {
         return visitTypeRef(implicitTypeRef, data)
     }

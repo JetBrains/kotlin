@@ -119,7 +119,6 @@ import org.jetbrains.kotlin.fir.references.FirBackingFieldReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
-import org.jetbrains.kotlin.fir.types.FirDelegatedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRefWithNullability
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.FirDynamicTypeRef
@@ -591,10 +590,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {
         visitElement(errorTypeRef)
-    }
-
-    open fun visitDelegatedTypeRef(delegatedTypeRef: FirDelegatedTypeRef) {
-        visitElement(delegatedTypeRef)
     }
 
     open fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability) {
@@ -1099,10 +1094,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef, data: Nothing?) {
         visitErrorTypeRef(errorTypeRef)
-    }
-
-    final override fun visitDelegatedTypeRef(delegatedTypeRef: FirDelegatedTypeRef, data: Nothing?) {
-        visitDelegatedTypeRef(delegatedTypeRef)
     }
 
     final override fun visitTypeRefWithNullability(typeRefWithNullability: FirTypeRefWithNullability, data: Nothing?) {
