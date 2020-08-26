@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -38,12 +37,6 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         internal set
 
     final override val session: FirSession get() = components.session
-
-    final override val <D> AbstractFirBasedSymbol<D>.phasedFir: D where D : FirDeclaration, D : FirSymbolOwner<D>
-        get() {
-            val requiredPhase = transformerPhase.requiredToLaunch
-            return phasedFir(requiredPhase)
-        }
 
     protected inline fun <T> withLocalScopeCleanup(crossinline l: () -> T): T {
         return context.withTowerDataCleanup(l)

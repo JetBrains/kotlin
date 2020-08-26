@@ -13,15 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 
-fun <D> AbstractFirBasedSymbol<D>.phasedFir(
-    requiredPhase: FirResolvePhase = FirResolvePhase.DECLARATIONS
-): D where D : FirDeclaration, D : FirSymbolOwner<D> {
-
-    ensureResolved(requiredPhase, fir.session)
-
-    return fir
-}
-
 fun <D> AbstractFirBasedSymbol<D>.ensureResolved(
     requiredPhase: FirResolvePhase,
     // TODO: Currently, the parameter is unused but it's needed to guarantee that all call-sites are able to supply use-site session
