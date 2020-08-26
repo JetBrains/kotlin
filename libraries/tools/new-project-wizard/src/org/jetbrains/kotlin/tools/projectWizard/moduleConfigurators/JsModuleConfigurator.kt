@@ -44,7 +44,6 @@ interface JSConfigurator : ModuleConfiguratorWithModuleType, ModuleConfiguratorW
         GradlePlugin.gradleProperties
             .addValues(
                 "kotlin.js.generate.executable.default" to "false",
-                "kotlin.js.compiler" to settingsValue(module, compiler).text.toLowerCase()
             )
 
     override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> =
@@ -139,9 +138,6 @@ abstract class JsSinglePlatformModuleConfigurator :
         super<ModuleConfiguratorWithTests>.getConfiguratorSettings() +
                 super<JSConfigurator>.getConfiguratorSettings()
 
-    @NonNls
-    override val suggestedModuleName = "js"
-
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JS
 
     override val canContainSubModules = false
@@ -158,7 +154,7 @@ abstract class JsSinglePlatformModuleConfigurator :
         module: Module
     ): List<BuildSystemIR> = irsList {
         "kotlin" {
-            "js" {
+            "js(${reader.settingsValue(module, JSConfigurator.compiler).text})" {
                 subTarget(module, reader)
             }
         }
@@ -170,6 +166,9 @@ abstract class JsSinglePlatformModuleConfigurator :
 object BrowserJsSinglePlatformModuleConfigurator : JsSinglePlatformModuleConfigurator(), JsBrowserBasedConfigurator {
     @NonNls
     override val id = "jsBrowserSinglePlatform"
+
+    @NonNls
+    override val suggestedModuleName = "browser"
 
     override val moduleKind = ModuleKind.singleplatformJsBrowser
 
@@ -188,6 +187,9 @@ object BrowserJsSinglePlatformModuleConfigurator : JsSinglePlatformModuleConfigu
 object NodeJsSinglePlatformModuleConfigurator : JsSinglePlatformModuleConfigurator() {
     @NonNls
     override val id = "jsNodeSinglePlatform"
+
+    @NonNls
+    override val suggestedModuleName = "nodejs"
 
     override val moduleKind = ModuleKind.singleplatformJsNode
 
