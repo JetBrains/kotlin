@@ -87,10 +87,10 @@ sealed class DClasslike : Documentable(), WithScope, WithVisibility, WithExpectA
 
 data class DModule(
     override val name: String,
-    val packages: List<DPackage>,
-    override val documentation: SourceSetDependent<DocumentationNode>,
+    val packages: List<DPackage> = emptyList(),
+    override val documentation: SourceSetDependent<DocumentationNode> = emptyMap(),
     override val expectPresentInSet: DokkaSourceSet? = null,
-    override val sourceSets: Set<DokkaSourceSet>,
+    override val sourceSets: Set<DokkaSourceSet> = emptySet(),
     override val extra: PropertyContainer<DModule> = PropertyContainer.empty()
 ) : Documentable(), WithExtraProperties<DModule> {
     override val dri: DRI = DRI.topLevel
@@ -102,13 +102,13 @@ data class DModule(
 
 data class DPackage(
     override val dri: DRI,
-    override val functions: List<DFunction>,
-    override val properties: List<DProperty>,
-    override val classlikes: List<DClasslike>,
-    val typealiases: List<DTypeAlias>,
-    override val documentation: SourceSetDependent<DocumentationNode>,
+    override val functions: List<DFunction> = emptyList(),
+    override val properties: List<DProperty> = emptyList(),
+    override val classlikes: List<DClasslike> = emptyList(),
+    val typealiases: List<DTypeAlias> = emptyList(),
+    override val documentation: SourceSetDependent<DocumentationNode> = emptyMap(),
     override val expectPresentInSet: DokkaSourceSet? = null,
-    override val sourceSets: Set<DokkaSourceSet>,
+    override val sourceSets: Set<DokkaSourceSet> = emptySet(),
     override val extra: PropertyContainer<DPackage> = PropertyContainer.empty()
 ) : Documentable(), WithScope, WithExtraProperties<DPackage> {
     override val name = dri.packageName.orEmpty()
