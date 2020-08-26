@@ -8,15 +8,15 @@ import com.jetbrains.cidr.execution.simulatorSupport.SimulatorConfiguration
 import com.jetbrains.cidr.execution.simulatorSupport.SimulatorsRegistry
 
 open class DeviceService(protected val project: Project) {
-    open fun getAll(): List<Device> = getIosDevices()
-    fun getIosDevices(): List<AppleDevice> = getIosPhysicalDevices() + getIosSimulators()
+    open fun getAll(): List<Device> = getAppleDevices()
+    fun getAppleDevices(): List<AppleDevice> = getApplePhysicalDevices() + getAppleSimulators()
 
-    protected fun getIosPhysicalDevices(): List<ApplePhysicalDevice> =
+    protected fun getApplePhysicalDevices(): List<ApplePhysicalDevice> =
         AMDeviceManager.getInstance().devices
             .filter { it.deviceType.isIOS }
             .map(::ApplePhysicalDevice)
 
-    protected fun getIosSimulators(): List<AppleSimulator> =
+    protected fun getAppleSimulators(): List<AppleSimulator> =
         SimulatorsRegistry.getInstance().configurations
             .filter { it.launchDeviceFamily == SimulatorConfiguration.IPHONE_FAMILY }
             .map(::AppleSimulator)

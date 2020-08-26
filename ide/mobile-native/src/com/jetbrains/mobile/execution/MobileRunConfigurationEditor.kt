@@ -73,7 +73,7 @@ open class MobileRunConfigurationEditor(
 
         val deviceService = MobileDeviceService.getInstance(project)
 
-        val appleDevices = deviceService.getIosDevices()
+        val appleDevices = deviceService.getAppleDevices()
         appleDeviceComboBox = addComboBox(MobileBundle.message("device.apple.select"), appleDevices)
 
         val androidDevices = deviceService.getAndroidDevices()

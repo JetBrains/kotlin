@@ -8,7 +8,7 @@ import com.intellij.openapi.util.AtomicClearableLazyValue
 import com.jetbrains.mobile.AndroidToolkit
 
 class MobileDeviceService(project: Project) : DeviceService(project) {
-    override fun getAll(): List<Device> = getIosPhysicalDevices() + getAndroidDevices() + getIosSimulators()
+    override fun getAll(): List<Device> = getApplePhysicalDevices() + getAndroidDevices() + getAppleSimulators()
 
     fun getAndroidDevices(): List<AndroidDevice> =
         getAndroidPhysicalDevices() + androidEmulators.value
