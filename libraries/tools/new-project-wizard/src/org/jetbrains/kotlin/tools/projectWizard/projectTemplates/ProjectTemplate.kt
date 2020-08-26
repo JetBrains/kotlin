@@ -239,7 +239,7 @@ object FullStackWebApplicationProjectTemplate : ProjectTemplate() {
                         }
                     },
                     ModuleType.js.createDefaultTarget().apply {
-                        withTemplate(SimpleJsClientTemplate())
+                        withTemplate(ReactJsClientTemplate())
                     }
                 )
             )
