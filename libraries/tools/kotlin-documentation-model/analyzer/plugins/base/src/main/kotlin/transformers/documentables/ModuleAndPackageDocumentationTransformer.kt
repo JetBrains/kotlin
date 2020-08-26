@@ -5,7 +5,6 @@ import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
 
-// TODO NOW: Test
 internal class ModuleAndPackageDocumentationTransformer(
     private val moduleAndPackageDocumentationReader: ModuleAndPackageDocumentationReader
 ) : PreMergeDocumentableTransformer {
