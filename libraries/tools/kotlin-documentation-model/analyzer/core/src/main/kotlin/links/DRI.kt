@@ -1,7 +1,5 @@
 package org.jetbrains.dokka.links
 
-import org.jetbrains.dokka.model.ClassKind
-
 /**
  * [DRI] stands for DokkaResourceIdentifier
  */
