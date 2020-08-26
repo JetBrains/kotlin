@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.fir.types.ConeTypeVariableTypeConstructor
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.CoroutinePosition
@@ -94,7 +94,7 @@ class FirBuilderInferenceSession(
         @Suppress("UNCHECKED_CAST")
         components.callCompleter.completer.complete(
             context,
-            KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL,
+            ConstraintSystemCompletionMode.FULL,
             partiallyResolvedCalls.map { it.first as FirStatement },
             components.session.builtinTypes.unitType.type,
             collectVariablesFromContext = true

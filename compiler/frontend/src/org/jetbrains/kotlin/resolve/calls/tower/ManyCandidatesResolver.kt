@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
@@ -81,7 +82,7 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
         }
 
         fun runCompletion(constraintSystem: NewConstraintSystem, atoms: List<ResolvedAtom>) {
-            val completionMode = KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL
+            val completionMode = ConstraintSystemCompletionMode.FULL
             kotlinConstraintSystemCompleter.runCompletion(
                 constraintSystem.asConstraintSystemCompleterContext(),
                 completionMode,

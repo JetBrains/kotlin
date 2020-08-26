@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
-import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
@@ -31,7 +31,7 @@ interface NewConstraintSystem {
     // after this method we shouldn't mutate system via ConstraintSystemBuilder
     fun asReadOnlyStorage(): ConstraintStorage
 
-    fun asConstraintSystemCompleterContext(): KotlinConstraintSystemCompleter.Context
+    fun asConstraintSystemCompleterContext(): ConstraintSystemCompletionContext
     fun asPostponedArgumentsAnalyzerContext(): PostponedArgumentsAnalyzer.Context
     fun asPostponedArgumentInputTypesResolverContext(): PostponedArgumentInputTypesResolver.Context
 }

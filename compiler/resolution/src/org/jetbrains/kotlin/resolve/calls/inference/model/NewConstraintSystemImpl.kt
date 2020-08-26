@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.model
 
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.inference.*
-import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
-import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
-import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver
-import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolver
+import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedAtom
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
@@ -30,7 +27,7 @@ class NewConstraintSystemImpl(
     ConstraintSystemBuilder,
     ConstraintInjector.Context,
     ResultTypeResolver.Context,
-    KotlinConstraintSystemCompleter.Context,
+    ConstraintSystemCompletionContext,
     PostponedArgumentInputTypesResolver.Context,
     PostponedArgumentsAnalyzer.Context {
     private val storage = MutableConstraintStorage()

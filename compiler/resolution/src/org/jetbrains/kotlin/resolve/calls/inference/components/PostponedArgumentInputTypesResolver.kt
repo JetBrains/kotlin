@@ -20,7 +20,7 @@ class PostponedArgumentInputTypesResolver(
     private val resultTypeResolver: ResultTypeResolver,
     private val variableFixationFinder: VariableFixationFinder
 ) {
-    interface Context : KotlinConstraintSystemCompleter.Context
+    interface Context : ConstraintSystemCompletionContext
 
     private class ParameterTypesInfo(
         val parametersFromDeclaration: List<UnwrappedType?>?,
@@ -339,7 +339,7 @@ class PostponedArgumentInputTypesResolver(
     fun collectParameterTypesAndBuildNewExpectedTypes(
         c: Context,
         postponedArguments: List<PostponedAtomWithRevisableExpectedType>,
-        completionMode: KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode,
+        completionMode: ConstraintSystemCompletionMode,
         dependencyProvider: TypeVariableDependencyInformationProvider
     ): Boolean {
         // We can collect parameter types from declaration in any mode, they can't change during completion.
@@ -357,7 +357,7 @@ class PostponedArgumentInputTypesResolver(
              *
              * TODO: investigate why we can't do it for anonymous functions in full mode always (see `diagnostics/tests/resolve/resolveWithSpecifiedFunctionLiteralWithId.kt`)
              */
-            if (completionMode == KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.PARTIAL && !isAnonymousFunction(argument))
+            if (completionMode == ConstraintSystemCompletionMode.PARTIAL && !isAnonymousFunction(argument))
                 return@any false
             if (argument.revisedExpectedType != null) return@any false
             val parameterTypesInfo =
@@ -459,7 +459,7 @@ class PostponedArgumentInputTypesResolver(
         val relatedVariables = type.getPureArgumentsForFunctionalTypeOrSubtype()
             .flatMap { getAllDeeplyRelatedTypeVariables(it, dependencyProvider) }
         val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
-            this, relatedVariables, postponedArguments, KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL, topLevelType
+            this, relatedVariables, postponedArguments, ConstraintSystemCompletionMode.FULL, topLevelType
         )
 
         if (variableForFixation == null || !variableForFixation.hasProperConstraint)
