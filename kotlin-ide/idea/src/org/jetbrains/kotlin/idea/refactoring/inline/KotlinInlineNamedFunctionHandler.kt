@@ -8,35 +8,29 @@ package org.jetbrains.kotlin.idea.refactoring.inline
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.refactoring.isAbstract
 import org.jetbrains.kotlin.idea.util.isExpectDeclaration
-import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
-class KotlinInlineFunctionHandler : KotlinInlineActionHandler() {
-    override val helpId: String? get() = HelpID.INLINE_METHOD
+class KotlinInlineNamedFunctionHandler : AbstractKotlinInlineFunctionHandler<KtNamedFunction>() {
+    override fun canInlineKotlinFunction(function: KtFunction): Boolean = function is KtNamedFunction
 
-    override val refactoringName: String get() = KotlinBundle.message("title.inline.function")
+    override fun inlineKotlinFunction(project: Project, editor: Editor?, function: KtNamedFunction) {
+        if (!checkSources(project, editor, function)) return
 
-    override fun canInlineKotlinElement(element: KtElement): Boolean = element is KtNamedFunction
-
-    override fun inlineKotlinElement(project: Project, editor: Editor?, element: KtElement) {
-        element as KtNamedFunction
-        if (!checkSources(project, editor, element)) return
-
-        if (!element.hasBody()) {
+        if (!function.hasBody()) {
             val message = when {
-                element.isAbstract() -> KotlinBundle.message("refactoring.cannot.be.applied.to.abstract.declaration", refactoringName)
-                element.isExpectDeclaration() -> KotlinBundle.message(
+                function.isAbstract() -> KotlinBundle.message("refactoring.cannot.be.applied.to.abstract.declaration", refactoringName)
+                function.isExpectDeclaration() -> KotlinBundle.message(
                     "refactoring.cannot.be.applied.to.expect.declaration",
                     refactoringName
                 )
@@ -46,13 +40,13 @@ class KotlinInlineFunctionHandler : KotlinInlineActionHandler() {
             return showErrorHint(project, editor, message)
         }
 
-        if (element.name == null) {
+        if (function.name == null) {
             val message = KotlinBundle.message("refactoring.cannot.be.applied.to.anonymous.function", refactoringName)
             return showErrorHint(project, editor, message)
         }
 
         val nameReference = editor?.findSimpleNameReference()
-        val recursive = element.isRecursive()
+        val recursive = function.isRecursive()
         if (recursive && nameReference == null) {
             val message = RefactoringBundle.getCannotRefactorMessage(
                 KotlinBundle.message("text.inline.recursive.function.is.supported.only.on.references")
@@ -62,7 +56,7 @@ class KotlinInlineFunctionHandler : KotlinInlineActionHandler() {
         }
 
         val dialog = KotlinInlineFunctionDialog(
-            element,
+            function,
             nameReference,
             allowToInlineThisOnly = recursive,
             editor = editor,
