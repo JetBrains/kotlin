@@ -22,8 +22,8 @@ class PackagesTest : AbstractModelTest("/src/main/kotlin/packages/Test.kt", "pac
                 }
             }
         ) {
-            with((this / "[JVM root]").cast<DPackage>()) {
-                name equals "[JVM root]"
+            with((this / "").cast<DPackage>()) {
+                name equals ""
                 children counts 0
             }
         }
