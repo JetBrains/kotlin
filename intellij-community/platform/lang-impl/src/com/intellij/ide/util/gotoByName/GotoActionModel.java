@@ -716,7 +716,9 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
         try {
           r.run();
         }
-        catch (Exception e) {}
+        catch (Throwable e) {
+          LOG.error(e);
+        }
       }
       else {
         myModel.updateOnEdt(r);
