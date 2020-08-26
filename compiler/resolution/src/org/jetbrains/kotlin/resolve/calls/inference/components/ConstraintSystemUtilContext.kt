@@ -18,4 +18,5 @@ interface ConstraintSystemUtilContext {
     fun TypeVariableMarker.hasOnlyInputTypesAttribute(): Boolean
     fun KotlinTypeMarker.unCapture(): KotlinTypeMarker
     fun TypeVariableMarker.isReified(): Boolean
+    fun KotlinTypeMarker.refineType(): KotlinTypeMarker
 }

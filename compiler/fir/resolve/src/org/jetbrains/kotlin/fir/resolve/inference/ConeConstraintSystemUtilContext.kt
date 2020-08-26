@@ -31,4 +31,8 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
         // TODO
         return false
     }
+
+    override fun KotlinTypeMarker.refineType(): KotlinTypeMarker {
+        return this
+    }
 }

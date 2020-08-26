@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.ResultTypeResolve
 import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
-import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 
 class InferenceComponents(
     val ctx: ConeInferenceContext,
@@ -27,7 +26,7 @@ class InferenceComponents(
     val approximator: AbstractTypeApproximator = object : AbstractTypeApproximator(ctx) {}
     val trivialConstraintTypeInferenceOracle = TrivialConstraintTypeInferenceOracle.create(ctx)
     private val incorporator = ConstraintIncorporator(approximator, trivialConstraintTypeInferenceOracle, ConeConstraintSystemUtilContext)
-    private val injector = ConstraintInjector(incorporator, approximator, KotlinTypeRefiner.Default)
+    private val injector = ConstraintInjector(incorporator, approximator)
     val resultTypeResolver = ResultTypeResolver(approximator, trivialConstraintTypeInferenceOracle)
 
     @set:PrivateForInline

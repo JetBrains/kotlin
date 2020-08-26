@@ -20,17 +20,17 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind.*
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.AbstractTypeApproximator
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.*
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.jetbrains.kotlin.utils.SmartList
 import kotlin.math.max
 
 class ConstraintInjector(
     val constraintIncorporator: ConstraintIncorporator,
-    val typeApproximator: AbstractTypeApproximator,
-    val kotlinTypeRefiner: KotlinTypeRefiner
+    val typeApproximator: AbstractTypeApproximator
 ) {
     private val ALLOWED_DEPTH_DELTA_FOR_INCORPORATION = 1
 
@@ -175,12 +175,9 @@ class ConstraintInjector(
             return baseContext.prepareType(type)
         }
 
-        @OptIn(TypeRefinement::class)
         override fun refineType(type: KotlinTypeMarker): KotlinTypeMarker {
-            return if (type is KotlinType) {
-                kotlinTypeRefiner.refineType(type)
-            } else {
-                type
+            return with(constraintIncorporator.utilContext) {
+                type.refineType()
             }
         }
 
@@ -200,12 +197,13 @@ class ConstraintInjector(
 
             if (!isSubtypeOf(upperType)) {
                 // todo improve error reporting -- add information about base types
-                if (shouldTryUseDifferentFlexibilityForUpperType && upperType is SimpleType) {
+                if (shouldTryUseDifferentFlexibilityForUpperType && upperType.isSimpleType()) {
                     /*
                      * Please don't reuse this logic.
                      * It's necessary to solve constraint systems when flexibility isn't propagated through a type variable.
                      * It's OK in the old inference because it uses already substituted types, that are with the correct flexibility.
                      */
+                    require(upperType is SimpleTypeMarker)
                     val flexibleUpperType = createFlexibleType(upperType, upperType.withNullability(true))
                     if (!isSubtypeOf(flexibleUpperType)) {
                         c.addError(NewConstraintError(lowerType, flexibleUpperType, position))

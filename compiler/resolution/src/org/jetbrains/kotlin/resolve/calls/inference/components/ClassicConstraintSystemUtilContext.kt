@@ -9,11 +9,13 @@ import org.jetbrains.kotlin.resolve.calls.components.CreateFreshVariablesSubstit
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
+import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.unCapture as unCaptureKotlinType
 
-object ClassicConstraintSystemUtilContext : ConstraintSystemUtilContext {
+class ClassicConstraintSystemUtilContext(val kotlinTypeRefiner: KotlinTypeRefiner) : ConstraintSystemUtilContext {
     override fun TypeVariableMarker.shouldBeFlexible(): Boolean {
         return this is TypeVariableFromCallableDescriptor && this.originalTypeParameter.shouldBeFlexible()
     }
@@ -31,5 +33,11 @@ object ClassicConstraintSystemUtilContext : ConstraintSystemUtilContext {
     override fun TypeVariableMarker.isReified(): Boolean {
         if (this !is TypeVariableFromCallableDescriptor) return false
         return originalTypeParameter.isReified
+    }
+
+    @OptIn(TypeRefinement::class)
+    override fun KotlinTypeMarker.refineType(): KotlinTypeMarker {
+        require(this is KotlinType)
+        return kotlinTypeRefiner.refineType(this)
     }
 }
