@@ -10,11 +10,12 @@ import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjec
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.jetbrains.cidr.apple.gradle.AppleProjectResolver.Companion.APPLE_PROJECT
+import com.jetbrains.mobile.execution.AppleSimulator
+import com.jetbrains.mobile.execution.MobileDeviceService
 import com.jetbrains.mobile.execution.MobileRunConfigurationBase
 import com.jetbrains.mobile.execution.createDefaults
 import com.jetbrains.mobile.gradle.forEachModule
-import com.jetbrains.mobile.isApple
-import com.jetbrains.mobile.isMobileAppMain
+import com.jetbrains.mobile.isCommonMain
 
 class AppleProjectDataService : AbstractProjectDataService<AppleProjectModel, Module>() {
     override fun getTargetDataKey(): Key<AppleProjectModel> = APPLE_PROJECT
@@ -35,8 +36,11 @@ class AppleProjectDataService : AbstractProjectDataService<AppleProjectModel, Mo
         modelsProvider: IdeModelsProvider
     ) {
         val modules = modelsProvider.getModules(projectData ?: return)
-            .filter { it.isMobileAppMain && it.isApple }
-        MobileRunConfigurationBase.createDefaults(project, modules)
+            .filter { it.isCommonMain }
+        val device = MobileDeviceService.getInstance(project).getAppleDevices()
+            .filterIsInstance<AppleSimulator>()
+            .firstOrNull() ?: return
+        MobileRunConfigurationBase.createDefaults(project, modules, device)
     }
 
     companion object {
