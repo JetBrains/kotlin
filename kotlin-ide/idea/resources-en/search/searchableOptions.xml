@@ -1228,9 +1228,9 @@
         <option name="on" path="ActionManager" hit="Enable components for analyzing libraries depending on project source files in Kotlin" />
         <option name="project" path="ActionManager" hit="Enable components for analyzing libraries depending on project source files in Kotlin" />
         <option name="source" path="ActionManager" hit="Enable components for analyzing libraries depending on project source files in Kotlin" />
-        <option name="and" path="ActionManager" hit="Equals() and HashCode()" />
-        <option name="equals" path="ActionManager" hit="Equals() and HashCode()" />
-        <option name="hashcode" path="ActionManager" hit="Equals() and HashCode()" />
+        <option name="and" path="ActionManager" hit="equals() and hashCode()" />
+        <option name="equals" path="ActionManager" hit="equals() and hashCode()" />
+        <option name="hashcode" path="ActionManager" hit="equals() and hashCode()" />
         <option name="calls" path="ActionManager" hit="Find Implicit Nothing Calls" />
         <option name="find" path="ActionManager" hit="Find Implicit Nothing Calls" />
         <option name="implicit" path="ActionManager" hit="Find Implicit Nothing Calls" />
