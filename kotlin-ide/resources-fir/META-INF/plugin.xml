@@ -99,6 +99,9 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
                             id="KotlinCompletionContributor"
                             order="first"
                             implementationClass="org.jetbrains.kotlin.idea.completion.KotlinFirCompletionContributor"/>
+    <codeInsight.typeInfo language="kotlin"
+                          implementationClass="org.jetbrains.kotlin.idea.codeInsight.KotlinHighLevelExpressionTypeProvider"/>
+
   </extensions>
 
   <!--  scripts  -->
