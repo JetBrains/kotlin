@@ -20,7 +20,7 @@ fun DModule.descriptionOf(className: String, functionName: String? = null): Desc
 }
 
 fun DModule.findPackage(packageName: String? = null) =
-    packageName?.let { packages.firstOrNull { pkg -> pkg.name == packageName }
+    packageName?.let { packages.firstOrNull { pkg -> pkg.packageName == packageName }
         ?: throw NoSuchElementException("No packageName with name $packageName") } ?: packages.single()
 
 fun DModule.findClasslike(packageName: String? = null, className: String? = null): DClasslike {

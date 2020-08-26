@@ -22,8 +22,8 @@ class PackagesTest : AbstractModelTest("/src/main/kotlin/packages/Test.kt", "pac
                 }
             }
         ) {
-            with((this / "").cast<DPackage>()) {
-                name equals ""
+            with((this / "[root]").cast<DPackage>()) {
+                packageName equals ""
                 children counts 0
             }
         }
@@ -38,7 +38,7 @@ class PackagesTest : AbstractModelTest("/src/main/kotlin/packages/Test.kt", "pac
             prependPackage = false
         ) {
             with((this / "simple").cast<DPackage>()) {
-                name equals "simple"
+                packageName equals "simple"
                 children counts 0
             }
         }
@@ -53,7 +53,7 @@ class PackagesTest : AbstractModelTest("/src/main/kotlin/packages/Test.kt", "pac
             prependPackage = false
         ) {
             with((this / "dot.name").cast<DPackage>()) {
-                name equals "dot.name"
+                packageName equals "dot.name"
                 children counts 0
             }
         }
@@ -72,11 +72,11 @@ class PackagesTest : AbstractModelTest("/src/main/kotlin/packages/Test.kt", "pac
         ) {
             children counts 2
             with((this / "dot.name").cast<DPackage>()) {
-                name equals "dot.name"
+                packageName equals "dot.name"
                 children counts 0
             }
             with((this / "simple").cast<DPackage>()) {
-                name equals "simple"
+                packageName equals "simple"
                 children counts 0
             }
         }
@@ -94,7 +94,7 @@ class PackagesTest : AbstractModelTest("/src/main/kotlin/packages/Test.kt", "pac
         ) {
             children counts 1
             with((this / "simple").cast<DPackage>()) {
-                name equals "simple"
+                packageName equals "simple"
                 children counts 0
             }
         }
@@ -111,11 +111,13 @@ class PackagesTest : AbstractModelTest("/src/main/kotlin/packages/Test.kt", "pac
             prependPackage = false
         ) {
             with((this / "simple.name").cast<DPackage>()) {
-                name equals "simple.name"
+                packageName equals "simple.name"
                 children counts 1
             }
         }
     }
+
+    // TODO NOW test displayName
 
     // todo
 //    @Test fun suppressAtPackageLevel() {

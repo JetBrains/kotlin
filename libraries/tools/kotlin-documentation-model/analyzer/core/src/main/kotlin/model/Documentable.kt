@@ -111,9 +111,18 @@ data class DPackage(
     override val sourceSets: Set<DokkaSourceSet> = emptySet(),
     override val extra: PropertyContainer<DPackage> = PropertyContainer.empty()
 ) : Documentable(), WithScope, WithExtraProperties<DPackage> {
-    override val name = dri.packageName.orEmpty()
-    override val children: List<Documentable>
-        get() = (properties + functions + classlikes + typealiases)
+
+    val packageName: String = dri.packageName.orEmpty()
+
+    /**
+     * !!! WARNING !!!
+     * This name is not guaranteed to be a be a canonical/real package name.
+     * e.g. this will return a human readable version for root packages.
+     * Use [packageName] or `dri.packageName` instead to obtain the real packageName
+     */
+    override val name: String = if (packageName.isBlank()) "[root]" else packageName
+
+    override val children: List<Documentable> = properties + functions + classlikes + typealiases
 
     override fun withNewExtras(newExtras: PropertyContainer<DPackage>) = copy(extra = newExtras)
 }
