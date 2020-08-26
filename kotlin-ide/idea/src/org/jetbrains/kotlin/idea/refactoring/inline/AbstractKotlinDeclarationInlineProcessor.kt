@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.refactoring.inline
 
 import com.intellij.lang.findUsages.DescriptiveNameUtil
+import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.RefactoringBundle
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.psi.*
 
 abstract class AbstractKotlinDeclarationInlineProcessor<TElement : KtDeclaration>(
     protected val declaration: TElement,
+    protected val editor: Editor?,
     project: Project,
 ) : BaseRefactoringProcessor(project) {
 

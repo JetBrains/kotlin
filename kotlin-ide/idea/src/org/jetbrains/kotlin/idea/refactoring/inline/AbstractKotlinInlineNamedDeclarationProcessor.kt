@@ -48,9 +48,9 @@ abstract class AbstractKotlinInlineNamedDeclarationProcessor<TDeclaration : KtNa
     private val reference: PsiReference?,
     private val inlineThisOnly: Boolean,
     private val deleteAfter: Boolean,
-    protected val editor: Editor?,
+    editor: Editor?,
     project: Project,
-) : AbstractKotlinDeclarationInlineProcessor<TDeclaration>(declaration, project) {
+) : AbstractKotlinDeclarationInlineProcessor<TDeclaration>(declaration, editor, project) {
     private lateinit var inliners: Map<Language, InlineHandler.Inliner>
 
     abstract fun createReplacementStrategy(): UsageReplacementStrategy?

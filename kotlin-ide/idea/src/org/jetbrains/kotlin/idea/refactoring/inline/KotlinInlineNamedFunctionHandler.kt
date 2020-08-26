@@ -12,8 +12,6 @@ import com.intellij.refactoring.RefactoringBundle
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
-import org.jetbrains.kotlin.idea.refactoring.isAbstract
-import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -25,21 +23,6 @@ class KotlinInlineNamedFunctionHandler : AbstractKotlinInlineFunctionHandler<KtN
     override fun canInlineKotlinFunction(function: KtFunction): Boolean = function is KtNamedFunction && function.name != null
 
     override fun inlineKotlinFunction(project: Project, editor: Editor?, function: KtNamedFunction) {
-        if (!checkSources(project, editor, function)) return
-
-        if (!function.hasBody()) {
-            val message = when {
-                function.isAbstract() -> KotlinBundle.message("refactoring.cannot.be.applied.to.abstract.declaration", refactoringName)
-                function.isExpectDeclaration() -> KotlinBundle.message(
-                    "refactoring.cannot.be.applied.to.expect.declaration",
-                    refactoringName
-                )
-                else -> KotlinBundle.message("refactoring.cannot.be.applied.no.sources.attached", refactoringName)
-            }
-
-            return showErrorHint(project, editor, message)
-        }
-
         val nameReference = editor?.findSimpleNameReference()
         val recursive = function.isRecursive()
         if (recursive && nameReference == null) {

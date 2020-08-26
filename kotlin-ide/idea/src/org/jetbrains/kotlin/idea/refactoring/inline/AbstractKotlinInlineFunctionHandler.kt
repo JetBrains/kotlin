@@ -9,6 +9,8 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.refactoring.HelpID
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.refactoring.isAbstract
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFunction
 
@@ -21,7 +23,25 @@ abstract class AbstractKotlinInlineFunctionHandler<T : KtFunction> : KotlinInlin
 
     final override fun inlineKotlinElement(project: Project, editor: Editor?, element: KtElement) {
         @Suppress("UNCHECKED_CAST")
-        inlineKotlinFunction(project, editor, element as T)
+        val function = element as T
+
+        if (!checkSources(project, editor, function)) return
+
+        if (!function.hasBody()) {
+            val message = when {
+                function.isAbstract() -> KotlinBundle.message("refactoring.cannot.be.applied.to.abstract.declaration", refactoringName)
+                function.isExpectDeclaration() -> KotlinBundle.message(
+                    "refactoring.cannot.be.applied.to.expect.declaration",
+                    refactoringName
+                )
+
+                else -> KotlinBundle.message("refactoring.cannot.be.applied.no.sources.attached", refactoringName)
+            }
+
+            return showErrorHint(project, editor, message)
+        }
+
+        inlineKotlinFunction(project, editor, function)
     }
 
     abstract fun canInlineKotlinFunction(function: KtFunction): Boolean
