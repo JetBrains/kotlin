@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.fir.resolve.transformers.contracts
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
-import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
-import org.jetbrains.kotlin.fir.contracts.builder.buildEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.builder.buildLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration
@@ -17,32 +15,20 @@ import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.contracts.toFirEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeContractDescriptionError
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeStarProjection.kind
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
-import kotlin.contracts.contract
 
 class FirContractResolveTransformer(
     session: FirSession,
@@ -56,6 +42,10 @@ class FirContractResolveTransformer(
     outerBodyResolveContext = outerBodyResolveContext
 ) {
     override val declarationsTransformer: FirDeclarationsResolveTransformer = FirDeclarationsContractResolveTransformer(this)
+
+    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+        return annotationCall.compose()
+    }
 
     private class FirDeclarationsContractResolveTransformer(transformer: FirBodyResolveTransformer) : FirDeclarationsResolveTransformer(transformer) {
         override fun transformSimpleFunction(
@@ -251,6 +241,10 @@ class FirContractResolveTransformer(
             anonymousObject: FirAnonymousObject,
             data: ResolutionMode
         ): CompositeTransformResult<FirStatement> {
+            anonymousObject.updatePhase()
+            context.withContainer(anonymousObject) {
+                anonymousObject.transformDeclarations(this, data)
+            }
             return anonymousObject.compose()
         }
 
@@ -262,6 +256,7 @@ class FirContractResolveTransformer(
         }
 
         override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): CompositeTransformResult<FirDeclaration> {
+            constructor.updatePhase()
             return constructor.compose()
         }
 
