@@ -166,6 +166,12 @@ internal val provisionalFunctionExpressionPhase = makeKonanModuleLoweringPhase(
     description = "Transform IrFunctionExpression to a local function reference"
 )
 
+internal val flattenStringConcatenationPhase = makeKonanFileLoweringPhase(
+        ::FlattenStringConcatenationLowering,
+        name = "FlattenStringConcatenationLowering",
+        description = "Flatten nested string concatenation expressions into a single IrStringConcatenation"
+)
+
 internal val stringConcatenationPhase = makeKonanFileLoweringPhase(
         ::StringConcatenationLowering,
         name = "StringConcatenation",
@@ -359,5 +365,6 @@ internal val ifNullExpressionsFusionPhase = makeKonanFileLoweringPhase(
 internal val foldConstantLoweringPhase = makeKonanFileOpPhase(
         { context, irFile -> FoldConstantLowering(context).lower(irFile) },
         name = "FoldConstantLowering",
-        description = "Constant Folding"
+        description = "Constant Folding",
+        prerequisite = setOf(flattenStringConcatenationPhase)
 )

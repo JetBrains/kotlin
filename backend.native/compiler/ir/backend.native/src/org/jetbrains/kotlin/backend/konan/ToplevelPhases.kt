@@ -359,11 +359,12 @@ internal val allLoweringsPhase = NamedCompilerPhase(
                         lower = listOf(
                             rangeContainsLoweringPhase,
                             forLoopsPhase,
+                            flattenStringConcatenationPhase,
+                            foldConstantLoweringPhase,
                             stringConcatenationPhase,
                             enumConstructorsPhase,
                             initializersPhase,
                             localFunctionsPhase,
-                            foldConstantLoweringPhase,
                             tailrecPhase,
                             defaultParameterExtentPhase,
                             innerClassPhase,
