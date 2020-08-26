@@ -18,7 +18,6 @@ abstract class IrDeclarationBuilder : IrElementBuilder() {
     var origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
     var visibility: Visibility = Visibilities.PUBLIC
 
-    var wrappedDescriptorAnnotations: Annotations = Annotations.EMPTY
     lateinit var name: Name
 
     fun updateFrom(from: IrDeclaration) {

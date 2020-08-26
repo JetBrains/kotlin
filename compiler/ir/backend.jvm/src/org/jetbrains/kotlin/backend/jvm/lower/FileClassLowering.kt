@@ -85,7 +85,7 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
                 val ktFile = context.psiSourceManager.getKtFile(fileEntry)
                     ?: throw AssertionError("Unexpected file entry: $fileEntry")
                 fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(ktFile)
-                descriptor = WrappedClassDescriptor(sourceElement = KotlinSourceElement(ktFile))
+                descriptor = WrappedClassDescriptor()
             }
             is NaiveSourceBasedFileEntryImpl -> {
                 fileClassInfo = JvmSimpleFileClassInfo(PackagePartClassUtils.getPackagePartFqName(irFile.fqName, fileEntry.name), false)

@@ -223,7 +223,7 @@ fun <D> buildReceiverParameter(
 @PublishedApi
 internal fun IrFactory.buildValueParameter(builder: IrValueParameterBuilder, parent: IrDeclarationParent): IrValueParameter =
     with(builder) {
-        val wrappedDescriptor = WrappedValueParameterDescriptor(wrappedDescriptorAnnotations)
+        val wrappedDescriptor = WrappedValueParameterDescriptor()
         return createValueParameter(
             startOffset, endOffset, origin,
             IrValueParameterSymbolImpl(wrappedDescriptor),

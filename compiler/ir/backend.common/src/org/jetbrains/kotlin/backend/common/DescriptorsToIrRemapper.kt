@@ -17,38 +17,38 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 object DescriptorsToIrRemapper : DescriptorsRemapper {
     override fun remapDeclaredClass(descriptor: ClassDescriptor) =
-        WrappedClassDescriptor(descriptor.annotations, descriptor.source)
+        WrappedClassDescriptor()
 
     override fun remapDeclaredConstructor(descriptor: ClassConstructorDescriptor) =
-        WrappedClassConstructorDescriptor(descriptor.annotations, descriptor.source)
+        WrappedClassConstructorDescriptor()
 
     override fun remapDeclaredEnumEntry(descriptor: ClassDescriptor) =
-        WrappedClassDescriptor(descriptor.annotations, descriptor.source)
+        WrappedClassDescriptor()
 
     override fun remapDeclaredField(descriptor: PropertyDescriptor) =
-        WrappedFieldDescriptor(descriptor.annotations, descriptor.source)
+        WrappedFieldDescriptor()
 
     override fun remapDeclaredSimpleFunction(descriptor: FunctionDescriptor) =
         when (descriptor) {
-            is PropertyGetterDescriptor -> WrappedPropertyGetterDescriptor(descriptor.annotations, descriptor.source)
-            is PropertySetterDescriptor -> WrappedPropertySetterDescriptor(descriptor.annotations, descriptor.source)
-            else -> WrappedSimpleFunctionDescriptor(descriptor.annotations, descriptor.source)
+            is PropertyGetterDescriptor -> WrappedPropertyGetterDescriptor()
+            is PropertySetterDescriptor -> WrappedPropertySetterDescriptor()
+            else -> WrappedSimpleFunctionDescriptor()
         }
 
     override fun remapDeclaredProperty(descriptor: PropertyDescriptor) =
-        WrappedPropertyDescriptor(descriptor.annotations, descriptor.source)
+        WrappedPropertyDescriptor()
 
     override fun remapDeclaredTypeParameter(descriptor: TypeParameterDescriptor) =
-        WrappedTypeParameterDescriptor(descriptor.annotations, descriptor.source)
+        WrappedTypeParameterDescriptor()
 
     override fun remapDeclaredVariable(descriptor: VariableDescriptor) =
-        WrappedVariableDescriptor(descriptor.annotations, descriptor.source)
+        WrappedVariableDescriptor()
 
     override fun remapDeclaredValueParameter(descriptor: ParameterDescriptor): ParameterDescriptor =
         if (descriptor is ReceiverParameterDescriptor)
-            WrappedReceiverParameterDescriptor(descriptor.annotations, descriptor.source)
+            WrappedReceiverParameterDescriptor()
         else
-            WrappedValueParameterDescriptor(descriptor.annotations, descriptor.source)
+            WrappedValueParameterDescriptor()
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)

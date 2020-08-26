@@ -98,7 +98,6 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     ): IrValueParameter {
         val parameter = this
         return buildValueParameter(target) {
-            wrappedDescriptorAnnotations = descriptor.annotations
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
             name = parameter.name
             index = parameter.index

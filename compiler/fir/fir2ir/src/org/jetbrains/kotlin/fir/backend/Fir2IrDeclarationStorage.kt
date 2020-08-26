@@ -515,8 +515,8 @@ class Fir2IrDeclarationStorage(
     ): IrSimpleFunction {
         if (signature == null) {
             val descriptor =
-                if (isGetter) WrappedPropertyGetterDescriptor(Annotations.EMPTY, SourceElement.NO_SOURCE)
-                else WrappedPropertySetterDescriptor(Annotations.EMPTY, SourceElement.NO_SOURCE)
+                if (isGetter) WrappedPropertyGetterDescriptor()
+                else WrappedPropertySetterDescriptor()
             return symbolTable.declareSimpleFunction(descriptor, factory).apply { descriptor.bind(this) }
         }
         return symbolTable.declareSimpleFunction(signature, { Fir2IrSimpleFunctionSymbol(signature, containerSource) }, factory)
