@@ -57,6 +57,7 @@ internal fun State.toIrExpression(expression: IrExpression): IrExpression {
 
 internal fun Any?.toState(irType: IrType): State {
     return when (this) {
+        is IrInterpreter.Proxy -> this.state
         is State -> this
         is Boolean, is Char, is Byte, is Short, is Int, is Long, is String, is Float, is Double, is Array<*>, is ByteArray,
         is CharArray, is ShortArray, is IntArray, is LongArray, is FloatArray, is DoubleArray, is BooleanArray -> Primitive(this, irType)
@@ -129,27 +130,6 @@ internal fun getPrimitiveClass(irType: IrType, asObject: Boolean = false): Class
             else -> null
         }
     }
-
-internal fun IrFunction.getArgsForMethodInvocation(args: List<Variable>): List<Any?> {
-    val argsValues = args.map {
-        when (val state = it.state) {
-            is ExceptionState -> state.getThisAsCauseForException()
-            is Wrapper -> state.value
-            is Primitive<*> -> state.value
-            else -> throw AssertionError("${state::class} is unsupported as argument for wrapper method invocation")
-        }
-    }.toMutableList()
-
-    // TODO if vararg isn't last parameter
-    // must convert vararg array into separated elements for correct invoke
-    if (this.valueParameters.lastOrNull()?.varargElementType != null) {
-        val varargValue = argsValues.last()
-        argsValues.removeAt(argsValues.size - 1)
-        argsValues.addAll(varargValue as Array<out Any?>)
-    }
-
-    return argsValues
-}
 
 fun IrFunction.getLastOverridden(): IrFunction {
     if (this !is IrSimpleFunction) return this

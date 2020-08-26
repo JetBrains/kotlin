@@ -89,6 +89,84 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
         }
     }
 
+    internal class Proxy(val state: Common, val interpreter: IrInterpreter) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as Proxy
+
+            val valueArguments = mutableListOf<Variable>()
+            val equalsFun = state.getEqualsFunction()
+            if (equalsFun.isFakeOverriddenFromAny()) return this.state.getOriginal() === other.state.getOriginal()
+
+            equalsFun.getDispatchReceiver()!!.let { valueArguments.add(Variable(it, state)) }
+            valueArguments.add(Variable(equalsFun.valueParameters.single().symbol, other.state))
+
+            return with(interpreter) {
+                stack.newFrame(initPool = valueArguments) {
+                    equalsFun.interpret()
+                }
+                (stack.popReturnValue() as Primitive<*>).value as Boolean
+            } // TODO check
+        }
+
+        override fun hashCode(): Int {
+            val valueArguments = mutableListOf<Variable>()
+            val hashCodeFun = state.getHashCodeFunction()
+            if (hashCodeFun.isFakeOverriddenFromAny()) return System.identityHashCode(state.getOriginal())
+
+            hashCodeFun.getDispatchReceiver()!!.let { valueArguments.add(Variable(it, state)) }
+            return with(interpreter) {
+                stack.newFrame(initPool = valueArguments) {
+                    hashCodeFun.interpret()
+                }
+                (stack.popReturnValue() as Primitive<*>).value as Int
+            }// TODO check
+        }
+
+        override fun toString(): String {
+            val valueArguments = mutableListOf<Variable>()
+            val toStringFun = state.getToStringFunction()
+            if (toStringFun.isFakeOverriddenFromAny()) {
+                return "${state.getOriginal().irClass.internalName()}@" + System.identityHashCode(state).toString(16).padStart(8, '0')
+            }
+
+            toStringFun.getDispatchReceiver()!!.let { valueArguments.add(Variable(it, state)) }
+            return with(interpreter) {
+                stack.newFrame(initPool = valueArguments) {
+                    toStringFun.interpret()
+                }
+                (stack.popReturnValue() as Primitive<*>).value as String
+            }// TODO check
+        }
+    }
+
+    internal fun State.wrapAsProxyIfNeeded(): Any? {
+        return when (this) {
+            is ExceptionState -> this.getThisAsCauseForException()
+            is Wrapper -> this.value
+            is Primitive<*> -> this.value
+            is Common -> Proxy(this, this@IrInterpreter)
+            is Lambda -> this // TODO as Proxy
+            else -> throw AssertionError("${this::class} is unsupported as argument for wrap function")
+        }
+    }
+
+    internal fun IrFunction.getArgsForMethodInvocation(args: List<Variable>): List<Any?> {
+        val argsValues = args.map { it.state.wrapAsProxyIfNeeded() }.toMutableList()
+
+        // TODO if vararg isn't last parameter
+        // must convert vararg array into separated elements for correct invoke
+        if (this.valueParameters.lastOrNull()?.varargElementType != null) {
+            val varargValue = argsValues.last()
+            argsValues.removeAt(argsValues.size - 1)
+            argsValues.addAll(varargValue as Array<out Any?>)
+        }
+
+        return argsValues
+    }
+
     private fun IrElement.interpret(): ExecutionResult {
         try {
             incrementAndCheckCommands()
@@ -172,19 +250,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
 
         val receiverType = irFunction.dispatchReceiverParameter?.type
         val argsType = listOfNotNull(receiverType) + irFunction.valueParameters.map { it.type }
-        val argsValues = args.map {
-            when (it) {
-                is Wrapper -> it.value // wrapper can be used in built in calculation, for example, in null or equality checks
-                is Complex -> when (irFunction.fqNameWhenAvailable?.asString()) {
-                    // must explicitly convert Common to String in String plus method or else will be taken default toString from Common
-                    "kotlin.String.plus" -> stack.apply { interpretToString(it) }.popReturnValue().asString()
-                    else -> it.getOriginal()
-                }
-                is Primitive<*> -> it.value
-                is Lambda -> it // lambda also can be used, for example, in null check or toString
-                else -> TODO("unsupported type of argument for builtins calculations: ${it::class.java}")
-            }
-        }
+        val argsValues = args.map { it.wrapAsProxyIfNeeded() }
 
         fun IrType.getOnlyName(): String {
             return when {
@@ -209,7 +275,6 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
                         ?: throw InterpreterMethodNotFoundError("For given function $signature there is no entry in binary map")
                     when (methodName) {
                         "rangeTo" -> return calculateRangeTo(irFunction.returnType)
-                        "EQEQ" -> return calculateEquals(argsValues[0], argsValues[1])
                         else -> function.invoke(argsValues[0], argsValues[1])
                     }
                 }
@@ -239,24 +304,6 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
         return stack.newFrame(initPool = constructorValueParameters.map { Variable(it.first, it.second) }) {
             constructorCall.interpret()
         }
-    }
-
-    private fun calculateEquals(first: Any?, second: Any?): ExecutionResult {
-        if (first == null || second == null || first !is Common || second !is Common) {
-            return Next.apply { stack.pushReturnValue((first == second).toState(irBuiltIns.booleanType)) }
-        }
-
-        val valueArguments = mutableListOf<Variable>()
-        val equalsFun = first.getEqualsFunction()
-        if (equalsFun.isFakeOverriddenFromAny()) {
-            return Next.apply { stack.pushReturnValue((first == second).toState(irBuiltIns.booleanType)) }
-        }
-
-        equalsFun.getDispatchReceiver()!!.let { valueArguments.add(Variable(it, first)) }
-        valueArguments.add(Variable(equalsFun.valueParameters.single().symbol, second))
-        return stack.newFrame(initPool = valueArguments) {
-            equalsFun.interpret()
-        }.check { return it }
     }
 
     private fun interpretValueParameters(
@@ -722,7 +769,8 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
                 is Primitive<*> -> arrayToList(result.value)
                 is Common -> when {
                     result.irClass.defaultType.isUnsignedArray() -> arrayToList((result.fields.single().state as Primitive<*>).value)
-                    else -> listOf(result)
+                    result.irClass.defaultType.isUnsigned() -> listOf(result)
+                    else -> listOf(Proxy(result, this))
                 }
                 else -> listOf(result)
             }

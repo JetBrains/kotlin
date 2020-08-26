@@ -14,9 +14,11 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.overrides
+import org.jetbrains.kotlin.name.Name
 
 internal abstract class Complex(override val irClass: IrClass, override val fields: MutableList<Variable>) : State {
     var superClass: Complex? = null
@@ -89,5 +91,29 @@ internal abstract class Complex(override val irClass: IrClass, override val fiel
             null -> getOverridden(irFunction as IrSimpleFunction, this.getCorrectReceiverByFunction(irFunction))
             else -> irFunction
         }
+    }
+
+    fun getEqualsFunction(): IrSimpleFunction {
+        val equalsFun = irClass.declarations
+            .filterIsInstance<IrSimpleFunction>()
+            .single {
+                it.name == Name.identifier("equals") && it.dispatchReceiverParameter != null
+                        && it.valueParameters.size == 1 && it.valueParameters[0].type.isNullableAny()
+            }
+        return getOverridden(equalsFun, this)
+    }
+
+    fun getHashCodeFunction(): IrSimpleFunction {
+        return irClass.declarations.filterIsInstance<IrSimpleFunction>()
+            .filter { it.name.asString() == "hashCode" }
+            .first { it.valueParameters.isEmpty() }
+            .let { getOverridden(it, this) }
+    }
+
+    fun getToStringFunction(): IrSimpleFunction {
+        return irClass.declarations.filterIsInstance<IrSimpleFunction>()
+            .filter { it.name.asString() == "toString" }
+            .first { it.valueParameters.isEmpty() }
+            .let { getOverridden(it, this) }
     }
 }

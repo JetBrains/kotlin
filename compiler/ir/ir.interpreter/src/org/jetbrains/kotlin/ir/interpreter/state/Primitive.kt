@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isFakeOverride
 import org.jetbrains.kotlin.ir.util.overrides
 
-internal class Primitive<T>(var value: T, val type: IrType) : State {
+internal class Primitive<T>(val value: T, val type: IrType) : State {
     override val fields: MutableList<Variable> = mutableListOf()
     override val typeArguments: MutableList<Variable> = mutableListOf()
     override val irClass: IrClass = type.classOrNull!!.owner
