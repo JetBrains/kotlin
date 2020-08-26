@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
 class KotlinInlineNamedFunctionHandler : AbstractKotlinInlineFunctionHandler<KtNamedFunction>() {
-    override fun canInlineKotlinFunction(function: KtFunction): Boolean = function is KtNamedFunction
+    override fun canInlineKotlinFunction(function: KtFunction): Boolean = function is KtNamedFunction && function.name != null
 
     override fun inlineKotlinFunction(project: Project, editor: Editor?, function: KtNamedFunction) {
         if (!checkSources(project, editor, function)) return
@@ -37,11 +37,6 @@ class KotlinInlineNamedFunctionHandler : AbstractKotlinInlineFunctionHandler<KtN
                 else -> KotlinBundle.message("refactoring.cannot.be.applied.no.sources.attached", refactoringName)
             }
 
-            return showErrorHint(project, editor, message)
-        }
-
-        if (function.name == null) {
-            val message = KotlinBundle.message("refactoring.cannot.be.applied.to.anonymous.function", refactoringName)
             return showErrorHint(project, editor, message)
         }
 
