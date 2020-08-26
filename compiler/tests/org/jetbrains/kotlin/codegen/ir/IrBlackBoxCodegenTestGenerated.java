@@ -12667,6 +12667,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/inference/plusAssignInsideLambda.kt");
         }
 
+        @TestMetadata("recursiveConstraintInsideTypeArgumentWithStarProjection.kt")
+        public void testRecursiveConstraintInsideTypeArgumentWithStarProjection() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/recursiveConstraintInsideTypeArgumentWithStarProjection.kt");
+        }
+
         @TestMetadata("referenceToCatchParameterFromLambdaExpression.kt")
         public void testReferenceToCatchParameterFromLambdaExpression() throws Exception {
             runTest("compiler/testData/codegen/box/inference/referenceToCatchParameterFromLambdaExpression.kt");

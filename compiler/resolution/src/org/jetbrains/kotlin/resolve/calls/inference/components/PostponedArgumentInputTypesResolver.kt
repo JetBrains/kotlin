@@ -403,7 +403,9 @@ class PostponedArgumentInputTypesResolver(
                 listOf(typeConstructor) + relatedVariables.filterIsInstance<TypeVariableTypeConstructor>()
             }
             type.arguments.isNotEmpty() -> {
-                type.arguments.flatMap { getAllDeeplyRelatedTypeVariables(it.type, variableDependencyProvider) }
+                type.arguments.flatMap {
+                    if (it.isStarProjection) emptyList() else getAllDeeplyRelatedTypeVariables(it.type, variableDependencyProvider)
+                }
             }
             else -> emptyList()
         }
