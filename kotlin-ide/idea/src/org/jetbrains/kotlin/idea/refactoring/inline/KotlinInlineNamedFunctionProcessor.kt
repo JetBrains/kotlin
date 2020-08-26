@@ -9,6 +9,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiReference
 import org.jetbrains.kotlin.idea.codeInliner.CallableUsageReplacementStrategy
+import org.jetbrains.kotlin.idea.codeInliner.CodeToInline
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
@@ -31,12 +32,13 @@ class KotlinInlineFunctionProcessor(
 }
 
 fun createUsageReplacementStrategyForFunction(function: KtNamedFunction, editor: Editor?): UsageReplacementStrategy? {
-    val codeToInline = buildCodeToInline(
-        function,
-        function.bodyExpression!!,
-        function.hasBlockBody(),
-        editor
-    ) ?: return null
-
+    val codeToInline = createCodeToInlineForFunction(function, editor) ?: return null
     return CallableUsageReplacementStrategy(codeToInline, inlineSetter = false)
 }
+
+fun createCodeToInlineForFunction(function: KtNamedFunction, editor: Editor?): CodeToInline? = buildCodeToInline(
+    function,
+    function.bodyExpression!!,
+    function.hasBlockBody(),
+    editor
+)

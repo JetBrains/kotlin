@@ -34,6 +34,26 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/anonymousFunction/withConstantParameter.kt");
         }
 
+        @TestMetadata("withInvoke.kt")
+        public void testWithInvoke() throws Exception {
+            runTest("testData/refactoring/inline/anonymousFunction/withInvoke.kt");
+        }
+
+        @TestMetadata("withReceiver.kt")
+        public void testWithReceiver() throws Exception {
+            runTest("testData/refactoring/inline/anonymousFunction/withReceiver.kt");
+        }
+
+        @TestMetadata("withReceiverAsInvoke.kt")
+        public void testWithReceiverAsInvoke() throws Exception {
+            runTest("testData/refactoring/inline/anonymousFunction/withReceiverAsInvoke.kt");
+        }
+
+        @TestMetadata("withReceiverAsParameter.kt")
+        public void testWithReceiverAsParameter() throws Exception {
+            runTest("testData/refactoring/inline/anonymousFunction/withReceiverAsParameter.kt");
+        }
+
         @TestMetadata("withoutBody.kt")
         public void testWithoutBody() throws Exception {
             runTest("testData/refactoring/inline/anonymousFunction/withoutBody.kt");

@@ -30,7 +30,12 @@ internal fun buildCodeToInline(
     editor: Editor?
 ): CodeToInline? {
     val descriptor = declaration.unsafeResolveToDescriptor()
-    val builder = CodeToInlineBuilder(descriptor as CallableDescriptor, declaration.getResolutionFacade())
+    val builder = CodeToInlineBuilder(
+        targetCallable = descriptor as CallableDescriptor,
+        resolutionFacade = declaration.getResolutionFacade(),
+        inAnonymousFunction = declaration.name == null
+    )
+
     val expressionMapper: (KtExpression) -> Pair<KtExpression?, List<KtExpression>>? = if (isBlockBody) {
         fun(bodyOrInitializer: KtExpression): Pair<KtExpression?, List<KtExpression>>? {
             bodyOrInitializer as KtBlockExpression

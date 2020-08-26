@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.render
@@ -45,7 +46,8 @@ import java.util.*
 
 class CodeToInlineBuilder(
     private val targetCallable: CallableDescriptor,
-    private val resolutionFacade: ResolutionFacade
+    private val resolutionFacade: ResolutionFacade,
+    private val inAnonymousFunction: Boolean = false,
 ) {
     private val psiFactory = KtPsiFactory(resolutionFacade.project)
 
@@ -352,7 +354,8 @@ class CodeToInlineBuilder(
                 expression.putCopyableUserData(CodeToInline.PARAMETER_USAGE_KEY, target.name)
             } else if (receiverExpression == null) {
                 if (target is ValueParameterDescriptor && target.containingDeclaration == callableDescriptor) {
-                    expression.putCopyableUserData(CodeToInline.PARAMETER_USAGE_KEY, target.name)
+                    val name = if (inAnonymousFunction) Name.identifier("p${target.index + 1}") else target.name
+                    expression.putCopyableUserData(CodeToInline.PARAMETER_USAGE_KEY, name)
                 } else if (target is TypeParameterDescriptor && target.containingDeclaration == callableDescriptor) {
                     expression.putCopyableUserData(CodeToInline.TYPE_PARAMETER_USAGE_KEY, target.name)
                 }
