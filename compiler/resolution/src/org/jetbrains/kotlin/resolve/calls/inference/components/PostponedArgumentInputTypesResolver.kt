@@ -16,12 +16,12 @@ import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
+private typealias Context = ConstraintSystemCompletionContext
+
 class PostponedArgumentInputTypesResolver(
     private val resultTypeResolver: ResultTypeResolver,
     private val variableFixationFinder: VariableFixationFinder
 ) {
-    interface Context : ConstraintSystemCompletionContext
-
     private class ParameterTypesInfo(
         val parametersFromDeclaration: List<UnwrappedType?>?,
         val parametersFromDeclarationOfRelatedLambdas: Set<List<UnwrappedType?>>?,

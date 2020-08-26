@@ -28,7 +28,6 @@ class NewConstraintSystemImpl(
     ConstraintInjector.Context,
     ResultTypeResolver.Context,
     ConstraintSystemCompletionContext,
-    PostponedArgumentInputTypesResolver.Context,
     PostponedArgumentsAnalyzerContext {
     private val storage = MutableConstraintStorage()
     private var state = State.BUILDING
@@ -85,7 +84,7 @@ class NewConstraintSystemImpl(
 
     override fun asPostponedArgumentsAnalyzerContext() = apply { checkState(State.BUILDING) }
 
-    override fun asPostponedArgumentInputTypesResolverContext() = apply { checkState(State.BUILDING) }
+    override fun asConstraintSystemCompletionContext(): ConstraintSystemCompletionContext = apply { checkState(State.BUILDING) }
 
     // ConstraintSystemOperation
     override fun registerVariable(variable: TypeVariableMarker) {

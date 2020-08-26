@@ -30,5 +30,5 @@ interface ConstraintSystemCompletionContext : VariableFixationFinder.Context, Re
 
     fun fixVariable(variable: TypeVariableMarker, resultType: KotlinTypeMarker, atom: ResolvedAtom?)
 
-    fun asPostponedArgumentInputTypesResolverContext(): PostponedArgumentInputTypesResolver.Context
+    fun asConstraintSystemCompletionContext(): ConstraintSystemCompletionContext
 }

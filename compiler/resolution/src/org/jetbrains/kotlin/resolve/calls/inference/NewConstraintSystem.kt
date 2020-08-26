@@ -33,5 +33,4 @@ interface NewConstraintSystem {
 
     fun asConstraintSystemCompleterContext(): ConstraintSystemCompletionContext
     fun asPostponedArgumentsAnalyzerContext(): PostponedArgumentsAnalyzerContext
-    fun asPostponedArgumentInputTypesResolverContext(): PostponedArgumentInputTypesResolver.Context
 }
