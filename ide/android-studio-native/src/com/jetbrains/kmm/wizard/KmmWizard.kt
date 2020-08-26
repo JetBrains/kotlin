@@ -28,7 +28,7 @@ import java.nio.file.Path
 class ProjectDescription(
     suggestedProjectName: String?,
     val projectDir: Path,
-    private val packageName: String,
+    packageName: String,
     val androidSdkPath: Path?,
     val androidModuleName: String,
     val iosModuleName: String,
@@ -42,11 +42,7 @@ class ProjectDescription(
             return projectName
         }
 
-    val groupId: String
-        get() {
-            val id = packageName.removeSuffix("." + projectName.toLowerCase())
-            return if (id.isEmpty()) "me.user" else id
-        }
+    val groupId = if (packageName.isEmpty()) "me.user" else packageName
 }
 
 class KmmWizard(
