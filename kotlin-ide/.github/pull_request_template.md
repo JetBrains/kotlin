@@ -3,7 +3,7 @@
 Please:
   * Read our contribution guide:
     https://github.com/JetBrains/intellij-kotlin/blob/master/CONTRIBUTING.md
-    (Updated 21 Aug 2020).
+    (Updated 26 Aug 2020).
     We might not be able to merge certain kinds of PRs.
     Please contact us if you’re uncertain.
   * Ensure that changes are close to the HEAD of `master`.
