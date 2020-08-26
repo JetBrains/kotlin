@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics
 
+import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
@@ -45,10 +46,16 @@ internal class FirIdeDiagnosticsCollector private constructor(
     }
 
     override fun runCheck(block: (DiagnosticReporter) -> Unit) {
-        block(reporter)
+        try {
+            block(reporter)
+        } catch (e: Throwable) {
+            LOG.error(e)
+        }
     }
 
     companion object {
+        private val LOG = Logger.getInstance(FirIdeDiagnosticsCollector::class.java)
+
         /**
          * Collects diagnostics for given [firFile]
          * Should be called under [firFile]-based lock
