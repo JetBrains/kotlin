@@ -75,6 +75,7 @@ val projectsToShadow by extra(listOf(
         ":compiler:light-classes",
         ":compiler:plugin-api",
         ":kotlin-preloader",
+        ":compiler:resolution.common",
         ":compiler:resolution",
         ":compiler:serialization",
         ":compiler:util",

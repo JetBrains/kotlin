@@ -52,7 +52,7 @@ open class TypeApproximatorConfiguration {
     }
 
     abstract class AbstractCapturedTypesApproximation(val approximatedCapturedStatus: CaptureStatus) :
-        TypeApproximatorConfiguration.AllFlexibleSameValue() {
+        AllFlexibleSameValue() {
         override val allFlexible: Boolean get() = true
         override val errorType: Boolean get() = true
 
@@ -64,20 +64,20 @@ open class TypeApproximatorConfiguration {
         override val typeVariable: (TypeVariableTypeConstructorMarker) -> Boolean get() = { true }
     }
 
-    object IncorporationConfiguration : TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(CaptureStatus.FOR_INCORPORATION)
-    object SubtypeCapturedTypesApproximation : TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(CaptureStatus.FOR_SUBTYPING)
-    object InternalTypesApproximation : TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(CaptureStatus.FROM_EXPRESSION) {
+    object IncorporationConfiguration : AbstractCapturedTypesApproximation(CaptureStatus.FOR_INCORPORATION)
+    object SubtypeCapturedTypesApproximation : AbstractCapturedTypesApproximation(CaptureStatus.FOR_SUBTYPING)
+    object InternalTypesApproximation : AbstractCapturedTypesApproximation(CaptureStatus.FROM_EXPRESSION) {
         override val integerLiteralType: Boolean get() = true
         override val intersectionTypesInContravariantPositions: Boolean get() = true
     }
 
     object FinalApproximationAfterResolutionAndInference :
-        TypeApproximatorConfiguration.AbstractCapturedTypesApproximation(CaptureStatus.FROM_EXPRESSION) {
+        AbstractCapturedTypesApproximation(CaptureStatus.FROM_EXPRESSION) {
         override val integerLiteralType: Boolean get() = true
         override val intersectionTypesInContravariantPositions: Boolean get() = true
     }
 
-    object IntegerLiteralsTypesApproximation : TypeApproximatorConfiguration.AllFlexibleSameValue() {
+    object IntegerLiteralsTypesApproximation : AllFlexibleSameValue() {
         override val integerLiteralType: Boolean get() = true
         override val allFlexible: Boolean get() = true
         override val intersection: IntersectionStrategy get() = IntersectionStrategy.ALLOWED

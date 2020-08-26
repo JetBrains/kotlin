@@ -20,3 +20,6 @@ enum class ResolutionCandidateApplicability {
     HIDDEN, // removed from resolve
     RESOLVED_TO_SAM_WITH_VARARG, // migration warning up to 1.5 (when resolve to function with SAM conversion and array without spread as vararg)
 }
+
+val ResolutionCandidateApplicability.isSuccess: Boolean
+    get() = this <= ResolutionCandidateApplicability.RESOLVED_LOW_PRIORITY
