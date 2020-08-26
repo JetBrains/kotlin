@@ -1240,6 +1240,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/flex/flex-tests/intellij.flex.tests.iml" filepath="$PROJECT_DIR$/intellij/contrib/flex/flex-tests/intellij.flex.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/frameworks/starters/intellij.frameworks.starters.iml" filepath="$PROJECT_DIR$/intellij/plugins/frameworks/starters/intellij.frameworks.starters.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/freemarker/core/intellij.freemarker.iml" filepath="$PROJECT_DIR$/intellij/plugins/freemarker/core/intellij.freemarker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/tests/ideFunctionalTests/intellij.functional.tests.iml" filepath="$PROJECT_DIR$/intellij/tests/ideFunctionalTests/intellij.functional.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/gauge/intellij.gauge.iml" filepath="$PROJECT_DIR$/intellij/contrib/gauge/intellij.gauge.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/cucumber/intellij.gherkin.iml" filepath="$PROJECT_DIR$/intellij/contrib/cucumber/intellij.gherkin.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/localization/intellij.gnuGetText.iml" filepath="$PROJECT_DIR$/intellij/python/localization/intellij.gnuGetText.iml" />
