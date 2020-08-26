@@ -11,6 +11,7 @@ import org.jetbrains.dokka.testApi.logger.TestLogger
 import org.jetbrains.dokka.utilities.DokkaConsoleLogger
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.junit.rules.TemporaryFolder
+import testApi.testRunner.TestDokkaConfigurationBuilder
 import java.io.File
 import java.net.URL
 import java.nio.charset.Charset
@@ -160,96 +161,9 @@ abstract class AbstractCoreTest(
         )
     }
 
-    protected fun dokkaConfiguration(block: DokkaConfigurationBuilder.() -> Unit): DokkaConfigurationImpl =
-        DokkaConfigurationBuilder().apply(block).build()
+    protected fun dokkaConfiguration(block: TestDokkaConfigurationBuilder.() -> Unit): DokkaConfigurationImpl =
+        testApi.testRunner.dokkaConfiguration(block)
 
-    @DslMarker
-    protected annotation class DokkaConfigurationDsl
-
-    @DokkaConfigurationDsl
-    protected class DokkaConfigurationBuilder {
-        var outputDir: String = "out"
-        var format: String = "html"
-        var offlineMode: Boolean = false
-        var cacheRoot: String? = null
-        var pluginsClasspath: List<File> = emptyList()
-        var pluginsConfigurations: Map<String, String> = emptyMap()
-        var failOnWarning: Boolean = false
-        private val sourceSets = mutableListOf<DokkaSourceSetImpl>()
-        fun build() = DokkaConfigurationImpl(
-            outputDir = File(outputDir),
-            cacheRoot = cacheRoot?.let(::File),
-            offlineMode = offlineMode,
-            sourceSets = sourceSets.toList(),
-            pluginsClasspath = pluginsClasspath,
-            pluginsConfiguration = pluginsConfigurations,
-            modules = emptyList(),
-            failOnWarning = failOnWarning
-        )
-
-        fun sourceSets(block: SourceSetsBuilder.() -> Unit) {
-            sourceSets.addAll(SourceSetsBuilder().apply(block))
-        }
-    }
-
-    @DokkaConfigurationDsl
-    protected class SourceSetsBuilder : ArrayList<DokkaSourceSetImpl>() {
-        fun sourceSet(block: DokkaSourceSetBuilder.() -> Unit): DokkaSourceSet =
-            DokkaSourceSetBuilder().apply(block).build().apply(::add)
-    }
-
-    @DokkaConfigurationDsl
-    protected class DokkaSourceSetBuilder(
-        var moduleName: String = "root",
-        var moduleDisplayName: String? = null,
-        var name: String = "main",
-        var displayName: String = "JVM",
-        var classpath: List<String> = emptyList(),
-        var sourceRoots: List<String> = emptyList(),
-        var dependentSourceSets: Set<DokkaSourceSetID> = emptySet(),
-        var samples: List<String> = emptyList(),
-        var includes: List<String> = emptyList(),
-        var includeNonPublic: Boolean = false,
-        var includeRootPackage: Boolean = true,
-        var reportUndocumented: Boolean = false,
-        var skipEmptyPackages: Boolean = false,
-        var skipDeprecated: Boolean = false,
-        var jdkVersion: Int = 8,
-        var languageVersion: String? = null,
-        var apiVersion: String? = null,
-        var noStdlibLink: Boolean = false,
-        var noJdkLink: Boolean = false,
-        var suppressedFiles: List<String> = emptyList(),
-        var analysisPlatform: String = "jvm",
-        var perPackageOptions: List<PackageOptionsImpl> = emptyList(),
-        var externalDocumentationLinks: List<ExternalDocumentationLinkImpl> = emptyList(),
-        var sourceLinks: List<SourceLinkDefinitionImpl> = emptyList()
-    ) {
-        fun build() = DokkaSourceSetImpl(
-            moduleDisplayName = moduleDisplayName ?: moduleName,
-            displayName = displayName,
-            sourceSetID = DokkaSourceSetID(moduleName, name),
-            classpath = classpath.map(::File),
-            sourceRoots = sourceRoots.map(::File).toSet(),
-            dependentSourceSets = dependentSourceSets,
-            samples = samples.map(::File).toSet(),
-            includes = includes.map(::File).toSet(),
-            includeNonPublic = includeNonPublic,
-            reportUndocumented = reportUndocumented,
-            skipEmptyPackages = skipEmptyPackages,
-            skipDeprecated = skipDeprecated,
-            jdkVersion = jdkVersion,
-            sourceLinks = sourceLinks.toSet(),
-            perPackageOptions = perPackageOptions.toList(),
-            externalDocumentationLinks = externalDocumentationLinks.toSet(),
-            languageVersion = languageVersion,
-            apiVersion = apiVersion,
-            noStdlibLink = noStdlibLink,
-            noJdkLink = noJdkLink,
-            suppressedFiles = suppressedFiles.map(::File).toSet(),
-            analysisPlatform = Platform.fromString(analysisPlatform)
-        )
-    }
 
     protected val jvmStdlibPath: String? by lazy {
         PathManager.getResourceRoot(Strictfp::class.java, "/kotlin/jvm/Strictfp.class")
