@@ -9,6 +9,7 @@ import com.intellij.codeInsight.completion.*
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PsiJavaPatterns
 import com.intellij.util.ProcessingContext
+import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.getAnalysisSessionFor
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
@@ -62,6 +63,7 @@ private object KotlinHighLevelApiContributor : CompletionProvider<CompletionPara
 private object KotlinAvailableScopesCompletionContributor {
     private val lookupElementFactory = HighLevelApiLookupElementFactory()
 
+    @OptIn(InvalidWayOfUsingAnalysisSession::class)
     fun collectCompletions(parameters: CompletionParameters, result: CompletionResultSet) {
         val originalFile = parameters.originalFile as? KtFile ?: return
 
