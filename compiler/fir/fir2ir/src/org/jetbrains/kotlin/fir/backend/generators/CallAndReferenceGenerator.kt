@@ -324,20 +324,31 @@ class CallAndReferenceGenerator(
             }
         }
 
+        fun IrValueParameter.toGetValue(): IrGetValue =
+            IrGetValueImpl(startOffset, endOffset, this.type, this.symbol)
+
         adapteeFunction.valueParameters.mapIndexed { index, valueParameter ->
             when {
                 valueParameter.hasDefaultValue() -> {
                     irCall.putValueArgument(shift + index, null)
                 }
                 valueParameter.isVararg -> {
-                    // TODO: handle vararg and spread
-                    irCall.putValueArgument(shift + index, null)
+                    if (adapterFunction.valueParameters.size <= index) {
+                        irCall.putValueArgument(shift + index, null)
+                    } else {
+                        val adaptedValueArgument =
+                            IrVarargImpl(startOffset, endOffset, valueParameter.type, valueParameter.varargElementType!!)
+                        val irValueArgument = adapterFunction.valueParameters[index].toGetValue()
+                        if (irValueArgument.type == valueParameter.type) {
+                            adaptedValueArgument.addElement(IrSpreadElementImpl(startOffset, endOffset, irValueArgument))
+                        } else {
+                            adaptedValueArgument.addElement(irValueArgument)
+                        }
+                        irCall.putValueArgument(shift + index, adaptedValueArgument)
+                    }
                 }
                 else -> {
-                    val irValueArgument = adapterFunction.valueParameters[index]
-                    irCall.putValueArgument(
-                        shift + index, IrGetValueImpl(startOffset, endOffset, irValueArgument.type, irValueArgument.symbol)
-                    )
+                    irCall.putValueArgument(shift + index, adapterFunction.valueParameters[index].toGetValue())
                 }
             }
         }
