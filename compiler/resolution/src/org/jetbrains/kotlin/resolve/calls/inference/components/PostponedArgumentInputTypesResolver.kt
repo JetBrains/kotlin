@@ -468,10 +468,11 @@ class PostponedArgumentInputTypesResolver(
         val variableWithConstraints = notFixedTypeVariables.getValue(variableForFixation.variable)
         val resultType =
             resultTypeResolver.findResultType(this, variableWithConstraints, TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN)
-        val resolvedAtom = KotlinConstraintSystemCompleter.findResolvedAtomBy(variableWithConstraints.typeVariable, topLevelAtoms)
+        val variable = variableWithConstraints.typeVariable
+        val resolvedAtom = KotlinConstraintSystemCompleter.findResolvedAtomBy(variable, topLevelAtoms)
             ?: topLevelAtoms.firstOrNull()
 
-        fixVariable(variableWithConstraints.typeVariable, resultType, resolvedAtom)
+        fixVariable(variable, resultType, FixVariableConstraintPositionImpl(variable, resolvedAtom))
 
         return true
     }

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.resolve.calls.inference.model
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedAtom
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 import org.jetbrains.kotlin.types.model.*
@@ -292,11 +291,11 @@ class NewConstraintSystemImpl(
 
     // KotlinConstraintSystemCompleter.Context
     // TODO: simplify this: do only substitution a fixing type variable rather than running of subtyping and full incorporation
-    override fun fixVariable(variable: TypeVariableMarker, resultType: KotlinTypeMarker, atom: ResolvedAtom?) {
+    override fun fixVariable(variable: TypeVariableMarker, resultType: KotlinTypeMarker, position: FixVariableConstraintPosition<*>) {
         checkState(State.BUILDING, State.COMPLETION)
 
         constraintInjector.addInitialEqualityConstraint(
-            this, variable.defaultType(), resultType, FixVariableConstraintPositionImpl(variable, atom)
+            this, variable.defaultType(), resultType, position
         )
 
         val freshTypeConstructor = variable.freshTypeConstructor()

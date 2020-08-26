@@ -238,8 +238,9 @@ class KotlinConstraintSystemCompleter(
         topLevelAtoms: List<ResolvedAtom>
     ) {
         val resultType = resultTypeResolver.findResultType(c, variableWithConstraints, direction)
-        val resolvedAtom = findResolvedAtomBy(variableWithConstraints.typeVariable, topLevelAtoms) ?: topLevelAtoms.firstOrNull()
-        c.fixVariable(variableWithConstraints.typeVariable, resultType, resolvedAtom)
+        val variable = variableWithConstraints.typeVariable
+        val resolvedAtom = findResolvedAtomBy(variable, topLevelAtoms) ?: topLevelAtoms.firstOrNull()
+        c.fixVariable(variable, resultType, FixVariableConstraintPositionImpl(variable, resolvedAtom))
     }
 
     private fun ConstraintSystemCompletionContext.fixVariablesOrReportNotEnoughInformation(
@@ -300,7 +301,7 @@ class KotlinConstraintSystemCompleter(
             else -> ErrorUtils.createErrorType("Cannot infer type variable $typeVariable")
         }
 
-        c.fixVariable(typeVariable, resultErrorType, resolvedAtom)
+        c.fixVariable(typeVariable, resultErrorType, FixVariableConstraintPositionImpl(typeVariable, resolvedAtom))
     }
 
     private fun ConstraintSystemCompletionContext.getOrderedAllTypeVariables(

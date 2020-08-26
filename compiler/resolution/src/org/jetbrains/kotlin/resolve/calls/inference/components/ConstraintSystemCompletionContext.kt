@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
+import org.jetbrains.kotlin.resolve.calls.inference.model.FixVariableConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedAtom
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
@@ -28,7 +28,7 @@ interface ConstraintSystemCompletionContext : VariableFixationFinder.Context, Re
     // mutable operations
     fun addError(error: ConstraintSystemError)
 
-    fun fixVariable(variable: TypeVariableMarker, resultType: KotlinTypeMarker, atom: ResolvedAtom?)
+    fun fixVariable(variable: TypeVariableMarker, resultType: KotlinTypeMarker, position: FixVariableConstraintPosition<*>)
 
     fun asConstraintSystemCompletionContext(): ConstraintSystemCompletionContext
 }

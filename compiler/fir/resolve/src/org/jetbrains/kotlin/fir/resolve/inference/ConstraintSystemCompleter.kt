@@ -9,11 +9,15 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
 import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
-import org.jetbrains.kotlin.resolve.calls.inference.components.*
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
+import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator
+import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
@@ -203,7 +207,8 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents) {
     ) {
         val direction = TypeVariableDirectionCalculator(c, postponedResolveKtPrimitives, topLevelType).getDirection(variableWithConstraints)
         val resultType = components.inferenceComponents.resultTypeResolver.findResultType(c, variableWithConstraints, direction)
-        c.fixVariable(variableWithConstraints.typeVariable, resultType, atom = null) // TODO: obtain atom for diagnostics
+        val variable = variableWithConstraints.typeVariable
+        c.fixVariable(variable, resultType, ConeFixVariableConstraintPosition(variable)) // TODO: obtain atom for diagnostics
     }
 
     private fun analyzePostponeArgumentIfPossible(
