@@ -15,7 +15,7 @@
   </description>
   <version>0.1-SNAPSHOT</version>
   <vendor url="http://jetbrains.com">JetBrains</vendor>
-  <idea-version since-build="201.8743.12" until-build="201.8743.12"/>
+  <idea-version since-build="201.7846.76" until-build="201.7846.76"/>
 
   <change-notes><![CDATA[
     <h3>0.1:</h3>
