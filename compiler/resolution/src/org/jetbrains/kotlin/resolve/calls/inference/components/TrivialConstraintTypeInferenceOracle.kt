@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDelegate
 
@@ -63,7 +64,10 @@ class TrivialConstraintTypeInferenceOracle private constructor(context: TypeSyst
 
 
     private fun KotlinTypeMarker.containsOnlyNonNullableNothing(): Boolean =
-        contains { it.isNothing() } && !contains { it.isNullableNothing() }
+        contains {
+            (it.isNothing() || it.isFlexibleNothing()) &&
+                    !(it is SimpleTypeMarker && it.typeConstructor().isNothingConstructor() && it.isMarkedNullable())
+        }
 
 
     companion object {
