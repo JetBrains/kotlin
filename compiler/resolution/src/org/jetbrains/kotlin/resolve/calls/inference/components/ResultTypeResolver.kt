@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.components.TypeVariableDirectionCalculator.ResolveDirection
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.AbstractTypeApproximator
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.*
 
 class ResultTypeResolver(
@@ -81,7 +83,7 @@ class ResultTypeResolver(
         firstCandidate: KotlinTypeMarker,
         secondCandidate: KotlinTypeMarker,
     ): KotlinTypeMarker? {
-        if (firstCandidate.typeConstructor() is IntersectionTypeConstructor) {
+        if (firstCandidate.typeConstructor().isIntersection()) {
             if (!AbstractTypeChecker.isSubtypeOf(this, firstCandidate.toPublicType(), secondCandidate.toPublicType())) {
                 return createTypeWithAlternativeForIntersectionResult(firstCandidate, secondCandidate)
             }
