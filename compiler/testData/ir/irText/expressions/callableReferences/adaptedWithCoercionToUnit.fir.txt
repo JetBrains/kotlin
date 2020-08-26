@@ -54,3 +54,5 @@ FILE fqName:<root> fileName:/adaptedWithCoercionToUnit.kt
               VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:kotlin.Int
               BLOCK_BODY
                 CALL 'public final fun fnv (vararg xs: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+                  xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                    GET_VAR 'p0: kotlin.Int declared in <root>.testV1.fnv' type=kotlin.Int origin=null
