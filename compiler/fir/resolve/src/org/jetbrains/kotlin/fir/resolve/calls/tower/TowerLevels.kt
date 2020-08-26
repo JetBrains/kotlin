@@ -87,7 +87,7 @@ class MemberScopeTowerLevel(
             if (candidate is FirCallableSymbol<*> &&
                 (implicitExtensionInvokeMode || candidate.hasConsistentExtensionReceiver(extensionReceiver))
             ) {
-                val fir = with(bodyResolveComponents) { candidate.phasedFir }
+                val fir = candidate.fir
                 if ((fir as? FirConstructor)?.isInner == false) {
                     return@processScopeMembers
                 }

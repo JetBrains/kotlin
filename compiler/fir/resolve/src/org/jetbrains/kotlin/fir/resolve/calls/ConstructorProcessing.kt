@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypePa
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructor
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -68,16 +67,10 @@ internal fun FirScope.processFunctionsAndConstructorsByName(
     processConstructorsByName(
         name, session, bodyResolveComponents,
         includeInnerConstructors = includeInnerConstructors,
-        processor = {
-            with(bodyResolveComponents) { it.phasedFir }
-            processor(it)
-        }
+        processor
     )
 
-    processFunctionsByName(name) {
-        with(bodyResolveComponents) { it.phasedFir }
-        processor(it)
-    }
+    processFunctionsByName(name, processor)
 }
 
 private fun FirScope.getFirstClassifierOrNull(name: Name): Pair<FirClassifierSymbol<*>, ConeSubstitutor>? {

@@ -89,7 +89,7 @@ internal sealed class CheckReceivers : ResolutionStage() {
 
         override fun Candidate.getReceiverType(): ConeKotlinType? {
             val callableSymbol = symbol as? FirCallableSymbol<*> ?: return null
-            val callable = with(bodyResolveComponents) { callableSymbol.phasedFir }
+            val callable = callableSymbol.fir
             val receiverType = callable.receiverTypeRef?.coneType
             if (receiverType != null) return receiverType
             val returnTypeRef = callable.returnTypeRef as? FirResolvedTypeRef ?: return null
@@ -152,7 +152,7 @@ private fun FirExpression.isSuperReferenceExpression(): Boolean {
 internal object MapArguments : ResolutionStage() {
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         val symbol = candidate.symbol as? FirFunctionSymbol<*> ?: return sink.reportApplicability(CandidateApplicability.HIDDEN)
-        val function = with(candidate.bodyResolveComponents) { symbol.phasedFir }
+        val function = symbol.fir
 
         val mapping = mapArguments(callInfo.arguments, function)
         candidate.argumentMapping = mapping.toArgumentToParameterMapping()
@@ -212,9 +212,7 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
             else -> null
         }
 
-        val fir: FirCallableDeclaration<*> = with(candidate.bodyResolveComponents) {
-            candidateSymbol.phasedFir
-        }
+        val fir: FirCallableDeclaration<*> = candidate.symbol.fir
 
         val returnTypeRef = candidate.bodyResolveComponents.returnTypeCalculator.tryCalculateReturnType(fir)
         // If the expected type is a suspend function type and the current argument of interest is a function reference, we need to do
