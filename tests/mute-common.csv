@@ -77,3 +77,4 @@ org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.test
 org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryNestedClassUsages,,, FLAKY
 org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryMemberFunctionUsages,,, FLAKY
 org.jetbrains.kotlin.daemon.CompilerDaemonTest.testParallelDaemonStart,,,
+org.jetbrains.kotlin.idea.repl.IdeReplExecutionTest.testOnePlusOne,,, FLAKY
