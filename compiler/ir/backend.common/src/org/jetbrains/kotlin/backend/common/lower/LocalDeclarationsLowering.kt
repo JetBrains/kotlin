@@ -646,7 +646,7 @@ class LocalDeclarationsLowering(
                     startOffset = p.startOffset
                     endOffset = p.endOffset
                     origin =
-                        if (p.descriptor is ReceiverParameterDescriptor && newDeclaration is IrConstructor) BOUND_RECEIVER_PARAMETER
+                        if (p is IrValueParameter && p.index < 0 && newDeclaration is IrConstructor) BOUND_RECEIVER_PARAMETER
                         else BOUND_VALUE_PARAMETER
                     name = suggestNameForCapturedValue(p, generatedNames)
                     index = i

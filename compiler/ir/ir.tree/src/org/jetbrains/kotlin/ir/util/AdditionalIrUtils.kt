@@ -30,6 +30,23 @@ val IrDeclarationParent.fqNameForIrSerialization: FqName
         else -> error(this)
     }
 
+/**
+ * Skips synthetic FILE_CLASS to make top-level functions look as in kotlin source
+ */
+val IrDeclarationParent.kotlinFqName: FqName
+    get() = when (this) {
+        is IrPackageFragment -> this.fqName
+        is IrClass -> {
+            if (origin == IrDeclarationOrigin.FILE_CLASS) {
+                parent.kotlinFqName
+            } else {
+                parent.kotlinFqName.child(nameForIrSerialization)
+            }
+        }
+        is IrDeclaration -> this.parent.kotlinFqName.child(nameForIrSerialization)
+        else -> error(this)
+    }
+
 val IrClass.classId: ClassId?
     get() = when (val parent = this.parent) {
         is IrClass -> parent.classId?.createNestedClassId(this.name)

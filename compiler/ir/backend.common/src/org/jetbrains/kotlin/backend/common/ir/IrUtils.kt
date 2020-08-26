@@ -109,7 +109,6 @@ val IrClass.isFinalClass: Boolean
 
 val IrTypeParametersContainer.classIfConstructor get() = if (this is IrConstructor) parentAsClass else this
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrValueParameter.copyTo(
     irFunction: IrFunction,
     origin: IrDeclarationOrigin = this.origin,
@@ -129,9 +128,9 @@ fun IrValueParameter.copyTo(
     isNoinline: Boolean = this.isNoinline
 ): IrValueParameter {
     val descriptor = if (index < 0) {
-        WrappedReceiverParameterDescriptor(this.descriptor.annotations, this.descriptor.source)
+        WrappedReceiverParameterDescriptor()
     } else {
-        WrappedValueParameterDescriptor(this.descriptor.annotations, this.descriptor.source)
+        WrappedValueParameterDescriptor()
     }
     val symbol = IrValueParameterSymbolImpl(descriptor)
     val defaultValueCopy = defaultValue?.let { originalDefault ->
@@ -166,12 +165,15 @@ fun IrTypeParameter.copyToWithoutSuperTypes(
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrFunction.copyReceiverParametersFrom(from: IrFunction) {
     dispatchReceiverParameter = from.dispatchReceiverParameter?.run {
+        val newDescriptor = WrappedReceiverParameterDescriptor()
         factory.createValueParameter(
-            startOffset, endOffset, origin, IrValueParameterSymbolImpl(descriptor), descriptor.name,
-            descriptor.indexOrMinusOne, type, varargElementType, descriptor.isCrossinline,
-            descriptor.isNoinline
+            startOffset, endOffset, origin,
+            IrValueParameterSymbolImpl(newDescriptor),
+            name,
+            index, type, varargElementType, isCrossinline, isNoinline
         ).also { parameter ->
             parameter.parent = this@copyReceiverParametersFrom
+            newDescriptor.bind(this)
         }
     }
     extensionReceiverParameter = from.extensionReceiverParameter?.copyTo(this)
@@ -406,22 +408,23 @@ fun IrClass.createParameterDeclarations() {
     thisReceiver = buildReceiverParameter(this, IrDeclarationOrigin.INSTANCE_RECEIVER, symbol.typeWithParameters(typeParameters))
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = null) {
     assert(dispatchReceiverParameter == null)
 
+    val newDescriptor = WrappedReceiverParameterDescriptor()
     dispatchReceiverParameter = factory.createValueParameter(
         startOffset, endOffset,
         origin ?: parentAsClass.origin,
-        IrValueParameterSymbolImpl(parentAsClass.thisReceiver!!.descriptor),
+        IrValueParameterSymbolImpl(newDescriptor),
         Name.special("<this>"),
-        0,
+        -1,
         parentAsClass.defaultType,
         null,
         false,
         false
     ).apply {
         parent = this@createDispatchReceiverParameter
+        newDescriptor.bind(this)
     }
 }
 
