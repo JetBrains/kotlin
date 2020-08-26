@@ -10,8 +10,7 @@ import com.jetbrains.cidr.execution.testing.xctest.OCUnitTestObject
 import com.jetbrains.mobile.execution.MobileBuildTargetRunConfigurationBinder
 import com.jetbrains.mobile.execution.MobileBuildConfiguration
 import com.jetbrains.mobile.execution.MobileBuildTarget
-import com.jetbrains.mobile.isApple
-import com.jetbrains.mobile.isMobileAppTest
+import com.jetbrains.mobile.isCommonTest
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 
 class AppleXCTestRunConfigurationProducer : CidrTestWithScopeElementsRunConfigurationProducer<
@@ -29,7 +28,7 @@ class AppleXCTestRunConfigurationProducer : CidrTestWithScopeElementsRunConfigur
         context: ConfigurationContext,
         sourceElement: Ref<PsiElement>
     ): Boolean {
-        configuration.module = configuration.project.allModules().find { it.isApple && it.isMobileAppTest }
+        configuration.module = configuration.project.allModules().find { it.isCommonTest }
         return super.setupConfigurationFromContext(configuration, context, sourceElement)
     }
 }

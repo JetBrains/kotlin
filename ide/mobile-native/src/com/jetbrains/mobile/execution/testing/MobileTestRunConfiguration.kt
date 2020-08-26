@@ -11,7 +11,7 @@ import com.intellij.openapi.project.Project
 import com.jetbrains.cidr.execution.CidrLauncher
 import com.jetbrains.cidr.execution.testing.*
 import com.jetbrains.mobile.execution.*
-import com.jetbrains.mobile.isMobileAppTest
+import com.jetbrains.mobile.isCommonTest
 import org.jdom.Element
 import java.io.File
 
@@ -32,7 +32,7 @@ class MobileTestRunConfiguration(project: Project, factory: ConfigurationFactory
     private var testData = CompositeTestRunConfigurationData(this, listOf(AppleXCTestRunConfigurationData(this), AndroidTestRunConfigurationData(this)))
     override fun getTestData(): CidrTestRunConfigurationData<MobileTestRunConfiguration> = testData
 
-    override fun isSuitable(module: Module): Boolean = module.isMobileAppTest
+    override fun isSuitable(module: Module): Boolean = module.isCommonTest
 
     override fun getState(executor: Executor, environment: ExecutionEnvironment): CommandLineState? =
         testData.createState(environment, executor, null)

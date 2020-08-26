@@ -14,7 +14,7 @@ import com.intellij.util.SmartList
 import com.jetbrains.cidr.execution.CidrRunConfiguration
 import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
 import com.jetbrains.mobile.MobileBundle
-import com.jetbrains.mobile.isMobileAppMain
+import com.jetbrains.mobile.isCommonMain
 import org.jdom.Element
 import org.jetbrains.kotlin.idea.util.projectStructure.allModules
 import org.jetbrains.plugins.gradle.util.GradleUtil
@@ -116,7 +116,7 @@ abstract class MobileRunConfigurationBase(project: Project, factory: Configurati
 class MobileAppRunConfiguration(project: Project, factory: ConfigurationFactory, name: String) :
     MobileRunConfigurationBase(project, factory, name) {
 
-    override fun isSuitable(module: Module): Boolean = module.isMobileAppMain
+    override fun isSuitable(module: Module): Boolean = module.isCommonMain
 
     override fun getState(executor: Executor, environment: ExecutionEnvironment): CommandLineState {
         val states = SmartList<CommandLineState>()

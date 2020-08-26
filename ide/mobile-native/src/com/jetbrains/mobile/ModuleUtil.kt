@@ -7,12 +7,26 @@ import org.jetbrains.kotlin.platform.SimplePlatform
 import org.jetbrains.kotlin.platform.jvm.JdkPlatform
 import org.jetbrains.kotlin.platform.konan.NativePlatform
 
-private fun Module.targetPlatformOrNull(): SimplePlatform? {
+private fun Module.targetPlatforms(): Set<SimplePlatform> {
     val facets = FacetManager.getInstance(this).allFacets
     if (facets.size > 1) throw IllegalStateException()
     val facetConfiguration = facets.singleOrNull()?.configuration as? KotlinFacetConfiguration
-    return facetConfiguration?.settings?.targetPlatform?.componentPlatforms?.singleOrNull()
+    return facetConfiguration?.settings?.targetPlatform?.componentPlatforms ?: emptySet()
 }
+
+private fun Module.targetPlatformOrNull(): SimplePlatform? = targetPlatforms().singleOrNull()
+
+val Module.isCommon: Boolean
+    get() {
+        val platforms = targetPlatforms()
+        return platforms.any { it is JdkPlatform } && platforms.any { it is NativePlatform }
+    }
+
+val Module.isCommonMain: Boolean
+    get() = name.endsWith("Main") && isCommon
+
+val Module.isCommonTest: Boolean
+    get() = name.endsWith("Test") && isCommon
 
 val Module.isAndroid: Boolean
     get() = targetPlatformOrNull() is JdkPlatform
