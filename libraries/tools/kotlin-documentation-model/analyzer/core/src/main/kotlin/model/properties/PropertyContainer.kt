@@ -1,6 +1,6 @@
 package org.jetbrains.dokka.model.properties
 
-class PropertyContainer<C : Any> internal constructor(
+data class PropertyContainer<C : Any> internal constructor(
     @PublishedApi internal val map: Map<ExtraProperty.Key<C, *>, ExtraProperty<C>>
 ) {
     operator fun <D : C> plus(prop: ExtraProperty<D>): PropertyContainer<D> =
