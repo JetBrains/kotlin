@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 
@@ -32,4 +34,15 @@ fun <D> AbstractFirBasedSymbol<D>.ensureResolved(
         ?: error("phaseManager should be defined when working with FIR in phased mode")
 
     resolver.ensureResolved(this, requiredPhase)
+}
+
+fun <D> AbstractFirBasedSymbol<D>.ensureResolvedForCalls(
+    useSiteSession: FirSession,
+) where D : FirDeclaration, D : FirSymbolOwner<D> {
+    val requiredPhase = when (this.fir) {
+        is FirFunction<*>, is FirProperty -> FirResolvePhase.CONTRACTS
+        else -> FirResolvePhase.STATUS
+    }
+
+    ensureResolved(requiredPhase, useSiteSession)
 }
