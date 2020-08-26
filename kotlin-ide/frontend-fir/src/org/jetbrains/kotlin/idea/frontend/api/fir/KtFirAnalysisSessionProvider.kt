@@ -11,12 +11,14 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.idea.frontend.api.assertIsValid
 import org.jetbrains.kotlin.psi.KtElement
 import java.util.concurrent.ConcurrentHashMap
 
+@OptIn(InvalidWayOfUsingAnalysisSession::class)
 class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider() {
     private val analysisSessionByModuleInfoCache =
         CachedValuesManager.getManager(project).createCachedValue {
