@@ -6,11 +6,25 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.resolve.calls.components.CreateFreshVariablesSubstitutor.shouldBeFlexible
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
+import org.jetbrains.kotlin.types.typeUtil.unCapture as unCaptureKotlinType
 
 object ClassicConstraintSystemUtilContext : ConstraintSystemUtilContext {
     override fun TypeVariableMarker.shouldBeFlexible(): Boolean {
         return this is TypeVariableFromCallableDescriptor && this.originalTypeParameter.shouldBeFlexible()
+    }
+
+    override fun TypeVariableMarker.hasOnlyInputTypesAttribute(): Boolean {
+        require(this is NewTypeVariable)
+        return hasOnlyInputTypesAnnotation()
+    }
+
+    override fun KotlinTypeMarker.unCapture(): KotlinTypeMarker {
+        require(this is KotlinType)
+        return unCaptureKotlinType().unwrap()
     }
 }

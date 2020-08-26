@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemUtilContext
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
-import org.jetbrains.kotlin.types.typeUtil.unCapture
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.trimToSize
-
 
 class MutableVariableWithConstraints private constructor(
     override val typeVariable: TypeVariableMarker,
@@ -33,13 +32,16 @@ class MutableVariableWithConstraints private constructor(
         }
 
     // see @OnlyInputTypes annotation
-    val projectedInputCallTypes: Collection<UnwrappedType>
-        get() = mutableConstraints
-            .mapNotNullTo(SmartList()) {
-                if (it.position.from is OnlyInputTypeConstraintPosition || it.inputTypePositionBeforeIncorporation != null)
-                    (it.type as KotlinType).unCapture().unwrap()
-                else null
-            }
+    fun getProjectedInputCallTypes(utilContext: ConstraintSystemUtilContext): Collection<KotlinTypeMarker> {
+        return with(utilContext) {
+            mutableConstraints
+                .mapNotNullTo(SmartList()) {
+                    if (it.position.from is OnlyInputTypeConstraintPosition || it.inputTypePositionBeforeIncorporation != null)
+                        it.type.unCapture()
+                    else null
+                }
+        }
+    }
 
     private val mutableConstraints = if (constraints == null) SmartList() else SmartList(constraints)
 

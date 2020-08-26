@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 /*
@@ -14,4 +15,6 @@ import org.jetbrains.kotlin.types.model.TypeVariableMarker
  */
 interface ConstraintSystemUtilContext {
     fun TypeVariableMarker.shouldBeFlexible(): Boolean
+    fun TypeVariableMarker.hasOnlyInputTypesAttribute(): Boolean
+    fun KotlinTypeMarker.unCapture(): KotlinTypeMarker
 }

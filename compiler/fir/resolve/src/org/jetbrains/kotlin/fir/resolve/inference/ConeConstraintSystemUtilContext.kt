@@ -5,12 +5,25 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemUtilContext
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
     override fun TypeVariableMarker.shouldBeFlexible(): Boolean {
         // TODO
         return false
+    }
+
+    override fun TypeVariableMarker.hasOnlyInputTypesAttribute(): Boolean {
+        // TODO
+        return false
+    }
+
+    override fun KotlinTypeMarker.unCapture(): KotlinTypeMarker {
+        require(this is ConeKotlinType)
+        // TODO, see TypeUtils.kt
+        return this
     }
 }

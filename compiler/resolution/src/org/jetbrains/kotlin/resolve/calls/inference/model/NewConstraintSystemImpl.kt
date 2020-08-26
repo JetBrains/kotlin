@@ -8,26 +8,26 @@ package org.jetbrains.kotlin.resolve.calls.inference.model
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.addToStdlib.trimToSize
 import kotlin.math.max
 
 class NewConstraintSystemImpl(
     private val constraintInjector: ConstraintInjector,
     val typeSystemContext: TypeSystemInferenceExtensionContext
-) :
-    TypeSystemInferenceExtensionContext by typeSystemContext,
+) : TypeSystemInferenceExtensionContext by typeSystemContext,
     NewConstraintSystem,
     ConstraintSystemBuilder,
     ConstraintInjector.Context,
     ResultTypeResolver.Context,
     ConstraintSystemCompletionContext,
-    PostponedArgumentsAnalyzerContext {
+    PostponedArgumentsAnalyzerContext
+{
+    private val utilContext = constraintInjector.constraintIncorporator.utilContext
+
     private val storage = MutableConstraintStorage()
     private var state = State.BUILDING
     private val typeVariablesTransaction: MutableList<TypeVariableMarker> = SmartList()
@@ -316,16 +316,17 @@ class NewConstraintSystemImpl(
         variableWithConstraints: MutableVariableWithConstraints?,
         resultType: KotlinTypeMarker
     ) {
-        if (resultType !is KotlinType || variableWithConstraints == null) return
-        if (variableWithConstraints.typeVariable.safeAs<NewTypeVariable>()?.hasOnlyInputTypesAnnotation() != true) return
+        if (variableWithConstraints == null) return
+        val variableHasOnlyInputTypes = with(utilContext) { variableWithConstraints.typeVariable.hasOnlyInputTypesAttribute() }
+        if (!variableHasOnlyInputTypes) return
 
-        val resultTypeIsInputType = variableWithConstraints.projectedInputCallTypes.any { inputType ->
-            NewKotlinTypeChecker.Default.equalTypes(resultType, inputType) ||
-                    inputType.constructor is IntersectionTypeConstructor
-                    && inputType.constructor.supertypes.any { NewKotlinTypeChecker.Default.equalTypes(resultType, it) }
+        val resultTypeIsInputType = variableWithConstraints.getProjectedInputCallTypes(utilContext).any { inputType ->
+            if (AbstractTypeChecker.equalTypes(this, resultType, inputType)) return@any true
+            val constructor = inputType.typeConstructor()
+            constructor.isIntersection() && constructor.supertypes().any { AbstractTypeChecker.equalTypes(this, resultType, it) }
         }
         if (!resultTypeIsInputType) {
-            addError(OnlyInputTypesDiagnostic(variableWithConstraints.typeVariable as NewTypeVariable))
+            addError(OnlyInputTypesDiagnostic(variableWithConstraints.typeVariable))
         }
     }
 
