@@ -26,4 +26,9 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
         // TODO, see TypeUtils.kt
         return this
     }
+
+    override fun TypeVariableMarker.isReified(): Boolean {
+        // TODO
+        return false
+    }
 }

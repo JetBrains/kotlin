@@ -363,14 +363,13 @@ class NewConstraintSystemImpl(
 
     // ResultTypeResolver.Context, VariableFixationFinder.Context
     override fun isReified(variable: TypeVariableMarker): Boolean {
-        if (variable !is TypeVariableFromCallableDescriptor) return false
-        return variable.originalTypeParameter.isReified
+        return with(utilContext) { variable.isReified() }
     }
 
     override fun bindingStubsForPostponedVariables(): Map<TypeVariableMarker, StubTypeMarker> {
         checkState(State.BUILDING, State.COMPLETION)
         // TODO: SUB
-        return storage.postponedTypeVariables.associate { it to createStubType(it)/*StubType(it.freshTypeConstructor() as TypeConstructor, it.defaultType().isMarkedNullable())*/ }
+        return storage.postponedTypeVariables.associateWith { createStubType(it) }
     }
 
     override fun currentStorage(): ConstraintStorage {

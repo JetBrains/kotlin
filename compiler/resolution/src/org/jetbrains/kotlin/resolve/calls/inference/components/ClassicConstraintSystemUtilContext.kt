@@ -27,4 +27,9 @@ object ClassicConstraintSystemUtilContext : ConstraintSystemUtilContext {
         require(this is KotlinType)
         return unCaptureKotlinType().unwrap()
     }
+
+    override fun TypeVariableMarker.isReified(): Boolean {
+        if (this !is TypeVariableFromCallableDescriptor) return false
+        return originalTypeParameter.isReified
+    }
 }
