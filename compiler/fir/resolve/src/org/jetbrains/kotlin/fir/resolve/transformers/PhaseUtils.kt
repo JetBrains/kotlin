@@ -8,29 +8,17 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 
 fun <D> AbstractFirBasedSymbol<D>.phasedFir(
     requiredPhase: FirResolvePhase = FirResolvePhase.DECLARATIONS
 ): D where D : FirDeclaration, D : FirSymbolOwner<D> {
     val result = this.fir
-    val availablePhase = result.resolvePhase
-    if (availablePhase < requiredPhase) {
-        // NB: we should use session from symbol here, not transformer session (important for IDE)
-        val provider = fir.session.firProvider
+    val resolver = fir.session.phaseManager
+        ?: error("phasedFirFileResolver should be defined when working with FIR in phased mode")
 
-        require(provider.isPhasedFirAllowed) {
-            "Incorrect resolvePhase: actual: $availablePhase, expected: $requiredPhase\n For: ${fir.render()}"
-        }
+    resolver.ensureResolved(this, requiredPhase)
 
-        val resolver = fir.session.phasedFirFileResolver
-            ?: error("phasedFirFileResolver should be defined when working with FIR in phased mode")
-        resolver.resolveDeclaration(fir, fromPhase = availablePhase, toPhase = requiredPhase)
-    }
     return result
 }
 

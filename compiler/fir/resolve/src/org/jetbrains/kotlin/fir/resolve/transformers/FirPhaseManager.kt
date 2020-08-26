@@ -7,12 +7,16 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 
-abstract class PhasedFirFileResolver : FirSessionComponent {
-    abstract fun resolveDeclaration(declaration: FirDeclaration, fromPhase: FirResolvePhase, toPhase: FirResolvePhase)
+abstract class FirPhaseManager : FirSessionComponent {
+    abstract fun <D> ensureResolved(
+        symbol: AbstractFirBasedSymbol<D>,
+        requiredPhase: FirResolvePhase = FirResolvePhase.DECLARATIONS
+    ) where D : FirDeclaration, D : FirSymbolOwner<D>
 }
 
-internal val FirSession.phasedFirFileResolver: PhasedFirFileResolver? by FirSession.nullableSessionComponentAccessor()
+internal val FirSession.phaseManager: FirPhaseManager? by FirSession.nullableSessionComponentAccessor()
