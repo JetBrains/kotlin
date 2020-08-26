@@ -12,11 +12,12 @@ abstract class AbstractContextModuleAndPackageDocumentationReaderTest {
     protected lateinit var temporaryDirectory: Path
 
 
-    protected val SourceSetDependent<DocumentationNode>.texts: List<String>
-        get() = values.flatMap { it.withDescendants() }
-            .flatMap { it.children }
-            .flatMap { it.children }
-            .mapNotNull { it as? Text }
-            .map { it.body }
-
+    companion object {
+        val SourceSetDependent<DocumentationNode>.texts: List<String>
+            get() = values.flatMap { it.withDescendants() }
+                .flatMap { it.children }
+                .flatMap { it.children }
+                .mapNotNull { it as? Text }
+                .map { it.body }
+    }
 }

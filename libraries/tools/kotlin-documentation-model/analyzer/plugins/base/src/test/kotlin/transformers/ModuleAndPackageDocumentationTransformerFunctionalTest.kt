@@ -4,6 +4,7 @@ import org.jetbrains.dokka.DokkaSourceSetID
 import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
+import transformers.AbstractContextModuleAndPackageDocumentationReaderTest.Companion.texts
 import java.nio.file.Path
 import kotlin.test.assertEquals
 
@@ -19,6 +20,9 @@ class ModuleAndPackageDocumentationTransformerFunctionalTest : AbstractCoreTest(
             
             # Package
             This is the root package
+            
+            # Package [root]
+            This is also the root package
             
             # Package common
             This is the common package
@@ -47,6 +51,7 @@ class ModuleAndPackageDocumentationTransformerFunctionalTest : AbstractCoreTest(
                     analysisPlatform = "js"
                     sourceRoots = listOf("src/jsMain/kotlin")
                     dependentSourceSets = setOf(DokkaSourceSetID("moduleA", "commonMain"))
+                    includes = listOf(include.canonicalPath)
                 }
                 sourceSet {
                     moduleName = "moduleA"
@@ -55,6 +60,7 @@ class ModuleAndPackageDocumentationTransformerFunctionalTest : AbstractCoreTest(
                     analysisPlatform = "jvm"
                     sourceRoots = listOf("src/jvmMain/kotlin")
                     dependentSourceSets = setOf(DokkaSourceSetID("moduleA", "commonMain"))
+                    includes = listOf(include.canonicalPath)
                 }
             }
         }
@@ -89,6 +95,37 @@ class ModuleAndPackageDocumentationTransformerFunctionalTest : AbstractCoreTest(
                 assertEquals(
                     listOf("", "common", "js", "jvm").sorted(), packageNames.sorted(),
                     "Expected all packages to be present"
+                )
+
+                /* Assert module documentation */
+                assertEquals(3, module.documentation.keys.size, "Expected all three source sets")
+                assertEquals("This is moduleA", module.documentation.texts.distinct().joinToString())
+
+                /* Assert root package */
+                val rootPackage = module.packages.single { it.dri.packageName == "" }
+                assertEquals(3, rootPackage.documentation.keys.size, "Expected all three source sets")
+                assertEquals(
+                    listOf("This is the root package", "This is also the root package"),
+                    rootPackage.documentation.texts.distinct()
+                )
+
+                /* Assert common package */
+                val commonPackage = module.packages.single { it.dri.packageName == "common" }
+                assertEquals(3, commonPackage.documentation.keys.size, "Expected all three source sets")
+                assertEquals("This is the common package", commonPackage.documentation.texts.distinct().joinToString())
+
+                /* Assert js package */
+                val jsPackage = module.packages.single { it.dri.packageName == "js" }
+                assertEquals(
+                    "This is the js package",
+                    jsPackage.documentation.texts.joinToString()
+                )
+
+                /* Assert the jvm package */
+                val jvmPackage = module.packages.single { it.dri.packageName == "jvm" }
+                assertEquals(
+                    "This is the jvm package",
+                    jvmPackage.documentation.texts.joinToString()
                 )
             }
         }
