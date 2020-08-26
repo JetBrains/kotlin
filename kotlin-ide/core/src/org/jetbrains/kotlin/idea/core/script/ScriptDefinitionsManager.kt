@@ -272,7 +272,8 @@ fun loadDefinitionsFromTemplates(
      * Script template dependencies naturally become (part of) dependencies of the script which is not always desired for resolver dependencies.
      * i.e. gradle resolver may depend on some jars that 'built.gradle.kts' files should not depend on.
      */
-    additionalResolverClasspath: List<File> = emptyList()
+    additionalResolverClasspath: List<File> = emptyList(),
+    defaultCompilerOptions: Iterable<String> = emptyList()
 ): List<ScriptDefinition> {
     val classpath = templateClasspath + additionalResolverClasspath
     scriptingInfoLog("Loading script definitions $templateClassNames using classpath: ${classpath.joinToString(File.pathSeparator)}")
@@ -289,10 +290,10 @@ fun loadDefinitionsFromTemplates(
             }
             when {
                 template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateDefinition>() != null -> {
-                    ScriptDefinition.FromLegacyTemplate(hostConfiguration, template, templateClasspath)
+                    ScriptDefinition.FromLegacyTemplate(hostConfiguration, template, templateClasspath, defaultCompilerOptions)
                 }
                 template.annotations.firstIsInstanceOrNull<kotlin.script.experimental.annotations.KotlinScript>() != null -> {
-                    ScriptDefinition.FromTemplate(hostConfiguration, template, ScriptDefinition::class)
+                    ScriptDefinition.FromTemplate(hostConfiguration, template, ScriptDefinition::class, defaultCompilerOptions)
                 }
                 else -> {
                     scriptingWarnLog("Cannot find a valid script definition annotation on the class $template")
