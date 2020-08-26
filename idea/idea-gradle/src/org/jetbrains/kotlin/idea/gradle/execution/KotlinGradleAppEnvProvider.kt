@@ -170,33 +170,35 @@ class KotlinGradleAppEnvProvider : GradleExecutionEnvironmentProvider {
 
     allprojects {
         afterEvaluate { project ->
-            def overwrite = project.tasks.findByName(runAppTaskName) != null
-            project.tasks.create(name: runAppTaskName, overwrite: overwrite, type: JavaExec) {
-                if (javaExePath) executable = javaExePath
-                if (project.pluginManager.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
-                    project.kotlin.targets.each { target ->
-                        target.compilations.each { compilation ->
-                            if (compilation.defaultSourceSetName == sourceSetName) {
-                                classpath = compilation.output.allOutputs + compilation.runtimeDependencyFiles
+            if (project.path == gradlePath) {
+                def overwrite = project.tasks.findByName(runAppTaskName) != null
+                project.tasks.create(name: runAppTaskName, overwrite: overwrite, type: JavaExec) {
+                    if (javaExePath) executable = javaExePath
+                    if (project.pluginManager.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
+                        project.kotlin.targets.each { target ->
+                            target.compilations.each { compilation ->
+                                if (compilation.defaultSourceSetName == sourceSetName) {
+                                    classpath = compilation.output.allOutputs + compilation.runtimeDependencyFiles
+                                }
                             }
                         }
+                    } else {
+                        classpath = project.sourceSets[sourceSetName].runtimeClasspath
                     }
-                } else {
-                    classpath = project.sourceSets[sourceSetName].runtimeClasspath
-                }
-
-                main = mainClass
-                $argsString
-                if(_workingDir) workingDir = _workingDir
-                standardInput = System.in
-                if(javaModuleName) {
-                    inputs.property('moduleName', javaModuleName)
-                    doFirst {
-                        jvmArgs += [
-                                '--module-path', classpath.asPath,
-                                '--module', javaModuleName + '/' + mainClass
-                        ]
-                        classpath = files()
+    
+                    main = mainClass
+                    $argsString
+                    if(_workingDir) workingDir = _workingDir
+                    standardInput = System.in
+                    if(javaModuleName) {
+                        inputs.property('moduleName', javaModuleName)
+                        doFirst {
+                            jvmArgs += [
+                                    '--module-path', classpath.asPath,
+                                    '--module', javaModuleName + '/' + mainClass
+                            ]
+                            classpath = files()
+                        }
                     }
                 }
             }
