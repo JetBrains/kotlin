@@ -32,7 +32,8 @@ class KotlinInlineTypeAliasDialog(
                 reference = reference,
                 inlineThisOnly = isInlineThisOnly,
                 deleteAfter = !isInlineThisOnly && !isKeepTheDeclaration,
-                editor = editor
+                editor = editor,
+                project = project,
             )
         )
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.refactoring.inline
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiReference
 import org.jetbrains.kotlin.idea.codeInliner.TypeAliasUsageReplacementStrategy
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
@@ -18,12 +19,14 @@ class KotlinInlineTypeAliasProcessor(
     inlineThisOnly: Boolean,
     deleteAfter: Boolean,
     editor: Editor?,
-) : AbstractKotlinInlineDeclarationProcessor<KtTypeAlias>(
+    project: Project,
+) : AbstractKotlinInlineNamedDeclarationProcessor<KtTypeAlias>(
     declaration = declaration,
     reference = reference,
     inlineThisOnly = inlineThisOnly,
     deleteAfter = deleteAfter,
-    editor = editor
+    editor = editor,
+    project = project,
 ) {
     override fun postAction() {
         performDelayedRefactoringRequests(myProject)

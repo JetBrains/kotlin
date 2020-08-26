@@ -17,23 +17,19 @@
 package org.jetbrains.kotlin.idea.refactoring.inline
 
 import com.intellij.lang.Language
-import com.intellij.lang.findUsages.DescriptiveNameUtil
 import com.intellij.lang.refactoring.InlineHandler
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
-import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.OverrideMethodsProcessor
-import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.inline.GenericInlineHandler
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.usageView.UsageInfo
-import com.intellij.usageView.UsageViewBundle
 import com.intellij.usageView.UsageViewDescriptor
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.annotations.Nls
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinLanguage
@@ -47,31 +43,15 @@ import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingElem
 import org.jetbrains.kotlin.psi.*
 import java.util.*
 
-abstract class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDeclaration>(
-    protected val declaration: TDeclaration,
+abstract class AbstractKotlinInlineNamedDeclarationProcessor<TDeclaration : KtNamedDeclaration>(
+    declaration: TDeclaration,
     private val reference: PsiReference?,
     private val inlineThisOnly: Boolean,
     private val deleteAfter: Boolean,
     protected val editor: Editor?,
-) : BaseRefactoringProcessor(declaration.project) {
+    project: Project,
+) : AbstractKotlinDeclarationInlineProcessor<TDeclaration>(declaration, project) {
     private lateinit var inliners: Map<Language, InlineHandler.Inliner>
-
-    protected val kind = when (declaration) {
-        is KtNamedFunction -> KotlinBundle.message("text.function")
-        is KtProperty -> if (declaration.isLocal)
-            KotlinBundle.message("text.local.variable")
-        else
-            KotlinBundle.message("text.local.property")
-        is KtTypeAlias -> KotlinBundle.message("text.type.alias")
-        else -> KotlinBundle.message("text.declaration")
-    }
-
-    @Nls
-    private val commandName = KotlinBundle.message(
-        "text.inlining.0.1",
-        kind,
-        DescriptiveNameUtil.getDescriptiveName(declaration)
-    )
 
     abstract fun createReplacementStrategy(): UsageReplacementStrategy?
 
@@ -180,24 +160,6 @@ abstract class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDe
         }
     }
 
-    override fun getCommandName(): String = commandName
-
-    override fun createUsageViewDescriptor(usages: Array<out UsageInfo>): UsageViewDescriptor = object : UsageViewDescriptor {
-        override fun getCommentReferencesText(usagesCount: Int, filesCount: Int) = RefactoringBundle.message(
-            "comments.elements.header",
-            UsageViewBundle.getOccurencesString(usagesCount, filesCount),
-        )
-
-        override fun getCodeReferencesText(usagesCount: Int, filesCount: Int) = RefactoringBundle.message(
-            "invocations.to.be.inlined",
-            UsageViewBundle.getReferencesString(usagesCount, filesCount),
-        )
-
-        override fun getElements() = arrayOf<KtNamedDeclaration>(declaration)
-
-        override fun getProcessedElementsHeader() = KotlinBundle.message("text.0.to.inline", kind.capitalize())
-    }
-
     private val isWritable: Boolean
         get() = declaration.isWritable
 
@@ -208,7 +170,7 @@ abstract class AbstractKotlinInlineDeclarationProcessor<TDeclaration : KtNamedDe
     }
 
     companion object {
-        private val LOG = Logger.getInstance(AbstractKotlinInlineDeclarationProcessor::class.java)
+        private val LOG = Logger.getInstance(AbstractKotlinInlineNamedDeclarationProcessor::class.java)
     }
 }
 

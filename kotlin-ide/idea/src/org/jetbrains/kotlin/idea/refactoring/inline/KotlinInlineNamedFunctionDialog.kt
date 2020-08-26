@@ -32,7 +32,8 @@ class KotlinInlineNamedFunctionDialog(
                 reference = reference,
                 inlineThisOnly = isInlineThisOnly || allowToInlineThisOnly,
                 deleteAfter = !isInlineThisOnly && !isKeepTheDeclaration && !allowToInlineThisOnly,
-                editor = editor
+                editor = editor,
+                project = project,
             )
         )
 

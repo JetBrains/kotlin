@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.idea.codeInliner.CodeToInline
 import org.jetbrains.kotlin.idea.codeInliner.PropertyUsageReplacementStrategy
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.findUsages.ReferencesSearchScopeHelper
-import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.ReferenceAccess
 import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -40,12 +39,14 @@ class KotlinInlinePropertyProcessor(
     private val isWhenSubjectVariable: Boolean,
     editor: Editor?,
     private val statementToDelete: KtBinaryExpression?,
-) : AbstractKotlinInlineDeclarationProcessor<KtProperty>(
+    project: Project,
+) : AbstractKotlinInlineNamedDeclarationProcessor<KtProperty>(
     declaration = declaration,
     reference = reference,
     inlineThisOnly = inlineThisOnly,
     deleteAfter = deleteAfter && !isWhenSubjectVariable,
     editor = editor,
+    project = project,
 ) {
     override fun createReplacementStrategy(): UsageReplacementStrategy? {
         return createReplacementStrategyForProperty(declaration, editor, myProject)

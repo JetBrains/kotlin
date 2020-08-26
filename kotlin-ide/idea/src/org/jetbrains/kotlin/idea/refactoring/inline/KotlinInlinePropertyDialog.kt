@@ -72,6 +72,7 @@ class KotlinInlinePropertyDialog(
                 isWhenSubjectVariable = (declaration.parent as? KtWhenExpression)?.subjectVariable == declaration,
                 editor = editor,
                 statementToDelete = assignmentToDelete,
+                project = project,
             )
         )
 

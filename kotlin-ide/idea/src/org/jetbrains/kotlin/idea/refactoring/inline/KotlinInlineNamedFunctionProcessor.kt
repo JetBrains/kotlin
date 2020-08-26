@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.idea.refactoring.inline
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiReference
 import org.jetbrains.kotlin.idea.codeInliner.CallableUsageReplacementStrategy
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
-import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
 class KotlinInlineFunctionProcessor(
@@ -18,12 +18,14 @@ class KotlinInlineFunctionProcessor(
     inlineThisOnly: Boolean,
     deleteAfter: Boolean,
     editor: Editor?,
-) : AbstractKotlinInlineDeclarationProcessor<KtNamedFunction>(
+    project: Project,
+) : AbstractKotlinInlineNamedDeclarationProcessor<KtNamedFunction>(
     declaration = declaration,
     reference = reference,
     inlineThisOnly = inlineThisOnly,
     deleteAfter = deleteAfter,
-    editor = editor
+    editor = editor,
+    project = project,
 ) {
     override fun createReplacementStrategy(): UsageReplacementStrategy? = createUsageReplacementStrategyForFunction(declaration, editor)
 }
