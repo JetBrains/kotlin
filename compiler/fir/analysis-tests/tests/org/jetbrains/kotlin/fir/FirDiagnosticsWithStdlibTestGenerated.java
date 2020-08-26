@@ -636,6 +636,39 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
                         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/returnsImplies/propertyGetter.kt");
                     }
                 }
+
+                @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/safeBuilder")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class SafeBuilder extends AbstractFirDiagnosticsWithStdlibTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInSafeBuilder() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/safeBuilder"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                    }
+
+                    @TestMetadata("illegalActionProvide.kt")
+                    public void testIllegalActionProvide() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/safeBuilder/illegalActionProvide.kt");
+                    }
+
+                    @TestMetadata("unprovided.kt")
+                    public void testUnprovided() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/safeBuilder/unprovided.kt");
+                    }
+
+                    @TestMetadata("wrongInitializationCount.kt")
+                    public void testWrongInitializationCount() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/safeBuilder/wrongInitializationCount.kt");
+                    }
+
+                    @TestMetadata("wrongInvocationCount.kt")
+                    public void testWrongInvocationCount() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/bad/safeBuilder/wrongInvocationCount.kt");
+                    }
+                }
             }
 
             @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good")
@@ -801,6 +834,34 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
                     @TestMetadata("typePredicate.kt")
                     public void testTypePredicate() throws Exception {
                         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/returnsImplies/typePredicate.kt");
+                    }
+                }
+
+                @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/safeBuilder")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class SafeBuilder extends AbstractFirDiagnosticsWithStdlibTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInSafeBuilder() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/safeBuilder"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                    }
+
+                    @TestMetadata("initialization.kt")
+                    public void testInitialization() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/safeBuilder/initialization.kt");
+                    }
+
+                    @TestMetadata("invocation.kt")
+                    public void testInvocation() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/safeBuilder/invocation.kt");
+                    }
+
+                    @TestMetadata("requires.kt")
+                    public void testRequires() throws Exception {
+                        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/contracts/fromSource/good/safeBuilder/requires.kt");
                     }
                 }
             }

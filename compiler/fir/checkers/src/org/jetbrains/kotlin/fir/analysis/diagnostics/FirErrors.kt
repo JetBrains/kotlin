@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.Name
@@ -143,6 +141,11 @@ object FirErrors {
     val MISSING_COEFFECT_CONTEXT by error0<FirSourceElement, PsiElement>()
     val UNEXPECTED_COEFFECT_CONTEXT by error0<FirSourceElement, PsiElement>()
     val UNCHECKED_EXCEPTION by error1<FirSourceElement, PsiElement, ConeKotlinType>()
+    val PROPERTY_INITIALIZATION_REQUIRED by error3<FirSourceElement, PsiElement, FirCallableSymbol<*>, FirCallableSymbol<*>, EventOccurrencesRange>()
+    val FUNCTION_INVOCATION_REQUIRED by error3<FirSourceElement, PsiElement, FirCallableSymbol<*>, FirCallableSymbol<*>, EventOccurrencesRange>()
+    val UNPROVIDED_SAFE_BUILDER_INITIALIZATION by error2<FirSourceElement, PsiElement, FirCallableSymbol<*>, FirCallableSymbol<*>>()
+    val UNPROVIDED_SAFE_BUILDER_INVOCATION by error2<FirSourceElement, PsiElement, FirCallableSymbol<*>, FirCallableSymbol<*>>()
+    val NOT_A_SAFE_BUILDER_MEMBER by error2<FirSourceElement, PsiElement, FirRegularClassSymbol, FirCallableSymbol<*>>()
 
     // Extended checkers group
     val REDUNDANT_VISIBILITY_MODIFIER by warning0<FirSourceElement, PsiElement>()

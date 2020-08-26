@@ -37,6 +37,22 @@ class ConeContractRenderer(private val builder: StringBuilder) : ConeContractDes
         builder.append(")")
     }
 
+    override fun visitMustDoEffectDeclaration(mustDoEffect: ConeMustDoEffectDeclaration, data: Nothing?) {
+        mustDoEffect.lambda.accept(this, data)
+        builder.append(" mustDo ")
+        mustDoEffect.action.accept(this, data)
+    }
+
+    override fun visitProvidesActionEffectDeclaration(providesActionEffect: ConeProvidesActionEffectDeclaration, data: Nothing?) {
+        builder.append("provides ")
+        providesActionEffect.action.accept(this, data)
+    }
+
+    override fun visitRequiresActionEffectDeclaration(requiresActionEffect: ConeRequiresActionEffectDeclaration, data: Nothing?) {
+        builder.append("requires ")
+        requiresActionEffect.action.accept(this, data)
+    }
+
     override fun visitLogicalBinaryOperationContractExpression(binaryLogicExpression: ConeBinaryLogicExpression, data: Nothing?) {
         inBracketsIfNecessary(binaryLogicExpression, binaryLogicExpression.left) { binaryLogicExpression.left.accept(this, data) }
         builder.append(" ${binaryLogicExpression.kind.token} ")
@@ -64,6 +80,26 @@ class ConeContractRenderer(private val builder: StringBuilder) : ConeContractDes
 
     override fun visitValueParameterReference(valueParameterReference: ConeValueParameterReference, data: Nothing?) {
         builder.append(valueParameterReference.name)
+    }
+
+    override fun visitLambdaArgumentReference(lambdaArgumentReference: ConeLambdaArgumentReference, data: Nothing?) {
+        lambdaArgumentReference.parameter.accept(this, data)
+        builder.append("@")
+        lambdaArgumentReference.lambda.accept(this, data)
+    }
+
+    override fun visitPropertyInitializationAction(propertyInitializationAction: ConePropertyInitializationAction, data: Nothing?) {
+        builder.append("initializationOf(")
+        propertyInitializationAction.target.accept(this, data)
+        builder.append(", ", propertyInitializationAction.property.callableId.callableName)
+        builder.append(", ${propertyInitializationAction.kind})")
+    }
+
+    override fun visitFunctionInvocationAction(functionInvocationAction: ConeFunctionInvocationAction, data: Nothing?) {
+        builder.append("invocationOf(")
+        functionInvocationAction.target.accept(this, data)
+        builder.append(", ", functionInvocationAction.function.callableId.callableName)
+        builder.append(", ${functionInvocationAction.kind})")
     }
 
     private fun inBracketsIfNecessary(parent: ConeContractDescriptionElement, child: ConeContractDescriptionElement, block: () -> Unit) {

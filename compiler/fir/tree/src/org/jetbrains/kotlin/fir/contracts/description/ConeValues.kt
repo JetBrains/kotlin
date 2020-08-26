@@ -5,6 +5,11 @@
 
 package org.jetbrains.kotlin.fir.contracts.description
 
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+
 interface ConeContractDescriptionValue : ConeContractDescriptionElement {
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitValue(this, data)
@@ -31,11 +36,13 @@ class ConeBooleanConstantReference private constructor(name: String) : ConeConst
     }
 }
 
+interface ConeTargetReference : ConeContractDescriptionElement
+
 /*
  * Index of value parameter of function
  * -1 means that it is reference to extension receiver
  */
-open class ConeValueParameterReference(val parameterIndex: Int, val name: String) : ConeContractDescriptionValue {
+open class ConeValueParameterReference(val parameterIndex: Int, val name: String) : ConeContractDescriptionValue, ConeTargetReference {
     init {
         assert(parameterIndex >= -1)
     }
@@ -44,7 +51,40 @@ open class ConeValueParameterReference(val parameterIndex: Int, val name: String
         contractDescriptionVisitor.visitValueParameterReference(this, data)
 }
 
-class ConeBooleanValueParameterReference(parameterIndex: Int, name: String) : ConeValueParameterReference(parameterIndex, name), ConeBooleanExpression {
+class ConeBooleanValueParameterReference(parameterIndex: Int, name: String) : ConeValueParameterReference(parameterIndex, name),
+    ConeBooleanExpression {
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitBooleanValueParameterReference(this, data)
+}
+
+class ConeLambdaArgumentReference(val lambda: ConeValueParameterReference, val parameter: ConeValueParameterReference) :
+    ConeTargetReference {
+    override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
+        contractDescriptionVisitor.visitLambdaArgumentReference(this, data)
+}
+
+abstract class ConeActionDeclaration(
+    val target: ConeTargetReference,
+    val targetClass: FirRegularClassSymbol,
+    val kind: EventOccurrencesRange
+) : ConeContractDescriptionElement
+
+class ConePropertyInitializationAction(
+    target: ConeTargetReference,
+    targetClass: FirRegularClassSymbol,
+    val property: FirPropertySymbol,
+    kind: EventOccurrencesRange
+) : ConeActionDeclaration(target, targetClass, kind) {
+    override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
+        contractDescriptionVisitor.visitPropertyInitializationAction(this, data)
+}
+
+class ConeFunctionInvocationAction(
+    target: ConeTargetReference,
+    targetClass: FirRegularClassSymbol,
+    val function: FirFunctionSymbol<*>,
+    kind: EventOccurrencesRange
+) : ConeActionDeclaration(target, targetClass, kind) {
+    override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
+        contractDescriptionVisitor.visitFunctionInvocationAction(this, data)
 }

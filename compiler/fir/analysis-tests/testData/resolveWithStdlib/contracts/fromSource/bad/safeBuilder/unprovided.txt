@@ -1,0 +1,110 @@
+FILE: unprovided.kt
+    public final infix fun R|kotlin/Any|.mustDo(action: R|kotlin/Any|): R|kotlin/Unit| {
+    }
+    public final fun initializationOf(target: R|kotlin/Any|, property: R|kotlin/Any|, kind: R|kotlin/contracts/InvocationKind|): R|kotlin/Any| {
+        ^initializationOf R|<local>/target|
+    }
+    public final fun initializes(property: R|kotlin/Any|, kind: R|kotlin/contracts/InvocationKind|): R|kotlin/Unit| {
+    }
+    public final fun invocationOf(target: R|kotlin/Any|, function: R|kotlin/Any|, kind: R|kotlin/contracts/InvocationKind|): R|kotlin/Any| {
+        ^invocationOf R|<local>/target|
+    }
+    public final fun invokes(function: R|kotlin/Any|, kind: R|kotlin/contracts/InvocationKind|): R|kotlin/Unit| {
+    }
+    public final fun receiverOf(lambda: R|kotlin/Any|): R|kotlin/Any| {
+        ^receiverOf R|<local>/lambda|
+    }
+    @R|kotlin/annotation/Target|(vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|)) @R|kotlin/annotation/Retention|(Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|) public final annotation class SafeBuilder : R|kotlin/Annotation| {
+        public constructor(): R|SafeBuilder| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|kotlin/annotation/Target|(vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|)) @R|kotlin/annotation/Retention|(Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|) public final annotation class NotConstruction : R|kotlin/Annotation| {
+        public constructor(): R|NotConstruction| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|kotlin/annotation/Target|(vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|)) @R|kotlin/annotation/Retention|(Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|) public final annotation class Build : R|kotlin/Annotation| {
+        public constructor(): R|Build| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|SafeBuilder|() public final class Builder : R|kotlin/Any| {
+        public constructor(): R|Builder| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var a: R|kotlin/Int| = Int(0)
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final var b: R|kotlin/Int| = Int(0)
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+        @R|Build|() public final fun build(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun R|Builder|.initA(): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            provides initializationOf(this, a, EXACTLY_ONCE)
+        >
+     {
+        [StubStatement]
+        this@R|/initA|.R|/Builder.a| = Int(0)
+    }
+    public final fun R|Builder|.test1(): R|kotlin/Unit| {
+        this@R|/test1|.R|/Builder.a| = Int(0)
+        this@R|/test1|.R|/Builder.foo|()
+    }
+    public final fun R|Builder|.test2(): R|kotlin/Unit| {
+        this@R|/test2|.R|/Builder.a| = Int(0)
+        this@R|/test2|.R|/Builder.b| = Int(0)
+    }
+    public final fun R|Builder|.test3(): R|kotlin/Unit| {
+        this@R|/test3|.R|/initA|()
+    }
+    public final fun build(block: R|Builder.() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(block, EXACTLY_ONCE)
+            block mustDo initializationOf(receiver@block, a, EXACTLY_ONCE)
+        >
+     {
+        [StubStatement]
+        lval builder: R|Builder| = R|/Builder.Builder|()
+        R|<local>/block|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/builder|)
+        R|<local>/builder|.R|/Builder.build|()
+    }
+    public final fun test4(block: R|Builder.() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(block, EXACTLY_ONCE)
+            block mustDo initializationOf(receiver@block, a, EXACTLY_ONCE)
+        >
+     {
+        [StubStatement]
+        lval builder: R|Builder| = R|/Builder.Builder|()
+        R|<local>/block|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/builder|)
+    }
+    public final fun test5(): R|kotlin/Unit| {
+        R|/build|(<L> = build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+            this@R|special/anonymous|.R|/Builder.a| = Int(0)
+            this@R|special/anonymous|.R|/Builder.b| = Int(0)
+            this@R|special/anonymous|.R|/Builder.foo|()
+        }
+        )
+    }
+    public final fun test6(): R|kotlin/Unit| {
+        lval builder: R|Builder| = R|/Builder.Builder|()
+        R|<local>/builder|.R|/Builder.a| = Int(0)
+        R|<local>/builder|.R|/Builder.b| = Int(0)
+    }

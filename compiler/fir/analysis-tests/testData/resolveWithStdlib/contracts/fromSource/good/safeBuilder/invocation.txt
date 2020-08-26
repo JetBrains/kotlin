@@ -1,0 +1,100 @@
+FILE: invocation.kt
+    public final infix fun R|kotlin/Any|.mustDo(action: R|kotlin/Any|): R|kotlin/Unit| {
+    }
+    public final fun initializationOf(target: R|kotlin/Any|, property: R|kotlin/Any|, kind: R|kotlin/contracts/InvocationKind|): R|kotlin/Any| {
+        ^initializationOf R|<local>/target|
+    }
+    public final fun initializes(property: R|kotlin/Any|, kind: R|kotlin/contracts/InvocationKind|): R|kotlin/Unit| {
+    }
+    public final fun invocationOf(target: R|kotlin/Any|, function: R|kotlin/Any|, kind: R|kotlin/contracts/InvocationKind|): R|kotlin/Any| {
+        ^invocationOf R|<local>/target|
+    }
+    public final fun invokes(function: R|kotlin/Any|, kind: R|kotlin/contracts/InvocationKind|): R|kotlin/Unit| {
+    }
+    public final fun receiverOf(lambda: R|kotlin/Any|): R|kotlin/Any| {
+        ^receiverOf R|<local>/lambda|
+    }
+    @R|kotlin/annotation/Target|(vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|)) @R|kotlin/annotation/Retention|(Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|) public final annotation class SafeBuilder : R|kotlin/Annotation| {
+        public constructor(): R|SafeBuilder| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|kotlin/annotation/Target|(vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|)) @R|kotlin/annotation/Retention|(Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|) public final annotation class NotConstruction : R|kotlin/Annotation| {
+        public constructor(): R|NotConstruction| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|kotlin/annotation/Target|(vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FUNCTION|)) @R|kotlin/annotation/Retention|(Q|kotlin/annotation/AnnotationRetention|.R|kotlin/annotation/AnnotationRetention.SOURCE|) public final annotation class Build : R|kotlin/Annotation| {
+        public constructor(): R|Build| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|SafeBuilder|() public final class Builder : R|kotlin/Any| {
+        public constructor(): R|Builder| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun a(): R|kotlin/Unit| {
+        }
+
+        public final fun b(): R|kotlin/Unit| {
+        }
+
+        @R|Build|() public final fun build(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun R|Builder|.ab(): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            provides invocationOf(this, a, EXACTLY_ONCE)
+            provides invocationOf(this, b, EXACTLY_ONCE)
+        >
+     {
+        [StubStatement]
+        this@R|/ab|.R|/Builder.a|()
+        this@R|/ab|.R|/Builder.b|()
+    }
+    public final fun build(block: R|Builder.() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(block, EXACTLY_ONCE)
+            block mustDo invocationOf(receiver@block, a, EXACTLY_ONCE)
+            block mustDo invocationOf(receiver@block, b, AT_MOST_ONCE)
+        >
+     {
+        [StubStatement]
+        lval builder: R|Builder| = R|/Builder.Builder|()
+        R|<local>/block|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/builder|)
+        R|<local>/builder|.R|/Builder.build|()
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/build|(<L> = build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+            this@R|special/anonymous|.R|/Builder.a|()
+        }
+        )
+        R|/build|(<L> = build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+            this@R|special/anonymous|.R|/Builder.a|()
+            this@R|special/anonymous|.R|/Builder.b|()
+        }
+        )
+        R|/build|(<L> = build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+            this@R|special/anonymous|.R|/ab|()
+        }
+        )
+        R|/build|(<L> = build@fun R|Builder|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+            when () {
+                Boolean(true) ->  {
+                    this@R|special/anonymous|.R|/ab|()
+                }
+                else ->  {
+                    this@R|special/anonymous|.R|/Builder.a|()
+                }
+            }
+
+        }
+        )
+    }

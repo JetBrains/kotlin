@@ -31,6 +31,13 @@ object FirContractsDslNames {
     val CALLS_IN_PLACE = contractBuilder("callsInPlace")
     val THROWS = id("", "throws")
     val CALLED_IN_TRY_CATCH = id("", "calledInTryCatch")
+    val MUST_DO = id("", "mustDo")
+    val RECEIVER_OF = id("", "receiverOf")
+    val INITIALIZATION_OF = id("", "initializationOf")
+    val INITIALIZES = id("", "initializes")
+    val INVOCATION_OF = id("", "invocationOf")
+    val INVOKES = id("", "invokes")
+    val REQUIRES = id("", "requires")
 
     // enum class InvocationKind
     val INVOCATION_KIND_ENUM = id("InvocationKind")

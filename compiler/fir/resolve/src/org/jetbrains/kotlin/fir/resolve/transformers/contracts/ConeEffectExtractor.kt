@@ -8,14 +8,17 @@ package org.jetbrains.kotlin.fir.resolve.transformers.contracts
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.contract.contextual.family.safeBuilder.asCoeffect
 import org.jetbrains.kotlin.fir.contract.contextual.family.checkedexception.asCoeffect
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.resolve.toClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 
 class ConeEffectExtractor(
@@ -79,6 +82,66 @@ class ConeEffectExtractor(
                 val exceptionType = (functionCall.typeArguments.first() as? FirTypeProjectionWithVariance)?.typeRef?.coneType ?: return null
                 val lambda = functionCall.argument.accept(this, null) as? ConeValueParameterReference ?: return null
                 return asCoeffect(ConeCalledInTryCatchEffectDeclaration(lambda, exceptionType))
+            }
+
+            FirContractsDslNames.RECEIVER_OF -> {
+                val lambda = functionCall.argument.accept(this, null) as? ConeValueParameterReference ?: return null
+                return ConeLambdaArgumentReference(lambda, ConeValueParameterReference(-1, "receiver"))
+            }
+
+            FirContractsDslNames.INITIALIZATION_OF -> {
+                val target = functionCall.arguments[0].accept(this, null) as? ConeTargetReference ?: return null
+                val kind = functionCall.arguments.getOrNull(2)?.parseInvocationKind() ?: EventOccurrencesRange.UNKNOWN
+                val reference = functionCall.arguments[1] as? FirCallableReferenceAccess ?: return null
+                val targetClass = (reference.explicitReceiver as? FirResolvedQualifier)?.symbol as? FirRegularClassSymbol ?: return null
+                val property = reference.toResolvedCallableSymbol() as? FirPropertySymbol ?: return null
+
+                return ConePropertyInitializationAction(target, targetClass, property, kind)
+            }
+
+            FirContractsDslNames.INITIALIZES -> {
+                val reference = functionCall.argument as? FirCallableReferenceAccess ?: return null
+                val target = reference.explicitReceiver?.accept(this, null) as? ConeValueParameterReference ?: return null
+                val targetClass = reference.explicitReceiver?.typeRef?.toClassLikeSymbol(session) as? FirRegularClassSymbol ?: return null
+                val property = reference.toResolvedCallableSymbol() as? FirPropertySymbol ?: return null
+                val kind = functionCall.arguments.getOrNull(1)?.parseInvocationKind() ?: EventOccurrencesRange.UNKNOWN
+
+                return asCoeffect(
+                    ConeProvidesActionEffectDeclaration(ConePropertyInitializationAction(target, targetClass, property, kind))
+                )
+            }
+
+            FirContractsDslNames.INVOCATION_OF -> {
+                val target = functionCall.arguments[0].accept(this, null) as? ConeTargetReference ?: return null
+                val kind = functionCall.arguments.getOrNull(2)?.parseInvocationKind() ?: EventOccurrencesRange.UNKNOWN
+                val reference = functionCall.arguments[1] as? FirCallableReferenceAccess ?: return null
+                val targetClass = (reference.explicitReceiver as? FirResolvedQualifier)?.symbol as? FirRegularClassSymbol ?: return null
+                val function = reference.toResolvedCallableSymbol() as? FirFunctionSymbol<*> ?: return null
+
+                return ConeFunctionInvocationAction(target, targetClass, function, kind)
+            }
+
+            FirContractsDslNames.INVOKES -> {
+                val reference = functionCall.argument as? FirCallableReferenceAccess ?: return null
+                val target = reference.explicitReceiver?.accept(this, null) as? ConeValueParameterReference ?: return null
+                val targetClass = reference.explicitReceiver?.typeRef?.toClassLikeSymbol(session) as? FirRegularClassSymbol ?: return null
+                val function = reference.toResolvedCallableSymbol() as? FirFunctionSymbol<*> ?: return null
+                val kind = functionCall.arguments.getOrNull(1)?.parseInvocationKind() ?: EventOccurrencesRange.UNKNOWN
+
+                return asCoeffect(ConeProvidesActionEffectDeclaration(ConeFunctionInvocationAction(target, targetClass, function, kind)))
+            }
+
+            FirContractsDslNames.MUST_DO -> {
+                val lambda = functionCall.explicitReceiver?.accept(this, null) as? ConeValueParameterReference ?: return null
+                val action = functionCall.arguments[0].accept(this, null) as? ConeActionDeclaration ?: return null
+                if (action.target !is ConeLambdaArgumentReference) return null
+                return asCoeffect(ConeMustDoEffectDeclaration(lambda, action))
+            }
+
+            FirContractsDslNames.REQUIRES -> {
+                val action = functionCall.argument.accept(this, null) as? ConeActionDeclaration ?: return null
+                if (action.target !is ConeValueParameterReference) return null
+                return asCoeffect(ConeRequiresActionEffectDeclaration(action))
             }
 
             BOOLEAN_AND, BOOLEAN_OR -> {

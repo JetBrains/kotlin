@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_SUPER_CLA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_SUPER_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_TYPEALIAS_EXPANDED_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_TYPE_PARAMETER_BOUND
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUNCTION_INVOCATION_REQUIRED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HIDDEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_CONST_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_UNDERSCORE
@@ -61,6 +62,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_PRIVATE_CONST
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_PRIVATE_CONSTRUCTOR_IN_SEALED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_AN_ANNOTATION_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_A_LOOP_LABEL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_A_SAFE_BUILDER_MEMBER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NOT_A_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NO_TYPE_FOR_TYPE_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NULLABLE_TYPE_OF_ANNOTATION_MEMBER
@@ -68,6 +70,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OTHER_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_INITIALIZATION_REQUIRED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECURSION_IN_IMPLICIT_TYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECURSION_IN_SUPERTYPES
@@ -92,6 +95,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_AS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNCHECKED_EXCEPTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNEXPECTED_COEFFECT_CONTEXT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_VARIABLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNPROVIDED_SAFE_BUILDER_INITIALIZATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNPROVIDED_SAFE_BUILDER_INVOCATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_LABEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_VIOLATED
@@ -279,6 +284,25 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(MISSING_COEFFECT_CONTEXT, "Missing coeffect context")
             map.put(UNEXPECTED_COEFFECT_CONTEXT, "Unexpected coeffect context")
             map.put(UNCHECKED_EXCEPTION, "Unchecked exception: {2}", TO_STRING)
+            map.put(
+                PROPERTY_INITIALIZATION_REQUIRED,
+                "Property '{2}::{3}' needs to be initialized: {4}'", SYMBOL, SYMBOL, TO_STRING
+            )
+            map.put(
+                FUNCTION_INVOCATION_REQUIRED,
+                "Function '{2}::{3}' needs to be invoked: {4}'", SYMBOL, SYMBOL, TO_STRING
+            )
+            map.put(
+                UNPROVIDED_SAFE_BUILDER_INITIALIZATION,
+                "Property '{3}::{4}' is a member of safe builder. Provide its initialization using contract or close safe builder",
+                SYMBOL, SYMBOL
+            )
+            map.put(
+                UNPROVIDED_SAFE_BUILDER_INVOCATION,
+                "Function '{3}::{4}' is a member of safe builder. Provide its invocation using contract or close safe builder",
+                SYMBOL, SYMBOL
+            )
+            map.put(NOT_A_SAFE_BUILDER_MEMBER, "'{3}::{4}' is not a member of safe builder", SYMBOL, SYMBOL)
 
             // Extended checkers group
 //            map.put(REDUNDANT_VISIBILITY_MODIFIER, ...) // &

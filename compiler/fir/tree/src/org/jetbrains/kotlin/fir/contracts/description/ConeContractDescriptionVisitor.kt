@@ -29,6 +29,15 @@ abstract class ConeContractDescriptionVisitor<out R, in D> {
     open fun visitCalledInTryCatchEffectDeclaration(calledInEffect: ConeCalledInTryCatchEffectDeclaration, data: D): R =
         visitEffectDeclaration(calledInEffect, data)
 
+    open fun visitMustDoEffectDeclaration(mustDoEffect: ConeMustDoEffectDeclaration, data: D): R =
+        visitEffectDeclaration(mustDoEffect, data)
+
+    open fun visitProvidesActionEffectDeclaration(providesActionEffect: ConeProvidesActionEffectDeclaration, data: D): R =
+        visitEffectDeclaration(providesActionEffect, data)
+
+    open fun visitRequiresActionEffectDeclaration(requiresActionEffect: ConeRequiresActionEffectDeclaration, data: D): R =
+        visitEffectDeclaration(requiresActionEffect, data)
+
     // Expressions
     open fun visitBooleanExpression(booleanExpression: ConeBooleanExpression, data: D): R =
         visitContractDescriptionElement(booleanExpression, data)
@@ -56,4 +65,13 @@ abstract class ConeContractDescriptionVisitor<out R, in D> {
 
     open fun visitBooleanValueParameterReference(booleanValueParameterReference: ConeBooleanValueParameterReference, data: D): R =
         visitValueParameterReference(booleanValueParameterReference, data)
+
+    open fun visitLambdaArgumentReference(lambdaArgumentReference: ConeLambdaArgumentReference, data: D): R =
+        visitContractDescriptionElement(lambdaArgumentReference, data)
+
+    open fun visitPropertyInitializationAction(propertyInitializationAction: ConePropertyInitializationAction, data: D): R =
+        visitContractDescriptionElement(propertyInitializationAction, data)
+
+    open fun visitFunctionInvocationAction(functionInvocationAction: ConeFunctionInvocationAction, data: D): R =
+        visitContractDescriptionElement(functionInvocationAction, data)
 }

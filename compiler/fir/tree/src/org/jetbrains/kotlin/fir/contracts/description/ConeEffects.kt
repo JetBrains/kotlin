@@ -64,3 +64,29 @@ class ConeCalledInTryCatchEffectDeclaration(val lambda: ConeValueParameterRefere
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitCalledInTryCatchEffectDeclaration(this, data)
 }
+
+abstract class ConeSafeBuilderEffectDeclaration(val action: ConeActionDeclaration) : ConeEffectDeclaration()
+
+/**
+ * Effect which specifies that [lambda] must do some [action] inside
+ */
+class ConeMustDoEffectDeclaration(val lambda: ConeValueParameterReference, action: ConeActionDeclaration) : ConeSafeBuilderEffectDeclaration(action) {
+    override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
+        contractDescriptionVisitor.visitMustDoEffectDeclaration(this, data)
+}
+
+/**
+ * Effect which specifies that function is doing [action]
+ */
+class ConeProvidesActionEffectDeclaration(action: ConeActionDeclaration) : ConeSafeBuilderEffectDeclaration(action) {
+    override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
+        contractDescriptionVisitor.visitProvidesActionEffectDeclaration(this, data)
+}
+
+/**
+ * Effect which specifies that function requires made [action]
+ */
+class ConeRequiresActionEffectDeclaration(action: ConeActionDeclaration) : ConeSafeBuilderEffectDeclaration(action) {
+    override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
+        contractDescriptionVisitor.visitRequiresActionEffectDeclaration(this, data)
+}
