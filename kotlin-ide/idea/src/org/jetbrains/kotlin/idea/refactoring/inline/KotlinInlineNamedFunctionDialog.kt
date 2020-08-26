@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
 import org.jetbrains.kotlin.psi.KtConstructor
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
-class KotlinInlineFunctionDialog(
+class KotlinInlineNamedFunctionDialog(
     function: KtNamedFunction,
     reference: PsiReference?,
     editor: Editor?,

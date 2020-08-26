@@ -50,7 +50,7 @@ class KotlinInlineNamedFunctionHandler : AbstractKotlinInlineFunctionHandler<KtN
             return showErrorHint(project, editor, message)
         }
 
-        val dialog = KotlinInlineFunctionDialog(
+        val dialog = KotlinInlineNamedFunctionDialog(
             function,
             nameReference,
             allowToInlineThisOnly = recursive,
