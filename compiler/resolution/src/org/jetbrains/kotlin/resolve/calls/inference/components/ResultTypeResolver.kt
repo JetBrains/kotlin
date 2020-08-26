@@ -94,7 +94,7 @@ class ResultTypeResolver(
         typeApproximator.approximateToSuperType(this, TypeApproximatorConfiguration.PublicDeclaration) ?: this
 
     private fun Context.isSuitableType(resultType: KotlinTypeMarker, variableWithConstraints: VariableWithConstraints): Boolean {
-        val filteredConstraints = variableWithConstraints.constraints.filter { isProperType(it.type) }
+        val filteredConstraints = variableWithConstraints.constraints.filter { isProperTypeForFixation(it.type) }
         for (constraint in filteredConstraints) {
             if (!checkConstraint(this, constraint.type, constraint.kind, resultType)) return false
         }
@@ -171,7 +171,7 @@ class ResultTypeResolver(
             val type = constraint.type
             lowerConstraintTypes.add(type)
 
-            if (isProperType(type)) {
+            if (isProperTypeForFixation(type)) {
                 atLeastOneProper = true
             } else {
                 atLeastOneNonProper = true
@@ -183,7 +183,7 @@ class ResultTypeResolver(
 
         val notFixedToStubTypesSubstitutor = buildNotFixedVariablesToStubTypesSubstitutor()
 
-        return lowerConstraintTypes.map { if (isProperType(it)) it else notFixedToStubTypesSubstitutor.safeSubstitute(it) }
+        return lowerConstraintTypes.map { if (isProperTypeForFixation(it)) it else notFixedToStubTypesSubstitutor.safeSubstitute(it) }
     }
 
     private fun Context.sinkIntegerLiteralTypes(types: List<KotlinTypeMarker>): List<KotlinTypeMarker> {
@@ -196,7 +196,7 @@ class ResultTypeResolver(
 
     private fun Context.findSuperType(variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? {
         val upperConstraints =
-            variableWithConstraints.constraints.filter { it.kind == ConstraintKind.UPPER && this@findSuperType.isProperType(it.type) }
+            variableWithConstraints.constraints.filter { it.kind == ConstraintKind.UPPER && this@findSuperType.isProperTypeForFixation(it.type) }
         if (upperConstraints.isNotEmpty()) {
             val upperType = intersectTypes(upperConstraints.map { it.type })
 
@@ -208,10 +208,13 @@ class ResultTypeResolver(
         return null
     }
 
+    private fun Context.isProperTypeForFixation(type: KotlinTypeMarker): Boolean =
+        isProperTypeForFixation(type) { isProperType(it) }
+
     private fun findResultIfThereIsEqualsConstraint(c: Context, variableWithConstraints: VariableWithConstraints): KotlinTypeMarker? =
         with(c) {
             val properEqualityConstraints = variableWithConstraints.constraints.filter {
-                it.kind == ConstraintKind.EQUALITY && c.isProperType(it.type)
+                it.kind == ConstraintKind.EQUALITY && c.isProperTypeForFixation(it.type)
             }
 
             return c.representativeFromEqualityConstraints(properEqualityConstraints)
