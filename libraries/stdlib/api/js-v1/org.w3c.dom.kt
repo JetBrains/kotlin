@@ -9026,6 +9026,8 @@ public abstract external class Window : org.w3c.dom.events.EventTarget, org.w3c.
 
     public open val innerWidth: kotlin.Int { get; }
 
+    public open val isSecureContext: kotlin.Boolean { get; }
+
     public open val length: kotlin.Int { get; }
 
     public open val location: org.w3c.dom.Location { get; }
