@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.unCapture
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -91,12 +90,6 @@ class ResolvedSubCallArgument(override val atom: SubKotlinCallArgument, resolveI
         else
             setAnalyzedResults(listOf(atom.callResult))
     }
-}
-
-interface PostponedResolvedAtomMarker {
-    val inputTypes: Collection<KotlinTypeMarker>
-    val outputType: KotlinTypeMarker?
-    val analyzed: Boolean
 }
 
 interface PostponedAtomWithRevisableExpectedType {
