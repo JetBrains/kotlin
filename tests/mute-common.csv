@@ -76,4 +76,4 @@ org.jetbrains.kotlin.findUsages.FindUsagesTestGenerated.Java.FindJavaMethodUsage
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testEnumStaticImportInJava,,, FLAKY
 org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryNestedClassUsages,,, FLAKY
 org.jetbrains.kotlin.findUsages.KotlinFindUsagesWithLibraryTestGenerated.KotlinLibrary.testLibraryMemberFunctionUsages,,, FLAKY
-
+org.jetbrains.kotlin.daemon.CompilerDaemonTest.testParallelDaemonStart,,,
