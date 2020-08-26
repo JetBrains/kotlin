@@ -18,7 +18,6 @@
       <option name="STATIC_FIELD_NAME_PREFIX" value="our" />
       <option name="PREFER_LONGER_NAMES" value="false" />
       <option name="VISIBILITY" value="EscalateVisible" />
-      <option name="USE_EXTERNAL_ANNOTATIONS" value="true" />
       <option name="PACKAGES_TO_USE_IMPORT_ON_DEMAND">
         <value>
           <package name="java.awt" withSubpackages="false" static="false" />
