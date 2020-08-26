@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.Name
@@ -96,13 +95,13 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
     private fun transformSuspendLambdasIntoContinuations(irFile: IrFile) {
         val inlineReferences = mutableSetOf<IrCallableReference<*>>()
         val suspendLambdas = mutableMapOf<IrFunctionReference, SuspendLambdaInfo>()
-        irFile.acceptChildrenVoid(object : IrInlineReferenceLocator(context) {
+        irFile.acceptChildren(object : IrInlineReferenceLocator(context) {
             override fun visitInlineReference(argument: IrCallableReference<*>) {
                 inlineReferences.add(argument)
             }
 
-            override fun visitFunctionReference(expression: IrFunctionReference) {
-                expression.acceptChildrenVoid(this)
+            override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclaration?) {
+                expression.acceptChildren(this, data)
                 if (expression.isSuspend && expression.shouldBeTreatedAsSuspendLambda() && expression !in inlineReferences) {
                     val isRestricted = expression.symbol.owner.extensionReceiverParameter?.type?.classOrNull?.owner?.annotations?.any {
                         it.type.classOrNull?.signature == IdSignature.PublicSignature("kotlin.coroutines", "RestrictsSuspension", null, 0)
@@ -115,7 +114,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                 origin == IrStatementOrigin.LAMBDA ||
                         origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE ||
                         origin == IrStatementOrigin.SUSPEND_CONVERSION
-        })
+        }, null)
 
         for (lambda in suspendLambdas.values) {
             (lambda.function.parent as IrDeclarationContainer).declarations.remove(lambda.function)
