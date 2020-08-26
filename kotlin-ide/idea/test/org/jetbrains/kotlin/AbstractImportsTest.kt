@@ -67,7 +67,11 @@ abstract class AbstractImportsTest : KotlinLightCodeInsightFixtureTestCase() {
                 codeStyleSettings.PACKAGES_TO_USE_STAR_IMPORTS.addEntry(KotlinPackageEntry(it.trim(), true))
             }
 
-            val log = project.executeWriteCommand<String?>("") { doTest(file) }
+            val log = if (runTestInWriteCommand) {
+                project.executeWriteCommand<String?>("") { doTest(file) }
+            } else {
+                doTest(file)
+            }
 
             KotlinTestUtils.assertEqualsToFile(File("$testPath.after"), myFixture.file.text)
             if (log != null) {
@@ -89,4 +93,6 @@ abstract class AbstractImportsTest : KotlinLightCodeInsightFixtureTestCase() {
 
     protected open val nameCountToUseStarImportForMembersDefault: Int
         get() = 3
+
+    protected open val runTestInWriteCommand: Boolean = true
 }
