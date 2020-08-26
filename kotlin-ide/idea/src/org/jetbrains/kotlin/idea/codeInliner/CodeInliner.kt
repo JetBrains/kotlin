@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class CodeInliner<TCallElement : KtElement>(
-    private val nameExpression: KtSimpleNameExpression,
+    private val usageExpression: KtExpression,
     private val bindingContext: BindingContext,
     private val resolvedCall: ResolvedCall<out CallableDescriptor>,
     private val callElement: TCallElement,
@@ -47,12 +47,12 @@ class CodeInliner<TCallElement : KtElement>(
     codeToInline: CodeToInline
 ) {
     private val codeToInline = codeToInline.toMutable()
-    private val project = nameExpression.project
+    private val project = callElement.project
     private val psiFactory = KtPsiFactory(project)
 
     fun doInline(): KtElement? {
         val descriptor = resolvedCall.resultingDescriptor
-        val file = nameExpression.containingKtFile
+        val file = callElement.containingKtFile
 
         val qualifiedElement = if (callElement is KtExpression) callElement.getQualifiedExpressionForSelectorOrThis() else callElement
         val assignment = (qualifiedElement as? KtExpression)
@@ -81,7 +81,13 @@ class CodeInliner<TCallElement : KtElement>(
             codeToInline.mainExpression = null
         }
 
-        var receiver = nameExpression.getReceiverExpression()?.marked(USER_CODE_KEY)
+        var receiver = when (usageExpression) {
+            is KtSimpleNameExpression -> usageExpression.getReceiverExpression()
+            is KtCallExpression -> usageExpression.parent?.safeAs<KtQualifiedExpression>()?.receiverExpression
+            else -> null
+        }
+
+        receiver?.marked(USER_CODE_KEY)
         var receiverType = if (receiver != null) bindingContext.getType(receiver) else null
 
         if (receiver == null) {
