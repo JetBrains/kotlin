@@ -121,10 +121,12 @@ internal class Parser(val source: String) {
             TC_BEGIN_LIST, TC_BEGIN_OBJ, TC_OTHER, TC_STRING, TC_NULL -> true
             else -> false
         }
+
+    @OptIn(ExperimentalStdlibApi::class)
     fun takeStr(): String {
         if (tc != TC_OTHER && tc != TC_STRING) fail(tokenPos, "Expected string or non-null literal")
         val prevStr = if (offset < 0)
-            String(buf, 0, length) else
+            buf.concatToString(0, length) else
             source.substring(offset, offset + length)
         nextToken()
         return prevStr

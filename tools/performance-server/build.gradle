@@ -18,6 +18,8 @@ buildscript {
     }
 }
 
+apply plugin: 'kotlin-multiplatform'
+
 repositories {
     maven {
         url 'https://cache-redirector.jetbrains.com/jcenter'
@@ -30,22 +32,33 @@ repositories {
     }
 }
 
-apply plugin: 'kotlin2js'
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
+            }
+            kotlin.srcDir '../benchmarks/shared/src'
+        }
+        jsMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion"
+                implementation(npm("aws-sdk", "~2.670.0"))
+            }
+            kotlin.srcDir 'src/main/kotlin'
+            kotlin.srcDir 'src/main/kotlin-js'
+            kotlin.srcDir 'shared/src/main/kotlin'
+        }
+    }
 
-dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion"
-}
-
-
-sourceSets {
-    main.resources.srcDirs += "resources"
-    main.kotlin.srcDirs += "src"
-    main.kotlin.srcDirs += "../benchmarks/shared/src"
-    main.kotlin.srcDirs += "shared/src"
-}
-
-compileKotlin2Js {
-    kotlinOptions.outputFile = "${projectDir}/server/app.js"
-    kotlinOptions.moduleKind = "commonjs"
-    kotlinOptions.sourceMap = true
+    targets {
+        fromPreset(presets.js, 'js') {
+            nodejs()
+            compilations.main.kotlinOptions {
+                outputFile = "${projectDir}/server/app.js"
+                moduleKind = "commonjs"
+                sourceMap = true
+            }
+        }
+    }
 }

@@ -1,23 +1,12 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the LICENSE file.
  */
-@file:OptIn(ExperimentalCli::class)
+
+import kotlinx.cli.*
 import org.jetbrains.analyzer.sendGetRequest
 import org.jetbrains.analyzer.readFile
 import org.jetbrains.analyzer.SummaryBenchmarksReport
-import kotlinx.cli.*
 import org.jetbrains.renders.*
 import org.jetbrains.report.*
 import org.jetbrains.report.json.*
@@ -56,7 +45,7 @@ object ArtifactoryConnector : Connector() {
     }
 }
 
-object TeamCityConnector: Connector() {
+object TeamCityConnector : Connector() {
     override val connectorPrefix = "teamcity:"
     val teamCityUrl = "http://buildserver.labs.intellij.net"
 
@@ -76,11 +65,28 @@ object TeamCityConnector: Connector() {
     }
 }
 
+object DBServerConnector : Connector() {
+    override val connectorPrefix = ""
+    val serverUrl = "https://kotlin-native-perf-summary.labs.jb.gg"
+
+    override fun getFileContent(fileLocation: String, user: String?): String {
+        val buildNumber = fileLocation.substringBefore(':')
+        val target = fileLocation.substringAfter(':')
+        if (target == buildNumber) {
+            error("To get file from database, please, specify, target and build number" +
+                    " in format target:build_number")
+        }
+        val accessFileUrl = "$serverUrl/report/$target/$buildNumber"
+        return sendGetRequest(accessFileUrl)
+    }
+}
+
 fun getFileContent(fileName: String, user: String? = null): String {
     return when {
         ArtifactoryConnector.isCompatible(fileName) -> ArtifactoryConnector.getFileContent(fileName, user)
         TeamCityConnector.isCompatible(fileName) -> TeamCityConnector.getFileContent(fileName, user)
-        else -> readFile(fileName)
+        fileName.endsWith(".json") -> readFile(fileName)
+        else -> DBServerConnector.getFileContent(fileName, user)
     }
 }
 
@@ -108,12 +114,16 @@ fun parseNormalizeResults(results: String): Map<String, Map<String, Double>> {
     return parsedNormalizeResults
 }
 
-fun mergeCompilerFlags(reports: List<BenchmarksReport>) =
-    reports.map {
+fun mergeCompilerFlags(reports: List<BenchmarksReport>): List<String> {
+    val flagsMap = mutableMapOf<String, MutableList<String>>()
+    reports.forEach {
         val benchmarks = it.benchmarks.values.flatten().asSequence().filter { it.metric == BenchmarkResult.Metric.COMPILE_TIME }
-                .map { it.shortName }.distinct().sorted().joinToString()
-        "${it.compiler.backend.flags.joinToString()} for [$benchmarks]"
+                .map { it.shortName }.toList()
+        if (benchmarks.isNotEmpty())
+            (flagsMap.getOrPut("${it.compiler.backend.flags.joinToString()}") { mutableListOf<String>() }).addAll(benchmarks)
     }
+    return flagsMap.map { (flags, benchmarks) -> "$flags for [${benchmarks.distinct().sorted().joinToString()}]" }
+}
 
 fun mergeReportsWithDetailedFlags(reports: List<BenchmarksReport>) =
         if (reports.size > 1) {
@@ -129,75 +139,9 @@ fun mergeReportsWithDetailedFlags(reports: List<BenchmarksReport>) =
         }
 
 fun main(args: Array<String>) {
-    class Summary: Subcommand("summary", "Output summary information") {
-        val exec by option(ArgType.Choice(listOf("samples", "geomean")),
-                description = "Execution time way of calculation").default("geomean")
-        val execSamples by option(ArgType.String, "exec-samples",
-                description = "Samples used for execution time metric (value 'all' allows use all samples)")
-                .delimiter(",")
-        val execNormalize by option(ArgType.String, "exec-normalize",
-                description = "File with golden results which should be used for normalization")
-        val compile by option(ArgType.Choice(listOf("samples", "geomean")),
-                description = "Compile time way of calculation").default("geomean")
-        val compileSamples by option(ArgType.String, "compile-samples",
-                description = "Samples used for compile time metric (value 'all' allows use all samples)")
-                .delimiter(",")
-        val compileNormalize by option(ArgType.String, "compile-normalize",
-                description = "File with golden results which should be used for normalization")
-        val codesize by option(ArgType.Choice(listOf("samples", "geomean")),
-                description = "Code size way of calculation").default("geomean")
-        val codesizeSamples by option(ArgType.String, "codesize-samples",
-                description = "Samples used for code size metric (value 'all' allows use all samples)").delimiter(",")
-        val codesizeNormalize by option(ArgType.String, "codesize-normalize",
-                description = "File with golden results which should be used for normalization")
-        val user by option(ArgType.String, shortName = "u", description = "User access information for authorization")
-        val mainReport by argument(ArgType.String, description = "Main report for analysis")
-
-        override fun execute() {
-            val reportsList = getBenchmarkReport(mainReport, user)
-            val report = reportsList.reduce { result, it ->
-                result.merge(it)
-            }
-            val benchsReport = SummaryBenchmarksReport(report)
-            val results = mutableListOf<String>()
-            val executionNormalize = execNormalize?.let {
-                parseNormalizeResults(getFileContent(it))
-            }
-            val compileNormalize = compileNormalize?.let {
-                parseNormalizeResults(getFileContent(it))
-            }
-            val codesizeNormalize = codesizeNormalize?.let {
-                parseNormalizeResults(getFileContent(it))
-            }
-
-            results.apply {
-                add(benchsReport.failedBenchmarks.size.toString())
-                if (!execSamples.isEmpty()) {
-                    val filterExec = if (execSamples.first() == "all") null else execSamples
-                    add(benchsReport.getResultsByMetric(BenchmarkResult.Metric.EXECUTION_TIME,
-                            exec == "geomean", filterExec, executionNormalize).joinToString(";"))
-                }
-
-                if (!compileSamples.isEmpty()) {
-                    val filterCompile = if (compileSamples.first() == "all") null else compileSamples
-                    add(benchsReport.getResultsByMetric(BenchmarkResult.Metric.COMPILE_TIME,
-                            compile == "geomean", filterCompile, compileNormalize).joinToString(";"))
-                }
-
-                if (!codesizeSamples.isEmpty()) {
-                    val filterCodesize = if (codesizeSamples.first() == "all") null else codesizeSamples
-                    add(benchsReport.getResultsByMetric(BenchmarkResult.Metric.CODE_SIZE,
-                            codesize == "geomean", filterCodesize, codesizeNormalize).joinToString(";"))
-                }
-
-            }
-            println(results.joinToString())
-        }
-    }
-    val action = Summary()
     // Parse args.
     val argParser = ArgParser("benchmarksAnalyzer")
-    argParser.subcommands(action)
+
     val mainReport by argParser.argument(ArgType.String, description = "Main report for analysis")
     val compareToReport by argParser.argument(ArgType.String, description = "Report to compare to").optional()
 
@@ -207,26 +151,25 @@ fun main(args: Array<String>) {
     val useShortForm by argParser.option(ArgType.Boolean, "short", "s",
             "Show short version of report").default(false)
     val renders by argParser.option(ArgType.Choice(listOf("text", "html", "teamcity", "statistics", "metrics")),
-        shortName = "r", description = "Renders for showing information").multiple().default(listOf("text"))
+            shortName = "r", description = "Renders for showing information").multiple().default(listOf("text"))
     val user by argParser.option(ArgType.String, shortName = "u", description = "User access information for authorization")
 
-    if (argParser.parse(args).commandName == "benchmarksAnalyzer") {
-        // Read contents of file.
-        val mainBenchsReport = mergeReportsWithDetailedFlags(getBenchmarkReport(mainReport, user))
+    argParser.parse(args)
+    // Read contents of file.
+    val mainBenchsReport = mergeReportsWithDetailedFlags(getBenchmarkReport(mainReport, user))
 
-        var compareToBenchsReport = compareToReport?.let {
-            mergeReportsWithDetailedFlags(getBenchmarkReport(it, user))
-        }
+    var compareToBenchsReport = compareToReport?.let {
+        mergeReportsWithDetailedFlags(getBenchmarkReport(it, user))
+    }
 
-        // Generate comparasion report.
-        val summaryReport = SummaryBenchmarksReport(mainBenchsReport,
-                compareToBenchsReport,
-                epsValue)
+    // Generate comparasion report.
+    val summaryReport = SummaryBenchmarksReport(mainBenchsReport,
+            compareToBenchsReport,
+            epsValue)
 
-        var outputFile = output
-        renders.forEach {
-            Render.getRenderByName(it).print(summaryReport, useShortForm, outputFile)
-            outputFile = null
-        }
+    var outputFile = output
+    renders.forEach {
+        Render.getRenderByName(it).print(summaryReport, useShortForm, outputFile)
+        outputFile = null
     }
 }

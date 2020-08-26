@@ -6,11 +6,12 @@
     "start": "node server/app.js"
   },
   "dependencies": {
+    "aws-sdk": "~2.670.0",
     "body-parser": "~1.18.3",
     "debug": "~4.1.1",
+    "ejs": "~2.6.1",
     "express": "~4.16.4",
-    "kotlin": "^1.3.21",
-    "sync-request": "~6.0.0",
-    "ejs": "~2.6.1"
+    "kotlin": "~1.4.0-M3",
+    "node-fetch": "~2.6.0"
   }
 }

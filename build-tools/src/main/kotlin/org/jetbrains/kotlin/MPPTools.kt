@@ -104,7 +104,7 @@ fun createJsonReport(projectProperties: Map<String, Any>): String {
     val kotlin = Compiler(backend, getValue("kotlinVersion"))
     val benchDesc = getValue("benchmarks")
     val benchmarksArray = JsonTreeParser.parse(benchDesc)
-    val benchmarks = BenchmarksReport.parseBenchmarksArray(benchmarksArray)
+    val benchmarks = parseBenchmarksArray(benchmarksArray)
             .union(projectProperties["compileTime"] as List<BenchmarkResult>).union(
                     listOf(projectProperties["codeSize"] as? BenchmarkResult).filterNotNull()).toList()
     val report = BenchmarksReport(env, benchmarks, kotlin)

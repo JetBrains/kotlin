@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+
 buildscript {
     ext.rootBuildDirectory = file('../../..')
 
@@ -10,6 +12,12 @@ buildscript {
         }
         maven {
             url kotlinCompilerRepo
+        }
+        maven {
+            url "http://dl.bintray.com/kotlin/kotlin-eap"
+        }
+        maven {
+            url "http://dl.bintray.com/kotlin/kotlin-dev"
         }
     }
 
@@ -28,42 +36,40 @@ repositories {
     maven {
         url buildKotlinCompilerRepo
     }
+    maven {
+        url "http://dl.bintray.com/kotlin/kotlin-eap"
+    }
+    maven {
+        url "http://dl.bintray.com/kotlin/kotlin-dev"
+    }
 }
 
-apply plugin: 'kotlin2js'
+apply plugin: 'kotlin-multiplatform'
 
-dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion"
-}
-
-compileKotlin2Js {
-    kotlinOptions.outputFile = "${projectDir}/js/main.js"
-    kotlinOptions.main = "call"
-}
-
-sourceSets {
-    main.kotlin.srcDirs += "src"
-    main.kotlin.srcDirs += "../../benchmarks/shared/src"
-    main.kotlin.srcDirs += "../shared/src"
-    main.output.resourcesDir = "build/js/resources"
-}
-
-task copyResources(type: Copy) {
-    from sourceSets.main.resources.srcDirs
-    into file(buildDir.path + "/js")
-}
-
-build.doLast {
-    configurations.compile.each { File file ->
-        copy {
-            includeEmptyDirs = false
-
-            from zipTree(file.absolutePath)
-            into "${projectDir}/lib/kotlin"
-            include { fileTreeElement ->
-                def path = fileTreeElement.path
-                path.endsWith(".js") && (path.startsWith("META-INF/resources/") || !path.startsWith("META-INF/"))
+kotlin {
+    js {
+        browser {
+            binaries.executable()
+            distribution {
+                directory = new File("$projectDir/js/")
             }
+        }
+    }
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
+            }
+            kotlin.srcDir '../../benchmarks/shared/src'
+        }
+        jsMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlinVersion"
+            }
+            kotlin.srcDir 'src/main/kotlin'
+            kotlin.srcDir '../shared/src/main/kotlin'
+            kotlin.srcDir '../src/main/kotlin-js'
         }
     }
 }

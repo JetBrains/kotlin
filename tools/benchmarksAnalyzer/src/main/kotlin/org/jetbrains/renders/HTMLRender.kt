@@ -1,19 +1,7 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the LICENSE file.
  */
-
 
 package org.jetbrains.renders
 
@@ -556,7 +544,7 @@ class HTMLRender: Render() {
                                                    bucket: Map<String, ScoreChange>? = null, rowStyle: String? = null) {
         if (bucket != null && !bucket.isEmpty()) {
             // Find max ratio.
-            val maxRatio = bucket.values.map { it.second.mean }.max()!!
+            val maxRatio = bucket.values.map { it.second.mean }.maxOrNull()!!
             // There are changes in performance.
             // Output changed benchmarks.
             for ((name, change) in bucket) {
@@ -565,19 +553,19 @@ class HTMLRender: Render() {
                         attributes["style"] = rowStyle
                     }
                     th { +name }
-                    td { +"${fullSet.getValue(name).first}" }
-                    td { +"${fullSet.getValue(name).second}" }
+                    td { +"${fullSet.getValue(name).first?.description}" }
+                    td { +"${fullSet.getValue(name).second?.description}" }
                     td {
                         attributes["bgcolor"] = ColoredCell(if (bucket.values.first().first.mean == 0.0) null
                             else change.first.mean / abs(bucket.values.first().first.mean))
                                 .backgroundStyle
-                        +"${change.first.toString() + " %"}"
+                        +"${change.first.description + " %"}"
                     }
                     td {
                         val scaledRatio = if (maxRatio == 0.0) null else change.second.mean / maxRatio
                         attributes["bgcolor"] = ColoredCell(scaledRatio,
                                 borderPositive = { cellValue -> cellValue > 1.0 / maxRatio }).backgroundStyle
-                        +"${change.second}"
+                        +"${change.second.description}"
                     }
                 }
             }
@@ -587,8 +575,8 @@ class HTMLRender: Render() {
             for ((name, value) in fullSet) {
                 tr {
                     th { +name }
-                    td { +"${value.first?.toString() ?: placeholder}" }
-                    td { +"${value.second?.toString() ?: placeholder}" }
+                    td { +"${value.first?.description ?: placeholder}" }
+                    td { +"${value.second?.description ?: placeholder}" }
                     td { +placeholder }
                     td { +placeholder }
                 }
@@ -619,11 +607,11 @@ class HTMLRender: Render() {
                 }
             }
             val geoMeanChangeMap = report.geoMeanScoreChange?.
-                    let { mapOf(report.geoMeanBenchmark.first!!.meanBenchmark.name to report.geoMeanScoreChange!!) }
+                    let { mapOf(report.geoMeanBenchmark.first!!.name to report.geoMeanScoreChange!!) }
 
             tbody {
                 renderBenchmarksDetails(
-                        mutableMapOf(report.geoMeanBenchmark.first!!.meanBenchmark.name to report.geoMeanBenchmark),
+                        mutableMapOf(report.geoMeanBenchmark.first!!.name to report.geoMeanBenchmark),
                         geoMeanChangeMap, "border-bottom: 2.3pt solid black; border-top: 2.3pt solid black")
                 renderBenchmarksDetails(report.mergedReport, report.regressions)
                 renderBenchmarksDetails(report.mergedReport, report.improvements)

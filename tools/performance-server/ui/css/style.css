@@ -68,11 +68,6 @@
   border-color: darkcyan;
 }
 
-.ct-legend .ct-series-5:before {
-  background-color: #453d3f;
-  border-color: #453d3f;
-}
-
 .ct-series-b .ct-line,
 .ct-series-b .ct-point {
   /* Set the colour of this series line */

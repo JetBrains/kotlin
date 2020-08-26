@@ -65,7 +65,7 @@ dependencies {
 }
 
 sourceSets["main"].withConvention(KotlinSourceSet::class) {
-    kotlin.srcDir("$projectDir/../tools/benchmarks/shared/src")
+    kotlin.srcDir("$projectDir/../tools/benchmarks/shared/src/main/kotlin/report")
 }
 
 gradlePlugin {

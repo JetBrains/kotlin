@@ -1,330 +1,551 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the LICENSE file.
  */
 
 import org.w3c.xhr.*
 import kotlin.js.json
 import kotlin.js.Date
+import kotlin.js.Promise
+import org.jetbrains.database.*
 import org.jetbrains.report.json.*
-import org.jetbrains.build.Build
+import org.jetbrains.elastic.*
+import org.jetbrains.network.*
+import org.jetbrains.buildInfo.Build
+import org.jetbrains.analyzer.*
+import org.jetbrains.report.*
+import org.jetbrains.utils.*
+
+// TODO - create DSL for ES requests?
 
 const val teamCityUrl = "https://buildserver.labs.intellij.net/app/rest"
 const val artifactoryUrl = "https://repo.labs.intellij.net/kotlin-native-benchmarks"
-const val buildsFileName = "buildsSummary.csv"
-const val goldenResultsFileName = "goldenResults.csv"
-const val artifactoryBuildsDirectory = "builds"
-const val buildsInfoPartsNumber = 11
 
 operator fun <K, V> Map<K, V>?.get(key: K) = this?.get(key)
 
 fun getArtifactoryHeader(artifactoryApiKey: String) = Pair("X-JFrog-Art-Api", artifactoryApiKey)
 
-// Local cache for saving information about builds got from Artifactory.
-object LocalCache {
-    private val knownTargets = listOf("Linux", "MacOSX", "Windows10")
-    private val buildsInfo = mutableMapOf<String, MutableMap<String, String>>()
-
-    fun clean(onlyTarget: String? = null) {
-        onlyTarget?.let {
-            buildsInfo[onlyTarget]?.clear()
-        } ?: buildsInfo.clear()
+// Convert saved old report to expected new format.
+internal fun convertToNewFormat(data: JsonObject): List<Any> {
+    val env = Environment.create(data.getRequiredField("env"))
+    val benchmarksObj = data.getRequiredField("benchmarks")
+    val compilerDescription = data.getRequiredField("kotlin")
+    val compiler = Compiler.create(compilerDescription)
+    val backend = (compilerDescription as JsonObject).getRequiredField("backend")
+    val flagsArray = (backend as JsonObject).getOptionalField("flags")
+    var flags: List<String> = emptyList()
+    if (flagsArray != null && flagsArray is JsonArray) {
+        flags = flagsArray.jsonArray.map { (it as JsonLiteral).unquoted() }
     }
+    val benchmarksList = parseBenchmarksArray(benchmarksObj)
 
-    fun fill(onlyTarget: String? = null) {
-        onlyTarget?.let {
-            val buildsDescription = getBuildsInfoFromArtifactory(onlyTarget).lines().drop(1)
-            buildsInfo[onlyTarget] = mutableMapOf<String, String>()
-            buildsDescription.forEach {
-                if (!it.isEmpty()) {
-                    val buildNumber = it.substringBefore(',')
-                    if (!"\\d+(\\.\\d+)+(-M\\d)?-\\w+-\\d+".toRegex().matches(buildNumber)) {
-                        error("Build number $buildNumber differs from expected format. File with data for " +
-                                "target $onlyTarget could be corrupted.")
-                    }
-                    buildsInfo[onlyTarget]!![buildNumber] = it
-                }
-            }
-        } ?: run {
-            knownTargets.forEach {
-                fill(it)
-            }
-        }
-    }
-
-    fun buildExists(target: String, buildNumber: String) =
-            buildsInfo[target][buildNumber]?.let { true } ?: false
-
-    fun delete(target: String, builds: Iterable<String>, apiKey: String): Boolean {
-        // Delete from Artifactory.
-        val buildsDescription = getBuildsInfoFromArtifactory(target).lines()
-
-        val newBuildsDescription = buildsDescription.filter {
-            val buildNumber = it.substringBefore(',')
-            buildNumber !in builds
-        }
-        if (newBuildsDescription.size < buildsDescription.size) {
-            // Upload new version of file.
-            val uploadUrl = "$artifactoryUrl/$artifactoryBuildsDirectory/$target/$buildsFileName"
-            sendUploadRequest(uploadUrl, newBuildsDescription.joinToString("\n"),
-                    extraHeaders = listOf(getArtifactoryHeader(apiKey)))
-
-            // Reload values.
-            clean(target)
-            fill(target)
-            return true
-        }
-        return false
-    }
-
-    private fun getBuilds(target: String, buildNumber: String? = null) =
-            buildsInfo[target]?.let { buildsList ->
-                buildNumber?.let {
-                    // Check if interesting build id is in cache.
-                    buildsList[it]?.let { buildsList.values }
-                } ?: buildsList.values
-            }
-
-    operator fun get(target: String, buildId: String? = null): Collection<String> {
-        val builds = getBuilds(target, buildId)
-
-        if (builds.isNullOrEmpty()) {
-            // No suitable builds were found.
-            // Refill cache.
-            clean(target)
-            fill(target)
-            return getBuilds(target, buildId) ?: listOf<String>()
-        }
-
-        return builds
-    }
+    return listOf(env, compiler, benchmarksList, flags)
 }
 
+// Convert data results to expected format.
+internal fun convert(json: String, buildNumber: String, target: String): List<BenchmarksReport> {
+    val data = JsonTreeParser.parse(json)
+    val reports = if (data is JsonArray) {
+        data.map { convertToNewFormat(it as JsonObject) }
+    } else listOf(convertToNewFormat(data as JsonObject))
+
+    // Restored flags for old reports.
+    val knownFlags = mapOf(
+            "Cinterop" to listOf("-opt"),
+            "FrameworkBenchmarksAnalyzer" to listOf("-g"),
+            "HelloWorld" to if (target == "Mac OS X")
+                listOf("-Xcache-directory=/Users/teamcity/buildAgent/work/c104dee5223a31c5/test_dist/klib/cache/macos_x64-gSTATIC", "-g")
+            else listOf("-g"),
+            "Numerical" to listOf("-opt"),
+            "ObjCInterop" to listOf("-opt"),
+            "Ring" to listOf("-opt"),
+            "Startup" to listOf("-opt"),
+            "swiftInterop" to listOf("-opt"),
+            "Videoplayer" to if (target == "Mac OS X")
+                listOf("-Xcache-directory=/Users/teamcity/buildAgent/work/c104dee5223a31c5/test_dist/klib/cache/macos_x64-gSTATIC", "-g")
+            else listOf("-g")
+    )
+
+    return reports.map { elements ->
+        val benchmarks = (elements[2] as List<BenchmarkResult>).groupBy { it.name.substringBefore('.').substringBefore(':') }
+        val parsedFlags = elements[3] as List<String>
+        benchmarks.map { (setName, results) ->
+            val flags = if (parsedFlags.isNotEmpty() && parsedFlags[0] == "-opt") knownFlags[setName]!! else parsedFlags
+            val savedCompiler = elements[1] as Compiler
+            val compiler = Compiler(Compiler.Backend(savedCompiler.backend.type, savedCompiler.backend.version, flags),
+                    savedCompiler.kotlinVersion)
+            val newReport = BenchmarksReport(elements[0] as Environment, results, compiler)
+            newReport.buildNumber = buildNumber
+            newReport
+        }
+    }.flatten()
+}
+
+// Golden result value used to get normalized results.
 data class GoldenResult(val benchmarkName: String, val metric: String, val value: Double)
-data class GoldenResultsInfo(val apiKey: String, val goldenResults: Array<GoldenResult>)
+data class GoldenResultsInfo(val goldenResults: Array<GoldenResult>)
+
+// Convert information about golden results to benchmarks report format.
+fun GoldenResultsInfo.toBenchmarksReport(): BenchmarksReport {
+    val benchmarksSamples = goldenResults.map {
+        BenchmarkResult(it.benchmarkName, BenchmarkResult.Status.PASSED,
+                it.value, BenchmarkResult.metricFromString(it.metric)!!, it.value, 1, 0)
+    }
+    val compiler = Compiler(Compiler.Backend(Compiler.BackendType.NATIVE, "golden", emptyList()), "golden")
+    val environment = Environment(Environment.Machine("golden", "golden"), Environment.JDKInstance("golden", "golden"))
+    return BenchmarksReport(environment,
+            benchmarksSamples, compiler)
+}
 
 // Build information provided from request.
-data class BuildInfo(val buildNumber: String, val branch: String, val startTime: String,
-                     val finishTime: String)
+data class TCBuildInfo(val buildNumber: String, val branch: String, val startTime: String,
+                       val finishTime: String)
 
 data class BuildRegister(val buildId: String, val teamCityUser: String, val teamCityPassword: String,
-                    val artifactoryApiKey: String, val target: String, val buildType: String, val failuresNumber: Int,
-                    val executionTime: String, val compileTime: String, val codeSize: String,
-                    val bundleSize: String?) {
+                         val bundleSize: String?, val fileWithResult: String) {
     companion object {
         fun create(json: String): BuildRegister {
             val requestDetails = JSON.parse<BuildRegister>(json)
             // Parse method doesn't create real instance with all methods. So create it by hands.
             return BuildRegister(requestDetails.buildId, requestDetails.teamCityUser, requestDetails.teamCityPassword,
-                    requestDetails.artifactoryApiKey, requestDetails.target, requestDetails.buildType,
-                    requestDetails.failuresNumber, requestDetails.executionTime, requestDetails.compileTime,
-                    requestDetails.codeSize, requestDetails.bundleSize)
+                    requestDetails.bundleSize, requestDetails.fileWithResult)
         }
     }
 
-    private val teamCityBuildUrl: String by lazy { "$teamCityUrl/builds/id:$buildId" }
+    private val teamCityBuildUrl: String by lazy { "builds/id:$buildId" }
 
     val changesListUrl: String by lazy {
-        "$teamCityUrl/changes/?locator=build:id:$buildId"
+        "changes/?locator=build:id:$buildId"
     }
 
-    private fun sendTeamCityRequest(url: String) = sendGetRequest(url, teamCityUser, teamCityPassword)
+    val teamCityArtifactsUrl: String by lazy { "builds/id:$buildId/artifacts/content/$fileWithResult" }
+
+    fun sendTeamCityRequest(url: String, json: Boolean = false) =
+            UrlNetworkConnector(teamCityUrl).sendRequest(RequestMethod.GET, url, teamCityUser, teamCityPassword, json)
 
     private fun format(timeValue: Int): String =
             if (timeValue < 10) "0$timeValue" else "$timeValue"
 
-    fun getBuildInformation(): BuildInfo {
-        val buildNumber = sendTeamCityRequest("$teamCityBuildUrl/number")
-        val branch = sendTeamCityRequest("$teamCityBuildUrl/branchName")
-        val startTime = sendTeamCityRequest("$teamCityBuildUrl/startDate")
-        val currentTime = Date()
-        val timeZone = currentTime.getTimezoneOffset() / -60    // Convert to hours.
-        // Get finish time as current time, because buid on TeamCity isn't finished.
-        val finishTime = "${format(currentTime.getUTCFullYear())}" +
-                "${format(currentTime.getUTCMonth() + 1)}" +
-                "${format(currentTime.getUTCDate())}" +
-                "T${format(currentTime.getUTCHours())}" +
-                "${format(currentTime.getUTCMinutes())}" +
-                "${format(currentTime.getUTCSeconds())}" +
-                "${if (timeZone > 0) "+" else "-"}${format(timeZone)}${format(0)}"
-        return BuildInfo(buildNumber, branch, startTime, finishTime)
-    }
-}
-
-data class Commit(val revision: String, val developer: String)
-
-// List of commits.
-class CommitsList(data: JsonElement): ConvertedFromJson {
-
-    val commits: List<Commit>
-
-    init {
-        if (data !is JsonObject) {
-            error("Commits description is expected to be a json object!")
-        }
-        val changesElement = data.getOptionalField("change")
-        commits = changesElement?.let {
-            if (changesElement !is JsonArray) {
-                error("Change field is expected to be an array. Please, check source.")
-            }
-            changesElement.jsonArray.map {
-                with(it as JsonObject) {
-                    Commit(elementToString(getRequiredField("version"), "version"),
-                            elementToString(getRequiredField("username"), "username")
-                    )
-                }
-            }
-        } ?: listOf<Commit>()
-    }
-}
-
-fun getBuildsInfoFromArtifactory(target: String) =
-        sendGetRequest("$artifactoryUrl/$artifactoryBuildsDirectory/$target/$buildsFileName")
-
-fun checkBuildType(currentType: String, targetType: String): Boolean {
-    val releasesBuildTypes = listOf("release", "eap", "rc1", "rc2")
-    return if (targetType == "release") currentType in releasesBuildTypes else currentType == targetType
-}
-
-// Parse  and postprocess result of response with build description.
-fun prepareBuildsResponse(builds: Collection<String>, type: String, branch: String, buildNumber: String? = null): List<Build> {
-    val buildsObjects = mutableListOf<Build>()
-    builds.forEach {
-        val tokens = buildDescriptionToTokens(it)
-        if ((checkBuildType(tokens[5], type) || type == "day") && (branch == tokens[3] || branch == "all")
-                || tokens[0] == buildNumber) {
-            buildsObjects.add(Build(tokens[0], tokens[1], tokens[2], tokens[3],
-                    tokens[4], tokens[5], tokens[6].toInt(), tokens[7], tokens[8], tokens[9],
-                    if (tokens[10] == "-") null else tokens[10]))
+    fun getBuildInformation(): Promise<TCBuildInfo> {
+        return Promise.all(arrayOf(sendTeamCityRequest("$teamCityBuildUrl/number"),
+                sendTeamCityRequest("$teamCityBuildUrl/branchName"),
+                sendTeamCityRequest("$teamCityBuildUrl/startDate"))).then { results ->
+            val (buildNumber, branch, startTime) = results
+            val currentTime = Date()
+            val timeZone = currentTime.getTimezoneOffset() / -60    // Convert to hours.
+            // Get finish time as current time, because buid on TeamCity isn't finished.
+            val finishTime = "${format(currentTime.getUTCFullYear())}" +
+                    "${format(currentTime.getUTCMonth() + 1)}" +
+                    "${format(currentTime.getUTCDate())}" +
+                    "T${format(currentTime.getUTCHours())}" +
+                    "${format(currentTime.getUTCMinutes())}" +
+                    "${format(currentTime.getUTCSeconds())}" +
+                    "${if (timeZone > 0) "+" else "-"}${format(timeZone)}${format(0)}"
+            TCBuildInfo(buildNumber, branch, startTime, finishTime)
         }
     }
-    return buildsObjects
 }
 
-fun buildDescriptionToTokens(buildDescription: String): List<String> {
-    val tokens = buildDescription.split(",").map { it.trim() }
-    if (tokens.size != buildsInfoPartsNumber) {
-        error("Build description $buildDescription doesn't contain all necessary information. " +
-                "File with data could be corrupted.")
-    }
-    return tokens
-}
+// Get builds numbers in right order.
+internal fun <T> orderedValues(values: List<T>, buildElement: (T) -> String = { it -> it.toString() },
+                      skipMilestones: Boolean = false) =
+        values.sortedWith(
+                compareBy({ buildElement(it).substringBefore(".").toInt() },
+                        { buildElement(it).substringAfter(".").substringBefore("-").toDouble() },
+                        {
+                            if (skipMilestones) 0
+                            else if (buildElement(it).substringAfter("-").startsWith("M"))
+                                buildElement(it).substringAfter("M").substringBefore("-").toInt()
+                            else
+                                Int.MAX_VALUE
+                        },
+                        { buildElement(it).substringAfterLast("-").toDouble() }
+                )
+        )
+
+// ElasticSearch connector for work with custom instance.
+internal val localHostElasticConnector = UrlNetworkConnector("http://localhost", 9200)
+// ElasticSearch connector for work with AWS instance.
+internal val awsElasticConnector = AWSNetworkConnector()
+internal val networkConnector = awsElasticConnector
+
+fun urlParameterToBaseFormat(value: dynamic) =
+        value.toString().replace("_", " ")
 
 // Routing of requests to current server.
 fun router() {
     val express = require("express")
     val router = express.Router()
+    val connector = ElasticSearchConnector(networkConnector)
+    val benchmarksDispatcher = BenchmarksIndexesDispatcher(connector, "env.machine.os",
+            listOf("Linux", "Mac OS X", "Windows 10")
+    )
+    val goldenIndex = GoldenResultsIndex(connector)
+    val buildInfoIndex = BuildInfoIndex(connector)
+
+    router.get("/createMapping") { request, response ->
+        buildInfoIndex.createMapping().then { _ ->
+            response.sendStatus(200)
+        }.catch { _ ->
+            response.sendStatus(400)
+        }
+    }
+
+    // Get consistent build information in cases of rerunning the same build.
+    suspend fun getConsistentBuildInfo(buildInfoInstance: BuildInfo, reports: List<BenchmarksReport>,
+                                       rerunNumber: Int = 1): BuildInfo {
+        var currentBuildInfo = buildInfoInstance
+        if (buildExists(currentBuildInfo, buildInfoIndex)) {
+            // Check if benchmarks aren't repeated.
+            val existingBecnhmarks = benchmarksDispatcher.getBenchmarksList(currentBuildInfo.buildNumber,
+                    currentBuildInfo.agentInfo).await()
+            val benchmarksToRegister = reports.map { it.benchmarks.keys }.flatten()
+            if (existingBecnhmarks.toTypedArray().intersect(benchmarksToRegister).isNotEmpty()) {
+                // Build was rerun.
+                val buildNumber = "${currentBuildInfo.buildNumber}.$rerunNumber"
+                currentBuildInfo = BuildInfo(buildNumber, currentBuildInfo.startTime, currentBuildInfo.endTime,
+                        currentBuildInfo.commitsList, currentBuildInfo.branch, currentBuildInfo.agentInfo)
+                return getConsistentBuildInfo(currentBuildInfo, reports, rerunNumber + 1)
+            }
+        }
+        return currentBuildInfo
+    }
 
     // Register build on Artifactory.
-    router.post("/register", { request, response ->
-        val maxCommitsNumber = 5
+    router.post("/register") { request, response ->
         val register = BuildRegister.create(JSON.stringify(request.body))
 
         // Get information from TeamCity.
-        val buildInfo = register.getBuildInformation()
-        val changes = sendGetRequest(register.changesListUrl, register.teamCityUser,
-                register.teamCityPassword, true)
-        val commitsList = CommitsList(JsonTreeParser.parse(changes))
-        val commitsDescription = buildString {
-            if (commitsList.commits.size > maxCommitsNumber) {
-                append("${commitsList.commits.get(0).revision} by ${commitsList.commits.get(0).developer};")
-                append("${commitsList.commits.get(1).revision} by ${commitsList.commits.get(1).developer};")
-                append("...;")
-                val beforeLast = commitsList.commits.lastIndex - 1
-                append("${commitsList.commits.get(beforeLast).revision} by ${commitsList.commits.get(beforeLast).developer};")
-                append("${commitsList.commits.last().revision} by ${commitsList.commits.last().developer};")
-            } else {
-                commitsList.commits.forEach {
-                    append("${it.revision} by ${it.developer};")
+        register.getBuildInformation().then { buildInfo ->
+            register.sendTeamCityRequest(register.changesListUrl, true).then { changes ->
+                val commitsList = CommitsList(JsonTreeParser.parse(changes))
+                // Get artifact.
+                register.sendTeamCityRequest(register.teamCityArtifactsUrl).then { resultsContent ->
+                    launch {
+                        val reportData = JsonTreeParser.parse(resultsContent)
+                        val reports = if (reportData is JsonArray) {
+                            reportData.map { BenchmarksReport.create(it as JsonObject) }
+                        } else listOf(BenchmarksReport.create(reportData as JsonObject))
+                        val goldenResultPromise = getGoldenResults(goldenIndex)
+                        val goldenResults = goldenResultPromise.await()
+                        // Register build information.
+                        var buildInfoInstance = getConsistentBuildInfo(
+                                BuildInfo(buildInfo.buildNumber, buildInfo.startTime, buildInfo.finishTime,
+                                        commitsList, buildInfo.branch, reports[0].env.machine.os),
+                                reports
+                        )
+                        if (register.bundleSize != null) {
+                            // Add bundle size.
+                            val bundleSizeBenchmark = BenchmarkResult("KotlinNative",
+                                    BenchmarkResult.Status.PASSED, register.bundleSize.toDouble(),
+                                    BenchmarkResult.Metric.BUNDLE_SIZE, 0.0, 1, 0)
+                            val bundleSizeReport = BenchmarksReport(reports[0].env,
+                                    listOf(bundleSizeBenchmark), reports[0].compiler)
+                            bundleSizeReport.buildNumber = buildInfoInstance.buildNumber
+                            benchmarksDispatcher.insert(bundleSizeReport, reports[0].env.machine.os).then { _ ->
+                                println("[BUNDLE] Success insert ${buildInfoInstance.buildNumber}")
+                            }.catch { errorResponse ->
+                                println("Failed to insert data for build")
+                                println(errorResponse)
+                            }
+                        }
+                        val insertResults = reports.map {
+                            val benchmarksReport = SummaryBenchmarksReport(it).getBenchmarksReport()
+                                    .normalizeBenchmarksSet(goldenResults)
+                            benchmarksReport.buildNumber = buildInfoInstance.buildNumber
+                            // Save results in database.
+                            benchmarksDispatcher.insert(benchmarksReport, benchmarksReport.env.machine.os)
+                        }
+                        if (!buildExists(buildInfoInstance, buildInfoIndex)) {
+                            buildInfoIndex.insert(buildInfoInstance).then { _ ->
+                                println("Success insert build information for ${buildInfoInstance.buildNumber}")
+                            }.catch {
+                                response.sendStatus(400)
+                            }
+                        }
+                        Promise.all(insertResults.toTypedArray()).then { _ ->
+                            response.sendStatus(200)
+                        }.catch {
+                            response.sendStatus(400)
+                        }
+                    }
                 }
             }
         }
-
-        // Get summary file from Artifactory.
-        var buildsDescription = getBuildsInfoFromArtifactory(register.target)
-        // Add information about new build.
-        //var buildsDescription = "build, start time, finish time, branch, commits, type, failuresNumber, execution time, compile time, code size, bundle size\n"
-        buildsDescription += "${buildInfo.buildNumber}, ${buildInfo.startTime}, ${buildInfo.finishTime}, " +
-                "${buildInfo.branch}, $commitsDescription, ${register.buildType}, ${register.failuresNumber}, " +
-                "${register.executionTime}, ${register.compileTime}, ${register.codeSize}, " +
-                "${register.bundleSize ?: "-"}\n"
-
-        // Upload new version of file.
-        val uploadUrl = "$artifactoryUrl/$artifactoryBuildsDirectory/${register.target}/${buildsFileName}"
-        sendUploadRequest(uploadUrl, buildsDescription, extraHeaders = listOf(getArtifactoryHeader(register.artifactoryApiKey)))
-
-        LocalCache.clean(register.target)
-        LocalCache.fill(register.target)
-
-        // Send response.
-        response.sendStatus(200)
-    })
+    }
 
     // Register golden results to normalize on Artifactory.
     router.post("/registerGolden", { request, response ->
-        val goldenResultsInfo = JSON.parse<GoldenResultsInfo>(JSON.stringify(request.body))
-        val buildsDescription = StringBuilder(sendGetRequest("$artifactoryUrl/$artifactoryBuildsDirectory/$goldenResultsFileName"))
-        goldenResultsInfo.goldenResults.forEach {
-            buildsDescription.append("${it.benchmarkName}, ${it.metric}, ${it.value}\n")
+        val goldenResultsInfo: GoldenResultsInfo = JSON.parse<GoldenResultsInfo>(JSON.stringify(request.body))
+        val goldenReport = goldenResultsInfo.toBenchmarksReport()
+        goldenIndex.insert(goldenReport).then { _ ->
+            response.sendStatus(200)
+        }.catch {
+            response.sendStatus(400)
         }
-        // Upload new version of file.
-        val uploadUrl = "$artifactoryUrl/$artifactoryBuildsDirectory/$goldenResultsFileName"
-        sendUploadRequest(uploadUrl, buildsDescription.toString(),
-                extraHeaders = listOf(getArtifactoryHeader(goldenResultsInfo.apiKey)))
-        // Send response.
-        response.sendStatus(200)
     })
 
-    // Get list of builds.
-    router.get("/builds/:target/:type/:branch/:id", { request, response ->
-        val builds = LocalCache[request.params.target, request.params.id]
-        response.json(prepareBuildsResponse(builds, request.params.type, request.params.branch, request.params.id))
+    // Get builds description with additional information.
+    router.get("/buildsDesc/:target", { request, response ->
+        CachableResponseDispatcher.getResponse(request, response) { success, reject ->
+            val target = request.params.target.toString().replace('_', ' ')
+
+            var branch: String? = null
+            var type: String? = null
+            if (request.query != undefined) {
+                if (request.query.branch != undefined) {
+                    branch = request.query.branch
+                }
+                if (request.query.type != undefined) {
+                    type = request.query.type
+                }
+            }
+
+            getBuildsInfo(type, branch, target, buildInfoIndex).then { buildsInfo ->
+                val buildNumbers = buildsInfo.map { it.buildNumber }
+                // Get number of failed benchmarks for each build.
+                benchmarksDispatcher.getFailuresNumber(target, buildNumbers).then { failures ->
+                    success(orderedValues(buildsInfo, { it -> it.buildNumber }, branch == "master").map {
+                        Build(it.buildNumber, it.startTime, it.endTime, it.branch,
+                                it.commitsList.serializeFields(), failures[it.buildNumber] ?: 0)
+                    })
+                }.catch { errorResponse ->
+                    println("Error during getting failures numbers")
+                    println(errorResponse)
+                    reject()
+                }
+            }.catch {
+                reject()
+            }
+        }
     })
 
-    router.get("/builds/:target/:type/:branch", { request, response ->
-        val builds = LocalCache[request.params.target]
-        response.json(prepareBuildsResponse(builds, request.params.type, request.params.branch))
+    // Get values of current metric.
+    router.get("/metricValue/:target/:metric", { request, response ->
+        CachableResponseDispatcher.getResponse(request, response) { success, reject ->
+            val metric = request.params.metric
+            val target = request.params.target.toString().replace('_', ' ')
+            var samples: List<String> = emptyList()
+            var aggregation = "geomean"
+            var normalize = false
+            var branch: String? = null
+            var type: String? = null
+            var excludeNames: List<String> = emptyList()
+
+            // Parse parameters from request if it exists.
+            if (request.query != undefined) {
+                if (request.query.samples != undefined) {
+                    samples = request.query.samples.toString().split(",").map { it.trim() }
+                }
+                if (request.query.agr != undefined) {
+                    aggregation = request.query.agr.toString()
+                }
+                if (request.query.normalize != undefined) {
+                    normalize = true
+                }
+                if (request.query.branch != undefined) {
+                    branch = request.query.branch
+                }
+                if (request.query.type != undefined) {
+                    type = request.query.type
+                }
+                if (request.query.exclude != undefined) {
+                    excludeNames = request.query.exclude.toString().split(",").map { it.trim() }
+                }
+            }
+
+            getBuildsNumbers(type, branch, target, buildInfoIndex).then { buildNumbers ->
+                if (aggregation == "geomean") {
+                    // Get geometric mean for samples.
+                    benchmarksDispatcher.getGeometricMean(metric, target, buildNumbers, normalize,
+                            excludeNames).then { geoMeansValues ->
+                        success(orderedValues(geoMeansValues, { it -> it.first }, branch == "master"))
+                    }.catch { errorResponse ->
+                        println("Error during getting geometric mean")
+                        println(errorResponse)
+                        reject()
+                    }
+                } else {
+                    benchmarksDispatcher.getSamples(metric, target, samples, buildNumbers, normalize).then { geoMeansValues ->
+                        success(orderedValues(geoMeansValues, { it -> it.first }, branch == "master"))
+                    }.catch {
+                        println("Error during getting samples")
+                        reject()
+                    }
+                }
+            }.catch {
+                println("Error during getting builds information")
+                reject()
+            }
+        }
     })
 
-    router.get("/branches/:target", { request, response ->
-        val builds = LocalCache[request.params.target]
-        response.json(builds.map { buildDescriptionToTokens(it)[3] }.distinct())
+    // Get branches for [target].
+    router.get("/branches", { request, response ->
+        CachableResponseDispatcher.getResponse(request, response) { success, reject ->
+            distinctValues("branch", buildInfoIndex).then { results ->
+                success(results)
+            }.catch { errorMessage ->
+                error(errorMessage.message ?: "Failed getting branches list.")
+                reject()
+            }
+        }
     })
 
+    // Get build numbers for [target].
     router.get("/buildsNumbers/:target", { request, response ->
-        val builds = LocalCache[request.params.target]
-        response.json(builds.map { buildDescriptionToTokens(it)[0] }.distinct())
+        CachableResponseDispatcher.getResponse(request, response) { success, reject ->
+            distinctValues("buildNumber", buildInfoIndex).then { results ->
+                success(results)
+            }.catch { errorMessage ->
+                println(errorMessage.message ?: "Failed getting branches list.")
+                reject()
+            }
+        }
     })
 
-    router.get("/clean", { _, response ->
-        LocalCache.clean()
-        response.sendStatus(200)
-    })
+    // Conert data and migrate it from Artifactory to DB.
+    router.get("/migrate/:target", { request, response ->
+        val target = urlParameterToBaseFormat(request.params.target)
+        val targetPathName = target.replace(" ", "")
+        var buildNumber: String? = null
+        if (request.query != undefined) {
+            if (request.query.buildNumber != undefined) {
+                buildNumber = request.query.buildNumber
+            }
+        }
+        getBuildsInfoFromArtifactory(targetPathName).then { buildInfo ->
+            launch {
+                val buildsDescription = buildInfo.lines().drop(1)
+                var shouldConvert = buildNumber?.let { false } ?: true
+                val goldenResultPromise = getGoldenResults(goldenIndex)
+                val goldenResults = goldenResultPromise.await()
+                val buildsSet = mutableSetOf<String>()
+                buildsDescription.forEach {
+                    if (!it.isEmpty()) {
+                        val currentBuildNumber = it.substringBefore(',')
+                        if (!"\\d+(\\.\\d+)+(-M\\d)?-\\w+-\\d+(\\.\\d+)?".toRegex().matches(currentBuildNumber)) {
+                            error("Build number $currentBuildNumber differs from expected format. File with data for " +
+                                    "target $target could be corrupted.")
+                        }
+                        if (!shouldConvert && buildNumber != null && buildNumber == currentBuildNumber) {
+                            shouldConvert = true
+                        }
+                        if (shouldConvert) {
+                            // Save data from Artifactory into database.
+                            val artifactoryUrlConnector = UrlNetworkConnector(artifactoryUrl)
+                            val fileName = "nativeReport.json"
+                            val accessFileUrl = "$targetPathName/$currentBuildNumber/$fileName"
+                            val extrenalFileName = if (target == "Linux") "externalReport.json" else "spaceFrameworkReport.json"
+                            val accessExternalFileUrl = "$targetPathName/$currentBuildNumber/$extrenalFileName"
+                            val infoParts = it.split(", ")
+                            if ((infoParts[3] == "master" || "eap" in currentBuildNumber || "release" in currentBuildNumber) &&
+                                    currentBuildNumber !in buildsSet) {
+                                try {
+                                    buildsSet.add(currentBuildNumber)
+                                    val jsonReport = artifactoryUrlConnector.sendRequest(RequestMethod.GET, accessFileUrl).await()
+                                    var reports = convert(jsonReport, currentBuildNumber, target)
+                                    val buildInfoRecord = BuildInfo(currentBuildNumber, infoParts[1], infoParts[2],
+                                            CommitsList.parse(infoParts[4]), infoParts[3], target)
 
-    router.get("/fill", { _, response ->
-        LocalCache.fill()
-        response.sendStatus(200)
+                                    val externalJsonReport = artifactoryUrlConnector.sendOptionalRequest(RequestMethod.GET, accessExternalFileUrl).await()
+                                    buildInfoIndex.insert(buildInfoRecord).then { _ ->
+                                        externalJsonReport?.let {
+                                            var externalReports = convert(externalJsonReport, currentBuildNumber, target)
+                                            externalReports.forEach { externalReport ->
+                                                val extrenalAdditionalReport = SummaryBenchmarksReport(externalReport)
+                                                        .getBenchmarksReport().normalizeBenchmarksSet(goldenResults)
+                                                extrenalAdditionalReport.buildNumber = currentBuildNumber
+                                                benchmarksDispatcher.insert(extrenalAdditionalReport, target).then { _ ->
+                                                    println("[External] Success insert ${buildInfoRecord.buildNumber}")
+                                                }.catch { errorResponse ->
+                                                    println("Failed to insert data for build")
+                                                    println(errorResponse)
+                                                }
+                                            }
+                                        }
+
+                                        val bundleSize = if (infoParts[10] != "-") infoParts[10] else null
+                                        if (bundleSize != null) {
+                                            // Add bundle size.
+                                            val bundleSizeBenchmark = BenchmarkResult("KotlinNative",
+                                                    BenchmarkResult.Status.PASSED, bundleSize.toDouble(),
+                                                    BenchmarkResult.Metric.BUNDLE_SIZE, 0.0, 1, 0)
+                                            val bundleSizeReport = BenchmarksReport(reports[0].env,
+                                                    listOf(bundleSizeBenchmark), reports[0].compiler)
+                                            bundleSizeReport.buildNumber = currentBuildNumber
+                                            benchmarksDispatcher.insert(bundleSizeReport, target).then { _ ->
+                                                println("[BUNDLE] Success insert ${buildInfoRecord.buildNumber}")
+                                            }.catch { errorResponse ->
+                                                println("Failed to insert data for build")
+                                                println(errorResponse)
+                                            }
+                                        }
+
+                                        reports.forEach { report ->
+                                            val summaryReport = SummaryBenchmarksReport(report).getBenchmarksReport()
+                                                    .normalizeBenchmarksSet(goldenResults)
+                                            summaryReport.buildNumber = currentBuildNumber
+                                            // Save results in database.
+                                            benchmarksDispatcher.insert(summaryReport, target).then { _ ->
+                                                println("Success insert ${buildInfoRecord.buildNumber}")
+                                            }.catch { errorResponse ->
+                                                println("Failed to insert data for build")
+                                                println(errorResponse.message)
+                                            }
+                                        }
+
+
+                                    }.catch { errorResponse ->
+                                        println("Failed to insert data for build")
+                                        println(errorResponse)
+                                    }
+                                } catch (e: Exception) {
+                                    println(e)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            response.sendStatus(200)
+        }.catch {
+            response.sendStatus(400)
+        }
     })
 
     router.get("/delete/:target", { request, response ->
-        val buildsToDelete: List<String> = request.query.builds.toString().split(",").map { it.trim() }
-        val result = LocalCache.delete(request.params.target, buildsToDelete, request.query.key)
-        if (result) {
-            response.sendStatus(200)
-        } else {
-            response.sendStatus(404)
+        val target = urlParameterToBaseFormat(request.params.target)
+        var buildNumber: String? = null
+        if (request.query != undefined) {
+            if (request.query.buildNumber != undefined) {
+                buildNumber = request.query.buildNumber
+            }
         }
+        benchmarksDispatcher.deleteBenchmarks(target, buildNumber).then {
+            deleteBuildInfo(target, buildInfoIndex, buildNumber).then {
+                response.sendStatus(200)
+            }.catch {
+                response.sendStatus(400)
+            }
+        }.catch {
+            response.sendStatus(400)
+        }
+    })
+
+    router.get("/report/:target/:buildNumber", { request, response ->
+        val target = urlParameterToBaseFormat(request.params.target)
+        val buildNumber = request.params.buildNumber.toString()
+        benchmarksDispatcher.getBenchmarksReports(buildNumber, target).then { reports ->
+            response.send(reports.joinToString(", ", "[", "]"))
+        }.catch {
+            response.sendStatus(400)
+        }
+    })
+
+    router.get("/clear", { _, response ->
+        CachableResponseDispatcher.clear()
+        response.sendStatus(200)
     })
 
     // Main page.
@@ -335,52 +556,20 @@ fun router() {
     return router
 }
 
-fun getAuth(user: String, password: String): String {
-    val buffer = js("Buffer").from(user + ":" + password)
-    val based64String = buffer.toString("base64")
-    return "Basic " + based64String
+fun getBuildsInfoFromArtifactory(target: String): Promise<String> {
+    val buildsFileName = "buildsSummary.csv"
+    val artifactoryBuildsDirectory = "builds"
+    return UrlNetworkConnector(artifactoryUrl).sendRequest(RequestMethod.GET,
+            "$artifactoryBuildsDirectory/$target/$buildsFileName")
 }
 
-fun sendGetRequest(url: String, user: String? = null, password: String? = null, jsonContentType: Boolean = false) : String {
-    val request = require("sync-request")
-    val headers = mutableListOf<Pair<String, String>>()
-    if (user != null && password != null) {
-        headers.add("Authorization" to getAuth(user, password))
-    }
-    if (jsonContentType) {
-        headers.add("Accept" to "application/json")
-    }
-    val response = request("GET", url,
-            json(
-                "headers" to json(*(headers.toTypedArray()))
-            )
-    )
-    if (response.statusCode != 200) {
-        error("Error during getting response from $url\n" +
-                "${response.getBody()}")
-    }
-
-    return response.getBody().toString()
-}
-
-fun sendUploadRequest(url: String, fileContent: String, user: String? = null, password: String? = null,
-                      extraHeaders: List<Pair<String, String>> = emptyList()) {
-    val request = require("sync-request")
-    val headers = mutableListOf<Pair<String, String>>("Content-type" to "text/plain")
-    if (user != null && password != null) {
-        headers.add("Authorization" to getAuth(user, password))
-    }
-    extraHeaders.forEach {
-        headers.add(it.first to it.second)
-    }
-    val response = request("PUT", url,
-            json(
-                    "headers" to json(*(headers.toTypedArray())),
-                    "body" to fileContent
-            )
-    )
-    if (response.statusCode != 201) {
-        error("Error during uploading to $url\n" +
-                "${response}")
-    }
+fun BenchmarksReport.normalizeBenchmarksSet(dataForNormalization: Map<String, List<BenchmarkResult>>): BenchmarksReport {
+    val resultBenchmarksList = benchmarks.map { benchmarksList ->
+        benchmarksList.value.map {
+            NormalizedMeanVarianceBenchmark(it.name, it.status, it.score, it.metric,
+                    it.runtimeInUs, it.repeat, it.warmup, (it as MeanVarianceBenchmark).variance,
+                    dataForNormalization[benchmarksList.key]?.get(0)?.score?.let { golden -> it.score / golden } ?: 0.0)
+        }
+    }.flatten()
+    return BenchmarksReport(env, resultBenchmarksList, compiler)
 }
