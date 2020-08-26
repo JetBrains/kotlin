@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
-import org.jetbrains.kotlin.resolve.calls.components.CreateFreshVariablesSubstitutor.shouldBeFlexible
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
@@ -19,7 +18,8 @@ import java.util.*
 // todo problem: intersection types in constrains: A <: Number, B <: Inv<A & Any> =>? B <: Inv<out Number & Any>
 class ConstraintIncorporator(
     val typeApproximator: AbstractTypeApproximator,
-    val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle
+    val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
+    val utilContext: ConstraintSystemUtilContext
 ) {
 
     interface Context : TypeSystemInferenceExtensionContext {
@@ -66,8 +66,7 @@ class ConstraintIncorporator(
         typeVariable: TypeVariableMarker,
         constraint: Constraint
     ) {
-        val shouldBeTypeVariableFlexible =
-            typeVariable is TypeVariableFromCallableDescriptor && typeVariable.originalTypeParameter.shouldBeFlexible()
+        val shouldBeTypeVariableFlexible = with(utilContext) { typeVariable.shouldBeFlexible() }
 
         // \alpha <: constraint.type
         if (constraint.kind != ConstraintKind.LOWER) {
@@ -83,7 +82,7 @@ class ConstraintIncorporator(
             getConstraintsForVariable(typeVariable).forEach {
                 if (it.kind != ConstraintKind.LOWER) {
                     val isFromDeclaredUpperBound =
-                        it.position.from is DeclaredUpperBoundConstraintPosition<*> && it.type.typeConstructor() !is TypeVariableTypeConstructor
+                        it.position.from is DeclaredUpperBoundConstraintPosition<*> && !it.type.typeConstructor().isTypeVariable()
 
                     addNewIncorporatedConstraint(
                         constraint.type,

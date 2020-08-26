@@ -26,7 +26,7 @@ class InferenceComponents(
 ) {
     val approximator: AbstractTypeApproximator = object : AbstractTypeApproximator(ctx) {}
     val trivialConstraintTypeInferenceOracle = TrivialConstraintTypeInferenceOracle.create(ctx)
-    private val incorporator = ConstraintIncorporator(approximator, trivialConstraintTypeInferenceOracle)
+    private val incorporator = ConstraintIncorporator(approximator, trivialConstraintTypeInferenceOracle, ConeConstraintSystemUtilContext)
     private val injector = ConstraintInjector(incorporator, approximator, KotlinTypeRefiner.Default)
     val resultTypeResolver = ResultTypeResolver(approximator, trivialConstraintTypeInferenceOracle)
 
