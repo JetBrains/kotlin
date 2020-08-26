@@ -68,6 +68,7 @@ interface TypeSystemTypeFactoryContext {
     fun createTypeArgument(type: KotlinTypeMarker, variance: TypeVariance): TypeArgumentMarker
     fun createStarProjection(typeParameter: TypeParameterMarker): TypeArgumentMarker
 
+    fun createErrorType(debugName: String): SimpleTypeMarker
     fun createErrorTypeWithCustomConstructor(debugName: String, constructor: TypeConstructorMarker): KotlinTypeMarker
 }
 

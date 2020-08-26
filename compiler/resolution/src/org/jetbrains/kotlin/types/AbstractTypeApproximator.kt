@@ -25,8 +25,6 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
         const val CACHE_FOR_INCORPORATION_MAX_SIZE = 500
     }
 
-    abstract fun createErrorType(message: String): SimpleTypeMarker
-
     // null means that this input type is the result, i.e. input type not contains not-allowed kind of types
     // type <: resultType
     fun approximateToSuperType(type: KotlinTypeMarker, conf: TypeApproximatorConfiguration): KotlinTypeMarker? =

@@ -334,6 +334,10 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return type
     }
 
+    override fun createErrorType(debugName: String): ConeClassErrorType {
+        return ConeClassErrorType(ConeIntermediateDiagnostic(debugName))
+    }
+
     override fun createErrorTypeWithCustomConstructor(debugName: String, constructor: TypeConstructorMarker): KotlinTypeMarker {
         return ConeKotlinErrorType(ConeIntermediateDiagnostic("$debugName c: $constructor"))
     }
@@ -357,8 +361,6 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         if (this is ConeClassLikeLookupTag) return createErrorType("Not found classifier: $classId")
         return createErrorType("Unknown reason")
     }
-
-    private fun createErrorType(reason: String) = ConeClassErrorType(ConeIntermediateDiagnostic(reason))
 
     override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? {
         return ConeIntegerLiteralTypeImpl.findCommonSuperType(explicitSupertypes)

@@ -561,6 +561,10 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return captureFromExpressionInternal(type as UnwrappedType)
     }
 
+    override fun createErrorType(debugName: String): SimpleTypeMarker {
+        return ErrorUtils.createErrorType(debugName)
+    }
+
     override fun createErrorTypeWithCustomConstructor(debugName: String, constructor: TypeConstructorMarker): KotlinTypeMarker {
         require(constructor is TypeConstructor, constructor::errorMessage)
         return ErrorUtils.createErrorTypeWithCustomConstructor(debugName, constructor)

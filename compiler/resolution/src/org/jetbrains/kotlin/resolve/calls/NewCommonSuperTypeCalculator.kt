@@ -16,18 +16,14 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
-import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.AbstractFlexibilityChecker.hasDifferentFlexibilityAtDepth
+import org.jetbrains.kotlin.types.AbstractNullabilityChecker
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker.hasPathByNotMarkedNullableNodes
-import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.model.*
 
 object NewCommonSuperTypeCalculator {
-    // TODO: Bridge for old calls
-    fun commonSuperType(types: List<UnwrappedType>): UnwrappedType {
-        return SimpleClassicTypeSystemContext.commonSuperType(types) as UnwrappedType
-    }
-
     fun TypeSystemCommonSuperTypesContext.commonSuperType(types: List<KotlinTypeMarker>): KotlinTypeMarker {
         val maxDepth = types.maxOfOrNull { it.typeDepth() } ?: 0
         return commonSuperType(types, -maxDepth, true)
@@ -96,8 +92,8 @@ object NewCommonSuperTypeCalculator {
         contextStubTypesEqualToAnything: AbstractTypeCheckerContext,
         contextStubTypesNotEqual: AbstractTypeCheckerContext
     ): SimpleTypeMarker {
-        if (types.any { it is ErrorType }) {
-            return ErrorUtils.createErrorType("CST(${types.joinToString()}")
+        if (types.any { it.isError() }) {
+            return createErrorType("CST(${types.joinToString()}")
         }
 
         // i.e. result type also should be marked nullable
