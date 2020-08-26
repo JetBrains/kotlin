@@ -48,11 +48,12 @@ abstract class KotlinJsIrSubTarget(
 
     protected val taskGroupName = "Kotlin $disambiguationClassifier"
 
-    protected val distribution: Distribution = DefaultDistribution(project)
-
     @ExperimentalDistributionDsl
     override fun distribution(body: Distribution.() -> Unit) {
-        distribution.body()
+        target.binaries
+            .all {
+                it.distribution.body()
+            }
     }
 
     internal fun configure() {
@@ -228,19 +229,19 @@ abstract class KotlinJsIrSubTarget(
                     it.into(binary.distribution.directory)
                 }
 
+                val distributionTask = registerSubTargetTask<Task>(
+                    disambiguateCamelCased(
+                        binary.name,
+                        DISTRIBUTION_TASK_NAME
+                    )
+                ) {
+                    it.dependsOn(prepareJsLibrary)
+
+                    it.outputs.dir(project.newFileProperty { binary.distribution.directory })
+                }
+
                 if (mode == KotlinJsBinaryMode.PRODUCTION) {
-                    assembleTaskProvider.dependsOn(prepareJsLibrary)
-
-                    registerSubTargetTask<Task>(
-                        disambiguateCamelCased(
-                            binary.name,
-                            DISTRIBUTION_TASK_NAME
-                        )
-                    ) {
-                        it.dependsOn(prepareJsLibrary)
-
-                        it.outputs.dir(project.newFileProperty { distribution.directory })
-                    }
+                    assembleTaskProvider.dependsOn(distributionTask)
                 }
             }
     }
@@ -261,6 +262,6 @@ abstract class KotlinJsIrSubTarget(
         const val DISTRIBUTE_RESOURCES_TASK_NAME = "distributeResources"
         const val DISTRIBUTION_TASK_NAME = "distribution"
 
-        const val PREPARE_JS_LIBRARY_TASK_NAME = "prepareJsLibrary"
+        const val PREPARE_JS_LIBRARY_TASK_NAME = "prepare"
     }
 }

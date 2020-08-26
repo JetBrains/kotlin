@@ -152,26 +152,6 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 binary as Executable
 
                 val mode = binary.mode
-                val webpackTask = registerSubTargetTask<KotlinWebpack>(
-                    disambiguateCamelCased(
-                        binary.executeTaskBaseName,
-                        WEBPACK_TASK_NAME
-                    ),
-                    listOf(compilation)
-                ) { task ->
-                    val entryFileProvider = binary.linkTask.map { it.outputFile }
-
-                    task.description = "build webpack ${mode.name.toLowerCase()} bundle"
-                    task._destinationDirectory = distribution.directory
-
-                    task.commonConfigure(
-                        compilation = compilation,
-                        mode = mode,
-                        entryFileProvider = entryFileProvider,
-                        configurationActions = webpackTaskConfigurations,
-                        nodeJs = nodeJs
-                    )
-                }
 
                 val distributeResourcesTask = registerSubTargetTask<Copy>(
                     disambiguateCamelCased(
@@ -183,25 +163,49 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     it.into(binary.distribution.directory)
                 }
 
-                if (mode == KotlinJsBinaryMode.PRODUCTION) {
-                    assembleTaskProvider.dependsOn(webpackTask)
-                    val webpackCommonTask = registerSubTargetTask<Task>(
-                        disambiguateCamelCased(WEBPACK_TASK_NAME)
-                    ) {
-                        it.dependsOn(webpackTask)
-                    }
+                val webpackTask = registerSubTargetTask<KotlinWebpack>(
+                    disambiguateCamelCased(
+                        binary.executeTaskBaseName,
+                        WEBPACK_TASK_NAME
+                    ),
+                    listOf(compilation)
+                ) { task ->
+                    val entryFileProvider = binary.linkTask.map { it.outputFile }
 
-                    webpackTask.dependsOn(
+                    task.description = "build webpack ${mode.name.toLowerCase()} bundle"
+                    task._destinationDirectory = binary.distribution.directory
+
+                    task.dependsOn(
                         distributeResourcesTask
                     )
 
-                    assembleTaskProvider.dependsOn(distributeResourcesTask)
+                    task.commonConfigure(
+                        compilation = compilation,
+                        mode = mode,
+                        entryFileProvider = entryFileProvider,
+                        configurationActions = webpackTaskConfigurations,
+                        nodeJs = nodeJs
+                    )
+                }
 
-                    registerSubTargetTask<Task>(disambiguateCamelCased(DISTRIBUTION_TASK_NAME)) {
-                        it.dependsOn(webpackCommonTask)
-                        it.dependsOn(distributeResourcesTask)
+                val distributionTask = registerSubTargetTask<Task>(
+                    disambiguateCamelCased(
+                        if (binary.mode == KotlinJsBinaryMode.PRODUCTION) "" else binary.name,
+                        DISTRIBUTION_TASK_NAME
+                    )
+                ) {
+                    it.dependsOn(webpackTask)
+                    it.dependsOn(distributeResourcesTask)
 
-                        it.outputs.dir(project.newFileProperty { distribution.directory })
+                    it.outputs.dir(project.newFileProperty { binary.distribution.directory })
+                }
+
+                if (mode == KotlinJsBinaryMode.PRODUCTION) {
+                    assembleTaskProvider.dependsOn(distributionTask)
+                    registerSubTargetTask<Task>(
+                        disambiguateCamelCased(WEBPACK_TASK_NAME)
+                    ) {
+                        it.dependsOn(webpackTask)
                     }
                 }
             }

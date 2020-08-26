@@ -24,11 +24,11 @@ interface JsBinary {
 
 sealed class JsIrBinary(
     final override val compilation: KotlinJsCompilation,
-    override val name: String,
+    final override val name: String,
     override val mode: KotlinJsBinaryMode
 ) : JsBinary {
     override val distribution: Distribution =
-        DefaultDistribution(compilation.target.project)
+        DefaultDistribution(compilation.target.project, name)
 
     val linkTaskName: String = linkTaskName()
 
@@ -61,6 +61,12 @@ class Executable(
     name,
     mode
 ) {
+    override val distribution: Distribution =
+        DefaultDistribution(
+            compilation.target.project,
+            if (mode == KotlinJsBinaryMode.PRODUCTION) null else super.distribution.name
+        )
+
     val executeTaskBaseName: String =
         generateBinaryName(
             compilation,

@@ -11,12 +11,18 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 
-class DefaultDistribution(private val project: Project) : Distribution {
+class DefaultDistribution(
+    private val project: Project,
+    override var name: String? = null
+) : Distribution {
 
     private val basePluginConvention: BasePluginConvention
         get() = project.convention.plugins["base"] as BasePluginConvention
 
     override var directory: File by property {
-        project.buildDir.resolve(basePluginConvention.distsDirName)
+        project.buildDir
+            .let { buildDir ->
+                name?.let { buildDir.resolve(it) } ?: buildDir.resolve(basePluginConvention.distsDirName)
+            }
     }
 }
