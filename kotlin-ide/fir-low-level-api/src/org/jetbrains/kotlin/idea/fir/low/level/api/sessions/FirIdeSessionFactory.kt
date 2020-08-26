@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
-import org.jetbrains.kotlin.fir.resolve.transformers.PhasedFirFileResolver
+import org.jetbrains.kotlin.fir.resolve.transformers.FirPhaseManager
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.fir.session.registerCommonComponents
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.session.registerResolveComponents
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.resolve.IDEPackagePartProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
-import org.jetbrains.kotlin.idea.fir.low.level.api.IdePhasedFirFileResolver
+import org.jetbrains.kotlin.idea.fir.low.level.api.IdeFirPhaseManager
 import org.jetbrains.kotlin.idea.fir.low.level.api.IdeSessionComponents
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCacheImpl
@@ -57,7 +57,7 @@ internal object FirIdeSessionFactory {
         val searchScope = ModuleWithDependentsScope(project, dependentModules.map { it.module })
         return FirIdeSourcesSession(moduleInfo, sessionProvider, searchScope, firBuilder).apply {
             val cache = ModuleFileCacheImpl(this)
-            val phasedFirFileResolver = IdePhasedFirFileResolver(FirLazyDeclarationResolver(firFileBuilder), cache)
+            val firPhaseManager = IdeFirPhaseManager(FirLazyDeclarationResolver(firFileBuilder), cache)
 
             registerCommonComponents()
             registerResolveComponents()
@@ -75,7 +75,7 @@ internal object FirIdeSessionFactory {
             register(FirProvider::class, provider)
             register(FirIdeProvider::class, provider)
 
-            register(PhasedFirFileResolver::class, phasedFirFileResolver)
+            register(FirPhaseManager::class, firPhaseManager)
 
             register(
                 FirSymbolProvider::class,
