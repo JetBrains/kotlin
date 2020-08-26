@@ -64,11 +64,13 @@ class NameTable<T>(
         return freshName
     }
 
+    private val indexCache = mutableMapOf<String, Int>()
+
     private fun findFreshName(suggestedName: String): String {
         if (!isReserved(suggestedName))
             return suggestedName
 
-        var i = 0
+        var i = indexCache[suggestedName] ?: 0
 
         fun freshName() =
             suggestedName + "_" + i
@@ -76,6 +78,9 @@ class NameTable<T>(
         while (isReserved(freshName())) {
             i++
         }
+
+        indexCache[suggestedName] = i
+
         return freshName()
     }
 }
