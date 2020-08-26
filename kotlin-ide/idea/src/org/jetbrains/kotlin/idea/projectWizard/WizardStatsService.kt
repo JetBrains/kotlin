@@ -35,9 +35,9 @@ class WizardStatsService : CounterUsagesCollector() {
         private const val contextModulesRemoved = "modules_removed"
         private const val contextModuleTemplateChanged = "module_template_changed"
 
-        val groupField = EventFields.String(contextGroup).withCustomRule("kotlin_wizard_groups")
-        val projectTemplateField = EventFields.String(contextProjectTemplate).withCustomRule("kotlin_wizard_templates")
-        val buildSystemField = EventFields.String(contextBuildSystem).withCustomRule("kotlin_wizard_build_systems")
+        val groupField = EventFields.StringValidatedByCustomRule(contextGroup, "kotlin_wizard_groups")
+        val projectTemplateField = EventFields.StringValidatedByCustomRule(contextProjectTemplate, "kotlin_wizard_templates")
+        val buildSystemField = EventFields.StringValidatedByCustomRule(contextBuildSystem, "kotlin_wizard_build_systems")
 
         val modulesCreatedField = EventFields.Int(contextModulesCreated)
         val modulesRemovedField = EventFields.Int(contextModulesRemoved)
