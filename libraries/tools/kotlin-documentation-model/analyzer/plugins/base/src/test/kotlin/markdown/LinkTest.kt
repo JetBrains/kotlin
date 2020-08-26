@@ -73,7 +73,7 @@ class LinkTest : AbstractCoreTest() {
                 val foo = innerClass.children.first { it.name == "foo" } as MemberPageNode
                 val destinationDri = (root.documentable as WithGenerics).generics.first().dri.toString()
 
-                assertEquals(destinationDri, "[JVM root]/Outer///PointingToGenericParameters(0)/")
+                assertEquals(destinationDri, "/Outer///PointingToGenericParameters(0)/")
                 assertNotNull(foo.content.dfs { it is ContentDRILink && it.address.toString() == destinationDri } )
             }
         }
