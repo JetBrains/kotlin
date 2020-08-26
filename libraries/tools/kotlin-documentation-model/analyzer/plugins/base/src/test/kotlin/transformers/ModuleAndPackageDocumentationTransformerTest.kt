@@ -1,18 +1,16 @@
 package transformers
 
-import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import org.jetbrains.dokka.base.transformers.documentables.ModuleAndPackageDocumentationReader
 import org.jetbrains.dokka.base.transformers.documentables.ModuleAndPackageDocumentationTransformer
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.DPackage
 import org.jetbrains.dokka.model.SourceSetDependent
-import org.jetbrains.dokka.model.doc.Description
 import org.jetbrains.dokka.model.doc.DocumentationNode
-import org.jetbrains.dokka.model.doc.Text
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import renderers.defaultSourceSet
+import testApi.testRunner.documentationNode
+import testApi.testRunner.sourceSet
 
 
 class ModuleAndPackageDocumentationTransformerTest {
@@ -141,22 +139,22 @@ class ModuleAndPackageDocumentationTransformerTest {
                     documentation = emptyMap(),
                     sourceSets = emptySet(),
                     packages = listOf(
-                        dPackage(
-                            name = "com.sample",
+                        DPackage(
+                            dri = DRI("com.sample"),
                             documentation = mapOf(
                                 sourceSet("A") to documentationNode("pre-existing:A:com.sample")
                             ),
                             sourceSets = setOf(sourceSet("A"), sourceSet("B"), sourceSet("C")),
                         ),
-                        dPackage(
-                            name = "com.attach",
+                        DPackage(
+                            dri = DRI("com.attach"),
                             documentation = mapOf(
                                 sourceSet("A") to documentationNode("pre-existing:A:com.attach")
                             ),
                             sourceSets = setOf(sourceSet("A"), sourceSet("B"), sourceSet("C"))
                         ),
-                        dPackage(
-                            name = "com.attach.sub",
+                        DPackage(
+                            dri = DRI("com.attach.sub"),
                             documentation = mapOf(
                                 sourceSet("A") to documentationNode("pre-existing:A:com.attach.sub"),
                                 sourceSet("B") to documentationNode("pre-existing:B:com.attach.sub"),
@@ -178,7 +176,7 @@ class ModuleAndPackageDocumentationTransformerTest {
 
         val comSample = result.single().packages.single { it.dri.packageName == "com.sample" }
         assertEquals(
-             mapOf(sourceSet("A") to documentationNode("pre-existing:A:com.sample")),
+            mapOf(sourceSet("A") to documentationNode("pre-existing:A:com.sample")),
             comSample.documentation,
             "Expected no documentation added to package 'com.sample' because of wrong package"
         )
@@ -199,8 +197,8 @@ class ModuleAndPackageDocumentationTransformerTest {
                 documentation = emptyMap(),
                 sourceSets = emptySet(),
                 packages = listOf(
-                    dPackage(
-                        name = "com.sample",
+                    DPackage(
+                        dri = DRI("com.sample"),
                         documentation = mapOf(
                             /* No documentation added, since in wrong package */
                             sourceSet("A") to documentationNode("pre-existing:A:com.sample")
@@ -208,8 +206,8 @@ class ModuleAndPackageDocumentationTransformerTest {
                         sourceSets = setOf(sourceSet("A"), sourceSet("B"), sourceSet("C")),
 
                         ),
-                    dPackage(
-                        name = "com.attach",
+                    DPackage(
+                        dri = DRI("com.attach"),
                         documentation = mapOf(
                             /* Documentation added */
                             sourceSet("A") to documentationNode("pre-existing:A:com.attach", "doc:A:com.attach"),
@@ -217,8 +215,8 @@ class ModuleAndPackageDocumentationTransformerTest {
                         ),
                         sourceSets = setOf(sourceSet("A"), sourceSet("B"), sourceSet("C")),
                     ),
-                    dPackage(
-                        name = "com.attach.sub",
+                    DPackage(
+                        dri = DRI("com.attach.sub"),
                         documentation = mapOf(
                             /* Documentation added */
                             sourceSet("A") to documentationNode(
@@ -241,30 +239,3 @@ class ModuleAndPackageDocumentationTransformerTest {
     }
 
 }
-
-
-private fun sourceSet(name: String): DokkaSourceSet {
-    return defaultSourceSet.copy(
-        displayName = name,
-        sourceSetID = defaultSourceSet.sourceSetID.copy(sourceSetName = name)
-    )
-}
-
-private fun documentationNode(vararg texts: String): DocumentationNode {
-    return DocumentationNode(texts.toList().map { Description(Text(it)) })
-}
-
-private fun dPackage(
-    name: String,
-    documentation: SourceSetDependent<DocumentationNode>,
-    sourceSets: Set<DokkaSourceSet>
-): DPackage = DPackage(
-    dri = DRI(name),
-    documentation = documentation,
-    sourceSets = sourceSets,
-    classlikes = emptyList(),
-    functions = emptyList(),
-    properties = emptyList(),
-    typealiases = emptyList()
-
-)

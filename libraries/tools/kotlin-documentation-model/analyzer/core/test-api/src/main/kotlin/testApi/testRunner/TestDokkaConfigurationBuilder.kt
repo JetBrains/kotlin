@@ -1,9 +1,12 @@
 package testApi.testRunner
 
-import com.intellij.openapi.application.PathManager
 import org.jetbrains.dokka.*
+import org.jetbrains.dokka.links.DRI
+import org.jetbrains.dokka.model.*
+import org.jetbrains.dokka.model.doc.Description
+import org.jetbrains.dokka.model.doc.DocumentationNode
+import org.jetbrains.dokka.model.doc.Text
 import java.io.File
-import java.net.URL
 
 fun dokkaConfiguration(block: TestDokkaConfigurationBuilder.() -> Unit): DokkaConfigurationImpl =
     TestDokkaConfigurationBuilder().apply(block).build()
@@ -35,12 +38,20 @@ class TestDokkaConfigurationBuilder {
     fun sourceSets(block: SourceSetsBuilder.() -> Unit) {
         sourceSets.addAll(SourceSetsBuilder().apply(block))
     }
+
+    fun add(sourceSet: DokkaSourceSetImpl) {
+        sourceSets.add(sourceSet)
+    }
 }
 
 @DokkaConfigurationDsl
 class SourceSetsBuilder : ArrayList<DokkaSourceSetImpl>() {
     fun sourceSet(block: DokkaSourceSetBuilder.() -> Unit): DokkaConfiguration.DokkaSourceSet =
         DokkaSourceSetBuilder().apply(block).build().apply(::add)
+}
+
+fun sourceSet(block: DokkaSourceSetBuilder.() -> Unit): DokkaSourceSetImpl {
+    return DokkaSourceSetBuilder().apply(block).build()
 }
 
 @DokkaConfigurationDsl
@@ -55,7 +66,6 @@ class DokkaSourceSetBuilder(
     var samples: List<String> = emptyList(),
     var includes: List<String> = emptyList(),
     var includeNonPublic: Boolean = false,
-    var includeRootPackage: Boolean = true,
     var reportUndocumented: Boolean = false,
     var skipEmptyPackages: Boolean = false,
     var skipDeprecated: Boolean = false,
@@ -95,3 +105,41 @@ class DokkaSourceSetBuilder(
         analysisPlatform = Platform.fromString(analysisPlatform)
     )
 }
+
+val defaultSourceSet = DokkaSourceSetImpl(
+    moduleDisplayName = "DEFAULT",
+    displayName = "DEFAULT",
+    sourceSetID = DokkaSourceSetID("DEFAULT", "DEFAULT"),
+    classpath = emptyList(),
+    sourceRoots = emptySet(),
+    dependentSourceSets = emptySet(),
+    samples = emptySet(),
+    includes = emptySet(),
+    includeNonPublic = false,
+    reportUndocumented = false,
+    skipEmptyPackages = true,
+    skipDeprecated = false,
+    jdkVersion = 8,
+    sourceLinks = emptySet(),
+    perPackageOptions = emptyList(),
+    externalDocumentationLinks = emptySet(),
+    languageVersion = null,
+    apiVersion = null,
+    noStdlibLink = false,
+    noJdkLink = false,
+    suppressedFiles = emptySet(),
+    analysisPlatform = Platform.DEFAULT
+)
+
+// TODO NOW: Clean up
+fun sourceSet(name: String): DokkaConfiguration.DokkaSourceSet {
+    return defaultSourceSet.copy(
+        displayName = name,
+        sourceSetID = defaultSourceSet.sourceSetID.copy(sourceSetName = name)
+    )
+}
+
+fun documentationNode(vararg texts: String): DocumentationNode {
+    return DocumentationNode(texts.toList().map { Description(Text(it)) })
+}
+
