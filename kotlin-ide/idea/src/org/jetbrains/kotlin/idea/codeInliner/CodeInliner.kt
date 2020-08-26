@@ -390,7 +390,9 @@ class CodeInliner<TCallElement : KtElement>(
                 val expressionType = bindingContext.getType(expression)
                 val resultExpression = kotlin.run {
                     if (expression !is KtLambdaExpression) return@run null
-                    expression.mark(WAS_FUNCTION_LITERAL_ARGUMENT_KEY)
+                    if (valueArgument is LambdaArgument) {
+                        expression.mark(WAS_FUNCTION_LITERAL_ARGUMENT_KEY)
+                    }
 
                     if (!parameter.type.isExtensionFunctionType) return@run null
                     expression.functionLiteral.descriptor?.safeAs<FunctionDescriptor>()?.let { descriptor ->
