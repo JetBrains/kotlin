@@ -583,7 +583,7 @@ class ConeTypeCheckerContext(
         firstCandidate: KotlinTypeMarker,
         secondCandidate: KotlinTypeMarker
     ): KotlinTypeMarker {
-        TODO("Not yet implemented")
+        // TODO
+        return firstCandidate
     }
-
 }
