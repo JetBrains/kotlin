@@ -287,7 +287,7 @@ object FrontendApplicationProjectTemplate : ProjectTemplate() {
         get() = listOf(
             KotlinPlugin.modules.reference withValue listOf(
                 Module(
-                    "js",
+                    "browser",
                     BrowserJsSinglePlatformModuleConfigurator,
                     template = SimpleJsClientTemplate(),
                     sourcesets = SourcesetType.ALL.map { type ->
@@ -312,7 +312,7 @@ object ReactApplicationProjectTemplate : ProjectTemplate() {
         get() = listOf(
             KotlinPlugin.modules.reference withValue listOf(
                 Module(
-                    "js",
+                    "react",
                     BrowserJsSinglePlatformModuleConfigurator,
                     template = ReactJsClientTemplate(),
                     sourcesets = SourcesetType.ALL.map { type ->
@@ -431,7 +431,7 @@ object NodeJsApplicationProjectTemplate : ProjectTemplate() {
         get() = listOf(
             KotlinPlugin.modules.reference withValue listOf(
                 Module(
-                    "js",
+                    "nodejs",
                     NodeJsSinglePlatformModuleConfigurator,
                     template = SimpleNodeJsTemplate(),
                     sourcesets = SourcesetType.ALL.map { type ->

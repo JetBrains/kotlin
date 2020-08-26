@@ -65,10 +65,14 @@ interface SimpleTargetConfigurator : TargetConfigurator {
     }
 }
 
-internal fun Module.createTargetAccessIr(moduleSubType: ModuleSubType) =
+internal fun Module.createTargetAccessIr(
+    moduleSubType: ModuleSubType,
+    additionalParams: List<Any?> = listOf()
+) =
     TargetAccessIR(
         moduleSubType,
-        name.takeIf { it != moduleSubType.name }
+        name.takeIf { it != moduleSubType.name },
+        additionalParams.filterNotNull()
     )
 
 
@@ -94,9 +98,6 @@ object JsBrowserTargetConfigurator : JsTargetConfigurator, ModuleConfiguratorWit
     @NonNls
     override val id = "jsBrowser"
 
-    @NonNls
-    override val suggestedModuleName = "browser"
-
     override val text = KotlinNewProjectWizardBundle.message("module.configurator.js.browser")
 
     override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JS
@@ -105,7 +106,10 @@ object JsBrowserTargetConfigurator : JsTargetConfigurator, ModuleConfiguratorWit
         module: Module
     ): List<BuildSystemIR> = irsList {
         +DefaultTargetConfigurationIR(
-            module.createTargetAccessIr(ModuleSubType.js)
+            module.createTargetAccessIr(
+                ModuleSubType.js,
+                listOf(settingValue(module, JSConfigurator.compiler)?.text)
+            )
         ) {
             browserSubTarget(module, this@createTargetIrs)
         }
@@ -116,17 +120,16 @@ object JsNodeTargetConfigurator : JsTargetConfigurator {
     @NonNls
     override val id = "jsNode"
 
-    @NonNls
-    override val suggestedModuleName = "nodeJs"
-
     override val text = KotlinNewProjectWizardBundle.message("module.configurator.js.node")
-
 
     override fun Reader.createTargetIrs(
         module: Module
     ): List<BuildSystemIR> = irsList {
         +DefaultTargetConfigurationIR(
-            module.createTargetAccessIr(ModuleSubType.js)
+            module.createTargetAccessIr(
+                ModuleSubType.js,
+                listOf(settingValue(module, JSConfigurator.compiler)?.text)
+            )
         ) {
             nodejsSubTarget(module, this@createTargetIrs)
         }
