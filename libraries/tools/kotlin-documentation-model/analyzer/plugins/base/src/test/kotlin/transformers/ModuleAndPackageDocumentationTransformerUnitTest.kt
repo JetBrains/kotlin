@@ -13,7 +13,7 @@ import testApi.testRunner.documentationNode
 import testApi.testRunner.sourceSet
 
 
-class ModuleAndPackageDocumentationTransformerTest {
+class ModuleAndPackageDocumentationTransformerUnitTest {
 
     @Test
     fun `empty list of modules`() {
