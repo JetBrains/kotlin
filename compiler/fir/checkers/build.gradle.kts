@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     compile(project(":compiler:fir:resolve"))
+    api(project(":compiler:frontend"))
 
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
