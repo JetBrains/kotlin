@@ -1521,6 +1521,11 @@ public abstract class LocalInspectionTestGenerated extends AbstractLocalInspecti
                 runTest("testData/inspectionsLocal/collections/redundantAsSequence/hasLineBreak.kt");
             }
 
+            @TestMetadata("map.kt")
+            public void testMap() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/redundantAsSequence/map.kt");
+            }
+
             @TestMetadata("notTermination.kt")
             public void testNotTermination() throws Exception {
                 runTest("testData/inspectionsLocal/collections/redundantAsSequence/notTermination.kt");

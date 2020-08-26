@@ -9,6 +9,7 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiver
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class RedundantAsSequenceInspection : AbstractKotlinInspection() {
@@ -36,6 +38,8 @@ class RedundantAsSequenceInspection : AbstractKotlinInspection() {
         val parentCall = qualified.getQualifiedExpressionForReceiver()?.callExpression ?: return
 
         val context = qualified.analyze(BodyResolveMode.PARTIAL)
+        val receiverType = qualified.receiverExpression.getType(context) ?: return
+        if (!receiverType.isIterable(DefaultBuiltIns.Instance)) return
         if (call.getResolvedCall(context)?.isCalling(asSequenceFqName) != true) return
         if (!parentCall.isTermination(context)) return
 
