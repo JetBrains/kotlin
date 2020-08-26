@@ -12592,6 +12592,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/inference/earlyReturnInsideCrossinlineLambda.kt");
         }
 
+        @TestMetadata("inferenceWithTypeVariableInsideCapturedType.kt")
+        public void testInferenceWithTypeVariableInsideCapturedType() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/inferenceWithTypeVariableInsideCapturedType.kt");
+        }
+
         @TestMetadata("integerLiteralTypeInLamdaReturnType.kt")
         public void testIntegerLiteralTypeInLamdaReturnType() throws Exception {
             runTest("compiler/testData/codegen/box/inference/integerLiteralTypeInLamdaReturnType.kt");
