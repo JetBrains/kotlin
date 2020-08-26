@@ -15,6 +15,7 @@ sealed class FirDeclarationOrigin {
     object Enhancement : FirDeclarationOrigin()
     object ImportedFromObject : FirDeclarationOrigin()
     object IntersectionOverride : FirDeclarationOrigin()
+    object Delegated : FirDeclarationOrigin()
 
     class Plugin(val key: FirPluginKey) : FirDeclarationOrigin()
 }

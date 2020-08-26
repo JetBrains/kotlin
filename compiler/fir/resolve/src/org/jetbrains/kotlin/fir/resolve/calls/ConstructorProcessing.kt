@@ -164,7 +164,7 @@ private fun processConstructors(
                 }
                 is FirClassSymbol ->
                     (matchedSymbol.fir as FirClass<*>).scope(
-                        substitutor, session, scopeSession, false,
+                        substitutor, session, scopeSession, skipPrivateMembers = false,
                     )
             }
 
