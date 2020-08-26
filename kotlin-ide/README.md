@@ -41,6 +41,8 @@ more generic "VM options" (shared or user-local). `3000` or `4000` megabytes sho
 
 Now you should be able to open and build the project.
 
+Use the provided "IDEA" build configuration to run an IntelliJ IDEA instance with your modifications to the Kotlin plugin.
+
 ## 2. Frequently Asked Questions
 
 Q. How can I contribute to the Kotlin IDEA plugin?
