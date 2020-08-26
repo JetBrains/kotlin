@@ -64,7 +64,6 @@ org.jetbrains.kotlin.idea.resolve.ReferenceResolveTestGenerated.DelegatedPropert
 org.jetbrains.kotlin.tools.projectWizard.wizard.ProjectTemplateNewWizardProjectImportTestGenerated.GradleGroovy.testMultiplatformApplication,,,
 org.jetbrains.kotlin.tools.projectWizard.wizard.ProjectTemplateNewWizardProjectImportTestGenerated.GradleKts.testMultiplatformApplication,,,
 org.jetbrains.kotlin.gradle.NewMultiplatformIT.testJavaSupportInJvmTargets,,,
-org.jetbrains.kotlin.nj2k.NewJavaToKotlinConverterMultiFileTestGenerated.testNullabilityByDFa,,,
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testJvmOverloadsFunctions,,, FLAKY
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testReturnInnerClasses,,, FLAKY
 org.jetbrains.kotlin.checkers.JavaAgainstKotlinBinariesCheckerTestGenerated.testThrowsOnGenericMethod,,, FLAKY
