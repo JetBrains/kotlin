@@ -22,11 +22,13 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
+import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(
     KtExpression::class.java,
@@ -210,21 +212,32 @@ class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(
         //TODO: don't use creation by plain text
         private fun convertCall(element: KtCallExpression): KtExpression {
             val callee = element.calleeExpression!!
-            val arguments = element.valueArgumentList
-            val argumentString = arguments?.text?.removeSurrounding("(", ")")
+            val receiver = element.parent?.safeAs<KtQualifiedExpression>()?.receiverExpression
+            val isAnonymousFunctionWithReceiver = receiver != null && callee.deparenthesize() is KtNamedFunction
+            val argumentsList = element.valueArgumentList
+            val argumentString = argumentsList?.text?.removeSurrounding("(", ")") ?: ""
+            val argumentsWithReceiverIfNeeded = if (isAnonymousFunctionWithReceiver) {
+                val receiverText = receiver?.text ?: ""
+                val delimiter = if (receiverText.isNotEmpty() && argumentString.isNotEmpty()) ", " else ""
+                receiverText + delimiter + argumentString
+            } else {
+                argumentString
+            }
+
             val funcLitArgs = element.lambdaArguments
             val calleeText = callee.text
-            val transformation =
-                "$calleeText.${OperatorNameConventions.INVOKE.asString()}" + (if (argumentString == null) "()" else "($argumentString)")
+            val transformation = "$calleeText.${OperatorNameConventions.INVOKE.asString()}" + "($argumentsWithReceiverIfNeeded)"
             val transformed = KtPsiFactory(element).createExpression(transformation)
             val callExpression = transformed.getCalleeExpressionIfAny()?.parent as? KtCallExpression
             if (callExpression != null) {
                 funcLitArgs.forEach { callExpression.add(it) }
-                if (argumentString == null) {
+                if (argumentsWithReceiverIfNeeded.isEmpty()) {
                     callExpression.valueArgumentList?.delete()
                 }
             }
-            return callee.parent.replace(transformed) as KtExpression
+
+            val elementToReplace = if (isAnonymousFunctionWithReceiver) element.parent else callee.parent
+            return elementToReplace.replace(transformed) as KtExpression
         }
 
         fun convert(element: KtExpression): Pair<KtExpression, KtSimpleNameExpression> {

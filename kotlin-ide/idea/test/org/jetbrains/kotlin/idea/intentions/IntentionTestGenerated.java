@@ -12253,6 +12253,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("testData/intentions/operatorToFunction/incompleteUnaryExpression.kt");
         }
 
+        @TestMetadata("invokeOnAnonymousFunction.kt")
+        public void testInvokeOnAnonymousFunction() throws Exception {
+            runTest("testData/intentions/operatorToFunction/invokeOnAnonymousFunction.kt");
+        }
+
+        @TestMetadata("invokeOnAnonymousFunctionWithReceiver.kt")
+        public void testInvokeOnAnonymousFunctionWithReceiver() throws Exception {
+            runTest("testData/intentions/operatorToFunction/invokeOnAnonymousFunctionWithReceiver.kt");
+        }
+
+        @TestMetadata("invokeOnAnonymousFunctionWithReceiver2.kt")
+        public void testInvokeOnAnonymousFunctionWithReceiver2() throws Exception {
+            runTest("testData/intentions/operatorToFunction/invokeOnAnonymousFunctionWithReceiver2.kt");
+        }
+
         @TestMetadata("keepComments.kt")
         public void testKeepComments() throws Exception {
             runTest("testData/intentions/operatorToFunction/keepComments.kt");

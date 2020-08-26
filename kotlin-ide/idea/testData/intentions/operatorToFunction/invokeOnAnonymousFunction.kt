@@ -1,0 +1,1 @@
+val xx = (fun(x: Int) = x)<caret>(42)
