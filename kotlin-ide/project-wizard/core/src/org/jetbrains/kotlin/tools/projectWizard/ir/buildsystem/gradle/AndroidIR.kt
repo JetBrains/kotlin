@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle
 
+import org.jetbrains.kotlin.tools.projectWizard.core.asStringWithUnixSlashes
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.FreeIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.settings.JavaPackage
@@ -15,10 +16,10 @@ data class AndroidConfigIR(val javaPackage: JavaPackage?, val newManifestPath: P
             if (newManifestPath != null) {
                 when (dsl) {
                     GradlePrinter.GradleDsl.KOTLIN -> {
-                        +"""sourceSets["main"].manifest.srcFile("$newManifestPath")"""
+                        +"""sourceSets["main"].manifest.srcFile("${newManifestPath.asStringWithUnixSlashes()}")"""
                     }
                     GradlePrinter.GradleDsl.GROOVY -> {
-                        +"""sourceSets.main.manifest.srcFile('$newManifestPath')"""
+                        +"""sourceSets.main.manifest.srcFile('${newManifestPath.asStringWithUnixSlashes()}')"""
                     }
                 }
                 nlIndented()
