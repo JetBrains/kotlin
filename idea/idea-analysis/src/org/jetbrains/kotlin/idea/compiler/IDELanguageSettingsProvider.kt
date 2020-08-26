@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.compiler
 
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectFileIndex
@@ -32,20 +31,14 @@ import org.jetbrains.kotlin.cli.common.arguments.Jsr305Parser
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
-import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.core.script.scriptRelatedModuleName
-import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
-import org.jetbrains.kotlin.idea.project.getLanguageVersionSettings
-import org.jetbrains.kotlin.idea.project.languageVersionSettings
-import org.jetbrains.kotlin.idea.project.platform
+import org.jetbrains.kotlin.idea.project.*
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.platform.jvm.JdkPlatform
 import org.jetbrains.kotlin.platform.subplatformsOfType
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.utils.Jsr305State
 
@@ -122,34 +115,58 @@ private fun detectDefaultTargetPlatformVersion(platform: TargetPlatform?): Targe
 
 private fun getLanguageSettingsForScripts(project: Project, file: VirtualFile, scriptDefinition: ScriptDefinition): ScriptLanguageSettings {
     val scriptModule = file.let {
-        it.scriptRelatedModuleName?.let { ModuleManager.getInstance(project).findModuleByName(it) }
+        it.scriptRelatedModuleName?.let { module -> ModuleManager.getInstance(project).findModuleByName(module) }
             ?: ProjectFileIndex.SERVICE.getInstance(project).getModuleForFile(it)
     }
 
+    val environmentCompilerOptions = scriptDefinition.defaultCompilerOptions
     val args = scriptDefinition.compilerOptions
-    return if (args == null || args.none()) {
-        ScriptLanguageSettings(project.getLanguageVersionSettings(), detectDefaultTargetPlatformVersion(scriptModule?.platform))
+    return if (environmentCompilerOptions.none() && args.none()) {
+        ScriptLanguageSettings(
+            project.getLanguageVersionSettings(contextModule = scriptModule),
+            detectDefaultTargetPlatformVersion(scriptModule?.platform)
+        )
     } else {
         val settings = scriptDefinition.getUserData(SCRIPT_LANGUAGE_SETTINGS) ?: createCachedValue(project) {
             val compilerArguments = K2JVMCompilerArguments()
+            parseCommandLineArguments(environmentCompilerOptions.toList(), compilerArguments)
             parseCommandLineArguments(args.toList(), compilerArguments)
             // TODO: reporting
             val verSettings = compilerArguments.toLanguageVersionSettings(MessageCollector.NONE)
-            val jvmTarget = compilerArguments.jvmTarget?.let { JvmTarget.fromString(it) } ?: detectDefaultTargetPlatformVersion(scriptModule?.platform)
-            ScriptLanguageSettings(verSettings, jvmTarget)
+            val jvmTarget =
+                compilerArguments.jvmTarget?.let { JvmTarget.fromString(it) } ?: detectDefaultTargetPlatformVersion(scriptModule?.platform)
+
+            val languageVersionSettings = project.getLanguageVersionSettings(contextModule = scriptModule)
+            val versionSettings = if (languageVersionSettings.languageVersion.isLess(verSettings.languageVersion)) {
+                languageVersionSettings
+            } else {
+                verSettings
+            }
+
+            ScriptLanguageSettings(versionSettings, jvmTarget)
         }.also { scriptDefinition.putUserData(SCRIPT_LANGUAGE_SETTINGS, it) }
         settings.value
     }
 }
 
-private fun createCachedValue(project: Project, body: () -> ScriptLanguageSettings): CachedValue<ScriptLanguageSettings> {
+private fun LanguageVersion.isLess(languageVersion: LanguageVersion): Boolean =
+    if (major < languageVersion.major) {
+        true
+    } else {
+        minor < languageVersion.minor
+    }
+
+private inline fun createCachedValue(
+    project: Project,
+    crossinline body: () -> ScriptLanguageSettings
+): CachedValue<ScriptLanguageSettings> {
     return CachedValuesManager
         .getManager(project)
         .createCachedValue(
             {
                 CachedValueProvider.Result(
                     body(),
-                    ProjectRootModificationTracker.getInstance(project)
+                    ProjectRootModificationTracker.getInstance(project), ModuleManager.getInstance(project)
                 )
             }, false
         )
