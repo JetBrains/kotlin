@@ -91,9 +91,9 @@
     <option name="enable" path="ActionManager" hit="Enable Migrations Detection (Experimental)"/>
     <option name="experimental" path="ActionManager" hit="Enable Migrations Detection (Experimental)"/>
     <option name="migrations" path="ActionManager" hit="Enable Migrations Detection (Experimental)"/>
-    <option name="and" path="ActionManager" hit="Equals() and HashCode()"/>
-    <option name="equals" path="ActionManager" hit="Equals() and HashCode()"/>
-    <option name="hashcode" path="ActionManager" hit="Equals() and HashCode()"/>
+    <option name="and" path="ActionManager" hit="equals() and hashCode()"/>
+    <option name="equals" path="ActionManager" hit="equals() and hashCode()"/>
+    <option name="hashcode" path="ActionManager" hit="equals() and hashCode()"/>
     <option name="calls" path="ActionManager" hit="Find Implicit Nothing Calls"/>
     <option name="find" path="ActionManager" hit="Find Implicit Nothing Calls"/>
     <option name="implicit" path="ActionManager" hit="Find Implicit Nothing Calls"/>
