@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.multiplatf
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsBrowserBasedConfigurator.Companion.browserSubTarget
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsBrowserBasedConfigurator.Companion.cssSupport
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsNodeBasedConfigurator.Companion.nodejsSubTarget
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JsNodeTargetConfigurator.createTargetIrs
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.buildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
@@ -78,6 +79,16 @@ internal fun Module.createTargetAccessIr(
 
 interface JsTargetConfigurator : JSConfigurator, TargetConfigurator, SingleCoexistenceTargetConfigurator, ModuleConfiguratorWithSettings
 
+internal fun JsTargetConfigurator.jsCompilerParam(
+    reader: Reader,
+    module: Module
+) =
+    reader.settingValue(module, JSConfigurator.compiler)?.let {
+        if (it != JsCompiler.IR) {
+            listOf(it.text)
+        } else emptyList()
+    } ?: emptyList()
+
 enum class JsTargetKind(override val text: String) : DisplayableSettingItem {
     LIBRARY(KotlinNewProjectWizardBundle.message("module.configurator.js.target.settings.kind.library")),
     APPLICATION(KotlinNewProjectWizardBundle.message("module.configurator.js.target.settings.kind.application"))
@@ -108,7 +119,7 @@ object JsBrowserTargetConfigurator : JsTargetConfigurator, ModuleConfiguratorWit
         +DefaultTargetConfigurationIR(
             module.createTargetAccessIr(
                 ModuleSubType.js,
-                listOf(settingValue(module, JSConfigurator.compiler)?.text)
+                jsCompilerParam(this@createTargetIrs, module)
             )
         ) {
             browserSubTarget(module, this@createTargetIrs)
@@ -128,7 +139,7 @@ object JsNodeTargetConfigurator : JsTargetConfigurator {
         +DefaultTargetConfigurationIR(
             module.createTargetAccessIr(
                 ModuleSubType.js,
-                listOf(settingValue(module, JSConfigurator.compiler)?.text)
+                jsCompilerParam(this@createTargetIrs, module)
             )
         ) {
             nodejsSubTarget(module, this@createTargetIrs)

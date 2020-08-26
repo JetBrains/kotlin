@@ -44,6 +44,7 @@ interface JSConfigurator : ModuleConfiguratorWithModuleType, ModuleConfiguratorW
         GradlePlugin.gradleProperties
             .addValues(
                 "kotlin.js.generate.executable.default" to "false",
+                "kotlin.js.compiler" to JsCompiler.IR.text.toLowerCase()
             )
 
     override fun getConfiguratorSettings(): List<ModuleConfiguratorSetting<*, *>> =
@@ -154,7 +155,11 @@ abstract class JsSinglePlatformModuleConfigurator :
         module: Module
     ): List<BuildSystemIR> = irsList {
         "kotlin" {
-            "js(${reader.settingsValue(module, JSConfigurator.compiler).text})" {
+            val compiler = reader.settingsValue(module, JSConfigurator.compiler)
+            val param = if (compiler != JsCompiler.IR) {
+                "(${compiler.text})"
+            } else ""
+            "js${param}" {
                 subTarget(module, reader)
             }
         }
