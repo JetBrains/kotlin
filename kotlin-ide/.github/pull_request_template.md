@@ -7,7 +7,7 @@ Please:
     We might not be able to merge certain kinds of PRs.
     Please contact us if you’re uncertain.
   * Ensure that changes are close to the HEAD of `master`.
-  * Specify a YouTrack issue ID (https://youtrack.jetbrains.com/issues/KT).
+  * Attach a link to the YouTrack issue.
   * Add new tests or change the existing ones if the PR changes the plugin functionality.
   * Write additional information about the change if needed.
 -->
