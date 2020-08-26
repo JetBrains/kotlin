@@ -94,7 +94,7 @@ class PostponedArgumentInputTypesResolver(
             getDeclaredParametersFromRelatedLambdas(argument, postponedArguments, variableDependencyProvider)
 
         val annotationsFromConstraints = functionalTypesFromConstraints?.run {
-            Annotations.create(flatMap { it.type.annotations })
+            Annotations.create(flatMapTo(SmartSet.create()) { it.type.annotations }.toList())
         } ?: Annotations.EMPTY
 
         val annotations = if (isThereExtensionFunctionAmongRelatedLambdas) {
