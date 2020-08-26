@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.idea.liveTemplates;
 import com.intellij.codeInsight.template.EverywhereContextType;
 import com.intellij.codeInsight.template.TemplateContextType;
 import com.intellij.lang.ASTNode;
+import com.intellij.openapi.fileTypes.SyntaxHighlighter;
+import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import com.intellij.psi.PsiComment;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
@@ -81,6 +83,12 @@ public abstract class KotlinTemplateContextType extends TemplateContextType {
         }
 
         return element != null && isInContext(element);
+    }
+
+    @Nullable
+    @Override
+    public SyntaxHighlighter createHighlighter() {
+        return SyntaxHighlighterFactory.getSyntaxHighlighter(KotlinLanguage.INSTANCE, null, null);
     }
 
     protected boolean isCommentInContext() {
