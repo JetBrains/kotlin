@@ -200,7 +200,9 @@ object AndroidTargetConfigurator : TargetConfigurator,
     val androidPlugin by enumSetting<AndroidGradlePlugin>(
         KotlinNewProjectWizardBundle.message("module.configurator.android.setting.android.plugin"),
         neededAtPhase = GenerationPhase.PROJECT_GENERATION
-    )
+    ) {
+        description = KotlinNewProjectWizardBundle.message("module.configurator.android.setting.android.plugin.description")
+    }
 }
 
 enum class AndroidGradlePlugin(override val text: String, @NonNls val pluginName: String) : DisplayableSettingItem {
