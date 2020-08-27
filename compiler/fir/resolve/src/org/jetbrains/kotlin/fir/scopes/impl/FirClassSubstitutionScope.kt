@@ -258,12 +258,18 @@ class FirClassSubstitutionScope(
     }
 
     companion object {
-        private fun FirFunctionBuilder.configureAnnotationsAndParameters(
+        private fun FirFunctionBuilder.configureAnnotationsAndSignature(
             session: FirSession,
             baseFunction: FirFunction<*>,
-            newParameterTypes: List<ConeKotlinType?>?
+            newParameterTypes: List<ConeKotlinType?>?,
+            newReceiverType: ConeKotlinType? = null,
+            newReturnType: ConeKotlinType? = null
         ) {
             annotations += baseFunction.annotations
+            returnTypeRef = baseFunction.returnTypeRef.withReplacedConeType(newReturnType)
+            if (this is FirSimpleFunctionBuilder) {
+                receiverTypeRef = baseFunction.receiverTypeRef?.withReplacedConeType(newReceiverType)
+            }
             valueParameters += baseFunction.valueParameters.zip(
                 newParameterTypes ?: List(baseFunction.valueParameters.size) { null }
             ) { valueParameter, newType ->
@@ -283,15 +289,17 @@ class FirClassSubstitutionScope(
             }
         }
 
-        private fun FirFunctionBuilder.configureAnnotationsAndAllParameters(
+        private fun FirFunctionBuilder.configureAnnotationsTypeParametersAndSignature(
             session: FirSession,
             baseFunction: FirFunction<*>,
             newParameterTypes: List<ConeKotlinType?>?,
-            newTypeParameters: List<FirTypeParameterRef>?
+            newTypeParameters: List<FirTypeParameterRef>?,
+            newReceiverType: ConeKotlinType? = null,
+            newReturnType: ConeKotlinType? = null
         ): List<FirTypeParameterRef> {
             return when {
                 baseFunction.typeParameters.isEmpty() -> {
-                    configureAnnotationsAndParameters(session, baseFunction, newParameterTypes)
+                    configureAnnotationsAndSignature(session, baseFunction, newParameterTypes, newReceiverType, newReturnType)
                     emptyList()
                 }
                 newTypeParameters == null -> {
@@ -301,11 +309,21 @@ class FirClassSubstitutionScope(
                     val copiedParameterTypes = baseFunction.valueParameters.map {
                         substitutor.substituteOrNull(it.returnTypeRef.coneType)
                     }
-                    configureAnnotationsAndParameters(session, baseFunction, copiedParameterTypes)
+                    val copiedReceiverType = newReceiverType?.let {
+                        substitutor.substituteOrNull(it)
+                    } ?: baseFunction.receiverTypeRef?.let {
+                        substitutor.substituteOrNull(it.coneType)
+                    }
+                    val copiedReturnType = newReturnType?.let {
+                        substitutor.substituteOrNull(it)
+                    } ?: baseFunction.returnTypeRef.let {
+                        substitutor.substituteOrNull(it.coneType)
+                    }
+                    configureAnnotationsAndSignature(session, baseFunction, copiedParameterTypes, copiedReceiverType, copiedReturnType)
                     copiedTypeParameters
                 }
                 else -> {
-                    configureAnnotationsAndParameters(session, baseFunction, newParameterTypes)
+                    configureAnnotationsAndSignature(session, baseFunction, newParameterTypes, newReceiverType, newReturnType)
                     newTypeParameters
                 }
             }
@@ -337,15 +355,13 @@ class FirClassSubstitutionScope(
                 source = baseFunction.source
                 this.session = session
                 origin = FirDeclarationOrigin.FakeOverride
-                returnTypeRef = baseFunction.returnTypeRef.withReplacedReturnType(newReturnType)
-                receiverTypeRef = baseFunction.receiverTypeRef?.withReplacedConeType(newReceiverType)
                 name = baseFunction.name
                 status = baseFunction.status.withExpect(isExpect)
                 symbol = fakeOverrideSymbol
                 resolvePhase = baseFunction.resolvePhase
 
-                typeParameters += configureAnnotationsAndAllParameters(
-                    session, baseFunction, newParameterTypes, newTypeParameters
+                typeParameters += configureAnnotationsTypeParametersAndSignature(
+                    session, baseFunction, newParameterTypes, newTypeParameters, newReceiverType, newReturnType
                 ).filterIsInstance<FirTypeParameter>()
             }
         }
@@ -465,13 +481,14 @@ class FirClassSubstitutionScope(
                 source = baseConstructor.source
                 this.session = session
                 origin = FirDeclarationOrigin.FakeOverride
-                returnTypeRef = baseConstructor.returnTypeRef.withReplacedReturnType(newReturnType)
                 receiverTypeRef = baseConstructor.receiverTypeRef?.withReplacedConeType(null)
                 status = baseConstructor.status.withExpect(isExpect)
                 symbol = fakeOverrideSymbol
                 resolvePhase = baseConstructor.resolvePhase
 
-                typeParameters += configureAnnotationsAndAllParameters(session, baseConstructor, newParameterTypes, newTypeParameters)
+                typeParameters += configureAnnotationsTypeParametersAndSignature(
+                    session, baseConstructor, newParameterTypes, newTypeParameters, null, newReturnType
+                )
             }
         }
 
