@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.formatter.NodeIndentStrategy.Companion.strategy
 import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaHelper.trailingCommaExistsOrCanExist
 import org.jetbrains.kotlin.idea.formatter.trailingComma.addTrailingCommaIsAllowedFor
-import org.jetbrains.kotlin.idea.util.containsLineBreakInThis
+import org.jetbrains.kotlin.idea.util.containsLineBreakInChild
 import org.jetbrains.kotlin.idea.util.isMultiline
 import org.jetbrains.kotlin.idea.util.requireNode
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
@@ -756,7 +756,7 @@ abstract class KotlinCommonBlock(
             ?: psi.startOffset
         val endOffset = childElement.notDelimiterSiblingNodeInSequence(true, delimiterType, typeOfLastElement)?.psi?.endOffset
             ?: psi.endOffset
-        return psi.parent.containsLineBreakInThis(startOffset, endOffset)
+        return psi.parent.containsLineBreakInChild(startOffset, endOffset)
     }
 
     private fun trailingCommaWrappingStrategyWithMultiLineCheck(
