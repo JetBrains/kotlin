@@ -14,13 +14,18 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.createReturnTypeCalculatorForIDE
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.addValueFor
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
 import org.jetbrains.kotlin.psi.KtElement
 
 internal class FirIdeDiagnosticsCollector private constructor(
     session: FirSession,
-) : AbstractDiagnosticCollector(session) {
+) : AbstractDiagnosticCollector(
+    session,
+    returnTypeCalculator = createReturnTypeCalculatorForIDE(session, ScopeSession())
+) {
     private val result = mutableMapOf<KtElement, MutableList<Diagnostic>>()
 
     init {
