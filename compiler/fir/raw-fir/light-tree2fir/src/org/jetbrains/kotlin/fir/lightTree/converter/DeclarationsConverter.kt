@@ -1020,6 +1020,7 @@ class DeclarationsConverter(
     private fun convertDestructingDeclaration(destructingDeclaration: LighterASTNode): DestructuringDeclaration {
         var isVar = false
         val entries = mutableListOf<FirVariable<*>>()
+        val source = destructingDeclaration.toFirSourceElement()
         var firExpression: FirExpression =
             buildErrorExpression(null, ConeSimpleDiagnostic("Destructuring declaration without initializer", DiagnosticKind.Syntax))
         destructingDeclaration.forEachChildren {
@@ -1031,7 +1032,7 @@ class DeclarationsConverter(
             }
         }
 
-        return DestructuringDeclaration(isVar, entries, firExpression)
+        return DestructuringDeclaration(isVar, entries, firExpression, source)
     }
 
     /**
