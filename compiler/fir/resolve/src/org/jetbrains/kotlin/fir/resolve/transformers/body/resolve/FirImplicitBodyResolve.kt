@@ -304,7 +304,7 @@ private class ImplicitBodyResolveComputationSession {
 
         val returnTypeRef = transformedDeclaration.returnTypeRef
         require(returnTypeRef is FirResolvedTypeRef) {
-            "Not FirResolvedTypeRef (${transformedDeclaration.receiverTypeRef?.render()}) in storeResult for: ${symbol.fir.render()}"
+            "Not FirResolvedTypeRef (${transformedDeclaration.returnTypeRef.render()}) in storeResult for: ${symbol.fir.render()}"
         }
 
         implicitBodyResolveStatusMap[symbol] = ImplicitBodyResolveComputationStatus.Computed(returnTypeRef, transformedDeclaration)
