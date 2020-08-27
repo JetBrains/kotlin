@@ -1169,7 +1169,7 @@ class ParserTest : KDocTest() {
     }
 
     @Test
-    fun image(){
+    fun image() {
         val kdoc = "![Sample image](https://www.google.pl/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png)"
         val expectedDocumentationNode = DocumentationNode(
             listOf(
@@ -1181,6 +1181,123 @@ class ParserTest : KDocTest() {
                                 mapOf(
                                     "href" to "https://www.google.pl/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
                                     "alt" to "Sample image"
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+        executeTest(kdoc, expectedDocumentationNode)
+    }
+
+    @Test
+    fun `Bold + italic + link`() {
+        val kdoc = "It's very easy to make some words **bold** and other words *italic* with Markdown.\n" +
+                "You can even [link to Google!](http://google.com)"
+        val expectedDocumentationNode = DocumentationNode(
+            listOf(
+                Description(
+                    P(
+                        listOf(
+                            Text("It's very easy to make some words "),
+                            B(listOf(Text("bold"))),
+                            Text(" and other words "),
+                            I(listOf(Text("italic"))),
+                            Text(" with Markdown. You can even "),
+                            A(listOf(Text("link to Google!")), mapOf("href" to "http://google.com"))
+                        )
+                    )
+                )
+            )
+        )
+        executeTest(kdoc, expectedDocumentationNode)
+    }
+
+    @Test
+    fun `Codeblock from indent`() {
+        val kdoc = "Here is some example how to use conditional instructions:\n\n" +
+                "    val x = 1\n" +
+                "    val y = 2\n" +
+                "    if (x == 1) {\n" +
+                "        println(y)\n" +
+                "    }"
+        val expectedDocumentationNode = DocumentationNode(
+            listOf(
+                Description(
+                    P(
+                        listOf(
+                            P(listOf(Text("Here is some example how to use conditional instructions:"))),
+                            CodeBlock(
+                                listOf(
+                                    Text(
+                                        "    val x = 1\n" +
+                                                "    val y = 2\n" +
+                                                "    if (x == 1) {\n" +
+                                                "        println(y)\n" +
+                                                "    }"
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+        executeTest(kdoc, expectedDocumentationNode)
+    }
+
+    @Test
+    fun `Table`() {
+        val kdoc = "First Header | Second Header\n" +
+                "------------ | -------------\n" +
+                "Content from cell 1 | Content from cell 2\n" +
+                "Content in the first column | Content in the second column"
+        val expectedDocumentationNode = DocumentationNode(
+            listOf(
+                Description(
+                    Table(
+                        listOf(
+                            Th(
+                                listOf(
+                                    Td(
+                                        listOf(
+                                            Text("First Header")
+                                        )
+                                    ),
+                                    Td(
+                                        listOf(
+                                            Text("Second Header")
+                                        )
+                                    )
+                                )
+                            ),
+                            Tr(
+                                listOf(
+                                    Td(
+                                        listOf(
+                                            Text("Content from cell 1")
+                                        )
+                                    ),
+                                    Td(
+                                        listOf(
+                                            Text("Content from cell 2")
+                                        )
+                                    )
+                                )
+                            ),
+                            Tr(
+                                listOf(
+                                    Td(
+                                        listOf(
+                                            Text("Content in the first column")
+                                        )
+                                    ),
+                                    Td(
+                                        listOf(
+                                            Text("Content in the second column")
+                                        )
+                                    )
                                 )
                             )
                         )

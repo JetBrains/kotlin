@@ -1,9 +1,7 @@
 package org.jetbrains.dokka.base.parsers
 
 import com.intellij.psi.PsiElement
-import org.intellij.markdown.MarkdownElementType
 import org.intellij.markdown.MarkdownElementTypes
-import org.intellij.markdown.MarkdownElementTypes.LINK_DESTINATION
 import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.ast.ASTNode
 import org.intellij.markdown.ast.CompositeASTNode
@@ -208,6 +206,46 @@ class MarkdownParser(
             }
         }
 
+        private fun codeLineHandler(node: ASTNode) = DocTagsFromIElementFactory.getInstance(
+            MarkdownElementTypes.CODE_BLOCK,
+            body = text.substring(node.startOffset, node.endOffset)
+        )
+
+        private fun textHandler(node: ASTNode) = DocTagsFromIElementFactory.getInstance(
+            MarkdownTokenTypes.TEXT,
+            body = text.substring(node.startOffset, node.endOffset).transform()
+        )
+
+        private fun markdownFileHandler(node: ASTNode) = if (node.children.size == 1)
+            visitNode(node.children.first())
+        else
+            defaultHandler(node)
+
+        private fun strikeThroughHandler(node: ASTNode) = DocTagsFromIElementFactory.getInstance(
+            GFMElementTypes.STRIKETHROUGH,
+            body = text.substring(node.startOffset, node.endOffset).transform()
+        )
+
+        private fun tableHandler(node: ASTNode) = DocTagsFromIElementFactory.getInstance(
+            GFMElementTypes.TABLE,
+            children = node.children.filterTabSeparators().evaluateChildren()
+        )
+
+        private fun headerHandler(node: ASTNode) = DocTagsFromIElementFactory.getInstance(
+            GFMElementTypes.HEADER,
+            children = node.children.filterTabSeparators().evaluateChildren()
+        )
+
+        private fun rowHandler(node: ASTNode) = DocTagsFromIElementFactory.getInstance(
+            GFMElementTypes.ROW,
+            children = node.children.filterTabSeparators().evaluateChildren()
+        )
+
+        private fun cellHandler(node: ASTNode) =  DocTagsFromIElementFactory.getInstance(
+            GFMTokenTypes.CELL,
+            children = node.children.filterTabSeparators().evaluateChildren().trimSurroundingTokensIfText()
+        )
+
         private fun String.isRemoteLink() = try {
             URL(this)
             true
@@ -304,34 +342,14 @@ class MarkdownParser(
                 MarkdownElementTypes.IMAGE -> imagesHandler(node)
                 MarkdownTokenTypes.HARD_LINE_BREAK -> DocTagsFromIElementFactory.getInstance(node.type)
                 MarkdownTokenTypes.CODE_FENCE_CONTENT,
-                MarkdownTokenTypes.CODE_LINE -> DocTagsFromIElementFactory.getInstance(
-                    MarkdownElementTypes.CODE_BLOCK,
-                    body = text.substring(node.startOffset, node.endOffset)
-                )
-                MarkdownTokenTypes.TEXT -> DocTagsFromIElementFactory.getInstance(
-                    MarkdownTokenTypes.TEXT,
-                    body = text.substring(node.startOffset, node.endOffset).transform()
-                )
-                MarkdownElementTypes.MARKDOWN_FILE -> if (node.children.size == 1) visitNode(node.children.first()) else defaultHandler(
-                    node
-                )
-                GFMElementTypes.STRIKETHROUGH -> DocTagsFromIElementFactory.getInstance(
-                    GFMElementTypes.STRIKETHROUGH,
-                    body = text
-                        .substring(node.startOffset, node.endOffset).transform()
-                )
-                GFMElementTypes.TABLE -> DocTagsFromIElementFactory.getInstance(
-                    GFMElementTypes.TABLE,
-                    children = node.children.filterTabSeparators().evaluateChildren()
-                )
-                GFMElementTypes.HEADER -> DocTagsFromIElementFactory.getInstance(
-                    GFMElementTypes.HEADER,
-                    children = node.children.filterTabSeparators().evaluateChildren()
-                )
-                GFMElementTypes.ROW -> DocTagsFromIElementFactory.getInstance(
-                    GFMElementTypes.ROW,
-                    children = node.children.filterTabSeparators().evaluateChildren()
-                )
+                MarkdownTokenTypes.CODE_LINE -> codeLineHandler(node)
+                MarkdownTokenTypes.TEXT -> textHandler(node)
+                MarkdownElementTypes.MARKDOWN_FILE -> markdownFileHandler(node)
+                GFMElementTypes.STRIKETHROUGH -> strikeThroughHandler(node)
+                GFMElementTypes.TABLE -> tableHandler(node)
+                GFMElementTypes.HEADER -> headerHandler(node)
+                GFMElementTypes.ROW -> rowHandler(node)
+                GFMTokenTypes.CELL -> cellHandler(node)
                 else -> defaultHandler(node)
             }
 
@@ -348,6 +366,11 @@ class MarkdownParser(
                                 this.getOrNull(index - 1)?.type == MarkdownTokenTypes.HARD_LINE_BREAK
                         ))
             }
+
+        private fun List<DocTag>.trimSurroundingTokensIfText() = mapIndexed { index, elem ->
+            val elemTransformed = if (index == 0 && elem is Text) elem.copy(elem.body.trimStart()) else elem
+            if (index == size - 1 && elemTransformed is Text) elemTransformed.copy(elemTransformed.body.trimEnd()) else elemTransformed
+        }
 
         private val notLeafNodes = listOf(MarkdownTokenTypes.HORIZONTAL_RULE, MarkdownTokenTypes.HARD_LINE_BREAK)
 
