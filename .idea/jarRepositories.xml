@@ -107,11 +107,6 @@
       <option name="url" value="https://cache-redirector.jetbrains.com/jetbrains.bintray.com/space" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="9806f76a-efa6-41d4-b0b2-8085ceedaa45" />
-      <option name="name" value="9806f76a-efa6-41d4-b0b2-8085ceedaa45" />
-      <option name="url" value="https://cache-redirector.jetbrains.com/jetbrains.bintray.com/space" />
-    </remote-repository>
-    <remote-repository>
       <option name="id" value="caeb020e-2153-45d1-b752-f56d66968d08" />
       <option name="name" value="caeb020e-2153-45d1-b752-f56d66968d08" />
       <option name="url" value="https://cache-redirector.jetbrains.com/kotlin.bintray.com/kotlin-ide-plugin-dependencies" />

@@ -42,11 +42,6 @@
       <option name="url" value="https://cache-redirector.jetbrains.com/jetbrains.bintray.com/markdown" />
     </remote-repository>
     <remote-repository>
-      <option name="id" value="e585af2a-f558-424b-a8e6-3a1365d5b046" />
-      <option name="name" value="e585af2a-f558-424b-a8e6-3a1365d5b046" />
-      <option name="url" value="https://cache-redirector.jetbrains.com/jetbrains.bintray.com/markdown" />
-    </remote-repository>
-    <remote-repository>
       <option name="id" value="7f849d18-5038-490f-a93d-226871e8f98c" />
       <option name="name" value="7f849d18-5038-490f-a93d-226871e8f98c" />
       <option name="url" value="https://cache-redirector.jetbrains.com/www.myget.org/F/rd-snapshots/maven" />
