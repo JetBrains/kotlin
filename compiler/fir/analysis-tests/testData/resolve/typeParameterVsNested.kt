@@ -13,7 +13,7 @@ abstract class My<T : Some> {
 
     abstract val z: test.My.T
 
-    class Some : <!UNRESOLVED_REFERENCE!>T<!>()
+    class Some : <!OTHER_ERROR, UNRESOLVED_REFERENCE!>T<!>()
 }
 
 abstract class Your<T : Some> : <!OTHER_ERROR!>T<!>
