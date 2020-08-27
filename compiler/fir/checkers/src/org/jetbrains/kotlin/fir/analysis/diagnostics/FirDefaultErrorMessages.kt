@@ -19,12 +19,13 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_CLASS_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANY_METHOD_IMPLEMENTED_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGNED_VALUE_IS_NEVER_READ
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGN_OPERATOR_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BREAK_OR_CONTINUE_OUTSIDE_A_LOOP
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_IN_SUPERTYPE_FOR_ENUM
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_OVERLOADS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CAN_BE_VAL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_IN_SUPERTYPE_FOR_ENUM
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_OVERLOADS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_PROJECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONSTRUCTOR_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONSTRUCTOR_IN_OBJECT
@@ -90,10 +91,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_SINGLE_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_VISIBILITY_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_NOT_ALLOWED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_CLASS_CONSTRUCTOR_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_SUPERTYPE_IN_LOCAL_CLASS
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_TYPE_MISMATCH_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPE_INITIALIZED_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR
@@ -108,12 +109,15 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_AS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNINITIALIZED_VARIABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_LABEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNRESOLVED_REFERENCE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNUSED_VARIABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UPPER_BOUND_VIOLATED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VARIABLE_EXPECTED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VARIABLE_INITIALIZER_IS_REDUNDANT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VARIABLE_NEVER_READ
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_ANNOTATION_PARAMETER
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_INVOCATION_KIND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_TYPE_MISMATCH_ON_OVERRIDE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_INVOCATION_KIND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_NUMBER_OF_TYPE_ARGUMENTS
 
 @Suppress("unused")
@@ -339,6 +343,10 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS, "Replace '==' with 'Arrays.equals'")
             map.put(EMPTY_RANGE, "Range is empty")
             map.put(REDUNDANT_SETTER_PARAMETER_TYPE, "Redundant setter parameter type")
+            map.put(UNUSED_VARIABLE, "Unused variable")
+            map.put(ASSIGNED_VALUE_IS_NEVER_READ, "Assigned value is never read")
+            map.put(VARIABLE_INITIALIZER_IS_REDUNDANT, "Initialized is redundant")
+            map.put(VARIABLE_NEVER_READ, "Variable never read")
         }
     }
 }
