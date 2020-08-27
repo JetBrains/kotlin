@@ -26,6 +26,7 @@ interface JvmModuleConfigurator : ModuleConfiguratorWithTests {
             KotlinNewProjectWizardBundle.message("module.configurator.jvm.setting.target.jvm.version"),
             GenerationPhase.PROJECT_GENERATION
         ) {
+            description = KotlinNewProjectWizardBundle.message("module.configurator.jvm.setting.target.jvm.version.description")
             defaultValue = value(TargetJvmVersion.JVM_1_8)
         }
     }

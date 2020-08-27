@@ -192,6 +192,7 @@ object JvmTargetConfigurator : JvmModuleConfigurator,
             KotlinNewProjectWizardBundle.message("module.configurator.jvm.setting.java.support"),
             GenerationPhase.PROJECT_GENERATION
         ) {
+            description = KotlinNewProjectWizardBundle.message("module.configurator.jvm.setting.java.support.description")
             defaultValue = value(false)
         }
     }
