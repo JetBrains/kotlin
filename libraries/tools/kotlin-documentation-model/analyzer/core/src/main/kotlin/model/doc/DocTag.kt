@@ -3,111 +3,353 @@ package org.jetbrains.dokka.model.doc
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.WithChildren
 
-sealed class DocTag(
-    override val children: List<DocTag>,
-    val params: Map<String, String>
-) : WithChildren<DocTag> {
-    override fun equals(other: Any?): Boolean =
-        (
-                other != null &&
-                        other::class == this::class &&
-                        this.children == (other as DocTag).children &&
-                        this.params == other.params
-                )
-
-    override fun hashCode(): Int = children.hashCode() + params.hashCode()
+sealed class DocTag : WithChildren<DocTag> {
+    abstract val params: Map<String, String>
 }
 
-class A(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Big(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class B(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class BlockQuote(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) :
-    DocTag(children, params)
+data class A(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
 
-object Br : DocTag(emptyList(), emptyMap())
-class Cite(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-sealed class Code(children: List<DocTag>, params: Map<String, String>) : DocTag(children, params)
-class CodeInline(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) :
-    Code(children, params)
+data class Big(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
 
-class CodeBlock(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : Code(children, params)
-class Dd(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Dfn(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Dir(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Div(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Dl(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Dt(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Em(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Font(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Footer(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Frame(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class FrameSet(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) :
-    DocTag(children, params)
+data class B(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
 
-class H1(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class H2(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class H3(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class H4(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class H5(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class H6(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Head(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Header(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Html(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class I(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class IFrame(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Img(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Input(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Li(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Link(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Listing(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Main(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Menu(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Meta(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Nav(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class NoFrames(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) :
-    DocTag(children, params)
+data class BlockQuote(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
 
-class NoScript(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) :
-    DocTag(children, params)
-
-class Ol(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class P(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Pre(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Script(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Section(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Small(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Span(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Strikethrough(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) :
-    DocTag(children, params)
-
-class Strong(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Sub(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Sup(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Table(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Text(val body: String = "", children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) :
-    DocTag(children, params) {
-    override fun equals(other: Any?): Boolean = super.equals(other) && this.body == (other as Text).body
-    override fun hashCode(): Int = super.hashCode() + body.hashCode()
+object Br : DocTag() {
+    override val params = emptyMap<String, String>()
+    override val children = emptyList<DocTag>()
 }
 
-class TBody(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Td(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class TFoot(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Th(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class THead(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Title(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Tr(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Tt(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class U(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Ul(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class Var(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class DocumentationLink(val dri: DRI, children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) :
-    DocTag(children, params) {
-    override fun equals(other: Any?): Boolean = super.equals(other) && this.dri == (other as DocumentationLink).dri
-    override fun hashCode(): Int = super.hashCode() + dri.hashCode()
+data class Cite(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+sealed class Code : DocTag()
+
+data class CodeInline(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : Code()
+
+data class CodeBlock(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : Code()
+
+data class CustomDocTag(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Dd(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Dfn(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Dir(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Div(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Dl(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class DocumentationLink(
+    val dri: DRI,
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Dt(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Em(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Font(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Footer(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Frame(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class FrameSet(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class H1(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class H2(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class H3(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class H4(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class H5(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class H6(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Head(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Header(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+object HorizontalRule : DocTag() {
+    override val params = emptyMap<String, String>()
+    override val children = emptyList<DocTag>()
 }
 
-object HorizontalRule : DocTag(emptyList(), emptyMap())
-class Index(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) : DocTag(children, params)
-class CustomDocTag(children: List<DocTag> = emptyList(), params: Map<String, String> = emptyMap()) :
-    DocTag(children, params)
+data class Html(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class I(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class IFrame(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Img(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Index(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Input(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Li(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Link(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Listing(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Main(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Menu(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Meta(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Nav(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class NoFrames(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class NoScript(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Ol(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class P(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Pre(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Script(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Section(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Small(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Span(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Strikethrough(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Strong(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Sub(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Sup(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Table(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Text(
+    val body: String = "",
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class TBody(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Td(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class TFoot(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Th(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class THead(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Title(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Tr(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Tt(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class U(override val children: List<DocTag> = emptyList(), override val params: Map<String, String> = emptyMap()) :
+    DocTag()
+
+data class Ul(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
+
+data class Var(
+    override val children: List<DocTag> = emptyList(),
+    override val params: Map<String, String> = emptyMap()
+) : DocTag()
