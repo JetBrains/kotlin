@@ -3,7 +3,7 @@
 // INTENTION_TEXT_2: "Replace with 'asSequence().filter{}.mapTo(){}'"
 fun foo(list: List<String>): List<Int> {
     val target = createCollection()
-    <caret>list
+    list
         .asSequence()
         .filter { it.length > 0 }
         .mapTo(target) { it.hashCode() }
