@@ -10,10 +10,8 @@ import org.jetbrains.kotlin.backend.common.ir.isOverridable
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities as OldVisibilities
 import org.jetbrains.kotlin.fir.Visibilities
-import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
-import org.jetbrains.kotlin.fir.backend.FirMetadataSource
+import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
-import org.jetbrains.kotlin.fir.backend.isOverriding
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
@@ -232,6 +230,10 @@ internal class DelegatedMemberGenerator(
                         }
                     }
                     irTypeSubstitutor = IrTypeSubstitutor(substParameters, substArguments, irBuiltIns)
+                }
+                superFunction.extensionReceiverParameter?.let {
+                    val substitutedType = if (addTypeSubstitution) irTypeSubstitutor.substitute(it.type) else it.type
+                    extensionReceiverParameter = declareThisReceiverParameter(symbolTable, substitutedType, origin)
                 }
                 valueParameters = superFunction.valueParameters.map { valueParameter ->
                     val parameterDescriptor = WrappedValueParameterDescriptor()

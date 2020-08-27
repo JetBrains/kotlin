@@ -62,7 +62,7 @@ FILE fqName:<root> fileName:/delegatedMembers.kt
     FUN DELEGATED_MEMBER name:qux visibility:public modality:OPEN <X> ($this:<root>.Test<TT of <root>.Test>, t:TT of <root>.Test, x:X of <root>.Test.qux) returnType:kotlin.Unit
       overridden:
         public abstract fun qux <X> (t: T of <root>.IBase, x: X of <root>.IBase.qux): kotlin.Unit declared in <root>.IBase
-      TYPE_PARAMETER DELEGATED_MEMBER name:X index:0 variance: superTypes:[]
+      TYPE_PARAMETER DELEGATED_MEMBER name:X index:0 variance: superTypes:[kotlin.Any?]
       $this: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:<root>.Test<TT of <root>.Test>
       VALUE_PARAMETER DELEGATED_MEMBER name:t index:0 type:TT of <root>.Test
       VALUE_PARAMETER DELEGATED_MEMBER name:x index:1 type:X of <root>.Test.qux
