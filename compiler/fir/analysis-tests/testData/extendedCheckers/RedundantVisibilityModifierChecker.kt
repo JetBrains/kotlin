@@ -1,5 +1,5 @@
 fun f() {
-    <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> <!CAN_BE_VAL!>var<!> baz = 0
+    <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> <!CAN_BE_VAL!>var<!> <!UNUSED_VARIABLE!>baz<!> = 0
     class LocalClass {
         <!REDUNDANT_VISIBILITY_MODIFIER!>internal<!> var foo = 0
     }
@@ -75,12 +75,12 @@ open class J {
     }
 
     var buf = 0
-    private get() = 42
-    protected set(value) {
-        field = value
-    }
+        private get() = 42
+        protected set(value) {
+            field = value
+        }
 
     var bar = 0
-    get() = 3.1415926535
-    set(value) {}
+        get() = 3.1415926535
+        set(value) {}
 }

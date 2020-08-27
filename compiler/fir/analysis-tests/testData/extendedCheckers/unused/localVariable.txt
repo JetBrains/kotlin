@@ -1,0 +1,58 @@
+FILE: localVariable.kt
+    public final class Outer : R|kotlin/Any| {
+        public constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+            local final class Local : R|kotlin/Any| {
+                public constructor(): R|Outer.Local| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final fun bar(): R|kotlin/Unit| {
+                    lval x: R|kotlin/String| = this@R|/Outer|.R|/Outer.y|
+                }
+
+            }
+
+        }
+
+        public final val y: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+    }
+    public final fun f(): R|kotlin/Unit| {
+        lval a: R|kotlin/Int| = Int(1)
+        local final fun g(): R|kotlin/Int| {
+            ^g R|<local>/a|
+        }
+
+    }
+    public final fun foo(v: R|kotlin/Int|): R|kotlin/Unit| {
+        lval d: R|kotlin/Int|by Q|Delegate|
+        lval a: R|kotlin/Int|
+        lval b: R|kotlin/Int| = Int(1)
+        lval c: R|kotlin/Int| = Int(2)
+        @R|Anno|() lval e: R|kotlin/Int|
+        R|/foo|(R|<local>/c|)
+    }
+    public final object Delegate : R|kotlin/Any| {
+        private constructor(): R|Delegate| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun getValue(instance: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|kotlin/Int| {
+            ^getValue Int(1)
+        }
+
+        public final operator fun setValue(instance: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|, value: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+    }
+    @R|kotlin/annotation/Target|(vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|)) public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(): R|Anno| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
