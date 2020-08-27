@@ -20,4 +20,16 @@
         <line>10</line>
         <description>Function name &lt;code&gt;a_b&lt;/code&gt; should not contain underscores #loc</description>
     </problem>
+    <problem>
+        <file>test.kt</file>
+        <line>17</line>
+        <module>light_idea_test_case</module>
+        <package>test</package>
+        <entry_point TYPE="method" FQNAME="test.TestKt int Vector3d()" />
+        <problem_class id="FunctionName" severity="WEAK WARNING" attribute_key="INFO_ATTRIBUTES">Function naming convention</problem_class>
+        <description>Function name &lt;code&gt;Vector3d&lt;/code&gt; should start with a lowercase letter #loc</description>
+        <highlighted_element>Vector3d</highlighted_element>
+        <offset>4</offset>
+        <length>8</length>
+    </problem>
 </problems>
