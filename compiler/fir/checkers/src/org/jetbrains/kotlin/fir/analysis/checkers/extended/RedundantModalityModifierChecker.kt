@@ -12,11 +12,12 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.FirModifier
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirMemberDeclarationChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.checkers.implicitModality
 import org.jetbrains.kotlin.fir.analysis.checkers.source
+import org.jetbrains.kotlin.fir.analysis.checkers.toToken
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_MODALITY_MODIFIER
+import org.jetbrains.kotlin.fir.analysis.getChildren
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.modality
@@ -36,7 +37,7 @@ object RedundantModalityModifierChecker : FirMemberDeclarationChecker() {
 
         if (modality != implicitModality) return
 
-        val modalityModifierSource = declaration.source.getModifierList()?.modifiers?.modalitySource()
+        val modalityModifierSource = declaration.source?.getChildren(modality.toToken(), depth = 2)
         reporter.report(modalityModifierSource, REDUNDANT_MODALITY_MODIFIER)
     }
 

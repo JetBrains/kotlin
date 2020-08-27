@@ -7,17 +7,19 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirFakeSourceElement
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.Visibilities
+import org.jetbrains.kotlin.fir.Visibility
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.getChildren
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtModifierListOwner
-import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 
 object RedundantVisibilityModifierChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -54,7 +56,7 @@ object RedundantVisibilityModifierChecker : FirBasicDeclarationChecker() {
             && declaration.setter?.visibility == Visibilities.Public
         ) return
 
-        reporter.report(declaration.source.modifierSource, FirErrors.REDUNDANT_VISIBILITY_MODIFIER)
+        reporter.report(declaration.source?.getChildren(KtTokens.VISIBILITY_MODIFIERS), FirErrors.REDUNDANT_VISIBILITY_MODIFIER)
     }
 
     private fun FirDeclaration.implicitVisibility(context: CheckerContext): Visibility {
@@ -71,7 +73,7 @@ object RedundantVisibilityModifierChecker : FirBasicDeclarationChecker() {
                     clazz is FirClass
                     && (clazz.classKind == ClassKind.ENUM_CLASS || clazz.modality() == Modality.SEALED)
                 ) {
-                    return Visibilities.Private
+                    Visibilities.Private
                 } else {
                     Visibilities.DEFAULT_VISIBILITY
                 }
@@ -125,15 +127,6 @@ object RedundantVisibilityModifierChecker : FirBasicDeclarationChecker() {
     private val CheckerContext.containingPropertyVisibility
         get() = (this.containingDeclarations.last() as? FirProperty)?.visibility
 
-    private val FirSourceElement?.modifierSource: FirSourceElement?
-        get() = when (this) {
-            null -> null
-            is FirPsiSourceElement<*> -> (psi as? KtModifierListOwner)?.modifierList?.visibilityModifier()?.toFirPsiSourceElement()
-            is FirLightSourceElement -> {
-                val modifier = this.getModifierList()?.modifiers?.firstOrNull { it.isVisibilityModifier }
-                modifier?.source
-            }
-        }
 
     private val FirModifier<*>.isVisibilityModifier
         get() = this.token.toVisibilityOrNull() != null

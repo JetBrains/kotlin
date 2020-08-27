@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirLightSourceElement
 import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.eqOperatorSource
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.getChildren
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
@@ -62,8 +62,8 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirExpressionChecker<FirVari
         }
 
         if (needToReport) {
-            val reportSource = expression.source?.eqOperatorSource()
-            reporter.report(reportSource, FirErrors.CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT)
+            val source = expression.source?.getChildren(setOf(KtTokens.EQ))
+            reporter.report(source, FirErrors.CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT)
         }
 
     }
