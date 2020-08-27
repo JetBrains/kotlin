@@ -9,6 +9,7 @@ configurePublishing(project)
 
 configurations {
     distSources
+    withJvmBuiltins.extendsFrom(configurations.compile)
 }
 
 sourceSets {
@@ -40,6 +41,7 @@ configurations {
     commonSources
     longRunningTestCompile.extendsFrom(testCompile)
     builtins
+    builtinsJvm
     compileOnly.extendsFrom(builtins)
 }
 
@@ -54,6 +56,7 @@ dependencies {
     testCompile project(':kotlin-coroutines-experimental-compat')
 
     builtins project(':core:builtins')
+    builtinsJvm project(path: ':core:builtins', configuration: "runtimeElementsJvm")
 }
 
 jar {
@@ -92,11 +95,26 @@ task modularJar(type: Jar) {
     from zipTree(jar.outputs.files.singleFile)
 }
 
+task withJvmBuiltinsJar(type: Jar) {
+    dependsOn(jar)
+    dependsOn(configurations.builtinsJvm)
+    manifestAttributes(manifest, project, 'Main', true)
+    destinationDirectory = file("$buildDir/lib/with-jvm-builtins")
+
+    from(zipTree(jar.outputs.files.singleFile)) {
+        exclude("**/*.kotlin_builtins")
+    }
+    from {
+        zipTree(configurations.builtinsJvm.singleFile)
+    }
+}
+
 artifacts {
     archives sourcesJar
     sources sourcesJar
     distSources distSourcesJar
     archives modularJar
+    withJvmBuiltins withJvmBuiltinsJar
 }
 
 javadocJar()
