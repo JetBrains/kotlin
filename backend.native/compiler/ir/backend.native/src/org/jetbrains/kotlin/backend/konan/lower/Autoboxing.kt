@@ -494,7 +494,7 @@ private val Context.getLoweredInlineClassConstructor: (IrConstructor) -> IrSimpl
     require(irConstructor.constructedClass.isInlined())
     require(!irConstructor.isPrimary)
 
-    val descriptor = WrappedSimpleFunctionDescriptor(irConstructor.descriptor.annotations, irConstructor.descriptor.source)
+    val descriptor = WrappedSimpleFunctionDescriptor()
     IrFunctionImpl(
             irConstructor.startOffset, irConstructor.endOffset,
             IrDeclarationOrigin.DEFINED,
