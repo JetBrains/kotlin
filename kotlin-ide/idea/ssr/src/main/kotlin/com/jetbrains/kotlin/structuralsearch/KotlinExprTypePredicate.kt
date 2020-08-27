@@ -128,7 +128,13 @@ class KotlinExprTypePredicate(
         }
 
         private fun matchUserType(type: KotlinType, userType: KtUserType, project: Project, scope: GlobalSearchScope): Boolean {
-            val className = userType.referencedName ?: return false
+            var className = userType.referencedName ?: return false
+
+            var qualifier = userType.qualifier
+            while (qualifier != null) {
+                className = "${qualifier.referencedName}.$className"
+                qualifier = qualifier.qualifier
+            }
 
             val matchArguments = userType.typeArguments.isEmpty() ||
                     type.arguments.size == userType.typeArguments.size

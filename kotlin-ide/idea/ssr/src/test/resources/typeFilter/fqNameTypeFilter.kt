@@ -1,7 +1,25 @@
-<warning descr="SSR">val a = 1</warning>
+class Foo
 
-<warning descr="SSR">val b: Int = 2</warning>
+<warning descr="SSR">val foo1 = A.B.Foo()</warning>
+val bar1 = Foo()
 
-val c = 1.0
+class A {
 
-val d: Double = 1.0
+    class Foo
+    <warning descr="SSR">val foo2 = B.Foo()</warning>
+    val bar2 = Foo()
+
+    class B {
+
+        class Foo
+        <warning descr="SSR">val foo2 = Foo()</warning>
+        val bar3 = A.Foo()
+
+        class C {
+
+                class Foo
+                val bar4 = Foo()
+
+            }
+    }
+}

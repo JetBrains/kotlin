@@ -11,7 +11,7 @@ class KotlinSSTypeFilterTest : KotlinSSResourceInspectionTest() {
 
     fun testShortNameTypeFilter() { doTest("val '_x:[exprtype(Int)]") }
 
-    fun testFqNameTypeFilter() { doTest("val '_x:[exprtype(kotlin.Int)]") }
+    fun testFqNameTypeFilter() { doTest("val '_x:[exprtype(A.B.Foo)]") }
 
     fun testWithinHierarchyTypeFilter() { doTest("val '_x:[exprtype(*Number)]") }
 
