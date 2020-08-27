@@ -1704,6 +1704,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/kt38179.kt");
         }
 
+        @TestMetadata("kt41430.kt")
+        public void testKt41430() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/kt41430.kt");
+        }
+
         @TestMetadata("lambdaExpectedType.kt")
         public void testLambdaExpectedType() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/coroutines/lambdaExpectedType.kt");
