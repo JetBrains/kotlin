@@ -22,6 +22,7 @@ interface InferenceSession {
             override fun inferPostponedVariables(
                 lambda: ResolvedLambdaAtom,
                 initialStorage: ConstraintStorage,
+                completionMode: KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode,
                 diagnosticsHolder: KotlinDiagnosticsHolder
             ): Map<TypeConstructor, UnwrappedType> = emptyMap()
 
@@ -44,6 +45,7 @@ interface InferenceSession {
     fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
         initialStorage: ConstraintStorage,
+        completionMode: KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode,
         diagnosticsHolder: KotlinDiagnosticsHolder
     ): Map<TypeConstructor, UnwrappedType>?
 
