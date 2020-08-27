@@ -35,9 +35,9 @@ class ModuleAndPackageDocumentationTransformerFunctionalTest : AbstractCoreTest(
             """.trimIndent()
         )
         val configuration = dokkaConfiguration {
+            moduleName = "moduleA"
             sourceSets {
                 sourceSet {
-                    moduleName = "moduleA"
                     name = "commonMain"
                     displayName = "common"
                     analysisPlatform = "common"
@@ -45,7 +45,6 @@ class ModuleAndPackageDocumentationTransformerFunctionalTest : AbstractCoreTest(
                     includes = listOf(include.canonicalPath)
                 }
                 sourceSet {
-                    moduleName = "moduleA"
                     name = "jsMain"
                     displayName = "js"
                     analysisPlatform = "js"
@@ -54,7 +53,6 @@ class ModuleAndPackageDocumentationTransformerFunctionalTest : AbstractCoreTest(
                     includes = listOf(include.canonicalPath)
                 }
                 sourceSet {
-                    moduleName = "moduleA"
                     name = "jvmMain"
                     displayName = "jvm"
                     analysisPlatform = "jvm"

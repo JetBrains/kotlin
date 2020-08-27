@@ -10,20 +10,15 @@ internal object DefaultDocumentableMerger : DocumentableMerger {
 
     override fun invoke(modules: Collection<DModule>, context: DokkaContext): DModule {
 
-        val projectName =
-            modules.fold(modules.first().name) { acc, module -> acc.commonPrefixWith(module.name) }
-                .takeIf { it.isNotEmpty() }
-                ?: "project"
-
         return modules.reduce { left, right ->
             val list = listOf(left, right)
             DModule(
-                name = projectName,
+                name = modules.map { it.name }.distinct().joinToString("|"),
                 packages = merge(
                     list.flatMap { it.packages },
                     DPackage::mergeWith
                 ),
-                documentation = list.map { it.documentation }.flatMap { it.entries }.associate { (k,v) -> k to v },
+                documentation = list.map { it.documentation }.flatMap { it.entries }.associate { (k, v) -> k to v },
                 expectPresentInSet = list.firstNotNullResult { it.expectPresentInSet },
                 sourceSets = list.flatMap { it.sourceSets }.toSet()
             ).mergeExtras(left, right)
@@ -61,7 +56,7 @@ fun DFunction.mergeWith(other: DFunction): DFunction = copy(
     receiver = receiver?.let { r -> other.receiver?.let { r.mergeWith(it) } ?: r } ?: other.receiver,
     documentation = documentation + other.documentation,
     expectPresentInSet = expectPresentInSet ?: other.expectPresentInSet,
-    sources = sources+ other.sources,
+    sources = sources + other.sources,
     visibility = visibility + other.visibility,
     modifier = modifier + other.modifier,
     sourceSets = sourceSets + other.sourceSets,
@@ -72,7 +67,7 @@ fun DProperty.mergeWith(other: DProperty): DProperty = copy(
     receiver = receiver?.let { r -> other.receiver?.let { r.mergeWith(it) } ?: r } ?: other.receiver,
     documentation = documentation + other.documentation,
     expectPresentInSet = expectPresentInSet ?: other.expectPresentInSet,
-    sources = sources+ other.sources,
+    sources = sources + other.sources,
     visibility = visibility + other.visibility,
     modifier = modifier + other.modifier,
     sourceSets = sourceSets + other.sourceSets,
@@ -104,7 +99,7 @@ fun DClass.mergeWith(other: DClass): DClass = copy(
     supertypes = supertypes + other.supertypes,
     documentation = documentation + other.documentation,
     expectPresentInSet = expectPresentInSet ?: other.expectPresentInSet,
-    sources = sources+ other.sources,
+    sources = sources + other.sources,
     visibility = visibility + other.visibility,
     sourceSets = sourceSets + other.sourceSets
 ).mergeExtras(this, other)
@@ -122,7 +117,7 @@ fun DEnum.mergeWith(other: DEnum): DEnum = copy(
     supertypes = supertypes + other.supertypes,
     documentation = documentation + other.documentation,
     expectPresentInSet = expectPresentInSet ?: other.expectPresentInSet,
-    sources = sources+ other.sources,
+    sources = sources + other.sources,
     visibility = visibility + other.visibility,
     sourceSets = sourceSets + other.sourceSets
 ).mergeExtras(this, other)
@@ -143,7 +138,7 @@ fun DObject.mergeWith(other: DObject): DObject = copy(
     supertypes = supertypes + other.supertypes,
     documentation = documentation + other.documentation,
     expectPresentInSet = expectPresentInSet ?: other.expectPresentInSet,
-    sources = sources+ other.sources,
+    sources = sources + other.sources,
     visibility = visibility + other.visibility,
     sourceSets = sourceSets + other.sourceSets
 ).mergeExtras(this, other)
@@ -157,7 +152,7 @@ fun DInterface.mergeWith(other: DInterface): DInterface = copy(
     supertypes = supertypes + other.supertypes,
     documentation = documentation + other.documentation,
     expectPresentInSet = expectPresentInSet ?: other.expectPresentInSet,
-    sources = sources+ other.sources,
+    sources = sources + other.sources,
     visibility = visibility + other.visibility,
     sourceSets = sourceSets + other.sourceSets
 ).mergeExtras(this, other)
@@ -173,7 +168,7 @@ fun DAnnotation.mergeWith(other: DAnnotation): DAnnotation = copy(
     companion = companion?.let { c -> other.companion?.let { c.mergeWith(it) } ?: c } ?: other.companion,
     documentation = documentation + other.documentation,
     expectPresentInSet = expectPresentInSet ?: other.expectPresentInSet,
-    sources = sources+ other.sources,
+    sources = sources + other.sources,
     visibility = visibility + other.visibility,
     sourceSets = sourceSets + other.sourceSets,
     generics = merge(generics + other.generics, DTypeParameter::mergeWith)

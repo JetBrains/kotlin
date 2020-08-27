@@ -9,6 +9,7 @@ import java.io.Serializable
 import java.net.URL
 
 object DokkaDefaults {
+    val moduleName: String = "root"
     val outputDir = File("./dokka")
     const val format: String = "html"
     val cacheRoot: File? = null
@@ -58,12 +59,13 @@ interface DokkaConfigurationBuilder<T : Any> {
 
 fun <T : Any> Iterable<DokkaConfigurationBuilder<T>>.build(): List<T> = this.map { it.build() }
 
+
 data class DokkaSourceSetID(
-    val moduleName: String,
+    val scopeId: String,
     val sourceSetName: String
 ) : Serializable {
     override fun toString(): String {
-        return "$moduleName/$sourceSetName"
+        return "$scopeId/$sourceSetName"
     }
 }
 
@@ -72,6 +74,7 @@ fun DokkaConfigurationImpl(json: String): DokkaConfigurationImpl = parseJson(jso
 fun DokkaConfiguration.toJsonString(): String = toJsonString(this)
 
 interface DokkaConfiguration : Serializable {
+    val moduleName: String
     val outputDir: File
     val cacheRoot: File?
     val offlineMode: Boolean
@@ -84,7 +87,6 @@ interface DokkaConfiguration : Serializable {
     interface DokkaSourceSet : Serializable {
         val sourceSetID: DokkaSourceSetID
         val displayName: String
-        val moduleDisplayName: String
         val classpath: List<File>
         val sourceRoots: Set<File>
         val dependentSourceSets: Set<DokkaSourceSetID>
