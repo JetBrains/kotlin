@@ -62,6 +62,10 @@ class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatu
 
     override fun composeSignature(declaration: FirDeclaration): IdSignature? {
         if (declaration is FirAnonymousObject || declaration is FirAnonymousFunction) return null
+        if (declaration is FirRegularClass && declaration.classId.isLocal) return null
+        if (declaration is FirCallableMemberDeclaration<*>) {
+            if (declaration.visibility == Visibilities.Local || declaration.symbol.callableId.classId?.isLocal == true) return null
+        }
         val builder = SignatureBuilder()
         try {
             declaration.accept(builder)
