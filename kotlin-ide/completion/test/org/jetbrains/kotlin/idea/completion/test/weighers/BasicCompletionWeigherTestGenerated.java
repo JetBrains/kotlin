@@ -218,7 +218,7 @@ public class BasicCompletionWeigherTestGenerated extends AbstractBasicCompletion
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/weighers/basic/contextualReturn")
-    public static class ContextualReturn extends AbstractBasicCompletionWeigherTest {
+    public abstract static class ContextualReturn extends AbstractBasicCompletionWeigherTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/weighers/basic/contextualReturn/noReturnType")
         public static class NoReturnType extends AbstractBasicCompletionWeigherTest {

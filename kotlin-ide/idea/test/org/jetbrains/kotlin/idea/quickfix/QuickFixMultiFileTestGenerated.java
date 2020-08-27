@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 @TestDataPath("$CONTENT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/quickfix")
-public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTest {
+public abstract class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTest {
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/addAnnotationTarget")
     public static class AddAnnotationTarget extends AbstractQuickFixMultiFileTest {
@@ -884,10 +884,10 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/createFromUsage")
-    public static class CreateFromUsage extends AbstractQuickFixMultiFileTest {
+    public abstract static class CreateFromUsage extends AbstractQuickFixMultiFileTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/createFromUsage/createClass")
-        public static class CreateClass extends AbstractQuickFixMultiFileTest {
+        public abstract static class CreateClass extends AbstractQuickFixMultiFileTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createClass/annotationEntry")
             public static class AnnotationEntry extends AbstractQuickFixMultiFileTest {
@@ -1172,7 +1172,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/createFromUsage/createFunction")
-        public static class CreateFunction extends AbstractQuickFixMultiFileTest {
+        public abstract static class CreateFunction extends AbstractQuickFixMultiFileTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createFunction/call")
             public static class Call extends AbstractQuickFixMultiFileTest {
@@ -1318,7 +1318,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/createFromUsage/createVariable")
-        public static class CreateVariable extends AbstractQuickFixMultiFileTest {
+        public abstract static class CreateVariable extends AbstractQuickFixMultiFileTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createVariable/parameter")
             public static class Parameter extends AbstractQuickFixMultiFileTest {
@@ -1556,7 +1556,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/deprecatedSymbolUsage/typeAliases")
-        public static class TypeAliases extends AbstractQuickFixMultiFileTest {
+        public abstract static class TypeAliases extends AbstractQuickFixMultiFileTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/deprecatedSymbolUsage/typeAliases/wholeProject")
             public static class WholeProject extends AbstractQuickFixMultiFileTest {
@@ -1694,7 +1694,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/migration")
-    public static class Migration extends AbstractQuickFixMultiFileTest {
+    public abstract static class Migration extends AbstractQuickFixMultiFileTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/migration/conflictingExtension")
         public static class ConflictingExtension extends AbstractQuickFixMultiFileTest {
@@ -1788,7 +1788,7 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/override")
-    public static class Override extends AbstractQuickFixMultiFileTest {
+    public abstract static class Override extends AbstractQuickFixMultiFileTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/override/nothingToOverride")
         public static class NothingToOverride extends AbstractQuickFixMultiFileTest {

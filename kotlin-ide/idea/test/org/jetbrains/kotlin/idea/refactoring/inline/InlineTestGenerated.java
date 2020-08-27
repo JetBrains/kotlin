@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 @TestDataPath("$CONTENT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/refactoring/inline")
-public class InlineTestGenerated extends AbstractInlineTest {
+public abstract class InlineTestGenerated extends AbstractInlineTest {
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/inline/anonymousFunction")
     public static class AnonymousFunction extends AbstractInlineTest {

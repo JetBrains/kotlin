@@ -21,10 +21,10 @@ import org.junit.runner.RunWith;
 @TestDataPath("$CONTENT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/unifier")
-public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
+public abstract class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/unifier/equivalence")
-    public static class Equivalence extends AbstractPsiUnifierTest {
+    public abstract static class Equivalence extends AbstractPsiUnifierTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/unifier/equivalence/controlStructures")
         public static class ControlStructures extends AbstractPsiUnifierTest {
@@ -123,7 +123,7 @@ public class PsiUnifierTestGenerated extends AbstractPsiUnifierTest {
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/unifier/equivalence/declarations")
-        public static class Declarations extends AbstractPsiUnifierTest {
+        public abstract static class Declarations extends AbstractPsiUnifierTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/unifier/equivalence/declarations/classesAndObjects")
             public static class ClassesAndObjects extends AbstractPsiUnifierTest {

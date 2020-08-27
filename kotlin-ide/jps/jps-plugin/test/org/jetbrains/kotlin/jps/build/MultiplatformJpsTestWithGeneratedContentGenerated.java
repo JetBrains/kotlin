@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 @TestDataPath("$CONTENT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/incremental/multiModule/multiplatform/withGeneratedContent")
-public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractMultiplatformJpsTestWithGeneratedContent {
+public abstract class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractMultiplatformJpsTestWithGeneratedContent {
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/incremental/multiModule/multiplatform/withGeneratedContent/ignoreAndWarnAboutNative")
     public static class IgnoreAndWarnAboutNative extends AbstractMultiplatformJpsTestWithGeneratedContent {

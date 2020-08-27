@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 @TestDataPath("$CONTENT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/editor/enterHandler/multilineString")
-public class MultiLineStringIndentTestGenerated extends AbstractMultiLineStringIndentTest {
+public abstract class MultiLineStringIndentTestGenerated extends AbstractMultiLineStringIndentTest {
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/editor/enterHandler/multilineString/spaces")
     public static class Spaces extends AbstractMultiLineStringIndentTest {
@@ -222,7 +222,7 @@ public class MultiLineStringIndentTestGenerated extends AbstractMultiLineStringI
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/editor/enterHandler/multilineString/withTabs")
-    public static class WithTabs extends AbstractMultiLineStringIndentTest {
+    public abstract static class WithTabs extends AbstractMultiLineStringIndentTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/editor/enterHandler/multilineString/withTabs/tabs2")
         public static class Tabs2 extends AbstractMultiLineStringIndentTest {

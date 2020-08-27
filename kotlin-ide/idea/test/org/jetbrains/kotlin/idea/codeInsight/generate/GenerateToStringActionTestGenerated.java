@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 @TestDataPath("$CONTENT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/codeInsight/generate/toString")
-public class GenerateToStringActionTestGenerated extends AbstractGenerateToStringActionTest {
+public abstract class GenerateToStringActionTestGenerated extends AbstractGenerateToStringActionTest {
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/generate/toString/common")
     public static class Common extends AbstractGenerateToStringActionTest {

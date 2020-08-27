@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 @TestDataPath("$CONTENT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/codeInsight/generate/testFrameworkSupport")
-public class GenerateTestSupportMethodActionTestGenerated extends AbstractGenerateTestSupportMethodActionTest {
+public abstract class GenerateTestSupportMethodActionTestGenerated extends AbstractGenerateTestSupportMethodActionTest {
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/generate/testFrameworkSupport/jUnit4")
     public static class JUnit4 extends AbstractGenerateTestSupportMethodActionTest {

@@ -23,7 +23,7 @@ import org.junit.runner.RunWith;
 public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/findUsages/kotlin")
-    public static class Kotlin extends AbstractFindUsagesTest {
+    public abstract static class Kotlin extends AbstractFindUsagesTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/kotlin/companionObject")
         public static class CompanionObject extends AbstractFindUsagesTest {
@@ -1159,7 +1159,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/kotlin/internal")
-        public static class Internal extends AbstractFindUsagesTest {
+        public abstract static class Internal extends AbstractFindUsagesTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/findUsages/kotlin/internal/findFunctionUsages")
             public static class FindFunctionUsages extends AbstractFindUsagesTest {
@@ -1368,7 +1368,7 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/findUsages/java")
-    public static class Java extends AbstractFindUsagesTest {
+    public abstract static class Java extends AbstractFindUsagesTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/findUsages/java/findConstructorUsages")
         public static class FindConstructorUsages extends AbstractFindUsagesTest {

@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 @TestDataPath("$CONTENT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/findUsages/libraryUsages")
-public class KotlinFindUsagesWithLibraryTestGenerated extends AbstractKotlinFindUsagesWithLibraryTest {
+public abstract class KotlinFindUsagesWithLibraryTestGenerated extends AbstractKotlinFindUsagesWithLibraryTest {
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/findUsages/libraryUsages/javaLibrary")
     public static class JavaLibrary extends AbstractKotlinFindUsagesWithLibraryTest {

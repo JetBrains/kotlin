@@ -663,7 +663,7 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/checker/duplicateJvmSignature")
-    public static class DuplicateJvmSignature extends AbstractPsiCheckerTest {
+    public abstract static class DuplicateJvmSignature extends AbstractPsiCheckerTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/checker/duplicateJvmSignature/fields")
         public static class Fields extends AbstractPsiCheckerTest {

@@ -825,7 +825,7 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/incremental/withJava")
-    public static class WithJava extends AbstractIncrementalJvmJpsTest {
+    public abstract static class WithJava extends AbstractIncrementalJvmJpsTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/incremental/withJava/convertBetweenJavaAndKotlin")
         public static class ConvertBetweenJavaAndKotlin extends AbstractIncrementalJvmJpsTest {

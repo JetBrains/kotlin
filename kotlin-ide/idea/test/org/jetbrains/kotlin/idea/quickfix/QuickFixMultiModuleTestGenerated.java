@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 @TestDataPath("$CONTENT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/multiModuleQuickFix")
-public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModuleTest {
+public abstract class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModuleTest {
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/multiModuleQuickFix/accessibilityChecker")
     public static class AccessibilityChecker extends AbstractQuickFixMultiModuleTest {

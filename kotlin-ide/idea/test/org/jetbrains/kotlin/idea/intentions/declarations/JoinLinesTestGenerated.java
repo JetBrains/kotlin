@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 @TestDataPath("$CONTENT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/joinLines")
-public class JoinLinesTestGenerated extends AbstractJoinLinesTest {
+public abstract class JoinLinesTestGenerated extends AbstractJoinLinesTest {
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/joinLines/addSemicolon")
     public static class AddSemicolon extends AbstractJoinLinesTest {

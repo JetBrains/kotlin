@@ -91,7 +91,17 @@ class SuiteElement private constructor(
         appendAnnotation(TAnnotation<TestMetadata>(testDataPath))
         suite.annotations.forEach { appendAnnotation(it) }
 
-        appendModifiers(if (isNested) EnumSet.of(Modifier.PUBLIC, Modifier.STATIC) else EnumSet.of(Modifier.PUBLIC))
+        val modifiers = EnumSet.of(Modifier.PUBLIC)
+
+        if (isNested) {
+            modifiers.add(Modifier.STATIC)
+        }
+
+        if (methods.isEmpty()) {
+            modifiers.add(Modifier.ABSTRACT)
+        }
+
+        appendModifiers(modifiers)
         appendBlock("class $className extends ${suite.abstractTestClass.simpleName}") {
             appendList(methods + nestedSuites, separator = "\n\n")
         }

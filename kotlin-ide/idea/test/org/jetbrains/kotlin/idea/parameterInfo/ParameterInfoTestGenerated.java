@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 @TestDataPath("$CONTENT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/parameterInfo")
-public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
+public abstract class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/parameterInfo/annotations")
     public static class Annotations extends AbstractParameterInfoTest {

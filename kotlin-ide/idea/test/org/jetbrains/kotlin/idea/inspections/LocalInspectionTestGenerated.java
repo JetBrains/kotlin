@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 @TestDataPath("$CONTENT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/inspectionsLocal")
-public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
+public abstract class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/addOperatorModifier")
     public static class AddOperatorModifier extends AbstractLocalInspectionTest {
@@ -148,7 +148,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/branched")
-    public static class Branched extends AbstractLocalInspectionTest {
+    public abstract static class Branched extends AbstractLocalInspectionTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/branched/ifThenToElvis")
         public static class IfThenToElvis extends AbstractLocalInspectionTest {
@@ -917,7 +917,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/collections")
-    public static class Collections extends AbstractLocalInspectionTest {
+    public abstract static class Collections extends AbstractLocalInspectionTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/collections/convertCallChainIntoSequence")
         public static class ConvertCallChainIntoSequence extends AbstractLocalInspectionTest {
@@ -2651,7 +2651,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/controlFlowWithEmptyBody")
-    public static class ControlFlowWithEmptyBody extends AbstractLocalInspectionTest {
+    public abstract static class ControlFlowWithEmptyBody extends AbstractLocalInspectionTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/controlFlowWithEmptyBody/also")
         public static class Also extends AbstractLocalInspectionTest {
@@ -2916,7 +2916,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/conventionNameCalls")
-    public static class ConventionNameCalls extends AbstractLocalInspectionTest {
+    public abstract static class ConventionNameCalls extends AbstractLocalInspectionTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/conventionNameCalls/replaceCallWithBinaryOperator")
         public static class ReplaceCallWithBinaryOperator extends AbstractLocalInspectionTest {
@@ -3641,7 +3641,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/coroutines")
-    public static class Coroutines extends AbstractLocalInspectionTest {
+    public abstract static class Coroutines extends AbstractLocalInspectionTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/coroutines/deferredIsResult")
         public static class DeferredIsResult extends AbstractLocalInspectionTest {
@@ -5131,7 +5131,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/liftOut")
-    public static class LiftOut extends AbstractLocalInspectionTest {
+    public abstract static class LiftOut extends AbstractLocalInspectionTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/liftOut/ifToAssignment")
         public static class IfToAssignment extends AbstractLocalInspectionTest {
@@ -5648,10 +5648,10 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/logging")
-    public static class Logging extends AbstractLocalInspectionTest {
+    public abstract static class Logging extends AbstractLocalInspectionTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/logging/loggerInitializedWithForeignClass")
-        public static class LoggerInitializedWithForeignClass extends AbstractLocalInspectionTest {
+        public abstract static class LoggerInitializedWithForeignClass extends AbstractLocalInspectionTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/inspectionsLocal/logging/loggerInitializedWithForeignClass/commons")
             public static class Commons extends AbstractLocalInspectionTest {
@@ -9978,7 +9978,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog")
-    public static class ReplaceJavaStaticMethodWithKotlinAnalog extends AbstractLocalInspectionTest {
+    public abstract static class ReplaceJavaStaticMethodWithKotlinAnalog extends AbstractLocalInspectionTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/replaceJavaStaticMethodWithKotlinAnalog/collections")
         public static class Collections extends AbstractLocalInspectionTest {
@@ -10871,7 +10871,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/replaceSubstring")
-    public static class ReplaceSubstring extends AbstractLocalInspectionTest {
+    public abstract static class ReplaceSubstring extends AbstractLocalInspectionTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/replaceSubstring/withDropLast")
         public static class WithDropLast extends AbstractLocalInspectionTest {
@@ -11321,7 +11321,7 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/inspectionsLocal/scopeFunctions")
-    public static class ScopeFunctions extends AbstractLocalInspectionTest {
+    public abstract static class ScopeFunctions extends AbstractLocalInspectionTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/inspectionsLocal/scopeFunctions/alsoToApply")
         public static class AlsoToApply extends AbstractLocalInspectionTest {

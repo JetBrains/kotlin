@@ -1192,7 +1192,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/trailingComma")
-        public static class TrailingComma extends AbstractFormatterTest {
+        public abstract static class TrailingComma extends AbstractFormatterTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/formatter/trailingComma/collectionLiteralExpression")
             public static class CollectionLiteralExpression extends AbstractFormatterTest {
@@ -1367,7 +1367,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/formatter/trailingComma")
-    public static class FormatterCallSite extends AbstractFormatterTest {
+    public abstract static class FormatterCallSite extends AbstractFormatterTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/trailingComma/collectionLiteralExpression")
         public static class CollectionLiteralExpression extends AbstractFormatterTest {
@@ -1790,7 +1790,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/trailingComma")
-        public static class TrailingComma extends AbstractFormatterTest {
+        public abstract static class TrailingComma extends AbstractFormatterTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/formatter/trailingComma/collectionLiteralExpression")
             public static class CollectionLiteralExpression extends AbstractFormatterTest {
@@ -1965,7 +1965,7 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/formatter/trailingComma")
-    public static class FormatterInvertedCallSite extends AbstractFormatterTest {
+    public abstract static class FormatterInvertedCallSite extends AbstractFormatterTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/formatter/trailingComma/collectionLiteralExpression")
         public static class CollectionLiteralExpression extends AbstractFormatterTest {

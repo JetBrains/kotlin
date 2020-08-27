@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 @TestDataPath("$CONTENT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/intentions")
-public class IntentionTestGenerated extends AbstractIntentionTest {
+public abstract class IntentionTestGenerated extends AbstractIntentionTest {
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/intentions/addAnnotationUseSiteTarget")
     public static class AddAnnotationUseSiteTarget extends AbstractIntentionTest {
@@ -175,7 +175,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/intentions/addAnnotationUseSiteTarget/extension")
-        public static class Extension extends AbstractIntentionTest {
+        public abstract static class Extension extends AbstractIntentionTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/intentions/addAnnotationUseSiteTarget/extension/function")
             public static class Function extends AbstractIntentionTest {
@@ -1420,7 +1420,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/intentions/addPropertyAccessors")
-    public static class AddPropertyAccessors extends AbstractIntentionTest {
+    public abstract static class AddPropertyAccessors extends AbstractIntentionTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/intentions/addPropertyAccessors/both")
         public static class Both extends AbstractIntentionTest {
@@ -1955,7 +1955,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/intentions/branched")
-    public static class Branched extends AbstractIntentionTest {
+    public abstract static class Branched extends AbstractIntentionTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/intentions/branched/doubleBangToIfThen")
         public static class DoubleBangToIfThen extends AbstractIntentionTest {
@@ -2159,7 +2159,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/intentions/branched/folding")
-        public static class Folding extends AbstractIntentionTest {
+        public abstract static class Folding extends AbstractIntentionTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/intentions/branched/folding/ifToReturnAsymmetrically")
             public static class IfToReturnAsymmetrically extends AbstractIntentionTest {
@@ -2186,7 +2186,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/intentions/branched/ifWhen")
-        public static class IfWhen extends AbstractIntentionTest {
+        public abstract static class IfWhen extends AbstractIntentionTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/intentions/branched/ifWhen/ifToWhen")
             public static class IfToWhen extends AbstractIntentionTest {
@@ -2649,7 +2649,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/intentions/branched/unfolding")
-        public static class Unfolding extends AbstractIntentionTest {
+        public abstract static class Unfolding extends AbstractIntentionTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/intentions/branched/unfolding/assignmentToIf")
             public static class AssignmentToIf extends AbstractIntentionTest {
@@ -2926,7 +2926,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/intentions/branched/when")
-        public static class When extends AbstractIntentionTest {
+        public abstract static class When extends AbstractIntentionTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/intentions/branched/when/eliminateSubject")
             public static class EliminateSubject extends AbstractIntentionTest {
@@ -3017,7 +3017,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/intentions/changeVisibility")
-    public static class ChangeVisibility extends AbstractIntentionTest {
+    public abstract static class ChangeVisibility extends AbstractIntentionTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/intentions/changeVisibility/internal")
         public static class Internal extends AbstractIntentionTest {
@@ -3383,7 +3383,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/intentions/chop")
-    public static class Chop extends AbstractIntentionTest {
+    public abstract static class Chop extends AbstractIntentionTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/intentions/chop/argumentList")
         public static class ArgumentList extends AbstractIntentionTest {
@@ -3448,7 +3448,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/intentions/conventionNameCalls")
-    public static class ConventionNameCalls extends AbstractIntentionTest {
+    public abstract static class ConventionNameCalls extends AbstractIntentionTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/intentions/conventionNameCalls/replaceCallWithUnaryOperator")
         public static class ReplaceCallWithUnaryOperator extends AbstractIntentionTest {
@@ -6738,7 +6738,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/intentions/convertToScope")
-    public static class ConvertToScope extends AbstractIntentionTest {
+    public abstract static class ConvertToScope extends AbstractIntentionTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/intentions/convertToScope/convertToAlso")
         public static class ConvertToAlso extends AbstractIntentionTest {
@@ -7677,7 +7677,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/intentions/declarations")
-    public static class Declarations extends AbstractIntentionTest {
+    public abstract static class Declarations extends AbstractIntentionTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/intentions/declarations/convertMemberToExtension")
         public static class ConvertMemberToExtension extends AbstractIntentionTest {
@@ -8196,7 +8196,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/intentions/implementAbstractMember")
-    public static class ImplementAbstractMember extends AbstractIntentionTest {
+    public abstract static class ImplementAbstractMember extends AbstractIntentionTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/intentions/implementAbstractMember/function")
         public static class Function extends AbstractIntentionTest {
@@ -15594,7 +15594,7 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/intentions/underscoresInNumericLiteral")
-    public static class UnderscoresInNumericLiteral extends AbstractIntentionTest {
+    public abstract static class UnderscoresInNumericLiteral extends AbstractIntentionTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/intentions/underscoresInNumericLiteral/addUnderscores")
         public static class AddUnderscores extends AbstractIntentionTest {

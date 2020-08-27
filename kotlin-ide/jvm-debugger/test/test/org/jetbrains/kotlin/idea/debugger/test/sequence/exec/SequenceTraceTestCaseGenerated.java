@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 @TestDataPath("$CONTENT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/sequence/streams/sequence")
-public class SequenceTraceTestCaseGenerated extends AbstractSequenceTraceTestCase {
+public abstract class SequenceTraceTestCaseGenerated extends AbstractSequenceTraceTestCase {
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/sequence/streams/sequence/append")
     public static class Append extends AbstractSequenceTraceTestCase {

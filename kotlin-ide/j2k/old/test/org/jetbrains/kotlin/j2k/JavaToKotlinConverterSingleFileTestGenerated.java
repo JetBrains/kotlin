@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 @TestDataPath("$CONTENT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/fileOrElement")
-public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaToKotlinConverterSingleFileTest {
+public abstract class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaToKotlinConverterSingleFileTest {
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/fileOrElement/annotations")
     public static class Annotations extends AbstractJavaToKotlinConverterSingleFileTest {

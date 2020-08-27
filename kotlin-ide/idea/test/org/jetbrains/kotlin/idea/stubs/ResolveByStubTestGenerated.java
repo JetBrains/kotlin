@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 @TestDataPath("$CONTENT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/compiler/loadJava/compiledKotlin")
-public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
+public abstract class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/compiler/loadJava/compiledKotlin/annotations")
     public static class Annotations extends AbstractResolveByStubTest {

@@ -23,7 +23,7 @@ import org.junit.runner.RunWith;
 public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/moveUpDown/classBodyDeclarations")
-    public static class ClassBodyDeclarations extends AbstractMoveStatementTest {
+    public abstract static class ClassBodyDeclarations extends AbstractMoveStatementTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/codeInsight/moveUpDown/classBodyDeclarations/accessors")
         public static class Accessors extends AbstractMoveStatementTest {
@@ -586,7 +586,7 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/codeInsight/moveUpDown/closingBraces")
-    public static class ClosingBraces extends AbstractMoveStatementTest {
+    public abstract static class ClosingBraces extends AbstractMoveStatementTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/codeInsight/moveUpDown/closingBraces/for")
         public static class For extends AbstractMoveStatementTest {

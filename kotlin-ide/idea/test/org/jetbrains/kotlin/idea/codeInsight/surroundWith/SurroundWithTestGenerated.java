@@ -65,7 +65,7 @@ public class SurroundWithTestGenerated extends AbstractSurroundWithTest {
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/codeInsight/surroundWith/if/moveDeclarationsOut")
-        public static class MoveDeclarationsOut extends AbstractSurroundWithTest {
+        public abstract static class MoveDeclarationsOut extends AbstractSurroundWithTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/codeInsight/surroundWith/if/moveDeclarationsOut/class")
             public static class Class extends AbstractSurroundWithTest {

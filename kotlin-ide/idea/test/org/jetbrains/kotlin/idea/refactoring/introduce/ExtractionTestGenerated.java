@@ -731,7 +731,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/refactoring/extractFunction")
-    public static class ExtractFunction extends AbstractExtractionTest {
+    public abstract static class ExtractFunction extends AbstractExtractionTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/extractFunction/basic")
         public static class Basic extends AbstractExtractionTest {
@@ -1012,7 +1012,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/extractFunction/controlFlow")
-        public static class ControlFlow extends AbstractExtractionTest {
+        public abstract static class ControlFlow extends AbstractExtractionTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/refactoring/extractFunction/controlFlow/conditionalJumps")
             public static class ConditionalJumps extends AbstractExtractionTest {
@@ -1705,7 +1705,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/extractFunction/initializers")
-        public static class Initializers extends AbstractExtractionTest {
+        public abstract static class Initializers extends AbstractExtractionTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/refactoring/extractFunction/initializers/accessors")
             public static class Accessors extends AbstractExtractionTest {
@@ -1909,7 +1909,7 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/refactoring/extractFunction/parameters")
-        public static class Parameters extends AbstractExtractionTest {
+        public abstract static class Parameters extends AbstractExtractionTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/refactoring/extractFunction/parameters/candidateTypes")
             public static class CandidateTypes extends AbstractExtractionTest {

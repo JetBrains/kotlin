@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 @TestDataPath("$CONTENT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/partialConverter")
-public class PartialConverterTestGenerated extends AbstractPartialConverterTest {
+public abstract class PartialConverterTestGenerated extends AbstractPartialConverterTest {
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/partialConverter/field")
     public static class Field extends AbstractPartialConverterTest {

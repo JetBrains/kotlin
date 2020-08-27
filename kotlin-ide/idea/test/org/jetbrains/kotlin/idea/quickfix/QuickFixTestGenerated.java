@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 @TestDataPath("$CONTENT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/quickfix")
-public class QuickFixTestGenerated extends AbstractQuickFixTest {
+public abstract class QuickFixTestGenerated extends AbstractQuickFixTest {
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/abstract")
     public static class Abstract extends AbstractQuickFixTest {
@@ -1578,7 +1578,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/assignOperatorAmbiguity")
-    public static class AssignOperatorAmbiguity extends AbstractQuickFixTest {
+    public abstract static class AssignOperatorAmbiguity extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/assignOperatorAmbiguity/changeToVal")
         public static class ChangeToVal extends AbstractQuickFixTest {
@@ -2722,10 +2722,10 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/createFromUsage")
-    public static class CreateFromUsage extends AbstractQuickFixTest {
+    public abstract static class CreateFromUsage extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/createFromUsage/createClass")
-        public static class CreateClass extends AbstractQuickFixTest {
+        public abstract static class CreateClass extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createClass/annotationEntry")
             public static class AnnotationEntry extends AbstractQuickFixTest {
@@ -3623,7 +3623,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/createFromUsage/createFunction")
-        public static class CreateFunction extends AbstractQuickFixTest {
+        public abstract static class CreateFunction extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createFunction/binaryOperations")
             public static class BinaryOperations extends AbstractQuickFixTest {
@@ -4645,7 +4645,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/createFromUsage/createTypeParameter")
-        public static class CreateTypeParameter extends AbstractQuickFixTest {
+        public abstract static class CreateTypeParameter extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createTypeParameter/inContainingDeclaration")
             public static class InContainingDeclaration extends AbstractQuickFixTest {
@@ -4795,7 +4795,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/createFromUsage/createVariable")
-        public static class CreateVariable extends AbstractQuickFixTest {
+        public abstract static class CreateVariable extends AbstractQuickFixTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/quickfix/createFromUsage/createVariable/localVariable")
             public static class LocalVariable extends AbstractQuickFixTest {
@@ -7219,7 +7219,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/functionWithLambdaExpressionBody")
-    public static class FunctionWithLambdaExpressionBody extends AbstractQuickFixTest {
+    public abstract static class FunctionWithLambdaExpressionBody extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/functionWithLambdaExpressionBody/removeBraces")
         public static class RemoveBraces extends AbstractQuickFixTest {
@@ -8026,7 +8026,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/migration")
-    public static class Migration extends AbstractQuickFixTest {
+    public abstract static class Migration extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/migration/commasInWhenWithoutArgument")
         public static class CommasInWhenWithoutArgument extends AbstractQuickFixTest {
@@ -9573,7 +9573,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/properties")
-    public static class Properties extends AbstractQuickFixTest {
+    public abstract static class Properties extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/properties/extensionPropertyInitializerToGetter")
         public static class ExtensionPropertyInitializerToGetter extends AbstractQuickFixTest {
@@ -10767,7 +10767,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/restrictedRetentionForExpressionAnnotation")
-    public static class RestrictedRetentionForExpressionAnnotation extends AbstractQuickFixTest {
+    public abstract static class RestrictedRetentionForExpressionAnnotation extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/restrictedRetentionForExpressionAnnotation/addSourceRetention")
         public static class AddSourceRetention extends AbstractQuickFixTest {
@@ -11299,7 +11299,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/suppress")
-    public static class Suppress extends AbstractQuickFixTest {
+    public abstract static class Suppress extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/suppress/annotationPosition")
         public static class AnnotationPosition extends AbstractQuickFixTest {
@@ -11978,7 +11978,7 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/quickfix/suspiciousCollectionReassignment")
-    public static class SuspiciousCollectionReassignment extends AbstractQuickFixTest {
+    public abstract static class SuspiciousCollectionReassignment extends AbstractQuickFixTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/quickfix/suspiciousCollectionReassignment/changeTypeToMutable")
         public static class ChangeTypeToMutable extends AbstractQuickFixTest {

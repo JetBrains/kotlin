@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 @TestDataPath("$CONTENT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 @TestMetadata("testData/slicer")
-public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
+public abstract class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/slicer/inflow")
     public static class Inflow extends AbstractSlicerTreeTest {
@@ -427,10 +427,10 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
 
     @RunWith(JUnit3RunnerWithInners.class)
     @TestMetadata("testData/slicer/mpp")
-    public static class Mpp extends AbstractSlicerTreeTest {
+    public abstract static class Mpp extends AbstractSlicerTreeTest {
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/slicer/mpp/actualClassFunctionParameter")
-        public static class ActualClassFunctionParameter extends AbstractSlicerTreeTest {
+        public abstract static class ActualClassFunctionParameter extends AbstractSlicerTreeTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/actualClassFunctionParameter/common")
             public static class Common extends AbstractSlicerTreeTest {
@@ -460,7 +460,7 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/slicer/mpp/actualFunctionParameter")
-        public static class ActualFunctionParameter extends AbstractSlicerTreeTest {
+        public abstract static class ActualFunctionParameter extends AbstractSlicerTreeTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/actualFunctionParameter/common")
             public static class Common extends AbstractSlicerTreeTest {
@@ -490,7 +490,7 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/slicer/mpp/expectClassFunctionParameter")
-        public static class ExpectClassFunctionParameter extends AbstractSlicerTreeTest {
+        public abstract static class ExpectClassFunctionParameter extends AbstractSlicerTreeTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/expectClassFunctionParameter/common")
             public static class Common extends AbstractSlicerTreeTest {
@@ -520,7 +520,7 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/slicer/mpp/expectExtensionFunctionResultOut")
-        public static class ExpectExtensionFunctionResultOut extends AbstractSlicerTreeTest {
+        public abstract static class ExpectExtensionFunctionResultOut extends AbstractSlicerTreeTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/expectExtensionFunctionResultOut/common")
             public static class Common extends AbstractSlicerTreeTest {
@@ -550,7 +550,7 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/slicer/mpp/expectFunctionParameter")
-        public static class ExpectFunctionParameter extends AbstractSlicerTreeTest {
+        public abstract static class ExpectFunctionParameter extends AbstractSlicerTreeTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/expectFunctionParameter/common")
             public static class Common extends AbstractSlicerTreeTest {
@@ -580,7 +580,7 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/slicer/mpp/expectFunctionResultIn")
-        public static class ExpectFunctionResultIn extends AbstractSlicerTreeTest {
+        public abstract static class ExpectFunctionResultIn extends AbstractSlicerTreeTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/expectFunctionResultIn/common")
             public static class Common extends AbstractSlicerTreeTest {
@@ -610,7 +610,7 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/slicer/mpp/expectFunctionResultOut")
-        public static class ExpectFunctionResultOut extends AbstractSlicerTreeTest {
+        public abstract static class ExpectFunctionResultOut extends AbstractSlicerTreeTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/expectFunctionResultOut/common")
             public static class Common extends AbstractSlicerTreeTest {
@@ -640,7 +640,7 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/slicer/mpp/expectPropertyResultIn")
-        public static class ExpectPropertyResultIn extends AbstractSlicerTreeTest {
+        public abstract static class ExpectPropertyResultIn extends AbstractSlicerTreeTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/expectPropertyResultIn/common")
             public static class Common extends AbstractSlicerTreeTest {
@@ -670,7 +670,7 @@ public class SlicerTreeTestGenerated extends AbstractSlicerTreeTest {
 
         @RunWith(JUnit3RunnerWithInners.class)
         @TestMetadata("testData/slicer/mpp/expectPropertyResultOut")
-        public static class ExpectPropertyResultOut extends AbstractSlicerTreeTest {
+        public abstract static class ExpectPropertyResultOut extends AbstractSlicerTreeTest {
             @RunWith(JUnit3RunnerWithInners.class)
             @TestMetadata("testData/slicer/mpp/expectPropertyResultOut/common")
             public static class Common extends AbstractSlicerTreeTest {
