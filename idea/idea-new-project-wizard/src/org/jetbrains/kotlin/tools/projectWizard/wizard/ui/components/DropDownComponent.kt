@@ -10,16 +10,18 @@ import org.jetbrains.kotlin.tools.projectWizard.core.entity.ValidationResult
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settingValidator
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.componentWithCommentAtBottom
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.awt.event.ItemEvent
 import javax.swing.DefaultComboBoxModel
 import javax.swing.Icon
+import javax.swing.JComponent
 import javax.swing.JList
-import javax.swing.SwingUtilities
 
 class DropDownComponent<T : DisplayableSettingItem>(
     context: Context,
     private val initialValues: List<T> = emptyList(),
+    description: String? = null,
     initiallySelectedValue: T? = null,
     labelText: String? = null,
     private val filter: (T) -> Boolean = { true },
@@ -32,8 +34,9 @@ class DropDownComponent<T : DisplayableSettingItem>(
     validator,
     onValueUpdate
 ) {
+
     @Suppress("UNCHECKED_CAST")
-    override val uiComponent: ComboBox<T> = ComboBox(
+    private val combobox = ComboBox(
         initialValues.filter(filter).toTypedArray<DisplayableSettingItem>() as Array<T>
     ).apply {
         selectedItem = initiallySelectedValue
@@ -71,6 +74,10 @@ class DropDownComponent<T : DisplayableSettingItem>(
         }
     }
 
+    override val alignTarget: JComponent? get() = combobox
+
+    override val uiComponent = componentWithCommentAtBottom(combobox, description)
+
     fun filterValues() {
         val selectedItem = model.selectedItem
 
@@ -82,8 +89,8 @@ class DropDownComponent<T : DisplayableSettingItem>(
                     model.selectedItem = selectedItem
                 }
                 model.size != 0 -> {
-                    uiComponent.selectedIndex = 0
-                    uiComponent.selectedItem?.let {
+                    combobox.selectedIndex = 0
+                    combobox.selectedItem?.let {
                         ApplicationManager.getApplication().invokeLater {
                             @Suppress("UNCHECKED_CAST")
                             forceValueUpdate(it as T)
@@ -95,13 +102,13 @@ class DropDownComponent<T : DisplayableSettingItem>(
         uiComponent.repaint()
     }
 
-    private val model get() = uiComponent.model as DefaultComboBoxModel
+    private val model get() = combobox.model as DefaultComboBoxModel
 
     val valuesCount
-        get() = uiComponent.model.size
+        get() = combobox.model.size
 
     override fun updateUiValue(newValue: T) = safeUpdateUi {
-        uiComponent.selectedItem = newValue
+        combobox.selectedItem = newValue
     }
 
     override fun onValueUpdated(reference: SettingReference<*, *>?) {
@@ -110,5 +117,5 @@ class DropDownComponent<T : DisplayableSettingItem>(
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun getUiValue(): T? = uiComponent.selectedItem as? T
+    override fun getUiValue(): T? = combobox.selectedItem as? T
 }

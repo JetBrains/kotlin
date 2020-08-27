@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.DropDownSet
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.TitleComponentAlignment
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.IdeaBasedComponentValidator
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.SettingComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.setting.ValidationIndicator
@@ -38,6 +39,10 @@ class BuildSystemTypeSettingComponent(
         val actionGroup = DefaultActionGroup(buildSystemTypes.map(::BuildSystemTypeAction))
         BuildSystemToolbar(ActionPlaces.UNKNOWN, actionGroup, true)
     }
+
+    override val alignment: TitleComponentAlignment
+        get() = TitleComponentAlignment.AlignFormTopWithPadding(6)
+
     override val component: JComponent by lazy(LazyThreadSafetyMode.NONE) {
         toolbar
     }

@@ -7,11 +7,16 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui
 
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.ui.components.JBLabel
+import com.intellij.util.ui.JBUI
 import com.intellij.util.ui.UIUtil
+import javax.swing.JComponent
 import javax.swing.SwingConstants
 
-class CommentLabel : JBLabel() {
+class CommentLabel(text: String? = null) : JBLabel() {
     init {
+        if (text != null) {
+            this.text = text
+        }
         verticalAlignment = SwingConstants.TOP
         isFocusable = false
         foreground = UIUtil.getContextHelpForeground()
@@ -23,5 +28,27 @@ class CommentLabel : JBLabel() {
             val smallFont = font.deriveFont(size - 2.0f)
             this.font = smallFont
         }
+    }
+}
+
+fun commentLabel(text: String, init: JBLabel.() -> Unit = {}) =
+    CommentLabel(text).apply(init)
+
+fun componentWithCommentAtRight(component: JComponent, label: String?) = borderPanel {
+    addToLeft(component)
+    label?.let {
+        addToCenter(commentLabel(it) {
+            withBorder(JBUI.Borders.emptyLeft(5))
+            verticalAlignment = SwingConstants.CENTER
+        })
+    }
+}
+
+fun componentWithCommentAtBottom(component: JComponent, label: String?) = borderPanel {
+    addToTop(component)
+    label?.let {
+        addToCenter(commentLabel(it) {
+            withBorder(JBUI.Borders.emptyLeft(4))
+        })
     }
 }
