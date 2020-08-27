@@ -90,15 +90,9 @@ class CoroutineInferenceSession(
         val dispatchReceiver = resolvedCall.dispatchReceiverArgument
         return when {
             extensionReceiver == null && dispatchReceiver == null -> false
-            extensionReceiver == null -> true
-            extensionReceiver.receiver.stableType.containsStubType() -> resolvedCall.candidateDescriptor.hasBuilderInferenceAnnotation()
-            else -> true
-        }
-    }
-
-    private fun KotlinType.containsNotFixedTypeVariable(storage: ConstraintStorage): Boolean {
-        return this.contains {
-            it.constructor in storage.notFixedTypeVariables
+            dispatchReceiver?.receiver?.stableType?.containsStubType() == true -> true
+            extensionReceiver?.receiver?.stableType?.containsStubType() == true -> resolvedCall.candidateDescriptor.hasBuilderInferenceAnnotation()
+            else -> false
         }
     }
 
