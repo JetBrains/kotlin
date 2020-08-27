@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolved
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerLiteralTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
@@ -27,6 +29,8 @@ fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession)
         is ConeClassLikeType -> {
             val fullyExpandedType = fullyExpandedType(useSiteSession)
             val fir = fullyExpandedType.lookupTag.toSymbol(useSiteSession)?.fir as? FirClass<*> ?: return null
+
+            fir.symbol.ensureResolved(FirResolvePhase.STATUS, useSiteSession)
 
             val substitution = createSubstitution(fir.typeParameters, fullyExpandedType.typeArguments, useSiteSession)
 

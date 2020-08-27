@@ -10,7 +10,13 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
 
 fun AbstractFirBasedSymbol<*>.ensureResolved(
     requiredPhase: FirResolvePhase,
@@ -36,4 +42,19 @@ fun AbstractFirBasedSymbol<*>.ensureResolvedForCalls(
     }
 
     ensureResolved(requiredPhase, useSiteSession)
+}
+
+fun ConeKotlinType.ensureResolvedTypeDeclaration(
+    useSiteSession: FirSession,
+) {
+    if (this !is ConeClassLikeType) return
+
+    lookupTag.toSymbol(useSiteSession)?.ensureResolved(FirResolvePhase.STATUS, useSiteSession)
+    fullyExpandedType(useSiteSession).lookupTag.toSymbol(useSiteSession)?.ensureResolved(FirResolvePhase.STATUS, useSiteSession)
+}
+
+fun FirTypeRef.ensureResolvedTypeDeclaration(
+    useSiteSession: FirSession,
+) {
+    coneTypeSafe<ConeKotlinType>()?.ensureResolvedTypeDeclaration(useSiteSession)
 }

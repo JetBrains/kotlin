@@ -138,6 +138,7 @@ class FirCallCompletionResultsWriterTransformer(
         val subCandidate = calleeReference.candidate
 
         val resultType = typeRef.substituteTypeRef(subCandidate)
+        resultType.ensureResolvedTypeDeclaration(session)
         result.replaceTypeRef(resultType)
 
         if (mode == Mode.DelegatedPropertyCompletion) {

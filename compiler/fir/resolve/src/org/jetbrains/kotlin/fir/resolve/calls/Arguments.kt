@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.preprocessCallableReference
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessLambdaArgument
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
+import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
 import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.scopes.impl.FirILTTypeRefPlaceHolder
 import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperator
@@ -290,6 +291,8 @@ internal fun Candidate.resolveArgument(
     isReceiver: Boolean,
     sink: CheckerSink
 ) {
+
+    argument.resultType.ensureResolvedTypeDeclaration(sink.components.session)
 
     val expectedType = prepareExpectedType(sink.components.session, argument, parameter)
     resolveArgumentExpression(
