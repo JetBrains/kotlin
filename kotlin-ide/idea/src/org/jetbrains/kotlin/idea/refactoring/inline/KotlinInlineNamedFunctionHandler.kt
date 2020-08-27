@@ -12,6 +12,7 @@ import com.intellij.refactoring.RefactoringBundle
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
+import org.jetbrains.kotlin.idea.util.isAnonymousFunction
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
 class KotlinInlineNamedFunctionHandler : AbstractKotlinInlineFunctionHandler<KtNamedFunction>() {
-    override fun canInlineKotlinFunction(function: KtFunction): Boolean = function is KtNamedFunction && function.name != null
+    override fun canInlineKotlinFunction(function: KtFunction): Boolean = function is KtNamedFunction && !function.isAnonymousFunction
 
     override fun inlineKotlinFunction(project: Project, editor: Editor?, function: KtNamedFunction) {
         val nameReference = editor?.findSimpleNameReference()

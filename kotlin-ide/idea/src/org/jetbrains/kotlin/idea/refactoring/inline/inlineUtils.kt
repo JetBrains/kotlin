@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInline
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInlineBuilder
 import org.jetbrains.kotlin.idea.intentions.ConvertReferenceToLambdaIntention
+import org.jetbrains.kotlin.idea.util.isAnonymousFunction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -33,7 +34,7 @@ internal fun buildCodeToInline(
     val builder = CodeToInlineBuilder(
         targetCallable = descriptor as CallableDescriptor,
         resolutionFacade = declaration.getResolutionFacade(),
-        inAnonymousFunction = declaration.name == null
+        inAnonymousFunction = declaration.isAnonymousFunction
     )
 
     val expressionMapper: (KtExpression) -> Pair<KtExpression?, List<KtExpression>>? = if (isBlockBody) {

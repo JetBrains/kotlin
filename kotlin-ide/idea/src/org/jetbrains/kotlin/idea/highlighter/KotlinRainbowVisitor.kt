@@ -14,6 +14,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors.*
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinTargetElementEvaluator
+import org.jetbrains.kotlin.idea.util.isAnonymousFunction
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -35,6 +36,7 @@ class KotlinRainbowVisitor : RainbowVisitor() {
                 val rainbowElement = (element as KtNamedDeclaration).nameIdentifier ?: return
                 addRainbowHighlight(element, rainbowElement)
             }
+
             element is KtSimpleNameExpression -> {
                 val qualifiedExpression = PsiTreeUtil.getParentOfType(
                     element, KtQualifiedExpression::class.java, true,
@@ -57,6 +59,7 @@ class KotlinRainbowVisitor : RainbowVisitor() {
                     }
                 }
             }
+
             element is KDocName -> {
                 val target = element.reference?.resolve() ?: return
                 if (target.isRainbowDeclaration()) {
@@ -68,8 +71,8 @@ class KotlinRainbowVisitor : RainbowVisitor() {
 
     private fun addRainbowHighlight(target: PsiElement, rainbowElement: PsiElement, attributesKey: TextAttributesKey? = null) {
         val lambdaSequenceIterator = target.parents
-            .takeWhile { it !is KtDeclaration || it.isAnonymousFunction() || it is KtFunctionLiteral }
-            .filter { it is KtLambdaExpression || it.isAnonymousFunction() }
+            .takeWhile { it !is KtDeclaration || it.isAnonymousFunction || it is KtFunctionLiteral }
+            .filter { it is KtLambdaExpression || it.isAnonymousFunction }
             .iterator()
 
         val attributesKeyToUse = attributesKey ?: (if (target is KtParameter) PARAMETER else LOCAL_VARIABLE)
@@ -80,6 +83,7 @@ class KotlinRainbowVisitor : RainbowVisitor() {
                 lambdaNestingLevel++
                 lambda = lambdaSequenceIterator.next()
             }
+
             addInfo(getInfo(lambda, rainbowElement, "$lambdaNestingLevel${rainbowElement.text}", attributesKeyToUse))
             return
         }
@@ -87,6 +91,7 @@ class KotlinRainbowVisitor : RainbowVisitor() {
         val context = target.getStrictParentOfType<KtDeclarationWithBody>()
             ?: target.getStrictParentOfType<KtAnonymousInitializer>()
             ?: return
+
         addInfo(getInfo(context, rainbowElement, rainbowElement.text, attributesKeyToUse))
     }
 
@@ -95,5 +100,3 @@ class KotlinRainbowVisitor : RainbowVisitor() {
                 (this is KtParameter && getStrictParentOfType<KtPrimaryConstructor>() == null) ||
                 this is KtDestructuringDeclarationEntry
 }
-
-private fun PsiElement.isAnonymousFunction(): Boolean = this is KtNamedFunction && nameIdentifier == null

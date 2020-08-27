@@ -64,3 +64,7 @@ fun KtDotQualifiedExpression.hasNotReceiver(): Boolean {
 
 val KtExpression.isUnitLiteral: Boolean
     get() = KotlinBuiltIns.FQ_NAMES.unit.shortName() == (this as? KtNameReferenceExpression)?.getReferencedNameAsName()
+
+val PsiElement.isAnonymousFunction: Boolean get() = this is KtNamedFunction && isAnonymousFunction
+
+val KtNamedFunction.isAnonymousFunction: Boolean get() = nameIdentifier == null
