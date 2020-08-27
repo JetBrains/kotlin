@@ -21,13 +21,13 @@ class FirControlFlowAnalyzer(session: FirSession) {
 
     fun analyzeClassInitializer(klass: FirClass<*>, graph: ControlFlowGraph, context: CheckerContext, reporter: DiagnosticReporter) {
         if (graph.owner != null) return
-        cfaCheckers.forEach { it.analyze(graph, reporter) }
+        cfaCheckers.forEach { it.analyze(graph, reporter, context) }
     }
 
     fun analyzeFunction(function: FirFunction<*>, graph: ControlFlowGraph, context: CheckerContext, reporter: DiagnosticReporter) {
         if (graph.owner != null) return
 
-        cfaCheckers.forEach { it.analyze(graph, reporter) }
+        cfaCheckers.forEach { it.analyze(graph, reporter, context) }
         if (context.containingDeclarations.any { it is FirProperty || it is FirFunction<*> }) return
         runAssignmentCfaCheckers(graph, reporter)
     }
@@ -35,14 +35,14 @@ class FirControlFlowAnalyzer(session: FirSession) {
     fun analyzePropertyInitializer(property: FirProperty, graph: ControlFlowGraph, context: CheckerContext, reporter: DiagnosticReporter) {
         if (graph.owner != null) return
 
-        cfaCheckers.forEach { it.analyze(graph, reporter) }
+        cfaCheckers.forEach { it.analyze(graph, reporter, context) }
         runAssignmentCfaCheckers(graph, reporter)
     }
 
     fun analyzePropertyAccessor(accessor: FirPropertyAccessor, graph: ControlFlowGraph, context: CheckerContext, reporter: DiagnosticReporter) {
         if (graph.owner != null) return
 
-        cfaCheckers.forEach { it.analyze(graph, reporter) }
+        cfaCheckers.forEach { it.analyze(graph, reporter, context) }
         runAssignmentCfaCheckers(graph, reporter)
     }
 
