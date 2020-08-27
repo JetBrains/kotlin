@@ -123,6 +123,7 @@ fun generateDestructuringBlock(
                 }
                 this.isVar = isVar
                 symbol = FirPropertySymbol(entry.name) // TODO?
+                source = entry.source
                 isLocal = true
                 status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                 annotations += entry.annotations
