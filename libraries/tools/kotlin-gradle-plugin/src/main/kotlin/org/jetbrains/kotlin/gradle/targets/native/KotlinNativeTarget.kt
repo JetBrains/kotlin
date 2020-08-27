@@ -88,6 +88,8 @@ open class KotlinNativeTarget @Inject constructor(
                         project.artifacts.add(configuration.name, hostSpecificMetadataJar) { artifact ->
                             artifact.classifier = "metadata"
                         }
+
+                        configuration.extendsFrom(*configurations.getByName(apiElementsConfigurationName).extendsFrom.toTypedArray())
                     }
 
                 val metadataAttributes =
