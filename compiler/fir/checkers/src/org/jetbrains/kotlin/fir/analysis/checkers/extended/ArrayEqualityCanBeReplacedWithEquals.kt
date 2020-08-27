@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBasicExpresionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS
-import org.jetbrains.kotlin.fir.analysis.getChildren
+import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -29,7 +29,7 @@ object ArrayEqualityCanBeReplacedWithEquals : FirBasicExpresionChecker() {
         if (left.typeRef.coneType.classId != StandardClassIds.Array) return
         if (right.typeRef.coneType.classId != StandardClassIds.Array) return
 
-        val source = expression.source?.getChildren(setOf(KtTokens.EQEQ, KtTokens.EXCLEQ))
+        val source = expression.source?.getChild(setOf(KtTokens.EQEQ, KtTokens.EXCLEQ))
         reporter.report(source, ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS)
     }
 }

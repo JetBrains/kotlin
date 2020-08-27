@@ -343,10 +343,10 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
             map.put(ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS, "Replace '==' with 'Arrays.equals'")
             map.put(EMPTY_RANGE, "Range is empty")
             map.put(REDUNDANT_SETTER_PARAMETER_TYPE, "Redundant setter parameter type")
-            map.put(UNUSED_VARIABLE, "Unused variable")
+            map.put(UNUSED_VARIABLE, "Variable is unused")
             map.put(ASSIGNED_VALUE_IS_NEVER_READ, "Assigned value is never read")
-            map.put(VARIABLE_INITIALIZER_IS_REDUNDANT, "Initialized is redundant")
-            map.put(VARIABLE_NEVER_READ, "Variable never read")
+            map.put(VARIABLE_INITIALIZER_IS_REDUNDANT, "Initializer is redundant")
+            map.put(VARIABLE_NEVER_READ, "Variable is never read")
         }
     }
 }
