@@ -389,7 +389,7 @@ enum class FunctionModifiers {
     NONE, FUNCTION, EXTENSION
 }
 
-fun Variance<TypeParameter>.withNewDri(dri: DRI) = when(this) {
+fun Variance<TypeParameter>.withDri(dri: DRI) = when(this) {
     is Contravariance -> Contravariance(TypeParameter(dri, inner.name))
     is Covariance -> Covariance(TypeParameter(dri, inner.name))
     is Invariance -> Invariance(TypeParameter(dri, inner.name))
