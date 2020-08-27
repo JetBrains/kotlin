@@ -31,16 +31,16 @@ To learn how to write plugins for IntelliJ IDEA, please refer to the
 [IntelliJ Platform SDK DevGuide](https://jetbrains.org/intellij/sdk/docs/intro/welcome.html). 
 The portal contains a lot of useful information and explains how the IDE works under-the-hood.
 
-There's also a "#contributors" channel in the [public Slack](https://surveys.jetbrains.com/s3/kotlin-slack-sign-up). 
+There's also a [#kontributors](https://kotlinlang.slack.com/archives/C0BUHC9HD) channel in the [public Slack](https://surveys.jetbrains.com/s3/kotlin-slack-sign-up). 
 Please feel free to ask questions regarding contributions to the Kotlin IntelliJ IDEA plugin.
 
 ## 2. What to contribute
 
-A excellent way to contribute would be to fix some of the [issues marked with the "up-for-grabs" tag](https://youtrack.jetbrains.com/issues/KT?q=tag:%20%7BUp%20For%20Grabs%7D%20and%20(State:%20Open%20or%20State:%20Backlog)%20and%20(Subsystems:%20IDE*)).
+An excellent way to contribute would be to fix some of the [issues marked with the "up-for-grabs" tag](https://youtrack.jetbrains.com/issues/KT?q=tag:%20%7BUp%20For%20Grabs%7D%20and%20(State:%20Open%20or%20State:%20Backlog)%20and%20(Subsystems:%20IDE*)).
 They usually don't take a lot of time to be fixed, and the fix is often local.
 
 If you plan to work on new functionality (new intentions, inspections and so on) or want to fix something by re-writing a significant
-part of a subsystem, please contact us beforehand via the "#contributors" channel on Slack. Our experience shows that features that seem
+part of a subsystem, please contact us beforehand via the [#kontributors](https://kotlinlang.slack.com/archives/C0BUHC9HD) channel on Slack. Our experience shows that features that seem
 trivial often require thorough design work, or implementing them might dramatically affect the performance of the whole IDE.
 So we might not be able to accept the Pull Request, even if it brings significant value to the users.
 
