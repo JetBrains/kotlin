@@ -35,26 +35,41 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
         compilation: KotlinJsIrCompilation
     ) {
         compilation.binaries
-            .getIrBinaries(KotlinJsBinaryMode.DEVELOPMENT)
+            .withType(JsIrBinary::class.java)
             .matching { it is Executable }
             .all { developmentExecutable ->
-                configureRun(compilation, developmentExecutable)
+                configureRun(developmentExecutable)
             }
     }
 
-    private fun configureRun(compilation: KotlinJsIrCompilation, binary: JsIrBinary) {
-        val name = disambiguateCamelCased(RUN_TASK_NAME)
+    private fun configureRun(binary: JsIrBinary) {
+        val binaryRunName = disambiguateCamelCased(
+            binary.mode.name.toLowerCase(),
+            RUN_TASK_NAME
+        )
+        locateOrRegisterRunTask(binary, binaryRunName)
+
+        if (binary.mode == KotlinJsBinaryMode.DEVELOPMENT) {
+            val runName = disambiguateCamelCased(
+                RUN_TASK_NAME
+            )
+            locateOrRegisterRunTask(binary, runName)
+        }
+    }
+
+    private fun locateOrRegisterRunTask(
+        binary: JsIrBinary,
+        name: String
+    ) {
         val runTask = project.locateTask<NodeJsExec>(name)
-        if (runTask != null) {
-            return
-        }
+        if (runTask == null) {
+            val runTaskHolder = NodeJsExec.create(binary.compilation, name) {
+                group = taskGroupName
+                inputFileProperty.set(binary.linkTask.flatMap { it.outputFileProperty })
+            }
 
-        val runTaskHolder = NodeJsExec.create(compilation, name) {
-            group = taskGroupName
-            inputFileProperty.set(binary.linkTask.flatMap { it.outputFileProperty })
+            target.runTask.dependsOn(runTaskHolder)
         }
-
-        target.runTask.dependsOn(runTaskHolder)
     }
 
     override fun configureBuild(
@@ -70,11 +85,12 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
     override fun configureLibrary(compilation: KotlinJsIrCompilation) {
         super.configureLibrary(compilation)
+
         compilation.binaries
-            .getIrBinaries(KotlinJsBinaryMode.DEVELOPMENT)
+            .withType(JsIrBinary::class.java)
             .matching { it is Library }
             .all { binary ->
-                configureRun(compilation, binary)
+                configureRun(binary)
             }
     }
 }
