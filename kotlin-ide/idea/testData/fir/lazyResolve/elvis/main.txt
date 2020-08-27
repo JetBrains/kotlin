@@ -8,15 +8,7 @@ FILE: main.kt
             public get(): R|kotlin/String?|
 
         public final fun foo(): R|kotlin/String| {
-            ^foo when (lval <elvis>: R|kotlin/String?| = this@R|elvis/WithElvis|.R|elvis/WithElvis.value|) {
-                ==($subj$, Null(null)) ->  {
-                    String()
-                }
-                else ->  {
-                    R|<local>/<elvis>|
-                }
-            }
-
+            ^foo this@R|elvis/WithElvis|.R|elvis/WithElvis.value| ?: String()
         }
 
     }
