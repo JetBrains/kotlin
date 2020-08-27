@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api
 
-import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.render
@@ -19,15 +18,15 @@ internal class IdeFirPhaseManager(
     private val lazyDeclarationResolver: FirLazyDeclarationResolver,
     private val cache: ModuleFileCache
 ) : FirPhaseManager() {
-    override fun <D> ensureResolved(
-        symbol: AbstractFirBasedSymbol<D>,
+    override fun ensureResolved(
+        symbol: AbstractFirBasedSymbol<*>,
         requiredPhase: FirResolvePhase
-    ) where D : FirDeclaration, D : FirSymbolOwner<D> {
-        val result = symbol.fir
+    ) {
+        val result = symbol.fir as FirDeclaration
         val availablePhase = result.resolvePhase
         if (availablePhase >= requiredPhase) return
         // NB: we should use session from symbol here, not transformer session (important for IDE)
-        val provider = symbol.fir.session.firProvider
+        val provider = result.session.firProvider
 
         require(provider.isPhasedFirAllowed) {
             "Incorrect resolvePhase: actual: $availablePhase, expected: $requiredPhase\n For: ${symbol.fir.render()}"
