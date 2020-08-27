@@ -13,3 +13,5 @@ interface I {
 class C : I {
     override fun a_b() {} // Shouldn't be reported
 }
+
+fun Vector3d(): Int = 42
