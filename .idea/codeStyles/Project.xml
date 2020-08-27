@@ -29,9 +29,18 @@
     <JetCodeStyleSettings>
       <option name="PACKAGES_TO_USE_STAR_IMPORTS">
         <value>
-          <package name="java.util" withSubpackages="false" static="false" />
-          <package name="com.intellij.ui.layout" withSubpackages="true" static="false" />
-          <package name="kotlinx.android.synthetic" withSubpackages="true" static="false" />
+          <package name="java.util" alias="false" withSubpackages="false" />
+          <package name="com.intellij.ui.layout" alias="false" withSubpackages="true" />
+          <package name="kotlinx.android.synthetic" alias="false" withSubpackages="true" />
+        </value>
+      </option>
+      <option name="PACKAGES_IMPORT_LAYOUT">
+        <value>
+          <package name="" alias="false" withSubpackages="true" />
+          <package name="java" alias="false" withSubpackages="true" />
+          <package name="javax" alias="false" withSubpackages="true" />
+          <package name="kotlin" alias="false" withSubpackages="true" />
+          <package name="" alias="true" withSubpackages="true" />
         </value>
       </option>
     </JetCodeStyleSettings>
@@ -52,13 +61,6 @@
       <option name="TERNARY_OPERATION_SIGNS_ON_NEXT_LINE" value="true" />
       <option name="FOR_STATEMENT_WRAP" value="5" />
       <option name="ASSIGNMENT_WRAP" value="1" />
-    </codeStyleSettings>
-    <codeStyleSettings language="CSS">
-      <indentOptions>
-        <option name="INDENT_SIZE" value="2" />
-        <option name="CONTINUATION_INDENT_SIZE" value="2" />
-        <option name="TAB_SIZE" value="2" />
-      </indentOptions>
     </codeStyleSettings>
     <codeStyleSettings language="ECMA Script Level 4">
       <option name="ELSE_ON_NEW_LINE" value="true" />
