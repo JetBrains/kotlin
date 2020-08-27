@@ -133,7 +133,9 @@ private class ModuleTemplateComponent(
         onTemplateChanged()
     }.asSubComponent()
 
-    override val forceLabelCenteringOffset: Int? = 4
+    override val alignment: TitleComponentAlignment
+        get() = TitleComponentAlignment.AlignAgainstSpecificComponent(dropDown.component)
+
     private val templateDescriptionLabel = CommentLabel().apply {
         addBorder(JBUI.Borders.empty(2, 4))
     }

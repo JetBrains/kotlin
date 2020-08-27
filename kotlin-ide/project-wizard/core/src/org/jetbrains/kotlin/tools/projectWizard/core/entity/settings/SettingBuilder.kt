@@ -23,6 +23,7 @@ abstract class SettingBuilder<V : Any, T : SettingType<V>>(
     var validateOnProjectCreation = true
     var isSavable: Boolean = false
     var isRequired: Boolean? = null
+    var description: String? = null
 
     fun value(value: V) = SettingDefaultValue.Value(value)
     fun dynamic(getter: Reader.(SettingReference<V, SettingType<V>>) -> V?) =
@@ -47,6 +48,7 @@ abstract class SettingBuilder<V : Any, T : SettingType<V>>(
     fun buildInternal() = InternalSetting(
         path = path,
         title = title,
+        description = description,
         defaultValue = defaultValue,
         isAvailable = isAvailable,
         isRequired = isRequired ?: (defaultValue == null),

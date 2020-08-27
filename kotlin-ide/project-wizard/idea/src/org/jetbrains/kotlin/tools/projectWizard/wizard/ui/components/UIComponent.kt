@@ -27,6 +27,7 @@ abstract class UIComponent<V : Any>(
     private val validator: SettingValidator<V>? = null,
     private val onValueUpdate: (V) -> Unit = {}
 ) : DynamicComponent(context), FocusableComponent, Disposable {
+    open val alignTarget: JComponent? = null
     private val validationIndicator by lazy(LazyThreadSafetyMode.NONE) {
         if (validator != null)
             IdeaBasedComponentValidator(this, getValidatorTarget())

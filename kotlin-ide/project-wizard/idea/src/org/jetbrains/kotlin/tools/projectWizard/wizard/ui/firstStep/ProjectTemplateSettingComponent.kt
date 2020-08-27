@@ -27,7 +27,6 @@ class ProjectTemplateSettingComponent(
     context
 ) {
     override val validationIndicator: ValidationIndicator? get() = null
-    override val forceLabelCenteringOffset: Int? = 4
     private val templateDescriptionComponent = TemplateDescriptionComponent().asSubComponent()
 
     private val templateGroups = setting.type.values
@@ -44,6 +43,9 @@ class ProjectTemplateSettingComponent(
         },
         onValueSelected = { value = it }
     )
+
+    override val alignment: TitleComponentAlignment
+        get() = TitleComponentAlignment.AlignFormTopWithPadding(4)
 
     private val borderedPanel = list.addBorder(BorderFactory.createLineBorder(JBColor.border()))
 
