@@ -15576,6 +15576,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
                 runTest("compiler/testData/codegen/box/operatorConventions/compareTo/comparable.kt");
             }
 
+            @TestMetadata("customCompareTo.kt")
+            public void testCustomCompareTo() throws Exception {
+                runTest("compiler/testData/codegen/box/operatorConventions/compareTo/customCompareTo.kt");
+            }
+
             @TestMetadata("doubleInt.kt")
             public void testDoubleInt() throws Exception {
                 runTest("compiler/testData/codegen/box/operatorConventions/compareTo/doubleInt.kt");

@@ -15681,6 +15681,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/operatorConventions/compareTo/comparable.kt");
             }
 
+            @TestMetadata("customCompareTo.kt")
+            public void testCustomCompareTo() throws Exception {
+                runTest("compiler/testData/codegen/box/operatorConventions/compareTo/customCompareTo.kt");
+            }
+
             @TestMetadata("doubleInt.kt")
             public void testDoubleInt() throws Exception {
                 runTest("compiler/testData/codegen/box/operatorConventions/compareTo/doubleInt.kt");
