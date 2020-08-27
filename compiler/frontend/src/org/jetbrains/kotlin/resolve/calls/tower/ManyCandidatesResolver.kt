@@ -81,15 +81,20 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
         }
 
         fun runCompletion(constraintSystem: NewConstraintSystem, atoms: List<ResolvedAtom>) {
+            val completionMode = KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL
             kotlinConstraintSystemCompleter.runCompletion(
                 constraintSystem.asConstraintSystemCompleterContext(),
-                KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL,
+                completionMode,
                 atoms,
                 builtIns.unitType,
                 diagnosticHolder
             ) {
                 postponedArgumentsAnalyzer.analyze(
-                    constraintSystem.asPostponedArgumentsAnalyzerContext(), resolutionCallbacks, it, diagnosticHolder
+                    constraintSystem.asPostponedArgumentsAnalyzerContext(),
+                    resolutionCallbacks,
+                    it,
+                    completionMode,
+                    diagnosticHolder
                 )
             }
 

@@ -82,6 +82,7 @@ class DelegatedPropertyInferenceSession(
     override fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
         initialStorage: ConstraintStorage,
+        completionMode: KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode,
         diagnosticsHolder: KotlinDiagnosticsHolder
     ): Map<TypeConstructor, UnwrappedType> = emptyMap()
 
@@ -103,6 +104,7 @@ class InferenceSessionForExistingCandidates(private val resolveReceiverIndepende
     override fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
         initialStorage: ConstraintStorage,
+        completionMode: KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode,
         diagnosticsHolder: KotlinDiagnosticsHolder
     ): Map<TypeConstructor, UnwrappedType> = emptyMap()
 
