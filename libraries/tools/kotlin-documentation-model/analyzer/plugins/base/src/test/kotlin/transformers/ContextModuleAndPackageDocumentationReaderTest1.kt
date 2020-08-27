@@ -12,11 +12,9 @@ import org.jetbrains.dokka.utilities.DokkaConsoleLogger
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import testApi.testRunner.dokkaConfiguration
-import testApi.testRunner.sourceSet
+import testApi.testRunner.TestDokkaConfigurationBuilder
 
 class ContextModuleAndPackageDocumentationReaderTest1 : AbstractContextModuleAndPackageDocumentationReaderTest() {
-
 
 
     private val includeSourceSetA by lazy { temporaryDirectory.resolve("includeA.md").toFile() }
@@ -51,40 +49,31 @@ class ContextModuleAndPackageDocumentationReaderTest1 : AbstractContextModuleAnd
         )
     }
 
-    private val sourceSetA by lazy {
-        sourceSet {
-            moduleName = "moduleA"
-            name = "sourceSetA"
-            includes = listOf(includeSourceSetA.canonicalPath)
-        }
+    private val configurationBuilder = TestDokkaConfigurationBuilder().apply {
+        moduleName = "moduleA"
     }
 
-    private val sourceSetB by lazy {
-        sourceSet {
-            moduleName = "moduleB"
-            name = "sourceSetB"
-            includes = listOf(includeSourceSetB.canonicalPath)
-        }
+    private val sourceSetA by configurationBuilder.sourceSet {
+        name = "sourceSetA"
+        includes = listOf(includeSourceSetA.canonicalPath)
     }
 
-    private val sourceSetB2 by lazy {
-        sourceSet {
-            moduleName = "moduleB"
-            name = "sourceSetB2"
-            includes = emptyList()
-        }
+
+    private val sourceSetB by configurationBuilder.sourceSet {
+        name = "sourceSetB"
+        includes = listOf(includeSourceSetB.canonicalPath)
+    }
+
+
+    private val sourceSetB2 by configurationBuilder.sourceSet {
+        name = "sourceSetB2"
+        includes = emptyList()
     }
 
 
     private val context by lazy {
         DokkaContext.create(
-            configuration = dokkaConfiguration {
-                sourceSets {
-                    add(sourceSetA)
-                    add(sourceSetB)
-                    add(sourceSetB2)
-                }
-            },
+            configuration = configurationBuilder.build(),
             logger = TestLogger(DokkaConsoleLogger),
             pluginOverrides = emptyList()
         )
@@ -121,7 +110,9 @@ class ContextModuleAndPackageDocumentationReaderTest1 : AbstractContextModuleAnd
 
     @Test
     fun `assert moduleA with unknown source set`() {
-        val documentation = reader[DModule("moduleA", sourceSets = setOf(sourceSet { name = "unknown" }))]
+        val documentation = reader[
+                DModule("moduleA", sourceSets = setOf(configurationBuilder.unattachedSourceSet { name = "unknown" }))
+        ]
         assertEquals(
             emptyMap<DokkaSourceSet, DocumentationNode>(), documentation,
             "Expected no documentation received for module with unknown sourceSet"

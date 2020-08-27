@@ -16,6 +16,13 @@ annotation class DokkaConfigurationDsl
 
 @DokkaConfigurationDsl
 class TestDokkaConfigurationBuilder {
+
+    var moduleName: String = "root"
+        set(value) {
+            check(lazySourceSets.isEmpty()) { "Cannot set moduleName after adding source sets" }
+            field = value
+        }
+
     var outputDir: String = "out"
     var format: String = "html"
     var offlineMode: Boolean = false
@@ -23,12 +30,13 @@ class TestDokkaConfigurationBuilder {
     var pluginsClasspath: List<File> = emptyList()
     var pluginsConfigurations: Map<String, String> = emptyMap()
     var failOnWarning: Boolean = false
-    private val sourceSets = mutableListOf<DokkaSourceSetImpl>()
+    private val lazySourceSets = mutableListOf<Lazy<DokkaSourceSetImpl>>()
     fun build() = DokkaConfigurationImpl(
+        moduleName = moduleName,
         outputDir = File(outputDir),
         cacheRoot = cacheRoot?.let(::File),
         offlineMode = offlineMode,
-        sourceSets = sourceSets.toList(),
+        sourceSets = lazySourceSets.map { it.value }.toList(),
         pluginsClasspath = pluginsClasspath,
         pluginsConfiguration = pluginsConfigurations,
         modules = emptyList(),
@@ -36,28 +44,29 @@ class TestDokkaConfigurationBuilder {
     )
 
     fun sourceSets(block: SourceSetsBuilder.() -> Unit) {
-        sourceSets.addAll(SourceSetsBuilder().apply(block))
+        lazySourceSets.addAll(SourceSetsBuilder(moduleName).apply(block))
     }
 
-    fun add(sourceSet: DokkaSourceSetImpl) {
-        sourceSets.add(sourceSet)
+    fun sourceSet(block: DokkaSourceSetBuilder.() -> Unit): Lazy<DokkaSourceSetImpl> {
+        val lazySourceSet = lazy { DokkaSourceSetBuilder(moduleName).apply(block).build() }
+        lazySourceSets.add(lazySourceSet)
+        return lazySourceSet
+    }
+
+    fun unattachedSourceSet(block: DokkaSourceSetBuilder.() -> Unit): DokkaSourceSetImpl {
+        return DokkaSourceSetBuilder(moduleName).apply(block).build()
     }
 }
 
 @DokkaConfigurationDsl
-class SourceSetsBuilder : ArrayList<DokkaSourceSetImpl>() {
-    fun sourceSet(block: DokkaSourceSetBuilder.() -> Unit): DokkaConfiguration.DokkaSourceSet =
-        DokkaSourceSetBuilder().apply(block).build().apply(::add)
-}
-
-fun sourceSet(block: DokkaSourceSetBuilder.() -> Unit): DokkaSourceSetImpl {
-    return DokkaSourceSetBuilder().apply(block).build()
+class SourceSetsBuilder(val moduleName: String) : ArrayList<Lazy<DokkaSourceSetImpl>>() {
+    fun sourceSet(block: DokkaSourceSetBuilder.() -> Unit): Lazy<DokkaConfiguration.DokkaSourceSet> =
+        lazy { DokkaSourceSetBuilder(moduleName).apply(block).build() }.apply(::add)
 }
 
 @DokkaConfigurationDsl
 class DokkaSourceSetBuilder(
-    var moduleName: String = "root",
-    var moduleDisplayName: String? = null,
+    private val moduleName: String,
     var name: String = "main",
     var displayName: String = "JVM",
     var classpath: List<String> = emptyList(),
@@ -81,7 +90,6 @@ class DokkaSourceSetBuilder(
     var sourceLinks: List<SourceLinkDefinitionImpl> = emptyList()
 ) {
     fun build() = DokkaSourceSetImpl(
-        moduleDisplayName = moduleDisplayName ?: moduleName,
         displayName = displayName,
         sourceSetID = DokkaSourceSetID(moduleName, name),
         classpath = classpath.map(::File),
@@ -107,7 +115,6 @@ class DokkaSourceSetBuilder(
 }
 
 val defaultSourceSet = DokkaSourceSetImpl(
-    moduleDisplayName = "DEFAULT",
     displayName = "DEFAULT",
     sourceSetID = DokkaSourceSetID("DEFAULT", "DEFAULT"),
     classpath = emptyList(),
