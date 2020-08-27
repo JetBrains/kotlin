@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedForCalls
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
@@ -55,6 +56,7 @@ class FirPackageMemberScope(val fqName: FqName, val session: FirSession) : FirSc
         }
         for (symbol in symbols) {
             if (symbol is D) {
+                symbol.ensureResolvedForCalls(session)
                 processor(symbol)
             }
         }

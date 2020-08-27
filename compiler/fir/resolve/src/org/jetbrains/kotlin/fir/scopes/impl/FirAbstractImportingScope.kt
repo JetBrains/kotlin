@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerScopeLevel
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedForCalls
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
@@ -74,6 +75,7 @@ abstract class FirAbstractImportingScope(
             }
 
             for (symbol in symbols) {
+                symbol.ensureResolvedForCalls(session)
                 processor(symbol)
             }
         }
