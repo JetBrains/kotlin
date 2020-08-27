@@ -26,9 +26,9 @@ class LinkableContentTest : AbstractCoreTest() {
         val includesDir = getTestDataDir("linkable/includes").toAbsolutePath()
 
         val configuration = dokkaConfiguration {
+            moduleName = "example"
             sourceSets {
                 sourceSet {
-                    moduleName = "example"
                     analysisPlatform = "js"
                     sourceRoots = listOf("jsMain", "commonMain", "jvmAndJsSecondCommonMain").map {
                         Paths.get("$testDataDir/$it/kotlin").toString()
@@ -37,7 +37,6 @@ class LinkableContentTest : AbstractCoreTest() {
                     includes = listOf(Paths.get("$includesDir/include2.md").toString())
                 }
                 sourceSet {
-                    moduleName = "example"
                     analysisPlatform = "jvm"
                     sourceRoots = listOf("jvmMain", "commonMain", "jvmAndJsSecondCommonMain").map {
                         Paths.get("$testDataDir/$it/kotlin").toString()
@@ -65,9 +64,10 @@ class LinkableContentTest : AbstractCoreTest() {
         val testDataDir = getTestDataDir("linkable/sources").toAbsolutePath()
 
         val configuration = dokkaConfiguration {
+            moduleName = "example"
+
             sourceSets {
                 sourceSet {
-                    moduleName = "example"
                     analysisPlatform = "js"
                     sourceRoots = listOf("$testDataDir/jsMain/kotlin")
                     sourceLinks = listOf(
@@ -80,7 +80,6 @@ class LinkableContentTest : AbstractCoreTest() {
                     name = "js"
                 }
                 sourceSet {
-                    moduleName = "example"
                     analysisPlatform = "jvm"
                     sourceRoots = listOf("$testDataDir/jvmMain/kotlin")
                     sourceLinks = listOf(
@@ -130,16 +129,15 @@ class LinkableContentTest : AbstractCoreTest() {
         val testDataDir = getTestDataDir("linkable/samples").toAbsolutePath()
 
         val configuration = dokkaConfiguration {
+            moduleName = "example"
             sourceSets {
                 sourceSet {
-                    moduleName = "example"
                     analysisPlatform = "js"
                     sourceRoots = listOf("$testDataDir/jsMain/kotlin")
                     name = "js"
                     samples = listOf("$testDataDir/jsMain/resources/Samples.kt")
                 }
                 sourceSet {
-                    moduleName = "example"
                     analysisPlatform = "jvm"
                     sourceRoots = listOf("$testDataDir/jvmMain/kotlin")
                     name = "jvm"

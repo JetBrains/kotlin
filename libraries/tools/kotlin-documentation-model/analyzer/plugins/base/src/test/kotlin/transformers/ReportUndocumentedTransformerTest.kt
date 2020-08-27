@@ -484,7 +484,7 @@ class ReportUndocumentedTransformerTest : AbstractCoreTest() {
     fun `multiplatform undocumented class gets reported`() {
         val configuration = dokkaConfiguration {
             sourceSets {
-                val commonMain = sourceSet {
+                val commonMain by sourceSet {
                     reportUndocumented = true
                     analysisPlatform = Platform.common.toString()
                     name = "commonMain"
@@ -527,7 +527,7 @@ class ReportUndocumentedTransformerTest : AbstractCoreTest() {
     fun `multiplatform undocumented class does not get reported if expect is documented`() {
         val configuration = dokkaConfiguration {
             sourceSets {
-                val commonMain = sourceSet {
+                val commonMain by sourceSet {
                     reportUndocumented = true
                     analysisPlatform = Platform.common.toString()
                     name = "commonMain"
@@ -569,7 +569,7 @@ class ReportUndocumentedTransformerTest : AbstractCoreTest() {
     fun `multiplatform undocumented function gets reported`() {
         val configuration = dokkaConfiguration {
             sourceSets {
-                val commonMain = sourceSet {
+                val commonMain by sourceSet {
                     reportUndocumented = true
                     analysisPlatform = Platform.common.toString()
                     name = "commonMain"
