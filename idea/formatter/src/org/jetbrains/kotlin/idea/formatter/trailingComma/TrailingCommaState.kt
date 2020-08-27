@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.idea.formatter.trailingComma
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.util.containsLineBreakInThis
+import org.jetbrains.kotlin.idea.util.containsLineBreakInChild
 import org.jetbrains.kotlin.idea.util.isMultiline
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtElement
@@ -86,5 +86,5 @@ private fun <T : PsiElement> T.isMultiline(
 ): Boolean {
     val startOffset = startOffsetGetter() ?: startOffset
     val endOffset = endOffsetGetter() ?: endOffset
-    return containsLineBreakInThis(startOffset, endOffset)
+    return containsLineBreakInChild(startOffset, endOffset)
 }
