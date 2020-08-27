@@ -32,7 +32,7 @@ class FirClassDeclaredMemberScope(
             when (declaration) {
                 is FirCallableMemberDeclaration<*> -> {
                     val name = when (declaration) {
-                        is FirConstructor -> constructorName
+                        is FirConstructor -> CONSTRUCTOR_NAME
                         is FirVariable<*> -> declaration.name
                         is FirSimpleFunction -> declaration.name
                         else -> continue@loop
@@ -45,28 +45,25 @@ class FirClassDeclaredMemberScope(
     }
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
-        if (name == constructorName) return
-        val symbols = callablesIndex[name] ?: emptyList()
-        for (symbol in symbols) {
-            if (symbol is FirFunctionSymbol<*>) {
-                processor(symbol)
-            }
-        }
+        if (name == CONSTRUCTOR_NAME) return
+        processCallables(name, processor)
     }
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
-        val symbols = callablesIndex[constructorName] ?: return
-        for (symbol in symbols) {
-            if (symbol is FirConstructorSymbol) {
-                processor(symbol)
-            }
-        }
+        processCallables(CONSTRUCTOR_NAME, processor)
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
+        processCallables(name, processor)
+    }
+
+    private inline fun <reified D : FirCallableSymbol<*>> processCallables(
+        name: Name,
+        processor: (D) -> Unit
+    ) {
         val symbols = callablesIndex[name] ?: emptyList()
         for (symbol in symbols) {
-            if (symbol is FirVariableSymbol) {
+            if (symbol is D) {
                 processor(symbol)
             }
         }
@@ -89,4 +86,4 @@ class FirClassDeclaredMemberScope(
 }
 
 
-private val constructorName = Name.special("<init>")
+private val CONSTRUCTOR_NAME = Name.special("<init>")
