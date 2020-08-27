@@ -8,20 +8,16 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.analysis.checkers.FirModifier
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirMemberDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.implicitModality
-import org.jetbrains.kotlin.fir.analysis.checkers.source
 import org.jetbrains.kotlin.fir.analysis.checkers.toToken
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_MODALITY_MODIFIER
-import org.jetbrains.kotlin.fir.analysis.getChildren
+import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.modality
-import org.jetbrains.kotlin.lexer.KtTokens
 
 object RedundantModalityModifierChecker : FirMemberDeclarationChecker() {
     override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -37,16 +33,7 @@ object RedundantModalityModifierChecker : FirMemberDeclarationChecker() {
 
         if (modality != implicitModality) return
 
-        val modalityModifierSource = declaration.source?.getChildren(modality.toToken(), depth = 2)
+        val modalityModifierSource = declaration.source?.getChild(modality.toToken(), depth = 2)
         reporter.report(modalityModifierSource, REDUNDANT_MODALITY_MODIFIER)
-    }
-
-    private fun Collection<FirModifier<*>>.modalitySource(): FirSourceElement? {
-        return this.firstOrNull {
-            it.token == KtTokens.FINAL_KEYWORD
-                    || it.token == KtTokens.OPEN_KEYWORD
-                    || it.token == KtTokens.SEALED_KEYWORD
-                    || it.token == KtTokens.ABSTRACT_KEYWORD
-        }?.source
     }
 }

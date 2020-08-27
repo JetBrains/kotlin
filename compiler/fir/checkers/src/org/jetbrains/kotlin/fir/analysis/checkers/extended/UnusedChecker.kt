@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClass
 import org.jetbrains.kotlin.fir.analysis.checkers.isIterator
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.getChildren
+import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
@@ -203,5 +203,5 @@ object UnusedChecker : FirControlFlowChecker() {
         get() = fir.initializer?.source?.kind == FirFakeSourceElementKind.DesugaredForLoop
 
     private val FirPropertySymbol.identifierSource: FirSourceElement?
-        get() = fir.source?.getChildren(KtTokens.IDENTIFIER, 0, 1)
+        get() = fir.source?.getChild(KtTokens.IDENTIFIER, 0, 1)
 }
