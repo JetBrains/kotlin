@@ -5247,6 +5247,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/jsModule/importCountUmd.kt");
         }
 
+        @TestMetadata("interfaces.kt")
+        public void testInterfaces() throws Exception {
+            runTest("js/js.translator/testData/box/jsModule/interfaces.kt");
+        }
+
         @TestMetadata("topLevelVarargFun.kt")
         public void testTopLevelVarargFun() throws Exception {
             runTest("js/js.translator/testData/box/jsModule/topLevelVarargFun.kt");
@@ -5346,6 +5351,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("classes.kt")
         public void testClasses() throws Exception {
             runTest("js/js.translator/testData/box/jsQualifier/classes.kt");
+        }
+
+        @TestMetadata("interfaces.kt")
+        public void testInterfaces() throws Exception {
+            runTest("js/js.translator/testData/box/jsQualifier/interfaces.kt");
         }
 
         @TestMetadata("simple.kt")
