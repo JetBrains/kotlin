@@ -243,7 +243,7 @@ data class DObject(
     override val extra: PropertyContainer<DObject> = PropertyContainer.empty()
 ) : DClasslike(), WithSupertypes, WithExtraProperties<DObject> {
     override val children: List<Documentable>
-        get() = (functions + properties + classlikes) as List<Documentable>
+        get() = (functions + properties + classlikes)
 
     override fun withNewExtras(newExtras: PropertyContainer<DObject>) = copy(extra = newExtras)
 }
