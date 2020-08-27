@@ -5,6 +5,7 @@ import org.intellij.markdown.IElementType
 import org.intellij.markdown.MarkdownElementTypes
 import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.flavours.gfm.GFMElementTypes
+import org.intellij.markdown.flavours.gfm.GFMTokenTypes
 import org.jetbrains.dokka.links.DRI
 import java.lang.NullPointerException
 
@@ -38,6 +39,7 @@ object DocTagsFromIElementFactory {
             GFMElementTypes.TABLE                       -> Table(children, params)
             GFMElementTypes.HEADER                      -> Th(children, params)
             GFMElementTypes.ROW                         -> Tr(children, params)
+            GFMTokenTypes.CELL                          -> Td(children, params)
             else                                        -> CustomDocTag(children, params)
         }
 }
