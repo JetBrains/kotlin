@@ -1,16 +1,4 @@
 FILE: RedundantVisibilityModifierChecker.kt
-    public final class C : R|kotlin/Any| {
-        public constructor(): R|C| {
-            super<R|kotlin/Any|>()
-        }
-
-        public final val foo: R|kotlin/Int| = Int(0)
-            public get(): R|kotlin/Int|
-
-        public final fun bar(): R|kotlin/Unit| {
-        }
-
-    }
     public final fun f(): R|kotlin/Unit| {
         lvar baz: R|kotlin/Int| = Int(0)
         local final class LocalClass : R|kotlin/Any| {
@@ -61,6 +49,18 @@ FILE: RedundantVisibilityModifierChecker.kt
                 super<R|kotlin/Any|>()
             }
 
+        }
+
+    }
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val foo: R|kotlin/Int| = Int(0)
+            public get(): R|kotlin/Int|
+
+        public final fun bar(): R|kotlin/Unit| {
         }
 
     }
