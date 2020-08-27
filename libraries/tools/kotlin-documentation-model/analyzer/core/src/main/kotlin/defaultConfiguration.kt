@@ -5,6 +5,7 @@ import java.io.File
 import java.net.URL
 
 data class DokkaConfigurationImpl(
+    override val moduleName: String = DokkaDefaults.moduleName,
     override val outputDir: File = DokkaDefaults.outputDir,
     override val cacheRoot: File? = DokkaDefaults.cacheRoot,
     override val offlineMode: Boolean = DokkaDefaults.offlineMode,
@@ -12,12 +13,11 @@ data class DokkaConfigurationImpl(
     override val pluginsClasspath: List<File> = emptyList(),
     override val pluginsConfiguration: Map<String, String> = emptyMap(),
     override val modules: List<DokkaModuleDescriptionImpl> = emptyList(),
-    override val failOnWarning: Boolean = DokkaDefaults.failOnWarning
+    override val failOnWarning: Boolean = DokkaDefaults.failOnWarning,
 ) : DokkaConfiguration
 
 
 data class DokkaSourceSetImpl(
-    override val moduleDisplayName: String,
     override val displayName: String = DokkaDefaults.sourceSetDisplayName,
     override val sourceSetID: DokkaSourceSetID,
     override val classpath: List<File> = emptyList(),
