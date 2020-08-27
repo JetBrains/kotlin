@@ -40,7 +40,7 @@ private const val ELEMENT_TAG = "ELEMENT"
 fun KtClassOrObject.classIdIfNonLocal(): ClassId? {
     if (KtPsiUtil.isLocal(this)) return null
     val packageName = containingKtFile.packageFqName
-    val classesNames = parentsOfType<KtDeclaration>(withSelf = true).map { it.name }.toList()
+    val classesNames = parentsOfType<KtDeclaration>().map { it.name }.toList()
     if (classesNames.any { it == null }) return null
     return ClassId(packageName, FqName(classesNames.joinToString(separator = ".")), /*local=*/false)
 }
