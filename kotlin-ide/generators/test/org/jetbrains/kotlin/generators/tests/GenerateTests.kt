@@ -275,7 +275,7 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         }
 
         testClass<AbstractQuickFixTest> {
-            model("quickfix", pattern = "^([\\w\\-_]+)\\.kt$".toRegex(), filenameStartsLowerCase = true)
+            model("quickfix", pattern = "^([\\w\\-_]+)\\.kt$".toRegex())
         }
 
         testClass<AbstractGotoSuperTest> {
@@ -564,11 +564,11 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         }
 
         testClass<AbstractMultiFileIntentionTest> {
-            model("multiFileIntentions", pattern = TEST, flatten = true, filenameStartsLowerCase = true)
+            model("multiFileIntentions", pattern = TEST, flatten = true)
         }
 
         testClass<AbstractMultiFileLocalInspectionTest> {
-            model("multiFileLocalInspections", pattern = TEST, flatten = true, filenameStartsLowerCase = true)
+            model("multiFileLocalInspections", pattern = TEST, flatten = true)
         }
 
         testClass<AbstractMultiFileInspectionTest> {
@@ -1187,25 +1187,25 @@ private fun assembleWorkspace(): TWorkspace = workspace {
 
     testGroup("jps/jps-plugin") {
         testClass<AbstractIncrementalJvmJpsTest> {
-            model("incremental/multiModule/common", pattern = DIRECTORY, excludeParentDirs = true)
-            model("incremental/multiModule/jvm", pattern = DIRECTORY, excludeParentDirs = true)
-            model("incremental/multiModule/multiplatform/custom", pattern = DIRECTORY, excludeParentDirs = true)
+            model("incremental/multiModule/common", pattern = DIRECTORY)
+            model("incremental/multiModule/jvm", pattern = DIRECTORY)
+            model("incremental/multiModule/multiplatform/custom", pattern = DIRECTORY)
             model("incremental/pureKotlin", pattern = DIRECTORY, isRecursive = false)
-            model("incremental/withJava", pattern = DIRECTORY, excludeParentDirs = true)
-            model("incremental/inlineFunCallSite", pattern = DIRECTORY, excludeParentDirs = true)
-            model("incremental/classHierarchyAffected", pattern = DIRECTORY, excludeParentDirs = true)
+            model("incremental/withJava", pattern = DIRECTORY)
+            model("incremental/inlineFunCallSite", pattern = DIRECTORY)
+            model("incremental/classHierarchyAffected", pattern = DIRECTORY)
         }
 
         //actualizeMppJpsIncTestCaseDirs(testDataAbsoluteRoot, "incremental/multiModule/multiplatform/withGeneratedContent")
 
         testClass<AbstractIncrementalJsJpsTest> {
-            model("incremental/multiModule/common", pattern = DIRECTORY, excludeParentDirs = true)
+            model("incremental/multiModule/common", pattern = DIRECTORY)
         }
 
         testClass<AbstractMultiplatformJpsTestWithGeneratedContent> {
             model(
                 "incremental/multiModule/multiplatform/withGeneratedContent", isRecursive = true, pattern = DIRECTORY,
-                testClassName = "MultiplatformMultiModule", excludeParentDirs = true
+                testClassName = "MultiplatformMultiModule"
             )
         }
 
@@ -1221,36 +1221,36 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         }
 
         testClass<AbstractIncrementalLazyCachesTest> {
-            model("incremental/lazyKotlinCaches", pattern = DIRECTORY, excludeParentDirs = true)
-            model("incremental/changeIncrementalOption", pattern = DIRECTORY, excludeParentDirs = true)
+            model("incremental/lazyKotlinCaches", pattern = DIRECTORY)
+            model("incremental/changeIncrementalOption", pattern = DIRECTORY)
         }
 
         testClass<AbstractIncrementalCacheVersionChangedTest> {
-            model("incremental/cacheVersionChanged", pattern = DIRECTORY, excludeParentDirs = true)
+            model("incremental/cacheVersionChanged", pattern = DIRECTORY)
         }
 
         testClass<AbstractDataContainerVersionChangedTest> {
-            model("incremental/cacheVersionChanged", pattern = DIRECTORY, excludeParentDirs = true)
+            model("incremental/cacheVersionChanged", pattern = DIRECTORY)
         }
     }
 
     testGroup("jps/jps-plugin") {
         fun MutableTSuite.commonProtoComparisonTests() {
-            model("comparison/classSignatureChange", pattern = DIRECTORY, excludeParentDirs = true)
-            model("comparison/classPrivateOnlyChange", pattern = DIRECTORY, excludeParentDirs = true)
-            model("comparison/classMembersOnlyChanged", pattern = DIRECTORY, excludeParentDirs = true)
-            model("comparison/packageMembers", pattern = DIRECTORY, excludeParentDirs = true)
-            model("comparison/unchanged", pattern = DIRECTORY, excludeParentDirs = true)
+            model("comparison/classSignatureChange", pattern = DIRECTORY)
+            model("comparison/classPrivateOnlyChange", pattern = DIRECTORY)
+            model("comparison/classMembersOnlyChanged", pattern = DIRECTORY)
+            model("comparison/packageMembers", pattern = DIRECTORY)
+            model("comparison/unchanged", pattern = DIRECTORY)
         }
 
         testClass<AbstractJvmProtoComparisonTest> {
             commonProtoComparisonTests()
-            model("comparison/jvmOnly", pattern = DIRECTORY, excludeParentDirs = true)
+            model("comparison/jvmOnly", pattern = DIRECTORY)
         }
 
         testClass<AbstractJsProtoComparisonTest> {
             commonProtoComparisonTests()
-            model("comparison/jsOnly", pattern = DIRECTORY, excludeParentDirs = true)
+            model("comparison/jsOnly", pattern = DIRECTORY)
         }
     }
 

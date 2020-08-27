@@ -43,9 +43,7 @@ fun MutableTSuite.model(
     flatten: Boolean = false,
     targetBackend: TargetBackend = TargetBackend.ANY,
     excludedDirectories: List<String> = emptyList(),
-    depth: Int = Int.MAX_VALUE,
-    filenameStartsLowerCase: Boolean? = null,
-    excludeParentDirs: Boolean = false
+    depth: Int = Int.MAX_VALUE
 ) {
     models += TModel(
         path, pattern, testClassName, testMethodName,
