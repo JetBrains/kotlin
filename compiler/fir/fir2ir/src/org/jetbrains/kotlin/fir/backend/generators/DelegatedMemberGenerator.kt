@@ -203,9 +203,9 @@ internal class DelegatedMemberGenerator(
                     val substParameters = mutableListOf<IrTypeParameterSymbol>()
                     val substArguments = mutableListOf<IrTypeArgument>()
                     initializeTypeSubstitution(substParameters, substArguments, irField.type)
-                    superFunction.typeParameters.forEach { typeParameter ->
+                    typeParameters = superFunction.typeParameters.map { typeParameter ->
                         val parameterDescriptor = WrappedTypeParameterDescriptor()
-                        typeParameters += symbolTable.declareScopedTypeParameter(
+                        symbolTable.declareScopedTypeParameter(
                             startOffset, endOffset, origin, parameterDescriptor
                         ) { symbol ->
                             irFactory.createTypeParameter(
@@ -232,10 +232,10 @@ internal class DelegatedMemberGenerator(
                     }
                     irTypeSubstitutor = IrTypeSubstitutor(substParameters, substArguments, irBuiltIns)
                 }
-                superFunction.valueParameters.forEach { valueParameter ->
+                valueParameters = superFunction.valueParameters.map { valueParameter ->
                     val parameterDescriptor = WrappedValueParameterDescriptor()
                     val substedType = if (addTypeSubstitution) irTypeSubstitutor.substitute(valueParameter.type) else valueParameter.type
-                    valueParameters += symbolTable.declareValueParameter(
+                    symbolTable.declareValueParameter(
                         startOffset, endOffset, origin, parameterDescriptor, substedType
                     ) { symbol ->
                         irFactory.createValueParameter(
