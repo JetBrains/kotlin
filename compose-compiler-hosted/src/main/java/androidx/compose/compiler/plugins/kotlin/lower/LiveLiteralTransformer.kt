@@ -195,7 +195,7 @@ open class LiveLiteralTransformer(
 
     private fun Name.asJvmFriendlyString(): String {
         return if (!isSpecial) identifier
-        else asString().replace('<', '$').replace('>', '$')
+        else asString().replace('<', '$').replace('>', '$').replace(' ', '-')
     }
 
     private fun irLiveLiteralInfoAnnotation(
