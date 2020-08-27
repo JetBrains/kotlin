@@ -227,6 +227,7 @@ internal class DelegatedMemberGenerator(
                                         type = IrSimpleTypeImpl(it.symbol, false, emptyList(), emptyList())
                                     )
                                 )
+                                it.superTypes += typeParameter.superTypes
                             }
                         }
                     }
