@@ -5,13 +5,15 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
-import com.intellij.lang.LighterASTNode
-import com.intellij.openapi.util.Ref
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSymbolOwner
+import org.jetbrains.kotlin.fir.Visibilities
+import org.jetbrains.kotlin.fir.Visibility
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -310,21 +312,14 @@ fun FirClass<*>.findNonInterfaceSupertype(context: CheckerContext): FirTypeRef? 
 }
 
 /**
- * Returns the source element of the eq operator in assignment statement
+ * Returns KtModifierToken by Modality
  */
-fun FirSourceElement.eqOperatorSource(): FirSourceElement? {
-    return when (this) {
-        is FirLightSourceElement -> {
-            val children = Ref<Array<LighterASTNode>>()
-            val tree = tree
-            tree.getChildren(element, children)
-            val element = children.get().getOrNull(2) ?: return null
-            element.toFirLightSourceElement(element.startOffset, element.endOffset, tree)
-        }
-        is FirPsiSourceElement<*> -> {
-            val operator = psi.children.getOrNull(1)
-            operator?.toFirPsiSourceElement()
-        }
-        else -> null
-    }
+fun Modality.toToken(): KtModifierKeywordToken = when (this) {
+    Modality.FINAL -> KtTokens.FINAL_KEYWORD
+    Modality.SEALED -> KtTokens.SEALED_KEYWORD
+    Modality.OPEN -> KtTokens.OPEN_KEYWORD
+    Modality.ABSTRACT -> KtTokens.ABSTRACT_KEYWORD
 }
+
+val FirFunctionCall.isIterator
+    get() = this.calleeReference.name.asString() == "<iterator>"
