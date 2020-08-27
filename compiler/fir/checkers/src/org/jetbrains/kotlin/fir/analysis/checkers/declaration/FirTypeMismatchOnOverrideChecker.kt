@@ -18,7 +18,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.typeContext
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.upperBoundIfFlexible
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.utils.addToStdlib.min
@@ -38,8 +41,8 @@ object FirTypeMismatchOnOverrideChecker : FirRegularClassChecker() {
 
         for (it in declaration.declarations) {
             when (it) {
-                is FirSimpleFunction -> checkFunction(it, reporter, typeCheckerContext, firTypeScope)
-                is FirProperty -> checkProperty(it, reporter, typeCheckerContext, firTypeScope)
+                is FirSimpleFunction -> checkFunction(it, reporter, typeCheckerContext, firTypeScope, context)
+                is FirProperty -> checkProperty(it, reporter, typeCheckerContext, firTypeScope, context)
             }
         }
     }
@@ -95,11 +98,12 @@ object FirTypeMismatchOnOverrideChecker : FirRegularClassChecker() {
     private fun FirCallableMemberDeclaration<*>.checkReturnType(
         overriddenSymbols: List<FirCallableSymbol<*>>,
         typeCheckerContext: AbstractTypeCheckerContext,
+        context: CheckerContext,
     ): FirMemberDeclaration? {
         val returnType = returnTypeRef.safeAs<FirResolvedTypeRef>()?.type
             ?: return null
 
-        val bounds = overriddenSymbols.map { it.fir.returnTypeRef.coneType.upperBoundIfFlexible() }
+        val bounds = overriddenSymbols.map { context.returnTypeCalculator.tryCalculateReturnType(it.fir).coneType.upperBoundIfFlexible() }
 
         for (it in bounds.indices) {
             val restriction = bounds[it]
@@ -117,7 +121,8 @@ object FirTypeMismatchOnOverrideChecker : FirRegularClassChecker() {
         function: FirSimpleFunction,
         reporter: DiagnosticReporter,
         typeCheckerContext: AbstractTypeCheckerContext,
-        firTypeScope: FirTypeScope
+        firTypeScope: FirTypeScope,
+        context: CheckerContext,
     ) {
         if (!function.isOverride) {
             return
@@ -131,7 +136,8 @@ object FirTypeMismatchOnOverrideChecker : FirRegularClassChecker() {
 
         val restriction = function.checkReturnType(
             overriddenSymbols = overriddenFunctionSymbols,
-            typeCheckerContext = typeCheckerContext
+            typeCheckerContext = typeCheckerContext,
+            context = context,
         )
 
         restriction?.let {
@@ -147,7 +153,8 @@ object FirTypeMismatchOnOverrideChecker : FirRegularClassChecker() {
         property: FirProperty,
         reporter: DiagnosticReporter,
         typeCheckerContext: AbstractTypeCheckerContext,
-        firTypeScope: FirTypeScope
+        firTypeScope: FirTypeScope,
+        context: CheckerContext,
     ) {
         if (!property.isOverride) {
             return
@@ -161,7 +168,8 @@ object FirTypeMismatchOnOverrideChecker : FirRegularClassChecker() {
 
         val restriction = property.checkReturnType(
             overriddenSymbols = overriddenPropertySymbols,
-            typeCheckerContext = typeCheckerContext
+            typeCheckerContext = typeCheckerContext,
+            context = context,
         )
 
         restriction?.let {

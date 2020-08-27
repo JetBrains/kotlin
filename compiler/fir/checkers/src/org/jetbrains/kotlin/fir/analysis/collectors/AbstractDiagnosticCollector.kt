@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
 import org.jetbrains.kotlin.fir.resolve.collectImplicitReceivers
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -28,7 +30,8 @@ import org.jetbrains.kotlin.name.Name
 
 abstract class AbstractDiagnosticCollector(
     override val session: FirSession,
-    override val scopeSession: ScopeSession = ScopeSession()
+    override val scopeSession: ScopeSession = ScopeSession(),
+    returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve()
 ) : SessionHolder {
     fun collectDiagnostics(firFile: FirFile): Iterable<FirDiagnostic<*>> {
         if (!componentsInitialized) {
@@ -48,7 +51,7 @@ abstract class AbstractDiagnosticCollector(
     private val visitor = Visitor()
 
     @Suppress("LeakingThis")
-    private var context = PersistentCheckerContext(this)
+    private var context = PersistentCheckerContext(this, returnTypeCalculator)
 
     fun initializeComponents(vararg components: AbstractDiagnosticCollectorComponent) {
         if (componentsInitialized) {
