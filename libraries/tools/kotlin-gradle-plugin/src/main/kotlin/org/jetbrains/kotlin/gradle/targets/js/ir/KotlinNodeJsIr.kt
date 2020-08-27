@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
+import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import javax.inject.Inject
 
@@ -37,13 +38,23 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
             .getIrBinaries(KotlinJsBinaryMode.DEVELOPMENT)
             .matching { it is Executable }
             .all { developmentExecutable ->
-                val runTaskHolder = NodeJsExec.create(compilation, disambiguateCamelCased(RUN_TASK_NAME)) {
-                    group = taskGroupName
-                    inputFileProperty.set(developmentExecutable.linkTask.flatMap { it.outputFileProperty })
-                }
-
-                target.runTask.dependsOn(runTaskHolder)
+                configureRun(compilation, developmentExecutable)
             }
+    }
+
+    private fun configureRun(compilation: KotlinJsIrCompilation, binary: JsIrBinary) {
+        val name = disambiguateCamelCased(RUN_TASK_NAME)
+        val runTask = project.locateTask<NodeJsExec>(name)
+        if (runTask != null) {
+            return
+        }
+
+        val runTaskHolder = NodeJsExec.create(compilation, name) {
+            group = taskGroupName
+            inputFileProperty.set(binary.linkTask.flatMap { it.outputFileProperty })
+        }
+
+        target.runTask.dependsOn(runTaskHolder)
     }
 
     override fun configureBuild(
@@ -54,6 +65,16 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
             .matching { it is Executable }
             .all { productionExecutable ->
                 project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(productionExecutable.linkTask)
+            }
+    }
+
+    override fun configureLibrary(compilation: KotlinJsIrCompilation) {
+        super.configureLibrary(compilation)
+        compilation.binaries
+            .getIrBinaries(KotlinJsBinaryMode.DEVELOPMENT)
+            .matching { it is Library }
+            .all { binary ->
+                configureRun(compilation, binary)
             }
     }
 }

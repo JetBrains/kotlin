@@ -200,7 +200,7 @@ abstract class KotlinJsIrSubTarget(
         }
     }
 
-    private fun configureLibrary(compilation: KotlinJsIrCompilation) {
+    protected open fun configureLibrary(compilation: KotlinJsIrCompilation) {
         val project = compilation.target.project
 
         val processResourcesTask = target.project.tasks.named(compilation.processResourcesTaskName)
