@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.maven
 
 import com.google.gson.JsonParser
 import org.jetbrains.idea.maven.model.MavenArchetype
+import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -25,7 +26,7 @@ import java.io.File
 
 class KotlinMavenArchetypesProviderTest {
     companion object {
-        private const val BASE_PATH = "idea/testData/configuration/"
+        private val BASE_PATH = IDEA_TEST_DATA_DIR.resolve("configuration")
     }
 
     @Test
