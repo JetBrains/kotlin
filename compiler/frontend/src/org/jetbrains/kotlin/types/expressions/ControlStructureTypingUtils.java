@@ -26,7 +26,6 @@ import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
@@ -53,7 +52,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
-import org.jetbrains.kotlin.resolve.descriptorUtil.AnnotationsForResolveKt;
+import org.jetbrains.kotlin.resolve.descriptorUtil.AnnotationsForResolveUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
@@ -223,7 +222,7 @@ public class ControlStructureTypingUtils {
             );
             valueParameters.add(valueParameter);
         }
-        KotlinType returnType = construct != ResolveConstruct.ELVIS ? type : TypeUtilsKt.replaceAnnotations(type, AnnotationsForResolveKt.getExactInAnnotations());
+        KotlinType returnType = construct != ResolveConstruct.ELVIS ? type : TypeUtilsKt.replaceAnnotations(type, AnnotationsForResolveUtilsKt.getExactInAnnotations());
         function.initialize(
                 null,
                 null,
