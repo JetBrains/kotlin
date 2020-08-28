@@ -711,16 +711,3 @@ private inline fun Any.errorMessage(): String {
 private fun errorSupportedOnlyInTypeInference(): Nothing {
     error("supported only in type inference context")
 }
-
-@OptIn(ExperimentalContracts::class)
-fun requireOrDescribe(condition: Boolean, value: Any?) {
-    contract {
-        returns() implies condition
-    }
-    require(condition) {
-        val typeInfo = if (value != null) {
-            ", type = '${value::class}'"
-        } else ""
-        "Unexpected: value = '$value'$typeInfo"
-    }
-}

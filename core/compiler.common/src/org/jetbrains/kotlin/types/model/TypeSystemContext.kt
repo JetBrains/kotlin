@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.types.model
 
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.Variance
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 interface KotlinTypeMarker
 interface TypeArgumentMarker
@@ -362,4 +364,17 @@ inline fun TypeArgumentListMarker.all(
         if (!predicate(get(index))) return false
     }
     return true
+}
+
+@OptIn(ExperimentalContracts::class)
+fun requireOrDescribe(condition: Boolean, value: Any?) {
+    contract {
+        returns() implies condition
+    }
+    require(condition) {
+        val typeInfo = if (value != null) {
+            ", type = '${value::class}'"
+        } else ""
+        "Unexpected: value = '$value'$typeInfo"
+    }
 }
