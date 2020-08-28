@@ -352,16 +352,9 @@ class FirClassSubstitutionScope(
                     val copiedParameterTypes = baseFunction.valueParameters.map {
                         substitutor.substituteOrNull(it.returnTypeRef.coneType)
                     }
-                    val copiedReceiverType = newReceiverType?.let {
-                        substitutor.substituteOrNull(it)
-                    } ?: baseFunction.receiverTypeRef?.let {
-                        substitutor.substituteOrNull(it.coneType)
-                    }
-                    val copiedReturnType = newReturnType?.let {
-                        substitutor.substituteOrNull(it)
-                    } ?: baseFunction.returnTypeRef.let {
-                        substitutor.substituteOrNull(it.coneType)
-                    }
+                    val (copiedReceiverType, copiedReturnType) = substituteReceiverAndReturnType(
+                        baseFunction as FirCallableMemberDeclaration<*>, newReceiverType, newReturnType, substitutor
+                    )
                     configureAnnotationsAndSignature(session, baseFunction, copiedParameterTypes, copiedReceiverType, copiedReturnType)
                     copiedTypeParameters
                 }
@@ -421,20 +414,72 @@ class FirClassSubstitutionScope(
                 source = baseProperty.source
                 this.session = session
                 origin = FirDeclarationOrigin.FakeOverride
-                returnTypeRef = baseProperty.returnTypeRef.withReplacedReturnType(newReturnType)
-                receiverTypeRef = baseProperty.receiverTypeRef?.withReplacedConeType(newReceiverType)
                 name = baseProperty.name
                 isVar = baseProperty.isVar
                 this.symbol = symbol
                 isLocal = false
                 status = baseProperty.status.withExpect(isExpect)
                 resolvePhase = baseProperty.resolvePhase
-                annotations += baseProperty.annotations
-                if (newTypeParameters != null) {
-                    typeParameters += newTypeParameters
-                }
+                typeParameters += configureAnnotationsTypeParametersAndSignature(baseProperty, newTypeParameters, newReceiverType, newReturnType)
             }
             return symbol
+        }
+
+        private fun FirPropertyBuilder.configureAnnotationsTypeParametersAndSignature(
+            baseProperty: FirProperty,
+            newTypeParameters: List<FirTypeParameter>?,
+            newReceiverType: ConeKotlinType? = null,
+            newReturnType: ConeKotlinType? = null
+        ): List<FirTypeParameter> {
+            return when {
+                baseProperty.typeParameters.isEmpty() -> {
+                    configureAnnotationsAndSignature(baseProperty, newReceiverType, newReturnType)
+                    emptyList()
+                }
+                newTypeParameters == null -> {
+                    val (copiedTypeParameters, substitutor) = createNewTypeParametersAndSubstitutor(
+                        baseProperty, ConeSubstitutor.Empty
+                    )
+                    val (copiedReceiverType, copiedReturnType) = substituteReceiverAndReturnType(
+                        baseProperty, newReceiverType, newReturnType, substitutor
+                    )
+                    configureAnnotationsAndSignature(baseProperty, copiedReceiverType, copiedReturnType)
+                    copiedTypeParameters.filterIsInstance<FirTypeParameter>()
+                }
+                else -> {
+                    configureAnnotationsAndSignature(baseProperty, newReceiverType, newReturnType)
+                    newTypeParameters
+                }
+            }
+        }
+
+        private fun substituteReceiverAndReturnType(
+            baseCallable: FirCallableMemberDeclaration<*>,
+            newReceiverType: ConeKotlinType?,
+            newReturnType: ConeKotlinType?,
+            substitutor: ConeSubstitutor
+        ): Pair<ConeKotlinType?, ConeKotlinType?> {
+            val copiedReceiverType = newReceiverType?.let {
+                substitutor.substituteOrNull(it)
+            } ?: baseCallable.receiverTypeRef?.let {
+                substitutor.substituteOrNull(it.coneType)
+            }
+            val copiedReturnType = newReturnType?.let {
+                substitutor.substituteOrNull(it)
+            } ?: baseCallable.returnTypeRef.let {
+                substitutor.substituteOrNull(it.coneType)
+            }
+            return copiedReceiverType to copiedReturnType
+        }
+
+        private fun FirPropertyBuilder.configureAnnotationsAndSignature(
+            baseProperty: FirProperty,
+            newReceiverType: ConeKotlinType? = null,
+            newReturnType: ConeKotlinType? = null
+        ) {
+            annotations += baseProperty.annotations
+            returnTypeRef = baseProperty.returnTypeRef.withReplacedConeType(newReturnType)
+            receiverTypeRef = baseProperty.receiverTypeRef?.withReplacedConeType(newReceiverType)
         }
 
         fun createFakeOverrideField(
