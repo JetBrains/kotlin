@@ -9,9 +9,10 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 
-internal class Common private constructor(
-    override val irClass: IrClass, override val fields: MutableList<Variable>
-) : Complex(irClass, fields) {
+internal class Common private constructor(override val irClass: IrClass, override val fields: MutableList<Variable>) : Complex {
+    override var superWrapperClass: Wrapper? = null
+    override val typeArguments: MutableList<Variable> = mutableListOf()
+    override var outerClass: Variable? = null
 
     constructor(irClass: IrClass) : this(irClass, mutableListOf())
 

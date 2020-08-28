@@ -150,7 +150,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
 
     internal fun State.wrapAsProxyIfNeeded(calledFromBuiltIns: Boolean = false): Any? {
         return when (this) {
-            is ExceptionState -> this.getThisAsCauseForException()
+            is ExceptionState -> this
             is Wrapper -> this.value
             is Primitive<*> -> this.value
             is Common -> Proxy(this, this@IrInterpreter, calledFromBuiltIns)
@@ -812,9 +812,9 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
     private fun interpretTry(expression: IrTry): ExecutionResult {
         try {
             expression.tryResult.interpret().check(ReturnLabel.EXCEPTION) { return it } // if not exception -> return
-            val exception = stack.peekReturnValue() as ExceptionState
+            val exception = stack.peekReturnValue()
             for (catchBlock in expression.catches) {
-                if (exception.isSubtypeOf(catchBlock.catchParameter.type.classOrNull!!.owner)) {
+                if (exception.isSubtypeOf(catchBlock.catchParameter.type)) {
                     catchBlock.interpret().check { return it }
                     return Next
                 }

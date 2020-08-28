@@ -45,9 +45,11 @@ internal fun State.asBoolean() = (this as Primitive<*>).value as Boolean
 internal fun State.asString() = (this as Primitive<*>).value.toString()
 
 internal fun State.asBooleanOrNull() = (this as? Primitive<*>)?.value as? Boolean
+internal fun State.asStringOrNull() = (this as Primitive<*>).value as? String
 
 internal fun State.isSubtypeOf(other: IrType): Boolean {
     if (this is Primitive<*> && this.value == null) return other.isNullable()
+    if (this is ExceptionState) return this.isSubtypeOf(other.classOrNull!!.owner)
 
     if (this is Primitive<*> && this.type.isArray() && other.isArray()) {
         val thisClass = this.typeArguments.single().state.irClass.symbol

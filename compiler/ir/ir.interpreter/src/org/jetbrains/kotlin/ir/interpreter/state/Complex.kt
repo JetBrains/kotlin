@@ -14,16 +14,15 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 
-internal abstract class Complex(override val irClass: IrClass, override val fields: MutableList<Variable>) : State {
-    var superWrapperClass: Wrapper? = null
-    override val typeArguments: MutableList<Variable> = mutableListOf()
-    var outerClass: Variable? = null
+internal interface Complex: State {
+    var superWrapperClass: Wrapper?
+    override val typeArguments: MutableList<Variable>
+    var outerClass: Variable?
 
     fun irClassFqName(): String {
         return irClass.fqNameForIrSerialization.toString()
@@ -34,7 +33,11 @@ internal abstract class Complex(override val irClass: IrClass, override val fiel
         val propertySetters = this.declarations.filterIsInstance<IrProperty>().mapNotNull { it.setter }
         val functions = this.declarations.filterIsInstance<IrFunction>()
         return (propertyGetters + propertySetters + functions).firstOrNull {
-            if (it is IrSimpleFunction) it.overrides(symbol.owner as IrSimpleFunction) else it == symbol.owner
+            val owner = symbol.owner
+            when {
+                it is IrSimpleFunction && owner is IrSimpleFunction -> it.overrides(owner) || owner.overrides(it)
+                else -> it == symbol.owner
+            }
         }
     }
 
@@ -46,7 +49,7 @@ internal abstract class Complex(override val irClass: IrClass, override val fiel
         }
     }
 
-    protected fun getOverridden(owner: IrSimpleFunction): IrSimpleFunction {
+    private fun getOverridden(owner: IrSimpleFunction): IrSimpleFunction {
         if (!owner.isFakeOverride || owner.body != null || owner.parentAsClass.defaultType.isAny()) return owner
 
         val overriddenOwner = owner.overriddenSymbols.singleOrNull { !it.owner.parentAsClass.isInterface }?.owner
