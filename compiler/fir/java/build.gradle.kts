@@ -10,6 +10,7 @@ dependencies {
     compile(project(":compiler:fir:resolve"))
     compile(project(":compiler:fir:checkers"))
     implementation(project(":compiler:fir:jvm"))
+    api(project(":compiler:fir:fir-deserialization"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }

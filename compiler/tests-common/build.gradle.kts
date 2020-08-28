@@ -20,6 +20,7 @@ dependencies {
     testCompile(project(":compiler:fir:jvm"))
     testCompile(project(":compiler:fir:fir2ir:jvm-backend"))
     testCompile(project(":compiler:fir:fir-serialization"))
+    testCompile(project(":compiler:fir:fir-deserialization"))
     testCompile(project(":compiler:fir:cones"))
     testCompile(project(":compiler:fir:resolve"))
     testCompile(project(":compiler:fir:checkers"))

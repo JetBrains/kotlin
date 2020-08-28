@@ -4,12 +4,13 @@ plugins {
 }
 
 dependencies {
-    compile(project(":core:descriptors"))
-    compile(project(":compiler:fir:cones"))
-    compile(project(":compiler:fir:tree"))
-    compile(project(":compiler:fir:resolve"))
-    implementation(project(":compiler:fir:fir-deserialization"))
+    implementation(project(":core:descriptors"))
+    implementation(project(":core:descriptors.jvm"))
     implementation(project(":core:deserialization"))
+
+    api(project(":compiler:fir:cones"))
+    api(project(":compiler:fir:tree"))
+    api(project(":compiler:fir:resolve"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", rootProject = rootProject) }
 }
