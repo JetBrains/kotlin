@@ -68,11 +68,11 @@ object ReplaceWithAnnotationAnalyzer {
             expressionTypingServices = expressionTypingServices
         )
 
-        return CodeToInlineBuilder(symbolDescriptor, resolutionFacade).prepareCodeToInline(
+        return CodeToInlineBuilder(symbolDescriptor, resolutionFacade, originalDeclaration = null).prepareCodeToInline(
             expression,
             emptyList(),
             ::analyzeExpression,
-            reformat
+            reformat,
         )
     }
 

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.references.canBeResolvedViaImport
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.idea.util.isAnonymousFunction
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -47,12 +48,11 @@ import java.util.*
 class CodeToInlineBuilder(
     private val targetCallable: CallableDescriptor,
     private val resolutionFacade: ResolutionFacade,
-    private val inAnonymousFunction: Boolean = false,
+    private val originalDeclaration: KtDeclaration?,
 ) {
     private val psiFactory = KtPsiFactory(resolutionFacade.project)
 
     fun prepareCodeToInlineWithAdvancedResolution(
-        contextDeclaration: KtDeclaration,
         bodyOrExpression: KtExpression,
         expressionMapper: (bodyOrExpression: KtExpression) -> Pair<KtExpression?, List<KtExpression>>?,
     ): CodeToInline? {
@@ -62,7 +62,6 @@ class CodeToInlineBuilder(
             statementsBefore = statementsBefore,
             analyze = { it.analyze(BodyResolveMode.PARTIAL) },
             reformat = true,
-            contextDeclaration = contextDeclaration,
         )
 
         val copyOfBodyOrExpression = bodyOrExpression.copied()
@@ -79,7 +78,6 @@ class CodeToInlineBuilder(
         statementsBefore: List<KtExpression>,
         analyze: (KtExpression) -> BindingContext,
         reformat: Boolean,
-        contextDeclaration: KtDeclaration? = null,
     ): MutableCodeToInline {
         val alwaysKeepMainExpression =
             when (val descriptor = mainExpression?.getResolvedCall(analyze(mainExpression))?.resultingDescriptor) {
@@ -95,8 +93,8 @@ class CodeToInlineBuilder(
             extraComments = null,
         )
 
-        if (contextDeclaration != null) {
-            saveComments(codeToInline, contextDeclaration)
+        if (originalDeclaration != null) {
+            saveComments(codeToInline, originalDeclaration)
         }
 
         insertExplicitTypeArguments(codeToInline, analyze)
@@ -150,8 +148,7 @@ class CodeToInlineBuilder(
         statementsBefore: List<KtExpression>,
         analyze: (KtExpression) -> BindingContext,
         reformat: Boolean,
-        contextDeclaration: KtDeclaration? = null,
-    ): CodeToInline = prepareMutableCodeToInline(mainExpression, statementsBefore, analyze, reformat, contextDeclaration).toNonMutable()
+    ): CodeToInline = prepareMutableCodeToInline(mainExpression, statementsBefore, analyze, reformat).toNonMutable()
 
     private fun saveComments(codeToInline: MutableCodeToInline, contextDeclaration: KtDeclaration) {
         val topLevelLeadingComments = contextDeclaration.collectDescendantsOfType<PsiComment>(
@@ -312,6 +309,7 @@ class CodeToInlineBuilder(
     private fun processReferences(codeToInline: MutableCodeToInline, analyze: (KtExpression) -> BindingContext, reformat: Boolean) {
         val targetDispatchReceiverType = targetCallable.dispatchReceiverParameter?.value?.type
         val targetExtensionReceiverType = targetCallable.extensionReceiverParameter?.value?.type
+        val isAnonymousFunction = originalDeclaration?.isAnonymousFunction == true
 
         codeToInline.forEachDescendantOfType<KtSimpleNameExpression> { expression ->
             val parent = expression.parent
@@ -354,7 +352,7 @@ class CodeToInlineBuilder(
                 expression.putCopyableUserData(CodeToInline.PARAMETER_USAGE_KEY, target.name)
             } else if (receiverExpression == null) {
                 if (target is ValueParameterDescriptor && target.containingDeclaration == callableDescriptor) {
-                    val name = if (inAnonymousFunction) Name.identifier("p${target.index + 1}") else target.name
+                    val name = if (isAnonymousFunction) Name.identifier("p${target.index + 1}") else target.name
                     expression.putCopyableUserData(CodeToInline.PARAMETER_USAGE_KEY, name)
                 } else if (target is TypeParameterDescriptor && target.containingDeclaration == callableDescriptor) {
                     expression.putCopyableUserData(CodeToInline.TYPE_PARAMETER_USAGE_KEY, target.name)
