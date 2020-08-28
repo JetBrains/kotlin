@@ -258,34 +258,77 @@ class FirClassSubstitutionScope(
     }
 
     companion object {
-        private fun FirFunctionBuilder.configureAnnotationsAndSignature(
+        fun createFakeOverrideFunction(
             session: FirSession,
-            baseFunction: FirFunction<*>,
-            newParameterTypes: List<ConeKotlinType?>?,
+            baseFunction: FirSimpleFunction,
+            baseSymbol: FirNamedFunctionSymbol,
             newReceiverType: ConeKotlinType? = null,
-            newReturnType: ConeKotlinType? = null
-        ) {
-            annotations += baseFunction.annotations
-            returnTypeRef = baseFunction.returnTypeRef.withReplacedConeType(newReturnType)
-            if (this is FirSimpleFunctionBuilder) {
-                receiverTypeRef = baseFunction.receiverTypeRef?.withReplacedConeType(newReceiverType)
+            newReturnType: ConeKotlinType? = null,
+            newParameterTypes: List<ConeKotlinType?>? = null,
+            newTypeParameters: List<FirTypeParameter>? = null,
+            derivedClassId: ClassId? = null,
+            isExpect: Boolean = baseFunction.isExpect
+        ): FirNamedFunctionSymbol {
+            val symbol = FirNamedFunctionSymbol(
+                CallableId(derivedClassId ?: baseSymbol.callableId.classId!!, baseFunction.name),
+                isFakeOverride = true, overriddenSymbol = baseSymbol
+            )
+            createFakeOverrideFunction(
+                symbol, session, baseFunction, newReceiverType, newReturnType, newParameterTypes, newTypeParameters, isExpect
+            )
+            return symbol
+        }
+
+        private fun createFakeOverrideFunction(
+            fakeOverrideSymbol: FirFunctionSymbol<FirSimpleFunction>,
+            session: FirSession,
+            baseFunction: FirSimpleFunction,
+            newReceiverType: ConeKotlinType? = null,
+            newReturnType: ConeKotlinType? = null,
+            newParameterTypes: List<ConeKotlinType?>? = null,
+            newTypeParameters: List<FirTypeParameter>? = null,
+            isExpect: Boolean = baseFunction.isExpect
+        ): FirSimpleFunction {
+            // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
+            // As second alternative, we can invent some light-weight kind of FirRegularClass
+            return buildSimpleFunction {
+                source = baseFunction.source
+                this.session = session
+                origin = FirDeclarationOrigin.FakeOverride
+                name = baseFunction.name
+                status = baseFunction.status.withExpect(isExpect)
+                symbol = fakeOverrideSymbol
+                resolvePhase = baseFunction.resolvePhase
+
+                typeParameters += configureAnnotationsTypeParametersAndSignature(
+                    session, baseFunction, newParameterTypes, newTypeParameters, newReceiverType, newReturnType
+                ).filterIsInstance<FirTypeParameter>()
             }
-            valueParameters += baseFunction.valueParameters.zip(
-                newParameterTypes ?: List(baseFunction.valueParameters.size) { null }
-            ) { valueParameter, newType ->
-                buildValueParameter {
-                    source = valueParameter.source
-                    this.session = session
-                    resolvePhase = valueParameter.resolvePhase
-                    origin = FirDeclarationOrigin.FakeOverride
-                    returnTypeRef = valueParameter.returnTypeRef.withReplacedConeType(newType)
-                    name = valueParameter.name
-                    symbol = FirVariableSymbol(valueParameter.symbol.callableId)
-                    defaultValue = valueParameter.defaultValue
-                    isCrossinline = valueParameter.isCrossinline
-                    isNoinline = valueParameter.isNoinline
-                    isVararg = valueParameter.isVararg
-                }
+        }
+
+        private fun createFakeOverrideConstructor(
+            fakeOverrideSymbol: FirConstructorSymbol,
+            session: FirSession,
+            baseConstructor: FirConstructor,
+            newReturnType: ConeKotlinType? = null,
+            newParameterTypes: List<ConeKotlinType?>? = null,
+            newTypeParameters: List<FirTypeParameterRef>? = null,
+            isExpect: Boolean = baseConstructor.isExpect
+        ): FirConstructor {
+            // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
+            // As second alternative, we can invent some light-weight kind of FirRegularClass
+            return buildConstructor {
+                source = baseConstructor.source
+                this.session = session
+                origin = FirDeclarationOrigin.FakeOverride
+                receiverTypeRef = baseConstructor.receiverTypeRef?.withReplacedConeType(null)
+                status = baseConstructor.status.withExpect(isExpect)
+                symbol = fakeOverrideSymbol
+                resolvePhase = baseConstructor.resolvePhase
+
+                typeParameters += configureAnnotationsTypeParametersAndSignature(
+                    session, baseConstructor, newParameterTypes, newTypeParameters, null, newReturnType
+                )
             }
         }
 
@@ -329,62 +372,35 @@ class FirClassSubstitutionScope(
             }
         }
 
-        private fun FirDeclarationStatus.withExpect(isExpect: Boolean): FirDeclarationStatus {
-            return if (this.isExpect == isExpect) {
-                this
-            } else {
-                FirResolvedDeclarationStatusImpl(visibility, modality!!).apply {
-                    this.isExpect = isExpect
+        private fun FirFunctionBuilder.configureAnnotationsAndSignature(
+            session: FirSession,
+            baseFunction: FirFunction<*>,
+            newParameterTypes: List<ConeKotlinType?>?,
+            newReceiverType: ConeKotlinType? = null,
+            newReturnType: ConeKotlinType? = null
+        ) {
+            annotations += baseFunction.annotations
+            returnTypeRef = baseFunction.returnTypeRef.withReplacedConeType(newReturnType)
+            if (this is FirSimpleFunctionBuilder) {
+                receiverTypeRef = baseFunction.receiverTypeRef?.withReplacedConeType(newReceiverType)
+            }
+            valueParameters += baseFunction.valueParameters.zip(
+                newParameterTypes ?: List(baseFunction.valueParameters.size) { null }
+            ) { valueParameter, newType ->
+                buildValueParameter {
+                    source = valueParameter.source
+                    this.session = session
+                    resolvePhase = valueParameter.resolvePhase
+                    origin = FirDeclarationOrigin.FakeOverride
+                    returnTypeRef = valueParameter.returnTypeRef.withReplacedConeType(newType)
+                    name = valueParameter.name
+                    symbol = FirVariableSymbol(valueParameter.symbol.callableId)
+                    defaultValue = valueParameter.defaultValue
+                    isCrossinline = valueParameter.isCrossinline
+                    isNoinline = valueParameter.isNoinline
+                    isVararg = valueParameter.isVararg
                 }
             }
-        }
-
-        private fun createFakeOverrideFunction(
-            fakeOverrideSymbol: FirFunctionSymbol<FirSimpleFunction>,
-            session: FirSession,
-            baseFunction: FirSimpleFunction,
-            newReceiverType: ConeKotlinType? = null,
-            newReturnType: ConeKotlinType? = null,
-            newParameterTypes: List<ConeKotlinType?>? = null,
-            newTypeParameters: List<FirTypeParameter>? = null,
-            isExpect: Boolean = baseFunction.isExpect
-        ): FirSimpleFunction {
-            // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
-            // As second alternative, we can invent some light-weight kind of FirRegularClass
-            return buildSimpleFunction {
-                source = baseFunction.source
-                this.session = session
-                origin = FirDeclarationOrigin.FakeOverride
-                name = baseFunction.name
-                status = baseFunction.status.withExpect(isExpect)
-                symbol = fakeOverrideSymbol
-                resolvePhase = baseFunction.resolvePhase
-
-                typeParameters += configureAnnotationsTypeParametersAndSignature(
-                    session, baseFunction, newParameterTypes, newTypeParameters, newReceiverType, newReturnType
-                ).filterIsInstance<FirTypeParameter>()
-            }
-        }
-
-        fun createFakeOverrideFunction(
-            session: FirSession,
-            baseFunction: FirSimpleFunction,
-            baseSymbol: FirNamedFunctionSymbol,
-            newReceiverType: ConeKotlinType? = null,
-            newReturnType: ConeKotlinType? = null,
-            newParameterTypes: List<ConeKotlinType?>? = null,
-            newTypeParameters: List<FirTypeParameter>? = null,
-            derivedClassId: ClassId? = null,
-            isExpect: Boolean = baseFunction.isExpect
-        ): FirNamedFunctionSymbol {
-            val symbol = FirNamedFunctionSymbol(
-                CallableId(derivedClassId ?: baseSymbol.callableId.classId!!, baseFunction.name),
-                isFakeOverride = true, overriddenSymbol = baseSymbol
-            )
-            createFakeOverrideFunction(
-                symbol, session, baseFunction, newReceiverType, newReturnType, newParameterTypes, newTypeParameters, isExpect
-            )
-            return symbol
         }
 
         fun createFakeOverrideProperty(
@@ -466,29 +482,13 @@ class FirClassSubstitutionScope(
             }.symbol
         }
 
-        private fun createFakeOverrideConstructor(
-            fakeOverrideSymbol: FirConstructorSymbol,
-            session: FirSession,
-            baseConstructor: FirConstructor,
-            newReturnType: ConeKotlinType? = null,
-            newParameterTypes: List<ConeKotlinType?>? = null,
-            newTypeParameters: List<FirTypeParameterRef>? = null,
-            isExpect: Boolean = baseConstructor.isExpect
-        ): FirConstructor {
-            // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
-            // As second alternative, we can invent some light-weight kind of FirRegularClass
-            return buildConstructor {
-                source = baseConstructor.source
-                this.session = session
-                origin = FirDeclarationOrigin.FakeOverride
-                receiverTypeRef = baseConstructor.receiverTypeRef?.withReplacedConeType(null)
-                status = baseConstructor.status.withExpect(isExpect)
-                symbol = fakeOverrideSymbol
-                resolvePhase = baseConstructor.resolvePhase
-
-                typeParameters += configureAnnotationsTypeParametersAndSignature(
-                    session, baseConstructor, newParameterTypes, newTypeParameters, null, newReturnType
-                )
+        private fun FirDeclarationStatus.withExpect(isExpect: Boolean): FirDeclarationStatus {
+            return if (this.isExpect == isExpect) {
+                this
+            } else {
+                FirResolvedDeclarationStatusImpl(visibility, modality!!).apply {
+                    this.isExpect = isExpect
+                }
             }
         }
 
