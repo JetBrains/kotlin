@@ -117,8 +117,6 @@ class PackagesTest : AbstractModelTest("/src/main/kotlin/packages/Test.kt", "pac
         }
     }
 
-    // TODO NOW test displayName
-
     // todo
 //    @Test fun suppressAtPackageLevel() {
 //        verifyModel(

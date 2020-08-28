@@ -61,6 +61,14 @@ fun <T : Any> Iterable<DokkaConfigurationBuilder<T>>.build(): List<T> = this.map
 
 
 data class DokkaSourceSetID(
+    /**
+     * Unique identifier of the scope that this source set is placed in.
+     * Each scope provide only unique source set names.
+     *
+     * E.g. One DokkaTask inside the Gradle plugin represents one source set scope, since there cannot be multiple
+     * source sets with the same name. However, a Gradle project will not be a proper scope, since there can be
+     * multple DokkaTasks that contain source sets with the same name (but different configuration)
+     */
     val scopeId: String,
     val sourceSetName: String
 ) : Serializable {
@@ -116,8 +124,8 @@ interface DokkaConfiguration : Serializable {
 
     interface DokkaModuleDescription : Serializable {
         val name: String
-        val path: File
-        val docFile: File
+        val relativePathToOutputDirectory: File
+        val includes: Set<File>
     }
 
     interface PackageOptions : Serializable {
