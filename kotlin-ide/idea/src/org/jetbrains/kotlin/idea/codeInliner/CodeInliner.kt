@@ -101,9 +101,11 @@ class CodeInliner<TCallElement : KtElement>(
 
         receiver?.mark(RECEIVER_VALUE_KEY)
 
-        codeToInline.collectDescendantsOfType<KtThisExpression> { !it[CodeToInline.SIDE_RECEIVER_USAGE_KEY] }.forEach { thisExpression ->
-            // for this@ClassName we have only option to keep it as is (although it's sometimes incorrect but we have no other options)
-            if (thisExpression.labelQualifier == null && receiver != null) {
+        if (receiver != null) {
+            for (thisExpression in codeToInline.collectDescendantsOfType<KtThisExpression> {
+                // for this@ClassName we have only option to keep it as is (although it's sometimes incorrect but we have no other options)
+                !it[CodeToInline.SIDE_RECEIVER_USAGE_KEY] && it.labelQualifier == null
+            }) {
                 codeToInline.replaceExpression(thisExpression, receiver)
             }
         }
