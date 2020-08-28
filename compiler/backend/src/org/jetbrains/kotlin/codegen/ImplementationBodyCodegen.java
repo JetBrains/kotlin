@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -62,6 +62,8 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.*;
 
+import static org.jetbrains.kotlin.builtins.StandardNames.ENUM_VALUES;
+import static org.jetbrains.kotlin.builtins.StandardNames.ENUM_VALUE_OF;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.CodegenUtilKt.isGenericToArray;
 import static org.jetbrains.kotlin.codegen.CodegenUtilKt.isNonGenericToArray;
@@ -771,10 +773,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         if (isNonCompanionObject(descriptor)) {
             StackValue.Field field = StackValue.createSingletonViaInstance(descriptor, typeMapper, INSTANCE_FIELD);
-            v.newField(JvmDeclarationOriginKt.OtherOriginFromPure(myClass),
-                       ACC_PUBLIC | ACC_STATIC | ACC_FINAL,
-                       field.name, field.type.getDescriptor(), null, null);
-
+            FieldVisitor fv = v.newField(
+                    JvmDeclarationOriginKt.OtherOriginFromPure(myClass),
+                    ACC_PUBLIC | ACC_STATIC | ACC_FINAL,
+                    field.name, field.type.getDescriptor(), null, null
+            );
+            AnnotationCodegen.forField(fv, this, state).visitAnnotation(Type.getDescriptor(NotNull.class), false).visitEnd();
             return;
         }
 
@@ -816,10 +820,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             fieldAccessFlags |= ACC_SYNTHETIC;
         }
         StackValue.Field field = StackValue.singleton(companionObjectDescriptor, typeMapper);
-        FieldVisitor fv = v.newField(JvmDeclarationOriginKt.OtherOrigin(companionObject == null ? myClass.getPsiOrParent() : companionObject),
-                                     fieldAccessFlags, field.name, field.type.getDescriptor(), null, null);
+        FieldVisitor fv = v.newField(
+                JvmDeclarationOriginKt.OtherOrigin(companionObject == null ? myClass.getPsiOrParent() : companionObject),
+                fieldAccessFlags, field.name, field.type.getDescriptor(), null, null
+        );
+        AnnotationCodegen.forField(fv, this, state).visitAnnotation(Type.getDescriptor(NotNull.class), false).visitEnd();
         if (fieldShouldBeDeprecated) {
-            AnnotationCodegen.forField(fv, this, state).visitAnnotation("Ljava/lang/Deprecated;", true).visitEnd();
+            AnnotationCodegen.forField(fv, this, state).visitAnnotation(Type.getDescriptor(Deprecated.class), true).visitEnd();
         }
     }
 

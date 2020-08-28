@@ -205,10 +205,11 @@ private fun getInlineName(
 }
 
 internal fun isInvokeOnLambda(owner: String, name: String): Boolean {
-    return OperatorNameConventions.INVOKE.asString() == name &&
-            owner.startsWith(NUMBERED_FUNCTION_PREFIX) &&
-            owner.substring(NUMBERED_FUNCTION_PREFIX.length).isInteger()
+    return OperatorNameConventions.INVOKE.asString() == name && owner.isNumberedFunctionInternalName()
 }
+
+internal fun String.isNumberedFunctionInternalName(): Boolean =
+    startsWith(NUMBERED_FUNCTION_PREFIX) && substring(NUMBERED_FUNCTION_PREFIX.length).isInteger()
 
 internal fun isAnonymousConstructorCall(internalName: String, methodName: String): Boolean =
     isConstructor(methodName) && isAnonymousClass(internalName)

@@ -1,5 +1,5 @@
-
 // FILE: test.kt
+
 inline fun foo(stringMaker: () -> String): String {
     return stringMaker()
 }
@@ -14,10 +14,10 @@ fun box(): String {
 }
 
 // LINENUMBERS
-// test.kt:8
-// test.kt:4
-// test.kt:8
-// test.kt:9
-// test.kt:4
-// test.kt:10
-// test.kt:13
+// test.kt:8 box
+// test.kt:4 box
+// test.kt:8 box
+// test.kt:9 box
+// test.kt:4 box
+// test.kt:10 box
+// test.kt:13 box

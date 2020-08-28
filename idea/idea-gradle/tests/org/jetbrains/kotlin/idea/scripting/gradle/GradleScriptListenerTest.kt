@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle
 
+import com.intellij.openapi.application.impl.LaterInvocator
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.script.AbstractScriptConfigurationLoadingTest
+import org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleStandaloneScriptActionsManager
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
@@ -40,21 +41,11 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
     override fun setUpTestProject() {
         val rootDir = "idea/testData/script/definition/loading/gradle/"
 
-        val settings: KtFile = addFileToProject(rootDir + GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME)
-        val prop: PsiFile = addFileToProject(rootDir + "gradle.properties")
+        val settings: KtFile = copyFromTestdataToProject(rootDir + GradleConstants.KOTLIN_DSL_SETTINGS_FILE_NAME)
+        val prop: PsiFile = copyFromTestdataToProject(rootDir + "gradle.properties")
 
-        val gradleWrapperProperties = VfsUtil.virtualToIoFile(settings.virtualFile.parent)
-            .resolve("gradle/wrapper/gradle-wrapper.properties")
-        gradleWrapperProperties.parentFile.mkdirs()
-        gradleWrapperProperties.writeText(
-            """
-            distributionBase=GRADLE_USER_HOME
-            distributionPath=wrapper/dists
-            distributionUrl=https\://services.gradle.org/distributions/gradle-1.0.0-bin.zip
-            zipStoreBase=GRADLE_USER_HOME
-            zipStorePath=wrapper/dists
-        """.trimIndent()
-        )
+        val gradleCoreJar = createFileInProject("gradle/lib/gradle-core-1.0.0.jar")
+        val gradleWrapperProperties = createFileInProject("gradle/wrapper/gradle-wrapper.properties")
 
         val buildGradleKts = File(rootDir).walkTopDown().find { it.name == GradleConstants.KOTLIN_DSL_SCRIPT_NAME }
             ?: error("Couldn't find main script")
@@ -62,7 +53,8 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
         val build = (myFile as? KtFile) ?: error("")
 
         val newProjectSettings = GradleProjectSettings()
-        newProjectSettings.distributionType = DistributionType.DEFAULT_WRAPPED
+        newProjectSettings.gradleHome = gradleCoreJar.parentFile.parent
+        newProjectSettings.distributionType = DistributionType.LOCAL
         newProjectSettings.externalProjectPath = settings.virtualFile.parent.path
         ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID).linkProject(newProjectSettings)
 
@@ -74,9 +66,16 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
         )
     }
 
-    private inline fun <reified T : Any> addFileToProject(file: String): T {
+    private inline fun <reified T : Any> copyFromTestdataToProject(file: String): T {
         createFileAndSyncDependencies(File(file))
         return (myFile as? T) ?: error("Couldn't configure project by $file")
+    }
+
+    private fun createFileInProject(path: String): File {
+        val file = File(project.basePath, path)
+        file.parentFile.mkdirs()
+        file.createNewFile()
+        return file
     }
 
     fun testSectionChange() {
@@ -84,7 +83,7 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
 
         changeBuildKtsInsideSections()
 
-        assertConfigurationUpdateWasDone(testFiles.buildKts)
+        assertConfigurationUpdateWasDoneAfterClick(testFiles.buildKts)
     }
 
     fun testSpacesInSectionsChange() {
@@ -116,7 +115,7 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
 
         changeSettingsKtsInsideSections()
 
-        assertConfigurationUpdateWasDone(testFiles.settings)
+        assertConfigurationUpdateWasDoneAfterClick(testFiles.settings)
     }
 
     fun testOutsideSectionsInSettingsChange() {
@@ -134,7 +133,7 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
         changeBuildKtsOutsideSections()
 
         assertConfigurationUpToDate(testFiles.buildKts)
-        assertConfigurationUpdateWasDone(testFiles.settings)
+        assertConfigurationUpdateWasDoneAfterClick(testFiles.settings)
     }
 
     fun testChangeInsideSectionsInvalidatesOtherFiles() {
@@ -143,8 +142,8 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
 
         changeBuildKtsInsideSections()
 
-        assertConfigurationUpdateWasDone(testFiles.buildKts)
-        assertConfigurationUpdateWasDone(testFiles.settings)
+        assertConfigurationUpdateWasDoneAfterClick(testFiles.buildKts)
+        assertConfigurationUpdateWasDoneAfterClick(testFiles.settings)
     }
 
     fun testChangeInsideNonKtsFileInvalidatesOtherFiles() {
@@ -152,7 +151,7 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
 
         changePropertiesFile()
 
-        assertConfigurationUpdateWasDone(testFiles.buildKts)
+        assertConfigurationUpdateWasDoneAfterClick(testFiles.buildKts)
     }
 
     fun testTwoFilesChanged() {
@@ -162,7 +161,7 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
         changePropertiesFile()
         changeSettingsKtsOutsideSections()
 
-        assertConfigurationUpdateWasDone(testFiles.settings)
+        assertConfigurationUpdateWasDoneAfterClick(testFiles.settings)
     }
 
     fun testFileAttributes() {
@@ -180,7 +179,7 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
 
         changeBuildKtsInsideSections()
 
-        assertConfigurationUpdateWasDone(testFiles.buildKts)
+        assertConfigurationUpdateWasDoneAfterClick(testFiles.buildKts)
     }
 
     fun testFileAttributesUpToDateAfterChangeOutsideSections() {
@@ -202,7 +201,7 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
         changeSettingsKtsOutsideSections()
 
         assertConfigurationUpToDate(testFiles.settings)
-        assertConfigurationUpdateWasDone(testFiles.buildKts)
+        assertConfigurationUpdateWasDoneAfterClick(testFiles.buildKts)
     }
 
     fun testConfigurationUpdateAfterProjectClosing() {
@@ -212,7 +211,7 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
         changeSettingsKtsOutsideSections()
 
         assertConfigurationUpToDate(testFiles.settings)
-        assertConfigurationUpdateWasDone(testFiles.buildKts)
+        assertConfigurationUpdateWasDoneAfterClick(testFiles.buildKts)
     }
 
     fun testConfigurationUpdateAfterProjectClosing2() {
@@ -225,8 +224,8 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
         markFileChanged(testFiles.buildKts.virtualFile, ts)
         markFileChanged(testFiles.settings.virtualFile, ts)
 
-        assertConfigurationUpdateWasDone(testFiles.settings)
-        assertConfigurationUpdateWasDone(testFiles.buildKts)
+        assertConfigurationUpdateWasDoneAfterClick(testFiles.settings)
+        assertConfigurationUpdateWasDoneAfterClick(testFiles.buildKts)
     }
 
     fun testConfigurationUpdateAfterProjectClosing3() {
@@ -239,8 +238,8 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
 
         changePropertiesFile()
 
-        assertConfigurationUpdateWasDone(testFiles.settings)
-        assertConfigurationUpdateWasDone(testFiles.buildKts)
+        assertConfigurationUpdateWasDoneAfterClick(testFiles.settings)
+        assertConfigurationUpdateWasDoneAfterClick(testFiles.buildKts)
     }
 
     private fun markFileChanged(virtualFile: VirtualFile, ts: Long) {
@@ -252,7 +251,7 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
 
         changePropertiesFile()
 
-        assertConfigurationUpdateWasDone(testFiles.buildKts)
+        assertConfigurationUpdateWasDoneAfterClick(testFiles.buildKts)
         assertConfigurationUpToDate(testFiles.buildKts)
     }
 
@@ -261,8 +260,28 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
 
         markFileChanged(testFiles.gradleWrapperProperties, System.currentTimeMillis())
 
-        assertConfigurationUpdateWasDone(testFiles.buildKts)
+        assertConfigurationUpdateWasDoneAfterClick(testFiles.buildKts)
         assertConfigurationUpToDate(testFiles.buildKts)
+    }
+
+    override fun assertAndLoadInitialConfiguration(file: KtFile) {
+        assertNull(scriptConfigurationManager.getConfiguration(file))
+        assertReloadingSuggestedAndDoReload(file)
+        assertAndDoAllBackgroundTasks()
+        assertSingleLoading()
+        assertAppliedConfiguration(file.text, file)
+
+        checkHighlighting(file)
+    }
+
+    private fun assertReloadingSuggestedAndDoReload(file: KtFile = myFile as KtFile) {
+        LaterInvocator.ensureFlushRequested()
+        LaterInvocator.dispatchPendingFlushes()
+
+        assertTrue(
+            "reloading configuration should be suggested",
+            GradleStandaloneScriptActionsManager.getInstance(project).performSuggestedLoading(file.virtualFile)
+        )
     }
 
     private fun assertConfigurationUpToDate(file: KtFile) {
@@ -271,8 +290,9 @@ open class GradleScriptListenerTest : AbstractScriptConfigurationLoadingTest() {
         assertNoLoading()
     }
 
-    private fun assertConfigurationUpdateWasDone(file: KtFile) {
+    private fun assertConfigurationUpdateWasDoneAfterClick(file: KtFile) {
         scriptConfigurationManager.default.ensureUpToDatedConfigurationSuggested(file)
+        assertReloadingSuggestedAndDoReload(file)
         assertAndDoAllBackgroundTasks()
         assertSingleLoading()
     }

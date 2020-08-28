@@ -12,9 +12,8 @@ import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationList
 
 internal fun createAndRegisterKotlinCodeBlockModificationListener(project: MockProject, pomModel: PomModel, treeAspect: TreeAspect) {
     project.registerService(PomModel::class.java, pomModel)
-    project.picoContainer.registerComponentInstance(
-        KotlinCodeBlockModificationListener(project, treeAspect)
-    )
+    project.registerService(TreeAspect::class.java, treeAspect)
+    project.registerService(KotlinCodeBlockModificationListener::class.java, KotlinCodeBlockModificationListener(project))
 }
 
 internal fun unregisterKotlinCodeBlockModificationListener(project: MockProject) {

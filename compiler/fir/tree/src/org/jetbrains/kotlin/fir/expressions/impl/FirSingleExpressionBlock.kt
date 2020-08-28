@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -16,11 +17,13 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.fir.fakeElement
 
 class FirSingleExpressionBlock(
     var statement: FirStatement
 ) : FirBlock(), FirAnnotationContainer {
-    override val source: FirSourceElement ? get() = statement.source
+    override val source: FirSourceElement?
+        get() = statement.source?.fakeElement(FirFakeSourceElementKind.SingleExpressionBlock)
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override val statements: List<FirStatement> get() = listOf(statement)
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)

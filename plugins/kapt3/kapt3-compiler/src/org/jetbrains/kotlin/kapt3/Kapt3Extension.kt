@@ -81,7 +81,7 @@ class ClasspathBasedKapt3Extension(
 
     override fun loadProcessors(): LoadedProcessors {
         val efficientProcessorLoader = object : ProcessorLoader(options, logger) {
-            override fun doLoadProcessors(classLoader: URLClassLoader): List<Processor> {
+            override fun doLoadProcessors(classpath: LinkedHashSet<File>, classLoader: URLClassLoader): List<Processor> {
                 return ServiceLoaderLite.loadImplementations(Processor::class.java, classLoader)
             }
         }
@@ -131,6 +131,9 @@ abstract class AbstractKapt3Extension(
 
     override val analyzePartially: Boolean
         get() = !annotationProcessingComplete
+
+    override val analyzeDefaultParameterValues: Boolean
+        get() = options[KaptFlag.DUMP_DEFAULT_PARAMETER_VALUES]
 
     override fun doAnalysis(
         project: Project,
@@ -237,8 +240,8 @@ abstract class AbstractKapt3Extension(
 
             for (leak in leaks) {
                 logger.warn(buildString {
-                    appendln("Memory leak detected!")
-                    appendln("Location: '${leak.className}', static field '${leak.fieldName}'")
+                    appendLine("Memory leak detected!")
+                    appendLine("Location: '${leak.className}', static field '${leak.fieldName}'")
                     append(leak.description)
                 })
             }

@@ -5,7 +5,7 @@ interface B : A
 fun testA(x: A) {
     x.foo()
     x.bar()
-    x.<!UNRESOLVED_REFERENCE("baz")!>baz<!>()
+    x.<!UNRESOLVED_REFERENCE!>baz<!>()
 
     take_A_common_1(x)
     take_A_common_2_1(x)
@@ -15,7 +15,7 @@ fun testA(x: A) {
 fun testB(x: B) {
     x.foo()
     x.bar()
-    x.<!UNRESOLVED_REFERENCE("baz")!>baz<!>()
+    x.<!UNRESOLVED_REFERENCE!>baz<!>()
 
     take_A_common_1(x)
     take_A_common_2_1(x)

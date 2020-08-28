@@ -82,7 +82,7 @@ fun String.underlineAsText(from: Int, to: Int): String {
 
         if (isEndOfLine(c.toInt())) {
             if (lineWasMarked) {
-                lines.appendln(marks.toString().trimEnd())
+                lines.appendLine(marks.toString().trimEnd())
                 lineWasMarked = false
             }
 
@@ -91,7 +91,7 @@ fun String.underlineAsText(from: Int, to: Int): String {
     }
 
     if (lineWasMarked) {
-        lines.appendln()
+        lines.appendLine()
         lines.append(marks.toString())
     }
 

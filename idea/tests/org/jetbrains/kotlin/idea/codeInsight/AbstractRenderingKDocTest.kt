@@ -5,9 +5,32 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
+import com.intellij.testFramework.UsefulTestCase
+import org.jetbrains.kotlin.idea.KotlinDocumentationProvider
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
 //BUNCH 201
 abstract class AbstractRenderingKDocTest : KotlinLightCodeInsightFixtureTestCase() {
-    protected fun doTest(path: String) = Unit
+
+    override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
+
+    protected fun doTest(path: String) {
+        myFixture.configureByFile(fileName())
+        val file = myFixture.file
+
+        val kDocProvider = KotlinDocumentationProvider()
+
+        val comments = mutableListOf<String>()
+        kDocProvider.collectDocComments(file) {
+            val rendered = it.owner?.let { owner -> kDocProvider.generateRenderedDoc(owner) }
+            if (rendered != null) {
+                comments.add(rendered.replace("\n", ""))
+            }
+        }
+
+        val expectedRenders = InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.text, "// RENDER: ")
+        UsefulTestCase.assertOrderedEquals(comments, expectedRenders)
+    }
 }

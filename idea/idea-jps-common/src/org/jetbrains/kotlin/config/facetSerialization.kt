@@ -18,8 +18,10 @@ import org.jetbrains.kotlin.platform.*
 import org.jetbrains.kotlin.platform.impl.FakeK2NativeCompilerArguments
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.js.JsPlatform
+import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.JdkPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.*
 import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
@@ -32,16 +34,16 @@ private fun Element.getOptionValue(name: String) = getOption(name)?.getAttribute
 private fun Element.getOptionBody(name: String) = getOption(name)?.children?.firstOrNull()
 
 fun TargetPlatform.createArguments(init: (CommonCompilerArguments).() -> Unit = {}): CommonCompilerArguments {
-    return when (val singlePlatform = singleOrNull()) {
-        null -> K2MetadataCompilerArguments().apply { init() }
-        is JvmPlatform -> K2JVMCompilerArguments().apply {
+    return when {
+        isCommon() -> K2MetadataCompilerArguments().apply { init() }
+        isJvm() -> K2JVMCompilerArguments().apply {
             init()
             // TODO(dsavvinov): review this
-            jvmTarget = (singlePlatform as? JdkPlatform)?.targetVersion?.description ?: JvmTarget.DEFAULT.description
+            jvmTarget = (single() as? JdkPlatform)?.targetVersion?.description ?: JvmTarget.DEFAULT.description
         }
-        is JsPlatform -> K2JSCompilerArguments().apply { init() }
-        is NativePlatform -> FakeK2NativeCompilerArguments().apply { init() }
-        else -> error("Unknown platform $singlePlatform")
+        isJs() -> K2JSCompilerArguments().apply { init() }
+        isNative() -> FakeK2NativeCompilerArguments().apply { init() }
+        else -> error("Unknown platform $this")
     }
 }
 

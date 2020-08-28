@@ -20,17 +20,14 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.test.JUnitParameterizedWithIdeaConfigurationRunner
-import org.jetbrains.kotlin.test.RunnerFactoryWithMuteInDatabase
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
 import java.io.File
 
 @RunWith(value = JUnitParameterizedWithIdeaConfigurationRunner::class)
-@Parameterized.UseParametersRunnerFactory(RunnerFactoryWithMuteInDatabase::class)
 class GradleKtsImportTest : GradleImportingTestCase() {
     companion object {
         @JvmStatic
@@ -99,7 +96,7 @@ class GradleKtsImportTest : GradleImportingTestCase() {
 
         // reload configuration and check this it is not changed
         scripts.forEach {
-            val reloadedConfiguration = scriptConfigurationManager.default.forceReloadConfiguration(
+            val reloadedConfiguration = scriptConfigurationManager.default.runLoader(
                 it.psiFile,
                 object : DefaultScriptConfigurationLoader(it.psiFile.project) {
                     override fun shouldRunInBackground(scriptDefinition: ScriptDefinition) = false

@@ -142,7 +142,7 @@ abstract class AbstractScriptConfigurationLoadingTest : AbstractScriptConfigurat
         occurredLoadings = 0
     }
 
-    protected fun assertAndLoadInitialConfiguration(file: KtFile = myFile as KtFile) {
+    protected open fun assertAndLoadInitialConfiguration(file: KtFile = myFile as KtFile) {
         assertNull(scriptConfigurationManager.getConfiguration(file))
         assertAndDoAllBackgroundTasks()
         assertSingleLoading()

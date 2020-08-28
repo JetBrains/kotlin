@@ -5,17 +5,11 @@
 
 package org.jetbrains.kotlin.idea.test
 
-import com.intellij.codeInsight.daemon.impl.EditorTracker
 import com.intellij.ide.startup.impl.StartupManagerImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupManager
 
-// BUNCH: 192
-fun editorTrackerProjectOpened(project: Project) {
-    EditorTracker.getInstance(project)
-}
-
-// BUNCH: 193
+// FIX ME WHEN BUNCH 193 REMOVED
 fun runPostStartupActivitiesOnce(project: Project) {
-    (StartupManager.getInstance(project) as StartupManagerImpl).runPostStartupActivities()
+    (StartupManager.getInstance(project) as StartupManagerImpl).runPostStartupActivitiesRegisteredDynamically()
 }

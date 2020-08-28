@@ -197,6 +197,8 @@ public class DefaultErrorMessages {
             switch (target) {
                 case NON_KOTLIN_FUNCTION:
                     return "non-Kotlin functions";
+                case INTEROP_FUNCTION:
+                    return "interop functions with ambiguous parameter names";
                 case INVOKE_ON_FUNCTION_TYPE:
                     return "function types";
                 case EXPECTED_CLASS_MEMBER:
@@ -377,6 +379,12 @@ public class DefaultErrorMessages {
                 (obj, renderingContext) -> obj.equals(VersionRequirement.Version.INFINITY) ? "" : " is only available since Kotlin " + obj.asString() + " and",
                 versionRequirementMessage);
 
+        MAP.put(DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED, "DeprecatedSinceKotlin annotation can be used only together with Deprecated annotation");
+        MAP.put(DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL, "DeprecatedSinceKotlin annotation can be used only with unspecified deprecation level of Deprecated annotation");
+        MAP.put(DEPRECATED_SINCE_KOTLIN_WITH_UNORDERED_VERSIONS, "Values of DeprecatedSinceKotlin annotation should be ordered so 'warningSince' <= 'errorSince' <= 'hiddenSince' if specified");
+        MAP.put(DEPRECATED_SINCE_KOTLIN_WITHOUT_ARGUMENTS, "DeprecatedSinceKotlin annotation should have at least one argument");
+        MAP.put(DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE, "DeprecatedSinceKotlin annotation cannot be used outside 'kotlin' subpackages");
+
         MAP.put(API_NOT_AVAILABLE, "This declaration is only available since Kotlin {0} and cannot be used with the specified API version {1}", STRING, STRING);
 
         MAP.put(MISSING_DEPENDENCY_CLASS, "Cannot access class ''{0}''. Check your module classpath for missing or conflicting dependencies", TO_STRING);
@@ -519,6 +527,9 @@ public class DefaultErrorMessages {
 
         MAP.put(DSL_SCOPE_VIOLATION_WARNING, "''{0}'' shouldn't be called in this context by implicit receiver, it will become an error soon. " +
                                      "Use the explicit one if necessary", COMPACT);
+
+        MAP.put(NULLABLE_EXTENSION_OPERATOR_WITH_SAFE_CALL_RECEIVER, "Semantics of such combination of safe call and operator will change in next compiler version. " +
+                                     "Namely, the right part of the safe call will not be evaluated if receiver is null");
 
         MAP.put(RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY,
                 "Returns are not allowed for functions with expression body. Use block body in '{...}'");
@@ -709,6 +720,8 @@ public class DefaultErrorMessages {
         MAP.put(FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES, "Fun interfaces cannot have abstract properties");
         MAP.put(FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS, "Single abstract member cannot declare type parameters");
         MAP.put(FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE, "Single abstract member cannot declare default values");
+        MAP.put(FUN_INTERFACE_CONSTRUCTOR_REFERENCE, "Functional interface constructor references are prohibited");
+        MAP.put(FUN_INTERFACE_WITH_SUSPEND_FUNCTION, "'suspend' modifier is not allowed on a single abstract member");
 
         MAP.put(VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED, "Variance annotations are only allowed for type parameters of classes and interfaces");
         MAP.put(BOUND_ON_TYPE_ALIAS_PARAMETER_NOT_ALLOWED, "Bounds are not allowed on type alias parameters");
@@ -896,6 +909,9 @@ public class DefaultErrorMessages {
         MAP.put(REIFIED_TYPE_FORBIDDEN_SUBSTITUTION, "Cannot use ''{0}'' as reified type parameter", RENDER_TYPE);
         MAP.put(REIFIED_TYPE_UNSAFE_SUBSTITUTION, "It may be not safe to use ''{0}'' as an argument for a reified type parameter. Use a non-generic type or * if possible", RENDER_TYPE);
         MAP.put(TYPE_PARAMETERS_NOT_ALLOWED, "Type parameters are not allowed here");
+        MAP.put(CANDIDATE_CHOSEN_USING_OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION, "Candidate was chosen only by @OverloadResolutionByLambdaReturnType annotation");
+
+        MAP.put(COMPATIBILITY_WARNING, "Candidate resolution will be changed soon, please use fully qualified name to invoke the following closer candidate explicitly ''{0}''", COMPATIBILITY_CANDIDATE);
 
         MAP.put(TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER, "Type parameter of a property must be used in its receiver type");
 
@@ -979,6 +995,8 @@ public class DefaultErrorMessages {
         MAP.put(EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS, "Expression in a class literal has a nullable type ''{0}'', use !! to make the type non-nullable", RENDER_TYPE);
 
         MAP.put(CALLABLE_REFERENCE_TO_JAVA_SYNTHETIC_PROPERTY, "References to the synthetic extension properties for a Java get/set methods aren't supported fully, please use reference to a method");
+
+        MAP.put(ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE, "Adapted callable reference cannot be resolved against reflective types");
 
         //Inline
         MAP.put(NON_PUBLIC_CALL_FROM_PUBLIC_INLINE, "Public-API inline function cannot access non-public-API ''{0}''", SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);

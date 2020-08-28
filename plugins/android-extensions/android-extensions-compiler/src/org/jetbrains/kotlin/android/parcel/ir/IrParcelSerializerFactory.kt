@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.android.parcel.ir
 
 import org.jetbrains.kotlin.android.parcel.serializers.RAWVALUE_ANNOTATION_FQNAME
+import org.jetbrains.kotlin.backend.jvm.codegen.psiElement
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
-import org.jetbrains.kotlin.backend.jvm.ir.getArrayElementType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 
 class IrParcelSerializerFactory(symbols: AndroidSymbols) {
     /**
@@ -210,7 +209,7 @@ class IrParcelSerializerFactory(symbols: AndroidSymbols) {
                 // for writeToParcel/createFromParcel. For Java classes (or compiled Kotlin classes annotated with
                 // @Parcelize), we'll have a field in the class itself. Finally, with Parcelable instances which were
                 // manually implemented in Kotlin, we'll instead have an @JvmField property getter in the companion object.
-                return if (classifier.modality == Modality.FINAL && classifier.descriptor.source is PsiSourceElement
+                return if (classifier.modality == Modality.FINAL && classifier.psiElement != null
                     && (classifier.isParcelize || classifier.hasCreatorField)
                 ) {
                     wrapNullableSerializerIfNeeded(irType, IrEfficientParcelableParcelSerializer(classifier))

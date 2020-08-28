@@ -20,7 +20,7 @@ import com.google.common.collect.ImmutableList;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.codegen.AsmUtil;
 import org.jetbrains.kotlin.config.JvmTarget;
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 import org.jetbrains.org.objectweb.asm.Type;
 
-import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.*;
+import static org.jetbrains.kotlin.builtins.StandardNames.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class IntrinsicMethods {
@@ -70,15 +70,15 @@ public class IntrinsicMethods {
 
     public IntrinsicMethods(JvmTarget jvmTarget, boolean canReplaceStdlibRuntimeApiBehavior, boolean shouldThrowNpeOnExplicitEqualsForBoxedNull) {
         intrinsicsMap.registerIntrinsic(KOTLIN_JVM, RECEIVER_PARAMETER_FQ_NAME, "javaClass", -1, JavaClassProperty.INSTANCE);
-        intrinsicsMap.registerIntrinsic(KOTLIN_JVM, KotlinBuiltIns.FQ_NAMES.kClass, "java", -1, new KClassJavaProperty());
-        intrinsicsMap.registerIntrinsic(KOTLIN_JVM, KotlinBuiltIns.FQ_NAMES.kClass, "javaObjectType", -1, new KClassJavaObjectTypeProperty());
-        intrinsicsMap.registerIntrinsic(KOTLIN_JVM, KotlinBuiltIns.FQ_NAMES.kClass, "javaPrimitiveType", -1, new KClassJavaPrimitiveTypeProperty());
-        intrinsicsMap.registerIntrinsic(KotlinBuiltIns.FQ_NAMES.kCallable.toSafe(), null, "name", -1, new KCallableNameProperty());
+        intrinsicsMap.registerIntrinsic(KOTLIN_JVM, StandardNames.FqNames.kClass, "java", -1, new KClassJavaProperty());
+        intrinsicsMap.registerIntrinsic(KOTLIN_JVM, StandardNames.FqNames.kClass, "javaObjectType", -1, new KClassJavaObjectTypeProperty());
+        intrinsicsMap.registerIntrinsic(KOTLIN_JVM, StandardNames.FqNames.kClass, "javaPrimitiveType", -1, new KClassJavaPrimitiveTypeProperty());
+        intrinsicsMap.registerIntrinsic(StandardNames.FqNames.kCallable.toSafe(), null, "name", -1, new KCallableNameProperty());
         intrinsicsMap.registerIntrinsic(new FqName("kotlin.jvm.internal.unsafe"), null, "monitorEnter", 1, MonitorInstruction.MONITOR_ENTER);
         intrinsicsMap.registerIntrinsic(new FqName("kotlin.jvm.internal.unsafe"), null, "monitorExit", 1, MonitorInstruction.MONITOR_EXIT);
-        intrinsicsMap.registerIntrinsic(KOTLIN_JVM, KotlinBuiltIns.FQ_NAMES.array, "isArrayOf", 0, new IsArrayOf());
+        intrinsicsMap.registerIntrinsic(KOTLIN_JVM, StandardNames.FqNames.array, "isArrayOf", 0, new IsArrayOf());
 
-        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, KotlinBuiltIns.FQ_NAMES.kProperty0, "isInitialized", -1, LateinitIsInitialized.INSTANCE);
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, StandardNames.FqNames.kProperty0, "isInitialized", -1, LateinitIsInitialized.INSTANCE);
 
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "arrayOf", 1, new ArrayOf());
 
@@ -87,7 +87,7 @@ public class IntrinsicMethods {
         ImmutableList<Name> primitiveCastMethods = OperatorConventions.NUMBER_CONVERSIONS.asList();
         for (Name method : primitiveCastMethods) {
             String methodName = method.asString();
-            declareIntrinsicFunction(FQ_NAMES.number, methodName, 0, NUMBER_CAST);
+            declareIntrinsicFunction(StandardNames.FqNames.number, methodName, 0, NUMBER_CAST);
             for (PrimitiveType type : PrimitiveType.NUMBER_TYPES) {
                 declareIntrinsicFunction(type.getTypeFqName(), methodName, 0, NUMBER_CAST);
             }
@@ -139,20 +139,20 @@ public class IntrinsicMethods {
         declareBinaryOp("or", IOR);
         declareBinaryOp("xor", IXOR);
 
-        declareIntrinsicFunction(FQ_NAMES._boolean, "not", 0, new Not());
+        declareIntrinsicFunction(StandardNames.FqNames._boolean, "not", 0, new Not());
 
-        declareIntrinsicFunction(FQ_NAMES.string, "plus", 1, new Concat());
-        declareIntrinsicFunction(FQ_NAMES.string, "get", 1, new StringGetChar());
+        declareIntrinsicFunction(StandardNames.FqNames.string, "plus", 1, new Concat());
+        declareIntrinsicFunction(StandardNames.FqNames.string, "get", 1, new StringGetChar());
 
         if (canReplaceStdlibRuntimeApiBehavior) {
-            intrinsicsMap.registerIntrinsic(TEXT_PACKAGE_FQ_NAME, FQ_NAMES.string, "trimMargin", 1, new TrimMargin());
-            intrinsicsMap.registerIntrinsic(TEXT_PACKAGE_FQ_NAME, FQ_NAMES.string, "trimIndent", 0, new TrimIndent());
+            intrinsicsMap.registerIntrinsic(TEXT_PACKAGE_FQ_NAME, StandardNames.FqNames.string, "trimMargin", 1, new TrimMargin());
+            intrinsicsMap.registerIntrinsic(TEXT_PACKAGE_FQ_NAME, StandardNames.FqNames.string, "trimIndent", 0, new TrimIndent());
         }
 
-        declareIntrinsicFunction(FQ_NAMES.cloneable, "clone", 0, CLONE);
+        declareIntrinsicFunction(StandardNames.FqNames.cloneable, "clone", 0, CLONE);
 
-        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, KotlinBuiltIns.FQ_NAMES.any, "toString", 0, TO_STRING);
-        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, KotlinBuiltIns.FQ_NAMES.string, "plus", 1, STRING_PLUS);
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, StandardNames.FqNames.any, "toString", 0, TO_STRING);
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, StandardNames.FqNames.string, "plus", 1, STRING_PLUS);
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "arrayOfNulls", 1, new NewArray());
 
         for (PrimitiveType type : PrimitiveType.values()) {
@@ -197,7 +197,7 @@ public class IntrinsicMethods {
         for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
             declareArrayMethods(jvmPrimitiveType.getPrimitiveType().getArrayTypeFqName());
         }
-        declareArrayMethods(FQ_NAMES.array.toSafe());
+        declareArrayMethods(FqNames.array.toSafe());
     }
 
     private void declareArrayMethods(@NotNull FqName arrayTypeFqName) {

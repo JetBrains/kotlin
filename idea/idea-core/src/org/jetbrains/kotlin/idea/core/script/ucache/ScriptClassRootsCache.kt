@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.core.script.ucache
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.vfs.VirtualFile
@@ -20,15 +19,21 @@ import java.lang.ref.Reference
 import java.lang.ref.SoftReference
 
 class ScriptClassRootsCache(
-    val project: Project,
     private val scripts: Map<String, LightScriptInfo>,
     private val classes: Set<String>,
     private val sources: Set<String>,
     val customDefinitionsUsed: Boolean,
     val sdks: ScriptSdks
 ) {
+    companion object {
+        val EMPTY = ScriptClassRootsCache(
+            mapOf(), setOf(), setOf(), true,
+            ScriptSdks(mapOf(), setOf(), setOf())
+        )
+    }
+
     fun withUpdatedSdks(newSdks: ScriptSdks) =
-        ScriptClassRootsCache(project, scripts, classes, sources, customDefinitionsUsed, newSdks)
+        ScriptClassRootsCache(scripts, classes, sources, customDefinitionsUsed, newSdks)
 
     abstract class LightScriptInfo(val definition: ScriptDefinition?) {
         @Volatile
@@ -114,7 +119,12 @@ class ScriptClassRootsCache(
         when (old) {
             null -> FullUpdate(this)
             this -> NotChanged(this)
-            else -> IncrementalUpdates(this, hasNewRoots(old), getChangedScripts(old))
+            else -> IncrementalUpdates(
+                this,
+                this.hasNewRoots(old),
+                old.hasNewRoots(this),
+                getChangedScripts(old)
+            )
         }
 
     private fun hasNewRoots(old: ScriptClassRootsCache): Boolean {
@@ -154,20 +164,25 @@ class ScriptClassRootsCache(
     class IncrementalUpdates(
         override val cache: ScriptClassRootsCache,
         override val hasNewRoots: Boolean,
+        private val hasOldRoots: Boolean,
         private val updatedScripts: Set<String>
     ) : Updates {
         override val hasUpdatedScripts: Boolean get() = updatedScripts.isNotEmpty()
         override fun isScriptChanged(scriptPath: String) = scriptPath in updatedScripts
 
         override val changed: Boolean
-            get() = hasNewRoots || updatedScripts.isNotEmpty()
+            get() = hasNewRoots || updatedScripts.isNotEmpty() || hasOldRoots
     }
 
     class FullUpdate(override val cache: ScriptClassRootsCache) : Updates {
         override val changed: Boolean get() = true
-        override val hasNewRoots: Boolean get() = true
         override val hasUpdatedScripts: Boolean get() = true
         override fun isScriptChanged(scriptPath: String): Boolean = true
+
+        override val hasNewRoots: Boolean
+            get() {
+                return cache.allDependenciesClassFiles.isNotEmpty() || cache.allDependenciesSources.isNotEmpty()
+            }
     }
 
     class NotChanged(override val cache: ScriptClassRootsCache) : Updates {

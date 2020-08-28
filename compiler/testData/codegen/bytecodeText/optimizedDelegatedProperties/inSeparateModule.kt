@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-// TODO KT-36814 Support optimized delegated properties in JVM_IR
-
 // MODULE: lib
 // FILE: lib.kt
 package lib

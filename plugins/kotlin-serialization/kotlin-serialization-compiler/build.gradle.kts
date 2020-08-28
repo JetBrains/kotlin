@@ -16,12 +16,13 @@ dependencies {
     compileOnly(project(":compiler:ir.psi2ir"))
     compileOnly(project(":js:js.frontend"))
     compileOnly(project(":js:js.translator"))
+    compileOnly(project(":kotlin-util-klib-metadata"))
 
-    runtime(kotlinStdlib())
+    runtimeOnly(kotlinStdlib())
 
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
-    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.20.0-1.4.0-dev-5730") { isTransitive = false }
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-jvm:1.0-M1-1.4.0-rc") { isTransitive = false }
 
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
@@ -35,6 +36,12 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+    kotlinOptions {
+        freeCompilerArgs += "-Xopt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
+    }
+}
+
 runtimeJar()
 sourcesJar()
 javadocJar()
@@ -45,3 +52,4 @@ projectTest(parallel = true) {
 }
 
 apply(from = "$rootDir/gradle/kotlinPluginPublication.gradle.kts")
+

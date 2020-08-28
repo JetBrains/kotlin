@@ -44,7 +44,7 @@ inline val FirCall.argumentMapping: Map<FirExpression, FirValueParameter>?
     get() = (argumentList as? FirResolvedArgumentList)?.mapping
 
 fun FirExpression.toResolvedCallableReference(): FirResolvedNamedReference? {
-    return (this as? FirQualifiedAccess)?.calleeReference as? FirResolvedNamedReference
+    return (this as? FirResolvable)?.calleeReference as? FirResolvedNamedReference
 }
 
 fun FirExpression.toResolvedCallableSymbol(): FirCallableSymbol<*>? {

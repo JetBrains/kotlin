@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve.util
 
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.context.GlobalContextImpl
-import org.jetbrains.kotlin.idea.caches.resolve.PlatformAnalysisSettings
+import org.jetbrains.kotlin.idea.project.libraryToSourceAnalysisEnabled
 import org.jetbrains.kotlin.idea.project.useCompositeAnalysis
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.storage.ExceptionTracker
@@ -24,15 +25,15 @@ private fun GlobalContextImpl.contextWithCompositeExceptionTracker(debugName: St
 private fun GlobalContextImpl.contextWithNewLockAndCompositeExceptionTracker(debugName: String): GlobalContextImpl {
     val newExceptionTracker = CompositeExceptionTracker(this.exceptionTracker)
     return GlobalContextImpl(
-        LockBasedStorageManager.createWithExceptionHandling(debugName, newExceptionTracker) {
+        LockBasedStorageManager.createWithExceptionHandling(debugName, newExceptionTracker, {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-        },
+        }, { throw ProcessCanceledException(it) }),
         newExceptionTracker
     )
 }
 
 internal fun GlobalContextImpl.contextWithCompositeExceptionTracker(project: Project, debugName: String): GlobalContextImpl =
-    if (project.useCompositeAnalysis) {
+    if (project.useCompositeAnalysis || project.libraryToSourceAnalysisEnabled) {
         this.contextWithCompositeExceptionTracker(debugName)
     } else {
         this.contextWithNewLockAndCompositeExceptionTracker(debugName)

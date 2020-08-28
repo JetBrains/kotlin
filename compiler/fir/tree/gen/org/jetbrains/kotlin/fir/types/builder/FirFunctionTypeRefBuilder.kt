@@ -53,3 +53,19 @@ inline fun buildFunctionTypeRef(init: FirFunctionTypeRefBuilder.() -> Unit): Fir
     }
     return FirFunctionTypeRefBuilder().apply(init).build()
 }
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildFunctionTypeRefCopy(original: FirFunctionTypeRef, init: FirFunctionTypeRefBuilder.() -> Unit): FirFunctionTypeRef {
+    contract {
+        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirFunctionTypeRefBuilder()
+    copyBuilder.source = original.source
+    copyBuilder.annotations.addAll(original.annotations)
+    copyBuilder.isMarkedNullable = original.isMarkedNullable
+    copyBuilder.receiverTypeRef = original.receiverTypeRef
+    copyBuilder.valueParameters.addAll(original.valueParameters)
+    copyBuilder.returnTypeRef = original.returnTypeRef
+    copyBuilder.isSuspend = original.isSuspend
+    return copyBuilder.apply(init).build()
+}

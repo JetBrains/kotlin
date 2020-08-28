@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.RESOLUTION_ANCHOR_PROVIDER_CAPABILITY
+import org.jetbrains.kotlin.resolve.ResolutionAnchorProvider
+import org.jetbrains.kotlin.utils.checkWithAttachment
 
 abstract class AbstractResolverForProject<M : ModuleInfo>(
     private val debugName: String,
@@ -21,7 +24,8 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
     modules: Collection<M>,
     protected val fallbackModificationTracker: ModificationTracker? = null,
     private val delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
-    private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory
+    private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory,
+    protected val resolutionAnchorProvider: ResolutionAnchorProvider = ResolutionAnchorProvider.Default,
 ) : ResolverForProject<M>() {
 
     protected class ModuleData(
@@ -54,7 +58,6 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
     abstract fun modulesContent(module: M): ModuleContent<M>
     abstract fun builtInsForModule(module: M): KotlinBuiltIns
     abstract fun createResolverForModule(descriptor: ModuleDescriptor, moduleInfo: M): ResolverForModule
-
     override fun tryGetResolverForModule(moduleInfo: M): ResolverForModule? {
         if (!isCorrectModuleInfo(moduleInfo)) {
             return null
@@ -93,14 +96,43 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
 
     private fun isCorrectModuleInfo(moduleInfo: M) = moduleInfo in allModules
 
-    override fun resolverForModuleDescriptor(descriptor: ModuleDescriptor): ResolverForModule {
+    final override fun resolverForModuleDescriptor(descriptor: ModuleDescriptor): ResolverForModule {
+        val moduleResolver = resolverForModuleDescriptorImpl(descriptor)
+
+        // Please, attach exceptions from here to EA-214260 (see `resolverForModuleDescriptorImpl` comment)
+        checkWithAttachment(
+            moduleResolver != null,
+            lazyMessage = { "$descriptor is not contained in resolver $name" },
+            attachments = {
+                it.withAttachment(
+                    "resolverContents.txt",
+                    "Expected module descriptor: $descriptor\n\n${renderResolversChainContents()}"
+                )
+            }
+        )
+
+        return moduleResolver
+    }
+
+    /**
+     * We have a problem investigating EA-214260 (KT-40301), that is why we separated searching the
+     * [ResolverForModule] and reporting the problem in [resolverForModuleDescriptor] (so we can tweak the reported information more
+     * accurately).
+     *
+     * We use the fact that [ResolverForProject] have only two inheritors: [EmptyResolverForProject] and [AbstractResolverForProject].
+     * So if the [delegateResolver] is not an [EmptyResolverForProject], it has to be [AbstractResolverForProject].
+     *
+     * Knowing that, we can safely use [resolverForModuleDescriptorImpl] recursively, and get the same result
+     * as with [resolverForModuleDescriptor].
+     */
+    private fun resolverForModuleDescriptorImpl(descriptor: ModuleDescriptor): ResolverForModule? {
         return projectContext.storageManager.compute {
             val module = moduleInfoByDescriptor[descriptor]
             if (module == null) {
                 if (delegateResolver is EmptyResolverForProject<*>) {
-                    throw IllegalStateException("$descriptor is not contained in resolver $name")
+                    return@compute null
                 }
-                return@compute delegateResolver.resolverForModuleDescriptor(descriptor)
+                return@compute (delegateResolver as AbstractResolverForProject<M>).resolverForModuleDescriptorImpl(descriptor)
             }
             resolverByModuleDescriptor.getOrPut(descriptor) {
                 checkModuleIsCorrect(module)
@@ -120,6 +152,10 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
     override fun descriptorForModule(moduleInfo: M): ModuleDescriptorImpl {
         checkModuleIsCorrect(moduleInfo)
         return doGetDescriptorForModule(moduleInfo)
+    }
+
+    override fun moduleInfoForModuleDescriptor(moduleDescriptor: ModuleDescriptor): M {
+        return moduleInfoByDescriptor[moduleDescriptor] ?: delegateResolver.moduleInfoForModuleDescriptor(moduleDescriptor)
     }
 
     override fun diagnoseUnknownModuleInfo(infos: List<ModuleInfo>): Nothing {
@@ -158,6 +194,7 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
 
         val moduleData = createModuleDescriptor(module)
         descriptorByModule[module] = moduleData
+
         return moduleData
     }
 
@@ -167,13 +204,32 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
             projectContext.storageManager,
             builtInsForModule(module),
             module.platform,
-            module.capabilities,
-            module.stableName
+            module.capabilities + listOf(RESOLUTION_ANCHOR_PROVIDER_CAPABILITY to resolutionAnchorProvider),
+            module.stableName,
         )
         moduleInfoByDescriptor[moduleDescriptor] = module
         setupModuleDescriptor(module, moduleDescriptor)
         val modificationTracker = (module as? TrackableModuleInfo)?.createModificationTracker() ?: fallbackModificationTracker
         return ModuleData(moduleDescriptor, modificationTracker)
+    }
+
+    private fun renderResolversChainContents(): String {
+        val resolversChain = generateSequence(this) { it.delegateResolver as? AbstractResolverForProject<M> }
+
+        return resolversChain.joinToString("\n\n") { resolver ->
+            "Resolver: ${resolver.name}\n'moduleInfoByDescriptor' content:\n[${resolver.renderResolverModuleInfos()}]"
+        }
+    }
+
+    private fun renderResolverModuleInfos(): String = projectContext.storageManager.compute {
+        moduleInfoByDescriptor.entries.joinToString(",\n") { (descriptor, moduleInfo) ->
+            """
+            {
+                moduleDescriptor: $descriptor
+                moduleInfo: $moduleInfo
+            }
+            """.trimIndent()
+        }
     }
 }
 

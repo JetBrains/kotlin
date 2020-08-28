@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.Type
 
-val inventNamesForLocalClassesPhase = makeIrFilePhase<JvmBackendContext>(
+val inventNamesForLocalClassesPhase = makeIrFilePhase(
     { context -> InventNamesForLocalClasses(context) },
     name = "InventNamesForLocalClasses",
     description = "Invent names for local classes and anonymous objects",
@@ -86,7 +86,7 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
             declaration.acceptChildren(this, data.makeLocal())
         }
 
-        override fun visitDeclaration(declaration: IrDeclaration, data: Data) {
+        override fun visitDeclaration(declaration: IrDeclarationBase, data: Data) {
             if (declaration !is IrDeclarationWithName) {
                 declaration.acceptChildren(this, data)
                 return

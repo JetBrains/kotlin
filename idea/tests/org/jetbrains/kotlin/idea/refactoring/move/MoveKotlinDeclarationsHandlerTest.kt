@@ -51,90 +51,90 @@ class MoveKotlinDeclarationsHandlerTest : KotlinMultiFileTestCase() {
 
     fun testObjectLiteral() = doTest { rootDir, handler ->
         val objectDeclaration = getElementAtCaret(rootDir, "test.kt").getNonStrictParentOfType<KtObjectDeclaration>()!!
-        assert(!handler.canMoveCompat(arrayOf<PsiElement>(objectDeclaration), null, null))
+        assert(!handler.canMove(arrayOf<PsiElement>(objectDeclaration), null, null))
     }
 
     fun testLocalClass() = doTest { rootDir, handler ->
         val klass = getElementAtCaret(rootDir, "test.kt").getNonStrictParentOfType<KtClass>()!!
-        assert(!handler.canMoveCompat(arrayOf<PsiElement>(klass), null, null))
+        assert(!handler.canMove(arrayOf<PsiElement>(klass), null, null))
     }
 
     fun testLocalFun() = doTest { rootDir, handler ->
         val function = getElementAtCaret(rootDir, "test.kt").getNonStrictParentOfType<KtNamedFunction>()!!
-        assert(!handler.canMoveCompat(arrayOf<PsiElement>(function), null, null))
+        assert(!handler.canMove(arrayOf<PsiElement>(function), null, null))
     }
 
     fun testLocalVal() = doTest { rootDir, handler ->
         val property = getElementAtCaret(rootDir, "test.kt").getNonStrictParentOfType<KtProperty>()!!
-        assert(!handler.canMoveCompat(arrayOf<PsiElement>(property), null, null))
+        assert(!handler.canMove(arrayOf<PsiElement>(property), null, null))
     }
 
     fun testMemberFun() = doTest { rootDir, handler ->
         val function = getElementAtCaret(rootDir, "test.kt").getNonStrictParentOfType<KtNamedFunction>()!!
-        assert(!handler.canMoveCompat(arrayOf<PsiElement>(function), null, null))
+        assert(!handler.canMove(arrayOf<PsiElement>(function), null, null))
     }
 
     fun testMemberVal() = doTest { rootDir, handler ->
         val property = getElementAtCaret(rootDir, "test.kt").getNonStrictParentOfType<KtProperty>()!!
-        assert(!handler.canMoveCompat(arrayOf<PsiElement>(property), null, null))
+        assert(!handler.canMove(arrayOf<PsiElement>(property), null, null))
     }
 
     fun testNestedClass() = doTest { rootDir, handler ->
         val klass = getElementAtCaret(rootDir, "test.kt").getNonStrictParentOfType<KtClass>()!!
-        assert(handler.canMoveCompat(arrayOf<PsiElement>(klass), null, null))
+        assert(handler.canMove(arrayOf<PsiElement>(klass), null, null))
     }
 
     fun testInnerClass() = doTest { rootDir, handler ->
         val klass = getElementAtCaret(rootDir, "test.kt").getNonStrictParentOfType<KtClass>()!!
-        assert(handler.canMoveCompat(arrayOf<PsiElement>(klass), null, null))
+        assert(handler.canMove(arrayOf<PsiElement>(klass), null, null))
     }
 
     fun testTopLevelClass() = doTest { rootDir, handler ->
         val klass = getElementAtCaret(rootDir, "test.kt").getNonStrictParentOfType<KtClass>()!!
-        assert(handler.canMoveCompat(arrayOf<PsiElement>(klass), null, null))
+        assert(handler.canMove(arrayOf<PsiElement>(klass), null, null))
     }
 
     fun testTopLevelFun() = doTest { rootDir, handler ->
         val function = getElementAtCaret(rootDir, "test.kt").getNonStrictParentOfType<KtNamedFunction>()!!
-        assert(handler.canMoveCompat(arrayOf<PsiElement>(function), null, null))
+        assert(handler.canMove(arrayOf<PsiElement>(function), null, null))
     }
 
     fun testTopLevelVal() = doTest { rootDir, handler ->
         val property = getElementAtCaret(rootDir, "test.kt").getNonStrictParentOfType<KtProperty>()!!
-        assert(handler.canMoveCompat(arrayOf<PsiElement>(property), null, null))
+        assert(handler.canMove(arrayOf<PsiElement>(property), null, null))
     }
 
     fun testMultipleNestedClasses() = doTest { rootDir, handler ->
         val classes = getElementsAtCarets(rootDir, "test.kt").map { it.getNonStrictParentOfType<KtClass>()!! }
-        assert(handler.canMoveCompat(classes.toTypedArray(), null, null))
+        assert(handler.canMove(classes.toTypedArray(), null, null))
     }
 
     fun testNestedAndTopLevelClass() = doTest { rootDir, handler ->
         val classes = getElementsAtCarets(rootDir, "test.kt").map { it.getNonStrictParentOfType<KtClass>()!! }
-        assert(!handler.canMoveCompat(classes.toTypedArray(), null, null))
+        assert(!handler.canMove(classes.toTypedArray(), null, null))
     }
 
     fun testMultipleTopLevelDeclarations() = doTest { rootDir, handler ->
         val declarations = getElementsAtCarets(rootDir, "test.kt").map { it.getNonStrictParentOfType<KtNamedDeclaration>()!! }
-        assert(handler.canMoveCompat(declarations.toTypedArray(), null, null))
+        assert(handler.canMove(declarations.toTypedArray(), null, null))
     }
 
     fun testMultipleTopLevelDeclarationsInDifferentFiles() = doTest { rootDir, handler ->
         val declarations = listOf("test.kt", "test2.kt").flatMap { getElementsAtCarets(rootDir, it) }
             .map { it.getNonStrictParentOfType<KtNamedDeclaration>()!! }
-        assert(handler.canMoveCompat(declarations.toTypedArray(), null, null))
+        assert(handler.canMove(declarations.toTypedArray(), null, null))
 
         val files = listOf("test.kt", "test2.kt").map { getPsiFile(rootDir, it) }
-        assert(handler.canMoveCompat(files.toTypedArray(), null, null))
+        assert(handler.canMove(files.toTypedArray(), null, null))
     }
 
     fun testMultipleTopLevelDeclarationsInDifferentDirs() = doTest { rootDir, handler ->
         val declarations = listOf("test1/test.kt", "test2/test2.kt").flatMap { getElementsAtCarets(rootDir, it) }
             .map { it.getNonStrictParentOfType<KtNamedDeclaration>()!! }
-        assert(!handler.canMoveCompat(declarations.toTypedArray(), null, null))
+        assert(!handler.canMove(declarations.toTypedArray(), null, null))
 
         val files = listOf("test1/test.kt", "test2/test2.kt").map { getPsiFile(rootDir, it) }
-        assert(!handler.canMoveCompat(files.toTypedArray(), null, null))
+        assert(!handler.canMove(files.toTypedArray(), null, null))
     }
 
     fun testFileAndTopLevelDeclarations() = doTest { rootDir, handler ->
@@ -142,20 +142,20 @@ class MoveKotlinDeclarationsHandlerTest : KotlinMultiFileTestCase() {
             rootDir,
             "test2.kt"
         )
-        assert(!handler.canMoveCompat(elements.toTypedArray(), null, null))
+        assert(!handler.canMove(elements.toTypedArray(), null, null))
     }
 
     fun testCommonTargets() = doTest { rootDir, handler ->
         val elementsToMove = arrayOf<PsiElement>(getElementAtCaret(rootDir, "test.kt").getNonStrictParentOfType<KtClass>()!!)
 
         val targetPackage = JavaPsiFacade.getInstance(project).findPackage("pack")!!
-        assert(handler.canMoveCompat(elementsToMove, targetPackage, null))
+        assert(handler.canMove(elementsToMove, targetPackage, null))
 
         val targetDirectory = getPsiDirectory(rootDir, "pack")
-        assert(handler.canMoveCompat(elementsToMove, targetDirectory, null))
+        assert(handler.canMove(elementsToMove, targetDirectory, null))
 
         val targetFile = getPsiFile(rootDir, "pack/test2.kt")
-        assert(handler.canMoveCompat(elementsToMove, targetFile, null))
+        assert(handler.canMove(elementsToMove, targetFile, null))
     }
 
     fun testTopLevelClassToClass() = doTest { rootDir, handler ->
@@ -164,14 +164,14 @@ class MoveKotlinDeclarationsHandlerTest : KotlinMultiFileTestCase() {
 
         val topLevelTarget = targetFile.declarations.firstIsInstance<KtClass>()
         assert(topLevelTarget.name == "B")
-        assert(!handler.canMoveCompat(elementsToMove, topLevelTarget, null))
+        assert(!handler.canMove(elementsToMove, topLevelTarget, null))
 
         val annotationTarget = targetFile.declarations.first { it.name == "Ann" } as KtClass
-        assert(!handler.canMoveCompat(elementsToMove, annotationTarget, null))
+        assert(!handler.canMove(elementsToMove, annotationTarget, null))
 
         val nestedTarget = topLevelTarget.declarations.firstIsInstance<KtClass>()
         assert(nestedTarget.name == "C")
-        assert(!handler.canMoveCompat(elementsToMove, nestedTarget, null))
+        assert(!handler.canMove(elementsToMove, nestedTarget, null))
     }
 
     fun testNestedClassToClass() = doTest { rootDir, handler ->
@@ -180,33 +180,33 @@ class MoveKotlinDeclarationsHandlerTest : KotlinMultiFileTestCase() {
 
         val topLevelTarget = targetFile.declarations.firstIsInstance<KtClass>()
         assert(topLevelTarget.name == "B")
-        assert(handler.canMoveCompat(elementsToMove, topLevelTarget, null))
+        assert(handler.canMove(elementsToMove, topLevelTarget, null))
 
         val annotationTarget = targetFile.declarations.first { it.name == "Ann" } as KtClass
-        assert(!handler.canMoveCompat(elementsToMove, annotationTarget, null))
+        assert(!handler.canMove(elementsToMove, annotationTarget, null))
 
         val nestedTarget = topLevelTarget.declarations.firstIsInstance<KtClass>()
         assert(nestedTarget.name == "C")
-        assert(handler.canMoveCompat(elementsToMove, nestedTarget, null))
+        assert(handler.canMove(elementsToMove, nestedTarget, null))
     }
 
     fun testTypeAlias() = doTest { rootDir, handler ->
         val typeAlias = getElementAtCaret(rootDir, "test.kt").getNonStrictParentOfType<KtTypeAlias>()!!
-        assert(handler.canMoveCompat(arrayOf<PsiElement>(typeAlias), null, null))
+        assert(handler.canMove(arrayOf<PsiElement>(typeAlias), null, null))
     }
 
     fun testTopLevelClassInScript() = doTest { rootDir, handler ->
         val klass = getElementAtCaret(rootDir, "test.kts").getNonStrictParentOfType<KtClass>()!!
-        assert(handler.canMoveCompat(arrayOf<PsiElement>(klass), null, null))
+        assert(handler.canMove(arrayOf<PsiElement>(klass), null, null))
     }
 
     fun testTopLevelFunInScript() = doTest { rootDir, handler ->
         val function = getElementAtCaret(rootDir, "test.kts").getNonStrictParentOfType<KtNamedFunction>()!!
-        assert(handler.canMoveCompat(arrayOf<PsiElement>(function), null, null))
+        assert(handler.canMove(arrayOf<PsiElement>(function), null, null))
     }
 
     fun testTopLevelValInScript() = doTest { rootDir, handler ->
         val property = getElementAtCaret(rootDir, "test.kts").getNonStrictParentOfType<KtProperty>()!!
-        assert(handler.canMoveCompat(arrayOf<PsiElement>(property), null, null))
+        assert(handler.canMove(arrayOf<PsiElement>(property), null, null))
     }
 }

@@ -13,11 +13,14 @@ import kotlin.coroutines.intrinsics.createCoroutineUnintercepted
 import kotlin.coroutines.resume
 
 class ResolutionStageRunner(val components: InferenceComponents) {
-    fun processCandidate(candidate: Candidate): CandidateApplicability {
-        val sink = CheckerSinkImpl(components)
+    fun processCandidate(candidate: Candidate, stopOnFirstError: Boolean = true): CandidateApplicability {
+        val sink = CheckerSinkImpl(components, stopOnFirstError = stopOnFirstError)
+        with (candidate.bodyResolveComponents) { candidate.symbol.phasedFir }
         var finished = false
         sink.continuation = suspend {
-            for (stage in candidate.callInfo.callKind.resolutionSequence) {
+            candidate.callInfo.callKind.resolutionSequence.forEachIndexed { index, stage ->
+                if (index < candidate.passedStages) return@forEachIndexed
+                candidate.passedStages++
                 stage.check(candidate, sink, candidate.callInfo)
             }
         }.createCoroutineUnintercepted(completion = object : Continuation<Unit> {

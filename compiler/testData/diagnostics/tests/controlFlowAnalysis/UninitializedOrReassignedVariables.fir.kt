@@ -9,13 +9,13 @@ fun doSmth(i: Int) {}
 
 fun t1(b : Boolean) {
     val v : Int
-    if (v == 0) {}
+    if (<!UNINITIALIZED_VARIABLE!>v<!> == 0) {}
 
     var u: String
     if (b) {
         u = "s"
     }
-    doSmth(u)
+    doSmth(<!UNINITIALIZED_VARIABLE!>u<!>)
 
     var r: String
     if (b) {
@@ -28,10 +28,10 @@ fun t1(b : Boolean) {
 
     var t: String
     if (b)
-        doSmth(t)
+        doSmth(<!UNINITIALIZED_VARIABLE!>t<!>)
     else
         t = "ss"
-    doSmth(t) //repeat for t
+    doSmth(<!UNINITIALIZED_VARIABLE!>t<!>) //repeat for t
 
     val i = 3
     doSmth(i)
@@ -207,7 +207,7 @@ class LocalValsVsProperties(val a: Int, w: Int) : Open(a, w) {
         val r : Int
         doSmth(x)
         doSmth(y)
-        doSmth(r)
+        doSmth(<!UNINITIALIZED_VARIABLE!>r<!>)
         doSmth(a)
     }
     var xx = w
@@ -257,7 +257,7 @@ class ClassObject() {
 
         fun foo() {
             val a : Int
-            doSmth(a)
+            doSmth(<!UNINITIALIZED_VARIABLE!>a<!>)
         }
     }
 }
@@ -317,7 +317,7 @@ object TestObjectDeclaration {
         if (1 < 3) {
             i = 10
         }
-        doSmth(i)
+        doSmth(<!UNINITIALIZED_VARIABLE!>i<!>)
     }
 }
 

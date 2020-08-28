@@ -1,0 +1,24 @@
+plugins {
+    id("org.jetbrains.kotlin.js") version "<pluginMarkerVersion>"
+}
+
+repositories {
+    mavenLocal()
+    jcenter()
+}
+
+kotlin {
+    js {
+        nodejs()
+    }
+
+    sourceSets {
+        main {
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-stdlib-js")
+                implementation(npm("left-pad", "1.3.0"))
+                implementation(npm("decamelize", "4.0.0", true))
+            }
+        }
+    }
+}

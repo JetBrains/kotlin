@@ -10,7 +10,8 @@ import kotlin.internal.PlatformImplementations
 
 internal open class JDK7PlatformImplementations : PlatformImplementations() {
 
-    override fun addSuppressed(cause: Throwable, exception: Throwable) = cause.addSuppressed(exception)
+    @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+    override fun addSuppressed(cause: Throwable, exception: Throwable) = (cause as java.lang.Throwable).addSuppressed(exception)
 
     override fun getSuppressed(exception: Throwable): List<Throwable> = exception.suppressed.asList()
 }

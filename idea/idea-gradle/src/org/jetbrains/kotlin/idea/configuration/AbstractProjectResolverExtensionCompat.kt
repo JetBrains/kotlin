@@ -11,10 +11,10 @@ import com.intellij.openapi.externalSystem.model.project.ProjectData
 import org.gradle.tooling.model.idea.IdeaModule
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 
-// BUNCH: 193
+// FIX ME WHEN BUNCH 193 REMOVED
 abstract class AbstractProjectResolverExtensionCompat : AbstractProjectResolverExtension() {
-    override fun createModule(gradleModule: IdeaModule, projectDataNode: DataNode<ProjectData>): DataNode<ModuleData> {
-        return super.createModule(gradleModule, projectDataNode).also {
+    override fun createModule(gradleModule: IdeaModule, projectDataNode: DataNode<ProjectData>): DataNode<ModuleData>? {
+        return super.createModule(gradleModule, projectDataNode)?.also {
             initializeModuleNode(gradleModule, it, projectDataNode)
         }
     }

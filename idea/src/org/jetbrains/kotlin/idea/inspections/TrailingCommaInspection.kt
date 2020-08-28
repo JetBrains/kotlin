@@ -18,8 +18,13 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.formatter.*
+import org.jetbrains.kotlin.idea.formatter.TrailingCommaVisitor
+import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
+import org.jetbrains.kotlin.idea.formatter.trailingComma.*
+import org.jetbrains.kotlin.idea.formatter.trailingCommaAllowedInModule
+import org.jetbrains.kotlin.idea.util.isComma
 import org.jetbrains.kotlin.idea.util.isLineBreak
+import org.jetbrains.kotlin.idea.util.leafIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.*
 import javax.swing.JComponent
@@ -27,21 +32,25 @@ import kotlin.properties.Delegates
 
 class TrailingCommaInspection(
     @JvmField
-    var addCommaWarning: Boolean = false,
+    var addCommaWarning: Boolean = false
 ) : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor = object : TrailingCommaVisitor() {
         override val recursively: Boolean = false
         private var useTrailingComma by Delegates.notNull<Boolean>()
 
-        override fun process(commaOwner: KtElement) {
-            useTrailingComma = CodeStyle.getSettings(commaOwner.project).kotlinCustomSettings.ALLOW_TRAILING_COMMA
-            val action = TrailingCommaAction.create(commaOwner)
-            if (action != TrailingCommaAction.REMOVE) {
-                checkCommaPosition(commaOwner)
-                checkLineBreaks(commaOwner)
+        override fun process(trailingCommaContext: TrailingCommaContext) {
+            val element = trailingCommaContext.ktElement
+            val kotlinCustomSettings = CodeStyle.getSettings(element.project).kotlinCustomSettings
+            useTrailingComma = kotlinCustomSettings.addTrailingCommaIsAllowedFor(element)
+            when (trailingCommaContext.state) {
+                TrailingCommaState.MISSING, TrailingCommaState.EXISTS -> {
+                    checkCommaPosition(element)
+                    checkLineBreaks(element)
+                }
+                else -> Unit
             }
 
-            checkTrailingComma(commaOwner, action)
+            checkTrailingComma(trailingCommaContext)
         }
 
         private fun checkLineBreaks(commaOwner: KtElement) {
@@ -72,25 +81,29 @@ class TrailingCommaInspection(
             }
         }
 
-        private fun checkTrailingComma(commaOwner: KtElement, action: TrailingCommaAction) {
+        private fun checkTrailingComma(trailingCommaContext: TrailingCommaContext) {
+            val commaOwner = trailingCommaContext.ktElement
             val trailingCommaOrLastElement = TrailingCommaHelper.trailingCommaOrLastElement(commaOwner) ?: return
-            if (action == TrailingCommaAction.ADD) {
-                if (!TrailingCommaHelper.trailingCommaAllowedInModule(commaOwner) || trailingCommaOrLastElement.isComma) return
-                reportProblem(
-                    trailingCommaOrLastElement,
-                    KotlinBundle.message("inspection.trailing.comma.missing.trailing.comma"),
-                    KotlinBundle.message("inspection.trailing.comma.add.trailing.comma"),
-                    if (addCommaWarning) ProblemHighlightType.GENERIC_ERROR_OR_WARNING else ProblemHighlightType.INFORMATION,
-                )
-            } else if (action == TrailingCommaAction.REMOVE) {
-                if (!trailingCommaOrLastElement.isComma) return
-                reportProblem(
-                    trailingCommaOrLastElement,
-                    KotlinBundle.message("inspection.trailing.comma.useless.trailing.comma"),
-                    KotlinBundle.message("inspection.trailing.comma.remove.trailing.comma"),
-                    ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                    checkTrailingCommaSettings = false,
-                )
+            when (trailingCommaContext.state) {
+                TrailingCommaState.MISSING -> {
+                    if (!trailingCommaAllowedInModule(commaOwner)) return
+                    reportProblem(
+                        trailingCommaOrLastElement,
+                        KotlinBundle.message("inspection.trailing.comma.missing.trailing.comma"),
+                        KotlinBundle.message("inspection.trailing.comma.add.trailing.comma"),
+                        if (addCommaWarning) ProblemHighlightType.GENERIC_ERROR_OR_WARNING else ProblemHighlightType.INFORMATION,
+                    )
+                }
+                TrailingCommaState.REDUNDANT -> {
+                    reportProblem(
+                        trailingCommaOrLastElement,
+                        KotlinBundle.message("inspection.trailing.comma.useless.trailing.comma"),
+                        KotlinBundle.message("inspection.trailing.comma.remove.trailing.comma"),
+                        ProblemHighlightType.LIKE_UNUSED_SYMBOL,
+                        checkTrailingCommaSettings = false,
+                    )
+                }
+                else -> Unit
             }
         }
 
@@ -147,6 +160,7 @@ class TrailingCommaInspection(
                 val range = createFormatterTextRange(element)
                 val settings = CodeStyle.getSettings(project).clone()
                 settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA = true
+                settings.kotlinCustomSettings.ALLOW_TRAILING_COMMA_ON_CALL_SITE = true
                 CodeStyle.doWithTemporarySettings(project, settings) {
                     CodeStyleManager.getInstance(project).reformatRange(element, range.startOffset, range.endOffset)
                 }
@@ -174,17 +188,5 @@ class TrailingCommaInspection(
         val panel = MultipleCheckboxOptionsPanel(this)
         panel.addCheckbox(KotlinBundle.message("inspection.trailing.comma.report.also.a.missing.comma"), "addCommaWarning")
         return panel
-    }
-}
-
-private enum class TrailingCommaAction {
-    ADD, REFORMAT, REMOVE;
-
-    companion object {
-        fun create(commaOwner: KtElement): TrailingCommaAction = when {
-            TrailingCommaHelper.needComma(commaOwner, null, checkExistingTrailingComma = false) -> ADD
-            TrailingCommaHelper.needComma(commaOwner, null, checkExistingTrailingComma = true) -> REFORMAT
-            else -> REMOVE
-        }
     }
 }

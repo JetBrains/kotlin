@@ -23,6 +23,7 @@ import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import junit.framework.TestCase
 import org.jetbrains.jps.model.java.JavaResourceRootType
@@ -55,7 +56,6 @@ import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.*
-import java.util.*
 
 internal fun GradleImportingTestCase.facetSettings(moduleName: String) = KotlinFacet.get(getModule(moduleName))!!.configuration.settings
 
@@ -86,26 +86,26 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         importProject()
 
         with(facetSettings) {
-            Assert.assertEquals("1.1", languageLevel!!.versionString)
-            Assert.assertEquals("1.1", apiLevel!!.versionString)
+            Assert.assertEquals("1.3", languageLevel!!.versionString)
+            Assert.assertEquals("1.3", apiLevel!!.versionString)
             Assert.assertFalse(compilerArguments!!.autoAdvanceLanguageVersion)
             Assert.assertFalse(compilerArguments!!.autoAdvanceApiVersion)
             Assert.assertEquals(JvmPlatforms.jvm18, targetPlatform)
             Assert.assertEquals("1.7", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals(
-                "-Xdump-declarations-to=tmp -Xsingle-module",
+                "-Xallow-no-source-files -Xdump-declarations-to=tmp -Xsingle-module",
                 compilerSettings!!.additionalArguments
             )
         }
         with(testFacetSettings) {
-            Assert.assertEquals("1.1", languageLevel!!.versionString)
+            Assert.assertEquals("1.3", languageLevel!!.versionString)
             Assert.assertEquals("1.0", apiLevel!!.versionString)
             Assert.assertFalse(compilerArguments!!.autoAdvanceLanguageVersion)
             Assert.assertFalse(compilerArguments!!.autoAdvanceApiVersion)
             Assert.assertEquals(JvmPlatforms.jvm16, targetPlatform)
             Assert.assertEquals("1.6", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals(
-                "-Xdump-declarations-to=tmpTest",
+                "-Xallow-no-source-files -Xdump-declarations-to=tmpTest",
                 compilerSettings!!.additionalArguments
             )
         }
@@ -139,120 +139,32 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
-    fun testJvmImport_1_1_2() {
-        configureByFiles()
-        importProject()
-
-        with(facetSettings) {
-            Assert.assertEquals("1.1", languageLevel!!.versionString)
-            Assert.assertEquals("1.1", apiLevel!!.versionString)
-            Assert.assertEquals(JvmPlatforms.jvm18, targetPlatform)
-            Assert.assertEquals("1.7", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
-            Assert.assertEquals(
-                "-Xdump-declarations-to=tmp -Xsingle-module",
-                compilerSettings!!.additionalArguments
-            )
-        }
-        with(testFacetSettings) {
-            Assert.assertEquals("1.1", languageLevel!!.versionString)
-            Assert.assertEquals("1.0", apiLevel!!.versionString)
-            Assert.assertEquals(JvmPlatforms.jvm16, targetPlatform)
-            Assert.assertEquals("1.6", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
-            Assert.assertEquals(
-                "-Xdump-declarations-to=tmpTest",
-                compilerSettings!!.additionalArguments
-            )
-        }
-
-        Assert.assertEquals(
-            listOf(
-                "file:///src/main/java" to JavaSourceRootType.SOURCE,
-                "file:///src/main/kotlin" to JavaSourceRootType.SOURCE,
-                "file:///src/main/resources" to JavaResourceRootType.RESOURCE
-            ),
-            getSourceRootInfos("project_main")
-        )
-        Assert.assertEquals(
-            listOf(
-                "file:///src/test/java" to JavaSourceRootType.TEST_SOURCE,
-                "file:///src/test/kotlin" to JavaSourceRootType.TEST_SOURCE,
-                "file:///src/test/resources" to JavaResourceRootType.TEST_RESOURCE
-            ),
-            getSourceRootInfos("project_test")
-        )
-    }
-
-    @Test
     fun testJvmImportWithCustomSourceSets() {
         configureByFiles()
         importProject()
 
         with(facetSettings("project_myMain")) {
-            Assert.assertEquals("1.1", languageLevel!!.versionString)
-            Assert.assertEquals("1.1", apiLevel!!.versionString)
+            Assert.assertEquals("1.3", languageLevel!!.versionString)
+            Assert.assertEquals("1.3", apiLevel!!.versionString)
             Assert.assertEquals(JvmPlatforms.jvm18, targetPlatform)
             Assert.assertEquals("1.7", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals(
-                "-Xdump-declarations-to=tmp -Xsingle-module",
+                "-Xallow-no-source-files -Xdump-declarations-to=tmp -Xsingle-module",
                 compilerSettings!!.additionalArguments
             )
         }
         with(facetSettings("project_myTest")) {
-            Assert.assertEquals("1.1", languageLevel!!.versionString)
+            Assert.assertEquals("1.3", languageLevel!!.versionString)
             Assert.assertEquals("1.0", apiLevel!!.versionString)
             Assert.assertEquals(JvmPlatforms.jvm16, targetPlatform)
             Assert.assertEquals("1.6", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
             Assert.assertEquals(
-                "-Xdump-declarations-to=tmpTest",
+                "-Xallow-no-source-files -Xdump-declarations-to=tmpTest",
                 compilerSettings!!.additionalArguments
             )
         }
 
         assertAllModulesConfigured()
-
-        Assert.assertEquals(
-            listOf(
-                "file:///src/main/java" to JavaSourceRootType.SOURCE,
-                "file:///src/main/kotlin" to JavaSourceRootType.SOURCE,
-                "file:///src/main/resources" to JavaResourceRootType.RESOURCE
-            ),
-            getSourceRootInfos("project_main")
-        )
-        Assert.assertEquals(
-            listOf(
-                "file:///src/test/java" to JavaSourceRootType.TEST_SOURCE,
-                "file:///src/test/kotlin" to JavaSourceRootType.TEST_SOURCE,
-                "file:///src/test/resources" to JavaResourceRootType.TEST_RESOURCE
-            ),
-            getSourceRootInfos("project_test")
-        )
-    }
-
-    @Test
-    fun testJvmImportWithCustomSourceSets_1_1_2() {
-        configureByFiles()
-        importProject()
-
-        with(facetSettings("project_myMain")) {
-            Assert.assertEquals("1.1", languageLevel!!.versionString)
-            Assert.assertEquals("1.1", apiLevel!!.versionString)
-            Assert.assertEquals(JvmPlatforms.jvm18, targetPlatform)
-            Assert.assertEquals("1.7", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
-            Assert.assertEquals(
-                "-Xdump-declarations-to=tmp -Xsingle-module",
-                compilerSettings!!.additionalArguments
-            )
-        }
-        with(facetSettings("project_myTest")) {
-            Assert.assertEquals("1.1", languageLevel!!.versionString)
-            Assert.assertEquals("1.0", apiLevel!!.versionString)
-            Assert.assertEquals(JvmPlatforms.jvm16, targetPlatform)
-            Assert.assertEquals("1.6", (compilerArguments as K2JVMCompilerArguments).jvmTarget)
-            Assert.assertEquals(
-                "-Xdump-declarations-to=tmpTest",
-                compilerSettings!!.additionalArguments
-            )
-        }
 
         Assert.assertEquals(
             listOf(
@@ -457,8 +369,8 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         importProject()
 
         with(facetSettings) {
-            Assert.assertEquals("1.1", languageLevel!!.versionString)
-            Assert.assertEquals("1.1", apiLevel!!.versionString)
+            Assert.assertEquals("1.3", languageLevel!!.versionString)
+            Assert.assertEquals("1.3", apiLevel!!.versionString)
             Assert.assertEquals(JvmPlatforms.jvm16, targetPlatform)
         }
 
@@ -547,42 +459,13 @@ class GradleFacetImportTest : GradleImportingTestCase() {
     }
 
     @Test
-    @TargetVersions("4.9")
-    fun testCommonImportByPlatformPlugin_SingleModule() {
-        configureByFiles()
-        importProjectUsingSingeModulePerGradleProject()
-
-        with(facetSettings("project")) {
-            Assert.assertEquals("1.1", languageLevel!!.versionString)
-            Assert.assertEquals("1.1", apiLevel!!.versionString)
-            Assert.assertTrue(targetPlatform.isCommon())
-        }
-
-        val rootManager = ModuleRootManager.getInstance(getModule("project"))
-        val stdlib = rootManager.orderEntries.filterIsInstance<LibraryOrderEntry>().mapTo(HashSet()) { it.library }.single()
-        assertEquals(CommonLibraryKind, (stdlib as LibraryEx).kind)
-
-        Assert.assertEquals(
-            listOf(
-                "file:///src/main/java" to SourceKotlinRootType,
-                "file:///src/main/kotlin" to SourceKotlinRootType,
-                "file:///src/test/java" to TestSourceKotlinRootType,
-                "file:///src/test/kotlin" to TestSourceKotlinRootType,
-                "file:///src/main/resources" to ResourceKotlinRootType,
-                "file:///src/test/resources" to TestResourceKotlinRootType
-            ),
-            getSourceRootInfos("project")
-        )
-    }
-
-    @Test
     fun testJvmImportByKotlinPlugin() {
         configureByFiles()
         importProject()
 
         with(facetSettings) {
-            Assert.assertEquals("1.1", languageLevel!!.versionString)
-            Assert.assertEquals("1.1", apiLevel!!.versionString)
+            Assert.assertEquals("1.3", languageLevel!!.versionString)
+            Assert.assertEquals("1.3", apiLevel!!.versionString)
             Assert.assertEquals(JvmPlatforms.jvm16, targetPlatform)
         }
 
@@ -638,7 +521,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
         with(facetSettings) {
             Assert.assertEquals(
-                listOf("-Xbuild-file=module with spaces"),
+                listOf("-Xallow-no-source-files", "-Xbuild-file=module with spaces"),
                 compilerSettings!!.additionalArgumentsAsList
             )
         }
@@ -759,10 +642,12 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
     @Test
     fun testJDKImport() {
+        val mockJdkPath = "compiler/testData/mockJDK"
         object : WriteAction<Unit>() {
             override fun run(result: Result<Unit>) {
-                val jdk = JavaSdk.getInstance().createJdk("myJDK", "my/path/to/jdk")
+                val jdk = JavaSdk.getInstance().createJdk("myJDK", mockJdkPath)
                 getProjectJdkTableSafe().addJdk(jdk)
+                ProjectRootManager.getInstance(myProject).projectSdk = jdk
             }
         }.execute()
 
@@ -773,12 +658,13 @@ class GradleFacetImportTest : GradleImportingTestCase() {
             val moduleSDK = ModuleRootManager.getInstance(getModule("project_main")).sdk!!
             Assert.assertTrue(moduleSDK.sdkType is JavaSdk)
             Assert.assertEquals("myJDK", moduleSDK.name)
-            Assert.assertEquals("my/path/to/jdk", moduleSDK.homePath)
+            Assert.assertEquals(mockJdkPath, moduleSDK.homePath)
         } finally {
             object : WriteAction<Unit>() {
                 override fun run(result: Result<Unit>) {
                     val jdkTable = getProjectJdkTableSafe()
                     jdkTable.removeJdk(jdkTable.findJdk("myJDK")!!)
+                    ProjectRootManager.getInstance(myProject).projectSdk = null
                 }
             }.execute()
         }
@@ -813,8 +699,8 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         importProject()
 
         with(facetSettings) {
-            Assert.assertEquals("1.1", languageLevel!!.versionString)
-            Assert.assertEquals("1.1", apiLevel!!.versionString)
+            Assert.assertEquals("1.3", languageLevel!!.versionString)
+            Assert.assertEquals("1.3", apiLevel!!.versionString)
         }
 
         assertAllModulesConfigured()
@@ -831,8 +717,8 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         importProject()
 
         with(facetSettings) {
-            Assert.assertEquals("1.1", languageLevel!!.versionString)
-            Assert.assertEquals("1.1", apiLevel!!.versionString)
+            Assert.assertEquals("1.3", languageLevel!!.versionString)
+            Assert.assertEquals("1.3", apiLevel!!.versionString)
         }
 
         assertAllModulesConfigured()
@@ -871,6 +757,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
         Assert.assertEquals(
             listOf(
+                "file:///src/main/java" to SourceKotlinRootType,
                 "file:///src/main/kotlin" to SourceKotlinRootType,
                 "file:///src/main/resources" to ResourceKotlinRootType
             ),
@@ -878,6 +765,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         )
         Assert.assertEquals(
             listOf(
+                "file:///src/test/java" to TestSourceKotlinRootType,
                 "file:///src/test/kotlin" to TestSourceKotlinRootType,
                 "file:///src/test/resources" to TestResourceKotlinRootType
             ),
@@ -890,13 +778,13 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         configureByFiles()
         importProject()
 
-        // Version is indeed 1.2
-        Assert.assertEquals(LanguageVersion.KOTLIN_1_2, facetSettings.languageLevel)
+        // Version is indeed 1.3
+        Assert.assertEquals(LanguageVersion.KOTLIN_1_3, facetSettings.languageLevel)
 
         // We haven't lost internal argument during importing to facet
-        Assert.assertEquals("-XXLanguage:+InlineClasses", facetSettings.compilerSettings?.additionalArguments)
+        Assert.assertEquals("-Xallow-no-source-files -XXLanguage:+InlineClasses", facetSettings.compilerSettings?.additionalArguments)
 
-        // Inline classes are enabled even though LV = 1.2
+        // Inline classes are enabled even though LV = 1.3
         Assert.assertEquals(
             LanguageFeature.State.ENABLED,
             getModule("project_main").languageVersionSettings.getFeatureSupport(LanguageFeature.InlineClasses)
@@ -934,7 +822,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         importProject()
 
         Assert.assertEquals(
-            "-version",
+            "-Xallow-no-source-files",
             testFacetSettings.compilerSettings!!.additionalArguments
         )
 
@@ -951,7 +839,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
 
         importProject()
 
-        TestCase.assertEquals("1.2", holder.settings.languageVersion)
+        TestCase.assertEquals("1.3", holder.settings.languageVersion)
     }
 
     @Test

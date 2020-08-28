@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.util.statements
 
@@ -44,12 +44,6 @@ private fun createParameterMapping(source: IrFunction, target: IrFunction): Map<
     return sourceParameters.zip(targetParameters).toMap()
 }
 
-fun IrFunction.copyBodyTo(target: IrFunction): IrBody? =
-    copyBodyTo(target, createParameterMapping(this, target))
-
-fun IrFunction.copyBodyTo(target: IrFunction, arguments: Map<IrValueParameter, IrValueDeclaration>): IrBody? =
-    body?.deepCopyWithSymbols(target)?.move(this, target, target.symbol, arguments)
-
 fun IrFunction.moveBodyTo(target: IrFunction): IrBody? =
     moveBodyTo(target, createParameterMapping(this, target))
 
@@ -77,7 +71,7 @@ private fun IrBody.move(
         return super.visitBlock(expression)
     }
 
-    override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
+    override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
         if (declaration.parent == source)
             declaration.parent = target
         return super.visitDeclaration(declaration)
@@ -86,6 +80,7 @@ private fun IrBody.move(
 
 // TODO use a generic inliner (e.g. JS/Native's FunctionInlining.Inliner)
 // Inline simple function calls without type parameters, default parameters, or varargs.
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrFunction.inline(target: IrDeclarationParent, arguments: List<IrValueDeclaration> = listOf()): IrReturnableBlock =
     IrReturnableBlockImpl(startOffset, endOffset, returnType, IrReturnableBlockSymbolImpl(descriptor), null, symbol).apply {
         statements += body!!.move(this@inline, target, symbol, valueParameters.zip(arguments).toMap()).statements

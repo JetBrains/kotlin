@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public final class Foo {
+    // source: 'inlineReified.kt'
     public method <init>(): void
     public final method bar(): void
     public synthetic final method baz(): void
@@ -7,6 +8,7 @@ public final class Foo {
 
 @kotlin.Metadata
 public final class InlineReifiedKt {
+    // source: 'inlineReified.kt'
     public final static method bar(): void
     public synthetic final static method baz(): void
 }

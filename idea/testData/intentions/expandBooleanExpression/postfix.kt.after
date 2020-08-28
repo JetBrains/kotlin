@@ -1,0 +1,7 @@
+fun test(b: Boolean?): Boolean {
+    return if (b!!) {
+        true
+    } else {
+        false
+    }
+}

@@ -264,6 +264,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         private ReceiverParameterDescriptor dispatchReceiverParameter = PropertyDescriptorImpl.this.dispatchReceiverParameter;
         private List<TypeParameterDescriptor> newTypeParameters = null;
         private Name name = getName();
+        private KotlinType returnType = getType();
 
         @NotNull
         @Override
@@ -283,6 +284,13 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         @Override
         public CopyConfiguration setPreserveSourceElement() {
             preserveSourceElement = true;
+            return this;
+        }
+
+        @NotNull
+        @Override
+        public CopyBuilder<PropertyDescriptor> setReturnType(@NotNull KotlinType type) {
+            returnType = type;
             return this;
         }
 
@@ -386,7 +394,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
                 originalTypeParameters, copyConfiguration.substitution, substitutedDescriptor, substitutedTypeParameters
         );
 
-        KotlinType originalOutType = getType();
+        KotlinType originalOutType = copyConfiguration.returnType;
         KotlinType outType = substitutor.substitute(originalOutType, Variance.OUT_VARIANCE);
         if (outType == null) {
             return null; // TODO : tell the user that the property was projected out

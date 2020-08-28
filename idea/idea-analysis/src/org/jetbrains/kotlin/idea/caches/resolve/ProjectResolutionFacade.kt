@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
@@ -51,9 +52,11 @@ internal class ProjectResolutionFacade(
         get() = globalContext.storageManager.compute { cachedValue.value }
 
     private val analysisResultsLock = ReentrantLock()
-    private val analysisResultsSimpleLock = CancellableSimpleLock(analysisResultsLock) {
-        ProgressManager.checkCanceled()
-    }
+    private val analysisResultsSimpleLock = CancellableSimpleLock(analysisResultsLock,
+                                                                  checkCancelled = {
+                                                                      ProgressManager.checkCanceled()
+                                                                  },
+                                                                  interruptedExceptionHandler = { throw ProcessCanceledException(it) })
 
     private val analysisResults = CachedValuesManager.getManager(project).createCachedValue(
         {
@@ -145,6 +148,8 @@ internal class ProjectResolutionFacade(
     internal fun findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo): ModuleDescriptor {
         return cachedResolverForProject.descriptorForModule(ideaModuleInfo)
     }
+    
+    internal fun getResolverForProject(): ResolverForProject<IdeaModuleInfo> = cachedResolverForProject
 
     internal fun getAnalysisResultsForElements(elements: Collection<KtElement>): AnalysisResult {
         assert(elements.isNotEmpty()) { "elements collection should not be empty" }

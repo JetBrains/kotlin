@@ -17,12 +17,22 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
-inline fun <reified T : IrElement> MutableList<T>.transform(transformation: (T) -> IrElement) {
-    forEachIndexed { i, item ->
-        set(i, transformation(item) as T)
+inline fun <reified T : IrElement> MutableList<T>.transformInPlace(transformation: (T) -> IrElement) {
+    for (i in 0 until size) {
+        set(i, transformation(get(i)) as T)
+    }
+}
+
+fun <T : IrElement, D> MutableList<T>.transformInPlace(transformer: IrElementTransformer<D>, data: D) {
+    for (i in 0 until size) {
+        // Cast to IrElementBase to avoid casting to interface and invokeinterface, both of which are slow.
+        @Suppress("UNCHECKED_CAST")
+        set(i, (get(i) as IrElementBase).transform(transformer, data) as T)
     }
 }
 
@@ -65,12 +75,13 @@ fun IrDeclarationContainer.transformDeclarationsFlat(transformation: (IrDeclarat
 }
 
 /**
- * Similar to `map`. Return the same List instance if no element instances have changed.
+ * Transforms the list of elements with the given transformer. Return the same List instance if no element instances have changed.
  */
-internal inline fun <reified T : IrElement> List<T>.mapOptimized(transformation: (T) -> IrElement): List<T> {
+fun <T : IrElement, D> List<T>.transformIfNeeded(transformer: IrElementTransformer<D>, data: D): List<T> {
     var result: ArrayList<T>? = null
     for ((i, item) in withIndex()) {
-        val transformed = transformation(item) as T
+        @Suppress("UNCHECKED_CAST")
+        val transformed = item.transform(transformer, data) as T
         if (transformed !== item && result == null) {
             result = ArrayList(this)
         }

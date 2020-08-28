@@ -242,6 +242,17 @@ class CapturedVarsOptimizationMethodTransformer : MethodTransformer() {
             methodNode.removeUnusedLocalVariables()
         }
 
+        // Be careful to not remove instructions that are the only instruction for a line number. That will
+        // break debugging. If the previous instruction is a line number and the following instruction is
+        // a label followed by a line number, insert a nop instead of deleting the instruction.
+        private fun InsnList.removeOrReplaceByNop(insn: AbstractInsnNode) {
+            if (insn.previous is LineNumberNode && insn.next is LabelNode && insn.next.next is LineNumberNode) {
+                set(insn, InsnNode(Opcodes.NOP))
+            } else {
+                remove(insn)
+            }
+        }
+
         private fun rewriteRefValue(capturedVar: CapturedVarDescriptor) {
             methodNode.instructions.run {
                 val localVar = capturedVar.localVar!!
@@ -259,9 +270,10 @@ class CapturedVarsOptimizationMethodTransformer : MethodTransformer() {
 
                 remove(capturedVar.newInsn)
                 remove(capturedVar.initCallInsn!!)
-                capturedVar.stackInsns.forEach { remove(it) }
-                capturedVar.aloadInsns.forEach { remove(it) }
-                capturedVar.astoreInsns.forEach { remove(it) }
+
+                capturedVar.stackInsns.forEach { removeOrReplaceByNop(it) }
+                capturedVar.aloadInsns.forEach { removeOrReplaceByNop(it) }
+                capturedVar.astoreInsns.forEach { removeOrReplaceByNop(it) }
                 capturedVar.getFieldInsns.forEach { set(it, VarInsnNode(loadOpcode, capturedVar.localVarIndex)) }
                 capturedVar.putFieldInsns.forEach { set(it, VarInsnNode(storeOpcode, capturedVar.localVarIndex)) }
 
@@ -273,6 +285,7 @@ class CapturedVarsOptimizationMethodTransformer : MethodTransformer() {
                 }
             }
         }
+
     }
 }
 

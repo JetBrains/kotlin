@@ -19,7 +19,7 @@ fun test1() {
     }
 }
 
-fun test2(l: List<AA>) {
+fun test2(l: <!UNRESOLVED_REFERENCE!>List<AA><!>) {
     l.<!UNRESOLVED_REFERENCE!>map<!> {
         <!UNRESOLVED_REFERENCE!>it<!>!!
     }

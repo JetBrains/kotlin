@@ -77,7 +77,7 @@ object ModuleWrapperTranslation {
         val scope = program.scope
         val defineName = scope.declareName("define")
         val invocationArgs = listOf(
-            JsArrayLiteral(listOf(JsStringLiteral("exports")) + importedModules.map { JsStringLiteral(it.externalName) }),
+            JsArrayLiteral(listOf(JsStringLiteral("exports")) + importedModules.map { JsStringLiteral(it.requireName) }),
             function
         )
 
@@ -94,7 +94,7 @@ object ModuleWrapperTranslation {
         val moduleName = scope.declareName("module")
         val requireName = scope.declareName("require")
 
-        val invocationArgs = importedModules.map { JsInvocation(requireName.makeRef(), JsStringLiteral(it.externalName)) }
+        val invocationArgs = importedModules.map { JsInvocation(requireName.makeRef(), JsStringLiteral(it.requireName)) }
         val invocation = JsInvocation(function, listOf(JsNameRef("exports", moduleName.makeRef())) + invocationArgs)
         return listOf(invocation.makeStmt())
     }

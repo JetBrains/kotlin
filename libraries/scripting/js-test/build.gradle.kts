@@ -1,9 +1,6 @@
-
 plugins {
     kotlin("jvm")
 }
-
-jvmTarget = "1.6"
 
 val embeddableTestRuntime by configurations.creating
 
@@ -12,9 +9,10 @@ dependencies {
 
     testCompile(project(":kotlin-scripting-js"))
     testCompile(project(":compiler:plugin-api"))
-    testCompile(project(":kotlin-scripting-compiler-unshaded"))
+    testCompile(project(":kotlin-scripting-compiler"))
     testCompile(project(":compiler:cli"))
     testCompile(project(":compiler:backend.js"))
+    testCompile(project(":compiler:ir.tree.impl"))
     testCompile(project(":js:js.engines"))
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.ThreadTrackerPatcherForTeamCityTesting.patchThr
 import org.jetbrains.kotlin.idea.debugger.filter.addKotlinStdlibDebugFilterIfNeeded
 import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 
-// BUNCH: 192
+
 class JvmPluginStartupActivity : StartupActivity {
     override fun runActivity(project: Project) {
         if (isUnitTestMode()) {

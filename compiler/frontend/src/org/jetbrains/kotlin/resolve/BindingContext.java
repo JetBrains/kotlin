@@ -8,23 +8,24 @@ package org.jetbrains.kotlin.resolve;
 import com.google.common.collect.ImmutableMap;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
+import kotlin.Pair;
 import kotlin.annotations.jvm.ReadOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.cfg.LeakingThisDescriptor;
 import org.jetbrains.kotlin.cfg.TailRecursionKind;
-import org.jetbrains.kotlin.contracts.description.InvocationKind;
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange;
 import org.jetbrains.kotlin.contracts.model.Computation;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.FqNameUnsafe;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemCompleter;
 import org.jetbrains.kotlin.resolve.calls.model.PartialCallContainer;
-import org.jetbrains.kotlin.resolve.calls.model.PartialCallResolutionResult;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
@@ -169,6 +170,8 @@ public interface BindingContext {
     WritableSlice<KtExpression, Boolean> VARIABLE_REASSIGNMENT = Slices.createSimpleSetSlice();
     WritableSlice<ValueParameterDescriptor, Boolean> AUTO_CREATED_IT = Slices.createSimpleSetSlice();
 
+    WritableSlice<Pair<AnonymousFunctionDescriptor, Integer>, Boolean> SUSPEND_LAMBDA_PARAMETER_USED = Slices.createSimpleSlice();
+
     /**
      * Has type of current expression has been already resolved
      */
@@ -218,7 +221,7 @@ public interface BindingContext {
     WritableSlice<PropertyDescriptor, Boolean> IS_UNINITIALIZED = Slices.createSimpleSetSlice();
     WritableSlice<PropertyDescriptor, Boolean> MUST_BE_LATEINIT = Slices.createSimpleSetSlice();
 
-    WritableSlice<KtLambdaExpression, InvocationKind> LAMBDA_INVOCATIONS = Slices.createSimpleSlice();
+    WritableSlice<KtLambdaExpression, EventOccurrencesRange> LAMBDA_INVOCATIONS = Slices.createSimpleSlice();
 
     WritableSlice<KtLambdaExpression, Boolean> BLOCK = new SetSlice<KtLambdaExpression>(DO_NOTHING) {
         @Override
@@ -273,6 +276,7 @@ public interface BindingContext {
     WritableSlice<KtExpression, PrimitiveNumericComparisonInfo> PRIMITIVE_NUMERIC_COMPARISON_INFO = Slices.createSimpleSlice();
 
     WritableSlice<KtExpression, Ref<VariableDescriptor>> NEW_INFERENCE_CATCH_EXCEPTION_PARAMETER = Slices.createSimpleSlice();
+    WritableSlice<PsiElement, Boolean> NEW_INFERENCE_IS_LAMBDA_FOR_OVERLOAD_RESOLUTION_INLINE = Slices.createSimpleSlice();
 
     @SuppressWarnings("UnusedDeclaration")
     @Deprecated // This field is needed only for the side effects of its initializer

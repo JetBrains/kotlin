@@ -1,0 +1,47 @@
+digraph inLocalFunction_kt {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter function foo" style="filled" fillcolor=red];
+        subgraph cluster_1 {
+            color=blue
+            1 [label="Enter block"];
+            2 [label="Local function declaration foo"];
+            3 [label="Function call: R|<local>/localFun|()"];
+            4 [label="Function call: R|<local>/b|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            5 [label="Exit block"];
+        }
+        6 [label="Exit function foo" style="filled" fillcolor=red];
+    }
+    subgraph cluster_2 {
+        color=blue
+        7 [label="Enter function localFun" style="filled" fillcolor=red];
+        subgraph cluster_3 {
+            color=blue
+            8 [label="Enter block"];
+            9 [label="Access variable R|<local>/a|"];
+            10 [label="Function call: R|<local>/a|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            11 [label="Function call: R|<local>/a|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            12 [label="Exit block"];
+        }
+        13 [label="Exit function localFun" style="filled" fillcolor=red];
+    }
+    0 -> {1};
+    1 -> {2};
+    2 -> {3};
+    2 -> {7} [color=red];
+    2 -> {7} [style=dashed];
+    3 -> {4};
+    4 -> {5};
+    5 -> {6};
+    7 -> {8};
+    8 -> {9};
+    9 -> {10};
+    10 -> {11};
+    11 -> {12};
+    12 -> {13};
+
+}

@@ -46,6 +46,7 @@ class CanSealedSubClassBeObjectInspection : AbstractKotlinInspection() {
 
                 val candidates = klass.getSubclasses()
                     .withEmptyConstructors()
+                    .thatHasNoClassModifiers()
                     .thatAreFinal()
                     .thatHasNoTypeParameters()
                     .thatHasNoInnerClasses()
@@ -80,6 +81,13 @@ class CanSealedSubClassBeObjectInspection : AbstractKotlinInspection() {
             .filter { klass -> klass.secondaryConstructors.all { cons -> cons.valueParameters.isEmpty() } }.toList()
     }
 
+    private fun List<KtClass>.thatHasNoClassModifiers(): List<KtClass> {
+        return filter { klass ->
+            val modifierList = klass.modifierList ?: return@filter true
+            CLASS_MODIFIERS.none { modifierList.hasModifier(it) }
+        }
+    }
+
     private fun List<KtClass>.thatHasNoCompanionObjects(): List<KtClass> {
         return filter { klass -> klass.companionObjects.isEmpty() }
     }
@@ -110,7 +118,7 @@ class CanSealedSubClassBeObjectInspection : AbstractKotlinInspection() {
 
     private fun KtClass.hasNoStateOrEquals(): Boolean {
         if (primaryConstructor?.valueParameters?.isNotEmpty() == true) return false
-        val body = getBody()
+        val body = body
         return body == null || run {
             val declarations = body.declarations
             declarations.asSequence().filterIsInstance<KtProperty>().none { property ->
@@ -132,7 +140,7 @@ class CanSealedSubClassBeObjectInspection : AbstractKotlinInspection() {
     }
 
     private fun KtClass.hasNoInnerClass(): Boolean {
-        val internalClasses = getBody()
+        val internalClasses = body
             ?.declarations
             ?.filterIsInstance<KtClass>() ?: return true
 
@@ -143,5 +151,13 @@ class CanSealedSubClassBeObjectInspection : AbstractKotlinInspection() {
         val EQUALS = OperatorNameConventions.EQUALS.asString()
 
         const val HASH_CODE = "hashCode"
+
+        val CLASS_MODIFIERS = listOf(
+            KtTokens.ANNOTATION_KEYWORD,
+            KtTokens.DATA_KEYWORD,
+            KtTokens.ENUM_KEYWORD,
+            KtTokens.INNER_KEYWORD,
+            KtTokens.SEALED_KEYWORD,
+        )
     }
 }

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentTypeTransformer
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleDescriptorFactory
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.sam.SamConversionResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.*
@@ -119,7 +121,22 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             library, deserializedPackageFragments, moduleDescriptor
         )
 
-        val provider = PackageFragmentProviderImpl(deserializedPackageFragments + syntheticPackageFragments)
+        // Generate empty PackageFragmentDescriptor instances for packages that aren't mentioned in compilation units directly.
+        // For example, if there's `package foo.bar` directive, we'll get only PackageFragmentDescriptor for `foo.bar`, but
+        // none for `foo`. Various descriptor/scope code relies on presence of such package fragments, and currently we
+        // don't know if it's possible to fix this.
+        // TODO: think about fixing issues in descriptors/scopes
+        val packageFqNames = deserializedPackageFragments.mapTo(mutableSetOf()) { it.fqName }
+        val emptyPackageFragments = mutableListOf<PackageFragmentDescriptor>()
+        for (packageFqName in packageFqNames.mapNotNull { it.parentOrNull() }) {
+            var ancestorFqName = packageFqName
+            while (!ancestorFqName.isRoot && packageFqNames.add(ancestorFqName)) {
+                emptyPackageFragments += EmptyPackageFragmentDescriptor(moduleDescriptor, ancestorFqName)
+                ancestorFqName = ancestorFqName.parent()
+            }
+        }
+
+        val provider = PackageFragmentProviderImpl(deserializedPackageFragments + syntheticPackageFragments + emptyPackageFragments)
         return initializePackageFragmentProvider(provider, deserializedPackageFragments, storageManager,
             moduleDescriptor, configuration, compositePackageFragmentAddend, lookupTracker)
     }

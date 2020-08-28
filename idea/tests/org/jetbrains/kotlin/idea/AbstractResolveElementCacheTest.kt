@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.idea
 
+import com.intellij.util.ThrowableRunnable
+import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.idea.project.ResolveElementCache
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.*
 
@@ -42,6 +46,16 @@ class C(param1: String = "", param2: Int = 0) {
         val statements: List<KtExpression>,
         val factory: KtPsiFactory
     )
+
+    override fun tearDown() {
+        runAll(
+            ThrowableRunnable { ResolveElementCache.forceFullAnalysisModeInTests = false },
+            ThrowableRunnable { super.tearDown() },
+        )
+    }
+
+    protected fun configureWithKotlin(@Language("kotlin") text: String): KtFile =
+        myFixture.configureByText("Test.kt", text.trimIndent()) as KtFile
 
     protected fun doTest(handler: Data.() -> Unit) {
         val file = myFixture.configureByText("Test.kt", FILE_TEXT) as KtFile

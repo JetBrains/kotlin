@@ -46,7 +46,7 @@ private class SingletonReferencesLowering(val context: JvmBackendContext) : File
             // must be replaced with `SomeEnumEntry.this`.
             IrGetValueImpl(expression.startOffset, expression.endOffset, expression.type, appropriateThis.symbol)
         } else {
-            val entrySymbol = context.declarationFactory.getFieldForEnumEntry(expression.symbol.owner)
+            val entrySymbol = context.cachedDeclarations.getFieldForEnumEntry(expression.symbol.owner)
             IrGetFieldImpl(expression.startOffset, expression.endOffset, entrySymbol.symbol, expression.type)
         }
     }
@@ -60,9 +60,9 @@ private class SingletonReferencesLowering(val context: JvmBackendContext) : File
             return IrGetValueImpl(expression.startOffset, expression.endOffset, it.symbol)
         }
         val instanceField = if (allScopes.any { it.irElement == expression.symbol.owner })
-            context.declarationFactory.getPrivateFieldForObjectInstance(expression.symbol.owner) // Constructor or static method.
+            context.cachedDeclarations.getPrivateFieldForObjectInstance(expression.symbol.owner) // Constructor or static method.
         else
-            context.declarationFactory.getFieldForObjectInstance(expression.symbol.owner) // Not in object scope at all.
+            context.cachedDeclarations.getFieldForObjectInstance(expression.symbol.owner) // Not in object scope at all.
         return IrGetFieldImpl(expression.startOffset, expression.endOffset, instanceField.symbol, expression.type)
     }
 

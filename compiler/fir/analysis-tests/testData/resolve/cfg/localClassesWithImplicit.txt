@@ -10,11 +10,11 @@ FILE: localClassesWithImplicit.kt
         }
 
         local final class A : R|kotlin/Any| {
-            public[local] constructor(): R|A| {
+            public constructor(): R|A| {
                 super<R|kotlin/Any|>()
             }
 
-            public[local] final fun foo(): R|kotlin/Int| {
+            public final fun foo(): R|kotlin/Int| {
                 ^foo R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <kind=UNKNOWN>  {
                     R|<local>/a|.R|kotlin/String.length|
                     ^ when () {
@@ -31,7 +31,7 @@ FILE: localClassesWithImplicit.kt
                 )
             }
 
-            public[local] final fun bar(): R|kotlin/Int| {
+            public final fun bar(): R|kotlin/Int| {
                 ^bar R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <kind=UNKNOWN>  {
                     R|<local>/b|.<Unresolved name: length>#
                     R|<local>/a|.R|kotlin/String.length|
@@ -40,24 +40,24 @@ FILE: localClassesWithImplicit.kt
                 )
             }
 
-            public[local] final fun baz(): R|kotlin/Int| {
+            public final fun baz(): R|kotlin/Int| {
                 ^baz Int(1)
             }
 
         }
 
-        lval x: R|anonymous| = object : R|kotlin/Any| {
-            private constructor(): R|anonymous| {
+        lval x: R|<anonymous>| = object : R|kotlin/Any| {
+            private constructor(): R|<anonymous>| {
                 super<R|kotlin/Any|>()
             }
 
-            public[local] final fun foo(): R|kotlin/Int| {
+            public final fun foo(): R|kotlin/Int| {
                 ^foo R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <kind=UNKNOWN>  {
                     R|<local>/a|.R|kotlin/String.length|
                     ^ when () {
                         (R|<local>/b| is R|kotlin/String|) ->  {
                             R|<local>/b|.R|kotlin/String.length|
-                            this@R|/anonymous|.R|/anonymous.bar|()
+                            this@R|/<anonymous>|.R|/<anonymous>.bar|()
                         }
                         else ->  {
                             Int(1)
@@ -68,16 +68,16 @@ FILE: localClassesWithImplicit.kt
                 )
             }
 
-            public[local] final fun bar(): R|kotlin/Int| {
+            public final fun bar(): R|kotlin/Int| {
                 ^bar R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <kind=UNKNOWN>  {
                     R|<local>/a|.R|kotlin/String.length|
                     R|<local>/b|.<Unresolved name: length>#
-                    ^ this@R|/anonymous|.R|/anonymous.baz|()
+                    ^ this@R|/<anonymous>|.R|/<anonymous>.baz|()
                 }
                 )
             }
 
-            public[local] final fun baz(): R|kotlin/Int| {
+            public final fun baz(): R|kotlin/Int| {
                 ^baz Int(1)
             }
 

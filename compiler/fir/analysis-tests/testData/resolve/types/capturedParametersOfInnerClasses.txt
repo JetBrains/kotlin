@@ -1,0 +1,31 @@
+FILE: capturedParametersOfInnerClasses.kt
+    public final class A<T1, T2> : R|kotlin/Any| {
+        public constructor<T1, T2>(): R|A<T1, T2>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner class B<K1, K2, T1, T2> : R|kotlin/Any| {
+            public constructor<K1, K2>(): R|A.B<K1, K2, T1, T2>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final inner class C<U1, U2, K1, K2, T1, T2> : R|kotlin/Any| {
+                public constructor<U1, U2>(): R|A.B.C<U1, U2, K1, K2, T1, T2>| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+            public final fun <R3> foo(c: R|A.B.C<R3, R3, K1, K2, T1, T2>|): R|kotlin/Unit| {
+            }
+
+        }
+
+        public final fun <R2, R3> foo(c: R|A.B.C<R3, R3, R2, R2, T1, T2>|): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun <R1, R2, R3> foo(c: R|A.B.C<R3, R3, R2, R2, R1, R1>|): R|kotlin/Unit| {
+    }
+    public final fun <R3> foo(c: <ERROR TYPE REF: Type argument not defined>): R|kotlin/Unit| {
+    }

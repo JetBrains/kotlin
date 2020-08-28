@@ -1,0 +1,74 @@
+FILE: upperBoundViolated.kt
+    public abstract interface A : R|kotlin/Any| {
+    }
+    public final class B<T : R|A|> : R|kotlin/Any| {
+        public constructor<T : R|A|>(): R|B<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class C : R|A| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final typealias GGG = R|C|
+    public final typealias HHH = R|GGG|
+    public final typealias JJJ = R|B<C>|
+    public final fun <T : R|A|> fest(): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval b1: R|B<kotlin/Int>| = R|/B.B|<R|kotlin/Int|>()
+        lval b2: R|B<C>| = R|/B.B|<R|C|>()
+        lval b3: R|B<kotlin/Any?>| = R|/B.B|<R|kotlin/Any?|>()
+        lval b4: R|B<A>| = R|/B.B|<<ERROR TYPE REF: Symbol not found, for `UnexistingType`>>()
+        lval b5: R|B<A>| = R|/B.B|<<ERROR TYPE REF: Symbol not found, for `UnexistingType`>>()
+        R|/fest|<R|kotlin/Boolean|>()
+        R|/fest|<R|C|>()
+        R|/fest|<R|C|>()
+        R|/fest|<R|B<C>|>()
+    }
+    public open class S<F, G : R|F|> : R|kotlin/Any| {
+        public constructor<F, G : R|F|>(): R|S<F, G>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class T<U, Y : R|U|> : R|S<U, Y>| {
+        public constructor<U, Y : R|U|>(): R|T<U, Y>| {
+            super<R|S<U, Y>|>()
+        }
+
+    }
+    public final fun <K, L : R|K|> rest(): R|kotlin/Unit| {
+        lval o1: R|S<K, L>| = R|/S.S|<R|K|, R|L|>()
+        lval o2: R|S<K, K>| = R|/S.S|<R|K|, R|K|>()
+        lval o3: R|S<L, L>| = R|/S.S|<R|L|, R|L|>()
+        lval o4: R|S<S<K, L>, T<K, L>>| = R|/S.S|<R|S<K, L>|, R|T<K, L>|>()
+        lval o5: R|S<S<K, L>, T<K, K>>| = R|/S.S|<R|S<K, L>|, R|T<K, K>|>()
+        lval o5: R|S<S<L, L>, T<K, L>>| = R|/S.S|<R|S<L, L>|, R|T<K, L>|>()
+        lval o6: R|S<kotlin/Any, T<S<K, L>, kotlin/String>>| = R|/S.S|<R|kotlin/Any|, R|T<S<K, L>, kotlin/String>|>()
+        lval o7: R|S<kotlin/Any, T<S<K, L>, kotlin/Nothing>>| = R|/S.S|<R|kotlin/Any|, R|T<S<K, L>, kotlin/Nothing>|>()
+    }
+    public final class NumColl<T : R|kotlin/collections/Collection<kotlin/Number>|> : R|kotlin/Any| {
+        public constructor<T : R|kotlin/collections/Collection<kotlin/Number>|>(): R|NumColl<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final typealias NL<K> = R|NumColl<kotlin/collections/List<K>>|
+    public final val test7: R|NumColl<kotlin/collections/List<kotlin/Int>>| = R|/NumColl.NumColl|<R|kotlin/Int|>()
+        public get(): R|NumColl<kotlin/collections/List<kotlin/Int>>|
+    public final val test8: R|NumColl<kotlin/collections/List<kotlin/String>>| = R|/NumColl.NumColl|<R|kotlin/String|>()
+        public get(): R|NumColl<kotlin/collections/List<kotlin/String>>|
+    public final class NumberPhile<T : R|kotlin/Number|> : R|kotlin/Any| {
+        public constructor<T : R|kotlin/Number|>(x: R|T|): R|NumberPhile<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final val np1: R|NumberPhile<kotlin/Int>| = R|/NumberPhile.NumberPhile|<R|kotlin/Int|>(Int(10))
+        public get(): R|NumberPhile<kotlin/Int>|
+    public final val np2: R|NumberPhile<kotlin/String>| = <Inapplicable(INAPPLICABLE): /NumberPhile.NumberPhile>#<R|kotlin/String|>(String(Test))
+        public get(): R|NumberPhile<kotlin/String>|

@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.idea.perf
 
+import org.jetbrains.kotlin.idea.perf.profilers.ProfilerConfig
+
 class PerfTestBuilder<SV, TV> {
     private lateinit var stats: Stats
     private lateinit var name: String
@@ -13,8 +15,8 @@ class PerfTestBuilder<SV, TV> {
     private var setUp: (TestData<SV, TV>) -> Unit = { }
     private lateinit var test: (TestData<SV, TV>) -> Unit
     private var tearDown: (TestData<SV, TV>) -> Unit = { }
-    private var profilerEnabled: Boolean = false
     private var checkStability: Boolean = true
+    internal var profilerConfig: ProfilerConfig = ProfilerConfig()
 
     internal fun run() {
         stats.perfTest(
@@ -24,7 +26,6 @@ class PerfTestBuilder<SV, TV> {
             setUp = setUp,
             test = test,
             tearDown = tearDown,
-            profilerEnabled = profilerEnabled,
             checkStability = checkStability
         )
     }
@@ -57,8 +58,8 @@ class PerfTestBuilder<SV, TV> {
         this.tearDown = tearDown
     }
 
-    fun profilerEnabled(profilerEnabled: Boolean) {
-        this.profilerEnabled = profilerEnabled
+    fun profilerConfig(profilerConfig: ProfilerConfig) {
+        this.profilerConfig = profilerConfig
     }
 
     fun checkStability(checkStability: Boolean) {

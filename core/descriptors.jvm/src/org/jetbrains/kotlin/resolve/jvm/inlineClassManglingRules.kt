@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -24,13 +25,18 @@ fun shouldHideConstructorDueToInlineClassTypeValueParameters(descriptor: Callabl
     return constructorDescriptor.valueParameters.any { it.type.requiresFunctionNameManglingInParameterTypes() }
 }
 
-fun requiresFunctionNameManglingForParameterTypes(valueParameterTypes: List<KotlinType>): Boolean {
-    return valueParameterTypes.any { it.requiresFunctionNameManglingInParameterTypes() }
+fun requiresFunctionNameManglingForParameterTypes(descriptor: CallableMemberDescriptor): Boolean {
+    val extensionReceiverType = descriptor.extensionReceiverParameter?.type
+    return extensionReceiverType != null && extensionReceiverType.requiresFunctionNameManglingInParameterTypes() ||
+            descriptor.valueParameters.any { it.type.requiresFunctionNameManglingInParameterTypes() }
 }
 
 // NB functions returning all inline classes (including our special 'kotlin.Result') should be mangled.
-fun requiresFunctionNameManglingForReturnType(returnType: KotlinType?) =
-    returnType != null && returnType.isInlineClassType()
+fun requiresFunctionNameManglingForReturnType(descriptor: CallableMemberDescriptor): Boolean {
+    if (descriptor.containingDeclaration !is ClassDescriptor) return false
+    val returnType = descriptor.returnType ?: return false
+    return returnType.isInlineClassType()
+}
 
 fun DeclarationDescriptor.isInlineClassThatRequiresMangling(): Boolean =
     isInlineClass() && !isDontMangleClass(this as ClassDescriptor)
@@ -42,7 +48,7 @@ private fun KotlinType.requiresFunctionNameManglingInParameterTypes() =
     isInlineClassThatRequiresMangling() || isTypeParameterWithUpperBoundThatRequiresMangling()
 
 private fun isDontMangleClass(classDescriptor: ClassDescriptor) =
-    classDescriptor.fqNameSafe == DescriptorUtils.RESULT_FQ_NAME
+    classDescriptor.fqNameSafe == StandardNames.RESULT_FQ_NAME
 
 private fun KotlinType.isTypeParameterWithUpperBoundThatRequiresMangling(): Boolean {
     val descriptor = constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false

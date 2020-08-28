@@ -16,12 +16,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.profile.codeInspection.ProjectInspectionProfileManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.canOmitDeclaredType
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.core.setType
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isOneLiner
+import org.jetbrains.kotlin.idea.core.util.isOneLiner
 import org.jetbrains.kotlin.idea.intentions.hasResultingIfWithoutElse
 import org.jetbrains.kotlin.idea.intentions.resultingWhens
 import org.jetbrains.kotlin.idea.util.CommentSaver
@@ -168,7 +169,7 @@ class UseExpressionBodyInspection(private val convertEmptyToUnit: Boolean) : Abs
         if (!declaration.hasDeclaredReturnType() && declaration is KtNamedFunction && block.statements.isNotEmpty()) {
             val valueType = value.analyze().getType(value)
             if (valueType == null || !KotlinBuiltIns.isUnit(valueType)) {
-                declaration.setType(KotlinBuiltIns.FQ_NAMES.unit.asString(), shortenReferences = true)
+                declaration.setType(StandardNames.FqNames.unit.asString(), shortenReferences = true)
             }
         }
 

@@ -5,38 +5,67 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-interface IrMemberAccessExpression : IrExpression, IrDeclarationReference {
-    var dispatchReceiver: IrExpression?
-    var extensionReceiver: IrExpression?
+abstract class IrMemberAccessExpression<S : IrSymbol>(typeArgumentsCount: Int) : IrDeclarationReference() {
+    var dispatchReceiver: IrExpression? = null
+    var extensionReceiver: IrExpression? = null
 
-    override val symbol: IrSymbol
+    abstract override val symbol: S
 
-    val origin: IrStatementOrigin?
+    abstract val origin: IrStatementOrigin?
+    abstract val valueArgumentsCount: Int
 
-    val typeArgumentsCount: Int
-    fun getTypeArgument(index: Int): IrType?
-    fun putTypeArgument(index: Int, type: IrType?)
+    abstract fun getValueArgument(index: Int): IrExpression?
+    abstract fun putValueArgument(index: Int, valueArgument: IrExpression?)
+    abstract fun removeValueArgument(index: Int)
 
-    val valueArgumentsCount: Int
-    fun getValueArgument(index: Int): IrExpression?
-    fun putValueArgument(index: Int, valueArgument: IrExpression?)
-    fun removeValueArgument(index: Int)
+    private val typeArgumentsByIndex = arrayOfNulls<IrType>(typeArgumentsCount)
+
+    val typeArgumentsCount: Int get() = typeArgumentsByIndex.size
+
+    fun getTypeArgument(index: Int): IrType? {
+        if (index >= typeArgumentsCount) {
+            throw AssertionError("$this: No such type argument slot: $index")
+        }
+        return typeArgumentsByIndex[index]
+    }
+
+    fun putTypeArgument(index: Int, type: IrType?) {
+        if (index >= typeArgumentsCount) {
+            throw AssertionError("$this: No such type argument slot: $index")
+        }
+        typeArgumentsByIndex[index] = type
+    }
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        dispatchReceiver?.accept(visitor, data)
+        extensionReceiver?.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        dispatchReceiver = dispatchReceiver?.transform(transformer, data)
+        extensionReceiver = extensionReceiver?.transform(transformer, data)
+    }
 }
 
-fun IrMemberAccessExpression.getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): IrType? =
+fun IrMemberAccessExpression<*>.getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): IrType? =
     getTypeArgument(typeParameterDescriptor.index)
 
-fun IrMemberAccessExpression.copyTypeArgumentsFrom(other: IrMemberAccessExpression, shift: Int = 0) {
+fun IrMemberAccessExpression<*>.copyTypeArgumentsFrom(other: IrMemberAccessExpression<*>, shift: Int = 0) {
     assert(typeArgumentsCount == other.typeArgumentsCount + shift) {
         "Mismatching type arguments: $typeArgumentsCount vs ${other.typeArgumentsCount} + $shift"
     }
@@ -45,7 +74,7 @@ fun IrMemberAccessExpression.copyTypeArgumentsFrom(other: IrMemberAccessExpressi
     }
 }
 
-inline fun IrMemberAccessExpression.putTypeArguments(
+inline fun IrMemberAccessExpression<*>.putTypeArguments(
     typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
     toIrType: (KotlinType) -> IrType
 ) {
@@ -62,25 +91,22 @@ val CallableDescriptor.typeParametersCount: Int
             else -> typeParameters.size
         }
 
-fun IrMemberAccessExpression.getTypeArgumentOrDefault(irTypeParameter: IrTypeParameter) =
+fun IrMemberAccessExpression<*>.getTypeArgumentOrDefault(irTypeParameter: IrTypeParameter) =
     getTypeArgument(irTypeParameter.index) ?: irTypeParameter.defaultType
 
-interface IrFunctionAccessExpression : IrMemberAccessExpression {
-    override val symbol: IrFunctionSymbol
-}
-
-fun IrMemberAccessExpression.getValueArgument(valueParameterDescriptor: ValueParameterDescriptor) =
+fun IrMemberAccessExpression<*>.getValueArgument(valueParameterDescriptor: ValueParameterDescriptor) =
     getValueArgument(valueParameterDescriptor.index)
 
-fun IrMemberAccessExpression.putValueArgument(valueParameterDescriptor: ValueParameterDescriptor, valueArgument: IrExpression?) {
+fun IrMemberAccessExpression<*>.putValueArgument(valueParameterDescriptor: ValueParameterDescriptor, valueArgument: IrExpression?) {
     putValueArgument(valueParameterDescriptor.index, valueArgument)
 }
 
-fun IrMemberAccessExpression.removeValueArgument(valueParameterDescriptor: ValueParameterDescriptor) {
+fun IrMemberAccessExpression<*>.removeValueArgument(valueParameterDescriptor: ValueParameterDescriptor) {
     removeValueArgument(valueParameterDescriptor.index)
 }
 
-inline fun <T : IrMemberAccessExpression> T.mapTypeParameters(transform: (TypeParameterDescriptor) -> IrType) : T =
+@ObsoleteDescriptorBasedAPI
+inline fun <T : IrMemberAccessExpression<*>> T.mapTypeParameters(transform: (TypeParameterDescriptor) -> IrType) : T =
     apply {
         val descriptor = symbol.descriptor as CallableDescriptor
         descriptor.typeParameters.forEach {
@@ -88,7 +114,8 @@ inline fun <T : IrMemberAccessExpression> T.mapTypeParameters(transform: (TypePa
         }
     }
 
-inline fun <T : IrMemberAccessExpression> T.mapValueParameters(transform: (ValueParameterDescriptor) -> IrExpression?): T =
+@ObsoleteDescriptorBasedAPI
+inline fun <T : IrMemberAccessExpression<*>> T.mapValueParameters(transform: (ValueParameterDescriptor) -> IrExpression?): T =
     apply {
         val descriptor = symbol.descriptor as CallableDescriptor
         descriptor.valueParameters.forEach {
@@ -96,7 +123,8 @@ inline fun <T : IrMemberAccessExpression> T.mapValueParameters(transform: (Value
         }
     }
 
-inline fun <T : IrMemberAccessExpression> T.mapValueParametersIndexed(transform: (Int, ValueParameterDescriptor) -> IrExpression?): T =
+@ObsoleteDescriptorBasedAPI
+inline fun <T : IrMemberAccessExpression<*>> T.mapValueParametersIndexed(transform: (Int, ValueParameterDescriptor) -> IrExpression?): T =
     apply {
         val descriptor = symbol.descriptor as CallableDescriptor
         descriptor.valueParameters.forEach {
@@ -104,12 +132,9 @@ inline fun <T : IrMemberAccessExpression> T.mapValueParametersIndexed(transform:
         }
     }
 
-fun IrMemberAccessExpression.putArgument(callee: IrFunction, parameter: IrValueParameter, argument: IrExpression) =
+fun IrMemberAccessExpression<*>.putArgument(callee: IrFunction, parameter: IrValueParameter, argument: IrExpression) =
     when (parameter) {
         callee.dispatchReceiverParameter -> dispatchReceiver = argument
         callee.extensionReceiverParameter -> extensionReceiver = argument
         else -> putValueArgument(parameter.index, argument)
     }
-
-fun IrFunctionAccessExpression.putArgument(parameter: IrValueParameter, argument: IrExpression) =
-    putArgument(symbol.owner, parameter, argument)

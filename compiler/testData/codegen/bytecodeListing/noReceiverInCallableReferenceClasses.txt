@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public final class A {
+    // source: 'noReceiverInCallableReferenceClasses.kt'
     private final field bar: int
     public method <init>(): void
     public final method foo(): void
@@ -8,6 +9,7 @@ public final class A {
 
 @kotlin.Metadata
 synthetic final class NoReceiverInCallableReferenceClassesKt$A_bar$1 {
+    // source: 'noReceiverInCallableReferenceClasses.kt'
     public final static field INSTANCE: kotlin.reflect.KProperty1
     static method <clinit>(): void
     method <init>(): void
@@ -16,8 +18,9 @@ synthetic final class NoReceiverInCallableReferenceClassesKt$A_bar$1 {
 
 @kotlin.Metadata
 synthetic final class NoReceiverInCallableReferenceClassesKt$A_foo$1 {
+    // source: 'noReceiverInCallableReferenceClasses.kt'
     public final static field INSTANCE: NoReceiverInCallableReferenceClassesKt$A_foo$1
-    inner class NoReceiverInCallableReferenceClassesKt$A_foo$1
+    inner (anonymous) class NoReceiverInCallableReferenceClassesKt$A_foo$1
     static method <clinit>(): void
     method <init>(): void
     public final method invoke(@org.jetbrains.annotations.NotNull p0: A): void
@@ -26,13 +29,15 @@ synthetic final class NoReceiverInCallableReferenceClassesKt$A_foo$1 {
 
 @kotlin.Metadata
 synthetic final class NoReceiverInCallableReferenceClassesKt$aBar$1 {
+    // source: 'noReceiverInCallableReferenceClasses.kt'
     method <init>(p0: A): void
     public @org.jetbrains.annotations.Nullable method get(): java.lang.Object
 }
 
 @kotlin.Metadata
 synthetic final class NoReceiverInCallableReferenceClassesKt$aFoo$1 {
-    inner class NoReceiverInCallableReferenceClassesKt$aFoo$1
+    // source: 'noReceiverInCallableReferenceClasses.kt'
+    inner (anonymous) class NoReceiverInCallableReferenceClassesKt$aFoo$1
     method <init>(p0: A): void
     public synthetic bridge method invoke(): java.lang.Object
     public final method invoke(): void
@@ -40,12 +45,13 @@ synthetic final class NoReceiverInCallableReferenceClassesKt$aFoo$1 {
 
 @kotlin.Metadata
 public final class NoReceiverInCallableReferenceClassesKt {
+    // source: 'noReceiverInCallableReferenceClasses.kt'
     private final static @org.jetbrains.annotations.NotNull field A_bar: kotlin.reflect.KProperty1
     private final static @org.jetbrains.annotations.NotNull field A_foo: kotlin.reflect.KFunction
     private final static @org.jetbrains.annotations.NotNull field aBar: kotlin.reflect.KProperty0
     private final static @org.jetbrains.annotations.NotNull field aFoo: kotlin.reflect.KFunction
-    inner class NoReceiverInCallableReferenceClassesKt$A_foo$1
-    inner class NoReceiverInCallableReferenceClassesKt$aFoo$1
+    inner (anonymous) class NoReceiverInCallableReferenceClassesKt$A_foo$1
+    inner (anonymous) class NoReceiverInCallableReferenceClassesKt$aFoo$1
     static method <clinit>(): void
     public final static @org.jetbrains.annotations.NotNull method getABar(): kotlin.reflect.KProperty0
     public final static @org.jetbrains.annotations.NotNull method getAFoo(): kotlin.reflect.KFunction

@@ -10,13 +10,13 @@ object Foo {
 internal object Bar {
     @JvmStatic fun main(args: Array<String>) {
         bar(object : Runnable {
-        override fun run() {
-            doRun()
-        }
+            override fun run() {
+                doRun()
+            }
 
-        private fun doRun() {
-            // Woo-hoo
-        }
-    })
+            private fun doRun() {
+                // Woo-hoo
+            }
+        })
     }
 }

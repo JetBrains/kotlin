@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,10 +14,11 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
-import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
+import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import kotlin.reflect.KClass
 
 /**
@@ -41,10 +42,27 @@ internal class KotlinProjectNpmResolver(
     val compilationResolvers: Collection<KotlinCompilationNpmResolver>
         get() = byCompilation.values
 
-    val taskRequirements by lazy { TasksRequirements(this) }
-
     init {
         addContainerListeners()
+
+
+        project.whenEvaluated {
+            val nodeJs = resolver.nodeJs
+            project.tasks.implementing(RequiresNpmDependencies::class)
+                .configureEach { task ->
+                    if (task.enabled) {
+                        task as RequiresNpmDependencies
+                        // KotlinJsTest delegates npm dependencies to testFramework,
+                        // which can be defined after this configure action
+                        val packageJsonTaskHolder = get(task.compilation).packageJsonTaskHolder
+                        if (task !is KotlinJsTest) {
+                            nodeJs.taskRequirements.addTaskRequirements(task)
+                        }
+                        task.dependsOn(packageJsonTaskHolder)
+                        task.dependsOn(nodeJs.npmInstallTaskProvider)
+                    }
+                }
+        }
     }
 
     private fun addContainerListeners() {
@@ -96,44 +114,17 @@ internal class KotlinProjectNpmResolver(
         return KotlinProjectNpmResolution(
             project,
             byCompilation.values.mapNotNull { it.close() },
-            taskRequirements.byTask
+            resolver.nodeJs.taskRequirements.byTask
         )
     }
-
-    class TasksRequirements(val projectNpmResolver: KotlinProjectNpmResolver) {
-        val byTask = mutableMapOf<RequiresNpmDependencies, Collection<RequiredKotlinJsDependency>>()
-        val byCompilation = mutableMapOf<KotlinJsCompilation, MutableList<RequiresNpmDependencies>>()
-
-        fun getTaskRequirements(compilation: KotlinJsCompilation): Collection<RequiresNpmDependencies> =
-            byCompilation[compilation] ?: listOf()
-
-        init {
-            projectNpmResolver.project.tasks.implementing(RequiresNpmDependencies::class).forEach { task ->
-                if (task.enabled) {
-                    addTaskRequirements(task as RequiresNpmDependencies)
-                    task.dependsOn(projectNpmResolver[task.compilation].packageJsonTaskHolder)
-                    task.dependsOn(projectNpmResolver.resolver.nodeJs.npmInstallTask)
-                }
-            }
-        }
-
-        private fun addTaskRequirements(task: RequiresNpmDependencies) {
-            val requirements = task.requiredNpmDependencies.toList()
-
-            byTask[task] = requirements
-
-            byCompilation
-                .getOrPut(task.compilation) { mutableListOf() }
-                .add(task)
-        }
-    }
 }
+
 
 /**
  * Filters a [TaskCollection] by type that is not a subtype of [Task] (for use with interfaces)
  *
  * TODO properly express within the type system? The result should be a TaskCollection<T & R>
  */
-private fun <T : Task, R : Any> TaskCollection<T>.implementing(kclass: KClass<R>): TaskCollection<T> =
+internal fun <T : Task, R : Any> TaskCollection<T>.implementing(kclass: KClass<R>): TaskCollection<T> =
     @Suppress("UNCHECKED_CAST")
     withType(kclass.java as Class<T>)

@@ -38,5 +38,7 @@ abstract class FirTypeParameter : FirPureAbstractElement(), FirTypeParameterRef,
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
+    abstract fun replaceBounds(newBounds: List<FirTypeRef>)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeParameter
 }

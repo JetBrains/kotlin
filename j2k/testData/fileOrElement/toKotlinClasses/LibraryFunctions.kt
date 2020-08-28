@@ -12,7 +12,7 @@ class TestJava {
         @JvmStatic
         fun main(args: Array<String>) {
             val x = ArrayList<String>()
-            x.filter { o -> o == "a" }
+            x.filter { o: String -> o == "a" }
             val lazy = lazy(LazyThreadSafetyMode.NONE) { "aaa" }
         }
     }

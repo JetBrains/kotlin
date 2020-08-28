@@ -15,7 +15,7 @@ public final enum class E : R|kotlin/Enum<test/E>| {
     public final val y: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
-    private constructor(x: R|kotlin/String|, y: R|kotlin/Int|): R|test/E|
+    private constructor(@R|test/A|() x: R|kotlin/String|, @R|test/B|() y: R|kotlin/Int|): R|test/E|
 
     public final static fun values(): R|kotlin/Array<test/E>| {
     }

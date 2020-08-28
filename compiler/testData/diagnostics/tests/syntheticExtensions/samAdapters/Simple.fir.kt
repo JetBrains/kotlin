@@ -16,7 +16,7 @@ fun foo(javaClass: JavaClass, kotlinClass: KotlinClass) {
         bar()
     }
 
-    javaClass.doSomething2 {
+    javaClass.<!INAPPLICABLE_CANDIDATE!>doSomething2<!> {
         bar()
     }
 }

@@ -1,31 +1,31 @@
 package org.jetbrains.kotlin.tools.projectWizard.core
 
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.*
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.properties.PluginProperty
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.properties.PluginPropertyReference
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.properties.PropertyContext
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.properties.PropertyReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.*
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager
 import org.jetbrains.kotlin.tools.projectWizard.core.service.SettingSavingWizardService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
-import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
-import kotlin.reflect.KProperty1
-import kotlin.reflect.full.isSubclassOf
-import kotlin.reflect.full.memberProperties
 
 
 class Context private constructor(
-    private val servicesManager: ServicesManager,
+    val servicesManager: ServicesManager,
     private val isUnitTestMode: Boolean,
     private val settingContext: SettingContext,
-    private val propertyContext: PropertyContext,
-    private val taskContext: TaskContext
+    private val propertyContext: PropertyContext
 ) {
+
     private lateinit var plugins: List<Plugin>
 
     private val settingWritingContext = SettingsWriter()
 
     private val pluginSettings by lazy(LazyThreadSafetyMode.NONE) {
-        plugins.flatMap(Plugin::declaredSettings).distinctBy(PluginSetting<*, *>::path)
+        plugins.flatMap(Plugin::settings).distinctBy(PluginSetting<*, *>::path)
     }
 
     fun <T> read(reader: Reader.() -> T): T =
@@ -46,8 +46,7 @@ class Context private constructor(
         servicesManager,
         isUnitTestMode,
         SettingContext(),
-        PropertyContext(),
-        TaskContext()
+        PropertyContext()
     ) {
         plugins = pluginsCreator(this).onEach(::initPlugin)
     }
@@ -57,69 +56,33 @@ class Context private constructor(
             servicesManager.withAdditionalServices(services),
             isUnitTestMode,
             settingContext,
-            propertyContext,
-            taskContext
+            propertyContext
         ).also {
             it.plugins = plugins
         }
 
-
-    fun <V : Any, T : SettingType<V>> pluginSettingDelegate(
-        create: (path: String) -> SettingBuilder<V, T>
-    ): ReadOnlyProperty<Any, PluginSetting<V, T>> =
-        settingContext.settingDelegate(create)
-
-    fun <T : Any> propertyDelegate(
-        init: Property.Builder<T>.() -> Unit,
-        defaultValue: T
-    ) = entityDelegate(propertyContext) { name ->
-        Property.Builder(name, defaultValue).apply(init).build()
-    }
-
-    fun pipelineTaskDelegate(
-        phase: GenerationPhase,
-        init: PipelineTask.Builder.() -> Unit
-    ) = entityDelegate(taskContext) { name ->
-        PipelineTask.Builder(name, phase).apply(init).build()
-    }
-
-    fun <A, B : Any> task1Delegate(
-        init: Task1.Builder<A, B>.() -> Unit
-    ) = entityDelegate(taskContext) { name ->
-        Task1.Builder<A, B>(name).apply(init).build()
-    }
-
-
     private fun initPlugin(plugin: Plugin) {
-        for (entityReference in plugin::class.memberProperties) {
-            val type = entityReference.returnType.classifier.safeAs<KClass<*>>() ?: continue
-            if (type.isSubclassOf(Entity::class)) {
-                when (val entity = entityReference.getter.call(plugin)) {
-                    is Property<*> -> {
-                        @Suppress("UNCHECKED_CAST")
-                        propertyContext[entityReference as PropertyReference<Any>] = entity.defaultValue
-                    }
-                }
-            }
+        for (property in plugin.properties) {
+            propertyContext[property] = property.defaultValue
+        }
+        for (setting in plugin.settings) {
+            settingContext.setPluginSetting(setting.reference, setting)
         }
     }
 
 
     private val pipelineLineTasks: List<PipelineTask>
         get() = plugins
-            .flatMap { it.declaredTasks.filterIsInstance<PipelineTask>() }
-
-    private fun task(reference: PipelineTaskReference) =
-        taskContext.getEntity(reference) as? PipelineTask ?: error(reference.path)
+            .flatMap { it.pipelineTasks }
 
     private val dependencyList: Map<PipelineTask, List<PipelineTask>>
         get() {
             val dependeeMap = pipelineLineTasks.flatMap { task ->
-                task.after.map { after -> task to task(after) }
+                task.after.map { after -> task to after }
             }
 
             val dependencyMap = pipelineLineTasks.flatMap { task ->
-                task.before.map { before -> task(before) to task }
+                task.before.map { before -> before to task }
             }
 
             return (dependeeMap + dependencyMap)
@@ -150,18 +113,24 @@ class Context private constructor(
         fun <S : WizardService> serviceByClass(klass: KClass<S>, filter: (S) -> Boolean = { true }): S =
             servicesManager.serviceByClass(klass, filter) ?: error("Service ${klass.simpleName} was not found")
 
-        @Suppress("UNCHECKED_CAST")
+
+        val <T : Any> PluginProperty<T>.reference: PluginPropertyReference<T>
+            get() = PluginPropertyReference(this)
+
+        val <T : Any> PluginProperty<T>.propertyValue: T
+            get() = propertyContext[this] ?: error("No value is present for property `$this`")
+
         val <T : Any> PropertyReference<T>.propertyValue: T
-            get() = propertyContext[this] as T
+            get() = propertyContext[this] ?: error("No value is present for property `$this`")
 
         val <V : Any, T : SettingType<V>> SettingReference<V, T>.settingValue: V
             get() = settingContext[this] ?: error("No value is present for setting `$this`")
 
-        inline val <reified V : Any> KProperty1<out Plugin, PluginSetting<V, SettingType<V>>>.settingValue: V
-            get() = reference.settingValue
+        val <V : Any> PluginSetting<V, SettingType<V>>.settingValue: V
+            get() = settingContext[this.reference] ?: error("No value is present for setting `$this`")
 
-        inline fun <reified V : Any> KProperty1<out Plugin, PluginSetting<V, SettingType<V>>>.settingValue(): V =
-            this.reference.settingValue
+        val <V : Any> PluginSetting<V, SettingType<V>>.notRequiredSettingValue: V?
+            get() = settingContext[this.reference]
 
         fun <V : Any, T : SettingType<V>> SettingReference<V, T>.settingValue(): V =
             settingContext[this] ?: error("No value is present for setting `$this`")
@@ -206,11 +175,14 @@ class Context private constructor(
         val eventManager: EventManager
             get() = settingContext.eventManager
 
-        fun <A, B : Any> Task1Reference<A, B>.execute(value: A): TaskResult<B> {
+        fun <A, B : Any> Task1<A, B>.execute(value: A): TaskResult<B> {
             @Suppress("UNCHECKED_CAST")
-            val task = taskContext.getEntity(this) as Task1<A, B>
-            return task.action(this@Writer, value)
+            return action(this@Writer, value)
         }
+
+        fun <T : Any> PluginProperty<T>.update(
+            updater: suspend ComputeContext<*>.(T) -> TaskResult<T>
+        ): TaskResult<Unit> = reference.update(updater)
 
         fun <T : Any> PropertyReference<T>.update(
             updater: suspend ComputeContext<*>.(T) -> TaskResult<T>
@@ -219,9 +191,13 @@ class Context private constructor(
             propertyContext[this@update] = newValue
         }
 
-        fun <T : Any> PropertyReference<List<T>>.addValues(
+        fun <T : Any> PluginProperty<List<T>>.addValues(
             vararg values: T
         ): TaskResult<Unit> = update { oldValues -> success(oldValues + values) }
+
+        fun <T : Any> PluginProperty<List<T>>.addValues(
+            values: List<T>
+        ): TaskResult<Unit> = reference.addValues(values)
 
         fun <T : Any> PropertyReference<List<T>>.addValues(
             values: List<T>
@@ -234,6 +210,10 @@ class Context private constructor(
     open inner class SettingsWriter : Writer() {
         fun <V : Any, T : SettingType<V>> SettingReference<V, T>.setValue(newValue: V) {
             settingContext[this] = newValue
+        }
+
+        fun <V : Any> PropertyReference<V>.initDefaultValue(newValue: V) {
+            propertyContext[this] = property.defaultValue
         }
 
         fun <V : Any, T : SettingType<V>> SettingReference<V, T>.setSettingValueToItsDefaultIfItIsNotSetValue() {
@@ -251,7 +231,7 @@ class Context private constructor(
 fun Reader.getUnspecifiedSettings(phases: Set<GenerationPhase>): List<AnySetting> {
     val required = plugins
         .flatMap { plugin ->
-            plugin.declaredSettings.mapNotNull { setting ->
+            plugin.settings.mapNotNull { setting ->
                 if (setting.neededAtPhase !in phases) return@mapNotNull null
                 if (setting.isRequired) setting else null
             }

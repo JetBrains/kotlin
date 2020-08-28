@@ -17,7 +17,7 @@ val x3 = run {
         throw Exception()
     }
 
-    class LocalClass {
+    class InitializerLocalClass {
         init {
             throw Exception()
             1
@@ -27,7 +27,7 @@ val x3 = run {
     throw Exception()
 }
     get() {
-        class LocalClass {
+        class GetterLocalClass {
             init {
                 throw Exception()
             }

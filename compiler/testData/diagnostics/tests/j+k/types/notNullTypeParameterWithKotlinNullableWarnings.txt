@@ -1,0 +1,13 @@
+package
+
+public fun </*0*/ V> SLRUMap<V>.getOrPut(/*0*/ value: V, /*1*/ l: kotlin.collections.List<V>): kotlin.Unit
+
+public interface SLRUMap</*0*/ V : kotlin.Any!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun </*0*/ E : kotlin.Any!> takeE(/*0*/ @org.jetbrains.annotations.NotNull value: E): kotlin.Unit
+    public abstract fun </*0*/ E : kotlin.Any!> takeEList(/*0*/ @org.jetbrains.annotations.NotNull value: kotlin.collections.(Mutable)List<@org.jetbrains.annotations.NotNull E>): kotlin.Unit
+    public abstract fun takeV(/*0*/ @org.jetbrains.annotations.NotNull value: V): kotlin.Unit
+    public abstract fun takeVList(/*0*/ @org.jetbrains.annotations.NotNull value: kotlin.collections.(Mutable)List<@org.jetbrains.annotations.NotNull V>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

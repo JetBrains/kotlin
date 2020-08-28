@@ -45,8 +45,7 @@ private class KCallableNamePropertyLowering(val context: BackendContext) : FileL
 }
 
 private class KCallableNamePropertyTransformer(val lower: KCallableNamePropertyLowering) : IrElementTransformerVoid() {
-
-    private fun nameForCallableMember(reference: IrCallableReference): Name {
+    private fun nameForCallableMember(reference: IrCallableReference<*>): Name {
         return when (reference) {
             is IrFunctionReference -> reference.symbol.owner.name
             is IrPropertyReference -> reference.symbol.owner.name
@@ -56,8 +55,7 @@ private class KCallableNamePropertyTransformer(val lower: KCallableNamePropertyL
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-
-        val callableReference = expression.dispatchReceiver as? IrCallableReference ?: return expression
+        val callableReference = expression.dispatchReceiver as? IrCallableReference<*> ?: return expression
 
         //TODO rewrite checking
         val directMember = expression.symbol.owner.let {

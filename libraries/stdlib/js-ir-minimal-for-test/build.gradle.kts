@@ -78,7 +78,9 @@ val jsMainSources by task<Sync> {
                 "libraries/stdlib/js/src/kotlin/reflect/KTypeParameterImpl.kt",
                 "libraries/stdlib/js/src/kotlin/reflect/KTypeImpl.kt",
                 "libraries/stdlib/js/src/kotlin/dom/**",
-                "libraries/stdlib/js/src/kotlin/browser/**"
+                "libraries/stdlib/js/src/kotlin/browser/**",
+                "libraries/stdlib/js/src/kotlinx/dom/**",
+                "libraries/stdlib/js/src/kotlinx/browser/**"
             )
         )
         fullJsMainSources.outputs.files.singleFile

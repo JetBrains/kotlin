@@ -17,21 +17,41 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrLocalDelegatedProperty :
+abstract class IrLocalDelegatedProperty :
+    IrDeclarationBase(),
     IrDeclarationWithName,
-    IrSymbolOwner {
+    IrSymbolOwner,
+    IrMetadataSourceOwner {
 
-    override val descriptor: VariableDescriptorWithAccessors
-    override val symbol: IrLocalDelegatedPropertySymbol
+    @ObsoleteDescriptorBasedAPI
+    abstract override val descriptor: VariableDescriptorWithAccessors
+    abstract override val symbol: IrLocalDelegatedPropertySymbol
 
-    val type: IrType
-    val isVar: Boolean
+    abstract val type: IrType
+    abstract val isVar: Boolean
 
-    var delegate: IrVariable
-    var getter: IrFunction
-    var setter: IrFunction?
+    abstract var delegate: IrVariable
+    abstract var getter: IrFunction
+    abstract var setter: IrFunction?
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitLocalDelegatedProperty(this, data)
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        delegate.accept(visitor, data)
+        getter.accept(visitor, data)
+        setter?.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        delegate = delegate.transform(transformer, data) as IrVariable
+        getter = getter.transform(transformer, data) as IrFunction
+        setter = setter?.transform(transformer, data) as? IrFunction
+    }
 }

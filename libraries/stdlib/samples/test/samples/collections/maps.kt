@@ -44,6 +44,13 @@ class Maps {
         }
 
         @Sample
+        fun sortedMapWithComparatorFromPairs() {
+            val map = sortedMapOf(compareBy<String> { it.length }.thenBy { it }, Pair("abc", 1), Pair("c", 3), Pair("bd", 4), Pair("bc", 2))
+            assertPrints(map.keys, "[c, bc, bd, abc]")
+            assertPrints(map.values, "[3, 2, 4, 1]")
+        }
+
+        @Sample
         fun emptyReadOnlyMap() {
             val map = emptyMap<String, Int>()
             assertTrue(map.isEmpty())
@@ -316,6 +323,14 @@ class Maps {
             val map2 = map1.mapValues { it.value.toString() + "$" }
 
             assertPrints(map2, "{beverage=2.7$, meal=12.4$}")
+        }
+
+        @Sample
+        fun mapNotNull() {
+            val map = mapOf("Alice" to 20, "Tom" to 13, "Bob" to 18)
+            val adults = map.mapNotNull { (name, age) -> name.takeIf { age >= 18 } }
+
+            assertPrints(adults, "[Alice, Bob]")
         }
 
         @Sample

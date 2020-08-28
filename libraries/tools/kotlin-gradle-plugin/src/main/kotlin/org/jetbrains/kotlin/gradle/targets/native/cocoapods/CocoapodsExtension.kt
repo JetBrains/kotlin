@@ -17,23 +17,29 @@ open class CocoapodsExtension(private val project: Project) {
     val version: String
         get() = project.version.toString()
 
-    @Optional
-    @InputFile
-    var podfile: File? = null
-
-    /**
-     * Configure path to the Podfile.
-     */
-    fun podfile(path: String) {
-        podfile = project.file(path)
-    }
-
     /**
      * Configure authors of the pod built from this project.
      */
     @Optional
     @Input
     var authors: String? = null
+
+    /**
+     * Configure existing file `Podfile`.
+     */
+    @Optional
+    @InputFile
+    var podfile: File? = null
+
+    @get:Input
+    internal var needPodspec: Boolean = true
+
+    /**
+     * Setup plugin not to produce podspec file for cocoapods section
+     */
+    fun noPodspec() {
+        needPodspec = false
+    }
 
     /**
      * Configure license of the pod built from this project.
@@ -55,6 +61,18 @@ open class CocoapodsExtension(private val project: Project) {
     @Optional
     @Input
     var homepage: String? = null
+
+    @Nested
+    val ios: PodspecPlatformSettings = PodspecPlatformSettings("ios")
+
+    @Nested
+    val osx: PodspecPlatformSettings = PodspecPlatformSettings("osx")
+
+    @Nested
+    val tvos: PodspecPlatformSettings = PodspecPlatformSettings("tvos")
+
+    @Nested
+    val watchos: PodspecPlatformSettings = PodspecPlatformSettings("watchos")
 
     /**
      * Configure framework name of the pod built from this project.
@@ -81,17 +99,33 @@ open class CocoapodsExtension(private val project: Project) {
      * Add a CocoaPods dependency to the pod built from this project.
      */
     @JvmOverloads
-    fun pod(name: String, version: String? = null, moduleName: String = name.split("/")[0]) {
+    fun pod(name: String, version: String? = null, podspec: File? = null, moduleName: String = name.asModuleName()) {
         check(_pods.findByName(name) == null) { "Project already has a CocoaPods dependency with name $name" }
-        _pods.add(CocoapodsDependency(name, version, moduleName))
+        _pods.add(CocoapodsDependency(name, version, podspec, moduleName))
     }
 
     data class CocoapodsDependency(
         private val name: String,
         @get:Optional @get:Input val version: String?,
+        @get:Optional @get:InputFile val podspec: File?,
         @get:Input val moduleName: String
     ) : Named {
         @Input
         override fun getName(): String = name
+    }
+
+    data class PodspecPlatformSettings(
+        private val name: String,
+        @get:Optional @get:Input var deploymentTarget: String? = null
+    ) : Named {
+
+        @Input
+        override fun getName(): String = name
+    }
+
+    companion object {
+        private fun String.asModuleName() = this
+            .split("/")[0]     // Pick the module name from a subspec name.
+            .replace('-', '_') // Support pods with dashes in names (see https://github.com/JetBrains/kotlin-native/issues/2884).
     }
 }

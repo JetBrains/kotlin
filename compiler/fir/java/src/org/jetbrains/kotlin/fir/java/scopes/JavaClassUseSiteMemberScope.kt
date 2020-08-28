@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,13 +9,15 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirValueParameterBuilder
-import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.getContainingCallableNamesIfPresent
+import org.jetbrains.kotlin.fir.scopes.getContainingClassifierNamesIfPresent
 import org.jetbrains.kotlin.fir.scopes.impl.AbstractFirUseSiteMemberScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -25,7 +27,7 @@ import org.jetbrains.kotlin.name.Name
 class JavaClassUseSiteMemberScope(
     klass: FirRegularClass,
     session: FirSession,
-    superTypesScope: FirScope,
+    superTypesScope: FirTypeScope,
     declaredMemberScope: FirScope
 ) : AbstractFirUseSiteMemberScope(
     session,
@@ -43,6 +45,14 @@ class JavaClassUseSiteMemberScope(
         superTypesScope.processFunctionsByName(name) {
             it.getOverridden(overrideCandidates)
         }
+    }
+
+    override fun getCallableNames(): Set<Name> {
+        return declaredMemberScope.getContainingCallableNamesIfPresent() + superTypesScope.getCallableNames()
+    }
+
+    override fun getClassifierNames(): Set<Name> {
+        return declaredMemberScope.getContainingClassifierNamesIfPresent() + superTypesScope.getClassifierNames()
     }
 
     private fun generateAccessorSymbol(
@@ -81,12 +91,12 @@ class JavaClassUseSiteMemberScope(
     private fun processAccessorFunctionsAndPropertiesByName(
         propertyName: Name,
         getterNames: List<Name>,
-        setterName: Name?,
         processor: (FirVariableSymbol<*>) -> Unit
     ) {
         val overrideCandidates = mutableSetOf<FirCallableSymbol<*>>()
         val klass = symbol.fir
         declaredMemberScope.processPropertiesByName(propertyName) { variableSymbol ->
+            if (variableSymbol.isStatic) return@processPropertiesByName
             overrideCandidates += variableSymbol
             processor(variableSymbol)
         }
@@ -106,13 +116,11 @@ class JavaClassUseSiteMemberScope(
         }
 
         superTypesScope.processPropertiesByName(propertyName) {
-            val firCallableMember = it.fir as? FirCallableMemberDeclaration<*>
-            if (firCallableMember?.isStatic == true) {
-                processor(it)
-            } else {
-                when (val overriddenBy = it.getOverridden(overrideCandidates)) {
-                    null -> processor(it)
-                    is FirAccessorSymbol -> processor(overriddenBy)
+            when (val overriddenBy = it.getOverridden(overrideCandidates)) {
+                null -> processor(it)
+                is FirAccessorSymbol -> processor(overriddenBy)
+                is FirPropertySymbol -> if (it is FirPropertySymbol) {
+                    directOverriddenProperties.getOrPut(overriddenBy) { mutableListOf() }.add(it)
                 }
             }
         }
@@ -129,6 +137,7 @@ class JavaClassUseSiteMemberScope(
             modality = firSimpleFunction.modality
             returnTypeRef = firSimpleFunction.returnTypeRef
             isStatic = firSimpleFunction.status.isStatic
+            status = firSimpleFunction.status
         }
     }
 
@@ -146,11 +155,11 @@ class JavaClassUseSiteMemberScope(
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         // Do not generate accessors at all?
         if (name.isSpecial) {
-            return processAccessorFunctionsAndPropertiesByName(name, emptyList(), null, processor)
+            return processAccessorFunctionsAndPropertiesByName(name, emptyList(), processor)
         }
         val getterNames = FirSyntheticPropertiesScope.possibleGetterNamesByPropertyName(name)
         val setterName = Name.identifier(SETTER_PREFIX + name.identifier.capitalize())
-        return processAccessorFunctionsAndPropertiesByName(name, getterNames, setterName, processor)
+        return processAccessorFunctionsAndPropertiesByName(name, getterNames, processor)
     }
 
     companion object {

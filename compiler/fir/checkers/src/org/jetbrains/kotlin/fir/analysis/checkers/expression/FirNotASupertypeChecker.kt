@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirNotASupertypeChecker : FirQualifiedAccessChecker() {
-    override fun check(functionCall: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        val superReference = functionCall.calleeReference.safeAs<FirSuperReference>()
+    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+        val superReference = expression.calleeReference.safeAs<FirSuperReference>()?.takeIf { it.hadExplicitTypeInSource() }
 
         val targetClass = superReference
             ?.superTypeRef
@@ -29,7 +29,7 @@ object FirNotASupertypeChecker : FirQualifiedAccessChecker() {
 
         val surrounding = context.findClosestClass(superReference.labelName) ?: return
         if (!targetClass.isSupertypeOf(surrounding)) {
-            reporter.report(functionCall.source)
+            reporter.report(expression.source)
         }
     }
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
+import gnu.trove.THashMap
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 internal fun <T> Sequence<T>.toList(expectedCapacity: Int): List<T> {
@@ -17,7 +18,7 @@ internal infix fun <K, V> Map<K, V>.concat(other: Map<K, V>): Map<K, V> =
     when {
         isEmpty() -> other
         other.isEmpty() -> this
-        else -> HashMap<K, V>(size + other.size, 1F).apply {
+        else -> THashMap<K, V>(size + other.size, 1F).apply {
             putAll(this@concat)
             putAll(other)
         }
@@ -31,4 +32,10 @@ internal fun Any?.isNull(): Boolean = this == null
 inline fun hashCode(value: Any?): Int = value.hashCode()
 
 @Suppress("NOTHING_TO_INLINE")
+inline fun hashCode(array: Array<*>?): Int = array?.contentHashCode() ?: 0
+
+@Suppress("NOTHING_TO_INLINE")
 inline fun Int.appendHashCode(value: Any?): Int = 31 * this + hashCode(value)
+
+@Suppress("NOTHING_TO_INLINE")
+inline fun Int.appendHashCode(array: Array<*>?): Int = 31 * this + hashCode(array)

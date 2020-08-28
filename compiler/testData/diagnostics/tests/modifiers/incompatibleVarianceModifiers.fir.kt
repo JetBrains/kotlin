@@ -19,5 +19,5 @@ class A {
 }
 
 fun test4(a: A) {
-    a.bar<out out Int>()
+    a.bar<<!PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT!>out out Int<!>>()
 }

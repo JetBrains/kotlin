@@ -10,9 +10,9 @@ plugins {
 val packedJars by configurations.creating
 
 dependencies {
-    compile(kotlinStdlib())
+    api(kotlinStdlib())
     packedJars(project(":kotlin-annotation-processing")) { isTransitive = false }
-    runtime(projectRuntimeJar(":kotlin-compiler-embeddable"))
+    runtimeOnly(projectRuntimeJar(":kotlin-compiler-embeddable"))
 }
 
 projectTest(parallel = true) {

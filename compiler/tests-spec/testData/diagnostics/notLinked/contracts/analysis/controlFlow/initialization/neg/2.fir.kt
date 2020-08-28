@@ -12,11 +12,11 @@ fun case_1() {
             }
         }
         funWithExactlyOnceCallsInPlace {
-            value_1.inc()
+            <!UNINITIALIZED_VARIABLE!>value_1<!>.inc()
         }
-        value_1.inc()
+        <!UNINITIALIZED_VARIABLE!>value_1<!>.inc()
     }
-    value_1.inc()
+    <!UNINITIALIZED_VARIABLE!>value_1<!>.inc()
 }
 
 // TESTCASE NUMBER: 2
@@ -27,14 +27,14 @@ fun case_2() {
             value_1 = 1
         }
         funWithAtLeastOnceCallsInPlace {
-            value_1.inc()
+            <!UNINITIALIZED_VARIABLE!>value_1<!>.inc()
         }
         funWithUnknownCallsInPlace {
-            value_1.inc()
+            <!UNINITIALIZED_VARIABLE!>value_1<!>.inc()
         }
-        value_1.inc()
+        <!UNINITIALIZED_VARIABLE!>value_1<!>.inc()
     }
-    value_1.inc()
+    <!UNINITIALIZED_VARIABLE!>value_1<!>.inc()
 }
 
 // TESTCASE NUMBER: 3
@@ -48,11 +48,11 @@ fun case_3() {
             }
         }
         funWithExactlyOnceCallsInPlace {
-            value_1.inc()
+            <!UNINITIALIZED_VARIABLE!>value_1<!>.inc()
         }
-        value_1.inc()
+        <!UNINITIALIZED_VARIABLE!>value_1<!>.inc()
     }
-    value_1.inc()
+    <!UNINITIALIZED_VARIABLE!>value_1<!>.inc()
 }
 
 // TESTCASE NUMBER: 4
@@ -63,15 +63,15 @@ fun case_4() {
             value_1 = 1
         }
         funWithAtLeastOnceCallsInPlace {
-            value_1.inc()
+            <!UNINITIALIZED_VARIABLE!>value_1<!>.inc()
         }
         funWithUnknownCallsInPlace {
-            value_1.inc()
+            <!UNINITIALIZED_VARIABLE!>value_1<!>.inc()
         }
         funWithExactlyOnceCallsInPlace {
-            value_1.inc()
+            <!UNINITIALIZED_VARIABLE!>value_1<!>.inc()
         }
-        value_1.inc()
+        <!UNINITIALIZED_VARIABLE!>value_1<!>.inc()
     }
-    value_1.inc()
+    <!UNINITIALIZED_VARIABLE!>value_1<!>.inc()
 }

@@ -1,0 +1,3 @@
+FILE: long.kt
+    public final val foo: R|kotlin/Long| = Q|kotlin/Long|.R|kotlin/Long.Companion.MAX_VALUE|.R|kotlin/Long.toLong|()
+        public get(): R|kotlin/Long|

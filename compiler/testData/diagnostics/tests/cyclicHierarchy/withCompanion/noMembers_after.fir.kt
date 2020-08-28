@@ -9,7 +9,7 @@ public class C {
 
     open class Base ()
 
-    class Foo : Data()
+    class Foo : <!UNRESOLVED_REFERENCE!>Data<!>()
 
     companion object : DerivedAbstract()
 }

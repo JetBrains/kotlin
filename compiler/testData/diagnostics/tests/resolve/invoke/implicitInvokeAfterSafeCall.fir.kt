@@ -80,7 +80,7 @@ operator fun <T> Foo6<T>.invoke(x: Int) {}
 
 fun main(x: Bar6<String>?) {
     x?.value(1)
-    x?.value.<!INAPPLICABLE_CANDIDATE!>invoke<!>(1)
+    x?.value.<!NONE_APPLICABLE!>invoke<!>(1)
 }
 
 // Test case 7: top-level generic invoke and invoke with compatible additional dispatch recevier
@@ -108,7 +108,7 @@ operator fun Foo8<String>.invoke(x: Int) {}
 
 fun main(x: Bar8<String>?) {
     x?.value(1)
-    x?.value.<!INAPPLICABLE_CANDIDATE!>invoke<!>(1)
+    x?.value.<!NONE_APPLICABLE!>invoke<!>(1)
 }
 
 // Test case 9: additional receiver, generic invoke with pure type perameter receiver

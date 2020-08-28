@@ -15,4 +15,4 @@ package p1
 import p2.*
 
 val <!EXPOSED_PROPERTY_TYPE!>x<!>: X = X()
-val <!EXPOSED_PROPERTY_TYPE!>y<!>: Y = <!INAPPLICABLE_CANDIDATE!>Y<!>()
+val <!EXPOSED_PROPERTY_TYPE!>y<!>: Y = <!HIDDEN!>Y<!>()

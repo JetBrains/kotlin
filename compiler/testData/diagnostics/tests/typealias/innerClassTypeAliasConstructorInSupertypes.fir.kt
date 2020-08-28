@@ -22,16 +22,16 @@ class Generic<T1> {
     open inner class Generic<T2>
 
     inner class Test1 : GI<T1>()
-    inner class Test2 : GIInt()
+    inner class Test2 : <!UNRESOLVED_REFERENCE!>GIInt<!>()
     inner class Test3 : GIStar()
     inner class Test3a : test.Generic<*>.Inner()
 
     inner class Test4<T2> : GG<T1, T2>()
     inner class Test5 : GG<T1, Int>()
-    inner class Test6 : GG<Int, T1>()
-    inner class Test7 : GG<Int, Int>()
-    inner class Test8 : GIntG<Int>()
-    inner class Test9 : GGInt<Int>()
+    inner class Test6 : <!UNRESOLVED_REFERENCE!>GG<Int, T1><!>()
+    inner class Test7 : <!UNRESOLVED_REFERENCE!>GG<Int, Int><!>()
+    inner class Test8 : <!UNRESOLVED_REFERENCE!>GIntG<Int><!>()
+    inner class Test9 : <!UNRESOLVED_REFERENCE!>GGInt<Int><!>()
     inner class Test10 : GGInt<T1>()
 
     inner class Test11 : GG<T1, Int> {

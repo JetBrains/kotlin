@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.idea.refactoring.addTypeArgumentsIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.getQualifiedTypeArgumentList
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -69,6 +70,7 @@ class RemoveExplicitTypeIntention : SelfTargetingRangeIntention<KtCallableDeclar
             if (initializer == null || typeReference == null) return true
             if (initializer !is KtLambdaExpression && initializer !is KtNamedFunction) return true
             val typeElement = typeReference.typeElement ?: return true
+            if (typeReference.hasModifier(KtTokens.SUSPEND_KEYWORD)) return false
             return when (typeElement) {
                 is KtFunctionType -> {
                     if (typeElement.receiver != null) return false

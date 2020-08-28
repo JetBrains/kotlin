@@ -13,6 +13,7 @@ import com.intellij.lang.LanguageAnnotators
 import com.intellij.lang.LanguageExtensionPoint
 import com.intellij.lang.annotation.Annotator
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.impl.NonBlockingReadActionImpl
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -24,7 +25,6 @@ import com.intellij.psi.impl.PsiDocumentManagerBase
 import com.intellij.testFramework.ExtensionTestUtil
 import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.ui.UIUtil
-import org.jetbrains.kotlin.idea.parameterInfo.HintType
 import org.jetbrains.kotlin.idea.perf.util.logMessage
 import org.jetbrains.kotlin.idea.test.runPostStartupActivitiesOnce
 import java.nio.file.Paths
@@ -60,12 +60,10 @@ fun saveDocument(document: Document) {
     }
 }
 
-fun enableHints(enable: Boolean) =
-    HintType.values().forEach { it.option.set(enable) }
-
 fun dispatchAllInvocationEvents() {
     runInEdtAndWait {
         UIUtil.dispatchAllInvocationEvents()
+        NonBlockingReadActionImpl.waitForAsyncTaskCompletion();
     }
 }
 

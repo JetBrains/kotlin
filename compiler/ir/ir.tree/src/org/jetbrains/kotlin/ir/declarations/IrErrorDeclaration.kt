@@ -16,5 +16,18 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-interface IrErrorDeclaration : IrDeclaration
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
+abstract class IrErrorDeclaration : IrDeclarationBase() {
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitErrorDeclaration(this, data)
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        // no children
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        // no children
+    }
+}

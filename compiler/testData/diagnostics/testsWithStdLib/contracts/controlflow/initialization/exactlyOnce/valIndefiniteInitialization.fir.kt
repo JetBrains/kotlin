@@ -31,14 +31,14 @@ fun branchingIndetermineFlow(a: Any?) {
         myRun { x = 43 }
     }
 
-    x.inc()
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }
 
 fun nonAnonymousLambdas() {
     val x: Int
     val initializer = { x = 42 }
     myRun(initializer)
-    x.inc()
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }
 
 fun multipleAssignments() {
@@ -47,7 +47,7 @@ fun multipleAssignments() {
         // Val reassignment because we know that repeat's lambda called in-place
         myRun { x = 42 }
     }
-    x.inc()
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }
 
 fun funWithUnknownInvocations(block: () -> Unit) = block()
@@ -56,7 +56,7 @@ fun nestedIndefiniteAssignment() {
     val x: Int
     // Captured val initialization reported, because we don't know anything about funWithUnknownInvocations
     funWithUnknownInvocations { myRun { x = 42 } }
-    x.inc()
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }
 
 class InitializationForbiddenInNonInitSection {

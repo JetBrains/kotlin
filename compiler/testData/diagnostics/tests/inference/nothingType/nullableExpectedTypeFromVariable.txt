@@ -1,0 +1,10 @@
+package
+
+public final class Foo</*0*/ T> {
+    public constructor Foo</*0*/ T>()
+    private final fun append(/*0*/ map: kotlin.collections.MutableMap<kotlin.String, T>, /*1*/ field: kotlin.String, /*2*/ appendedValue: T?): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun or(/*0*/ left: T, /*1*/ right: T): T
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

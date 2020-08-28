@@ -22,12 +22,11 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrGetEnumValueImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    symbol: IrEnumEntrySymbol
-) : IrTerminalDeclarationReferenceBase<IrEnumEntrySymbol>(startOffset, endOffset, type, symbol), IrGetEnumValue {
-
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType,
+    override val symbol: IrEnumEntrySymbol,
+) : IrGetEnumValue() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitGetEnumValue(this, data)
     }

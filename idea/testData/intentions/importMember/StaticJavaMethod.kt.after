@@ -1,27 +1,24 @@
-// INTENTION_TEXT: "Add import for 'javax.swing.SwingUtilities.invokeLater'"
+// INTENTION_TEXT: "Add import for 'java.util.regex.Pattern.matches'"
 // WITH_RUNTIME
 // ERROR: Unresolved reference: SomethingElse
 // ERROR: Unresolved reference: somethingElse
 // SKIP_ERRORS_AFTER
 
-import javax.swing.SwingUtilities
-import javax.swing.SwingUtilities.invokeLater
+import java.util.regex.Pattern
+import java.util.regex.Pattern.matches
 
 fun foo() {
-    invokeLater {}
+    matches("", "")
 }
 
 fun bar() {
-    invokeLater {
-    }
+    matches("", "")
 
-    invokeLater(Runnable {
-        invokeLater { }
-    })
+    matches("", "")
 
-    SwingUtilities.invokeAndWait { }
+    Pattern.compile("")
 
-    SomethingElse.invokeLater()
+    SomethingElse.matches("", "")
 
-    somethingElse.SwingUtilities.invokeLater()
+    somethingElse.Pattern.matches("", "")
 }

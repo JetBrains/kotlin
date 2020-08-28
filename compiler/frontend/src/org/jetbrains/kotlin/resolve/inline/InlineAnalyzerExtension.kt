@@ -37,7 +37,7 @@ class InlineAnalyzerExtension(
 
     override fun process(descriptor: CallableMemberDescriptor, functionOrProperty: KtCallableDeclaration, trace: BindingTrace) {
         checkModalityAndOverrides(descriptor, functionOrProperty, trace)
-        notSupportedInInlineCheck(descriptor, functionOrProperty, trace)
+        notSupportedInInlineCheck(functionOrProperty, trace)
 
         if (descriptor is FunctionDescriptor) {
             assert(functionOrProperty is KtNamedFunction) {
@@ -61,7 +61,6 @@ class InlineAnalyzerExtension(
     }
 
     private fun notSupportedInInlineCheck(
-        descriptor: CallableMemberDescriptor,
         functionOrProperty: KtCallableDeclaration,
         trace: BindingTrace
     ) {

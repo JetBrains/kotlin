@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectService
 import org.jetbrains.kotlin.idea.configuration.notifyOutdatedBundledCompilerIfNecessary
 import org.jetbrains.kotlin.idea.util.ProgressIndicatorUtils.runUnderDisposeAwareIndicator
 
-// BUNCH: 192
+
 class MavenImportListener : StartupActivity {
 
     override fun runActivity(project: Project) {
@@ -37,6 +37,4 @@ class MavenImportListener : StartupActivity {
             }
         })
     }
-
-
 }

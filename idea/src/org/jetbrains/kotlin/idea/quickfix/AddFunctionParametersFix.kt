@@ -20,7 +20,12 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.PsiSearchHelper
 import com.intellij.psi.search.searches.ReferencesSearch
+import org.jetbrains.kotlin.builtins.isKFunctionType
+import org.jetbrains.kotlin.builtins.isKSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -29,8 +34,10 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
-import org.jetbrains.kotlin.idea.util.getDataFlowAwareTypes
+import org.jetbrains.kotlin.idea.intentions.reflectToRegularFunctionType
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
+import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.getDataFlowAwareTypes
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -187,7 +194,9 @@ class AddFunctionParametersFix(
     ): KotlinParameterInfo {
         val name = getNewArgumentName(argument, validator)
         val expression = argument.getArgumentExpression()
-        val type = expression?.let { getDataFlowAwareTypes(it).firstOrNull() } ?: functionDescriptor.builtIns.nullableAnyType
+        val type = (expression?.let { getDataFlowAwareTypes(it).firstOrNull() } ?: functionDescriptor.builtIns.nullableAnyType).let {
+            if (it.isKFunctionType || it.isKSuspendFunctionType) it.reflectToRegularFunctionType() else it
+        }
         return KotlinParameterInfo(functionDescriptor, -1, name, KotlinTypeInfo(false, null)).apply {
             currentTypeInfo = KotlinTypeInfo(false, type)
             originalTypeInfo.type?.let { typesToShorten.add(it) }
@@ -196,6 +205,15 @@ class AddFunctionParametersFix(
     }
 
     private fun hasOtherUsages(function: PsiElement): Boolean {
+        (function as? PsiNamedElement)?.let {
+            val name = it.name ?: return false
+            val project = runReadAction { it.project }
+            val psiSearchHelper = PsiSearchHelper.getInstance(project)
+            val globalSearchScope = GlobalSearchScope.projectScope(project)
+            val cheapEnoughToSearch = psiSearchHelper.isCheapEnoughToSearch(name, globalSearchScope, null, null)
+            if (cheapEnoughToSearch == PsiSearchHelper.SearchCostResult.TOO_MANY_OCCURRENCES) return false
+        }
+
         return ReferencesSearch.search(function).any {
             val call = it.element.getParentOfType<KtCallElement>(false)
             call != null && callElement != call

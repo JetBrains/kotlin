@@ -49,7 +49,7 @@ import static org.junit.Assume.assumeThat;
 @RunWith(value = Parameterized.class)
 public abstract class AbstractModelBuilderTest {
 
-    public static final Object[][] SUPPORTED_GRADLE_VERSIONS = {{"4.9"}, {"5.6.4"}};
+    public static final Object[][] SUPPORTED_GRADLE_VERSIONS = {{"4.9"}, {"5.6.4"}, {"6.5.1"}};
 
     private static final Pattern TEST_METHOD_NAME_PATTERN = Pattern.compile("(.*)\\[(\\d*: with Gradle-.*)\\]");
 
@@ -147,8 +147,8 @@ public abstract class AbstractModelBuilderTest {
     }
 
     @NotNull
-    private static Set<Class> getToolingExtensionClasses() {
-        Set<Class> classes = ContainerUtil.<Class>set(
+    private static Set<Class<?>> getToolingExtensionClasses() {
+        Set<Class<?>> classes = ContainerUtil.set(
                 ExternalProject.class,
                 // gradle-tooling-extension-api jar
                 ProjectImportAction.class,
@@ -163,7 +163,7 @@ public abstract class AbstractModelBuilderTest {
     }
 
     @NotNull
-    private static Set<Class> doGetToolingExtensionClasses() {
+    private static Set<Class<?>> doGetToolingExtensionClasses() {
         return Collections.emptySet();
     }
 
@@ -174,7 +174,7 @@ public abstract class AbstractModelBuilderTest {
         }
     }
 
-    protected abstract Set<Class> getModels();
+    protected abstract Set<Class<?>> getModels();
 
 
     private static void ensureTempDirCreated() throws IOException {

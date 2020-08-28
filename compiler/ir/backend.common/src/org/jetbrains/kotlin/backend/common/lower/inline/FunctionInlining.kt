@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
@@ -36,6 +37,7 @@ interface InlineFunctionResolver {
     fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class DefaultInlineFunctionResolver(open val context: CommonBackendContext) : InlineFunctionResolver {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
         val descriptor = symbol.descriptor.original
@@ -56,6 +58,7 @@ open class DefaultInlineFunctionResolver(open val context: CommonBackendContext)
     }
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 class FunctionInlining(
     val context: CommonBackendContext,
     val inlineFunctionResolver: InlineFunctionResolver
@@ -120,7 +123,7 @@ class FunctionInlining(
                 (0 until callSite.typeArgumentsCount).map {
                     typeParameters[it].symbol to callSite.getTypeArgument(it)
                 }.associate { it }
-            DeepCopyIrTreeWithSymbolsForInliner(context, typeArguments, parent)
+            DeepCopyIrTreeWithSymbolsForInliner(typeArguments, parent)
         }
 
         val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()
@@ -143,9 +146,12 @@ class FunctionInlining(
             callee: IrFunction,
             performRecursiveInline: Boolean
         ): IrReturnableBlock {
-            val copiedCallee = if (performRecursiveInline)
-                visitElement(copyIrElement.copy(callee)) as IrFunction
-            else copyIrElement.copy(callee) as IrFunction
+            val copiedCallee = copyIrElement.copy(callee).let {
+                (it as IrFunction).parent = callee.parent
+                if (performRecursiveInline)
+                    visitElement(it) as IrFunction
+                else it
+            }
 
             val evaluationStatements = evaluateArguments(callSite, copiedCallee)
             val statements = (copiedCallee.body as IrBlockBody).statements
@@ -160,10 +166,6 @@ class FunctionInlining(
             val transformer = ParameterSubstitutor()
             statements.transform { it.transform(transformer, data = null) }
             statements.addAll(0, evaluationStatements)
-
-            val isCoroutineIntrinsicCall = callSite.symbol.descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(
-                context.configuration.languageVersionSettings
-            )
 
             return IrReturnableBlockImpl(
                 startOffset = callSite.startOffset,
@@ -232,17 +234,22 @@ class FunctionInlining(
                     }
 
                     val immediateCall = with(expression) {
-                        if (function is IrConstructor) {
-                            val classTypeParametersCount = function.parentAsClass.typeParameters.size
-                            IrConstructorCallImpl.fromSymbolOwner(
-                                startOffset,
-                                endOffset,
-                                function.returnType,
-                                function.symbol,
-                                classTypeParametersCount
-                            )
-                        } else
-                            IrCallImpl(startOffset, endOffset, function.returnType, functionArgument.symbol)
+                        when (function) {
+                            is IrConstructor -> {
+                                val classTypeParametersCount = function.parentAsClass.typeParameters.size
+                                IrConstructorCallImpl.fromSymbolOwner(
+                                    startOffset,
+                                    endOffset,
+                                    function.returnType,
+                                    function.symbol,
+                                    classTypeParametersCount
+                                )
+                            }
+                            is IrSimpleFunction ->
+                                IrCallImpl(startOffset, endOffset, function.returnType, function.symbol)
+                            else ->
+                                error("Unknown function kind : ${function.render()}")
+                        }
                     }.apply {
                         for (parameter in functionParameters) {
                             val argument =
@@ -411,7 +418,7 @@ class FunctionInlining(
                     }
 
                     else -> {
-                        val message = "Incomplete expression: call to ${callee.descriptor} " +
+                        val message = "Incomplete expression: call to ${callee.render()} " +
                                 "has no argument at index ${parameter.index}"
                         throw Error(message)
                     }
@@ -507,13 +514,14 @@ class FunctionInlining(
     }
 
     private class IrGetValueWithoutLocation(
-        symbol: IrValueSymbol,
+        override val symbol: IrValueSymbol,
         override val origin: IrStatementOrigin? = null
-    ) : IrTerminalDeclarationReferenceBase<IrValueSymbol>(
-        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-        symbol.owner.type,
-        symbol
-    ), IrGetValue {
+    ) : IrGetValue() {
+        override val startOffset: Int get() = UNDEFINED_OFFSET
+        override val endOffset: Int get() = UNDEFINED_OFFSET
+
+        override val type: IrType get() = symbol.owner.type
+
         override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D) =
             visitor.visitGetValue(this, data)
 

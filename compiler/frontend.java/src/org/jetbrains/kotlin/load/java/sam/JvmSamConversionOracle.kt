@@ -22,4 +22,7 @@ class JvmSamConversionOracle(
 
     override fun isPossibleSamType(samType: KotlinType): Boolean =
         JavaBasedSamConversionOracle.isPossibleSamType(samType)
+
+    override fun isJavaApplicableCandidate(candidate: CallableDescriptor): Boolean =
+        JavaBasedSamConversionOracle.shouldRunSamConversionForFunction(candidate)
 }

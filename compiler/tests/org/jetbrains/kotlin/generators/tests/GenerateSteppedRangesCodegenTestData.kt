@@ -17,28 +17,8 @@ object GenerateSteppedRangesCodegenTestData {
         |// KT-34166: Translation of loop over literal completely removes the validation of step
         |// DONT_TARGET_EXACT_BACKEND: JS""".trimMargin()
     private val KT_34166_AFFECTED_FILENAMES = setOf("illegalStepZero.kt", "illegalStepNegative.kt", "illegalStepNonConst.kt")
-    private val FIR_FAILING_FOR_UNSIGNED_FILENAMES = setOf(
-        "emptyProgressionToMinValue.kt",
-        "maxValueToMinValueStepMaxValue.kt",
-        "maxValueToOneStepMaxValue.kt",
-        "maxValueToZeroStepMaxValue.kt",
-        "minValueToMaxValueStepMaxValue.kt",
-        "oneToMaxValueStepMaxValue.kt",
-        "zeroToMaxValueStepMaxValue.kt"
-    )
 
-    private val JVM_IR_FAILING_FOR_UNSIGNED_SUBDIRS =
-        setOf(
-            "expression/downTo",
-            "expression/downTo/reversed",
-            "expression/downTo/nestedStep",
-            "expression/rangeTo",
-            "expression/rangeTo/nestedStep",
-            "expression/rangeTo/reversed",
-            "expression/until",
-            "expression/until/nestedStep",
-            "expression/until/reversed"
-        )
+    private val JVM_IR_FAILING_FOR_UNSIGNED_FILENAMES = setOf<String>()
 
     private enum class Type(val type: String, val isLong: Boolean = false, val isUnsigned: Boolean = false) {
         INT("Int"),
@@ -183,7 +163,6 @@ object GenerateSteppedRangesCodegenTestData {
         extraCode: String?,
         fullSubdir: File,
         asLiteral: Boolean,
-        shouldIgnoreForFIR: Boolean = false,
         shouldIgnoreForJvmIR: Boolean = false
     ) {
         fullSubdir.mkdirs()
@@ -192,9 +171,6 @@ object GenerateSteppedRangesCodegenTestData {
                 println("// $PREAMBLE_MESSAGE")
                 if (shouldIgnoreForJvmIR) {
                     println("// IGNORE_BACKEND: JVM_IR")
-                }
-                if (shouldIgnoreForFIR) {
-                    println("// IGNORE_BACKEND_FIR: JVM_IR")
                 }
                 println("// KJS_WITH_FULL_RUNTIME")
                 println("// WITH_RUNTIME")
@@ -242,9 +218,7 @@ object GenerateSteppedRangesCodegenTestData {
                 extraCode,
                 File(UNSIGNED_TEST_DATA_DIR, fullSubdirPath),
                 asLiteral,
-                shouldIgnoreForFIR = fileName in FIR_FAILING_FOR_UNSIGNED_FILENAMES ||
-                        fullSubdirPath in JVM_IR_FAILING_FOR_UNSIGNED_SUBDIRS,
-                shouldIgnoreForJvmIR = fullSubdirPath in JVM_IR_FAILING_FOR_UNSIGNED_SUBDIRS
+                shouldIgnoreForJvmIR = fileName in JVM_IR_FAILING_FOR_UNSIGNED_FILENAMES,
             )
         }
         if (signedTests.isNotEmpty()) {

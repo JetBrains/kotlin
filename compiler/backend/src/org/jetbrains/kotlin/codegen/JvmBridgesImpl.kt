@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaForKotlinOverridePropertyD
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.annotations.isCompiledToJvmDefault
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasPlatformDependentAnnotation
+import org.jetbrains.kotlin.util.findImplementationFromInterface
+import org.jetbrains.kotlin.util.findInterfaceImplementation
 
 class DescriptorBasedFunctionHandleForJvm(
     descriptor: FunctionDescriptor,

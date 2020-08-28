@@ -9,7 +9,7 @@ expect val propertyWithInferredType3: String
 expect val propertyWithInferredType4: Nothing?
 expect val propertyWithInferredType5: Planet
 
-expect class C
+typealias C = Planet
 
 expect val property1: Int
 expect val property2: String

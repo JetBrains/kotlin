@@ -44,9 +44,16 @@ class KotlinStructureViewElement(
                 KotlinStructureElementPresentation(isInherited, element, countDescriptor())
             }
 
+    @Deprecated("Use 'visibility' instead.", level = DeprecationLevel.ERROR)
     var isPublic
             by AssignableLazyProperty {
                 isPublic(countDescriptor())
+            }
+        private set
+
+    var visibility
+            by AssignableLazyProperty {
+                Visibility(countDescriptor())
             }
         private set
 
@@ -54,7 +61,7 @@ class KotlinStructureViewElement(
         if (element !is KtElement) {
             // Avoid storing descriptor in fields
             kotlinPresentation = KotlinStructureElementPresentation(isInherited, element, descriptor)
-            isPublic = isPublic(descriptor)
+            visibility = Visibility(descriptor)
         }
     }
 
@@ -119,6 +126,22 @@ class KotlinStructureViewElement(
                 } else null
             }
         }
+    }
+
+    class Visibility(descriptor: DeclarationDescriptor?) {
+        private val visibility = (descriptor as? DeclarationDescriptorWithVisibility)?.visibility
+
+        val isPublic: Boolean
+            get() = visibility == Visibilities.PUBLIC
+
+        val accessLevel: Int?
+            get() = when {
+                visibility == Visibilities.PUBLIC -> 1
+                visibility == Visibilities.INTERNAL -> 2
+                visibility == Visibilities.PROTECTED -> 3
+                visibility?.let { Visibilities.isPrivate(it) } == true -> 4
+                else -> null
+            }
     }
 }
 

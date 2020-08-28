@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import java.awt.BorderLayout
 import javax.swing.JPanel
 
@@ -223,6 +220,7 @@ private val transformations = listOf(
     "minus",
     "minusElement",
     "onEach",
+    "onEachIndexed",
     "plus",
     "plusElement",
     "requireNoNulls",
@@ -236,10 +234,9 @@ private val transformations = listOf(
     "windowed",
     "withIndex",
     "zipWithNext"
-).associate { it to FqName("kotlin.collections.$it") }
+).associateWith { FqName("kotlin.collections.$it") }
 
-@NonNls
-private val terminations = listOf(
+internal val collectionTerminationFunctionNames = listOf(
     "all",
     "any",
     "asIterable",
@@ -283,18 +280,41 @@ private val terminations = listOf(
     "max",
     "maxBy",
     "maxWith",
+    "maxOrNull",
+    "maxByOrNull",
+    "maxWithOrNull",
+    "maxOf",
+    "maxOfOrNull",
+    "maxOfWith",
+    "maxOfWithOrNull",
     "min",
     "minBy",
     "minWith",
+    "minOrNull",
+    "minByOrNull",
+    "minWithOrNull",
+    "minOf",
+    "minOfOrNull",
+    "minOfWith",
+    "minOfWithOrNull",
     "none",
     "partition",
     "reduce",
     "reduceIndexed",
+    "reduceIndexedOrNull",
+    "reduceOrNull",
+    "runningFold",
+    "runningFoldIndexed",
+    "runningReduce",
+    "runningReduceIndexed",
+    "scan",
+    "scanIndexed",
     "single",
     "singleOrNull",
     "sum",
     "sumBy",
     "sumByDouble",
+    "sumOf",
     "toCollection",
     "toHashSet",
     "toList",
@@ -303,9 +323,12 @@ private val terminations = listOf(
     "toSet",
     "toSortedSet",
     "unzip"
-).associate {
+)
+
+@NonNls
+private val terminations = collectionTerminationFunctionNames.associateWith {
     val pkg = if (it in listOf("contains", "indexOf", "lastIndexOf")) "kotlin.collections.List" else "kotlin.collections"
-    it to FqName("$pkg.$it")
+    FqName("$pkg.$it")
 }
 
 private val lazyTerminations = terminations.filter { (key, _) -> key == "groupingBy" }

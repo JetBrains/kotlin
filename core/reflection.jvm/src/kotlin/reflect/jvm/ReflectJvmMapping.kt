@@ -21,6 +21,7 @@ package kotlin.reflect.jvm
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import java.lang.reflect.*
 import kotlin.reflect.*
+import kotlin.reflect.javaType as stdlibJavaType
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.memberProperties
@@ -76,7 +77,8 @@ val <T> KFunction<T>.javaConstructor: Constructor<T>?
  * the JVM class [Unit] when it's the type of a parameter, or to `void` when it's the return type of a function.
  */
 val KType.javaType: Type
-    get() = (this as KTypeImpl).javaType
+    @OptIn(ExperimentalStdlibApi::class)
+    get() = (this as KTypeImpl).javaType ?: stdlibJavaType
 
 
 // Java reflection -> Kotlin reflection

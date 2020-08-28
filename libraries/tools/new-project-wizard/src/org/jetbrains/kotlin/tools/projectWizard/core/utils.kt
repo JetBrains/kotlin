@@ -33,6 +33,10 @@ operator fun Path.div(@NonNls other: String): Path =
 operator fun Path.div(other: Path): Path =
     resolve(other.toString())
 
+@JvmName("divNullable")
+operator fun Path.div(other: Path?): Path =
+    other?.let { resolve(other.toString()) } ?: this
+
 operator fun @receiver:NonNls String.div(other: Path): Path =
     Paths.get(this).resolve(other)
 
@@ -40,6 +44,8 @@ operator fun @receiver:NonNls String.div(@NonNls other: String): Path =
     Paths.get(this).resolve(other)
 
 fun @receiver:NonNls String.asPath(): Path = Paths.get(this)
+
+fun Path.asStringWithUnixSlashes() = toString().replace('\\', '/')
 
 fun <T : Any> safe(operation: () -> T): TaskResult<T> =
     try {

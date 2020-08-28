@@ -30,9 +30,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
-import com.intellij.openapi.roots.impl.libraries.LibraryImpl
 import com.intellij.openapi.roots.libraries.Library
-import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.util.Key
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -186,10 +184,11 @@ class KotlinGradleLibraryDataService : AbstractProjectDataService<LibraryData, V
             val modifiableModel = modelsProvider.getModifiableLibraryModel(ideLibrary) as LibraryEx.ModifiableModelEx
             if (anyNonJvmModules || ideLibrary.looksAsNonJvmLibrary()) {
                 detectLibraryKind(modifiableModel.getFiles(OrderRootType.CLASSES))?.let { modifiableModel.kind = it }
-            } else if (ideLibrary is LibraryImpl
-                && (ideLibrary.kind === JSLibraryKind || ideLibrary.kind === NativeLibraryKind || ideLibrary.kind === CommonLibraryKind)
+            } else if (
+                ideLibrary is LibraryEx &&
+                (ideLibrary.kind === JSLibraryKind || ideLibrary.kind === NativeLibraryKind || ideLibrary.kind === CommonLibraryKind)
             ) {
-                resetLibraryKind(modifiableModel)
+                modifiableModel.kind = null
             }
         }
     }
@@ -201,23 +200,6 @@ class KotlinGradleLibraryDataService : AbstractProjectDataService<LibraryData, V
         }
 
         return getFiles(OrderRootType.CLASSES).firstOrNull()?.extension == KLIB_FILE_EXTENSION
-    }
-
-    private fun resetLibraryKind(modifiableModel: LibraryEx.ModifiableModelEx) {
-        try {
-            val cls = LibraryImpl::class.java
-            // Don't use name-based lookup because field names are scrambled in IDEA Ultimate
-            for (field in cls.declaredFields) {
-                if (field.type == PersistentLibraryKind::class.java) {
-                    field.isAccessible = true
-                    field.set(modifiableModel, null)
-                    return
-                }
-            }
-            LOG.info("Could not find field of type PersistentLibraryKind in LibraryImpl.class")
-        } catch (e: Exception) {
-            LOG.info("Failed to reset library kind", e)
-        }
     }
 
     companion object {

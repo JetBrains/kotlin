@@ -79,11 +79,9 @@ internal fun getStringHashCode(str: String): Int {
 
 internal fun identityHashCode(obj: Any?): Int = getObjectHashCode(obj)
 
-internal fun captureStack(instance: Throwable) {
+internal fun captureStack(instance: Throwable, constructorFunction: Any) {
     if (js("Error").captureStackTrace != null) {
-        // TODO Why we generated get kclass for throwable in original code?
-        js("Error").captureStackTrace(instance, instance.asDynamic().constructor)
-//        js("Error").captureStackTrace(instance, instance::class.js)
+        js("Error").captureStackTrace(instance, constructorFunction)
     } else {
         instance.asDynamic().stack = js("new Error()").stack
     }
@@ -99,6 +97,10 @@ internal fun newThrowable(message: String?, cause: Throwable?): Throwable {
 
 internal fun extendThrowable(this_: dynamic, message: String?, cause: Throwable?) {
     js("Error").call(this_)
+    setPropertiesToThrowableInstance(this_, message, cause)
+}
+
+internal fun setPropertiesToThrowableInstance(this_: dynamic, message: String?, cause: Throwable?) {
     if (!hasOwnPrototypeProperty(this_, "message")) {
         this_.message = message ?: cause?.toString() ?: undefined
     }
@@ -106,7 +108,6 @@ internal fun extendThrowable(this_: dynamic, message: String?, cause: Throwable?
         this_.cause = cause
     }
     this_.name = JsObject.getPrototypeOf(this_).constructor.name
-    captureStack(this_)
 }
 
 @JsName("Object")
@@ -116,5 +117,5 @@ internal external class JsObject {
     }
 }
 
-internal fun <T, R> boxIntrinsic(x: T): R = error("Should be lowered")
-internal fun <T, R> unboxIntrinsic(x: T): R = error("Should be lowered")
+internal fun <T, R> boxIntrinsic(@Suppress("UNUSED_PARAMETER") x: T): R = error("Should be lowered")
+internal fun <T, R> unboxIntrinsic(@Suppress("UNUSED_PARAMETER") x: T): R = error("Should be lowered")

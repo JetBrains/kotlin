@@ -178,7 +178,7 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder() {
             val defaultArguments = compileTask.getCompilerArguments("getDefaultSerializedCompilerArguments").orEmpty()
             val dependencyClasspath = compileTask.getDependencyClasspath()
             compilerArgumentsBySourceSet[sourceSetName] = ArgsInfoImpl(currentArguments, defaultArguments, dependencyClasspath)
-            extraProperties.acknowledgeTask(compileTask)
+            extraProperties.acknowledgeTask(compileTask, null)
         }
 
         val platform = platformPluginId ?: pluginToPlatform.entries.singleOrNull { project.plugins.findPlugin(it.key) != null }?.value

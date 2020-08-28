@@ -77,7 +77,10 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor, DisplayableSet
 
     override val text: String get() = title
 
-    open fun isApplicableTo(module: Module): Boolean = true
+    open fun isApplicableTo(
+        reader: Reader,
+        module: Module
+    ): Boolean = true
 
     open val settings: List<TemplateSetting<*, *>> = emptyList()
     open val interceptionPoints: List<InterceptionPoint<Any>> = emptyList()
@@ -123,7 +126,7 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor, DisplayableSet
             else -> idFunction()
         }
 
-        RunConfigurationsPlugin::configurations.addValues(createRunConfigurations(module))
+        RunConfigurationsPlugin.configurations.addValues(createRunConfigurations(module))
 
         val result = TemplateApplicationResult(librariesToAdd, irsToAddToBuildFile, targetsUpdater)
         return result.asSuccess()
@@ -141,7 +144,7 @@ abstract class Template : SettingsOwner, EntitiesOwnerDescriptor, DisplayableSet
 
 
     private fun Reader.createDefaultSettings() = mapOf(
-        "projectName" to StructurePlugin::name.settingValue.capitalize()
+        "projectName" to StructurePlugin.name.settingValue.capitalize()
     )
 
     override fun equals(other: Any?): Boolean =

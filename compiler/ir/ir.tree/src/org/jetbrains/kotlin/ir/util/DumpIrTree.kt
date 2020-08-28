@@ -145,9 +145,6 @@ class DumpIrTreeVisitor(
     override fun visitField(declaration: IrField, data: String) {
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
-            declaration.overriddenSymbols.dumpItems("overridden") {
-                it.dump()
-            }
             declaration.initializer?.accept(this, "")
         }
     }
@@ -171,7 +168,7 @@ class DumpIrTreeVisitor(
         }
     }
 
-    override fun visitMemberAccess(expression: IrMemberAccessExpression, data: String) {
+    override fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: String) {
         expression.dumpLabeledElementWith(data) {
             dumpTypeArguments(expression)
             expression.dispatchReceiver?.accept(this, "\$this")
@@ -198,7 +195,7 @@ class DumpIrTreeVisitor(
         }
     }
 
-    private fun dumpTypeArguments(expression: IrMemberAccessExpression) {
+    private fun dumpTypeArguments(expression: IrMemberAccessExpression<*>) {
         val typeParameterNames = expression.getTypeParameterNames(expression.typeArgumentsCount)
         for (index in 0 until expression.typeArgumentsCount) {
             printer.println("<${typeParameterNames[index]}>: ${expression.renderTypeArgument(index)}")
@@ -218,8 +215,8 @@ class DumpIrTreeVisitor(
         }
     }
 
-    private fun IrMemberAccessExpression.getTypeParameterNames(expectedCount: Int): List<String> =
-        if (this is IrDeclarationReference && symbol.isBound)
+    private fun IrMemberAccessExpression<*>.getTypeParameterNames(expectedCount: Int): List<String> =
+        if (symbol.isBound)
             symbol.owner.getTypeParameterNames(expectedCount)
         else
             getPlaceholderParameterNames(expectedCount)
@@ -246,7 +243,7 @@ class DumpIrTreeVisitor(
         return parentClass.typeParameters + typeParameters
     }
 
-    private fun IrMemberAccessExpression.renderTypeArgument(index: Int): String =
+    private fun IrMemberAccessExpression<*>.renderTypeArgument(index: Int): String =
         getTypeArgument(index)?.render() ?: "<none>"
 
     override fun visitGetField(expression: IrGetField, data: String) {
@@ -375,7 +372,7 @@ class DumpTreeFromSourceLineVisitor(
     }
 }
 
-internal fun IrMemberAccessExpression.getValueParameterNamesForDebug(): List<String> {
+internal fun IrMemberAccessExpression<*>.getValueParameterNamesForDebug(): List<String> {
     val expectedCount = valueArgumentsCount
     if (symbol.isBound) {
         val owner = symbol.owner

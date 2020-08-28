@@ -14,18 +14,15 @@ import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
@@ -41,7 +38,7 @@ class IrInlineCodegen(
     reifiedTypeInliner: ReifiedTypeInliner<IrType>
 ) :
     InlineCodegen<ExpressionCodegen>(
-        codegen, state, function.descriptor, methodOwner, signature, typeParameterMappings, sourceCompiler, reifiedTypeInliner
+        codegen, state, function.toIrBasedDescriptor(), methodOwner, signature, typeParameterMappings, sourceCompiler, reifiedTypeInliner
     ),
     IrCallGenerator {
 
@@ -82,8 +79,7 @@ class IrInlineCodegen(
             super.genValueAndPut(irValueParameter, argumentExpression, parameterType, codegen, blockInfo)
         }
 
-        // after transformation inlinable lambda parameter with default value would have nullable type: check default value type first
-        val isInlineParameter = irValueParameter.isInlineParameter(irValueParameter.defaultValue?.expression?.type ?: irValueParameter.type)
+        val isInlineParameter = irValueParameter.isInlineParameter()
         if (isInlineParameter && isInlineIrExpression(argumentExpression)) {
             val irReference: IrFunctionReference =
                 (argumentExpression as IrBlock).statements.filterIsInstance<IrFunctionReference>().single()
@@ -129,7 +125,7 @@ class IrInlineCodegen(
 
             //TODO support default argument erasure
             if (!processDefaultMaskOrMethodHandler(onStack, kind)) {
-                val expectedType = JvmKotlinType(parameterType, irValueParameter.type.toKotlinType())
+                val expectedType = JvmKotlinType(parameterType, irValueParameter.type.toIrBasedKotlinType())
                 putArgumentOrCapturedToLocalVal(expectedType, onStack, -1, irValueParameter.index, kind)
             }
         }
@@ -137,7 +133,7 @@ class IrInlineCodegen(
 
     private fun putCapturedValueOnStack(argumentExpression: IrExpression, valueType: Type, capturedParamIndex: Int) {
         val onStack = codegen.genOrGetLocal(argumentExpression, BlockInfo())
-        val expectedType = JvmKotlinType(valueType, argumentExpression.type.toKotlinType())
+        val expectedType = JvmKotlinType(valueType, argumentExpression.type.toIrBasedKotlinType())
         putArgumentOrCapturedToLocalVal(expectedType, onStack, capturedParamIndex, capturedParamIndex, ValueKind.CAPTURED)
     }
 
@@ -152,7 +148,9 @@ class IrInlineCodegen(
     ) {
         val element = codegen.context.psiSourceManager.findPsiElement(expression, codegen.irFunction)
             ?: codegen.context.psiSourceManager.findPsiElement(codegen.irFunction)
-        if (!state.globalInlineContext.enterIntoInlining(expression.symbol.owner.suspendFunctionOriginal().descriptor, element)) {
+        if (!state.globalInlineContext.enterIntoInlining(
+                expression.symbol.owner.suspendFunctionOriginal().toIrBasedDescriptor(), element)
+        ) {
             val message = "Call is a part of inline call cycle: ${expression.render()}"
             AsmUtil.genThrow(codegen.v, "java/lang/UnsupportedOperationException", message)
             return
@@ -244,13 +242,12 @@ class IrExpressionLambdaImpl(
         )
     }
 
-    override val invokeMethodDescriptor: FunctionDescriptor =
-        // Need the descriptor without captured parameters here.
-        (function.descriptor as? WrappedSimpleFunctionDescriptor)?.originalDescriptor ?: function.descriptor
+    // Need the descriptor without captured parameters here.
+    override val invokeMethodDescriptor: FunctionDescriptor = function.originalFunction.toIrBasedDescriptor()
 
     override val hasDispatchReceiver: Boolean = false
 
-    override fun getInlineSuspendLambdaViewDescriptor(): FunctionDescriptor = function.descriptor
+    override fun getInlineSuspendLambdaViewDescriptor(): FunctionDescriptor = function.toIrBasedDescriptor()
 
     override fun isCapturedSuspend(desc: CapturedParamDesc): Boolean =
         capturedParameters[desc]?.let { it.isInlineParameter() && it.type.isSuspendFunctionTypeOrSubtype() } == true
@@ -262,19 +259,26 @@ class IrDefaultLambda(
     private val irValueParameter: IrValueParameter,
     offset: Int,
     needReification: Boolean
-) : DefaultLambda(lambdaClassType, capturedArgs, irValueParameter.descriptor as ValueParameterDescriptor, offset, needReification) {
+) : DefaultLambda(
+    lambdaClassType, capturedArgs, irValueParameter.toIrBasedDescriptor() as ValueParameterDescriptor, offset, needReification
+) {
 
     override fun mapAsmSignature(sourceCompiler: SourceCompilerForInline): Method {
         val invoke =
             irValueParameter.type.classOrNull!!.owner.declarations.filterIsInstance<IrFunction>().single { it.name.asString() == "invoke" }
         return (sourceCompiler as IrSourceCompilerForInline).codegen.context.methodSignatureMapper.mapSignatureSkipGeneric(invoke).asmMethod
     }
+
+    override fun findInvokeMethodDescriptor(): FunctionDescriptor =
+        (irValueParameter.type.classifierOrFail.owner as IrClass).functions.single {
+            it.name == OperatorNameConventions.INVOKE
+        }.toIrBasedDescriptor()
 }
 
 fun isInlineIrExpression(argumentExpression: IrExpression) =
     when (argumentExpression) {
         is IrBlock -> argumentExpression.isInlineIrBlock()
-        is IrCallableReference -> true.also {
+        is IrCallableReference<*> -> true.also {
             assert((0 until argumentExpression.valueArgumentsCount).count { argumentExpression.getValueArgument(it) != null } == 0) {
                 "Expecting 0 value arguments for bounded callable reference: ${argumentExpression.dump()}"
             }

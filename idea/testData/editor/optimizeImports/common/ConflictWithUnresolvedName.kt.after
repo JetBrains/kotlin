@@ -1,0 +1,7 @@
+package srt
+
+const val A = 4
+
+fun test(a: A) {
+
+}

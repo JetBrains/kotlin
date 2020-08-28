@@ -20,6 +20,7 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -339,7 +340,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
     override fun visitElement(element: IrElement, data: Nothing?): String =
         "?ELEMENT? ${element::class.java.simpleName} $element"
 
-    override fun visitDeclaration(declaration: IrDeclaration, data: Nothing?): String =
+    override fun visitDeclaration(declaration: IrDeclarationBase, data: Nothing?): String =
         "?DECLARATION? ${declaration::class.java.simpleName} $declaration"
 
     override fun visitModuleFragment(declaration: IrModuleFragment, data: Nothing?): String =
@@ -384,7 +385,8 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
             "suspend".takeIf { isSuspend },
             "expect".takeIf { isExpect },
             "fake_override".takeIf { isFakeOverride },
-            "operator".takeIf { isOperator }
+            "operator".takeIf { isOperator },
+            "infix".takeIf { isInfix }
         )
 
     private fun IrFunction.renderTypeParameters(): String =
@@ -444,7 +446,6 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
             "final".takeIf { isFinal },
             "external".takeIf { isExternal },
             "static".takeIf { isStatic },
-            "fake_override".takeIf { isFakeOverride }
         )
 
     override fun visitClass(declaration: IrClass, data: Nothing?): String =
@@ -700,6 +701,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
     override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression, data: Nothing?): String =
         "DYN_MEMBER memberName='${expression.memberName}' type=${expression.type.render()}"
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?): String =
         "ERROR_DECL ${declaration.descriptor::class.java.simpleName} " +
                 descriptorRendererForErrorDeclarations.renderDescriptor(declaration.descriptor.original)
@@ -713,6 +715,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
     private val descriptorRendererForErrorDeclarations = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES
 }
 
+@ObsoleteDescriptorBasedAPI
 internal fun IrDeclaration.name(): String =
     descriptor.name.toString()
 
@@ -739,7 +742,7 @@ internal fun IrTypeAliasSymbol.renderTypeAliasFqn(): String =
     if (isBound)
         StringBuilder().also { owner.renderDeclarationFqn(it) }.toString()
     else
-        "<unbound $this: ${this.descriptor}>"
+        "<unbound $this>"
 
 internal fun IrClass.renderClassFqn(): String =
     StringBuilder().also { renderDeclarationFqn(it) }.toString()

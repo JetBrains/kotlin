@@ -7,15 +7,15 @@ FILE: initBlockAndInPlaceLambda.kt
 
     }
     public final class C : R|kotlin/Any| {
-        public constructor(a: R|A|, b: R|ERROR CLASS: Symbol not found, for `b`|): R|C| {
+        public constructor(a: R|A|, b: R|B|): R|C| {
             super<R|kotlin/Any|>()
         }
 
         init {
-            lval c: R|C?| = R|<local>/a|.R|/A.b|?.R|kotlin/let|<R|B|, R|C|>(<L> = let@fun <anonymous>(it: R|B|): R|C| <kind=EXACTLY_ONCE>  {
+            lval c: R|C?| = R|<local>/a|.R|/A.b|?.{ $subj$.R|kotlin/let|<R|B|, R|C|>(<L> = let@fun <anonymous>(it: R|B|): R|C| <kind=EXACTLY_ONCE>  {
                 ^ R|/C.C|(R|<local>/a|, R|<local>/it|)
             }
-            )
+            ) }
         }
 
     }

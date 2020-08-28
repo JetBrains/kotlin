@@ -1,0 +1,34 @@
+package
+
+public fun f(): kotlin.String
+
+public final class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun schedule1(/*0*/ e: Executor): Future<kotlin.String>
+    public final fun schedule2(/*0*/ e: Executor): Future<kotlin.String>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Callable</*0*/ V : kotlin.Any!> {
+    public abstract fun call(): V!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Executor {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun </*0*/ T : kotlin.Any!> submit(/*0*/ task: Callable<T!>!): Future<T!>!
+    public abstract fun submit(/*0*/ task: java.lang.Runnable!): Future<*>!
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class Future</*0*/ T : kotlin.Any!> {
+    public constructor Future</*0*/ T : kotlin.Any!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -1,12 +1,12 @@
 // !LANGUAGE: +NewInference +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
 // WITH_COROUTINES
 // WITH_RUNTIME
-// SKIP_DCE_DRIVEN
 
 import helpers.*
 import kotlin.coroutines.*
 
 fun interface SuspendRunnable {
+    @Suppress("FUN_INTERFACE_WITH_SUSPEND_FUNCTION")
     suspend fun invoke()
 }
 

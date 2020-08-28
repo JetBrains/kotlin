@@ -69,6 +69,7 @@ abstract class KtLightAbstractAnnotation(parent: PsiElement, computeDelegate: La
 
     override fun getOwner() = parent as? PsiAnnotationOwner
 
+    @Suppress("DEPRECATION")
     override fun getMetaData() = clsDelegate.metaData
 
     override fun getParameterList() = clsDelegate.parameterList
@@ -91,6 +92,7 @@ class KtLightAnnotationForSourceEntry(
 
     override fun getOwner() = parent as? PsiAnnotationOwner
 
+    @Suppress("DEPRECATION")
     override fun getMetaData() = lazyClsDelegate?.value?.metaData
 
     override fun getQualifiedName() = qualifiedName
@@ -308,6 +310,9 @@ open class KtLightNullabilityAnnotation<D : KtLightElement<*, PsiModifierListOwn
 
         // all data-class generated members are not-null
         if (annotatedElement is KtClass && annotatedElement.isData()) return NotNull::class.java.name
+
+        // objects and companion objects are not null
+        if (annotatedElement is KtObjectDeclaration) return NotNull::class.java.name
 
         if (annotatedElement is KtParameter) {
             if (annotatedElement.containingClassOrObject?.isAnnotation() == true) return null

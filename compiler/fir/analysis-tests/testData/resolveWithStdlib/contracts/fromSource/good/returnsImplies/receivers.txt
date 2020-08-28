@@ -33,7 +33,7 @@ FILE: receivers.kt
             this@R|special/anonymous|.R|/myRequireNotNull|()
         }
         )
-        R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/foo]>#()
+        R|<local>/x|.<Inapplicable(WRONG_RECEIVER): /foo>#()
     }
     public final fun test_4(x: R|A?|): R|kotlin/Unit| {
         R|kotlin/with|<R|A?|, R|kotlin/Unit|>(R|<local>/x|, <L> = with@fun R|A?|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {

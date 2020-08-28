@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.fir.expressions.builder
 
 import kotlin.contracts.*
+import org.jetbrains.kotlin.fir.FirExpressionRef
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.FirWhenSubject
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirWhenSubjectExpressionImpl
@@ -26,13 +27,13 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirWhenSubjectExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: FirSourceElement? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
-    lateinit var whenSubject: FirWhenSubject
+    lateinit var whenRef: FirExpressionRef<FirWhenExpression>
 
     override fun build(): FirWhenSubjectExpression {
         return FirWhenSubjectExpressionImpl(
             source,
             annotations,
-            whenSubject,
+            whenRef,
         )
     }
 

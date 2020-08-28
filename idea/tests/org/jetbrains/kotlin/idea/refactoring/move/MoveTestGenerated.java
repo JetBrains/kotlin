@@ -323,6 +323,21 @@ public class MoveTestGenerated extends AbstractMoveTest {
         runTest("idea/testData/refactoring/move/kotlin/moveFile/typeRefWithArguments/typeRefWithArguments.test");
     }
 
+    @TestMetadata("kotlin/moveMethod/moveToClass/parameterAsReference/parameterAsReference.test")
+    public void testKotlin_moveMethod_moveToClass_parameterAsReference_ParameterAsReference() throws Exception {
+        runTest("idea/testData/refactoring/move/kotlin/moveMethod/moveToClass/parameterAsReference/parameterAsReference.test");
+    }
+
+    @TestMetadata("kotlin/moveMethod/moveToClass/propertyAsReference/propertyAsReference.test")
+    public void testKotlin_moveMethod_moveToClass_propertyAsReference_PropertyAsReference() throws Exception {
+        runTest("idea/testData/refactoring/move/kotlin/moveMethod/moveToClass/propertyAsReference/propertyAsReference.test");
+    }
+
+    @TestMetadata("kotlin/moveMethod/moveToObject/moveToObject.test")
+    public void testKotlin_moveMethod_moveToObject_MoveToObject() throws Exception {
+        runTest("idea/testData/refactoring/move/kotlin/moveMethod/moveToObject/moveToObject.test");
+    }
+
     @TestMetadata("kotlin/moveNestedClass/callableReferences/nestedToAnotherClass/nestedToAnotherClass.test")
     public void testKotlin_moveNestedClass_callableReferences_nestedToAnotherClass_NestedToAnotherClass() throws Exception {
         runTest("idea/testData/refactoring/move/kotlin/moveNestedClass/callableReferences/nestedToAnotherClass/nestedToAnotherClass.test");

@@ -41,12 +41,12 @@ object CliArgumentStringBuilder {
         val dedicatedFlag = dedicatedFlagInfo?.run {
             val (xFlag, xFlagSinceVersion) = this
 
-            // TODO: replace to returning xFlag in 1.4 (behaviour for fallback)
-            if (kotlinVersion == null) return@run null
+            if (kotlinVersion == null) return@run xFlag
 
-            val isAtLeastSpecifiedVersion = versionRegex.find(kotlinVersion)?.destructured?.let { (major, minor, patch) ->
+            val parsedVersion = versionRegex.find(kotlinVersion) ?: return@run xFlag
+            val isAtLeastSpecifiedVersion = parsedVersion.destructured.let { (major, minor, patch) ->
                 KotlinVersion(major.toInt(), minor.toInt(), patch.toInt()) >= xFlagSinceVersion
-            } == true
+            }
             if (isAtLeastSpecifiedVersion) xFlag else null
         }
 

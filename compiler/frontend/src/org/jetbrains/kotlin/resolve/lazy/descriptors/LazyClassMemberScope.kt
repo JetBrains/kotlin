@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
+import org.jetbrains.kotlin.utils.addToStdlib.flatMapToNullable
 import java.util.*
 
 open class LazyClassMemberScope(
@@ -57,25 +58,22 @@ open class LazyClassMemberScope(
     c, declarationProvider, thisClass, trace, scopeForDeclaredMembers
 ) {
 
-    private val descriptorsFromDeclaredElements = storageManager.createLazyValue {
-        computeDescriptorsFromDeclaredElements(
-            DescriptorKindFilter.ALL,
-            MemberScope.ALL_NAME_FILTER,
-            NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS
+    private val allDescriptors = storageManager.createLazyValue {
+        val result = LinkedHashSet(
+            computeDescriptorsFromDeclaredElements(
+                DescriptorKindFilter.ALL,
+                MemberScope.ALL_NAME_FILTER,
+                NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS
+            )
         )
-    }
-    private val extraDescriptors: NotNullLazyValue<Collection<DeclarationDescriptor>> = storageManager.createLazyValue {
-        computeExtraDescriptors(NoLookupLocation.FOR_ALREADY_TRACKED)
+        result.addAll(computeExtraDescriptors(NoLookupLocation.FOR_ALREADY_TRACKED))
+        result.toList()
     }
 
     override fun getContributedDescriptors(
         kindFilter: DescriptorKindFilter,
         nameFilter: (Name) -> Boolean
-    ): Collection<DeclarationDescriptor> {
-        val result = LinkedHashSet(descriptorsFromDeclaredElements())
-        result.addAll(extraDescriptors())
-        return result
-    }
+    ): Collection<DeclarationDescriptor> = allDescriptors()
 
     protected open fun computeExtraDescriptors(location: LookupLocation): Collection<DeclarationDescriptor> {
         val result = ArrayList<DeclarationDescriptor>()
@@ -92,6 +90,7 @@ open class LazyClassMemberScope(
 
         addDataClassMethods(result, location)
         addSyntheticFunctions(result, location)
+        addSyntheticVariables(result, location)
         addSyntheticCompanionObject(result, location)
         addSyntheticNestedClasses(result, location)
 
@@ -105,9 +104,10 @@ open class LazyClassMemberScope(
     }
 
     private val _variableNames: MutableSet<Name>
-            by lazy(LazyThreadSafetyMode.PUBLICATION) {
+            by storageManager.createLazyValue {
                 mutableSetOf<Name>().apply {
                     addAll(declarationProvider.getDeclarationNames())
+                    addAll(c.syntheticResolveExtension.getSyntheticPropertiesNames(thisDescriptor))
                     supertypes.flatMapTo(this) {
                         it.memberScope.getVariableNames()
                     }
@@ -115,14 +115,41 @@ open class LazyClassMemberScope(
             }
 
     private val _functionNames: MutableSet<Name>
-            by lazy(LazyThreadSafetyMode.PUBLICATION) {
+            by storageManager.createLazyValue {
                 mutableSetOf<Name>().apply {
                     addAll(declarationProvider.getDeclarationNames())
+                    addAll(c.syntheticResolveExtension.getSyntheticFunctionNames(thisDescriptor))
                     supertypes.flatMapTo(this) {
                         it.memberScope.getFunctionNames()
                     }
 
                     addAll(getDataClassRelatedFunctionNames())
+                }
+            }
+
+    private val _classifierNames: Set<Name>?
+            by storageManager.createNullableLazyValue {
+                mutableSetOf<Name>().apply {
+                    supertypes.flatMapToNullable(this) {
+                        it.memberScope.getClassifierNames()
+                    } ?: return@createNullableLazyValue null
+
+                    addAll(declarationProvider.getDeclarationNames())
+                    with(c.syntheticResolveExtension) {
+                        getPossibleSyntheticNestedClassNames(thisDescriptor)?.let { addAll(it) } ?: return@createNullableLazyValue null
+                        getSyntheticCompanionObjectNameIfNeeded(thisDescriptor)?.let { add(it) }
+                    }
+                }
+            }
+
+    private val _allNames: Set<Name>?
+            by storageManager.createNullableLazyValue {
+                val classifiers = getClassifierNames() ?: return@createNullableLazyValue null
+
+                mutableSetOf<Name>().apply {
+                    addAll(getVariableNames())
+                    addAll(getFunctionNames())
+                    addAll(classifiers)
                 }
             }
 
@@ -134,6 +161,11 @@ open class LazyClassMemberScope(
 
     override fun getVariableNames() = _variableNames
     override fun getFunctionNames() = _functionNames
+    override fun getClassifierNames() = _classifierNames
+
+    override fun definitelyDoesNotContainName(name: Name): Boolean {
+        return _allNames?.let { name !in it } ?: false
+    }
 
     private interface MemberExtractor<out T : CallableMemberDescriptor> {
         fun extract(extractFrom: KotlinType, name: Name): Collection<T>
@@ -308,6 +340,15 @@ open class LazyClassMemberScope(
     private fun addSyntheticFunctions(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {
         result.addAll(c.syntheticResolveExtension.getSyntheticFunctionNames(thisDescriptor).flatMap {
             getContributedFunctions(
+                it,
+                location
+            )
+        }.toList())
+    }
+
+    private fun addSyntheticVariables(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {
+        result.addAll(c.syntheticResolveExtension.getSyntheticPropertiesNames(thisDescriptor).flatMap {
+            getContributedVariables(
                 it,
                 location
             )

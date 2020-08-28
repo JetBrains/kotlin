@@ -122,4 +122,7 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> NO_KOTLIN_NOTHING_VALUE_EXCEPTION =
             CompilerConfigurationKey.create("Do not use KotlinNothingValueException available since 1.4");
+
+    public static final CompilerConfigurationKey<Boolean> USE_OLD_SPILLED_VAR_TYPE_ANALYSIS =
+            CompilerConfigurationKey.create("Use old, SourceInterpreter-based analysis for fields, used for spilled variables in coroutines");
 }

@@ -6,16 +6,35 @@
 package org.jetbrains.kotlin.nj2k.conversions
 
 
+import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
-import org.jetbrains.kotlin.nj2k.tree.JKLiteralExpression
-import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
+import org.jetbrains.kotlin.nj2k.tree.*
 import java.math.BigInteger
 
 class LiteralConversion(context: NewJ2kConverterContext) : RecursiveApplicableConversionBase(context) {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
         if (element !is JKLiteralExpression) return recurse(element)
-        element.convertLiteral()
-        return recurse(element)
+
+        val convertedElement = try {
+            element.apply { convertLiteral() }
+        } catch (_: NumberFormatException) {
+            createTodoCall(cannotConvertLiteralMessage(element))
+        }
+
+        return recurse(convertedElement)
+    }
+
+    private fun createTodoCall(@NonNls message: String): JKCallExpressionImpl {
+        val todoMethodSymbol = symbolProvider.provideMethodSymbol("kotlin.TODO")
+        val todoMessageArgument = JKArgumentImpl(JKLiteralExpression("\"$message\"", JKLiteralExpression.LiteralType.STRING))
+
+        return JKCallExpressionImpl(todoMethodSymbol, JKArgumentList(todoMessageArgument))
+    }
+
+    private fun cannotConvertLiteralMessage(element: JKLiteralExpression): String {
+        val literalType = element.type.toString().toLowerCase()
+        val literalValue = element.literal
+        return "Could not convert $literalType literal '$literalValue' to Kotlin"
     }
 
     private fun JKLiteralExpression.convertLiteral() {

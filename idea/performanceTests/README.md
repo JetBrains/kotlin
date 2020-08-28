@@ -14,6 +14,10 @@ Run all Kotlin IDE plugin performance tests with
 
 `$ gradle idea-plugin-performance-tests`
 
+## Run with profiler
+
+`YOURKIT_PROFILER_HOME=/Applications/YourKit-Java-Profiler-2019.8.app ./gradlew -Pkotlin.test.instrumentation.disable=true  :idea:performanceTests:performanceTest --tests "<test-filter>"`
+
 ## Performance test
 
 Output is provided to console in TeamCity format like

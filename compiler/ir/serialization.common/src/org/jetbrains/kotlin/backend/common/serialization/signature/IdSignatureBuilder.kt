@@ -26,10 +26,12 @@ abstract class IdSignatureBuilder<D> {
     }
 
     protected fun build(): IdSignature {
+        val packageFqName = packageFqn.asString()
+        val classFqName = classFqnSegments.joinToString(".")
         return if (hashIdAcc == null) {
-            IdSignature.PublicSignature(packageFqn, FqName.fromSegments(classFqnSegments), hashId, mask)
+            IdSignature.PublicSignature(packageFqName, classFqName, hashId, mask)
         } else {
-            val accessorSignature = IdSignature.PublicSignature(packageFqn, FqName.fromSegments(classFqnSegments), hashIdAcc, mask)
+            val accessorSignature = IdSignature.PublicSignature(packageFqName, classFqName, hashIdAcc, mask)
             hashIdAcc = null
             classFqnSegments.run { removeAt(lastIndex) }
             val propertySignature = build()

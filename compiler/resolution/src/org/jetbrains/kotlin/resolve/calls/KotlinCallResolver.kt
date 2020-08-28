@@ -1,27 +1,15 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
-import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceResolver
-import org.jetbrains.kotlin.resolve.calls.components.KotlinCallCompleter
-import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
-import org.jetbrains.kotlin.resolve.calls.components.NewOverloadingConflictResolver
+import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.*
@@ -37,6 +25,9 @@ class KotlinCallResolver(
     private val callableReferenceResolver: CallableReferenceResolver,
     private val callComponents: KotlinCallComponents
 ) {
+    companion object {
+        val OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION = FqName.fromSegments(listOf("kotlin", "OverloadResolutionByLambdaReturnType"))
+    }
 
     fun resolveCall(
         scopeTower: ImplicitScopeTower,
@@ -142,11 +133,34 @@ class KotlinCallResolver(
             }
         }
 
-        val maximallySpecificCandidates = overloadingConflictResolver.chooseMaximallySpecificCandidates(
+        var maximallySpecificCandidates = overloadingConflictResolver.chooseMaximallySpecificCandidates(
             refinedCandidates,
             CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
             discriminateGenerics = true // todo
         )
+
+        if (
+            maximallySpecificCandidates.size > 1 &&
+            callComponents.languageVersionSettings.supportsFeature(LanguageFeature.OverloadResolutionByLambdaReturnType) &&
+            candidates.all { resolutionCallbacks.inferenceSession.shouldRunCompletion(it) }
+        ) {
+            val candidatesWithAnnotation =
+                candidates.filter { it.resolvedCall.candidateDescriptor.annotations.hasAnnotation(OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION) }
+            val candidatesWithoutAnnotation = candidates - candidatesWithAnnotation
+            if (candidatesWithAnnotation.isNotEmpty()) {
+                val newCandidates = kotlinCallCompleter.chooseCandidateRegardingOverloadResolutionByLambdaReturnType(maximallySpecificCandidates, resolutionCallbacks)
+                maximallySpecificCandidates = overloadingConflictResolver.chooseMaximallySpecificCandidates(
+                    newCandidates,
+                    CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
+                    discriminateGenerics = true
+                )
+
+                if (maximallySpecificCandidates.size > 1 && candidatesWithoutAnnotation.any { it in maximallySpecificCandidates }) {
+                    maximallySpecificCandidates = maximallySpecificCandidates.toMutableSet().apply { removeAll(candidatesWithAnnotation) }
+                    maximallySpecificCandidates.singleOrNull()?.addDiagnostic(CandidateChosenUsingOverloadResolutionByLambdaAnnotation())
+                }
+            }
+        }
 
         return kotlinCallCompleter.runCompletion(candidateFactory, maximallySpecificCandidates, expectedType, resolutionCallbacks)
     }

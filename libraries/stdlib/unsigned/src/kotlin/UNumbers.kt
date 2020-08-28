@@ -9,8 +9,8 @@ package kotlin
 /**
  * Counts the number of set bits in the binary representation of this [UInt] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UInt.countOneBits(): Int = toInt().countOneBits()
@@ -18,8 +18,8 @@ public inline fun UInt.countOneBits(): Int = toInt().countOneBits()
 /**
  * Counts the number of consecutive most significant bits that are zero in the binary representation of this [UInt] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UInt.countLeadingZeroBits(): Int = toInt().countLeadingZeroBits()
@@ -27,8 +27,8 @@ public inline fun UInt.countLeadingZeroBits(): Int = toInt().countLeadingZeroBit
 /**
  * Counts the number of consecutive least significant bits that are zero in the binary representation of this [UInt] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UInt.countTrailingZeroBits(): Int = toInt().countTrailingZeroBits()
@@ -37,8 +37,8 @@ public inline fun UInt.countTrailingZeroBits(): Int = toInt().countTrailingZeroB
  * Returns a number having a single bit set in the position of the most significant set bit of this [UInt] number,
  * or zero, if this number is zero.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UInt.takeHighestOneBit(): UInt = toInt().takeHighestOneBit().toUInt()
@@ -47,8 +47,8 @@ public inline fun UInt.takeHighestOneBit(): UInt = toInt().takeHighestOneBit().t
  * Returns a number having a single bit set in the position of the least significant set bit of this [UInt] number,
  * or zero, if this number is zero.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UInt.takeLowestOneBit(): UInt = toInt().takeLowestOneBit().toUInt()
@@ -90,8 +90,8 @@ public inline fun UInt.rotateRight(bitCount: Int): UInt = toInt().rotateRight(bi
 /**
  * Counts the number of set bits in the binary representation of this [ULong] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun ULong.countOneBits(): Int = toLong().countOneBits()
@@ -99,8 +99,8 @@ public inline fun ULong.countOneBits(): Int = toLong().countOneBits()
 /**
  * Counts the number of consecutive most significant bits that are zero in the binary representation of this [ULong] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun ULong.countLeadingZeroBits(): Int = toLong().countLeadingZeroBits()
@@ -108,8 +108,8 @@ public inline fun ULong.countLeadingZeroBits(): Int = toLong().countLeadingZeroB
 /**
  * Counts the number of consecutive least significant bits that are zero in the binary representation of this [ULong] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun ULong.countTrailingZeroBits(): Int = toLong().countTrailingZeroBits()
@@ -118,8 +118,8 @@ public inline fun ULong.countTrailingZeroBits(): Int = toLong().countTrailingZer
  * Returns a number having a single bit set in the position of the most significant set bit of this [ULong] number,
  * or zero, if this number is zero.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun ULong.takeHighestOneBit(): ULong = toLong().takeHighestOneBit().toULong()
@@ -128,8 +128,8 @@ public inline fun ULong.takeHighestOneBit(): ULong = toLong().takeHighestOneBit(
  * Returns a number having a single bit set in the position of the least significant set bit of this [ULong] number,
  * or zero, if this number is zero.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun ULong.takeLowestOneBit(): ULong = toLong().takeLowestOneBit().toULong()
@@ -169,8 +169,8 @@ public inline fun ULong.rotateRight(bitCount: Int): ULong = toLong().rotateRight
 /**
  * Counts the number of set bits in the binary representation of this [UByte] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UByte.countOneBits(): Int = toUInt().countOneBits()
@@ -178,8 +178,8 @@ public inline fun UByte.countOneBits(): Int = toUInt().countOneBits()
 /**
  * Counts the number of consecutive most significant bits that are zero in the binary representation of this [UByte] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UByte.countLeadingZeroBits(): Int = toByte().countLeadingZeroBits()
@@ -187,8 +187,8 @@ public inline fun UByte.countLeadingZeroBits(): Int = toByte().countLeadingZeroB
 /**
  * Counts the number of consecutive least significant bits that are zero in the binary representation of this [UByte] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UByte.countTrailingZeroBits(): Int = toByte().countTrailingZeroBits()
@@ -197,8 +197,8 @@ public inline fun UByte.countTrailingZeroBits(): Int = toByte().countTrailingZer
  * Returns a number having a single bit set in the position of the most significant set bit of this [UByte] number,
  * or zero, if this number is zero.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UByte.takeHighestOneBit(): UByte = toInt().takeHighestOneBit().toUByte()
@@ -207,8 +207,8 @@ public inline fun UByte.takeHighestOneBit(): UByte = toInt().takeHighestOneBit()
  * Returns a number having a single bit set in the position of the least significant set bit of this [UByte] number,
  * or zero, if this number is zero.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UByte.takeLowestOneBit(): UByte = toInt().takeLowestOneBit().toUByte()
@@ -249,8 +249,8 @@ public inline fun UByte.rotateRight(bitCount: Int): UByte = toByte().rotateRight
 /**
  * Counts the number of set bits in the binary representation of this [UShort] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UShort.countOneBits(): Int = toUInt().countOneBits()
@@ -258,8 +258,8 @@ public inline fun UShort.countOneBits(): Int = toUInt().countOneBits()
 /**
  * Counts the number of consecutive most significant bits that are zero in the binary representation of this [UShort] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UShort.countLeadingZeroBits(): Int = toShort().countLeadingZeroBits()
@@ -267,8 +267,8 @@ public inline fun UShort.countLeadingZeroBits(): Int = toShort().countLeadingZer
 /**
  * Counts the number of consecutive least significant bits that are zero in the binary representation of this [UShort] number.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UShort.countTrailingZeroBits(): Int = toShort().countTrailingZeroBits()
@@ -277,8 +277,8 @@ public inline fun UShort.countTrailingZeroBits(): Int = toShort().countTrailingZ
  * Returns a number having a single bit set in the position of the most significant set bit of this [UShort] number,
  * or zero, if this number is zero.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UShort.takeHighestOneBit(): UShort = toInt().takeHighestOneBit().toUShort()
@@ -287,8 +287,8 @@ public inline fun UShort.takeHighestOneBit(): UShort = toInt().takeHighestOneBit
  * Returns a number having a single bit set in the position of the least significant set bit of this [UShort] number,
  * or zero, if this number is zero.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UShort.takeLowestOneBit(): UShort = toInt().takeLowestOneBit().toUShort()

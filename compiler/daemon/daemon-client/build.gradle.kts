@@ -32,9 +32,16 @@ dependencies {
     nativePlatformVariants.forEach {
         embedded(commonDep("net.rubygrapefruit", "native-platform", "-$it"))
     }
-    runtime(project(":kotlin-reflect"))
-    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
+    runtimeOnly(project(":kotlin-reflect"))
+    api(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
         isTransitive = false
+    }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+    kotlinOptions {
+        // This module is being run from within Gradle, older versions of which only have kotlin-stdlib 1.3 in the runtime classpath.
+        apiVersion = "1.3"
     }
 }
 

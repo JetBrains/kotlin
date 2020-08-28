@@ -5,8 +5,8 @@ fun myFun(i : String) {}
 fun myFun(i : Int) {}
 
 fun test1() {
-    <!INAPPLICABLE_CANDIDATE!>myFun<!><Int>(3)
-    <!INAPPLICABLE_CANDIDATE!>myFun<!><String>('a')
+    <!NONE_APPLICABLE!>myFun<!><Int>(3)
+    <!NONE_APPLICABLE!>myFun<!><String>('a')
 }
 
 fun test2() {

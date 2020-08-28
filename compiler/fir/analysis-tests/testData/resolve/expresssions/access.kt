@@ -21,7 +21,7 @@ class Bar {
     }
 
     // NB! abc() here is resolved to member Foo.abc(), and not to extension member of Bar
-    fun Foo.check() = abc() <!INAPPLICABLE_CANDIDATE!>+<!> bar()
+    fun Foo.check() = abc() <!NONE_APPLICABLE!>+<!> bar()
 
     // NB! + here is resolved to member String.plus (not to extension member above)
     fun Foo.check2() = "" + bar()

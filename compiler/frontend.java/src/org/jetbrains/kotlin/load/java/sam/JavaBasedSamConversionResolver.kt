@@ -38,4 +38,7 @@ object JavaBasedSamConversionOracle : SamConversionOracle {
         val descriptor = samType.constructor.declarationDescriptor
         return descriptor is ClassDescriptor && (descriptor.isFun || descriptor is JavaClassDescriptor)
     }
+
+    override fun isJavaApplicableCandidate(candidate: CallableDescriptor): Boolean =
+        shouldRunSamConversionForFunction(candidate)
 }

@@ -1,4 +1,4 @@
-//FILE: test.kt
+// FILE: test.kt
 fun cond() = false
 
 fun box() {
@@ -9,8 +9,8 @@ fun box() {
 }
 
 // LINENUMBERS
-// test.kt:5
-// test.kt:2
-// test.kt:5
-// test.kt:8
-// test.kt:9
+// test.kt:5 box
+// test.kt:2 cond
+// test.kt:5 box
+// test.kt:8 box
+// test.kt:9 box

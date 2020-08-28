@@ -30,7 +30,7 @@ import java.util.*
 class KotlinUFile(
     override val psi: KtFile,
     override val languagePlugin: UastLanguagePlugin = kotlinUastPlugin
-) : UFile, JvmDeclarationUElementPlaceholder {
+) : UFile {
     override val packageName: String
         get() = psi.packageFqName.asString()
 

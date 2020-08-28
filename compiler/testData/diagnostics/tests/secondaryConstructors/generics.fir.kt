@@ -17,5 +17,5 @@ class A1<R> : B<R> {
 }
 
 class A2<R> {
-    constructor(t: R, i: Int) : this(i, 1)
+    constructor(t: R, i: Int) : <!INAPPLICABLE_CANDIDATE!>this<!>(i, 1)
 }

@@ -29,6 +29,19 @@ public class LegacyJsTypeScriptExportTestGenerated extends AbstractLegacyJsTypeS
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
     }
 
+    @TestMetadata("js/js.translator/testData/typescript-export/constructors")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Constructors extends AbstractLegacyJsTypeScriptExportTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInConstructors() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/constructors"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+        }
+    }
+
     @TestMetadata("js/js.translator/testData/typescript-export/declarations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -62,6 +75,34 @@ public class LegacyJsTypeScriptExportTestGenerated extends AbstractLegacyJsTypeS
         @TestMetadata("inheritance.kt")
         public void testInheritance() throws Exception {
             runTest("js/js.translator/testData/typescript-export/inheritance/inheritance.kt");
+        }
+    }
+
+    @TestMetadata("js/js.translator/testData/typescript-export/moduleSystems")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ModuleSystems extends AbstractLegacyJsTypeScriptExportTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInModuleSystems() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/moduleSystems"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+        }
+
+        @TestMetadata("commonjs.kt")
+        public void testCommonjs() throws Exception {
+            runTest("js/js.translator/testData/typescript-export/moduleSystems/commonjs.kt");
+        }
+
+        @TestMetadata("plain.kt")
+        public void testPlain() throws Exception {
+            runTest("js/js.translator/testData/typescript-export/moduleSystems/plain.kt");
+        }
+
+        @TestMetadata("umd.kt")
+        public void testUmd() throws Exception {
+            runTest("js/js.translator/testData/typescript-export/moduleSystems/umd.kt");
         }
     }
 

@@ -39,7 +39,7 @@ private val commonCases: CaseBuilder.(String, String) -> Unit = { testByName, te
 
 private val commonCasesWithTestNotRenamed: CaseBuilder.() -> Unit = { commonCases(testNotRenamedByName, testNotRenamedByRef) }
 
-fun main(args: Array<String>) {
+fun main() {
     generateTestDataForReservedWords()
 }
 

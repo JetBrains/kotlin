@@ -140,6 +140,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/conflictingOverloads.args");
         }
 
+        @TestMetadata("conflictingProjection.args")
+        public void testConflictingProjection() throws Exception {
+            runTest("compiler/testData/cli/jvm/conflictingProjection.args");
+        }
+
         @TestMetadata("coroutinesEnable.args")
         public void testCoroutinesEnable() throws Exception {
             runTest("compiler/testData/cli/jvm/coroutinesEnable.args");
@@ -250,6 +255,16 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/expression1.args");
         }
 
+        @TestMetadata("extendedCheckers.args")
+        public void testExtendedCheckers() throws Exception {
+            runTest("compiler/testData/cli/jvm/extendedCheckers.args");
+        }
+
+        @TestMetadata("extendedCheckersNoWarning.args")
+        public void testExtendedCheckersNoWarning() throws Exception {
+            runTest("compiler/testData/cli/jvm/extendedCheckersNoWarning.args");
+        }
+
         @TestMetadata("extraArgumentPassedInObsoleteForm.args")
         public void testExtraArgumentPassedInObsoleteForm() throws Exception {
             runTest("compiler/testData/cli/jvm/extraArgumentPassedInObsoleteForm.args");
@@ -273,6 +288,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("fileClassClashMultipleFiles.args")
         public void testFileClassClashMultipleFiles() throws Exception {
             runTest("compiler/testData/cli/jvm/fileClassClashMultipleFiles.args");
+        }
+
+        @TestMetadata("firError.args")
+        public void testFirError() throws Exception {
+            runTest("compiler/testData/cli/jvm/firError.args");
         }
 
         @TestMetadata("firHello.args")
@@ -300,6 +320,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/help.args");
         }
 
+        @TestMetadata("inapplicableLateinitModifier.args")
+        public void testInapplicableLateinitModifier() throws Exception {
+            runTest("compiler/testData/cli/jvm/inapplicableLateinitModifier.args");
+        }
+
         @TestMetadata("inlineCycle.args")
         public void testInlineCycle() throws Exception {
             runTest("compiler/testData/cli/jvm/inlineCycle.args");
@@ -308,6 +333,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("inlineCycle_ir.args")
         public void testInlineCycle_ir() throws Exception {
             runTest("compiler/testData/cli/jvm/inlineCycle_ir.args");
+        }
+
+        @TestMetadata("instanceAccessBeforeSuperCall.args")
+        public void testInstanceAccessBeforeSuperCall() throws Exception {
+            runTest("compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.args");
         }
 
         @TestMetadata("internalArgDisableLanguageFeature.args")
@@ -475,6 +505,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/jvm8Target.args");
         }
 
+        @TestMetadata("jvmDefaultAll.args")
+        public void testJvmDefaultAll() throws Exception {
+            runTest("compiler/testData/cli/jvm/jvmDefaultAll.args");
+        }
+
         @TestMetadata("kotlinHomeWithoutStdlib.args")
         public void testKotlinHomeWithoutStdlib() throws Exception {
             runTest("compiler/testData/cli/jvm/kotlinHomeWithoutStdlib.args");
@@ -533,6 +568,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("multipleTextRangesInDiagnosticsOrder.args")
         public void testMultipleTextRangesInDiagnosticsOrder() throws Exception {
             runTest("compiler/testData/cli/jvm/multipleTextRangesInDiagnosticsOrder.args");
+        }
+
+        @TestMetadata("newInferenceImpliesProgressiveModeForNI.args")
+        public void testNewInferenceImpliesProgressiveModeForNI() throws Exception {
+            runTest("compiler/testData/cli/jvm/newInferenceImpliesProgressiveModeForNI.args");
         }
 
         @TestMetadata("newInferenceImpliesSamConversions.args")
@@ -703,6 +743,21 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("unknownExtraFlags.args")
         public void testUnknownExtraFlags() throws Exception {
             runTest("compiler/testData/cli/jvm/unknownExtraFlags.args");
+        }
+
+        @TestMetadata("useDeclarationThatWasExperimentalWithoutExplicitImport.args")
+        public void testUseDeclarationThatWasExperimentalWithoutExplicitImport() throws Exception {
+            runTest("compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutExplicitImport.args");
+        }
+
+        @TestMetadata("useDeclarationThatWasExperimentalWithoutExplicitImportCommandLine.args")
+        public void testUseDeclarationThatWasExperimentalWithoutExplicitImportCommandLine() throws Exception {
+            runTest("compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutExplicitImportCommandLine.args");
+        }
+
+        @TestMetadata("useDeclarationThatWasExperimentalWithoutMarker.args")
+        public void testUseDeclarationThatWasExperimentalWithoutMarker() throws Exception {
+            runTest("compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker.args");
         }
 
         @TestMetadata("useMixedNamedArgumentsFlag.args")

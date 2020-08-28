@@ -9,9 +9,9 @@ operator infix fun A.div(i : Int) {}
 operator infix fun A?.times(i : Int) {}
 
 fun test(x : Int?, a : A?) {
-    x.<!INAPPLICABLE_CANDIDATE!>plus<!>(1)
+    x.<!NONE_APPLICABLE!>plus<!>(1)
     x?.plus(1)
-    x <!INAPPLICABLE_CANDIDATE!>+<!> 1
+    x <!NONE_APPLICABLE!>+<!> 1
     <!INAPPLICABLE_CANDIDATE!>-<!>x
     x.<!INAPPLICABLE_CANDIDATE!>unaryMinus<!>()
     x?.unaryMinus()

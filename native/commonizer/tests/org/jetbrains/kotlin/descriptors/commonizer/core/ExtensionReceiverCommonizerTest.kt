@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirExtensionReceiver
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirExtensionReceiverFactory
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.utils.EMPTY_CLASSIFIERS_CACHE
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirExtensionReceiver
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.junit.Test
 
@@ -51,7 +52,7 @@ class ExtensionReceiverCommonizerTest : AbstractCommonizerTest<CirExtensionRecei
     override fun createCommonizer() = ExtensionReceiverCommonizer(EMPTY_CLASSIFIERS_CACHE)
 }
 
-private fun mockExtensionReceiver(typeFqName: String) = CirExtensionReceiver(
+private fun mockExtensionReceiver(typeFqName: String) = CirExtensionReceiverFactory.create(
     annotations = emptyList(),
-    type = CirType.create(mockClassType(typeFqName))
+    type = CirTypeFactory.create(mockClassType(typeFqName))
 )

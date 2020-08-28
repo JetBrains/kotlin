@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.AnnotationValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
@@ -246,10 +247,10 @@ internal class ComparingDeclarationsVisitor(
             context.assertSetsEqual(expectedSealedSubclassesFqNames, actualSealedSubclassesFqNames, "Sealed subclasses FQ names")
         }
 
-        val expectedSupertypeFqNames = expected.typeConstructor.supertypes.mapTo(HashSet()) { it.fqNameWithTypeParameters }
-        val actualSupertypeFqNames = actual.typeConstructor.supertypes.mapTo(HashSet()) { it.fqNameWithTypeParameters }
+        val expectedSupertypeSignatures = expected.typeConstructor.supertypes.mapTo(HashSet()) { it.signature }
+        val actualSupertypeSignatures = actual.typeConstructor.supertypes.mapTo(HashSet()) { it.signature }
 
-        context.assertSetsEqual(expectedSupertypeFqNames, actualSupertypeFqNames, "Supertypes FQ names")
+        context.assertSetsEqual(expectedSupertypeSignatures, actualSupertypeSignatures, "Supertypes signatures")
 
         if (expected.constructors.isNotEmpty() || actual.constructors.isNotEmpty()) {
             val expectedConstructors = expected.constructors.associateBy { ConstructorApproximationKey(it) }
@@ -332,7 +333,6 @@ internal class ComparingDeclarationsVisitor(
             // see org.jetbrains.kotlin.resolve.DelegationResolver
         } */
 
-        @Suppress("DEPRECATION")
         context.assertFieldsEqual(expected::isDelegated, actual::isDelegated)
 
         visitAnnotations(
@@ -484,10 +484,10 @@ internal class ComparingDeclarationsVisitor(
             context.nextLevel("Unwrapped/unabbreviated type annotations")
         )
 
-        val expectedFqName = expectedUnwrapped.fqNameInterned
-        val actualFqName = actualUnwrapped.fqNameInterned
+        val expectedId = expectedUnwrapped.declarationDescriptor.run { classId?.asString() ?: name.asString() }
+        val actualId = actualUnwrapped.declarationDescriptor.run { classId?.asString() ?: name.asString() }
 
-        context.assertEquals(expectedFqName, actualFqName, "type FQN")
+        context.assertEquals(expectedId, actualId, "type class ID / name")
 
         val expectedArguments = expectedUnwrapped.arguments
         val actualArguments = actualUnwrapped.arguments

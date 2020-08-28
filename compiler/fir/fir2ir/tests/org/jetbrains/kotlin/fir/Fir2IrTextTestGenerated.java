@@ -245,6 +245,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         public void testSuperCalls() throws Exception {
             runTest("compiler/testData/ir/irText/classes/superCalls.kt");
         }
+
+        @TestMetadata("superCallsComposed.kt")
+        public void testSuperCallsComposed() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/superCallsComposed.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/ir/irText/declarations")
@@ -284,6 +289,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/declarations/delegatedProperties.kt");
         }
 
+        @TestMetadata("deprecatedProperty.kt")
+        public void testDeprecatedProperty() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/deprecatedProperty.kt");
+        }
+
         @TestMetadata("extensionProperties.kt")
         public void testExtensionProperties() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/extensionProperties.kt");
@@ -302,6 +312,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @TestMetadata("fileWithTypeAliasesOnly.kt")
         public void testFileWithTypeAliasesOnly() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/fileWithTypeAliasesOnly.kt");
+        }
+
+        @TestMetadata("genericDelegatedProperty.kt")
+        public void testGenericDelegatedProperty() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/genericDelegatedProperty.kt");
         }
 
         @TestMetadata("interfaceProperties.kt")
@@ -1007,6 +1022,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/expressions/javaSyntheticPropertyAccess.kt");
         }
 
+        @TestMetadata("jvmFieldReferenceWithIntersectionTypes.kt")
+        public void testJvmFieldReferenceWithIntersectionTypes() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/jvmFieldReferenceWithIntersectionTypes.kt");
+        }
+
         @TestMetadata("jvmInstanceFieldReference.kt")
         public void testJvmInstanceFieldReference() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/jvmInstanceFieldReference.kt");
@@ -1070,6 +1090,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @TestMetadata("kt30796.kt")
         public void testKt30796() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/kt30796.kt");
+        }
+
+        @TestMetadata("kt35730.kt")
+        public void testKt35730() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/kt35730.kt");
         }
 
         @TestMetadata("kt36956.kt")
@@ -1590,6 +1615,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
                 runTest("compiler/testData/ir/irText/expressions/funInterface/samConversionInVarargs.kt");
             }
 
+            @TestMetadata("samConversionInVarargsMixed.kt")
+            public void testSamConversionInVarargsMixed() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/funInterface/samConversionInVarargsMixed.kt");
+            }
+
             @TestMetadata("samConversionOnCallableReference.kt")
             public void testSamConversionOnCallableReference() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/funInterface/samConversionOnCallableReference.kt");
@@ -1662,6 +1692,29 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             public void testSamOperators() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/sam/samOperators.kt");
             }
+        }
+    }
+
+    @TestMetadata("compiler/testData/ir/irText/firProblems")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class FirProblems extends AbstractFir2IrTextTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.ANY, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
+        }
+
+        public void testAllFilesPresentInFirProblems() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/firProblems"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("deprecated.kt")
+        public void testDeprecated() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/deprecated.kt");
+        }
+
+        @TestMetadata("FirBuilder.kt")
+        public void testFirBuilder() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/FirBuilder.kt");
         }
     }
 

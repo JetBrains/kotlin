@@ -20,15 +20,18 @@ import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptorImpl
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.ir.expressions.putTypeArguments
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
+import org.jetbrains.kotlin.ir.util.createIrClassFromDescriptor
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.ir.util.properties
-import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtEnumEntry
@@ -84,12 +87,12 @@ class ClassGenerator(
         val modality = getEffectiveModality(ktClassOrObject, classDescriptor)
 
         return context.symbolTable.declareClass(classDescriptor) {
-            IrClassImpl(
-                startOffset, endOffset, IrDeclarationOrigin.DEFINED, it,
-                classDescriptor,
-                context.symbolTable.nameProvider.nameForDeclaration(classDescriptor),
-                visibility = visibility, modality = modality,
-            ).apply { metadata = MetadataSource.Class(it.descriptor) }
+            context.irFactory.createIrClassFromDescriptor(
+                startOffset, endOffset, IrDeclarationOrigin.DEFINED, it, classDescriptor,
+                context.symbolTable.nameProvider.nameForDeclaration(classDescriptor), visibility, modality
+            ).apply {
+                metadata = MetadataSource.Class(it.descriptor)
+            }
         }.buildWithScope { irClass ->
             declarationGenerator.generateGlobalTypeParametersDeclarations(irClass, classDescriptor.declaredTypeParameters)
 
@@ -319,16 +322,16 @@ class ClassGenerator(
         delegatedDescriptor: FunctionDescriptor,
         delegateToDescriptor: FunctionDescriptor,
         irDelegatedFunction: IrSimpleFunction
-    ): IrBlockBodyImpl {
+    ): IrBlockBody {
         val startOffset = irDelegate.startOffset
         val endOffset = irDelegate.endOffset
 
-        val irBlockBody = IrBlockBodyImpl(startOffset, endOffset)
+        val irBlockBody = context.irFactory.createBlockBody(startOffset, endOffset)
 
         val substitutedDelegateTo = substituteDelegateToDescriptor(delegatedDescriptor, delegateToDescriptor)
         val returnType = substitutedDelegateTo.returnType!!
 
-        val delegateToSymbol = context.symbolTable.referenceFunction(delegateToDescriptor.original)
+        val delegateToSymbol = context.symbolTable.referenceSimpleFunction(delegateToDescriptor.original)
 
         val irCall = IrCallImpl(
             startOffset, endOffset,
@@ -497,7 +500,7 @@ class ClassGenerator(
 
             if (!enumEntryDescriptor.isExpect) {
                 irEnumEntry.initializerExpression =
-                    IrExpressionBodyImpl(createBodyGenerator(irEnumEntry.symbol)
+                    context.irFactory.createExpressionBody(createBodyGenerator(irEnumEntry.symbol)
                         .generateEnumEntryInitializer(ktEnumEntry, enumEntryDescriptor))
             }
 

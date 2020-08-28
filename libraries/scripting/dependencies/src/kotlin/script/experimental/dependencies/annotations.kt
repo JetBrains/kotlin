@@ -6,9 +6,9 @@
 package kotlin.script.experimental.dependencies
 
 import java.io.File
-import kotlin.script.experimental.api.ResultWithDiagnostics
-import kotlin.script.experimental.api.flatMapSuccess
-import kotlin.script.experimental.api.makeFailureResult
+import kotlin.script.experimental.api.*
+import kotlin.script.experimental.util.filterByAnnotationType
+import kotlin.script.experimental.dependencies.impl.SimpleExternalDependenciesResolverOptionsParser
 
 /**
  * A common annotation that could be used in a script to denote a dependency
@@ -18,7 +18,7 @@ import kotlin.script.experimental.api.makeFailureResult
 @Target(AnnotationTarget.FILE)
 @Repeatable
 @Retention(AnnotationRetention.SOURCE)
-annotation class DependsOn(vararg val artifactsCoordinates: String)
+annotation class DependsOn(vararg val artifactsCoordinates: String, val options: Array<String> = [])
 
 /**
  * A common annotation that could be used in a script to denote a repository for an ExternalDependenciesResolver
@@ -28,27 +28,57 @@ annotation class DependsOn(vararg val artifactsCoordinates: String)
 @Target(AnnotationTarget.FILE)
 @Repeatable
 @Retention(AnnotationRetention.SOURCE)
-annotation class Repository(vararg val repositoriesCoordinates: String)
+annotation class Repository(vararg val repositoriesCoordinates: String, val options: Array<String> = [])
 
 /**
  * An extension function that configures repositories and resolves artifacts denoted by the [Repository] and [DependsOn] annotations
  */
-suspend fun ExternalDependenciesResolver.resolveFromAnnotations(annotations: Iterable<Annotation>): ResultWithDiagnostics<List<File>> {
-    annotations.forEach { annotation ->
+suspend fun ExternalDependenciesResolver.resolveFromScriptSourceAnnotations(
+    annotations: Iterable<ScriptSourceAnnotation<*>>
+): ResultWithDiagnostics<List<File>> {
+    val reports = mutableListOf<ScriptDiagnostic>()
+    annotations.forEach { (annotation, locationWithId) ->
         when (annotation) {
             is Repository -> {
+                val options = SimpleExternalDependenciesResolverOptionsParser(*annotation.options, locationWithId = locationWithId)
+                    .valueOr { return it }
+
                 for (coordinates in annotation.repositoriesCoordinates) {
-                    if (!tryAddRepository(coordinates))
-                        return makeFailureResult("Unrecognized repository coordinates: $coordinates")
+                    val added = addRepository(coordinates, options, locationWithId)
+                        .also { reports.addAll(it.reports) }
+                        .valueOr { return it }
+
+                    if (!added)
+                        return reports + makeFailureResult(
+                            "Unrecognized repository coordinates: $coordinates",
+                            locationWithId = locationWithId
+                        )
                 }
             }
             is DependsOn -> {}
-            else -> return makeFailureResult("Unknown annotation ${annotation.javaClass}")
+            else -> return reports + makeFailureResult("Unknown annotation ${annotation.javaClass}", locationWithId = locationWithId)
         }
     }
-    return annotations.filterIsInstance(DependsOn::class.java)
-        .flatMap { it.artifactsCoordinates.asIterable() }
-        .flatMapSuccess { artifactCoordinates ->
-            resolve(artifactCoordinates)
+
+    return reports + annotations.filterByAnnotationType<DependsOn>()
+        .flatMapSuccess { (annotation, locationWithId) ->
+            SimpleExternalDependenciesResolverOptionsParser(
+                *annotation.options,
+                locationWithId = locationWithId
+            ).onSuccess { options ->
+                annotation.artifactsCoordinates.asIterable().flatMapSuccess { artifactCoordinates ->
+                    resolve(artifactCoordinates, options, locationWithId)
+                }
+            }
         }
+}
+
+/**
+ * An extension function that configures repositories and resolves artifacts denoted by the [Repository] and [DependsOn] annotations
+ */
+suspend fun ExternalDependenciesResolver.resolveFromAnnotations(
+    annotations: Iterable<Annotation>
+): ResultWithDiagnostics<List<File>> {
+    val scriptSourceAnnotations = annotations.map { ScriptSourceAnnotation(it, null) }
+    return resolveFromScriptSourceAnnotations(scriptSourceAnnotations)
 }

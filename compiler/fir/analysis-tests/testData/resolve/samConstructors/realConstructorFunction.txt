@@ -5,11 +5,11 @@ FILE: main.kt
         ^MyRunnable Int(1)
     }
     public final fun main(): R|kotlin/Unit| {
-        <Inapplicable(INAPPLICABLE): [/foo]>#(R|/MyRunnable|(<L> = MyRunnable@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean| {
+        <Inapplicable(INAPPLICABLE): /foo>#(R|/MyRunnable|(<L> = MyRunnable@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean| {
             ^ CMP(>, R|<local>/x|.R|kotlin/Int.compareTo|(Int(1)))
         }
         ))
-        <Inapplicable(INAPPLICABLE): [/foo]>#(R|/MyRunnable|(MyRunnable@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean| {
+        <Inapplicable(INAPPLICABLE): /foo>#(R|/MyRunnable|(MyRunnable@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean| {
             ^ CMP(>, R|<local>/it|.R|kotlin/Int.compareTo|(Int(1)))
         }
         ))
@@ -17,5 +17,5 @@ FILE: main.kt
             ^ CMP(>, R|<local>/x|.R|kotlin/Int.compareTo|(Int(1)))
         }
 
-        <Inapplicable(INAPPLICABLE): [/foo]>#(R|/MyRunnable|(R|<local>/x|))
+        <Inapplicable(INAPPLICABLE): /foo>#(R|/MyRunnable|(R|<local>/x|))
     }

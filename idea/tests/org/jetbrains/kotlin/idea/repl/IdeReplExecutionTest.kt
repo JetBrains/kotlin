@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.console.KotlinConsoleRunner
 import org.jetbrains.kotlin.idea.run.createLibraryWithLongPaths
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
+import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
+import org.jetbrains.kotlin.test.runTest
 import org.junit.Test
 import org.junit.runner.RunWith
 import kotlin.reflect.KMutableProperty0
@@ -21,6 +23,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
+@WithMutedInDatabaseRunTest
 class IdeReplExecutionTest : PlatformTestCase() {
     private lateinit var consoleRunner: KotlinConsoleRunner
     private var commandsSent = 0
@@ -34,6 +37,12 @@ class IdeReplExecutionTest : PlatformTestCase() {
         consoleRunner.dispose()
         (this::consoleRunner as KMutableProperty0<KotlinConsoleRunner?>).set(null)
         super.tearDown()
+    }
+
+    override fun runTest() {
+        runTest {
+            super.runTest()
+        }
     }
 
     private fun sendCommand(command: String) {

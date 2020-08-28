@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
@@ -22,7 +21,6 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -120,7 +118,7 @@ private fun coneFlexibleOrSimpleType(
             // TODO: we need enhancement for type parameter bounds for this code to work properly
             // At this moment, this condition is always true
             if (lookupTag.typeParameterSymbol.fir.bounds.any {
-                    val type = (it as FirResolvedTypeRef).type
+                    val type = it.coneType
                     type is ConeTypeParameterType || type.isNullable
                 }
             ) {
@@ -173,7 +171,7 @@ private fun ConeKotlinType.enhanceInflexibleType(
         typeArguments
     } else {
         var globalArgIndex = index + 1
-        typeArguments.mapIndexed { localArgIndex, arg ->
+        typeArguments.map { arg ->
             if (arg.kind != ProjectionKind.INVARIANT) {
                 globalArgIndex++
                 arg
@@ -249,7 +247,7 @@ internal data class TypeAndDefaultQualifiers(
 )
 
 internal fun FirTypeRef.typeArguments(): List<FirTypeProjection> =
-    (this as? FirUserTypeRef)?.qualifier?.lastOrNull()?.typeArguments.orEmpty()
+    (this as? FirUserTypeRef)?.qualifier?.lastOrNull()?.typeArgumentList?.typeArguments.orEmpty()
 
 internal fun JavaType.typeArguments(): List<JavaType?> = (this as? JavaClassifierType)?.typeArguments.orEmpty()
 
@@ -278,7 +276,7 @@ internal fun ConeKotlinType.lexicalCastFrom(session: FirSession, value: String):
                 buildQualifiedAccessExpression {
                     calleeReference = buildResolvedNamedReference {
                         this.name = name
-                        resolvedSymbol = firStaticProperty.symbol as FirCallableSymbol<*>
+                        resolvedSymbol = firStaticProperty.symbol
                     }
                 }
             } else null

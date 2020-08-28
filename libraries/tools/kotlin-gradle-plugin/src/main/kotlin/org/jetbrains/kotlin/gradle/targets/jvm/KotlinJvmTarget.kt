@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
+import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import java.util.concurrent.Callable
 import javax.inject.Inject
@@ -61,11 +61,11 @@ open class KotlinJvmTarget @Inject constructor(
 
         javaPluginConvention.sourceSets.all { javaSourceSet ->
             val compilation = compilations.getByName(javaSourceSet.name)
-            val compileJavaTask = project.tasks.getByName(javaSourceSet.compileJavaTaskName) as AbstractCompile
+            val compileJavaTask = project.tasks.withType<AbstractCompile>().named(javaSourceSet.compileJavaTaskName)
 
             setupJavaSourceSetSourcesAndResources(javaSourceSet, compilation)
 
-            val javaClasses = project.files(Callable { compileJavaTask.destinationDir }).builtBy(compileJavaTask)
+            val javaClasses = project.files(compileJavaTask.map { it.destinationDir })
 
             compilation.output.classesDirs.from(javaClasses)
 
@@ -110,16 +110,19 @@ open class KotlinJvmTarget @Inject constructor(
     private fun disableJavaPluginTasks(javaPluginConvention: JavaPluginConvention) {
         // A 'normal' build should not do redundant job like running the tests twice or building two JARs,
         // so disable some tasks and just make them depend on the others:
-        val targetJar = project.tasks.getByName(artifactsTaskName) as Jar
-        val javaJar = project.tasks.getByName(javaPluginConvention.sourceSets.getByName("main").jarTaskName) as Jar
-        (javaJar.source as? ConfigurableFileCollection)?.setFrom(targetJar.source)
-        javaJar.conventionMapping("archiveName") { targetJar.archiveName }
-        javaJar.dependsOn(targetJar)
-        javaJar.enabled = false
+        val targetJar = project.tasks.withType(Jar::class.java).named(artifactsTaskName)
 
-        val javaTestTask = project.tasks.getByName(JavaPlugin.TEST_TASK_NAME) as Test
-        javaTestTask.dependsOn(project.tasks.getByName(testTaskName) as Test)
-        javaTestTask.enabled = false
+        project.tasks.withType(Jar::class.java).named(javaPluginConvention.sourceSets.getByName("main").jarTaskName) { javaJar ->
+            (javaJar.source as? ConfigurableFileCollection)?.setFrom(targetJar.map { it.source })
+            javaJar.conventionMapping("archiveName") { targetJar.get().archiveFileName.get() }
+            javaJar.dependsOn(targetJar)
+            javaJar.enabled = false
+        }
+
+        project.tasks.withType(Test::class.java).named(JavaPlugin.TEST_TASK_NAME) { javaTestTask ->
+            javaTestTask.dependsOn(project.tasks.named(testTaskName))
+            javaTestTask.enabled = false
+        }
     }
 
     private fun setupDependenciesCrossInclusionForJava(

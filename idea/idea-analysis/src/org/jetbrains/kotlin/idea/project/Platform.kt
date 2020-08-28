@@ -119,11 +119,15 @@ fun Project.getLanguageVersionSettings(
     jsr305State: Jsr305State? = null,
     isReleaseCoroutines: Boolean? = null
 ): LanguageVersionSettings {
-    val arguments = KotlinCommonCompilerArgumentsHolder.getInstance(this).settings
+    val kotlinFacetSettings = contextModule?.let {
+        KotlinFacetSettingsProvider.getInstance(this)?.getInitializedSettings(it)
+    }
+
+    val arguments = kotlinFacetSettings?.compilerArguments ?: KotlinCommonCompilerArgumentsHolder.getInstance(this).settings
     val languageVersion =
-        LanguageVersion.fromVersionString(arguments.languageVersion)
-            ?: contextModule?.getAndCacheLanguageLevelByDependencies()
-            ?: VersionView.RELEASED_VERSION
+        kotlinFacetSettings?.languageLevel ?: LanguageVersion.fromVersionString(arguments.languageVersion)
+        ?: contextModule?.getAndCacheLanguageLevelByDependencies()
+        ?: VersionView.RELEASED_VERSION
     val apiVersion = ApiVersion.createByLanguageVersion(LanguageVersion.fromVersionString(arguments.apiVersion) ?: languageVersion)
     val compilerSettings = KotlinCompilerSettings.getInstance(this).settings
 

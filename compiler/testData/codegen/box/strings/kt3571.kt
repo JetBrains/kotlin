@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 class Thing(delegate: CharSequence) : CharSequence by delegate
   
 fun box(): String {

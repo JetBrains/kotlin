@@ -37,6 +37,7 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
     }
 
     override fun updateConfiguration(configuration: CompilerConfiguration) {
+        super.updateConfiguration(configuration)
         if (scriptDefinitions.isNotEmpty()) {
             configureScriptDefinitions(
                 scriptDefinitions, configuration, this::class.java.classLoader, MessageCollector.NONE, defaultJvmScriptingHostConfiguration

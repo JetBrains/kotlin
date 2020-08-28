@@ -1,15 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.js
 
 import kotlin.annotation.AnnotationTarget.*
-
-@Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, VALUE_PARAMETER, PROPERTY_GETTER, PROPERTY_SETTER)
-@Deprecated("Use `external` modifier instead", level = DeprecationLevel.ERROR)
-public annotation class native(public val name: String = "")
 
 @Target(FUNCTION)
 @Deprecated("Use inline extension function with body using dynamic")

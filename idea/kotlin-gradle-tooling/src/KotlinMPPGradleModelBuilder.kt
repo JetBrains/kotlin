@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,6 +20,8 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.KotlinMPPGradleModel.Companion.NO_KOTLIN_NATIVE_HOME
+import org.jetbrains.kotlin.gradle.KotlinSourceSet.Companion.COMMON_MAIN_SOURCE_SET_NAME
+import org.jetbrains.kotlin.gradle.KotlinSourceSet.Companion.COMMON_TEST_SOURCE_SET_NAME
 import org.jetbrains.plugins.gradle.DefaultExternalDependencyId
 import org.jetbrains.plugins.gradle.model.*
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
@@ -58,7 +60,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val sourceSets = buildSourceSets(dependencyResolver, project, dependencyMapper) ?: return null
         val sourceSetMap = sourceSets.map { it.name to it }.toMap()
         val targets = buildTargets(projectTargets, sourceSetMap, dependencyResolver, project, dependencyMapper) ?: return null
-        computeSourceSetsDeferredInfo(sourceSetMap, targets, isHMPPEnabled(project))
+        computeSourceSetsDeferredInfo(sourceSetMap, targets, isHMPPEnabled(project), shouldCoerceRootSourceSetToCommon(project))
         val coroutinesState = getCoroutinesState(project)
         reportUnresolvedDependencies(targets)
         val kotlinNativeHome = KotlinNativeHomeEvaluator.getKotlinNativeHome(project) ?: NO_KOTLIN_NATIVE_HOME
@@ -82,7 +84,9 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
                 null
             }?.toString()?.toBoolean() ?: DEFAULT_IMPORT_ORPHAN_SOURCE_SETS
         ) return sourceSets
-        val compiledSourceSets: Collection<String> = targets.flatMap { it.compilations }.flatMap { it.sourceSets }.flatMap { it.dependsOnSourceSets.union(listOf(it.name)) }.distinct()
+        val compiledSourceSets: Collection<String> =
+            targets.flatMap { it.compilations }.flatMap { it.sourceSets }.flatMap { it.dependsOnSourceSets.union(listOf(it.name)) }
+                .distinct()
         sourceSets.filter { !compiledSourceSets.contains(it.key) }.forEach {
             logger.warn("[sync warning] Source set \"${it.key}\" is not compiled with any compilation. This source set is not imported in the IDE.")
         }
@@ -92,6 +96,10 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
     private fun isHMPPEnabled(project: Project): Boolean {
         //TODO(auskov): replace with Project.isKotlinGranularMetadataEnabled after merging with gradle branch
         return (project.findProperty("kotlin.mpp.enableGranularSourceSetsMetadata") as? String)?.toBoolean() ?: false
+    }
+
+    private fun shouldCoerceRootSourceSetToCommon(project: Project): Boolean {
+        return (project.findProperty("kotlin.mpp.coerceRootSourceSetsToCommon") as? String)?.toBoolean() ?: true
     }
 
     private fun isNativeDependencyPropagationEnabled(project: Project): Boolean {
@@ -148,9 +156,11 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val androidDeps = buildAndroidDeps(kotlinExt.javaClass.classLoader, project)
 
         // Some performance optimisation: do not build metadata dependencies if source set is not common
-        val doBuildMetadataDependencies =
+        val doBuildMetadataDependencies = try {
             project.properties["build_metadata_dependencies_for_actualised_source_sets"]?.toString()?.toBoolean()
-                ?: DEFAULT_BUILD_METADATA_DEPENDENCIES_FOR_ACTUALISED_SOURCE_SETS
+        } catch (_: Exception) {
+            null
+        } ?: DEFAULT_BUILD_METADATA_DEPENDENCIES_FOR_ACTUALISED_SOURCE_SETS
         val allSourceSetsProtos = sourceSets.mapNotNull { buildSourceSet(it, dependencyResolver, project, dependencyMapper, androidDeps) }
         val allSourceSets = if (doBuildMetadataDependencies) {
             allSourceSetsProtos.map { proto -> proto.buildKotlinSourceSetImpl(true) }
@@ -176,7 +186,11 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
     }
 
     private fun buildAndroidDeps(classLoader: ClassLoader, project: Project): Map<String, List<Any>>? {
-        val includeAndroidDeps = project.properties["kotlin.include.android.dependencies"]?.toString()?.toBoolean() == true
+        val includeAndroidDeps = try {
+            project.properties["kotlin.include.android.dependencies"]?.toString()?.toBoolean() == true
+        } catch (_: Exception) {
+            false
+        }
         if (includeAndroidDeps) {
             try {
                 val resolverClass = classLoader.loadClass("org.jetbrains.kotlin.gradle.targets.android.internal.AndroidDependencyResolver")
@@ -268,6 +282,11 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             .resolveDependencies(configuration)
             .apply {
                 forEach<ExternalDependency?> { (it as? AbstractExternalDependency)?.scope = scope }
+                forEach<ExternalDependency?> {
+                    if (it is DefaultExternalProjectDependency && it.projectDependencyArtifacts !is ArrayList) {
+                        it.projectDependencyArtifacts = ArrayList(it.projectDependencyArtifacts)
+                    }
+                }
             }
             .flatMap { dependencyAdjuster.adjustDependency(it) }
         val singleDependencyFiles = resolvedDependencies.mapNotNullTo(LinkedHashSet<File>()) {
@@ -355,11 +374,12 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val platformId = (getPlatformType.invoke(gradleTarget) as? Named)?.name ?: return null
         val platform = KotlinPlatform.byId(platformId) ?: return null
         val useDisambiguationClassifier =
-            targetClass.getMethodOrNull("getUseDisambiguitionClassifierAsSourcesetNamePreffix")?.invoke(gradleTarget) as? Boolean ?: true
+            targetClass.getMethodOrNull("getUseDisambiguationClassifierAsSourceSetNamePrefix")?.invoke(gradleTarget) as? Boolean ?: true
         val disambiguationClassifier = if (useDisambiguationClassifier)
             getDisambiguationClassifier(gradleTarget) as? String
-        else
-            null
+        else {
+            targetClass.getMethodOrNull("getOverrideDisambiguationClassifierOnIdeImport")?.invoke(gradleTarget) as? String
+        }
         val getPreset = targetClass.getMethodOrNull("getPreset")
         val targetPresetName: String?
         targetPresetName = try {
@@ -547,7 +567,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val dependencyClasspath = buildDependencyClasspath(compileKotlinTask)
         val dependencies =
             buildCompilationDependencies(gradleCompilation, classifier, sourceSetMap, dependencyResolver, project, dependencyMapper)
-        val kotlinTaskProperties = getKotlinTaskProperties(compileKotlinTask)
+        val kotlinTaskProperties = getKotlinTaskProperties(compileKotlinTask, classifier)
 
         // Get konanTarget (for native compilations only).
         val konanTarget = compilationClass.getMethodOrNull("getKonanTarget")?.let { getKonanTarget ->
@@ -605,8 +625,6 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
                 gradleCompilation.name,
                 classifier
             )]?.dependencies?.map { dependencyMapper.getDependency(it) }?.filterNotNull() ?: emptySet()
-
-            makeConfigurationNamesDefault(dependencyMapper)
         }
     }
 
@@ -761,7 +779,8 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
     private fun computeSourceSetsDeferredInfo(
         sourceSets: Map<String, KotlinSourceSetImpl>,
         targets: Collection<KotlinTarget>,
-        isHMPPEnabled: Boolean
+        isHMPPEnabled: Boolean,
+        coerceRootSourceSetsToCommon: Boolean
     ) {
         // includes only compilations where source set is listed
         val compiledSourceSetToCompilations = LinkedHashMap<KotlinSourceSet, MutableSet<KotlinCompilation>>()
@@ -800,9 +819,29 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
                 val platforms = compilations.map { it.platform }
                 sourceSet.actualPlatforms.addSimplePlatforms(platforms)
             }
-            if ((!isHMPPEnabled) && sourceSet.actualPlatforms.platforms.size != 1) {
+
+            if (sourceSet.shouldCoerceToCommon(isHMPPEnabled, coerceRootSourceSetsToCommon)) {
                 sourceSet.actualPlatforms.addSimplePlatforms(listOf(KotlinPlatform.COMMON))
             }
+        }
+    }
+
+    private fun KotlinSourceSetImpl.shouldCoerceToCommon(isHMPPEnabled: Boolean, coerceRootSourceSetsToCommon: Boolean): Boolean {
+        val isRoot = name == COMMON_MAIN_SOURCE_SET_NAME || name == COMMON_TEST_SOURCE_SET_NAME
+
+        // never makes sense to coerce single-targeted source-sets
+        if (actualPlatforms.platforms.size == 1) return false
+
+        return when {
+            // pre-HMPP has only single-targeted source sets and COMMON
+            !isHMPPEnabled -> true
+
+            // in HMPP, we might want to coerce source sets to common, but only root ones, and only
+            // when the corresponding setting is turned on
+            isHMPPEnabled && isRoot && coerceRootSourceSetsToCommon -> true
+
+            // in all other cases, in HMPP we shouldn't coerce anything
+            else -> false
         }
     }
 
@@ -813,6 +852,8 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         transformations: Collection<MetadataDependencyTransformationBuilder.KotlinMetadataDependencyTransformation>
     ) {
         private val adjustmentMap = HashMap<ExternalDependency, List<ExternalDependency>>()
+
+        private val EXTRA_DEFAULT_CONFIGURATION_NAMES = listOf("metadataApiElements")
 
         private val projectDependencyTransformation =
             transformations.filter { it.projectPath != null }.associateBy { it.projectPath }
@@ -888,7 +929,8 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             return adjustmentMap.getOrPut(dependency) {
                 if (dependency !is ExternalProjectDependency)
                     return@getOrPut adjustLibraryDependency(dependency, parentScope)
-                if (dependency.configurationName != Dependency.DEFAULT_CONFIGURATION)
+                if (dependency.configurationName != Dependency.DEFAULT_CONFIGURATION &&
+                    !EXTRA_DEFAULT_CONFIGURATION_NAMES.contains(dependency.configurationName))
                     return@getOrPut listOf(dependency)
                 val artifacts = dependenciesByProjectPath[dependency.projectPath] ?: return@getOrPut listOf(dependency)
                 val artifactConfiguration = artifacts.mapTo(LinkedHashSet()) {

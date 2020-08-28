@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.idea.codeInsight
 
-import com.intellij.xml.breadcrumbs.BreadcrumbsInfoProvider
+import com.intellij.ide.ui.UISettings
+import com.intellij.ui.breadcrumbs.BreadcrumbsProvider
 
-// BUNCH 201
-typealias BreadcrumbsProviderCompatBase = BreadcrumbsInfoProvider
+// FIX ME WHEN BUNCH 201 REMOVED
+abstract class BreadcrumbsProviderCompatBase : BreadcrumbsProvider {
+    override fun isShownByDefault(): Boolean =
+        !UISettings.instance.showMembersInNavigationBar
+}

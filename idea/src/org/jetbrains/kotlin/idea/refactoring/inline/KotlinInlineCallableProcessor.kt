@@ -70,15 +70,15 @@ class KotlinInlineCallableProcessor(
     }
 
     override fun performRefactoring(usages: Array<out UsageInfo>) {
-        val simpleNameUsages = usages.mapNotNull { it.element as? KtSimpleNameExpression }
+        val referenceUsages = usages.mapNotNull { it.element as? KtReferenceExpression }
         replacementStrategy.replaceUsages(
-            simpleNameUsages,
+            referenceUsages,
             declaration,
             myProject,
             commandName,
             postAction = {
                 if (deleteAfter) {
-                    if (usages.size == simpleNameUsages.size) {
+                    if (usages.size == referenceUsages.size) {
                         declaration.deleteWithCompanion()
                         statementToDelete?.delete()
                     } else {
@@ -87,7 +87,7 @@ class KotlinInlineCallableProcessor(
                             null,
                             KotlinBundle.message(
                                 "text.cannot.inline.0.1.usages",
-                                usages.size - simpleNameUsages.size,
+                                usages.size - referenceUsages.size,
                                 usages.size
                             ),
                             KotlinBundle.message("text.inline.0", kind),

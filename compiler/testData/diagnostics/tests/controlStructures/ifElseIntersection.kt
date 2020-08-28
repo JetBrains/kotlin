@@ -25,11 +25,11 @@ fun <T> bind2(r: Option<T>): Option<T> {
 }
 
 fun <T, R> bind3(r: Option<T>): Option<T> {
-    return <!NI;TYPE_MISMATCH!>if (r is Some) {
+    return if (r is Some) <!NI;TYPE_MISMATCH!>{
         // Diagnoses an error correctly
         if (true) <!OI;TYPE_MISMATCH!>None<R>()<!> else r
-    }
-    else r<!>
+    }<!>
+    else r
 }
 
 fun <T> bindWhen(r: Option<T>): Option<T> {

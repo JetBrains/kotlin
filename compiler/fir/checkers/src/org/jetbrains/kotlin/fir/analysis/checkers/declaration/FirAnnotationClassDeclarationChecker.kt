@@ -128,7 +128,7 @@ object FirAnnotationClassDeclarationChecker : FirBasicDeclarationChecker() {
     }
 
     private fun isAllowedArray(typeRef: FirTypeRef, session: FirSession): Boolean {
-        val typeArguments = typeRef.coneTypeUnsafe<ConeKotlinType>().typeArguments
+        val typeArguments = typeRef.coneType.typeArguments
 
         if (typeArguments.size != 1) return false
 

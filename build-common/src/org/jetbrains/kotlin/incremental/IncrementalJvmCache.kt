@@ -168,6 +168,8 @@ open class IncrementalJvmCache(
                 constantsMap.process(kotlinClass, changesCollector)
                 inlineFunctionsMap.process(kotlinClass, changesCollector)
             }
+            KotlinClassHeader.Kind.UNKNOWN, KotlinClassHeader.Kind.SYNTHETIC_CLASS -> {
+            }
         }
     }
 

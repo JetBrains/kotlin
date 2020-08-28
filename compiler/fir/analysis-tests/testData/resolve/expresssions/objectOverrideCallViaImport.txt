@@ -11,5 +11,5 @@ FILE: objectOverrideCallViaImport.kt
 
     }
     public final fun test(): R|kotlin/Unit| {
-        R|/Base.foo|()
+        Q|Derived|.R|/Base.foo|()
     }

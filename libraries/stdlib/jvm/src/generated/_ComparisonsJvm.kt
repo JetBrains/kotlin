@@ -16,6 +16,7 @@ package kotlin.comparisons
 
 /**
  * Returns the greater of two values.
+ * 
  * If values are equal, returns the first one.
  */
 @SinceKotlin("1.1")
@@ -61,6 +62,8 @@ public actual inline fun maxOf(a: Long, b: Long): Long {
 
 /**
  * Returns the greater of two values.
+ * 
+ * If either value is `NaN`, returns `NaN`.
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -70,6 +73,8 @@ public actual inline fun maxOf(a: Float, b: Float): Float {
 
 /**
  * Returns the greater of two values.
+ * 
+ * If either value is `NaN`, returns `NaN`.
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -79,6 +84,8 @@ public actual inline fun maxOf(a: Double, b: Double): Double {
 
 /**
  * Returns the greater of three values.
+ * 
+ * If there are multiple equal maximal values, returns the first of them.
  */
 @SinceKotlin("1.1")
 public actual fun <T : Comparable<T>> maxOf(a: T, b: T, c: T): T {
@@ -123,6 +130,8 @@ public actual inline fun maxOf(a: Long, b: Long, c: Long): Long {
 
 /**
  * Returns the greater of three values.
+ * 
+ * If any value is `NaN`, returns `NaN`.
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -132,6 +141,8 @@ public actual inline fun maxOf(a: Float, b: Float, c: Float): Float {
 
 /**
  * Returns the greater of three values.
+ * 
+ * If any value is `NaN`, returns `NaN`.
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -140,7 +151,9 @@ public actual inline fun maxOf(a: Double, b: Double, c: Double): Double {
 }
 
 /**
- * Returns the greater of given values.
+ * Returns the greater of the given values.
+ * 
+ * If there are multiple equal maximal values, returns the first of them.
  */
 @SinceKotlin("1.4")
 public actual fun <T : Comparable<T>> maxOf(a: T, vararg other: T): T {
@@ -150,7 +163,7 @@ public actual fun <T : Comparable<T>> maxOf(a: T, vararg other: T): T {
 }
 
 /**
- * Returns the greater of given values.
+ * Returns the greater of the given values.
  */
 @SinceKotlin("1.4")
 public actual fun maxOf(a: Byte, vararg other: Byte): Byte {
@@ -160,7 +173,7 @@ public actual fun maxOf(a: Byte, vararg other: Byte): Byte {
 }
 
 /**
- * Returns the greater of given values.
+ * Returns the greater of the given values.
  */
 @SinceKotlin("1.4")
 public actual fun maxOf(a: Short, vararg other: Short): Short {
@@ -170,7 +183,7 @@ public actual fun maxOf(a: Short, vararg other: Short): Short {
 }
 
 /**
- * Returns the greater of given values.
+ * Returns the greater of the given values.
  */
 @SinceKotlin("1.4")
 public actual fun maxOf(a: Int, vararg other: Int): Int {
@@ -180,7 +193,7 @@ public actual fun maxOf(a: Int, vararg other: Int): Int {
 }
 
 /**
- * Returns the greater of given values.
+ * Returns the greater of the given values.
  */
 @SinceKotlin("1.4")
 public actual fun maxOf(a: Long, vararg other: Long): Long {
@@ -190,7 +203,9 @@ public actual fun maxOf(a: Long, vararg other: Long): Long {
 }
 
 /**
- * Returns the greater of given values.
+ * Returns the greater of the given values.
+ * 
+ * If any value is `NaN`, returns `NaN`.
  */
 @SinceKotlin("1.4")
 public actual fun maxOf(a: Float, vararg other: Float): Float {
@@ -200,7 +215,9 @@ public actual fun maxOf(a: Float, vararg other: Float): Float {
 }
 
 /**
- * Returns the greater of given values.
+ * Returns the greater of the given values.
+ * 
+ * If any value is `NaN`, returns `NaN`.
  */
 @SinceKotlin("1.4")
 public actual fun maxOf(a: Double, vararg other: Double): Double {
@@ -211,6 +228,7 @@ public actual fun maxOf(a: Double, vararg other: Double): Double {
 
 /**
  * Returns the smaller of two values.
+ * 
  * If values are equal, returns the first one.
  */
 @SinceKotlin("1.1")
@@ -256,6 +274,8 @@ public actual inline fun minOf(a: Long, b: Long): Long {
 
 /**
  * Returns the smaller of two values.
+ * 
+ * If either value is `NaN`, returns `NaN`.
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -265,6 +285,8 @@ public actual inline fun minOf(a: Float, b: Float): Float {
 
 /**
  * Returns the smaller of two values.
+ * 
+ * If either value is `NaN`, returns `NaN`.
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -274,6 +296,8 @@ public actual inline fun minOf(a: Double, b: Double): Double {
 
 /**
  * Returns the smaller of three values.
+ * 
+ * If there are multiple equal minimal values, returns the first of them.
  */
 @SinceKotlin("1.1")
 public actual fun <T : Comparable<T>> minOf(a: T, b: T, c: T): T {
@@ -318,6 +342,8 @@ public actual inline fun minOf(a: Long, b: Long, c: Long): Long {
 
 /**
  * Returns the smaller of three values.
+ * 
+ * If any value is `NaN`, returns `NaN`.
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -327,6 +353,8 @@ public actual inline fun minOf(a: Float, b: Float, c: Float): Float {
 
 /**
  * Returns the smaller of three values.
+ * 
+ * If any value is `NaN`, returns `NaN`.
  */
 @SinceKotlin("1.1")
 @kotlin.internal.InlineOnly
@@ -335,7 +363,9 @@ public actual inline fun minOf(a: Double, b: Double, c: Double): Double {
 }
 
 /**
- * Returns the smaller of given values.
+ * Returns the smaller of the given values.
+ * 
+ * If there are multiple equal minimal values, returns the first of them.
  */
 @SinceKotlin("1.4")
 public actual fun <T : Comparable<T>> minOf(a: T, vararg other: T): T {
@@ -345,7 +375,7 @@ public actual fun <T : Comparable<T>> minOf(a: T, vararg other: T): T {
 }
 
 /**
- * Returns the smaller of given values.
+ * Returns the smaller of the given values.
  */
 @SinceKotlin("1.4")
 public actual fun minOf(a: Byte, vararg other: Byte): Byte {
@@ -355,7 +385,7 @@ public actual fun minOf(a: Byte, vararg other: Byte): Byte {
 }
 
 /**
- * Returns the smaller of given values.
+ * Returns the smaller of the given values.
  */
 @SinceKotlin("1.4")
 public actual fun minOf(a: Short, vararg other: Short): Short {
@@ -365,7 +395,7 @@ public actual fun minOf(a: Short, vararg other: Short): Short {
 }
 
 /**
- * Returns the smaller of given values.
+ * Returns the smaller of the given values.
  */
 @SinceKotlin("1.4")
 public actual fun minOf(a: Int, vararg other: Int): Int {
@@ -375,7 +405,7 @@ public actual fun minOf(a: Int, vararg other: Int): Int {
 }
 
 /**
- * Returns the smaller of given values.
+ * Returns the smaller of the given values.
  */
 @SinceKotlin("1.4")
 public actual fun minOf(a: Long, vararg other: Long): Long {
@@ -385,7 +415,9 @@ public actual fun minOf(a: Long, vararg other: Long): Long {
 }
 
 /**
- * Returns the smaller of given values.
+ * Returns the smaller of the given values.
+ * 
+ * If any value is `NaN`, returns `NaN`.
  */
 @SinceKotlin("1.4")
 public actual fun minOf(a: Float, vararg other: Float): Float {
@@ -395,7 +427,9 @@ public actual fun minOf(a: Float, vararg other: Float): Float {
 }
 
 /**
- * Returns the smaller of given values.
+ * Returns the smaller of the given values.
+ * 
+ * If any value is `NaN`, returns `NaN`.
  */
 @SinceKotlin("1.4")
 public actual fun minOf(a: Double, vararg other: Double): Double {

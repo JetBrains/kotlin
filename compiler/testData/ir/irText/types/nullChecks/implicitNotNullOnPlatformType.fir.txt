@@ -26,6 +26,8 @@ FILE fqName:<root> fileName:/implicitNotNullOnPlatformType.kt
         RETURN type=kotlin.Nothing from='public final fun contains (element: kotlin.String): kotlin.Boolean declared in <root>.MySet'
           CALL 'public final fun TODO (): kotlin.Nothing [inline] declared in kotlin' type=kotlin.Nothing origin=null
     FUN name:containsAll visibility:public modality:FINAL <> ($this:<root>.MySet, elements:kotlin.collections.Collection<kotlin.String>) returnType:kotlin.Boolean
+      overridden:
+        public abstract fun containsAll (elements: kotlin.collections.Collection<E of kotlin.collections.Set>): kotlin.Boolean declared in kotlin.collections.Set
       $this: VALUE_PARAMETER name:<this> type:<root>.MySet
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<kotlin.String>
       BLOCK_BODY
@@ -67,9 +69,11 @@ FILE fqName:<root> fileName:/implicitNotNullOnPlatformType.kt
   FUN name:testContains visibility:public modality:FINAL <> (m:<root>.MySet) returnType:kotlin.Unit
     VALUE_PARAMETER name:m index:0 type:<root>.MySet
     BLOCK_BODY
-      CALL 'public final fun contains (element: kotlin.String): kotlin.Boolean declared in <root>.MySet' type=kotlin.Boolean origin=null
-        $this: GET_VAR 'm: <root>.MySet declared in <root>.testContains' type=<root>.MySet origin=null
-        element: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:STRING type:kotlin.String? visibility:public [static]' type=kotlin.String? origin=GET_PROPERTY
-      CALL 'public final fun contains (element: kotlin.String): kotlin.Boolean declared in <root>.MySet' type=kotlin.Boolean origin=null
-        $this: GET_VAR 'm: <root>.MySet declared in <root>.testContains' type=<root>.MySet origin=null
-        element: CONST String type=kotlin.String value="abc"
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun contains (element: kotlin.String): kotlin.Boolean declared in <root>.MySet' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'm: <root>.MySet declared in <root>.testContains' type=<root>.MySet origin=null
+          element: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:STRING type:kotlin.String? visibility:public [static]' type=kotlin.String? origin=GET_PROPERTY
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun contains (element: kotlin.String): kotlin.Boolean declared in <root>.MySet' type=kotlin.Boolean origin=null
+          $this: GET_VAR 'm: <root>.MySet declared in <root>.testContains' type=<root>.MySet origin=null
+          element: CONST String type=kotlin.String value="abc"

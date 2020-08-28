@@ -7,10 +7,11 @@
 3 	open class A(<bold>val n: Int</bold>) (in A)
 5 		class B : A(<bold>1</bold>) (in B)
 
+7 A a = new A(<bold>3</bold>);
+3 	open class A(<bold>val n: Int</bold>) (in A)
+7 		A a = new A(<bold>3</bold>);
+
 8 val z = A(<bold>2</bold>).n (in test())
 3 	open class A(<bold>val n: Int</bold>) (in A)
 8 		val z = A(<bold>2</bold>).n (in test())
 
-7 A a = new A(<bold>3</bold>);
-3 	open class A(<bold>val n: Int</bold>) (in A)
-7 		A a = new A(<bold>3</bold>);

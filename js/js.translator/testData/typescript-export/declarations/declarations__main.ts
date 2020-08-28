@@ -20,6 +20,8 @@ import A3 = JS_TESTS.foo.A3;
 import _valCustom = JS_TESTS.foo._valCustom;
 import _valCustomWithField = JS_TESTS.foo._valCustomWithField;
 import A4 = JS_TESTS.foo.A4;
+import O = JS_TESTS.foo.O;
+import takesO = JS_TESTS.foo.takesO;
 
 function assert(condition: boolean) {
     if (!condition) {
@@ -85,6 +87,10 @@ function box(): string {
     assert(a4._varCustomWithField === 10);
     a4._varCustomWithField = 10;
     assert(a4._varCustomWithField === 1000);
+
+    assert(O.x === 10);
+    assert(O.foo() === 20);
+    assert(takesO(O) === 30);
 
     return "OK";
 }

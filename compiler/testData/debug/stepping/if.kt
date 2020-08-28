@@ -1,4 +1,4 @@
-//FILE: test.kt
+// FILE: test.kt
 fun box(): Int {
     if (
         getB() ==
@@ -14,11 +14,11 @@ inline fun getB(): Int {
 }
 
 // LINENUMBERS
-// test.kt:4
-// test.kt:13
-// test.kt:5
-// test.kt:10
-// test.kt:5
-// test.kt:7
-// test.kt:13
-// test.kt:7
+// test.kt:4 box
+// test.kt:13 box
+// test.kt:5 box
+// test.kt:10 getA
+// test.kt:5 box
+// test.kt:7 box
+// test.kt:13 box
+// test.kt:7 box

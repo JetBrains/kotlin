@@ -20,4 +20,4 @@ public @interface A {
 
 @A(y = 7) fun test7() {}
 
-@A("8", "9", "10") fun test8() {}
+<!INAPPLICABLE_CANDIDATE!>@A("8", "9", "10")<!> fun test8() {}

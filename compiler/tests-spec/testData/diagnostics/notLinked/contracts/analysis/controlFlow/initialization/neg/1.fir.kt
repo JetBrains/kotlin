@@ -12,14 +12,14 @@ fun case_1() {
 fun case_2() {
     val value_1: Int
     funWithAtMostOnceCallsInPlace { value_1 = 10 }
-    value_1.inc()
+    <!UNINITIALIZED_VARIABLE!>value_1<!>.inc()
 }
 
 // TESTCASE NUMBER: 3
 fun case_3() {
     val value_1: Int
     funWithUnknownCallsInPlace { value_1 = 10 }
-    value_1.inc()
+    <!UNINITIALIZED_VARIABLE!>value_1<!>.inc()
 }
 
 // TESTCASE NUMBER: 4
@@ -28,8 +28,8 @@ fun case_4() {
     var value_2: Int
     funWithAtMostOnceCallsInPlace { value_1 = 10 }
     funWithUnknownCallsInPlace { value_2 = 10 }
-    value_1.dec()
-    value_2.div(10)
+    <!UNINITIALIZED_VARIABLE!>value_1<!>.dec()
+    <!UNINITIALIZED_VARIABLE!>value_2<!>.div(10)
 }
 
 // TESTCASE NUMBER: 5
@@ -53,7 +53,7 @@ fun case_6() {
     val value_1: Int
     for (i in 0..1)
         funWithExactlyOnceCallsInPlace { value_1 = 10 }
-    value_1.dec()
+    <!UNINITIALIZED_VARIABLE!>value_1<!>.dec()
 }
 
 // TESTCASE NUMBER: 7
@@ -64,12 +64,12 @@ fun case_7() {
         funWithExactlyOnceCallsInPlace { value_1 = 10 }
         i++
     }
-    value_1.dec()
+    <!UNINITIALIZED_VARIABLE!>value_1<!>.dec()
 }
 
 // TESTCASE NUMBER: 8
 fun case_8() {
     var value_1: Int
     if (true) funWithAtLeastOnceCallsInPlace { value_1 = 10 }
-    value_1.dec()
+    <!UNINITIALIZED_VARIABLE!>value_1<!>.dec()
 }

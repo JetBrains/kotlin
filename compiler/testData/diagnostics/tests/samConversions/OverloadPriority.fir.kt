@@ -22,9 +22,9 @@ public interface J {
 
 // FILE: 1.kt
 fun test(j: J) {
-    j.<!AMBIGUITY!>foo<!>({ <!UNRESOLVED_REFERENCE!>it<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Any>() }; "" }, "") <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
+    j.<!AMBIGUITY!>foo<!>({ <!UNRESOLVED_REFERENCE!>it<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Any>() }; "" }, "") <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
 
-    j.<!AMBIGUITY!>bas<!>({ <!UNRESOLVED_REFERENCE!>it<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Any>() }; "" }, "") <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Int>() }
+    j.<!AMBIGUITY!>bas<!>({ <!UNRESOLVED_REFERENCE!>it<!> <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Any>() }; "" }, "") <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
 
     // NI: TODO
     j.bar { it checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Any>() }; "" } checkType { _<Int>() }

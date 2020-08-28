@@ -22,6 +22,7 @@ import com.intellij.xdebugger.breakpoints.XBreakpoint
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XLineBreakpointType
 import com.intellij.xdebugger.breakpoints.ui.XBreakpointCustomPropertiesPanel
+import com.intellij.xdebugger.evaluation.XDebuggerEditorsProvider
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.psi.KtDeclarationContainer
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtProperty
+import javax.swing.Icon
 import javax.swing.JComponent
 
 class KotlinFieldBreakpointType :
@@ -137,13 +139,13 @@ class KotlinFieldBreakpointType :
 
     override fun isAddBreakpointButtonVisible() = true
 
-    override fun getMutedEnabledIcon() = AllIcons.Debugger.Db_muted_field_breakpoint
+    override fun getMutedEnabledIcon(): Icon = AllIcons.Debugger.Db_muted_field_breakpoint
 
-    override fun getDisabledIcon() = AllIcons.Debugger.Db_disabled_field_breakpoint
+    override fun getDisabledIcon(): Icon = AllIcons.Debugger.Db_disabled_field_breakpoint
 
-    override fun getEnabledIcon() = AllIcons.Debugger.Db_field_breakpoint
+    override fun getEnabledIcon(): Icon = AllIcons.Debugger.Db_field_breakpoint
 
-    override fun getMutedDisabledIcon() = AllIcons.Debugger.Db_muted_disabled_field_breakpoint
+    override fun getMutedDisabledIcon(): Icon = AllIcons.Debugger.Db_muted_disabled_field_breakpoint
 
     override fun canBeHitInOtherPlaces() = true
 
@@ -166,7 +168,7 @@ class KotlinFieldBreakpointType :
         return kotlinBreakpoint?.description ?: super.getDisplayText(breakpoint)
     }
 
-    override fun getEditorsProvider() = null
+    override fun getEditorsProvider(): XDebuggerEditorsProvider? = null
 
     override fun createCustomRightPropertiesPanel(project: Project): XBreakpointCustomPropertiesPanel<XLineBreakpoint<KotlinPropertyBreakpointProperties>>? {
         return KotlinBreakpointFiltersPanel(project)

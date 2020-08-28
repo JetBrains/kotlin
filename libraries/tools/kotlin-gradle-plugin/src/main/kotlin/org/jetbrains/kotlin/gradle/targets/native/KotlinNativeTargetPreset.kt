@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGene
 import org.jetbrains.kotlin.gradle.targets.native.internal.setUpKotlinNativePlatformDependencies
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
+import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -89,11 +90,9 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
         createTargetConfigurator().configureTarget(result)
 
         SingleActionPerProject.run(project, "setUpKotlinNativePlatformDependencies") {
-            project.gradle.addListener(object : BuildAdapter() {
-                override fun projectsEvaluated(gradle: Gradle) {
-                    project.setUpKotlinNativePlatformDependencies()
-                }
-            })
+            project.gradle.projectsEvaluated {
+                project.setUpKotlinNativePlatformDependencies()
+            }
         }
 
         if (!konanTarget.enabledOnCurrentHost) {
@@ -148,9 +147,6 @@ internal val KonanTarget.isCurrentHost: Boolean
 
 internal val KonanTarget.enabledOnCurrentHost
     get() = HostManager().isEnabled(this)
-
-internal val AbstractKotlinNativeCompilation.isMainCompilation: Boolean
-    get() = name == KotlinCompilation.MAIN_COMPILATION_NAME
 
 // KonanVersion doesn't provide an API to compare versions,
 // so we have to transform it to KotlinVersion first.

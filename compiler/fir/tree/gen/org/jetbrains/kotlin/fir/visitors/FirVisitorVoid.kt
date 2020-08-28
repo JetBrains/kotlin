@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.FirTargetElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -38,7 +39,6 @@ import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirSealedClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
@@ -68,19 +68,21 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirCall
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirComparisonExpression
 import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
+import org.jetbrains.kotlin.fir.expressions.FirAssignmentOperatorStatement
+import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessWithoutCallee
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
+import org.jetbrains.kotlin.fir.expressions.FirElvisExpression
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
 import org.jetbrains.kotlin.fir.expressions.FirAugmentedArraySetCall
 import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
+import org.jetbrains.kotlin.fir.declarations.FirErrorProperty
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
@@ -88,6 +90,8 @@ import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
+import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
+import org.jetbrains.kotlin.fir.expressions.FirCheckedSafeCallSubject
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirWrappedExpression
 import org.jetbrains.kotlin.fir.expressions.FirWrappedArgumentExpression
@@ -96,6 +100,7 @@ import org.jetbrains.kotlin.fir.expressions.FirSpreadArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.expressions.FirVarargArgumentsExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.FirErrorResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirResolvedReifiedParameterReference
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
@@ -122,7 +127,9 @@ import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirComposedSuperTypeRef
+import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
+import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 
@@ -176,6 +183,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus) {
         visitElement(resolvedDeclarationStatus)
+    }
+
+    open fun visitControlFlowGraphOwner(controlFlowGraphOwner: FirControlFlowGraphOwner) {
+        visitElement(controlFlowGraphOwner)
     }
 
     open fun visitStatement(statement: FirStatement) {
@@ -260,10 +271,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitRegularClass(regularClass: FirRegularClass) {
         visitElement(regularClass)
-    }
-
-    open fun visitSealedClass(sealedClass: FirSealedClass) {
-        visitElement(sealedClass)
     }
 
     open fun visitTypeAlias(typeAlias: FirTypeAlias) {
@@ -382,16 +389,20 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(annotationCall)
     }
 
-    open fun visitOperatorCall(operatorCall: FirOperatorCall) {
-        visitElement(operatorCall)
-    }
-
     open fun visitComparisonExpression(comparisonExpression: FirComparisonExpression) {
         visitElement(comparisonExpression)
     }
 
     open fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall) {
         visitElement(typeOperatorCall)
+    }
+
+    open fun visitAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement) {
+        visitElement(assignmentOperatorStatement)
+    }
+
+    open fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall) {
+        visitElement(equalityOperatorCall)
     }
 
     open fun visitWhenExpression(whenExpression: FirWhenExpression) {
@@ -402,16 +413,16 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(whenBranch)
     }
 
-    open fun visitQualifiedAccessWithoutCallee(qualifiedAccessWithoutCallee: FirQualifiedAccessWithoutCallee) {
-        visitElement(qualifiedAccessWithoutCallee)
-    }
-
     open fun visitQualifiedAccess(qualifiedAccess: FirQualifiedAccess) {
         visitElement(qualifiedAccess)
     }
 
     open fun visitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall) {
         visitElement(checkNotNullCall)
+    }
+
+    open fun visitElvisExpression(elvisExpression: FirElvisExpression) {
+        visitElement(elvisExpression)
     }
 
     open fun visitArrayOfCall(arrayOfCall: FirArrayOfCall) {
@@ -432,6 +443,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitErrorFunction(errorFunction: FirErrorFunction) {
         visitElement(errorFunction)
+    }
+
+    open fun visitErrorProperty(errorProperty: FirErrorProperty) {
+        visitElement(errorProperty)
     }
 
     open fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
@@ -460,6 +475,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast) {
         visitElement(expressionWithSmartcast)
+    }
+
+    open fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression) {
+        visitElement(safeCallExpression)
+    }
+
+    open fun visitCheckedSafeCallSubject(checkedSafeCallSubject: FirCheckedSafeCallSubject) {
+        visitElement(checkedSafeCallSubject)
     }
 
     open fun visitGetClassCall(getClassCall: FirGetClassCall) {
@@ -492,6 +515,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
         visitElement(resolvedQualifier)
+    }
+
+    open fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier) {
+        visitElement(errorResolvedQualifier)
     }
 
     open fun visitResolvedReifiedParameterReference(resolvedReifiedParameterReference: FirResolvedReifiedParameterReference) {
@@ -598,8 +625,16 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(composedSuperTypeRef)
     }
 
+    open fun visitEffectDeclaration(effectDeclaration: FirEffectDeclaration) {
+        visitElement(effectDeclaration)
+    }
+
     open fun visitContractDescription(contractDescription: FirContractDescription) {
         visitElement(contractDescription)
+    }
+
+    open fun visitLegacyRawContractDescription(legacyRawContractDescription: FirLegacyRawContractDescription) {
+        visitElement(legacyRawContractDescription)
     }
 
     open fun visitRawContractDescription(rawContractDescription: FirRawContractDescription) {
@@ -656,6 +691,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitResolvedDeclarationStatus(resolvedDeclarationStatus: FirResolvedDeclarationStatus, data: Nothing?) {
         visitResolvedDeclarationStatus(resolvedDeclarationStatus)
+    }
+
+    final override fun visitControlFlowGraphOwner(controlFlowGraphOwner: FirControlFlowGraphOwner, data: Nothing?) {
+        visitControlFlowGraphOwner(controlFlowGraphOwner)
     }
 
     final override fun visitStatement(statement: FirStatement, data: Nothing?) {
@@ -740,10 +779,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitRegularClass(regularClass: FirRegularClass, data: Nothing?) {
         visitRegularClass(regularClass)
-    }
-
-    final override fun visitSealedClass(sealedClass: FirSealedClass, data: Nothing?) {
-        visitSealedClass(sealedClass)
     }
 
     final override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Nothing?) {
@@ -862,16 +897,20 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitAnnotationCall(annotationCall)
     }
 
-    final override fun visitOperatorCall(operatorCall: FirOperatorCall, data: Nothing?) {
-        visitOperatorCall(operatorCall)
-    }
-
     final override fun visitComparisonExpression(comparisonExpression: FirComparisonExpression, data: Nothing?) {
         visitComparisonExpression(comparisonExpression)
     }
 
     final override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Nothing?) {
         visitTypeOperatorCall(typeOperatorCall)
+    }
+
+    final override fun visitAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement, data: Nothing?) {
+        visitAssignmentOperatorStatement(assignmentOperatorStatement)
+    }
+
+    final override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: Nothing?) {
+        visitEqualityOperatorCall(equalityOperatorCall)
     }
 
     final override fun visitWhenExpression(whenExpression: FirWhenExpression, data: Nothing?) {
@@ -882,16 +921,16 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitWhenBranch(whenBranch)
     }
 
-    final override fun visitQualifiedAccessWithoutCallee(qualifiedAccessWithoutCallee: FirQualifiedAccessWithoutCallee, data: Nothing?) {
-        visitQualifiedAccessWithoutCallee(qualifiedAccessWithoutCallee)
-    }
-
     final override fun visitQualifiedAccess(qualifiedAccess: FirQualifiedAccess, data: Nothing?) {
         visitQualifiedAccess(qualifiedAccess)
     }
 
     final override fun visitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, data: Nothing?) {
         visitCheckNotNullCall(checkNotNullCall)
+    }
+
+    final override fun visitElvisExpression(elvisExpression: FirElvisExpression, data: Nothing?) {
+        visitElvisExpression(elvisExpression)
     }
 
     final override fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: Nothing?) {
@@ -912,6 +951,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitErrorFunction(errorFunction: FirErrorFunction, data: Nothing?) {
         visitErrorFunction(errorFunction)
+    }
+
+    final override fun visitErrorProperty(errorProperty: FirErrorProperty, data: Nothing?) {
+        visitErrorProperty(errorProperty)
     }
 
     final override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: Nothing?) {
@@ -940,6 +983,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitExpressionWithSmartcast(expressionWithSmartcast: FirExpressionWithSmartcast, data: Nothing?) {
         visitExpressionWithSmartcast(expressionWithSmartcast)
+    }
+
+    final override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression, data: Nothing?) {
+        visitSafeCallExpression(safeCallExpression)
+    }
+
+    final override fun visitCheckedSafeCallSubject(checkedSafeCallSubject: FirCheckedSafeCallSubject, data: Nothing?) {
+        visitCheckedSafeCallSubject(checkedSafeCallSubject)
     }
 
     final override fun visitGetClassCall(getClassCall: FirGetClassCall, data: Nothing?) {
@@ -972,6 +1023,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: Nothing?) {
         visitResolvedQualifier(resolvedQualifier)
+    }
+
+    final override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier, data: Nothing?) {
+        visitErrorResolvedQualifier(errorResolvedQualifier)
     }
 
     final override fun visitResolvedReifiedParameterReference(resolvedReifiedParameterReference: FirResolvedReifiedParameterReference, data: Nothing?) {
@@ -1078,8 +1133,16 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitComposedSuperTypeRef(composedSuperTypeRef)
     }
 
+    final override fun visitEffectDeclaration(effectDeclaration: FirEffectDeclaration, data: Nothing?) {
+        visitEffectDeclaration(effectDeclaration)
+    }
+
     final override fun visitContractDescription(contractDescription: FirContractDescription, data: Nothing?) {
         visitContractDescription(contractDescription)
+    }
+
+    final override fun visitLegacyRawContractDescription(legacyRawContractDescription: FirLegacyRawContractDescription, data: Nothing?) {
+        visitLegacyRawContractDescription(legacyRawContractDescription)
     }
 
     final override fun visitRawContractDescription(rawContractDescription: FirRawContractDescription, data: Nothing?) {

@@ -100,7 +100,9 @@ class ReplTest : TestCase() {
             ),
             sequenceOf(
                 makeFailureResult(
-                    "Unresolved reference: ppp", location = SourceCode.Location(SourceCode.Position(3, 11))
+                    "Unresolved reference: ppp", location = SourceCode.Location(
+                        SourceCode.Position(3, 11), SourceCode.Position(3, 14)
+                    )
                 )
             )
         )

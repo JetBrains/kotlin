@@ -66,6 +66,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.calls.tower.ImplicitsExtensionsResolutionFilter
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
@@ -135,7 +136,8 @@ object TopDownAnalyzerFacadeForJVM {
         declarationProviderFactory: (StorageManager, Collection<KtFile>) -> DeclarationProviderFactory,
         targetEnvironment: TargetEnvironment = CompilerEnvironment,
         sourceModuleSearchScope: GlobalSearchScope = newModuleSearchScope(project, files),
-        klibList: List<KotlinLibrary> = emptyList()
+        klibList: List<KotlinLibrary> = emptyList(),
+        implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter? = null
     ): ComponentProvider {
         val jvmTarget = configuration.get(JVMConfigurationKeys.JVM_TARGET, JvmTarget.DEFAULT)
         val languageVersionSettings = configuration.languageVersionSettings
@@ -186,7 +188,8 @@ object TopDownAnalyzerFacadeForJVM {
                 targetEnvironment, lookupTracker, expectActualTracker,
                 packagePartProvider(dependencyScope), languageVersionSettings,
                 useBuiltInsProvider = true,
-                configureJavaClassFinder = configureJavaClassFinder
+                configureJavaClassFinder = configureJavaClassFinder,
+                implicitsResolutionFilter = implicitsResolutionFilter
             )
 
             moduleClassResolver.compiledCodeResolver = dependenciesContainer.get()
@@ -220,7 +223,8 @@ object TopDownAnalyzerFacadeForJVM {
             partProvider, languageVersionSettings,
             useBuiltInsProvider = true,
             configureJavaClassFinder = configureJavaClassFinder,
-            javaClassTracker = configuration[JVMConfigurationKeys.JAVA_CLASSES_TRACKER]
+            javaClassTracker = configuration[JVMConfigurationKeys.JAVA_CLASSES_TRACKER],
+            implicitsResolutionFilter = implicitsResolutionFilter
         ).apply {
             initJvmBuiltInsForTopDownAnalysis()
             (partProvider as? IncrementalPackagePartProvider)?.deserializationConfiguration = get()

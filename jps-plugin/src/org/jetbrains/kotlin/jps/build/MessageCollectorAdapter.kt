@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.jps.build
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerRunnerConstants
@@ -21,7 +21,7 @@ class MessageCollectorAdapter(
 ) : MessageCollector {
     private var hasErrors = false
 
-    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation?) {
+    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
         hasErrors = hasErrors || severity.isError
 
         var prefix = ""

@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-interface IrDynamicExpression : IrExpression
+abstract class IrDynamicExpression : IrExpression()
 
-interface IrDynamicOperatorExpression : IrDynamicExpression {
-    val operator: IrDynamicOperator
+abstract class IrDynamicOperatorExpression : IrDynamicExpression() {
+    abstract val operator: IrDynamicOperator
 
-    var receiver: IrExpression
+    abstract var receiver: IrExpression
 
-    val arguments: MutableList<IrExpression>
+    abstract val arguments: MutableList<IrExpression>
 }
 
 var IrDynamicOperatorExpression.left: IrExpression
@@ -30,9 +30,10 @@ var IrDynamicOperatorExpression.right: IrExpression
             arguments[0] = value
     }
 
-interface IrDynamicMemberExpression : IrDynamicExpression {
-    val memberName: String
-    var receiver: IrExpression
+abstract class IrDynamicMemberExpression : IrDynamicExpression() {
+    abstract val memberName: String
+
+    abstract var receiver: IrExpression
 }
 
 enum class IrDynamicOperator(val image: String, val isAssignmentOperator: Boolean = false) {

@@ -5,14 +5,19 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassifiersCache
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirExtensionReceiver
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirType
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirExtensionReceiver.Companion.toReceiverNoAnnotations
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirExtensionReceiver
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirExtensionReceiverFactory
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
 
 class ExtensionReceiverCommonizer(cache: CirClassifiersCache) :
     AbstractNullableCommonizer<CirExtensionReceiver, CirExtensionReceiver, CirType, CirType>(
         wrappedCommonizerFactory = { TypeCommonizer(cache) },
         extractor = { it.type },
-        builder = { it.toReceiverNoAnnotations() }
+        builder = { receiverType ->
+            CirExtensionReceiverFactory.create(
+                annotations = emptyList(),
+                type = receiverType
+            )
+        }
     )

@@ -38,7 +38,7 @@ class CliKotlinAsJavaSupport(
     override fun getFacadeClassesInPackage(packageFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
         return findFacadeFilesInPackage(packageFqName, scope)
             .groupBy { it.javaFileFacadeFqName }
-            .mapNotNull { (facadeClassFqName, files) ->
+            .mapNotNull { (facadeClassFqName, _) ->
                 KtLightClassForFacade.createForFacade(psiManager, facadeClassFqName, scope)
             }
     }

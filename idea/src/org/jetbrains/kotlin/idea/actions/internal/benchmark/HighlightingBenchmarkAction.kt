@@ -194,7 +194,7 @@ class HighlightingBenchmarkAction : AnAction() {
             .mapNotNull { highlighter ->
                 val info = highlighter.errorStripeTooltip as? HighlightInfo ?: return@mapNotNull null
                 info.severity
-            }.maxWith(Comparator { o1, o2 -> severityRegistrar.compare(o1, o2) })
+            }.maxWithOrNull(severityRegistrar)
         return Result.Success(location, lines, analysisTime, maxSeverity?.myName ?: "clean")
     }
 
@@ -205,13 +205,13 @@ class HighlightingBenchmarkAction : AnAction() {
         if (result == JFileChooser.APPROVE_OPTION) {
             val file = jfc.selectedFile
             file.writeText(buildString {
-                appendln("n, file, lines, status, time")
+                appendLine("n, file, lines, status, time")
                 var i = 0
                 allResults.forEach {
                     append(i++)
                     append(", ")
                     it.toCSV(this)
-                    appendln()
+                    appendLine()
                 }
             })
         }
@@ -222,5 +222,3 @@ class HighlightingBenchmarkAction : AnAction() {
         e.presentation.isEnabledAndVisible = ApplicationManager.getApplication().isInternal
     }
 }
-
-

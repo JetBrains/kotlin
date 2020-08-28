@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 class FirTotalResolveProcessor(session: FirSession) {
     val scopeSession: ScopeSession = ScopeSession()
 
-    private val processors: List<FirResolveProcessor> = createAllResolveProcessors(session, scopeSession)
+    private val processors: List<FirResolveProcessor> = createAllCompilerResolveProcessors(session, scopeSession)
 
     fun process(files: List<FirFile>) {
         for (processor in processors) {
@@ -31,22 +31,35 @@ class FirTotalResolveProcessor(session: FirSession) {
     }
 }
 
-fun createAllResolveProcessors(
+fun createAllCompilerResolveProcessors(
     session: FirSession,
     scopeSession: ScopeSession? = null,
-    mode: CompilerMode = CompilerMode.CLI
+    pluginPhasesEnabled: Boolean = false
 ): List<FirResolveProcessor> {
-    @Suppress("NAME_SHADOWING")
-    val scopeSession = scopeSession ?: ScopeSession()
-    return FirResolvePhase.values()
-        .drop(1) // to remove RAW_FIR phase
-        .map { it.createProcessorByPhase(session, scopeSession, mode) }
+    return createAllResolveProcessors(scopeSession, pluginPhasesEnabled) {
+        createCompilerProcessorByPhase(session, it)
+    }
 }
 
 fun createAllTransformerBasedResolveProcessors(
     session: FirSession,
     scopeSession: ScopeSession? = null,
+    pluginPhasesEnabled: Boolean = false,
 ): List<FirTransformerBasedResolveProcessor> {
-    @Suppress("UNCHECKED_CAST")
-    return createAllResolveProcessors(session, scopeSession, CompilerMode.IDE) as List<FirTransformerBasedResolveProcessor>
+    return createAllResolveProcessors(scopeSession, pluginPhasesEnabled) {
+        createTransformerBasedProcessorByPhase(session, it)
+    }
+}
+
+private inline fun <T : FirResolveProcessor> createAllResolveProcessors(
+    scopeSession: ScopeSession? = null,
+    pluginPhasesEnabled: Boolean,
+    creator: FirResolvePhase.(ScopeSession) -> T
+): List<T> {
+    @Suppress("NAME_SHADOWING")
+    val scopeSession = scopeSession ?: ScopeSession()
+    val phases = FirResolvePhase.values().filter {
+        !it.noProcessor && if (!pluginPhasesEnabled) !it.pluginPhase else true
+    }
+    return phases.map { it.creator(scopeSession) }
 }

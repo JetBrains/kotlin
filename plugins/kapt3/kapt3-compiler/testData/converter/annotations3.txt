@@ -15,6 +15,7 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class BParceler implements Parceler<B> {
+    @org.jetbrains.annotations.NotNull()
     public static final BParceler INSTANCE = null;
 
     private BParceler() {
@@ -42,6 +43,7 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class CParceler implements Parceler<C> {
+    @org.jetbrains.annotations.NotNull()
     public static final CParceler INSTANCE = null;
 
     private CParceler() {

@@ -1,1 +1,0 @@
-val someList = listOf(1, 2, 3)

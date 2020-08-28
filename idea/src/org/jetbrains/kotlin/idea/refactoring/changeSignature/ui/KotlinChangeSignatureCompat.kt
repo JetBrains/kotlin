@@ -11,7 +11,7 @@ import com.intellij.openapi.ui.Messages.OkCancelResult
 import org.jetbrains.kotlin.descriptors.Visibility
 import javax.swing.Icon
 
-// BUNCH: 193
+// FIX ME WHEN BUNCH 193 REMOVED
 
 @OkCancelResult
 fun showOkCancelDialog(
@@ -24,8 +24,10 @@ fun showOkCancelDialog(
         project,
         message,
         title,
+        Messages.getOkButton(),
+        Messages.getCancelButton(),
         icon
     )
 }
 
-typealias ComboBox = javax.swing.JComboBox<Visibility>
+typealias ComboBox = com.intellij.openapi.ui.ComboBox<Visibility>

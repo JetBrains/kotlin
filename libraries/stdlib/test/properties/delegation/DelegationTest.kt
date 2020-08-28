@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -62,5 +62,29 @@ class VetoablePropertyTest {
         b = A(false)
         assertTrue(b == firstValue, "fail3: b should be firstValue = A(true)")
         assertFalse(result, "fail4: result should be false")
+    }
+}
+
+private typealias ReadOnlyPropertyDelegateProvider<T, V> =
+        PropertyDelegateProvider<T, ReadOnlyProperty<T, V>>
+
+class DelegationInterfacesTest {
+    val a by ReadOnlyProperty { _, property -> property.name }
+
+    private val delegatedToProvider = mutableListOf<String>()
+    private val provider = ReadOnlyPropertyDelegateProvider { thisRef: DelegationInterfacesTest, property ->
+        val index = thisRef.delegatedToProvider.size
+        thisRef.delegatedToProvider.add(property.name)
+        ReadOnlyProperty { _, prop -> "${prop.name} is numbered $index" }
+    }
+
+    val b by provider
+    val c by provider
+
+    @Test fun doTest() {
+        assertEquals("a", a)
+        assertEquals(listOf("b", "c"), delegatedToProvider)
+        assertEquals("b is numbered 0", b)
+        assertEquals("c is numbered 1", c)
     }
 }

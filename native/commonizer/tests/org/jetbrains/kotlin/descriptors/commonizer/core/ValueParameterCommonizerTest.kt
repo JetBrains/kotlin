@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.utils.EMPTY_CLASSIFIERS_CACHE
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirValueParameter
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.core.CirTestValueParameter.Companion.areEqual
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirAnnotation
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassifiersCache
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirType
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirValueParameter
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.utils.EMPTY_CLASSIFIERS_CACHE
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.jetbrains.kotlin.name.Name
 import org.junit.Test
@@ -153,7 +154,7 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
             isNoinline: Boolean = false,
             declaresDefaultValue: Boolean = false
         ): CirValueParameter {
-            val returnType = CirType.create(mockClassType(returnTypeFqName))
+            val returnType = CirTypeFactory.create(mockClassType(returnTypeFqName))
 
             return CirTestValueParameter(
                 name = Name.identifier(name),

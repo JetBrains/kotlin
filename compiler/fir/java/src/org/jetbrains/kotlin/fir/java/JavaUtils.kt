@@ -8,29 +8,26 @@ package org.jetbrains.kotlin.fir.java
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.getClassDeclaredCallableSymbols
+import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredCallableSymbols
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.toFirPsiSourceElement
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -43,6 +40,9 @@ import org.jetbrains.kotlin.load.java.typeEnhancement.TypeComponentPosition
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance.*
+import org.jetbrains.kotlin.descriptors.Visibilities as OldVisibilities
+import org.jetbrains.kotlin.descriptors.Visibility as OldVisibility
+import org.jetbrains.kotlin.load.java.JavaVisibilities as OldJavaVisibilities
 
 internal val JavaModifierListOwner.modality: Modality
     get() = when {
@@ -75,7 +75,9 @@ internal fun FirTypeRef.toConeKotlinTypeProbablyFlexible(
         is FirJavaTypeRef -> {
             type.toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack)
         }
-        else -> ConeKotlinErrorType("Unexpected type reference in JavaClassUseSiteMemberScope: ${this::class.java}")
+        else -> ConeKotlinErrorType(
+            ConeSimpleDiagnostic("Unexpected type reference in JavaClassUseSiteMemberScope: ${this::class.java}", DiagnosticKind.Java)
+        )
     }
 
 internal fun JavaType.toFirJavaTypeRef(session: FirSession, javaTypeParameterStack: JavaTypeParameterStack): FirJavaTypeRef {
@@ -106,11 +108,12 @@ internal fun JavaClassifierType.toFirResolvedTypeRef(
 
 internal fun JavaType?.toConeKotlinTypeWithoutEnhancement(
     session: FirSession,
-    javaTypeParameterStack: JavaTypeParameterStack
+    javaTypeParameterStack: JavaTypeParameterStack,
+    forAnnotationValueParameter: Boolean = false
 ): ConeKotlinType {
     return when (this) {
         is JavaClassifierType -> {
-            toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack)
+            toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack, forAnnotationValueParameter = forAnnotationValueParameter)
         }
         is JavaPrimitiveType -> {
             val primitiveType = type
@@ -123,20 +126,7 @@ internal fun JavaType?.toConeKotlinTypeWithoutEnhancement(
             classId.toConeKotlinType(emptyArray(), isNullable = false)
         }
         is JavaArrayType -> {
-            val componentType = componentType
-            if (componentType !is JavaPrimitiveType) {
-                val classId = StandardClassIds.Array
-                val argumentType = componentType.toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack)
-                classId.toConeFlexibleType(
-                    arrayOf(argumentType),
-                    typeArgumentsForUpper = arrayOf(ConeKotlinTypeProjectionOut(argumentType))
-                )
-            } else {
-                val javaComponentName = componentType.type?.typeName?.asString()?.capitalize() ?: error("Array of voids")
-                val classId = StandardClassIds.byName(javaComponentName + "Array")
-
-                classId.toConeFlexibleType(emptyArray())
-            }
+            toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack, forAnnotationValueParameter)
         }
         is JavaWildcardType -> bound?.toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack) ?: run {
             StandardClassIds.Any.toConeFlexibleType(emptyArray())
@@ -145,6 +135,27 @@ internal fun JavaType?.toConeKotlinTypeWithoutEnhancement(
             StandardClassIds.Any.toConeFlexibleType(emptyArray())
         }
         else -> error("Strange JavaType: ${this::class.java}")
+    }
+}
+
+private fun JavaArrayType.toConeKotlinTypeWithoutEnhancement(
+    session: FirSession,
+    javaTypeParameterStack: JavaTypeParameterStack,
+    forAnnotationValueParameter: Boolean = false
+): ConeFlexibleType {
+    val componentType = componentType
+    return if (componentType !is JavaPrimitiveType) {
+        val classId = StandardClassIds.Array
+        val argumentType = componentType.toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack, forAnnotationValueParameter)
+        classId.toConeFlexibleType(
+            arrayOf(argumentType),
+            typeArgumentsForUpper = arrayOf(ConeKotlinTypeProjectionOut(argumentType))
+        )
+    } else {
+        val javaComponentName = componentType.type?.typeName?.asString()?.capitalize() ?: error("Array of voids")
+        val classId = StandardClassIds.byName(javaComponentName + "Array")
+
+        classId.toConeFlexibleType(emptyArray())
     }
 }
 
@@ -159,12 +170,24 @@ private fun ClassId.toConeFlexibleType(
 private fun JavaClassifierType.toConeKotlinTypeWithoutEnhancement(
     session: FirSession,
     javaTypeParameterStack: JavaTypeParameterStack,
-    forTypeParameterBounds: Boolean = false
+    forTypeParameterBounds: Boolean = false,
+    forAnnotationValueParameter: Boolean = false
 ): ConeKotlinType {
-    val lowerBound = toConeKotlinTypeForFlexibleBound(session, javaTypeParameterStack, isLowerBound = true, forTypeParameterBounds)
+    val lowerBound = toConeKotlinTypeForFlexibleBound(
+        session,
+        javaTypeParameterStack,
+        isLowerBound = true,
+        forTypeParameterBounds,
+        forAnnotationValueParameter = forAnnotationValueParameter
+    )
     val upperBound =
         toConeKotlinTypeForFlexibleBound(
-            session, javaTypeParameterStack, isLowerBound = false, forTypeParameterBounds, lowerBound
+            session,
+            javaTypeParameterStack,
+            isLowerBound = false,
+            forTypeParameterBounds,
+            lowerBound,
+            forAnnotationValueParameter = forAnnotationValueParameter
         )
 
     return if (isRaw) ConeRawType(lowerBound, upperBound) else ConeFlexibleType(lowerBound, upperBound)
@@ -210,11 +233,13 @@ private fun FirTypeParameter.getErasedUpperBound(
     // E.g. `class A<T extends A, F extends A>`
     // To prevent recursive calls return defaultValue() instead
     potentiallyRecursiveTypeParameter: FirTypeParameter? = null,
-    defaultValue: (() -> ConeKotlinType) = { ConeKotlinErrorType("Can't compute erased upper bound of type parameter `$this`") }
+    defaultValue: (() -> ConeKotlinType) = {
+        ConeKotlinErrorType(ConeIntermediateDiagnostic("Can't compute erased upper bound of type parameter `$this`"))
+    }
 ): ConeKotlinType {
     if (this === potentiallyRecursiveTypeParameter) return defaultValue()
 
-    val firstUpperBound = this.bounds.first().coneTypeUnsafe<ConeKotlinType>()
+    val firstUpperBound = this.bounds.first().coneType
 
     return getErasedVersionOfFirstUpperBound(firstUpperBound, mutableSetOf(this, potentiallyRecursiveTypeParameter), defaultValue)
 }
@@ -249,7 +274,7 @@ private fun getErasedVersionOfFirstUpperBound(
             val current = firstUpperBound.lookupTag.typeParameterSymbol.fir
 
             if (alreadyVisitedParameters.add(current)) {
-                val nextUpperBound = current.bounds.first().coneTypeUnsafe<ConeKotlinType>()
+                val nextUpperBound = current.bounds.first().coneType
                 getErasedVersionOfFirstUpperBound(nextUpperBound, alreadyVisitedParameters, defaultValue)
             } else {
                 defaultValue()
@@ -263,12 +288,17 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
     javaTypeParameterStack: JavaTypeParameterStack,
     isLowerBound: Boolean,
     forTypeParameterBounds: Boolean,
-    lowerBound: ConeLookupTagBasedType? = null
+    lowerBound: ConeLookupTagBasedType? = null,
+    forAnnotationValueParameter: Boolean = false
 ): ConeLookupTagBasedType {
     return when (val classifier = classifier) {
         is JavaClass -> {
             //val classId = classifier.classId!!
-            var classId = JavaToKotlinClassMap.mapJavaToKotlin(classifier.fqName!!) ?: classifier.classId!!
+            var classId = if (forAnnotationValueParameter) {
+                JavaToKotlinClassMap.mapJavaToKotlinIncludingClassMapping(classifier.fqName!!)
+            } else {
+                JavaToKotlinClassMap.mapJavaToKotlin(classifier.fqName!!)
+            } ?: classifier.classId!!
 
             if (isLowerBound) {
                 classId = classId.readOnlyToMutable() ?: classId
@@ -311,7 +341,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
             val symbol = javaTypeParameterStack[classifier]
             ConeTypeParameterTypeImpl(symbol.toLookupTag(), isNullable = !isLowerBound)
         }
-        else -> ConeKotlinErrorType("Unexpected classifier: $classifier")
+        else -> ConeKotlinErrorType(ConeSimpleDiagnostic("Unexpected classifier: $classifier", DiagnosticKind.Java))
     }
 }
 
@@ -337,6 +367,7 @@ internal fun JavaAnnotation.toFirAnnotationCall(
                 arguments += argument.toFirExpression(session, javaTypeParameterStack)
             }
         }
+        calleeReference = FirReferencePlaceholderForResolvedAnnotations
     }
 }
 
@@ -385,7 +416,8 @@ private fun JavaType?.toConeProjectionWithoutEnhancement(
             }
         }
         is JavaClassifierType -> toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack)
-        else -> ConeClassErrorType("Unexpected type argument: $this")
+        is JavaArrayType -> toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack)
+        else -> ConeClassErrorType(ConeSimpleDiagnostic("Unexpected type argument: $this", DiagnosticKind.Java))
     }
 }
 
@@ -490,7 +522,21 @@ private fun JavaType.toFirResolvedTypeRef(
         forTypeParameterBounds = false
     )
     return buildResolvedTypeRef {
-        type = ConeClassErrorType("Unexpected JavaType: $this")
+        type = ConeClassErrorType(ConeSimpleDiagnostic("Unexpected JavaType: $this", DiagnosticKind.Java))
     }
 }
 
+fun OldVisibility.toFirVisibility(): Visibility = when (this) {
+    OldVisibilities.PRIVATE -> Visibilities.Private
+    OldVisibilities.PRIVATE_TO_THIS -> Visibilities.PrivateToThis
+    OldVisibilities.PROTECTED -> Visibilities.Protected
+    OldVisibilities.INTERNAL -> Visibilities.Internal
+    OldVisibilities.PUBLIC -> Visibilities.Public
+    OldVisibilities.LOCAL -> Visibilities.Local
+    OldVisibilities.INVISIBLE_FAKE -> Visibilities.InvisibleFake
+    OldVisibilities.UNKNOWN -> Visibilities.Unknown
+    OldJavaVisibilities.PACKAGE_VISIBILITY -> JavaVisibilities.PackageVisibility
+    OldJavaVisibilities.PROTECTED_AND_PACKAGE -> JavaVisibilities.ProtectedAndPackage
+    OldJavaVisibilities.PROTECTED_STATIC_VISIBILITY -> JavaVisibilities.ProtectedStaticVisibility
+    else -> error("Unknown visiblity: $this")
+}

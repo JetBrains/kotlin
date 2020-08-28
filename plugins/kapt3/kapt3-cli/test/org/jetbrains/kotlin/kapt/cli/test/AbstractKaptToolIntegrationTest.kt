@@ -96,8 +96,8 @@ abstract class AbstractKaptToolIntegrationTest : TestCaseWithTmpdir() {
         if (!process.waitFor(2, TimeUnit.MINUTES)) err("Process is still alive")
         if (process.exitValue() != 0) {
             throw GotResult(buildString {
-                append("Return code: ").appendln(process.exitValue()).appendln()
-                appendln(outputFile.readText())
+                append("Return code: ").appendLine(process.exitValue()).appendLine()
+                appendLine(outputFile.readText())
             })
         }
     }
@@ -117,6 +117,6 @@ private val Section.args get() = readArgumentsFromArgFile(preprocessPathSeparato
 private fun preprocessPathSeparators(text: String): String = buildString {
     for (line in text.lineSequence()) {
         val transformed = if (line.startsWith("-cp ")) line.replace(':', File.pathSeparatorChar) else line
-        appendln(transformed)
+        appendLine(transformed)
     }
 }

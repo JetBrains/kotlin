@@ -26,8 +26,9 @@ FILE fqName:<root> fileName:/intersectionType3_NI.kt
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     $receiver: VALUE_PARAMETER name:<this> type:<root>.In<T of <root>.asT>
     BLOCK_BODY
-      TYPE_OP type=T of <root>.asT origin=CAST typeOperand=T of <root>.asT
-        GET_VAR '<this>: <root>.In<T of <root>.asT> declared in <root>.asT' type=<root>.In<T of <root>.asT> origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        TYPE_OP type=T of <root>.asT origin=CAST typeOperand=T of <root>.asT
+          GET_VAR '<this>: <root>.In<T of <root>.asT> declared in <root>.asT' type=<root>.In<T of <root>.asT> origin=null
   FUN name:sel visibility:public modality:FINAL <S> (x:S of <root>.sel, y:S of <root>.sel) returnType:S of <root>.sel
     TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?]
     VALUE_PARAMETER name:x index:0 type:S of <root>.sel

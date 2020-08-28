@@ -65,11 +65,8 @@ import kotlin.reflect.KClass;
 
 @kotlin.Metadata()
 public final class ErrorInDeclarations {
-    @org.jetbrains.annotations.NotNull()
     public java.lang.String p1;
-    @org.jetbrains.annotations.NotNull()
     public ABC p2;
-    @org.jetbrains.annotations.NotNull()
     public BCD<java.lang.String> p3;
 
     @org.jetbrains.annotations.NotNull()

@@ -44,13 +44,16 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmClassCodegen
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.createSession
 import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
@@ -143,9 +146,12 @@ object GenerationUtils {
             Fir2IrConverter.createModuleFragment(
                 session, resolveTransformer.scopeSession, firFiles,
                 configuration.languageVersionSettings,
-                signaturer = IdSignatureDescriptor(JvmManglerDesc()),
+                IdSignatureDescriptor(JvmManglerDesc()),
                 // TODO: differentiate JVM resolve from other targets, such as JS resolve.
-                generatorExtensions = JvmGeneratorExtensions()
+                JvmGeneratorExtensions(),
+                FirJvmKotlinMangler(session),
+                IrFactoryImpl,
+                FirJvmVisibilityConverter
             )
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 

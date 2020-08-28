@@ -5,34 +5,49 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
+import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.typeResolver
-import org.jetbrains.kotlin.fir.scopes.FirIterableScope
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class FirSpecificTypeResolverTransformer(
-    private val towerScope: FirIterableScope,
     override val session: FirSession,
     private val errorTypeAsResolved: Boolean = true
-) : FirAbstractTreeTransformer<Nothing?>(phase = FirResolvePhase.SUPER_TYPES) {
+) : FirAbstractTreeTransformer<FirScope>(phase = FirResolvePhase.SUPER_TYPES) {
     private val typeResolver = session.typeResolver
 
-    override fun transformTypeRef(typeRef: FirTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
-        typeRef.transformChildren(this, null)
-        return transformType(typeRef, typeResolver.resolveType(typeRef, towerScope))
+    @set:PrivateForInline
+    var areBareTypesAllowed: Boolean = false
+
+    @OptIn(PrivateForInline::class)
+    inline fun <R> withAllowedBareTypes(block: () -> R): R {
+        val oldValue = areBareTypesAllowed
+        areBareTypesAllowed = true
+        return try {
+            block()
+        } finally {
+            areBareTypesAllowed = oldValue
+        }
     }
 
-    override fun transformFunctionTypeRef(functionTypeRef: FirFunctionTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
+    override fun transformTypeRef(typeRef: FirTypeRef, data: FirScope): CompositeTransformResult<FirTypeRef> {
+        typeRef.transformChildren(this, data)
+        return transformType(typeRef, typeResolver.resolveType(typeRef, data, areBareTypesAllowed))
+    }
+
+    override fun transformFunctionTypeRef(functionTypeRef: FirFunctionTypeRef, data: FirScope): CompositeTransformResult<FirTypeRef> {
         functionTypeRef.transformChildren(this, data)
         return buildResolvedFunctionTypeRef {
             source = functionTypeRef.source
-            type = typeResolver.resolveType(functionTypeRef, towerScope).takeIfAcceptable() ?: return functionTypeRef.compose()
+            type = typeResolver.resolveType(functionTypeRef, data, areBareTypesAllowed).takeIfAcceptable() ?: return functionTypeRef.compose()
             isMarkedNullable = functionTypeRef.isMarkedNullable
             isSuspend = functionTypeRef.isSuspend
             receiverTypeRef = functionTypeRef.receiverTypeRef
@@ -43,11 +58,31 @@ class FirSpecificTypeResolverTransformer(
     }
 
     private fun transformType(typeRef: FirTypeRef, resolvedType: ConeKotlinType): CompositeTransformResult<FirTypeRef> {
-        return buildResolvedTypeRef {
-            source = typeRef.source
-            type = resolvedType.takeIfAcceptable() ?: return typeRef.compose()
-            annotations += typeRef.annotations
-            delegatedTypeRef = typeRef
+        return if (resolvedType !is ConeClassErrorType) {
+            buildResolvedTypeRef {
+                source = typeRef.source
+                type = resolvedType.takeIfAcceptable() ?: return typeRef.compose()
+                annotations += typeRef.annotations
+                delegatedTypeRef = typeRef
+            }
+        } else {
+            buildErrorTypeRef {
+                val typeRefSourceKind = typeRef.source?.kind
+                val diagnosticSource = resolvedType.diagnostic.safeAs<ConeUnexpectedTypeArgumentsError>()
+                    ?.source.safeAs<FirSourceElement>()
+
+                source = if (diagnosticSource != null) {
+                    if (typeRefSourceKind is FirFakeSourceElementKind) {
+                        diagnosticSource.fakeElement(typeRefSourceKind)
+                    } else {
+                        diagnosticSource
+                    }
+                } else {
+                    typeRef.source
+                }
+
+                diagnostic = resolvedType.diagnostic
+            }
         }.compose()
     }
 
@@ -55,11 +90,11 @@ class FirSpecificTypeResolverTransformer(
         !errorTypeAsResolved && it is ConeClassErrorType
     }
 
-    override fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
+    override fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: FirScope): CompositeTransformResult<FirTypeRef> {
         return resolvedTypeRef.compose()
     }
 
-    override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> {
+    override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: FirScope): CompositeTransformResult<FirTypeRef> {
         return implicitTypeRef.compose()
     }
 }

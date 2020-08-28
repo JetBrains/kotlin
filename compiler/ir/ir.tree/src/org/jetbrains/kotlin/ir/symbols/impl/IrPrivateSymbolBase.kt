@@ -17,13 +17,24 @@
 package org.jetbrains.kotlin.ir.symbols.impl
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.*
+import org.jetbrains.kotlin.ir.descriptors.WrappedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.render
 
-abstract class IrSymbolBase<out D : DeclarationDescriptor>(override val descriptor: D) : IrSymbol
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+abstract class IrSymbolBase<out D : DeclarationDescriptor>(
+    @ObsoleteDescriptorBasedAPI
+    override val descriptor: D
+) : IrSymbol {
+    override fun toString(): String {
+        if (isBound) return owner.render()
+        return "Unbound private symbol ${super.toString()}"
+    }
+}
 
 abstract class IrBindableSymbolBase<out D : DeclarationDescriptor, B : IrSymbolOwner>(descriptor: D) :
     IrBindableSymbol<D, B>, IrSymbolBase<D>(descriptor) {
@@ -48,13 +59,13 @@ abstract class IrBindableSymbolBase<out D : DeclarationDescriptor, B : IrSymbolO
 
     private var _owner: B? = null
     override val owner: B
-        get() = _owner ?: throw IllegalStateException("Symbol for $descriptor is unbound")
+        get() = _owner ?: throw IllegalStateException("Symbol with ${javaClass.simpleName} is unbound")
 
     override fun bind(owner: B) {
         if (_owner == null) {
             _owner = owner
         } else {
-            throw IllegalStateException("${javaClass.simpleName} for $descriptor is already bound")
+            throw IllegalStateException("${javaClass.simpleName} is already bound: ${owner.render()}")
         }
     }
 
@@ -75,51 +86,44 @@ class IrExternalPackageFragmentSymbolImpl(descriptor: PackageFragmentDescriptor)
     IrBindableSymbolBase<PackageFragmentDescriptor, IrExternalPackageFragment>(descriptor),
     IrExternalPackageFragmentSymbol
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrAnonymousInitializerSymbolImpl(descriptor: ClassDescriptor) :
     IrBindableSymbolBase<ClassDescriptor, IrAnonymousInitializer>(descriptor),
     IrAnonymousInitializerSymbol {
-    constructor(irClassSymbol: IrClassSymbol) : this(irClassSymbol.descriptor) {}
+    constructor(irClassSymbol: IrClassSymbol) : this(irClassSymbol.descriptor)
 }
 
 class IrClassSymbolImpl(descriptor: ClassDescriptor) :
     IrBindableSymbolBase<ClassDescriptor, IrClass>(descriptor),
-    IrClassSymbol {
-}
+    IrClassSymbol
 
 class IrEnumEntrySymbolImpl(descriptor: ClassDescriptor) :
     IrBindableSymbolBase<ClassDescriptor, IrEnumEntry>(descriptor),
-    IrEnumEntrySymbol {
-}
+    IrEnumEntrySymbol
 
 class IrFieldSymbolImpl(descriptor: PropertyDescriptor) :
     IrBindableSymbolBase<PropertyDescriptor, IrField>(descriptor),
-    IrFieldSymbol {
-}
+    IrFieldSymbol
 
 class IrTypeParameterSymbolImpl(descriptor: TypeParameterDescriptor) :
     IrBindableSymbolBase<TypeParameterDescriptor, IrTypeParameter>(descriptor),
-    IrTypeParameterSymbol {
-}
+    IrTypeParameterSymbol
 
 class IrValueParameterSymbolImpl(descriptor: ParameterDescriptor) :
     IrBindableSymbolBase<ParameterDescriptor, IrValueParameter>(descriptor),
-    IrValueParameterSymbol {
-}
+    IrValueParameterSymbol
 
 class IrVariableSymbolImpl(descriptor: VariableDescriptor) :
     IrBindableSymbolBase<VariableDescriptor, IrVariable>(descriptor),
-    IrVariableSymbol {
-}
+    IrVariableSymbol
 
 class IrSimpleFunctionSymbolImpl(descriptor: FunctionDescriptor) :
     IrBindableSymbolBase<FunctionDescriptor, IrSimpleFunction>(descriptor),
-    IrSimpleFunctionSymbol {
-}
+    IrSimpleFunctionSymbol
 
 class IrConstructorSymbolImpl(descriptor: ClassConstructorDescriptor) :
     IrBindableSymbolBase<ClassConstructorDescriptor, IrConstructor>(descriptor),
-    IrConstructorSymbol {
-}
+    IrConstructorSymbol
 
 class IrReturnableBlockSymbolImpl(descriptor: FunctionDescriptor) :
     IrBindableSymbolBase<FunctionDescriptor, IrReturnableBlock>(descriptor),
@@ -127,8 +131,7 @@ class IrReturnableBlockSymbolImpl(descriptor: FunctionDescriptor) :
 
 class IrPropertySymbolImpl(descriptor: PropertyDescriptor) :
     IrBindableSymbolBase<PropertyDescriptor, IrProperty>(descriptor),
-    IrPropertySymbol {
-}
+    IrPropertySymbol
 
 class IrLocalDelegatedPropertySymbolImpl(descriptor: VariableDescriptorWithAccessors) :
     IrBindableSymbolBase<VariableDescriptorWithAccessors, IrLocalDelegatedProperty>(descriptor),
@@ -136,8 +139,7 @@ class IrLocalDelegatedPropertySymbolImpl(descriptor: VariableDescriptorWithAcces
 
 class IrTypeAliasSymbolImpl(descriptor: TypeAliasDescriptor) :
     IrBindableSymbolBase<TypeAliasDescriptor, IrTypeAlias>(descriptor),
-    IrTypeAliasSymbol {
-}
+    IrTypeAliasSymbol
 
 class IrScriptSymbolImpl(descriptor: ScriptDescriptor) :
     IrScriptSymbol, IrBindableSymbolBase<ScriptDescriptor, IrScript>(descriptor)

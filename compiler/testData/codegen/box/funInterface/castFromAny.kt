@@ -1,5 +1,4 @@
 // !LANGUAGE: +NewInference +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
-// SKIP_DCE_DRIVEN
 
 
 fun interface KRunnable {

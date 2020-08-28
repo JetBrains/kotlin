@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
-import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.NON_KOTLIN_FUNCTION
+import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.*
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isNull
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.reportTrailingLambdaErrorOr
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.constants.TypedCompileTimeConstant
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils
@@ -76,6 +77,18 @@ class DiagnosticReporterByTrackingStrategy(
                     else TYPE_INFERENCE_ONLY_INPUT_TYPES
                     trace.report(factory.on(it, typeVariable.originalTypeParameter))
                 }
+            }
+            CandidateChosenUsingOverloadResolutionByLambdaAnnotation::class.java -> {
+                trace.report(CANDIDATE_CHOSEN_USING_OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION.on(psiKotlinCall.psiCall.callElement))
+            }
+            CompatibilityWarning::class.java -> {
+                val callElement = psiKotlinCall.psiCall.callElement
+                trace.report(
+                    COMPATIBILITY_WARNING.on(
+                        callElement.getCalleeExpressionIfAny() ?: callElement,
+                        (diagnostic as CompatibilityWarning).candidate
+                    )
+                )
             }
         }
     }
@@ -165,7 +178,9 @@ class DiagnosticReporterByTrackingStrategy(
 
             ArgumentTypeMismatchDiagnostic::class.java -> {
                 require(diagnostic is ArgumentTypeMismatchDiagnostic)
-                val expression = callArgument.safeAs<PSIKotlinCallArgument>()?.valueArgument?.getArgumentExpression()
+                val expression = callArgument.safeAs<PSIKotlinCallArgument>()?.valueArgument?.getArgumentExpression()?.let {
+                    KtPsiUtil.deparenthesize(it) ?: it
+                }
                 if (expression != null) {
                     if (expression.isNull() && expression is KtConstantExpression) {
                         trace.reportDiagnosticOnce(NULL_FOR_NONNULL_TYPE.on(expression, diagnostic.expectedType))
@@ -212,6 +227,23 @@ class DiagnosticReporterByTrackingStrategy(
                     trace.report(CANNOT_INFER_PARAMETER_TYPE.on(parameter))
                 }
             }
+
+            CompatibilityWarningOnArgument::class.java -> {
+                trace.report(
+                    COMPATIBILITY_WARNING.on(
+                        callArgument.psiCallArgument.valueArgument.asElement(),
+                        (diagnostic as CompatibilityWarningOnArgument).candidate
+                    )
+                )
+            }
+
+            AdaptedCallableReferenceIsUsedWithReflection::class.java -> {
+                trace.report(
+                    ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE.on(
+                        callArgument.psiCallArgument.valueArgument.asElement()
+                    )
+                )
+            }
         }
     }
 
@@ -228,7 +260,11 @@ class DiagnosticReporterByTrackingStrategy(
             NamedArgumentNotAllowed::class.java -> trace.report(
                 NAMED_ARGUMENTS_NOT_ALLOWED.on(
                     nameReference,
-                    if ((diagnostic as NamedArgumentNotAllowed).descriptor is FunctionInvokeDescriptor) INVOKE_ON_FUNCTION_TYPE else NON_KOTLIN_FUNCTION
+                    when ((diagnostic as NamedArgumentNotAllowed).descriptor) {
+                        is FunctionInvokeDescriptor -> INVOKE_ON_FUNCTION_TYPE
+                        is DeserializedCallableMemberDescriptor -> INTEROP_FUNCTION
+                        else -> NON_KOTLIN_FUNCTION
+                    }
                 )
             )
             ArgumentPassedTwice::class.java -> trace.report(ARGUMENT_PASSED_TWICE.on(nameReference))

@@ -260,7 +260,7 @@ internal class ProgressionLoopHeader(
     //
     // In the case of a reversed range, the `inductionVariable` and `last` variables are swapped, therefore the declaration order must be
     // swapped to preserve the correct evaluation order.
-    override val loopInitStatements = headerInfo.additionalVariables + (
+    override val loopInitStatements = headerInfo.additionalStatements + (
             if (headerInfo.isReversed)
                 listOfNotNull(lastVariableIfCanCacheLast, inductionVariable)
             else
@@ -440,6 +440,7 @@ internal class WithIndexLoopHeader(
                 is ProgressionHeaderInfo -> ProgressionLoopHeader(nestedInfo, this@with, context)
                 is IterableHeaderInfo -> IterableLoopHeader(nestedInfo)
                 is WithIndexHeaderInfo -> throw IllegalStateException("Nested WithIndexHeaderInfo not allowed for WithIndexLoopHeader")
+                is FloatingPointRangeHeaderInfo, is ComparableRangeInfo -> error("Unexpected ${nestedInfo::class.simpleName} for loops")
             }
 
             // Do not build own indexVariable if the nested loop header has an inductionVariable == 0 and step == 1.
@@ -579,7 +580,7 @@ internal class IterableLoopHeader(
         loopVariable: IrVariable?,
         loopVariableComponents: Map<Int, IrVariable>,
         builder: DeclarationIrBuilder
-    ) =
+    ): List<IrStatement> =
         with(builder) {
             // loopVariable = iteratorVar.next()
             val iteratorClass = headerInfo.iteratorVariable.type.getClass()!!
@@ -668,6 +669,7 @@ internal class HeaderProcessor(
             is ProgressionHeaderInfo -> ProgressionLoopHeader(headerInfo, builder, context)
             is WithIndexHeaderInfo -> WithIndexLoopHeader(headerInfo, builder, context)
             is IterableHeaderInfo -> IterableLoopHeader(headerInfo)
+            is FloatingPointRangeHeaderInfo, is ComparableRangeInfo -> error("Unexpected ${headerInfo::class.simpleName} for loops")
         }
     }
 }

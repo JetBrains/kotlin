@@ -44,7 +44,7 @@ class FirPluginAnnotationsResolveTransformer(
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
         checkSessionConsistency(file)
-        if (!extensionService.hasExtensions) return file.compose()
+        if (!extensionService.hasPredicateBasedExtensions) return file.compose()
         val registeredPluginAnnotations = file.session.registeredPluginAnnotations
         file.replaceResolvePhase(FirResolvePhase.ANNOTATIONS_FOR_PLUGINS)
         val newAnnotations = file.resolveAnnotations(registeredPluginAnnotations.annotations, registeredPluginAnnotations.metaAnnotations)
@@ -87,7 +87,6 @@ private class FirAnnotationResolveTransformer(
 ) : FirAbstractAnnotationResolveTransformer<Multimap<AnnotationFqn, FirRegularClass>, PersistentList<FirAnnotatedDeclaration>>(session, scopeSession) {
     var metaAnnotations: Set<AnnotationFqn> = emptySet()
     private val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(
-        towerScope,
         session,
         errorTypeAsResolved = false
     )
@@ -109,7 +108,7 @@ private class FirAnnotationResolveTransformer(
         annotationCall: FirAnnotationCall,
         data: Multimap<AnnotationFqn, FirRegularClass>
     ): CompositeTransformResult<FirStatement> {
-        return annotationCall.transformAnnotationTypeRef(typeResolverTransformer, null).compose()
+        return annotationCall.transformAnnotationTypeRef(typeResolverTransformer, scope).compose()
     }
 
     override fun transformRegularClass(

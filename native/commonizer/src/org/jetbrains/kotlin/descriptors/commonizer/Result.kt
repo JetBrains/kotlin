@@ -6,19 +6,20 @@
 package org.jetbrains.kotlin.descriptors.commonizer
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import java.io.File
 
-sealed class Result
+sealed class Result {
+    object NothingToCommonize : Result()
 
-object NothingToCommonize : Result()
-
-class CommonizationPerformed(
-    val modulesByTargets: Map<Target, Collection<ModuleDescriptor>>
-) : Result() {
-    val commonTarget: OutputTarget by lazy {
-        modulesByTargets.keys.filterIsInstance<OutputTarget>().single()
+    class Commonized(
+        val modulesByTargets: Map<Target, Collection<ModuleResult>>
+    ) : Result() {
+        val sharedTarget: OutputTarget by lazy { modulesByTargets.keys.filterIsInstance<OutputTarget>().single() }
+        val leafTargets: Set<InputTarget> by lazy { modulesByTargets.keys.filterIsInstance<InputTarget>().toSet() }
     }
+}
 
-    val concreteTargets: Set<InputTarget> by lazy {
-        modulesByTargets.keys.filterIsInstance<InputTarget>().toSet()
-    }
+sealed class ModuleResult {
+    class Absent(val originalLocation: File) : ModuleResult()
+    class Commonized(val module: ModuleDescriptor) : ModuleResult()
 }

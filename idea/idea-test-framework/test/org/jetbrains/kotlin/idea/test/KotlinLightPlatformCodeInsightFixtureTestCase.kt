@@ -14,12 +14,15 @@ import java.io.File
 import kotlin.reflect.full.findAnnotation
 
 abstract class KotlinLightPlatformCodeInsightFixtureTestCase : LightPlatformCodeInsightFixtureTestCase() {
+    protected open fun isFirPlugin(): Boolean = false
     override fun setUp() {
         super.setUp()
         enableKotlinOfficialCodeStyle(project)
         runPostStartupActivitiesOnce(project)
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
-        invalidateLibraryCache(project)
+        if (!isFirPlugin()) {
+            invalidateLibraryCache(project)
+        }
     }
 
     override fun tearDown() = runAll(

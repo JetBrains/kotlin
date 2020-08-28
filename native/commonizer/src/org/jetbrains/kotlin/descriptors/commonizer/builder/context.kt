@@ -5,35 +5,38 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.builder
 
+import gnu.trove.THashMap
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.commonizer.StatsCollector
+import org.jetbrains.kotlin.descriptors.commonizer.Parameters
 import org.jetbrains.kotlin.descriptors.commonizer.Target
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirRootNode
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.dimension
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.indexOfCommon
-import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.dimension
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.indexOfCommon
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirRootNode
+import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector
+import org.jetbrains.kotlin.descriptors.commonizer.utils.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroupMap
 import org.jetbrains.kotlin.descriptors.commonizer.utils.createKotlinNativeForwardDeclarationsModule
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderKotlinNativeSyntheticPackages
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
 
 /**
  * Temporary caches for constructed descriptors.
  */
-class DeclarationsBuilderCache(dimension: Int) {
+class DeclarationsBuilderCache(private val dimension: Int) {
     init {
         check(dimension > 0)
     }
 
     private val modules = CommonizedGroup<List<ModuleDescriptorImpl>>(dimension)
     private val packageFragments = CommonizedGroupMap<Pair<Name, FqName>, CommonizedPackageFragmentDescriptor>(dimension)
-    private val classes = CommonizedGroupMap<FqName, CommonizedClassDescriptor>(dimension)
-    private val typeAliases = CommonizedGroupMap<FqName, CommonizedTypeAliasDescriptor>(dimension)
+    private val classes = CommonizedGroupMap<ClassId, CommonizedClassDescriptor>(dimension)
+    private val typeAliases = CommonizedGroupMap<ClassId, CommonizedTypeAliasDescriptor>(dimension)
 
     private val forwardDeclarationsModules = CommonizedGroup<ModuleDescriptorImpl>(dimension)
     private val allModulesWithDependencies = CommonizedGroup<List<ModuleDescriptor>>(dimension)
@@ -41,10 +44,28 @@ class DeclarationsBuilderCache(dimension: Int) {
     fun getCachedPackageFragments(moduleName: Name, packageFqName: FqName): List<CommonizedPackageFragmentDescriptor?> =
         packageFragments.getOrFail(moduleName to packageFqName)
 
-    fun getCachedClasses(fqName: FqName): List<CommonizedClassDescriptor?> = classes.getOrFail(fqName)
+    fun getCachedClasses(classId: ClassId): List<CommonizedClassDescriptor?> = classes.getOrFail(classId)
 
-    fun getCachedClassifier(fqName: FqName, index: Int): ClassifierDescriptorWithTypeParameters? =
-        classes.getOrNull(fqName)?.get(index) ?: typeAliases.getOrNull(fqName)?.get(index)
+    fun getCachedClassifier(classId: ClassId, index: Int): ClassifierDescriptorWithTypeParameters? {
+        // first, look up for class
+        val classes: CommonizedGroup<CommonizedClassDescriptor>? = classes.getOrNull(classId)
+        classes?.get(index)?.let { return it }
+
+        // then, for type alias
+        val typeAliases: CommonizedGroup<CommonizedTypeAliasDescriptor>? = typeAliases.getOrNull(classId)
+        typeAliases?.get(index)?.let { return it }
+
+        val indexOfCommon = dimension - 1
+        if (indexOfCommon != index) {
+            // then, for class from the common fragment
+            classes?.get(indexOfCommon)?.let { return it }
+
+            // then, for type alias from the common fragment
+            typeAliases?.get(indexOfCommon)?.let { return it }
+        }
+
+        return null
+    }
 
     fun cache(index: Int, modules: List<ModuleDescriptorImpl>) {
         this.modules[index] = modules
@@ -54,15 +75,15 @@ class DeclarationsBuilderCache(dimension: Int) {
         packageFragments[moduleName to packageFqName][index] = descriptor
     }
 
-    fun cache(fqName: FqName, index: Int, descriptor: CommonizedClassDescriptor) {
-        classes[fqName][index] = descriptor
+    fun cache(classId: ClassId, index: Int, descriptor: CommonizedClassDescriptor) {
+        classes[classId][index] = descriptor
     }
 
-    fun cache(fqName: FqName, index: Int, descriptor: CommonizedTypeAliasDescriptor) {
-        typeAliases[fqName][index] = descriptor
+    fun cache(classId: ClassId, index: Int, descriptor: CommonizedTypeAliasDescriptor) {
+        typeAliases[classId][index] = descriptor
     }
 
-    fun computeIfAbsentForwardDeclarationsModule(index: Int, computable: () -> ModuleDescriptorImpl): ModuleDescriptorImpl {
+    fun getOrPutForwardDeclarationsModule(index: Int, computable: () -> ModuleDescriptorImpl): ModuleDescriptorImpl {
         forwardDeclarationsModules[index]?.let { return it }
 
         val module = computable()
@@ -92,7 +113,7 @@ class DeclarationsBuilderCache(dimension: Int) {
 
     companion object {
         private inline fun <reified K, reified V : DeclarationDescriptor> CommonizedGroupMap<K, V>.getOrFail(key: K): List<V?> =
-            getOrNull(key)?.toList() ?: error("No cached ${V::class.java} with key $key found")
+            getOrNull(key) ?: error("No cached ${V::class.java} with key $key found")
     }
 }
 
@@ -112,90 +133,140 @@ class TargetDeclarationsBuilderComponents(
     val storageManager: StorageManager,
     val target: Target,
     val builtIns: KotlinBuiltIns,
+    val lazyModulesLookupTable: NotNullLazyValue<MutableMap<String, ModuleDescriptor?>>,
     val isCommon: Boolean,
     val index: Int,
     private val cache: DeclarationsBuilderCache
 ) {
+    // only for test purposes
+    internal var extendedLookupForBuiltInsClassifiers: Boolean = false
+
     // N.B. this function may create new classifiers for types from Kotlin/Native forward declarations packages
-    fun findAppropriateClassOrTypeAlias(fqName: FqName): ClassifierDescriptorWithTypeParameters? {
+    fun findClassOrTypeAlias(classId: ClassId): ClassifierDescriptorWithTypeParameters {
+        return when {
+            classId.packageFqName.isUnderStandardKotlinPackages -> {
+                // look up for classifier in built-ins module:
+                val builtInsModule = builtIns.builtInsModule
 
-        return if (fqName.isUnderKotlinNativeSyntheticPackages) {
-            // that's a synthetic Kotlin/Native classifier that was exported as forward declaration in one or more modules,
-            // but did not match any existing class or typealias
-            val module = cache.computeIfAbsentForwardDeclarationsModule(index) {
-                // N.B. forward declarations module is created only on demand
-                createKotlinNativeForwardDeclarationsModule(
-                    storageManager = storageManager,
-                    builtIns = builtIns
-                )
+                // TODO: this works fine for Native as far as built-ins module contains full Native stdlib, but this is not enough for JVM and JS
+                val classifier = builtInsModule.resolveClassOrTypeAlias(classId)
+                if (classifier != null)
+                    return classifier
+
+                if (extendedLookupForBuiltInsClassifiers) {
+                    return findOriginalClassOrTypeAlias(classId)
+                        ?: error("Classifier ${classId.asString()} not found neither in built-ins module $builtInsModule nor in original modules for $target")
+                }
+
+                error("Classifier ${classId.asString()} not found in built-ins module $builtInsModule for $target")
             }
-
-            // create and return new classifier
-            module.packageFragmentProvider
-                .getPackageFragments(fqName.parent())
-                .single()
-                .getMemberScope()
-                .getContributedClassifier(
-                    name = fqName.shortName(),
-                    location = NoLookupLocation.FOR_ALREADY_TRACKED
-                ) as ClassifierDescriptorWithTypeParameters
-        } else {
-            // look up in created descriptors cache
-            cache.getCachedClassifier(fqName, index)
+            classId.packageFqName.isUnderKotlinNativeSyntheticPackages -> {
+                // that's a synthetic Kotlin/Native classifier that was exported as forward declaration in one or more modules,
+                // but did not match any existing class or typealias
+                cache.getOrPutForwardDeclarationsModule(index) {
+                    // N.B. forward declarations module is created only on demand
+                    createKotlinNativeForwardDeclarationsModule(
+                        storageManager = storageManager,
+                        builtIns = builtIns
+                    )
+                }.resolveClassOrTypeAlias(classId)
+                    ?: error("Classifier ${classId.asString()} not found for $target")
+            }
+            else -> {
+                cache.getCachedClassifier(classId, index) // first, look up in created descriptors cache
+                    ?: findOriginalClassOrTypeAlias(classId) // then, attempt to load the original classifier
+                    ?: error("Classifier ${classId.asString()} not found for $target")
+            }
         }
+    }
+
+    private fun findOriginalClassOrTypeAlias(classId: ClassId): ClassifierDescriptorWithTypeParameters? {
+        if (classId.packageFqName.isRoot)
+            return null
+
+        // first, guess containing module and look up in it
+        val classifier = lazyModulesLookupTable()
+            .guessModuleByPackageFqName(classId.packageFqName)
+            ?.resolveClassOrTypeAlias(classId)
+
+        // if failed, then look up though all modules
+        return classifier
+            ?: lazyModulesLookupTable().values
+                .asSequence()
+                .mapNotNull { it?.resolveClassOrTypeAlias(classId) }
+                .firstOrNull()
     }
 }
 
 fun CirRootNode.createGlobalBuilderComponents(
     storageManager: StorageManager,
-    statsCollector: StatsCollector?
+    parameters: Parameters
 ): GlobalDeclarationsBuilderComponents {
     val cache = DeclarationsBuilderCache(dimension)
 
     val targetContexts = (0 until dimension).map { index ->
         val isCommon = index == indexOfCommon
-        val root = if (isCommon) common()!! else target[index]!!
+
+        // do not leak root inside of createLazyValue {} closures!!
+        val root = if (isCommon) commonDeclaration()!! else targetDeclarations[index]!!
 
         val builtIns = root.builtInsProvider.loadBuiltIns()
         check(builtIns::class.java.name == root.builtInsClass) {
             "Unexpected built-ins class: ${builtIns::class.java}, $builtIns\nExpected: ${root.builtInsClass}"
         }
 
+        val lazyModulesLookupTable = storageManager.createLazyValue {
+            val source = if (isCommon) emptyMap() else parameters.targetProviders[index].modulesProvider.loadModules()
+            THashMap(source)
+        }
+
         TargetDeclarationsBuilderComponents(
             storageManager = storageManager,
             target = root.target,
             builtIns = builtIns,
+            lazyModulesLookupTable = lazyModulesLookupTable,
             isCommon = isCommon,
             index = index,
             cache = cache
-        )
+        ).also {
+            it.extendedLookupForBuiltInsClassifiers = parameters.extendedLookupForBuiltInsClassifiers
+        }
     }
 
-    return GlobalDeclarationsBuilderComponents(storageManager, targetContexts, cache, statsCollector)
+    return GlobalDeclarationsBuilderComponents(storageManager, targetContexts, cache, parameters.statsCollector)
 }
 
 interface TypeParameterResolver {
-    fun resolve(name: Name): TypeParameterDescriptor?
+    val parametersCount: Int
+    fun resolve(index: Int): TypeParameterDescriptor?
 
     companion object {
         val EMPTY = object : TypeParameterResolver {
-            override fun resolve(name: Name): TypeParameterDescriptor? = null
+            override val parametersCount get() = 0
+            override fun resolve(index: Int): TypeParameterDescriptor? = null
         }
     }
 }
 
 class TypeParameterResolverImpl(
-    storageManager: StorageManager,
-    ownTypeParameters: List<TypeParameterDescriptor>,
+    private val ownTypeParameters: List<TypeParameterDescriptor>,
     private val parent: TypeParameterResolver = TypeParameterResolver.EMPTY
 ) : TypeParameterResolver {
+    override val parametersCount: Int
+        get() = ownTypeParameters.size + parent.parametersCount
 
-    private val ownTypeParameters = storageManager.createLazyValue {
-        // memoize the first occurrence of descriptor with the same Name
-        ownTypeParameters.groupingBy { it.name }.reduce { _, accumulator, _ -> accumulator }
+    @Suppress("ConvertTwoComparisonsToRangeCheck")
+    override fun resolve(index: Int): TypeParameterDescriptor? {
+        val parentParametersCount = parent.parametersCount
+        if (index >= 0 && index < parentParametersCount)
+            return parent.resolve(index)
+
+        val localIndex = index - parentParametersCount
+        if (localIndex < ownTypeParameters.size)
+            return ownTypeParameters[localIndex]
+
+        error("Illegal type parameter index: $index. Should be between 0 and ${parametersCount - 1}")
     }
-
-    override fun resolve(name: Name) = ownTypeParameters()[name] ?: parent.resolve(name)
 }
 
 fun DeclarationDescriptor.getTypeParameterResolver(): TypeParameterResolver =

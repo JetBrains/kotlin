@@ -2,6 +2,7 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public abstract interface Intf {
+    @org.jetbrains.annotations.NotNull()
     public static final Intf.Companion Companion = null;
     public static final int WHITE = 2;
 
@@ -14,7 +15,8 @@ public abstract interface Intf {
             super();
         }
 
-        public static int getColor(Intf $this) {
+        public static int getColor(@org.jetbrains.annotations.NotNull()
+        Intf $this) {
             return 0;
         }
     }
@@ -51,7 +53,8 @@ public abstract interface IntfWithDefaultImpls {
             super();
         }
 
-        public static void a(IntfWithDefaultImpls $this) {
+        public static void a(@org.jetbrains.annotations.NotNull()
+        IntfWithDefaultImpls $this) {
         }
     }
 }

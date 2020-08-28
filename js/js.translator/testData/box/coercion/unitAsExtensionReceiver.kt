@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
 // EXPECTED_REACHABLE_NODES: 1284
 
 // TODO: Design Unit materialization and Unit.asDynamic() in JS IR BE

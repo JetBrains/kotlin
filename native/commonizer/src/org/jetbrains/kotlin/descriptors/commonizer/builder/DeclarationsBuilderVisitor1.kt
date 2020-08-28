@@ -5,17 +5,15 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.builder
 
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.Target
 import org.jetbrains.kotlin.descriptors.commonizer.builder.CommonizedMemberScope.Companion.plusAssign
 import org.jetbrains.kotlin.descriptors.commonizer.builder.CommonizedPackageFragmentProvider.Companion.plusAssign
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.dimension
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.indexOfCommon
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 /**
  * Serves two goals:
@@ -29,16 +27,17 @@ internal class DeclarationsBuilderVisitor1(
         check(data.isEmpty()) // root node may not have containing declarations
         check(components.targetComponents.size == node.dimension)
 
-        val allTargets = (node.target + node.common()!!).map { it!!.target }
-
-        val modulesByTargets = HashMap<Target, MutableList<ModuleDescriptorImpl>>()
+        val allTargets: List<Target> = (node.targetDeclarations + node.commonDeclaration()).map { it!!.target }
+        val modulesByTargets: Map<Target, MutableList<ModuleDescriptorImpl>> = allTargets.associateWithTo(HashMap()) { mutableListOf() }
 
         // collect module descriptors:
-        for (moduleNode in node.modules) {
+        for (moduleNode in node.modules.values) {
             val modules = moduleNode.accept(this, noContainingDeclarations()).asListContaining<ModuleDescriptorImpl>()
             modules.forEachIndexed { index, module ->
-                val target = allTargets[index]
-                modulesByTargets.computeIfAbsent(target) { mutableListOf() }.addIfNotNull(module)
+                if (module != null) {
+                    val target = allTargets[index]
+                    modulesByTargets.getValue(target) += module
+                }
             }
         }
 
@@ -54,37 +53,35 @@ internal class DeclarationsBuilderVisitor1(
         // build module descriptors:
         val moduleDescriptorsGroup = CommonizedGroup<ModuleDescriptorImpl>(node.dimension)
         node.buildDescriptors(components, moduleDescriptorsGroup)
-        val moduleDescriptors = moduleDescriptorsGroup.toList()
 
         // build package fragments:
         val packageFragmentProviders = CommonizedPackageFragmentProvider.createArray(node.dimension)
-        for (packageNode in node.packages) {
-            val packageFragments = packageNode.accept(this, moduleDescriptors).asListContaining<PackageFragmentDescriptor>()
+        for (packageNode in node.packages.values) {
+            val packageFragments = packageNode.accept(this, moduleDescriptorsGroup).asListContaining<PackageFragmentDescriptor>()
             packageFragmentProviders += packageFragments
         }
 
         // initialize module descriptors:
-        moduleDescriptors.forEachIndexed { index, moduleDescriptor ->
+        moduleDescriptorsGroup.forEachIndexed { index, moduleDescriptor ->
             moduleDescriptor?.initialize(packageFragmentProviders[index])
         }
 
-        return moduleDescriptors
+        return moduleDescriptorsGroup
     }
 
     override fun visitPackageNode(node: CirPackageNode, data: List<DeclarationDescriptor?>): List<PackageFragmentDescriptor?> {
         val containingDeclarations = data.asListContaining<ModuleDescriptorImpl>()
 
         // build package fragments:
-        val packageFragmentsGroup = CommonizedGroup<CommonizedPackageFragmentDescriptor>(node.dimension)
-        node.buildDescriptors(components, packageFragmentsGroup, containingDeclarations)
-        val packageFragments = packageFragmentsGroup.toList()
+        val packageFragments = CommonizedGroup<CommonizedPackageFragmentDescriptor>(node.dimension)
+        node.buildDescriptors(components, packageFragments, containingDeclarations)
 
         // build package members:
         val packageMemberScopes = CommonizedMemberScope.createArray(node.dimension)
-        for (classNode in node.classes) {
+        for (classNode in node.classes.values) {
             packageMemberScopes += classNode.accept(this, packageFragments)
         }
-        for (typeAliasNode in node.typeAliases) {
+        for (typeAliasNode in node.typeAliases.values) {
             packageMemberScopes += typeAliasNode.accept(this, packageFragments)
         }
 
@@ -103,13 +100,13 @@ internal class DeclarationsBuilderVisitor1(
         error("This method should not be called in ${this::class.java}")
 
     override fun visitClassNode(node: CirClassNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
-        val classesGroup = CommonizedGroup<ClassifierDescriptorWithTypeParameters>(node.dimension)
-        node.buildDescriptors(components, classesGroup, data)
-        val classes = classesGroup.toList().asListContaining<CommonizedClassDescriptor>()
+        val classifiers = CommonizedGroup<ClassifierDescriptorWithTypeParameters>(node.dimension)
+        node.buildDescriptors(components, classifiers, data)
+        val classes = classifiers.asListContaining<CommonizedClassDescriptor>()
 
         // build class members:
         val classMemberScopes = CommonizedMemberScope.createArray(node.dimension)
-        for (classNode in node.classes) {
+        for (classNode in node.classes.values) {
             classMemberScopes += classNode.accept(this, classes)
         }
 
@@ -125,15 +122,14 @@ internal class DeclarationsBuilderVisitor1(
         error("This method should not be called in ${this::class.java}")
 
     override fun visitTypeAliasNode(node: CirTypeAliasNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
-        val typeAliasesGroup = CommonizedGroup<ClassifierDescriptorWithTypeParameters>(node.dimension)
-        node.buildDescriptors(components, typeAliasesGroup, data)
-        val typeAliases = typeAliasesGroup.toList()
+        val classifiers = CommonizedGroup<ClassifierDescriptorWithTypeParameters>(node.dimension)
+        node.buildDescriptors(components, classifiers, data)
 
-        val commonClass = typeAliases[node.indexOfCommon] as CommonizedClassDescriptor?
+        val commonClass = classifiers[node.indexOfCommon] as? CommonizedClassDescriptor?
         commonClass?.unsubstitutedMemberScope = CommonizedMemberScope() // empty member scope
         commonClass?.initialize(emptyList()) // no constructors
 
-        return typeAliases
+        return classifiers
     }
 
     companion object {

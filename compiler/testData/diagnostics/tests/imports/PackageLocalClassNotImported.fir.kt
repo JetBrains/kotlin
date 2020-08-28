@@ -14,4 +14,4 @@ package a
 import pack1.*
 import pack2.*
 
-class X : <!EXPOSED_SUPER_CLASS, INAPPLICABLE_CANDIDATE!>SomeClass<!>()
+class X : <!EXPOSED_SUPER_CLASS, HIDDEN!>SomeClass<!>()

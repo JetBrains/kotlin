@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.internal.execWithProgress
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.PEER
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import java.io.File
 
@@ -105,13 +106,17 @@ abstract class YarnBasics : NpmApi {
         val entryRegistry = YarnEntryRegistry(yarnLock)
         val visited = mutableMapOf<NpmDependency, NpmDependency>()
 
-        fun resolveRecursively(src: NpmDependency): NpmDependency {
+        fun resolveRecursively(src: NpmDependency) {
+            if (src.scope == PEER) {
+                return
+            }
+
             val copy = visited[src]
             if (copy != null) {
                 src.resolvedVersion = copy.resolvedVersion
                 src.integrity = copy.integrity
                 src.dependencies.addAll(copy.dependencies)
-                return src
+                return
             }
             visited[src] = src
 
@@ -133,8 +138,6 @@ abstract class YarnBasics : NpmApi {
 
                 child
             }
-
-            return src
         }
 
         srcDependenciesList.forEach { src ->

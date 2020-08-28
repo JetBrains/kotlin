@@ -107,7 +107,7 @@ class NamingConventionInspectionSettings(
             val message = getNameMismatchMessage(name)
             holder.registerProblem(
                 element.nameIdentifier!!,
-                "$entityName ${KotlinBundle.message("text.name")}<code>#ref</code> $message #loc",
+                "$entityName ${KotlinBundle.message("text.name")} <code>#ref</code> $message #loc",
                 RenameIdentifierFix()
             )
         }

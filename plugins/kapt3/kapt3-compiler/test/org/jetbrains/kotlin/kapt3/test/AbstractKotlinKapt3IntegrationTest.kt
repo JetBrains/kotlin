@@ -21,10 +21,8 @@ import org.jetbrains.kotlin.base.kapt3.DetectMemoryLeaksMode
 import org.jetbrains.kotlin.base.kapt3.KaptOptions
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.OriginCollectingClassBuilderFactory
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.kapt3.AbstractKapt3Extension
 import org.jetbrains.kotlin.kapt3.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt3.base.KaptContext
@@ -52,9 +50,8 @@ import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.Element
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
-import com.sun.tools.javac.util.List as JavacList
 
-abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
+abstract class AbstractKotlinKapt3IntegrationTest : KotlinKapt3TestBase() {
     private companion object {
         val TEST_DATA_DIR = File("plugins/kapt3/kapt3-compiler/testData/kotlinRunner")
     }
@@ -144,6 +141,7 @@ abstract class AbstractKotlinKapt3IntegrationTest : CodegenTestCase() {
             incrementalDataOutputDir = Files.createTempDirectory("kaptIncrementalData").toFile()
 
             mutableOptions?.let { processingOptions.putAll(it) }
+            flags.addAll(kaptFlags)
             detectMemoryLeaks = DetectMemoryLeaksMode.NONE
         }.build()
 

@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS, NATIVE
+// IGNORE_BACKEND: JS
 
 fun <T> something(): T = Any() as T
 

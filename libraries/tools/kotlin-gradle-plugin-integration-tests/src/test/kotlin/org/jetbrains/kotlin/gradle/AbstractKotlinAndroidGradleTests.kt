@@ -12,9 +12,6 @@ import kotlin.test.assertTrue
 open class KotlinAndroid33GradleIT : KotlinAndroid32GradleIT() {
     override val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v3_3_2
-
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("5.0")
 }
 
 open class KotlinAndroid36GradleIT : KotlinAndroid33GradleIT() {
@@ -346,6 +343,10 @@ open class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT() {
     override val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v3_2_0
 
+    //android build tool 28.0.3 use org.gradle.api.file.ProjectLayout#fileProperty(org.gradle.api.provider.Provider) that was deleted in gradle 6.0
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.Until("5.6.4")
+
     @Test
     fun testKaptUsingApOptionProvidersAsNestedInputOutput() = with(Project("AndroidProject")) {
         setupWorkingDir()
@@ -408,14 +409,6 @@ open class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT() {
             assertTasksUpToDate(javacTasks + kaptTasks)
         }
     }
-}
-
-class KotlinAndroid30GradleIT : KotlinAndroid3GradleIT() {
-    override val androidGradlePluginVersion: AGPVersion
-        get() = AGPVersion.v3_0_0
-
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.Until("4.10.2")
 
     @Test
     fun testOmittedStdlibVersion() = Project("AndroidProject").run {
@@ -724,29 +717,6 @@ fun getSomething() = 10
         val project = Project("AndroidExtensionsSpecificFeatures")
         val options = defaultBuildOptions().copy(incremental = false)
 
-        if (this is KotlinAndroid30GradleIT) {
-            project.setupWorkingDir()
-            project.gradleBuildScript("app").modify {
-                """
-                def projectEvaluated = false
-
-                configurations.all { configuration ->
-                    incoming.beforeResolve {
-                        if (!projectEvaluated) {
-                            throw new RuntimeException("${'$'}configuration resolved during project configuration phase.")
-                        }
-                    }
-                }
-
-                $it
-
-                afterEvaluate {
-                    projectEvaluated = true
-                }
-                """.trimIndent()
-            }
-        }
-
         project.build("assemble", options = options) {
             assertFailed()
             assertContains("Unresolved reference: textView")
@@ -756,7 +726,7 @@ fun getSomething() = 10
 
         project.build("assemble", options = options) {
             assertFailed()
-            assertContains("Class 'User' is not abstract and does not implement abstract member public abstract fun writeToParcel")
+            assertContainsRegex("Class 'User' is not abstract and does not implement abstract member public abstract fun (writeToParcel|describeContents)".toRegex())
         }
 
         File(project.projectDir, "app/build.gradle").modify { it.replace("[\"views\"]", "[\"parcelize\", \"views\"]") }

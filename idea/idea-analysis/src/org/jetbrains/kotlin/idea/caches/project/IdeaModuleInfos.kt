@@ -11,7 +11,6 @@ import com.intellij.openapi.module.impl.scopes.LibraryScopeBase
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.*
-import com.intellij.openapi.roots.impl.ModuleOrderEntryImpl
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.util.ModificationTracker
@@ -31,7 +30,7 @@ import org.jetbrains.kotlin.caches.project.cacheInvalidatingOnRootModifications
 import org.jetbrains.kotlin.caches.resolve.resolution
 import org.jetbrains.kotlin.config.SourceKotlinRootType
 import org.jetbrains.kotlin.config.TestSourceKotlinRootType
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.idea.KotlinIdeaAnalysisBundle
 import org.jetbrains.kotlin.idea.caches.resolve.util.enlargedSearchScope
 import org.jetbrains.kotlin.idea.caches.trackers.KotlinModuleOutOfCodeBlockModificationTracker
@@ -40,6 +39,7 @@ import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.framework.effectiveKind
 import org.jetbrains.kotlin.idea.framework.platform
+import org.jetbrains.kotlin.idea.klib.AbstractKlibLibraryInfo
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.findAnalyzerServices
 import org.jetbrains.kotlin.idea.project.getStableName
@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.idea.project.isHMPPEnabled
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.idea.util.rootManager
+import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -75,7 +76,7 @@ interface IdeaModuleInfo : org.jetbrains.kotlin.idea.caches.resolve.IdeaModuleIn
 
     val project: Project?
 
-    override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
+    override val capabilities: Map<ModuleCapability<*>, Any?>
         get() = super.capabilities + mapOf(OriginCapability to moduleOrigin)
 
     override fun dependencies(): List<IdeaModuleInfo>
@@ -92,7 +93,7 @@ private fun orderEntryToModuleInfo(project: Project, orderEntry: OrderEntry, for
         }
         is ModuleOrderEntry -> {
             val module = orderEntry.module ?: return emptyList()
-            if (forProduction && orderEntry is ModuleOrderEntryImpl && orderEntry.isProductionOnTestDependency) {
+            if (forProduction && orderEntry.isProductionOnTestDependency) {
                 listOfNotNull(module.testSourceInfo())
             } else {
                 module.toInfos()
@@ -131,7 +132,7 @@ private fun OrderEntry.acceptAsDependency(forProduction: Boolean): Boolean {
     return this !is ExportableOrderEntry
             || !forProduction
             // this is needed for Maven/Gradle projects with "production-on-test" dependency
-            || this is ModuleOrderEntryImpl && isProductionOnTestDependency
+            || this is ModuleOrderEntry && isProductionOnTestDependency
             || scope.isForProductionCompile
 }
 
@@ -140,34 +141,57 @@ private fun ideaModelDependencies(
     forProduction: Boolean,
     platform: TargetPlatform
 ): List<IdeaModuleInfo> {
+    // Use StringBuilder so that all lines are written into the log atomically (otherwise
+    // logs of call to ideaModelDependencies for several different modules interleave, leading
+    // to unreadable mess)
+    val debugString: StringBuilder? = if (LOG.isDebugEnabled) StringBuilder() else null
+    debugString?.appendLine("Building idea model dependencies for module $module, platform=${platform}, forProduction=$forProduction")
+
     //NOTE: lib dependencies can be processed several times during recursive traversal
     val result = LinkedHashSet<IdeaModuleInfo>()
     val dependencyEnumerator = ModuleRootManager.getInstance(module).orderEntries().compileOnly().recursively().exportedOnly()
     if (forProduction && module.getBuildSystemType() == BuildSystemType.JPS) {
         dependencyEnumerator.productionOnly()
     }
+
+    debugString?.append("    IDEA dependencies: [")
     dependencyEnumerator.forEach { orderEntry ->
+        debugString?.append("${orderEntry.presentableName} ")
         if (orderEntry.acceptAsDependency(forProduction)) {
             result.addAll(orderEntryToModuleInfo(module.project, orderEntry!!, forProduction))
+            debugString?.append("OK; ")
+        } else {
+            debugString?.append("SKIP; ")
         }
         true
     }
-    return result.filterNot { it is LibraryInfo && !platform.canDependOn(it.platform, module.isHMPPEnabled) }
+    debugString?.appendLine("]")
+
+    // Some dependencies prohibited (e.g. common can not depend on a platform)
+    val correctedResult = result.filterNot { it is LibraryInfo && !platform.canDependOn(it, module.isHMPPEnabled) }
+    debugString?.appendLine("    Corrected result: ${correctedResult.joinToString(prefix = "[", postfix = "]", separator = ";") { it.displayedName }}")
+
+    LOG.debug(debugString?.toString())
+
+    return correctedResult
 }
 
-private fun TargetPlatform.canDependOn(other: TargetPlatform, isHmppEnabled: Boolean): Boolean {
+private fun TargetPlatform.canDependOn(other: IdeaModuleInfo, isHmppEnabled: Boolean): Boolean {
     if (isHmppEnabled) {
-        val platformsWhichAreNotContainedInOther = this.componentPlatforms - other.componentPlatforms
+        // HACK: allow depending on stdlib even if platforms do not match
+        if (isNative() && other is AbstractKlibLibraryInfo && other.libraryRoot.endsWith(KONAN_STDLIB_NAME)) return true
+
+        val platformsWhichAreNotContainedInOther = this.componentPlatforms - other.platform.componentPlatforms
         if (platformsWhichAreNotContainedInOther.isEmpty()) return true
 
         // unspecifiedNativePlatform is effectively a wildcard for NativePlatform
         return platformsWhichAreNotContainedInOther.all { it is NativePlatform } &&
-                NativePlatforms.unspecifiedNativePlatform.componentPlatforms.single() in other.componentPlatforms
+                NativePlatforms.unspecifiedNativePlatform.componentPlatforms.single() in other.platform.componentPlatforms
     } else {
-        return this.isJvm() && other.isJvm() ||
-                this.isJs() && other.isJs() ||
-                this.isNative() && other.isNative() ||
-                this.isCommon() && other.isCommon()
+        return this.isJvm() && other.platform.isJvm() ||
+                this.isJs() && other.platform.isJs() ||
+                this.isNative() && other.platform.isNative() ||
+                this.isCommon() && other.platform.isCommon()
     }
 }
 
@@ -469,7 +493,7 @@ private class SdkScope(project: Project, val sdk: Sdk) :
 
 fun IdeaModuleInfo.isLibraryClasses() = this is SdkInfo || this is LibraryInfo
 
-val OriginCapability = ModuleDescriptor.Capability<ModuleOrigin>("MODULE_ORIGIN")
+val OriginCapability = ModuleCapability<ModuleOrigin>("MODULE_ORIGIN")
 
 enum class ModuleOrigin {
     MODULE,
@@ -513,7 +537,7 @@ data class PlatformModuleInfo(
     override val platformModule: ModuleSourceInfo,
     private val commonModules: List<ModuleSourceInfo> // NOTE: usually contains a single element for current implementation
 ) : IdeaModuleInfo, CombinedModuleInfo, TrackableModuleInfo {
-    override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
+    override val capabilities: Map<ModuleCapability<*>, Any?>
         get() = platformModule.capabilities
 
     override fun contentScope() = GlobalSearchScope.union(containedModules.map { it.contentScope() }.toTypedArray())

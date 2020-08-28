@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.tree.generator.context
 
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.tree.generator.model.*
 import org.jetbrains.kotlin.fir.tree.generator.noReceiverExpressionType
 import org.jetbrains.kotlin.fir.tree.generator.printer.call
@@ -120,6 +119,12 @@ abstract class AbstractFirTreeImplementationConfigurator {
             default(field) {
                 this.value = value
             }
+        }
+
+        fun defaultTypeRefWithSource(typeRefClass: String) {
+            default("typeRef", "$typeRefClass(source?.fakeElement(FirFakeSourceElementKind.ImplicitTypeRef))")
+            implementation.arbitraryImportables += ArbitraryImportable("org.jetbrains.kotlin.fir", "FirFakeSourceElementKind")
+            implementation.arbitraryImportables += ArbitraryImportable("org.jetbrains.kotlin.fir", "fakeElement")
         }
 
         fun defaultTrue(field: String, withGetter: Boolean = false) {

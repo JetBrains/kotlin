@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrSetVariable
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -26,28 +25,13 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrSetVariableImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType,
     override val symbol: IrVariableSymbol,
+    override var value: IrExpression,
     override val origin: IrStatementOrigin?
-) :
-    IrExpressionBase(startOffset, endOffset, type),
-    IrSetVariable {
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        symbol: IrVariableSymbol,
-        value: IrExpression,
-        origin: IrStatementOrigin?
-    ) : this(startOffset, endOffset, type, symbol, origin) {
-        this.value = value
-    }
-
-    override lateinit var value: IrExpression
-
+) : IrSetVariable() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitSetVariable(this, data)
     }

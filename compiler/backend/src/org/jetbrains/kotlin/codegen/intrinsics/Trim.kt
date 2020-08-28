@@ -33,7 +33,11 @@ class TrimMargin : IntrinsicMethod() {
                 val marginPrefix = argument.valueArgument?.getArgumentExpression()
                     ?.let { codegen.getCompileTimeConstant(it) as? StringValue }
                     ?.value ?: return null
-                literalText.trimMargin(marginPrefix)
+                try {
+                    literalText.trimMargin(marginPrefix)
+                } catch (e: IllegalArgumentException) {
+                    return null
+                }
             }
             else -> error("Unknown value argument type ${argument::class}: $argument")
         }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class WrappedDeclarationDescriptor<T : IrDeclaration>(annotations: Annotations) : DeclarationDescriptor {
     private val annotations_ = annotations
 
@@ -159,6 +161,7 @@ abstract class WrappedCallableDescriptor<T : IrDeclaration>(
 
 // TODO: (Roman Artemev) do not create this kind of descriptor for dispatch receiver parameters
 // WrappedReceiverParameterDescriptor should be used instead
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedValueParameterDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -203,6 +206,7 @@ open class WrappedValueParameterDescriptor(
     }
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedReceiverParameterDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -240,6 +244,7 @@ open class WrappedReceiverParameterDescriptor(
     }
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedTypeParameterDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -281,12 +286,12 @@ open class WrappedTypeParameterDescriptor(
     private val _defaultType: SimpleType by lazy {
         KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
             Annotations.EMPTY, typeConstructor, emptyList(), false,
-            LazyScopeAdapter(LockBasedStorageManager.NO_LOCKS.createLazyValue {
+            LazyScopeAdapter {
                 TypeIntersectionScope.create(
                     "Scope for type parameter " + name.asString(),
                     upperBounds
                 )
-            })
+            }
         )
     }
 
@@ -305,6 +310,7 @@ open class WrappedTypeParameterDescriptor(
 
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedVariableDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -340,6 +346,7 @@ open class WrappedVariableDescriptor(
     }
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedVariableDescriptorWithAccessor() : VariableDescriptorWithAccessors,
     WrappedCallableDescriptor<IrLocalDelegatedProperty>(Annotations.EMPTY, SourceElement.NO_SOURCE) {
     override fun getName(): Name = owner.name
@@ -370,17 +377,11 @@ open class WrappedVariableDescriptorWithAccessor() : VariableDescriptorWithAcces
 
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedSimpleFunctionDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     sourceElement: SourceElement = SourceElement.NO_SOURCE
 ) : SimpleFunctionDescriptor, WrappedCallableDescriptor<IrSimpleFunction>(annotations, sourceElement) {
-
-    // TODO: Remove as soon as all IR declarations have their originalDescriptor.
-    constructor(originalDescriptor: FunctionDescriptor) : this(originalDescriptor.annotations, originalDescriptor.source) {
-        this.originalDescriptor = originalDescriptor
-    }
-
-    var originalDescriptor: FunctionDescriptor? = null
 
     override fun getOverriddenDescriptors() = owner.overriddenSymbols.map { it.descriptor }
 
@@ -454,10 +455,13 @@ open class WrappedSimpleFunctionDescriptor(
     }
 }
 
-class WrappedFunctionDescriptorWithContainerSource(
-    override val containerSource: DeserializedContainerSource?
-) : WrappedSimpleFunctionDescriptor(), DescriptorWithContainerSource
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+class WrappedFunctionDescriptorWithContainerSource : WrappedSimpleFunctionDescriptor(), DescriptorWithContainerSource {
+    override val containerSource
+        get() = owner.containerSource
+}
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedClassConstructorDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -552,6 +556,7 @@ open class WrappedClassConstructorDescriptor(
     }
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedClassDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     private val sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -620,11 +625,22 @@ open class WrappedClassDescriptor(
     private val _typeConstructor: TypeConstructor by lazy {
         LazyTypeConstructor(
             this,
-            { declaredTypeParameters },
+            ::collectTypeParameters,
             { owner.superTypes.map { it.toKotlinType() } },
             LockBasedStorageManager.NO_LOCKS
         )
     }
+
+    private fun collectTypeParameters(): List<TypeParameterDescriptor> =
+        generateSequence(owner as IrTypeParametersContainer,
+                         { current ->
+                             val parent = current.parent as? IrTypeParametersContainer
+                             if (parent is IrClass && current is IrClass && !current.isInner) null
+                             else parent
+                         })
+            .flatMap { it.typeParameters }
+            .map { it.descriptor }
+            .toList()
 
     override fun getTypeConstructor(): TypeConstructor = _typeConstructor
 
@@ -669,6 +685,7 @@ class LazyTypeConstructor(
         get() = SupertypeLoopChecker.EMPTY
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedEnumEntryDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     private val sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -765,7 +782,7 @@ open class WrappedEnumEntryDescriptor(
     override fun isDefinitelyNotSamInterface() = true
 }
 
-
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedPropertyDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     private val sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -871,10 +888,12 @@ open class WrappedPropertyDescriptor(
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 }
 
-class WrappedPropertyDescriptorWithContainerSource(
-    override var containerSource: DeserializedContainerSource?
-) : WrappedPropertyDescriptor(), DescriptorWithContainerSource
+class WrappedPropertyDescriptorWithContainerSource : WrappedPropertyDescriptor(), DescriptorWithContainerSource {
+    override val containerSource: DeserializedContainerSource?
+        get() = owner.containerSource
+}
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class WrappedPropertyAccessorDescriptor(annotations: Annotations, sourceElement: SourceElement) :
     WrappedSimpleFunctionDescriptor(annotations, sourceElement), PropertyAccessorDescriptor {
     override fun isDefault(): Boolean = false
@@ -902,6 +921,7 @@ class WrappedPropertySetterDescriptor(annotations: Annotations, sourceElement: S
     override fun getOriginal(): WrappedPropertySetterDescriptor = this
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedTypeAliasDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     private val sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -958,6 +978,7 @@ open class WrappedTypeAliasDescriptor(
     }
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedFieldDescriptor(
     annotations: Annotations = Annotations.EMPTY,
     private val sourceElement: SourceElement = SourceElement.NO_SOURCE
@@ -976,8 +997,7 @@ open class WrappedFieldDescriptor(
 
     override fun hasSynthesizedParameterNames() = false
 
-    override fun getOverriddenDescriptors(): MutableCollection<out PropertyDescriptor> =
-        owner.overriddenSymbols.map { it.descriptor }.toMutableList()
+    override fun getOverriddenDescriptors(): MutableCollection<out PropertyDescriptor> = mutableListOf()
 
     override fun copy(
         newOwner: DeclarationDescriptor?,
@@ -1062,6 +1082,7 @@ open class WrappedFieldDescriptor(
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 }
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 private fun getContainingDeclaration(declaration: IrDeclarationWithName): DeclarationDescriptor {
     val parent = declaration.parent
     val parentDescriptor = (parent as IrSymbolOwner).symbol.descriptor

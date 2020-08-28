@@ -16,9 +16,20 @@
 
 package org.jetbrains.kotlin.resolve.scopes
 
-import org.jetbrains.kotlin.storage.NotNullLazyValue
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 
-class LazyScopeAdapter(private val scope: NotNullLazyValue<MemberScope>) : AbstractScopeAdapter() {
+class LazyScopeAdapter @JvmOverloads constructor(
+    storageManager: StorageManager = LockBasedStorageManager.NO_LOCKS,
+    getScope: () -> MemberScope
+) : AbstractScopeAdapter() {
+
+    private val lazyScope = storageManager.createLazyValue{
+        getScope().let {
+            if (it is AbstractScopeAdapter) it.getActualScope() else it
+        }
+    }
+
     override val workerScope: MemberScope
-        get() = scope()
+        get() = lazyScope()
 }

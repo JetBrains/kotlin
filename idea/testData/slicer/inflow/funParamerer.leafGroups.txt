@@ -1,7 +1,8 @@
+10 foo(<bold>1</bold>) (in test())
+5 	fun foo(<bold>n: Int</bold>, s: String = "???") { (in foo(Int, String = ...))
+10 		foo(<bold>1</bold>) (in test())
+
 3 FunParamererKt.foo(<bold>1</bold>);
 5 	fun foo(<bold>n: Int</bold>, s: String = "???") { (in foo(Int, String = ...))
 3 		FunParamererKt.foo(<bold>1</bold>);
 
-10 foo(<bold>1</bold>) (in test())
-5 	fun foo(<bold>n: Int</bold>, s: String = "???") { (in foo(Int, String = ...))
-10 		foo(<bold>1</bold>) (in test())

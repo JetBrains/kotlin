@@ -19,12 +19,16 @@ object Elements : TemplateGroupBase() {
             }
             specialFor(RangesOfPrimitives) {
                 if (primitive in PrimitiveType.unsignedPrimitives) {
-                    since("1.3")
+                    sinceAtLeast("1.3")
                     annotation("@ExperimentalUnsignedTypes")
                     sourceFile(SourceFile.URanges)
                 }
             }
         }
+    }
+
+    private fun floatingSearchDeprecationMessage(signature: String, replacement: String): String {
+        return "The function has unclear behavior when searching for NaN or zero values and will be removed soon. Use '$replacement' instead to continue using this behavior, or '.asList().$signature' to get the same search behavior as in a list."
     }
 
     val f_contains = fn("contains(element: T)") {
@@ -34,12 +38,18 @@ object Elements : TemplateGroupBase() {
 
         doc { "Returns `true` if [element] is found in the ${f.collection}." }
         typeParam("@kotlin.internal.OnlyInputTypes T")
+        if (f == ArraysOfPrimitives && primitive!!.isFloatingPoint()) {
+            val replacement = "any { it == element }"
+            val message = floatingSearchDeprecationMessage(signature, replacement)
+            deprecate(Deprecation(message, replacement, warningSince = "1.4"))
+            annotation("""@Suppress("DEPRECATION")""")
+        }
         returns("Boolean")
         body(Iterables) {
             """
-                if (this is Collection)
-                    return contains(element)
-                return indexOf(element) >= 0
+            if (this is Collection)
+                return contains(element)
+            return indexOf(element) >= 0
             """
         }
         body(ArraysOfPrimitives, ArraysOfObjects, Sequences) {
@@ -56,6 +66,11 @@ object Elements : TemplateGroupBase() {
         typeParam("@kotlin.internal.OnlyInputTypes T")
         specialFor(Lists) {
             annotation("""@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases""")
+        }
+        if (f == ArraysOfPrimitives && primitive!!.isFloatingPoint()) {
+            val replacement = "indexOfFirst { it == element }"
+            val message = floatingSearchDeprecationMessage(signature, replacement)
+            deprecate(Deprecation(message, replacement, warningSince = "1.4"))
         }
         returns("Int")
         body {
@@ -116,6 +131,11 @@ object Elements : TemplateGroupBase() {
         typeParam("@kotlin.internal.OnlyInputTypes T")
         specialFor(Lists) {
             annotation("""@Suppress("EXTENSION_SHADOWED_BY_MEMBER") // false warning, extension takes precedence in some cases""")
+        }
+        if (f == ArraysOfPrimitives && primitive!!.isFloatingPoint()) {
+            val replacement = "indexOfLast { it == element }"
+            val message = floatingSearchDeprecationMessage(signature, replacement)
+            deprecate(Deprecation(message, replacement, warningSince = "1.4"))
         }
         returns("Int")
         body {
@@ -409,6 +429,7 @@ object Elements : TemplateGroupBase() {
         include(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or `null` if the [index] is out of bounds of this ${f.collection}." }
+        sample("samples.collections.Collections.Elements.getOrNull")
         returns("T?")
         body {
             """
@@ -541,6 +562,7 @@ object Elements : TemplateGroupBase() {
     } builder {
         inline(Inline.Only)
         doc { "Returns the first ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
+        sample("samples.collections.Collections.Elements.find")
         returns("T?")
         body { "return firstOrNull(predicate)"}
     }
@@ -735,6 +757,7 @@ object Elements : TemplateGroupBase() {
     } builder {
         inline(Inline.Only)
         doc { "Returns the last ${f.element} matching the given [predicate], or `null` if no such ${f.element} was found." }
+        sample("samples.collections.Collections.Elements.find")
         returns("T?")
         body { "return lastOrNull(predicate)"}
     }
@@ -909,8 +932,8 @@ object Elements : TemplateGroupBase() {
     val f_randomOrNull = fn("randomOrNull()") {
         include(Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, RangesOfPrimitives)
     } builder {
-        since("1.3")
-        annotation("@ExperimentalStdlibApi")
+        since("1.4")
+        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
         inlineOnly()
         returns("T?")
         doc {
@@ -971,8 +994,8 @@ object Elements : TemplateGroupBase() {
     val f_randomOrNull_random = fn("randomOrNull(random: Random)") {
         include(Collections, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, RangesOfPrimitives)
     } builder {
-        since("1.3")
-        annotation("@ExperimentalStdlibApi")
+        since("1.4")
+        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
         returns("T?")
         doc {
             """

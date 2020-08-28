@@ -24,10 +24,10 @@ import java.util.*
 
 object CompanionObjectMapping {
     private val classIds =
-        (PrimitiveType.NUMBER_TYPES.map(KotlinBuiltIns::getPrimitiveFqName) +
-                KotlinBuiltIns.FQ_NAMES.string.toSafe() +
-                KotlinBuiltIns.FQ_NAMES._boolean.toSafe() +
-                KotlinBuiltIns.FQ_NAMES._enum.toSafe()).mapTo(linkedSetOf<ClassId>(), ClassId::topLevel)
+        (PrimitiveType.NUMBER_TYPES.map(StandardNames::getPrimitiveFqName) +
+                StandardNames.FqNames.string.toSafe() +
+                StandardNames.FqNames._boolean.toSafe() +
+                StandardNames.FqNames._enum.toSafe()).mapTo(linkedSetOf<ClassId>(), ClassId::topLevel)
 
     fun allClassesWithIntrinsicCompanions(): Set<ClassId> =
         Collections.unmodifiableSet(classIds)

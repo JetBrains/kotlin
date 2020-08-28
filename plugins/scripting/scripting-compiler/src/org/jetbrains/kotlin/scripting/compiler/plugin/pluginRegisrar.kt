@@ -49,32 +49,19 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
         }
         withClassloadingProblemsReporting(messageCollector) {
             CompilerConfigurationExtension.registerExtension(project, ScriptingCompilerConfigurationExtension(project, hostConfiguration))
-            CollectAdditionalSourcesExtension.registerExtension(project,
-                                                                ScriptingCollectAdditionalSourcesExtension(
-                                                                    project
-                                                                )
-            )
+            CollectAdditionalSourcesExtension.registerExtension(project, ScriptingCollectAdditionalSourcesExtension(project))
             ScriptEvaluationExtension.registerExtensionIfRequired(project, JvmCliScriptEvaluationExtension())
             ScriptEvaluationExtension.registerExtensionIfRequired(project, JsScriptEvaluationExtension())
             ShellExtension.registerExtensionIfRequired(project, JvmCliReplShellExtension())
-            ReplFactoryExtension.registerExtensionIfRequired(project,
-                                                             JvmStandardReplFactoryExtension()
-            )
+            ReplFactoryExtension.registerExtensionIfRequired(project, JvmStandardReplFactoryExtension())
 
-            val scriptDefinitionProvider = CliScriptDefinitionProvider()
-            project.registerService(ScriptDefinitionProvider::class.java, scriptDefinitionProvider)
-            project.registerService(
-                ScriptDependenciesProvider::class.java,
-                CliScriptDependenciesProvider(project)
-            )
+            project.registerService(ScriptDefinitionProvider::class.java, CliScriptDefinitionProvider())
+            project.registerService(ScriptDependenciesProvider::class.java, CliScriptDependenciesProvider(project))
             SyntheticResolveExtension.registerExtension(project, ScriptingResolveExtension())
             ExtraImportsProviderExtension.registerExtension(project, ScriptExtraImportsProviderExtension())
 
             if (messageCollector != null) {
-                project.registerService(
-                    ScriptReportSink::class.java,
-                    CliScriptReportSink(messageCollector)
-                )
+                project.registerService(ScriptReportSink::class.java, CliScriptReportSink(messageCollector))
             }
         }
     }

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 class Queue<T>(override val size: Int) : Collection<T> {
     override fun contains(element: T): Boolean = TODO()
 

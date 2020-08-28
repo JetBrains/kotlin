@@ -23,7 +23,7 @@ abstract class IndentedPrintingVisitor(val shouldIndent: (PsiElement) -> Boolean
         if (charSequence != null) {
             builder.append("    ".repeat(level))
             builder.append(charSequence)
-            builder.appendln()
+            builder.appendLine()
         }
 
         val shouldIndent = shouldIndent(element)

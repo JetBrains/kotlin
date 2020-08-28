@@ -1,5 +1,4 @@
 // !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType
-// IGNORE_BACKEND_FIR: JVM_IR
 
 fun foo(s: String = "kotlin", vararg t: String): Boolean {
     if (s != "kotlin") throw AssertionError(s)

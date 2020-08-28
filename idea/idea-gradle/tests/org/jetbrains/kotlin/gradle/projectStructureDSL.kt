@@ -10,7 +10,6 @@ import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.rootManager
 import com.intellij.openapi.roots.*
-import com.intellij.openapi.roots.impl.ModuleOrderEntryImpl
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.jps.util.JpsPathUtil
@@ -88,7 +87,7 @@ class ModuleInfo(
     val projectInfo: ProjectInfo
 ) {
     private val rootModel = module.rootManager
-    private val expectedDependencyNames = HashSet<String>()
+    private val expectedDependencyNames = ArrayList<String>()
     private val expectedSourceRoots = HashSet<String>()
     private val expectedExternalSystemTestTasks = ArrayList<ExternalSystemTestRunTask>()
 
@@ -201,7 +200,8 @@ class ModuleInfo(
     }
 
     fun moduleDependency(moduleName: String, scope: DependencyScope, productionOnTest: Boolean? = null) {
-        val moduleEntries = rootModel.orderEntries.filterIsInstance<ModuleOrderEntry>().filter { it.moduleName == moduleName }
+        val moduleEntries =
+            rootModel.orderEntries.filterIsInstance<ModuleOrderEntry>().filter { it.moduleName == moduleName && it.scope == scope}
         if (moduleEntries.size > 1) {
             projectInfo.messageCollector.report(
                 "Found multiple order entries for module $moduleName: ${rootModel.orderEntries.filterIsInstance<ModuleOrderEntry>()}"
@@ -225,7 +225,7 @@ class ModuleInfo(
     fun sourceFolder(pathInProject: String, rootType: JpsModuleSourceRootType<*>, packagePrefix: String? = ANY_PACKAGE_PREFIX) {
         val sourceFolder = sourceFolderByPath[pathInProject]
         if (sourceFolder == null) {
-            projectInfo.messageCollector.report("Module '${module.name}': No source folder found: '$pathInProject'")
+            projectInfo.messageCollector.report("Module '${module.name}': No source folder found: '$pathInProject' among $sourceFolderByPath")
             return
         }
         if (packagePrefix != ANY_PACKAGE_PREFIX && sourceFolder.packagePrefix != packagePrefix) {
@@ -319,7 +319,7 @@ class ModuleInfo(
 
     private fun checkProductionOnTest(library: ExportableOrderEntry, productionOnTest: Boolean?) {
         if (productionOnTest == null) return
-        val actualFlag = (library as? ModuleOrderEntryImpl)?.isProductionOnTestDependency
+        val actualFlag = (library as? ModuleOrderEntry)?.isProductionOnTestDependency
         if (actualFlag == null) {
             projectInfo.messageCollector.report(
                 "Module '${module.name}': Dependency '${library.presentableName}' has no productionOnTest property"

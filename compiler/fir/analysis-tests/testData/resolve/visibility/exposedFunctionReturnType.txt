@@ -5,7 +5,7 @@ FILE: exposedFunctionReturnType.kt
         }
 
         private final class InnerA : R|kotlin/Any| {
-            public[private] constructor(): R|A.InnerA| {
+            public constructor(): R|A.InnerA| {
                 super<R|kotlin/Any|>()
             }
 
@@ -20,4 +20,28 @@ FILE: exposedFunctionReturnType.kt
         public final fun foo(str: R|kotlin/String|): R|A.InnerA|
 
     }
+    private final enum class Some : R|kotlin/Enum<Some>| {
+        private constructor(): R|Some| {
+            super<R|kotlin/Enum<Some>|>()
+        }
 
+        public final static enum entry FIRST: R|Some| = object : R|Some| {
+            private constructor(): R|<anonymous>| {
+                super<R|Some|>()
+            }
+
+            public final override fun foo(): R|Some| {
+                ^foo R|/Some.FIRST|
+            }
+
+        }
+
+        public abstract fun foo(): R|Some|
+
+        public final static fun values(): R|kotlin/Array<Some>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|Some| {
+        }
+
+    }

@@ -17,33 +17,32 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.SourceManager
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import java.io.File
 
-interface IrPackageFragment : IrElement, IrDeclarationContainer, IrSymbolOwner {
-    val packageFragmentDescriptor: PackageFragmentDescriptor
-    override val symbol: IrPackageFragmentSymbol
+abstract class IrPackageFragment : IrElementBase(), IrDeclarationContainer, IrSymbolOwner {
+    abstract val packageFragmentDescriptor: PackageFragmentDescriptor
+    abstract override val symbol: IrPackageFragmentSymbol
 
-    val fqName: FqName
+    abstract val fqName: FqName
 }
 
-interface IrExternalPackageFragment : IrPackageFragment {
-    override val symbol: IrExternalPackageFragmentSymbol
+abstract class IrExternalPackageFragment : IrPackageFragment() {
+    abstract override val symbol: IrExternalPackageFragmentSymbol
+    abstract val containerSource: DeserializedContainerSource?
 }
 
-interface IrFile : IrPackageFragment, IrMutableAnnotationContainer, IrMetadataSourceOwner {
-    override val symbol: IrFileSymbol
+abstract class IrFile : IrPackageFragment(), IrMutableAnnotationContainer, IrMetadataSourceOwner {
+    abstract override val symbol: IrFileSymbol
 
-    val fileEntry: SourceManager.FileEntry
-
-    override val metadata: MetadataSource.File?
+    abstract val fileEntry: SourceManager.FileEntry
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrFile =
         accept(transformer, data) as IrFile

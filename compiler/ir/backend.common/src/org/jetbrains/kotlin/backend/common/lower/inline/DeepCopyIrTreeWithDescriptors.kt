@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
 
 internal class DeepCopyIrTreeWithSymbolsForInliner(
-    val context: CommonBackendContext,
     val typeArguments: Map<IrTypeParameterSymbol, IrType?>?,
     val parent: IrDeclarationParent?
 ) {

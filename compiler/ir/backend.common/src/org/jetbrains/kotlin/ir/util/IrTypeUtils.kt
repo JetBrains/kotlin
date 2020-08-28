@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -20,22 +21,24 @@ import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.DFS
-import org.jetbrains.kotlin.ir.types.isNullable as irTreeTypeUtils_isNullable
 
 val kotlinPackageFqn = FqName.fromSegments(listOf("kotlin"))
 private val kotlinReflectionPackageFqn = kotlinPackageFqn.child(Name.identifier("reflect"))
 private val kotlinCoroutinesPackageFqn = kotlinPackageFqn.child(Name.identifier("coroutines"))
 
-fun IrType.isFunction(): Boolean = this.isClassWithNamePrefix("Function", kotlinPackageFqn)
-fun IrType.isKFunction(): Boolean = this.isClassWithNamePrefix("KFunction", kotlinReflectionPackageFqn)
-fun IrType.isSuspendFunction(): Boolean = this.isClassWithNamePrefix("SuspendFunction", kotlinCoroutinesPackageFqn)
-fun IrType.isKSuspendFunction(): Boolean = this.isClassWithNamePrefix("KSuspendFunction", kotlinReflectionPackageFqn)
+fun IrType.isFunction(): Boolean = classifierOrNull?.isClassWithNamePrefix("Function", kotlinPackageFqn) == true
+fun IrType.isKFunction(): Boolean = classifierOrNull?.isClassWithNamePrefix("KFunction", kotlinReflectionPackageFqn) == true
+fun IrType.isSuspendFunction(): Boolean = classifierOrNull?.isClassWithNamePrefix("SuspendFunction", kotlinCoroutinesPackageFqn) == true
+fun IrType.isKSuspendFunction(): Boolean = classifierOrNull?.isClassWithNamePrefix("KSuspendFunction", kotlinReflectionPackageFqn) == true
 
-private fun IrType.isClassWithNamePrefix(prefix: String, packageFqName: FqName): Boolean {
-    val classifier = classifierOrNull ?: return false
-    val name = classifier.descriptor.name.asString()
+fun IrClassifierSymbol.isFunction(): Boolean = this.isClassWithNamePrefix("Function", kotlinPackageFqn)
+fun IrClassifierSymbol.isKFunction(): Boolean = this.isClassWithNamePrefix("KFunction", kotlinReflectionPackageFqn)
+fun IrClassifierSymbol.isKSuspendFunction(): Boolean = this.isClassWithNamePrefix("KSuspendFunction", kotlinReflectionPackageFqn)
+
+private fun IrClassifierSymbol.isClassWithNamePrefix(prefix: String, packageFqName: FqName): Boolean {
+    val declaration = owner as IrDeclarationWithName
+    val name = declaration.name.asString()
     if (!name.startsWith(prefix)) return false
-    val declaration = classifier.owner as IrDeclaration
     val parent = declaration.parent as? IrPackageFragment ?: return false
 
     return parent.fqName == packageFqName
@@ -54,18 +57,7 @@ fun IrType.isFunctionOrKFunction() = isFunction() || isKFunction()
 
 fun IrType.isSuspendFunctionOrKFunction() = isSuspendFunction() || isKSuspendFunction()
 
-
-@Deprecated(
-    "Use org.jetbrains.kotlin.ir.types.isNullable instead.",
-    ReplaceWith("this.isNullable()", "org.jetbrains.kotlin.ir.types.isNullable")
-)
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-@kotlin.internal.LowPriorityInOverloadResolution
-fun IrType.isNullable(): Boolean = this.irTreeTypeUtils_isNullable()
-
 fun IrType.isThrowable(): Boolean = isTypeFromKotlinPackage { name -> name.asString() == "Throwable" }
-
-fun IrType.isThrowableTypeOrSubtype(): Boolean = DFS.ifAny(listOf(this), IrType::superTypes, IrType::isThrowable)
 
 fun IrType.isUnsigned(): Boolean = isTypeFromKotlinPackage { name -> UnsignedTypes.isShortNameOfUnsignedType(name) }
 
@@ -78,10 +70,10 @@ private inline fun IrType.isTypeFromKotlinPackage(namePredicate: (Name) -> Boole
     } else return false
 }
 
-fun IrType.isPrimitiveArray() = isTypeFromKotlinPackage { it in FQ_NAMES.primitiveArrayTypeShortNames }
+fun IrType.isPrimitiveArray() = isTypeFromKotlinPackage { it in FqNames.primitiveArrayTypeShortNames }
 
 fun IrType.getPrimitiveArrayElementType() = (this as? IrSimpleType)?.let {
-    (it.classifier.owner as? IrClass)?.fqNameWhenAvailable?.toUnsafe()?.let { fqn -> FQ_NAMES.arrayClassFqNameToPrimitiveType[fqn] }
+    (it.classifier.owner as? IrClass)?.fqNameWhenAvailable?.toUnsafe()?.let { fqn -> FqNames.arrayClassFqNameToPrimitiveType[fqn] }
 }
 
 fun IrType.substitute(params: List<IrTypeParameter>, arguments: List<IrType>): IrType =

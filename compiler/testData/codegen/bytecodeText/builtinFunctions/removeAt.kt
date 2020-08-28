@@ -90,18 +90,33 @@ fun box(
 }
 
 /*
-16 INVOKEVIRTUAL A[0-9]+.removeAt \(I\) -> calls in bridges with signature `public final bridge remove\(I\)` + 7 calls from `public synthetic bridge remove\(I\)Ljava/lang/Object;`
-9 INVOKEVIRTUAL A[0-9]+\.remove \(I\) -> calls to A1-A9.removeAt
 1 INVOKEINTERFACE A9\.remove \(I\) -> call A9.removeAt
 1 INVOKEINTERFACE A9\.remove \(Ljava/lang/Object;\) -> call A9.remove
+
+On the JVM backend we have:
+16 INVOKEVIRTUAL A[0-9]+.removeAt \(I\) -> calls in bridges with signature `public final bridge remove\(I\)` + 7 calls from `public synthetic bridge remove\(I\)Ljava/lang/Object;`
+9 INVOKEVIRTUAL A[0-9]+\.remove \(I\) -> calls to A1-A9.removeAt
 1 INVOKEVIRTUAL A10\.remove \(I\) -> one call in 'box' function
+
+On the JVM IR backend we have:
+9 INVOKEVIRTUAL A[0-9]+.removeAt \(I\) -> calls in non-synthetic bridges with signature `public final bridge remove(I)`
+17 INVOKEVIRTUAL A[0-9]+\.remove \(I\) -> calls to A1-A9.removeAt + calls in synthetic bridges with signature `public synthetic bridge remove(I)Ljava/lang/Object;`
+2 INVOKEVIRTUAL A10\.remove \(I\) -> one call in 'box' function + call from synthetic `remove(I)` bridge
+
+This currently differs because of KT-40277, and the test expectations should be revised once KT-40277 is resolved.
 */
 
-// 16 INVOKEVIRTUAL A[0-9]+.removeAt \(I\)
-// 9 INVOKEVIRTUAL A[0-9]+\.remove \(I\)
 // 1 INVOKEINTERFACE A9\.remove \(I\)
 // 1 INVOKEINTERFACE A9\.remove \(Ljava/lang/Object;\)
-// 1 INVOKEVIRTUAL A10\.remove \(I\)
 // 2 INVOKEINTERFACE java\/util\/List.remove \(I\)
 // 2 INVOKEINTERFACE java\/util\/List.remove \(Ljava/lang/Object;\)
 
+// JVM_TEMPLATES:
+// 16 INVOKEVIRTUAL A[0-9]+.removeAt \(I\)
+// 9 INVOKEVIRTUAL A[0-9]+\.remove \(I\)
+// 1 INVOKEVIRTUAL A10\.remove \(I\)
+
+// JVM_IR_TEMPLATES:
+// 9 INVOKEVIRTUAL A[0-9]+.removeAt \(I\)
+// 17 INVOKEVIRTUAL A[0-9]+\.remove \(I\)
+// 2 INVOKEVIRTUAL A10\.remove \(I\)

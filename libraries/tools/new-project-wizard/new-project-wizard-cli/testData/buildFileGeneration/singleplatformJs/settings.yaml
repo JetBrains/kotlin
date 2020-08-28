@@ -1,5 +1,0 @@
-kotlin:
-  projectKind: js
-  modules:
-    - type: jsSinglepaltform
-      name: a

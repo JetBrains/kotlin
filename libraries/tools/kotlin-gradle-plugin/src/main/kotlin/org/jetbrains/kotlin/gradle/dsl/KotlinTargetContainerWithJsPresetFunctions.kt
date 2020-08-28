@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.dsl
 
 import groovy.lang.Closure
 import org.gradle.util.ConfigureUtil
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension.Companion.reportJsCompilerMode
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.targets.js.calculateJsCompilerType
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
@@ -94,6 +95,7 @@ private fun KotlinTargetContainerWithJsPresetFunctions.jsInternal(
         }
     }
 
+    reportJsCompilerMode(compilerOrDefault)
     return configureOrCreate(
         targetName,
         presets.getByName(

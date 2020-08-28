@@ -25,3 +25,6 @@ class C {
     @JvmName("test")
     fun returnsKotlinResult(a: Result<Int>): Result<Int> = a
 }
+
+@JvmName("extensionFun")
+fun Foo.extensionFun() {}

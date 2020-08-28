@@ -84,7 +84,7 @@ class Case5<T> {
 
     fun get(): T {
         var x = getTN()
-        x = if (x == null) getT() else <!DEBUG_INFO_SMARTCAST!>x<!>
+        x = if (x == null) getT() else x
         <!DEBUG_INFO_EXPRESSION_TYPE("T & T?")!>x<!>
         return <!DEBUG_INFO_SMARTCAST!>x<!>
     }
@@ -97,7 +97,7 @@ class Case6 {
 
     fun get(): Int {
         var x = getIntN()
-        x = if (x == null) getInt() else <!DEBUG_INFO_SMARTCAST!>x<!>
+        x = if (x == null) getInt() else x
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?"), DEBUG_INFO_SMARTCAST!>x<!>.equals(10)
         return <!DEBUG_INFO_SMARTCAST!>x<!>

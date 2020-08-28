@@ -21,7 +21,6 @@ abstract class FirThisReceiverExpression : FirQualifiedAccessExpression() {
     abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotationCall>
-    abstract override val safe: Boolean
     abstract override val typeArguments: List<FirTypeProjection>
     abstract override val explicitReceiver: FirExpression?
     abstract override val dispatchReceiver: FirExpression
@@ -33,6 +32,8 @@ abstract class FirThisReceiverExpression : FirQualifiedAccessExpression() {
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
+
+    abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
 
     abstract fun replaceCalleeReference(newCalleeReference: FirThisReference)
 

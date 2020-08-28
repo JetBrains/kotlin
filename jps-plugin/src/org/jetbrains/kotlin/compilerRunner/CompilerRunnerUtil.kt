@@ -16,18 +16,15 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.preloading.ClassPreloadingUtils
 import org.jetbrains.kotlin.preloading.Preloader
 import org.jetbrains.kotlin.utils.KotlinPaths
-
+import org.jetbrains.kotlin.utils.KotlinPathsFromBaseDirectory
 import java.io.File
 import java.io.PrintStream
 import java.lang.ref.SoftReference
-
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
-import org.jetbrains.kotlin.utils.KotlinPathsFromBaseDirectory
-import org.jetbrains.kotlin.utils.SmartList
 
 object CompilerRunnerUtil {
     private var ourClassLoaderRef = SoftReference<ClassLoader>(null)

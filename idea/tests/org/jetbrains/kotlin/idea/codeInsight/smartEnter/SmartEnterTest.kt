@@ -1127,6 +1127,77 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
             """
     )
 
+    fun testGetter1() = doFileTest(
+        """
+            var a: Int = 0
+                get<caret>
+        """
+        ,
+        """
+            var a: Int = 0
+                get
+            <caret>
+            """
+    )
+
+    fun testGetter2() = doFileTest(
+        """
+            var a: Int = 0
+                get(<caret>
+            """
+        ,
+        """
+            var a: Int = 0
+                get() {
+                    <caret>
+                }
+            """
+    )
+
+    fun testGetter3() = doFileTest(
+        """
+            var a: Int = 0
+                get(<caret>)
+            """
+        ,
+        """
+            var a: Int = 0
+                get() {
+                    <caret>
+                }
+            """
+    )
+
+    fun testGetter4() = doFileTest(
+        """
+            var a: Int = 0
+                get(<caret>) = 1
+            """
+        ,
+        """
+            var a: Int = 0
+                get() = 1
+            <caret>
+            """
+    )
+
+    fun testGetter5() = doFileTest(
+        """
+            var a: Int = 0
+                get(<caret>) {
+                    return 1
+                }
+            """
+        ,
+        """
+            var a: Int = 0
+                get() {
+                    <caret>
+                    return 1
+                }
+            """
+    )
+
     fun testTryBody() = doFunTest(
         """
             try<caret>
@@ -1435,7 +1506,7 @@ class SmartEnterTest : KotlinLightCodeInsightFixtureTestCase() {
         """
         fun foo(i: Int) = 1
         fun test4() {
-            foo(1,<caret>)
+            foo(1<caret>)
         }
         """
     )

@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.pill.generateAllTests;
 
 import org.jetbrains.kotlin.generators.tests.*;
+import org.jetbrains.kotlin.generators.tests.generator.InconsistencyChecker;
+
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
@@ -13,6 +16,14 @@ public class Main {
         GenerateTestsKt.main(args);
         GenerateJsTestsKt.main(args);
         GenerateJava8TestsKt.main(args);
-        GenerateRuntimeDescriptorTestsKt.main();
+        GenerateRuntimeDescriptorTestsKt.main(args);
+
+        boolean dryRun = InconsistencyChecker.Companion.hasDryRunArg(args);
+        List<String> affectedFiles = InconsistencyChecker.Companion.inconsistencyChecker(dryRun).getAffectedFiles();
+        int size = affectedFiles.size();
+        if (size > 0) {
+            throw new IllegalStateException("There " + (size == 1 ? "is a test" : "are " + size + " tests") + " to be regenerated:\n"
+                                            + String.join("\n", affectedFiles));
+        }
     }
 }

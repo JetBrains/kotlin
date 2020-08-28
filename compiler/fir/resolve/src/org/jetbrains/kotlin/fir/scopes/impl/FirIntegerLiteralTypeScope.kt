@@ -5,20 +5,25 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
-import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeImpl
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -28,8 +33,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-
-class FirIntegerLiteralTypeScope(private val session: FirSession, val isUnsigned: Boolean) : FirScope() {
+class FirIntegerLiteralTypeScope(private val session: FirSession, val isUnsigned: Boolean) : FirTypeScope() {
     sealed class ILTKey {
         object Signed : ILTKey()
         object Unsigned : ILTKey()
@@ -40,9 +44,10 @@ class FirIntegerLiteralTypeScope(private val session: FirSession, val isUnsigned
         val UNARY_OPERATOR_NAMES = FirIntegerOperator.Kind.values().filter { it.unary }.map { it.operatorName }
         private val ALL_OPERATORS = FirIntegerOperator.Kind.values().map { it.operatorName to it }.toMap()
 
-        val SCOPE_SESSION_KEY = scopeSessionKey<ILTKey, FirIntegerLiteralTypeScope>()
+        val SCOPE_SESSION_KEY = scopeSessionKey<ILTKey, FirTypeScope>()
     }
 
+    @Suppress("PrivatePropertyName")
     private val BINARY_OPERATOR_SYMBOLS = BINARY_OPERATOR_NAMES.map { name ->
         name to FirNamedFunctionSymbol(CallableId(name)).apply {
             createFirFunction(name, this).apply {
@@ -63,6 +68,7 @@ class FirIntegerLiteralTypeScope(private val session: FirSession, val isUnsigned
         }
     }.toMap()
 
+    @Suppress("PrivatePropertyName")
     private val UNARY_OPERATOR_SYMBOLS = UNARY_OPERATOR_NAMES.map { name ->
         name to FirNamedFunctionSymbol(CallableId(name)).apply { createFirFunction(name, this) }
     }.toMap()
@@ -74,12 +80,11 @@ class FirIntegerLiteralTypeScope(private val session: FirSession, val isUnsigned
         FirILTTypeRefPlaceHolder(isUnsigned),
         receiverTypeRef = null,
         ALL_OPERATORS.getValue(name),
-        FirResolvedDeclarationStatusImpl(Visibilities.PUBLIC, FirEffectiveVisibilityImpl.Public, Modality.FINAL),
+        FirResolvedDeclarationStatusImpl(Visibilities.Public, Modality.FINAL),
         symbol
     ).apply {
         resolvePhase = FirResolvePhase.BODY_RESOLVE
     }
-
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         val symbol = BINARY_OPERATOR_SYMBOLS[name]
@@ -90,6 +95,20 @@ class FirIntegerLiteralTypeScope(private val session: FirSession, val isUnsigned
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
     }
+
+    override fun processDirectOverriddenFunctionsWithBaseScope(
+        functionSymbol: FirFunctionSymbol<*>,
+        processor: (FirFunctionSymbol<*>, FirTypeScope) -> ProcessorAction
+    ): ProcessorAction = ProcessorAction.NEXT
+
+    override fun processDirectOverriddenPropertiesWithBaseScope(
+        propertySymbol: FirPropertySymbol,
+        processor: (FirPropertySymbol, FirTypeScope) -> ProcessorAction
+    ): ProcessorAction = ProcessorAction.NEXT
+
+    override fun getCallableNames(): Set<Name> = ALL_OPERATORS.keys
+
+    override fun getClassifierNames(): Set<Name> = emptySet()
 }
 
 @OptIn(FirImplementationDetail::class)
@@ -108,7 +127,6 @@ class FirIntegerOperator @FirImplementationDetail constructor(
     FirDeclarationOrigin.Synthetic,
     returnTypeRef,
     receiverTypeRef,
-    typeParameters = mutableListOf(),
     valueParameters = mutableListOf(),
     body = null,
     status,
@@ -117,6 +135,7 @@ class FirIntegerOperator @FirImplementationDetail constructor(
     kind.operatorName,
     symbol,
     annotations = mutableListOf(),
+    typeParameters = mutableListOf(),
 ) {
     enum class Kind(val unary: Boolean, val operatorName: Name) {
         PLUS(false, OperatorNameConventions.PLUS),
@@ -155,4 +174,3 @@ class FirILTTypeRefPlaceHolder(
         return this
     }
 }
-

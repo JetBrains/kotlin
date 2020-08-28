@@ -33,7 +33,9 @@ internal abstract class KotlinToolRunner(
     abstract val isolatedClassLoaderCacheKey: Any
     private fun getIsolatedClassLoader(): ClassLoader = isolatedClassLoadersMap.computeIfAbsent(isolatedClassLoaderCacheKey) {
         val arrayOfURLs = classpath.map { File(it.absolutePath).toURI().toURL() }.toTypedArray()
-        URLClassLoader(arrayOfURLs, null)
+        URLClassLoader(arrayOfURLs, null).apply {
+            setDefaultAssertionStatus(enableAssertions)
+        }
     }
 
     open val defaultMaxHeapSize: String get() = "3G"
@@ -90,8 +92,7 @@ internal abstract class KotlinToolRunner(
         }
     }
 
-    // TODO: Make it private again once KT-37550 is fixed.
-    protected open fun runInProcess(args: List<String>) {
+    private fun runInProcess(args: List<String>) {
         try {
             val mainClass = getIsolatedClassLoader().loadClass(mainClass)
             val entryPoint = mainClass.methods.single { it.name == daemonEntryPoint }

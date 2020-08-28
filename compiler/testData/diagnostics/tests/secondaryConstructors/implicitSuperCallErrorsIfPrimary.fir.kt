@@ -2,6 +2,6 @@
 open class A(p1: String)
 
 class B() : A("") {
-    constructor(s: String) {
+    <!INAPPLICABLE_CANDIDATE, PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED!>constructor(s: String)<!> {
     }
 }

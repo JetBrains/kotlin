@@ -88,7 +88,7 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
 
         configuration.addAll(
             CLIConfigurationKeys.CONTENT_ROOTS,
-            moduleData.sources.filter { it.extension == "kt" }.map { KotlinSourceRoot(it.absolutePath, false) })
+            moduleData.sources.filter { it.extension == "kt" || it.isDirectory }.map { KotlinSourceRoot(it.absolutePath, false) })
         return configuration
     }
 
@@ -132,13 +132,13 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
     }
 
 
-    protected abstract fun beforePass()
+    protected abstract fun beforePass(pass: Int)
     protected abstract fun afterPass(pass: Int)
     protected open fun afterAllPasses() {}
     protected abstract fun processModule(moduleData: ModuleData): ProcessorAction
 
     protected fun runTestOnce(pass: Int) {
-        beforePass()
+        beforePass(pass)
         val testDataPath = System.getProperty("fir.bench.jps.dir")?.toString() ?: "/Users/jetbrains/jps"
         val root = File(testDataPath)
 

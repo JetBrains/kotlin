@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.substitutions.getTypeSubstitution
-import org.jetbrains.kotlin.utils.keysToMap
+import org.jetbrains.kotlin.utils.keysToMapExceptNulls
 import java.util.*
 
 class KotlinPullUpData(
@@ -37,11 +37,11 @@ class KotlinPullUpData(
 
     val sourceClassDescriptor = sourceClassContext[BindingContext.DECLARATION_TO_DESCRIPTOR, sourceClass] as ClassDescriptor
 
-    val memberDescriptors = membersToMove.keysToMap {
+    val memberDescriptors = membersToMove.keysToMapExceptNulls {
         when (it) {
-            is KtPsiClassWrapper -> it.psiClass.getJavaClassDescriptor(resolutionFacade)!!
-            is KtParameter -> sourceClassContext[BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, it]!!
-            else -> sourceClassContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it]!!
+            is KtPsiClassWrapper -> it.psiClass.getJavaClassDescriptor(resolutionFacade)
+            is KtParameter -> sourceClassContext[BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, it]
+            else -> sourceClassContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it]
         }
     }
 

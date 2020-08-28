@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
@@ -53,7 +52,7 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
     }
 
     private inner class EnumClassTransformer(val irClass: IrClass) {
-        private val loweredEnumConstructors = hashMapOf<IrConstructorSymbol, IrConstructorImpl>()
+        private val loweredEnumConstructors = hashMapOf<IrConstructorSymbol, IrConstructor>()
         private val loweredEnumConstructorParameters = hashMapOf<IrValueParameterSymbol, IrValueParameter>()
         private val enumEntryOrdinals = TObjectIntHashMap<IrEnumEntry>()
         private val declarationToEnumEntry = mutableMapOf<IrDeclaration, IrEnumEntry>()
@@ -80,7 +79,7 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
         }
 
         private fun buildEnumEntryField(enumEntry: IrEnumEntry): IrField =
-            context.declarationFactory.getFieldForEnumEntry(enumEntry).apply {
+            context.cachedDeclarations.getFieldForEnumEntry(enumEntry).apply {
                 initializer = IrExpressionBodyImpl(enumEntry.initializerExpression!!.expression.patchDeclarationParents(this))
                 annotations += enumEntry.annotations
             }
@@ -107,7 +106,7 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
                 if (declaration.isEnumEntry) super.visitClass(declaration) else declaration
 
             override fun visitConstructor(declaration: IrConstructor): IrStatement =
-                buildConstructor {
+                context.irFactory.buildConstructor {
                     updateFrom(declaration)
                     returnType = declaration.returnType
                 }.apply {

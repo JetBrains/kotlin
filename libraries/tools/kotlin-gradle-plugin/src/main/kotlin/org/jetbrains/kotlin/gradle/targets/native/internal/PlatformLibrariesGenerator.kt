@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.tasks.CacheBuilder
 import org.jetbrains.kotlin.gradle.tasks.addArg
 import org.jetbrains.kotlin.gradle.utils.lifecycleWithDuration
+import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
 import org.jetbrains.kotlin.konan.library.KONAN_PLATFORM_LIBS_NAME_PREFIX
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -73,9 +74,8 @@ internal class PlatformLibrariesGenerator(val project: Project, val konanTarget:
         val cacheDirectory = CacheBuilder.getRootCacheDirectory(
             File(project.konanHome), konanTarget, true, project.konanCacheKind
         )
-        val presentCacheFiles = cacheDirectory.listFiles().orEmpty().map { it.name }.toSet()
         return presentDefs.toPlatformLibNames().all {
-            CacheBuilder.getCacheFileName(it, project.konanCacheKind, konanTarget) in presentCacheFiles
+            cacheDirectory.resolve(CacheBuilder.getCacheFileName(it, project.konanCacheKind)).listFilesOrEmpty().isNotEmpty()
         }
     }
 

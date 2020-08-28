@@ -16,7 +16,9 @@ enum class DiagnosticKind {
 
     ReturnNotAllowed,
     UnresolvedLabel,
+    NoThis,
     IllegalConstExpression,
+    IllegalUnderscore,
     DeserializationError,
     InferenceError,
     TypeParameterAsSupertype,
@@ -25,5 +27,10 @@ enum class DiagnosticKind {
     RecursionInImplicitTypes,
     Java,
     SuperNotAllowed,
+    NoTypeForTypeParameter,
+    UnknownCallableKind,
+    SymbolNotFound,
+    IllegalProjectionUsage,
+    MissingStdlibClass,
     Other
 }

@@ -30,7 +30,8 @@ open class ResolveModule(
     val root: File,
     val platform: TargetPlatform,
     val dependencies: List<ResolveDependency>,
-    val testRoot: File? = null
+    val testRoot: File? = null,
+    val additionalCompilerArgs: String? = null
 ) {
     final override fun toString(): String {
         return buildString { renderDescription(Printer(this)) }
@@ -43,6 +44,7 @@ open class ResolveModule(
         printer.println("root=${root.absolutePath}")
         if (testRoot != null) printer.println("testRoot=${testRoot.absolutePath}")
         printer.println("dependencies=${dependencies.joinToString { it.to.name }}")
+        if (additionalCompilerArgs != null)  printer.println("additionalCompilerArgs=$additionalCompilerArgs")
     }
 
     override fun equals(other: Any?): Boolean {
@@ -69,6 +71,7 @@ open class ResolveModule(
         var platform: TargetPlatform? = null
         val dependencies: MutableList<ResolveDependency.Builder> = mutableListOf()
         var testRoot: File? = null
+        var additionalCompilerArgs: String? = null
 
         open fun build(): ResolveModule {
             if (state == State.BUILT) return cachedResult!!
@@ -77,7 +80,7 @@ open class ResolveModule(
             state = State.BUILDING
 
             val builtDependencies = dependencies.map { it.build() }
-            cachedResult = ResolveModule(name!!, root!!, platform!!, builtDependencies, testRoot)
+            cachedResult = ResolveModule(name!!, root!!, platform!!, builtDependencies, testRoot, additionalCompilerArgs= additionalCompilerArgs)
             state = State.BUILT
 
             return cachedResult!!
@@ -157,6 +160,13 @@ sealed class KotlinTest(
 object FullJdk : ResolveLibrary(
     "full-jdk",
     File("fake file for full jdk"),
+    JvmPlatforms.defaultJvmPlatform,
+    null
+)
+
+object MockJdk : ResolveLibrary(
+    "mock-jdk",
+    File("fake file for mock jdk"),
     JvmPlatforms.defaultJvmPlatform,
     null
 )

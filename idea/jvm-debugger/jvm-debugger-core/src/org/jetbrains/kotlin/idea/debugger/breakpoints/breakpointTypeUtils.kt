@@ -37,8 +37,6 @@ import java.util.*
 
 interface KotlinBreakpointType
 
-private val LOG = Logger.getInstance("BreakpointTypeUtilsKt")
-
 class ApplicabilityResult(val isApplicable: Boolean, val shouldStop: Boolean) {
     companion object {
         @JvmStatic
@@ -74,26 +72,29 @@ fun isBreakpointApplicable(file: VirtualFile, line: Int, project: Project, check
         var isApplicable = false
         val checked = HashSet<PsiElement>()
 
-        XDebuggerUtil.getInstance().iterateLine(project, document, line, fun(element: PsiElement): Boolean {
-            if (element is PsiWhiteSpace || element.getParentOfType<PsiComment>(false) != null || !element.isValid) {
-                return true
-            }
+        XDebuggerUtil.getInstance().iterateLine(
+            project, document, line,
+            fun(element: PsiElement): Boolean {
+                if (element is PsiWhiteSpace || element.getParentOfType<PsiComment>(false) != null || !element.isValid) {
+                    return true
+                }
 
-            val parent = getTopmostParentOnLineOrSelf(element, document, line)
-            if (!checked.add(parent)) {
-                return true
-            }
+                val parent = getTopmostParentOnLineOrSelf(element, document, line)
+                if (!checked.add(parent)) {
+                    return true
+                }
 
-            val result = checker(parent)
+                val result = checker(parent)
 
-            if (result.shouldStop && !result.isApplicable) {
-                isApplicable = false
-                return false
-            }
+                if (result.shouldStop && !result.isApplicable) {
+                    isApplicable = false
+                    return false
+                }
 
-            isApplicable = isApplicable or result.isApplicable
-            return !result.shouldStop
-        })
+                isApplicable = isApplicable or result.isApplicable
+                return !result.shouldStop
+            },
+        )
 
         return@runReadAction isApplicable
     }
@@ -117,7 +118,7 @@ private fun getTopmostParentOnLineOrSelf(element: PsiElement, document: Document
 fun computeLineBreakpointVariants(
     project: Project,
     position: XSourcePosition,
-    kotlinBreakpointType: KotlinLineBreakpointType
+    kotlinBreakpointType: KotlinLineBreakpointType,
 ): List<JavaLineBreakpointType.JavaBreakpointVariant> {
     val file = PsiManager.getInstance(project).findFile(position.file) as? KtFile ?: return emptyList()
 

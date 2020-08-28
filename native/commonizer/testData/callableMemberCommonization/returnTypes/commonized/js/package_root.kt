@@ -7,7 +7,6 @@ actual val propertyWithInferredType4 = null
 actual val propertyWithInferredType5 = Planet("Earth", 12742)
 
 typealias A = Planet
-actual typealias C = Planet
 
 actual val property1 = 1
 actual val property2 = "hello"

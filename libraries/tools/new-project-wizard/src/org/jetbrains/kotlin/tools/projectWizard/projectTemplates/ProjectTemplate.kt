@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.tools.projectWizard.projectTemplates
 
 import org.jetbrains.annotations.NonNls
@@ -22,7 +27,7 @@ sealed class ProjectTemplate : DisplayableSettingItem {
     abstract val id: String
 
     private val setsDefaultValues: List<SettingWithValue<*, *>>
-        get() = listOf(KotlinPlugin::projectKind.reference withValue projectKind)
+        get() = listOf(KotlinPlugin.projectKind.reference withValue projectKind)
 
     protected open val setsPluginSettings: List<SettingWithValue<*, *>> = emptyList()
     protected open val setsModules: List<Module> = emptyList()
@@ -31,7 +36,7 @@ sealed class ProjectTemplate : DisplayableSettingItem {
     val setsValues: List<SettingWithValue<*, *>>
         get() = buildList {
             setsModules.takeIf { it.isNotEmpty() }?.let { modules ->
-                +(KotlinPlugin::modules withValue modules)
+                +(KotlinPlugin.modules.reference withValue modules)
             }
             +setsDefaultValues
             +setsPluginSettings
@@ -72,7 +77,9 @@ sealed class ProjectTemplate : DisplayableSettingItem {
             MultiplatformLibraryProjectTemplate,
             NativeApplicationProjectTemplate,
             FrontendApplicationProjectTemplate,
-            FullStackWebApplicationProjectTemplate
+            ReactApplicationProjectTemplate,
+            FullStackWebApplicationProjectTemplate,
+            NodeJsApplicationProjectTemplate
         )
 
         fun byId(id: String): ProjectTemplate? = ALL.firstOrNull {
@@ -97,7 +104,7 @@ class TemplateSettingsBuilder<Q : Template>(
 class ConfiguratorSettingsBuilder<C : ModuleConfigurator>(
     val module: Module,
     val configurator: C
-) : ModuleConfiguratorSettingsEnvironment by ModuleBasedConfiguratorSettingsEnvironment(configurator, module) {
+) : ModuleConfiguratorContext by ModuleBasedConfiguratorContext(configurator, module) {
     init {
         assert(module.configurator === configurator)
     }
@@ -116,10 +123,6 @@ data class SettingWithValue<V : Any, T : SettingType<V>>(val setting: SettingRef
 
 infix fun <V : Any, T : SettingType<V>> PluginSettingReference<V, T>.withValue(value: V): SettingWithValue<V, T> =
     SettingWithValue(this, value)
-
-inline infix fun <V : Any, reified T : SettingType<V>> PluginSettingPropertyReference<V, T>.withValue(
-    value: V
-): SettingWithValue<V, T> = reference.withValue(value)
 
 private fun createDefaultSourcesets() =
     SourcesetType.values().map { sourcesetType ->
@@ -144,7 +147,7 @@ object BackendApplicationProjectTemplate : ProjectTemplate() {
 
     override val setsPluginSettings: List<SettingWithValue<*, *>>
         get() = listOf(
-            KotlinPlugin::modules withValue listOf(
+            KotlinPlugin.modules.reference withValue listOf(
                 SingleplatformModule("mainModule", createDefaultSourcesets())
             )
         )
@@ -161,7 +164,7 @@ object MultiplatformApplicationProjectTemplate : ProjectTemplate() {
 
     override val setsPluginSettings: List<SettingWithValue<*, *>>
         get() = listOf(
-            KotlinPlugin::modules withValue listOf(
+            KotlinPlugin.modules.reference withValue listOf(
                 MultiplatformModule("mainModule", listOf(ModuleType.common.createDefaultTarget()))
             )
         )
@@ -178,7 +181,7 @@ object ConsoleApplicationProjectTemplate : ProjectTemplate() {
 
     override val setsPluginSettings: List<SettingWithValue<*, *>>
         get() = listOf(
-            KotlinPlugin::modules withValue listOf(
+            KotlinPlugin.modules.reference withValue listOf(
                 SingleplatformModule(
                     "consoleApp",
                     createDefaultSourcesets()
@@ -200,14 +203,14 @@ object MultiplatformLibraryProjectTemplate : ProjectTemplate() {
 
     override val setsPluginSettings: List<SettingWithValue<*, *>>
         get() = listOf(
-            KotlinPlugin::modules withValue listOf(
+            KotlinPlugin.modules.reference withValue listOf(
                 MultiplatformModule(
                     "library",
                     listOf(
                         ModuleType.common.createDefaultTarget(),
                         ModuleType.jvm.createDefaultTarget(),
                         ModuleType.js.createDefaultTarget().withConfiguratorSettings(JsBrowserTargetConfigurator) {
-                            JsTargetConfigurator.kind withValue JsTargetKind.LIBRARY
+                            JSConfigurator.kind withValue JsTargetKind.LIBRARY
                         },
                         ModuleType.native.createDefaultTarget()
                     )
@@ -225,7 +228,7 @@ object FullStackWebApplicationProjectTemplate : ProjectTemplate() {
     override val suggestedProjectName: String = "myFullStackApplication"
     override val projectKind: ProjectKind = ProjectKind.Multiplatform
     override val setsPluginSettings: List<SettingWithValue<*, *>> = listOf(
-        KotlinPlugin::modules withValue listOf(
+        KotlinPlugin.modules.reference withValue listOf(
             MultiplatformModule(
                 "application",
                 listOf(
@@ -236,7 +239,7 @@ object FullStackWebApplicationProjectTemplate : ProjectTemplate() {
                         }
                     },
                     ModuleType.js.createDefaultTarget().apply {
-                        withTemplate(SimpleJsClientTemplate())
+                        withTemplate(ReactJsClientTemplate())
                     }
                 )
             )
@@ -255,7 +258,7 @@ object NativeApplicationProjectTemplate : ProjectTemplate() {
 
     override val setsPluginSettings: List<SettingWithValue<*, *>>
         get() = listOf(
-            KotlinPlugin::modules withValue listOf(
+            KotlinPlugin.modules.reference withValue listOf(
                 Module(
                     "app",
                     MppModuleConfigurator,
@@ -272,8 +275,8 @@ object NativeApplicationProjectTemplate : ProjectTemplate() {
 }
 
 object FrontendApplicationProjectTemplate : ProjectTemplate() {
-    override val title = KotlinNewProjectWizardBundle.message("project.template.frontend.title")
-    override val description = KotlinNewProjectWizardBundle.message("project.template.frontend.description")
+    override val title = KotlinNewProjectWizardBundle.message("project.template.browser.title")
+    override val description = KotlinNewProjectWizardBundle.message("project.template.browser.description")
     override val id = "frontendApplication"
 
     @NonNls
@@ -282,11 +285,36 @@ object FrontendApplicationProjectTemplate : ProjectTemplate() {
 
     override val setsPluginSettings: List<SettingWithValue<*, *>>
         get() = listOf(
-            KotlinPlugin::modules withValue listOf(
+            KotlinPlugin.modules.reference withValue listOf(
                 Module(
-                    "frontend",
-                    JsSingleplatformModuleConfigurator,
+                    "browser",
+                    BrowserJsSinglePlatformModuleConfigurator,
                     template = SimpleJsClientTemplate(),
+                    sourcesets = SourcesetType.ALL.map { type ->
+                        Sourceset(type, dependencies = emptyList())
+                    },
+                    subModules = emptyList()
+                )
+            )
+        )
+}
+
+object ReactApplicationProjectTemplate : ProjectTemplate() {
+    override val title = KotlinNewProjectWizardBundle.message("project.template.react.title")
+    override val description = KotlinNewProjectWizardBundle.message("project.template.react.description")
+    override val id = "reactApplication"
+
+    @NonNls
+    override val suggestedProjectName = "myKotlinJsApplication"
+    override val projectKind = ProjectKind.Js
+
+    override val setsPluginSettings: List<SettingWithValue<*, *>>
+        get() = listOf(
+            KotlinPlugin.modules.reference withValue listOf(
+                Module(
+                    "react",
+                    BrowserJsSinglePlatformModuleConfigurator,
+                    template = ReactJsClientTemplate(),
                     sourcesets = SourcesetType.ALL.map { type ->
                         Sourceset(type, dependencies = emptyList())
                     },
@@ -321,14 +349,13 @@ object MultiplatformMobileApplicationProjectTemplate : ProjectTemplate() {
                 },
                 Module(
                     "ios",
-                    RealNativeTargetConfigurator.configuratorsByModuleType.getValue(ModuleSubType.iosX64),
+                    RealNativeTargetConfigurator.configuratorsByModuleType.getValue(ModuleSubType.ios),
                     null,
                     sourcesets = createDefaultSourcesets(),
                     subModules = emptyList()
                 )
             )
         )
-        +shared
         +Module(
             "iosApp",
             IOSSinglePlatformModuleConfigurator,
@@ -345,6 +372,7 @@ object MultiplatformMobileApplicationProjectTemplate : ProjectTemplate() {
             subModules = emptyList(),
             dependencies = mutableListOf(ModuleReference.ByModule(shared))
         )
+        +shared // shared module must be the last so dependent modules could create actual files
     }
 }
 
@@ -359,7 +387,7 @@ object MultiplatformMobileLibraryProjectTemplate : ProjectTemplate() {
 
     override val setsPluginSettings: List<SettingWithValue<*, *>>
         get() = listOf(
-            KotlinPlugin::modules withValue listOf(
+            KotlinPlugin.modules.reference withValue listOf(
                 MultiplatformModule(
                     "library",
                     listOf(
@@ -385,6 +413,31 @@ object MultiplatformMobileLibraryProjectTemplate : ProjectTemplate() {
                             emptyList()
                         )
                     )
+                )
+            )
+        )
+}
+
+object NodeJsApplicationProjectTemplate : ProjectTemplate() {
+    override val title = KotlinNewProjectWizardBundle.message("project.template.nodejs.title")
+    override val description = KotlinNewProjectWizardBundle.message("project.template.nodejs.description")
+    override val id = "nodejsApplication"
+
+    @NonNls
+    override val suggestedProjectName = "myKotlinJsApplication"
+    override val projectKind = ProjectKind.Js
+
+    override val setsPluginSettings: List<SettingWithValue<*, *>>
+        get() = listOf(
+            KotlinPlugin.modules.reference withValue listOf(
+                Module(
+                    "nodejs",
+                    NodeJsSinglePlatformModuleConfigurator,
+                    template = SimpleNodeJsTemplate(),
+                    sourcesets = SourcesetType.ALL.map { type ->
+                        Sourceset(type, dependencies = emptyList())
+                    },
+                    subModules = emptyList()
                 )
             )
         )

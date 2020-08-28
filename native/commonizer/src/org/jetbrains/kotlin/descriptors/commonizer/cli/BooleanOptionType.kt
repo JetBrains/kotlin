@@ -10,18 +10,20 @@ internal class BooleanOptionType(
     description: String,
     mandatory: Boolean
 ) : OptionType<Boolean>(alias, description, mandatory) {
-    private val trueTokens = setOf("1", "on", "yes", "true")
-    private val falseTokens = setOf("0", "off", "no", "false")
-
     override fun parse(rawValue: String, onError: (reason: String) -> Nothing): Option<Boolean> {
         val value = rawValue.toLowerCase().let {
             when (it) {
-                in trueTokens -> true
-                in falseTokens -> false
+                in TRUE_TOKENS -> true
+                in FALSE_TOKENS -> false
                 else -> onError("Invalid boolean value: $it")
             }
         }
 
         return Option(this, value)
+    }
+
+    companion object {
+        private val TRUE_TOKENS = setOf("1", "on", "yes", "true")
+        private val FALSE_TOKENS = setOf("0", "off", "no", "false")
     }
 }

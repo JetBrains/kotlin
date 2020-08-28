@@ -52,14 +52,15 @@ class NewJavaToKotlinConverter(
 
     private val LOG = Logger.getInstance("#org.jetbrains.kotlin.j2k.JavaToKotlinConverter")
 
+    private val phasesCount = J2KConversionPhase.values().size
+
     override fun filesToKotlin(
         files: List<PsiJavaFile>,
         postProcessor: PostProcessor,
         progress: ProgressIndicator
     ): FilesResult {
         progress.isIndeterminate = false
-        val phasesCount = postProcessor.phasesCount + 1
-        val withProgressProcessor = NewJ2kWithProgressProcessor(progress, files, phasesCount)
+        val withProgressProcessor = NewJ2kWithProgressProcessor(progress, files, postProcessor.phasesCount + phasesCount)
         return withProgressProcessor.process {
             val (results, externalCodeProcessing, context) =
                 ApplicationManager.getApplication().runReadAction(Computable {
@@ -69,6 +70,11 @@ class NewJavaToKotlinConverter(
             val kotlinFiles = results.mapIndexed { i, result ->
                 runUndoTransparentActionInEdt(inWriteAction = true) {
                     val javaFile = files[i]
+                    withProgressProcessor.updateState(
+                        fileIndex = i,
+                        phase = J2KConversionPhase.CREATE_FILES,
+                        description = "Creating files..."
+                    )
                     KtPsiFactory(project).createFileWithLightClassSupport(
                         javaFile.name.replace(".java", ".kt"),
                         result!!.text,
@@ -84,7 +90,7 @@ class NewJavaToKotlinConverter(
                 JKMultipleFilesPostProcessingTarget(kotlinFiles),
                 context
             ) { phase, description ->
-                withProgressProcessor.updateState(fileIndex = null, phase = phase + 1, description = description)
+                withProgressProcessor.updateState(fileIndex = null, phase = phase + phasesCount, description = description)
             }
             FilesResult(kotlinFiles.map { it.text }, externalCodeProcessing)
         }
@@ -92,14 +98,21 @@ class NewJavaToKotlinConverter(
 
     private fun KtFile.addImports(imports: Collection<FqName>) {
         val factory = KtPsiFactory(this)
-        var importList = importList
-        for (import in imports) {
-            val importDirective = factory.createImportDirective(ImportPath(import, isAllUnder = false))
-            if (importList == null) {
-                importList = addImportList(importDirective.parent as KtImportList)
-            } else {
-                importList.add(importDirective)
-            }
+
+
+        if (imports.isEmpty()) return
+        val importPsi = factory.createImportDirectives(
+            imports.map { ImportPath(it, isAllUnder = false) }
+        )
+        val createdImportList = importPsi.first().parent as KtImportList
+        val importList = importList
+        if (importList == null) {
+            addImportList(createdImportList)
+        } else {
+            val updatedList = if (importList.firstChild != null) {
+                createdImportList.addRangeBefore(importList.firstChild, importList.lastChild, createdImportList.firstChild)
+            } else createdImportList
+            importList.replace(updatedList)
         }
     }
 
@@ -142,7 +155,7 @@ class NewJavaToKotlinConverter(
         }
 
         val asts = inputElements.mapIndexed { i, element ->
-            processor.updateState(i, 1, phaseDescription)
+            processor.updateState(i, J2KConversionPhase.BUILD_AST, phaseDescription)
             element to treeBuilder.buildTree(element, saveImports)
         }
         val inConversionContext = { element: PsiElement ->
@@ -165,13 +178,18 @@ class NewJavaToKotlinConverter(
             externalCodeProcessing,
             languageVersion.supportsFeature(LanguageFeature.FunctionalInterfaceConversion)
         )
-        ConversionsRunner.doApply(asts.withIndex().mapNotNull { (i, ast) ->
-            processor.updateState(i, 1, phaseDescription)
-            ast.second
-        }, context)
+        ConversionsRunner.doApply(asts.mapNotNull { it.second }, context) { conversionIndex, conversionCount, i, desc ->
+            processor.updateState(
+                J2KConversionPhase.RUN_CONVERSIONS.phaseNumber,
+                conversionIndex,
+                conversionCount,
+                i,
+                desc
+            )
+        }
 
         val results = asts.mapIndexed { i, elementWithAst ->
-            processor.updateState(i, 1, phaseDescription)
+            processor.updateState(i, J2KConversionPhase.PRINT_CODE, phaseDescription)
             val (element, ast) = elementWithAst
             if (ast == null) return@mapIndexed null
             val code = JKCodeBuilder(context).run { printCodeOut(ast) }
@@ -208,11 +226,44 @@ class NewJ2kWithProgressProcessor(
     }
 
     override fun updateState(fileIndex: Int?, phase: Int, description: String) {
+        if (fileIndex == null)
+            updateState(phase, 1, 1, fileIndex, description)
+        else
+            updateState(phase, 0, 1, fileIndex, description)
+    }
+
+    override fun updateState(
+        phase: Int,
+        subPhase: Int,
+        subPhaseCount: Int,
+        fileIndex: Int?,
+        description: String
+    ) {
         progress?.checkCanceled()
-        progress?.fraction = phase / phasesCount.toDouble()
-        progress?.text = KotlinNJ2KBundle.message("progress.text", description, phase, phasesCount)
+        val singlePhaseFraction = 1.0 / phasesCount.toDouble()
+        val singleSubPhaseFraction = singlePhaseFraction / subPhaseCount.toDouble()
+
+        var resultFraction = phase * singlePhaseFraction + subPhase * singleSubPhaseFraction
+        if (files != null && fileIndex != null && files.isNotEmpty()) {
+            val fileFraction = singleSubPhaseFraction / files.size.toDouble()
+            resultFraction += fileFraction * fileIndex
+        }
+        progress?.fraction = resultFraction
+
+        if (subPhaseCount > 1) {
+            progress?.text = KotlinNJ2KBundle.message(
+                "subphase.progress.text",
+                description,
+                subPhase,
+                subPhaseCount,
+                phase + 1,
+                phasesCount
+            )
+        } else {
+            progress?.text = KotlinNJ2KBundle.message("progress.text", description, phase + 1, phasesCount)
+        }
         progress?.text2 = when {
-            files != null && files.isNotEmpty() && fileIndex != null -> files[fileIndex].virtualFile.presentableUrl
+            files != null && files.isNotEmpty() && fileIndex != null -> files[fileIndex].virtualFile.presentableUrl + if (files.size > 1) " ($fileIndex/${files.size})" else ""
             else -> ""
         }
     }
@@ -231,4 +282,15 @@ class NewJ2kWithProgressProcessor(
         return result!!
     }
 
+}
+
+internal fun WithProgressProcessor.updateState(fileIndex: Int?, phase: J2KConversionPhase, description: String) {
+    updateState(fileIndex, phase.phaseNumber, description)
+}
+
+internal enum class J2KConversionPhase(val phaseNumber: Int) {
+    BUILD_AST(0),
+    RUN_CONVERSIONS(1),
+    PRINT_CODE(2),
+    CREATE_FILES(3)
 }

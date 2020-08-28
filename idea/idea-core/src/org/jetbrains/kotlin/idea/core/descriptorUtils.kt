@@ -141,3 +141,7 @@ fun <D : CallableMemberDescriptor> D.getDeepestSuperDeclarations(withThis: Boole
 
     return overriddenDeclarations.filterNot(DescriptorUtils::isOverride)
 }
+
+fun <T : DeclarationDescriptor> T.unwrapIfFakeOverride(): T {
+    return if (this is CallableMemberDescriptor) DescriptorUtils.unwrapFakeOverride(this) else this
+}

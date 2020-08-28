@@ -10,25 +10,50 @@ import {formatMessage, TYPED_MESSAGE} from "./src/teamcity-format";
 const ModuleNotFoundError = require("webpack/lib/ModuleNotFoundError")
 
 class TeamCityErrorPlugin {
+    warningsFilter(value) {
+        if (!Array.isArray(value)) {
+            value = value ? [value] : [];
+        }
+        return value.map(filter => {
+            if (typeof filter === "string") {
+                return (warning, warningString) => warningString.includes(filter);
+            }
+            if (filter instanceof RegExp) {
+                return (warning, warningString) => filter.test(warningString);
+            }
+            if (typeof filter === "function") {
+                return filter;
+            }
+            throw new Error(
+                `Can only filter warnings with Strings or RegExps. (Given: ${filter})`
+            );
+        });
+    }
+
     apply(compiler) {
         compiler.hooks.done.tap('TeamCityErrorPlugin', (stats) => {
+
+            const warningsFilters = this.warningsFilter(stats.compilation.options.stats.warningsFilter);
+
             stats.compilation.errors.forEach(error => {
-                const type = 'error'
+                const type = 'error';
                 if (error instanceof ModuleNotFoundError) {
                     error.dependencies.forEach(dependency => {
-                        console[type](formatMessage(TYPED_MESSAGE, `Module '${dependency.request}' not found`, type))
-                    })
+                        console[type](formatMessage(TYPED_MESSAGE, `Module '${dependency.request}' not found`, type));
+                    });
                     return
                 }
 
-                console[type](formatMessage(TYPED_MESSAGE, error.message, type))
-            })
+                console[type](formatMessage(TYPED_MESSAGE, error.message, type));
+            });
 
-            stats.compilation.warnings.forEach(warning => {
-                const type = 'warn'
+            stats.compilation.warnings
+                .filter(warning => warningsFilters.every(warningFilter => warningFilter(warning)))
+                .forEach(warning => {
+                    const type = 'warn';
 
-                console[type](formatMessage(TYPED_MESSAGE, warning.message, type))
-            })
+                    console[type](formatMessage(TYPED_MESSAGE, warning.message, type));
+                });
         });
     }
 }

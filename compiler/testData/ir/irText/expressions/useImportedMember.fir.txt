@@ -255,7 +255,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
               arg0: CALL 'public final fun <get-fromClass> <T> (): T of <root>.BaseClass.<get-fromClass> declared in <root>.BaseClass' type=kotlin.String origin=GET_PROPERTY
                 <T>: kotlin.String
-                $this: CONST String type=kotlin.String value="10"
+                $this: GET_OBJECT 'CLASS OBJECT name:C modality:FINAL visibility:public superTypes:[<root>.BaseClass; <root>.I<kotlin.String>]' type=<root>.C
                 $receiver: CONST String type=kotlin.String value="10"
               arg1: CONST String type=kotlin.String value="10"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'

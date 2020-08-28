@@ -270,9 +270,11 @@ fun Call.isSafeCall(): Boolean {
 
 fun Call.isCallableReference(): Boolean {
     val callElement = callElement
-    return callElement is KtNameReferenceExpression &&
-            (callElement.parent as? KtCallableReferenceExpression)?.callableReference == callElement
+    return callElement.isCallableReference()
 }
+
+fun KtElement.isCallableReference(): Boolean =
+    this is KtNameReferenceExpression && (parent as? KtCallableReferenceExpression)?.callableReference == this
 
 fun Call.createLookupLocation(): KotlinLookupLocation {
     val calleeExpression = calleeExpression
@@ -281,6 +283,9 @@ fun Call.createLookupLocation(): KotlinLookupLocation {
         else callElement
     return KotlinLookupLocation(element)
 }
+
+fun KtExpression.createLookupLocation(): KotlinLookupLocation? =
+    if (!isFakeElement) KotlinLookupLocation(this) else null
 
 fun ResolvedCall<*>.getFirstArgumentExpression(): KtExpression? =
     valueArgumentsByIndex?.run { get(0).arguments[0].getArgumentExpression() }

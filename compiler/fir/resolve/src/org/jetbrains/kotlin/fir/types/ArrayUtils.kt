@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-
 
 fun ConeTypeProjection.createArrayOf(nullable: Boolean = false): ConeKotlinType {
     if (this is ConeKotlinTypeProjection) {
         val type = type.lowerBoundIfFlexible()
-        if (type is ConeClassLikeType) {
+        if (type is ConeClassLikeType && type.nullability != ConeNullability.NULLABLE) {
             val classId = type.lookupTag.classId
             val primitiveArrayId =
                 StandardClassIds.primitiveArrayTypeByElementType[classId] ?: StandardClassIds.unsignedArrayTypeByElementType[classId]
@@ -25,8 +23,7 @@ fun ConeTypeProjection.createArrayOf(nullable: Boolean = false): ConeKotlinType 
     return StandardClassIds.Array.constructClassLikeType(arrayOf(this), nullable)
 }
 
-
-fun ConeKotlinType.arrayElementType(session: FirSession): ConeKotlinType? {
+fun ConeKotlinType.arrayElementType(): ConeKotlinType? {
     val type = this.lowerBoundIfFlexible()
     if (type !is ConeClassLikeType) return null
     val classId = type.lookupTag.classId

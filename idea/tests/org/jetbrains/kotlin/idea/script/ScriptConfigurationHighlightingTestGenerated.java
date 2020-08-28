@@ -100,14 +100,19 @@ public class ScriptConfigurationHighlightingTestGenerated extends AbstractScript
             runTest("idea/testData/script/definition/highlighting/implicitReceiver/");
         }
 
-        @TestMetadata("javaNestedClass")
-        public void testJavaNestedClass() throws Exception {
-            runTest("idea/testData/script/definition/highlighting/javaNestedClass/");
-        }
-
         @TestMetadata("multiModule")
         public void testMultiModule() throws Exception {
             runTest("idea/testData/script/definition/highlighting/multiModule/");
+        }
+
+        @TestMetadata("multipleScripts")
+        public void testMultipleScripts() throws Exception {
+            runTest("idea/testData/script/definition/highlighting/multipleScripts/");
+        }
+
+        @TestMetadata("nestedClass")
+        public void testNestedClass() throws Exception {
+            runTest("idea/testData/script/definition/highlighting/nestedClass/");
         }
 
         @TestMetadata("noResolver")

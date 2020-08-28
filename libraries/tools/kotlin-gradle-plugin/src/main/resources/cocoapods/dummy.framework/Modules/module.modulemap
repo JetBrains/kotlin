@@ -1,5 +1,5 @@
 framework module dummy {
-  umbrella header "dummy.h"
+  umbrella header "placeholder.h"
 
   export *
   module * { export * }

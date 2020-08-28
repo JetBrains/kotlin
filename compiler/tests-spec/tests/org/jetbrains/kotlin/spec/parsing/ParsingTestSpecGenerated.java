@@ -1150,11 +1150,6 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                             KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
                         }
 
-                        @TestMetadata("12.1.kt")
-                        public void test12_1() throws Exception {
-                            runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/12.1.kt");
-                        }
-
                         @TestMetadata("1.1.kt")
                         public void test1_1() throws Exception {
                             runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/1.1.kt");
@@ -1170,9 +1165,14 @@ public class ParsingTestSpecGenerated extends AbstractParsingTestSpec {
                             runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/3.1.kt");
                         }
 
-                        @TestMetadata("9.1.kt")
-                        public void test9_1() throws Exception {
-                            runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/9.1.kt");
+                        @TestMetadata("5.1.kt")
+                        public void test5_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/5.1.kt");
+                        }
+
+                        @TestMetadata("7.1.kt")
+                        public void test7_1() throws Exception {
+                            runTest("compiler/tests-spec/testData/psi/linked/expressions/when-expression/p-6/neg/7.1.kt");
                         }
 
                         public void testAllFilesPresentInNeg() throws Exception {

@@ -117,7 +117,6 @@ private class RangeLoopTransformer(
     val oldLoopToNewLoop: MutableMap<IrLoop, IrLoop>
 ) : IrElementTransformerVoidWithContext() {
 
-    private val symbols = context.ir.symbols
     private val headerInfoBuilder = DefaultHeaderInfoBuilder(context, this::getScopeOwnerSymbol)
     private val headerProcessor = HeaderProcessor(context, headerInfoBuilder, this::getScopeOwnerSymbol)
 

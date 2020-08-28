@@ -16,10 +16,10 @@ import org.jetbrains.jps.model.serialization.module.JpsModuleSourceRootPropertie
 private const val IS_GENERATED_ATTRIBUTE = "generated"
 private const val RELATIVE_OUTPUT_PATH_ATTRIBUTE = "relativeOutputPath"
 
-val KOTLIN_SOURCE_ROOT_TYPE_ID = "kotlin-source"
-val KOTLIN_TEST_ROOT_TYPE_ID = "kotlin-test"
-val KOTLIN_RESOURCE_ROOT_TYPE_ID = "kotlin-resource"
-val KOTLIN_TEST_RESOURCE_ROOT_TYPE_ID = "kotlin-test-resource"
+const val KOTLIN_SOURCE_ROOT_TYPE_ID = "kotlin-source"
+const val KOTLIN_TEST_ROOT_TYPE_ID = "kotlin-test"
+const val KOTLIN_RESOURCE_ROOT_TYPE_ID = "kotlin-resource"
+const val KOTLIN_TEST_RESOURCE_ROOT_TYPE_ID = "kotlin-test-resource"
 
 // Based on org.jetbrains.jps.model.serialization.java.JpsJavaModelSerializerExtension.JavaSourceRootPropertiesSerializer class
 sealed class KotlinSourceRootPropertiesSerializer(

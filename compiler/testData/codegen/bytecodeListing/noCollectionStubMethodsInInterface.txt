@@ -1,5 +1,9 @@
 @kotlin.Metadata
-public interface A
+public interface A {
+    // source: 'noCollectionStubMethodsInInterface.kt'
+}
 
 @kotlin.Metadata
-public interface B
+public interface B {
+    // source: 'noCollectionStubMethodsInInterface.kt'
+}

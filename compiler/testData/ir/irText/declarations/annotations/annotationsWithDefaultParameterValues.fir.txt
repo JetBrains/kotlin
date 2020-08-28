@@ -57,7 +57,7 @@ FILE fqName:<root> fileName:/annotationsWithDefaultParameterValues.kt
     BLOCK_BODY
   FUN name:test4 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     annotations:
-      A(x = '456', y = <null>)
+      A(x = <null>, y = '456')
     BLOCK_BODY
   FUN name:test5 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     annotations:

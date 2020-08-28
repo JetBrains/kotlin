@@ -131,30 +131,30 @@ internal fun DeclarationDescriptor.getText(): String = when (this) {
 
 internal fun ResolvedCall<*>.renderToText(): String {
     return buildString {
-        appendln("Resolved call:")
-        appendln()
+        appendLine("Resolved call:")
+        appendLine()
 
         if (candidateDescriptor != resultingDescriptor) {
-            appendln("Candidate descriptor: ${candidateDescriptor!!.getText()}")
+            appendLine("Candidate descriptor: ${candidateDescriptor!!.getText()}")
         }
-        appendln("Resulting descriptor: ${resultingDescriptor!!.getText()}")
-        appendln()
+        appendLine("Resulting descriptor: ${resultingDescriptor!!.getText()}")
+        appendLine()
 
-        appendln("Explicit receiver kind = ${explicitReceiverKind}")
-        appendln("Dispatch receiver = ${dispatchReceiver.getText()}")
-        appendln("Extension receiver = ${extensionReceiver.getText()}")
+        appendLine("Explicit receiver kind = ${explicitReceiverKind}")
+        appendLine("Dispatch receiver = ${dispatchReceiver.getText()}")
+        appendLine("Extension receiver = ${extensionReceiver.getText()}")
 
         val valueArguments = call.valueArguments
         if (!valueArguments.isEmpty()) {
-            appendln()
-            appendln("Value arguments mapping:")
-            appendln()
+            appendLine()
+            appendLine("Value arguments mapping:")
+            appendLine()
 
             for (valueArgument in valueArguments) {
                 val argumentText = valueArgument!!.getText()
                 val argumentMappingText = getArgumentMapping(valueArgument).getText()
 
-                appendln("$argumentMappingText $argumentText")
+                appendLine("$argumentMappingText $argumentText")
             }
         }
     }

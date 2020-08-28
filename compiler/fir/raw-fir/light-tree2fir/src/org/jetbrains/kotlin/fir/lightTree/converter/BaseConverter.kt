@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,12 +10,10 @@ import com.intellij.openapi.util.Ref
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.FirLightSourceElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.BaseFirBuilder
 import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.escapedStringToCharacter
-import org.jetbrains.kotlin.fir.toFirLightSourceElement
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
@@ -30,10 +28,10 @@ open class BaseConverter(
 ) : BaseFirBuilder<LighterASTNode>(baseSession, context) {
     protected val implicitType = buildImplicitTypeRef()
 
-    override fun LighterASTNode.toFirSourceElement(): FirLightSourceElement {
+    override fun LighterASTNode.toFirSourceElement(kind: FirFakeSourceElementKind?): FirLightSourceElement {
         val startOffset = offset + tree.getStartOffset(this)
         val endOffset = offset + tree.getEndOffset(this)
-        return toFirLightSourceElement(startOffset, endOffset, tree)
+        return toFirLightSourceElement(startOffset, endOffset, tree, kind ?: FirRealSourceElementKind)
     }
 
     override val LighterASTNode.elementType: IElementType
@@ -113,6 +111,16 @@ open class BaseConverter(
         val kidsRef = Ref<Array<LighterASTNode?>>()
         tree.getChildren(this, kidsRef)
         return kidsRef.get()
+    }
+
+    fun LighterASTNode?.getFirstChild(): LighterASTNode? {
+        val firstChild: LighterASTNode?
+        try {
+            firstChild = getChildrenAsArray()[0]
+        } catch (e: ArrayIndexOutOfBoundsException) {
+            return null
+        }
+        return firstChild
     }
 
     @OptIn(ExperimentalContracts::class)

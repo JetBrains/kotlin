@@ -6,6 +6,6 @@ fun foo(i: Int, f: Int.()->Int) = i.f()
 
 fun test1() {
     <!AMBIGUITY!>foo<!>(1) { ->
-        this
+        <!NO_THIS!>this<!>
     }
 }

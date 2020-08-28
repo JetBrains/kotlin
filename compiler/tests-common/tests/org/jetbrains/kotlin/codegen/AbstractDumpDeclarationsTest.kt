@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
@@ -26,6 +25,7 @@ abstract class AbstractDumpDeclarationsTest : CodegenTestCase() {
     }
 
     override fun updateConfiguration(configuration: CompilerConfiguration) {
+        super.updateConfiguration(configuration)
         configuration.put(JVMConfigurationKeys.DECLARATIONS_JSON_PATH, dumpToFile.path)
     }
 }

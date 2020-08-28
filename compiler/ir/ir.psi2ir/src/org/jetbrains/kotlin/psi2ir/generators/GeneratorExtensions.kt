@@ -28,16 +28,5 @@ open class GeneratorExtensions : StubGeneratorExtensions() {
 
     open fun computeFieldVisibility(descriptor: PropertyDescriptor): Visibility? = null
 
-    open val enhancedNullability: EnhancedNullability
-        get() = EnhancedNullability
-
-    open class EnhancedNullability {
-        open fun hasEnhancedNullability(kotlinType: KotlinType): Boolean = false
-
-        open fun stripEnhancedNullability(kotlinType: KotlinType): KotlinType = kotlinType
-
-        companion object Instance : EnhancedNullability()
-    }
-
     open fun getParentClassStaticScope(descriptor: ClassDescriptor): MemberScope? = null
 }

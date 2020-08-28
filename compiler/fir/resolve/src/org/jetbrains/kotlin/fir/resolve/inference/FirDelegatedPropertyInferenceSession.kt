@@ -15,34 +15,76 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeTypeVariableTypeConstructor
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
+import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class FirDelegatedPropertyInferenceSession(
     val property: FirProperty,
     initialCall: FirExpression,
     components: BodyResolveComponents,
-    postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
-) : AbstractManyCandidatesInferenceSession(components, initialCall, postponedArgumentsAnalyzer) {
+    private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
+) : AbstractManyCandidatesInferenceSession(components) {
+    init {
+        val initialCandidate = (initialCall as? FirResolvable)
+            ?.calleeReference
+            ?.safeAs<FirNamedReferenceWithCandidate>()
+            ?.candidate
+        if (initialCandidate != null) {
+            addPartiallyResolvedCall(initialCall)
+        }
+    }
+
     val expectedType: ConeKotlinType? by lazy { property.returnTypeRef.coneTypeSafe() }
+    private val unitType: ConeKotlinType = components.session.builtinTypes.unitType.type
+    private lateinit var resultingConstraintSystem: NewConstraintSystem
+
+    override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement = false
 
     override fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
         initialStorage: ConstraintStorage
-    ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType> = emptyMap()
+    ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>? = null
 
     override fun <T> shouldCompleteResolvedSubAtomsOf(call: T): Boolean where T : FirResolvable, T : FirStatement = true
 
-    override fun prepareForCompletion(commonSystem: NewConstraintSystem, partiallyResolvedCalls: List<FirResolvable>) {
+    fun completeCandidates(): List<FirResolvable> {
+        @Suppress("UNCHECKED_CAST")
+        val resolvedCalls = partiallyResolvedCalls.map { it.first }
+        val commonSystem = components.inferenceComponents.createConstraintSystem().apply {
+            addOtherSystem(currentConstraintSystem)
+        }
+        prepareForCompletion(commonSystem, resolvedCalls)
+        components.inferenceComponents.withInferenceSession(DEFAULT) {
+            @Suppress("UNCHECKED_CAST")
+            components.callCompleter.completer.complete(
+                commonSystem.asConstraintSystemCompleterContext(),
+                KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL,
+                resolvedCalls as List<FirStatement>,
+                unitType
+            ) {
+                postponedArgumentsAnalyzer.analyze(
+                    commonSystem.asPostponedArgumentsAnalyzerContext(),
+                    it,
+                    resolvedCalls.first().candidate
+                )
+            }
+        }
+        resultingConstraintSystem = commonSystem
+        return resolvedCalls
+    }
+
+    private fun prepareForCompletion(commonSystem: NewConstraintSystem, partiallyResolvedCalls: List<FirResolvable>) {
         val csBuilder = commonSystem.getBuilder()
         for (call in partiallyResolvedCalls) {
             val candidate = call.candidate
@@ -53,10 +95,15 @@ class FirDelegatedPropertyInferenceSession(
         }
     }
 
+    fun createFinalSubstitutor(): ConeSubstitutor {
+        return resultingConstraintSystem.asReadOnlyStorage()
+            .buildAbstractResultingSubstitutor(components.inferenceComponents.ctx) as ConeSubstitutor
+    }
+
     private fun Candidate.addConstraintsForGetValueMethod(commonSystem: ConstraintSystemBuilder) {
         if (expectedType != null) {
             val accessor = symbol.fir as? FirSimpleFunction ?: return
-            val unsubstitutedReturnType = accessor.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: return
+            val unsubstitutedReturnType = accessor.returnTypeRef.coneType
 
             val substitutedReturnType = substitutor.substituteOrSelf(unsubstitutedReturnType)
             commonSystem.addSubtypeConstraint(substitutedReturnType, expectedType!!, SimpleConstraintSystemConstraintPosition)
@@ -65,11 +112,10 @@ class FirDelegatedPropertyInferenceSession(
         addConstraintForThis(commonSystem)
     }
 
-
     private fun Candidate.addConstraintsForSetValueMethod(commonSystem: ConstraintSystemBuilder) {
         if (expectedType != null) {
             val accessor = symbol.fir as? FirSimpleFunction ?: return
-            val unsubstitutedParameterType = accessor.valueParameters.getOrNull(2)?.returnTypeRef?.coneTypeSafe<ConeKotlinType>() ?: return
+            val unsubstitutedParameterType = accessor.valueParameters.getOrNull(2)?.returnTypeRef?.coneType ?: return
 
             val substitutedReturnType = substitutor.substituteOrSelf(unsubstitutedParameterType)
             commonSystem.addSubtypeConstraint(substitutedReturnType, expectedType!!, SimpleConstraintSystemConstraintPosition)
@@ -79,14 +125,16 @@ class FirDelegatedPropertyInferenceSession(
     }
 
     private fun Candidate.addConstraintForThis(commonSystem: ConstraintSystemBuilder) {
-        val typeOfThis: ConeKotlinType = property.receiverTypeRef?.coneTypeUnsafe()
+        val typeOfThis: ConeKotlinType = property.receiverTypeRef?.coneType
             ?: when (val container = components.container) {
                 is FirRegularClass -> container.defaultType()
                 is FirAnonymousObject -> container.defaultType()
                 else -> null
-            } ?: components.session.builtinTypes.nullableNothingType.coneTypeUnsafe()
+            } ?: components.session.builtinTypes.nullableNothingType.type
         val valueParameterForThis = (symbol as? FirFunctionSymbol<*>)?.fir?.valueParameters?.firstOrNull() ?: return
-        val substitutedType = substitutor.substituteOrSelf(valueParameterForThis.returnTypeRef.coneTypeUnsafe<ConeKotlinType>())
+        val substitutedType = substitutor.substituteOrSelf(valueParameterForThis.returnTypeRef.coneType)
         commonSystem.addSubtypeConstraint(typeOfThis, substitutedType, SimpleConstraintSystemConstraintPosition)
     }
+
+    override fun <T> writeOnlyStubs(call: T): Boolean where T : FirResolvable, T : FirStatement = false
 }

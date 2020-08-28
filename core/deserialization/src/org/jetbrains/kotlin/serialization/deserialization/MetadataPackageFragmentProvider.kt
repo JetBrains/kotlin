@@ -126,6 +126,7 @@ class MetadataPackageFragment(
             override fun hasClass(name: Name): Boolean = hasTopLevelClass(name)
             override fun definitelyDoesNotContainName(name: Name) = false
             override fun getClassifierNames(): Set<Name>? = null
+            override fun getNonDeclaredClassifierNames(): Set<Name>? = null
         })
 
         return ChainedMemberScope.create("Metadata scope", scopes)

@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.resolve.calls.inference.model
 import org.jetbrains.kotlin.resolve.calls.inference.trimToSize
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.typeUtil.unCapture
+import org.jetbrains.kotlin.utils.SmartList
 
 
 class MutableVariableWithConstraints private constructor(
@@ -36,15 +36,19 @@ class MutableVariableWithConstraints private constructor(
     // see @OnlyInputTypes annotation
     val projectedInputCallTypes: Collection<UnwrappedType>
         get() = mutableConstraints
-            .filter { it.position.from is OnlyInputTypeConstraintPosition || it.inputTypePositionBeforeIncorporation != null }
-            .map { (it.type as KotlinType).unCapture().unwrap() }
+            .mapNotNullTo(SmartList()) {
+                if (it.position.from is OnlyInputTypeConstraintPosition || it.inputTypePositionBeforeIncorporation != null)
+                    (it.type as KotlinType).unCapture().unwrap()
+                else null
+            }
 
-    private val mutableConstraints = if (constraints == null) ArrayList() else ArrayList(constraints)
+    private val mutableConstraints = if (constraints == null) SmartList() else SmartList(constraints)
 
-    private var simplifiedConstraints: ArrayList<Constraint>? = mutableConstraints
+    private var simplifiedConstraints: SmartList<Constraint>? = mutableConstraints
 
     // return new actual constraint, if this constraint is new
     fun addConstraint(constraint: Constraint): Constraint? {
+        val isLowerAndFlexibleTypeWithDefNotNullLowerBound = constraint.isLowerAndFlexibleTypeWithDefNotNullLowerBound()
 
         for (previousConstraint in constraints) {
             if (previousConstraint.typeHashCode == constraint.typeHashCode
@@ -71,12 +75,23 @@ class MutableVariableWithConstraints private constructor(
                     return actualConstraint
                 }
             }
+
+            if (isLowerAndFlexibleTypeWithDefNotNullLowerBound &&
+                previousConstraint.isStrongerThanLowerAndFlexibleTypeWithDefNotNullLowerBound(constraint)
+            ) {
+                return null
+            }
         }
 
         mutableConstraints.add(constraint)
         if (simplifiedConstraints != null && simplifiedConstraints !== mutableConstraints) {
             simplifiedConstraints!!.add(constraint)
         }
+
+        if (simplifiedConstraints != null && isLowerAndFlexibleTypeWithDefNotNullLowerBound) {
+            simplifiedConstraints = null
+        }
+
         return constraint
     }
 
@@ -110,13 +125,53 @@ class MutableVariableWithConstraints private constructor(
         }
     }
 
-    private fun ArrayList<Constraint>.simplifyConstraints(): ArrayList<Constraint> {
-        val equalityConstraints =
-            filter { it.kind == ConstraintKind.EQUALITY }
-                .groupBy { it.typeHashCode }
+    private fun SmartList<Constraint>.simplifyConstraints(): SmartList<Constraint> =
+        simplifyLowerConstraints().simplifyEqualityConstraints()
+
+    private fun SmartList<Constraint>.simplifyLowerConstraints(): SmartList<Constraint> {
+        val usefulConstraints = SmartList<Constraint>()
+        for (constraint in this) {
+            if (!constraint.isLowerAndFlexibleTypeWithDefNotNullLowerBound()) {
+                usefulConstraints.add(constraint)
+                continue
+            }
+
+            // Now we have to check that some constraint T!!.T? <: K is useless or not
+            // If there is constraint T..T? <: K, then the original one (T!!.T?) is useless
+            // This is so because CST(T..T?, T!!..T?) == CST(T..T?)
+
+            val thereIsStrongerConstraint = this.any { it.isStrongerThanLowerAndFlexibleTypeWithDefNotNullLowerBound(constraint) }
+
+            if (!thereIsStrongerConstraint) {
+                usefulConstraints.add(constraint)
+            }
+        }
+
+        return usefulConstraints
+    }
+
+    // Such constraint is applicable for simplification
+    private fun Constraint.isLowerAndFlexibleTypeWithDefNotNullLowerBound(): Boolean =
+        kind == ConstraintKind.LOWER && type is FlexibleType && type.lowerBound.isDefinitelyNotNullType
+
+    private fun Constraint.isStrongerThanLowerAndFlexibleTypeWithDefNotNullLowerBound(other: Constraint): Boolean {
+        if (this === other) return false
+
+        if (typeHashCode != other.typeHashCode || kind == ConstraintKind.UPPER) return false
+        if (type !is FlexibleType) return false
+
+        val otherFlexibleType = other.type as? FlexibleType ?: return false
+        val otherLowerBound = otherFlexibleType.lowerBound as? DefinitelyNotNullType ?: return false
+        val otherUpperBound = otherFlexibleType.upperBound
+
+        return type.lowerBound == otherLowerBound.original && type.upperBound == otherUpperBound
+    }
+
+    private fun SmartList<Constraint>.simplifyEqualityConstraints(): SmartList<Constraint> {
+        val equalityConstraints = filter { it.kind == ConstraintKind.EQUALITY }.groupBy { it.typeHashCode }
         return when {
             equalityConstraints.isEmpty() -> this
-            else -> filterTo(ArrayList()) { isUsefulConstraint(it, equalityConstraints) }
+            else -> filterTo(SmartList()) { isUsefulConstraint(it, equalityConstraints) }
         }
     }
 
@@ -134,10 +189,10 @@ class MutableVariableWithConstraints private constructor(
 internal class MutableConstraintStorage : ConstraintStorage {
     override val allTypeVariables: MutableMap<TypeConstructorMarker, TypeVariableMarker> = LinkedHashMap()
     override val notFixedTypeVariables: MutableMap<TypeConstructorMarker, MutableVariableWithConstraints> = LinkedHashMap()
-    override val initialConstraints: MutableList<InitialConstraint> = ArrayList()
+    override val initialConstraints: MutableList<InitialConstraint> = SmartList()
     override var maxTypeDepthFromInitialConstraints: Int = 1
-    override val errors: MutableList<KotlinCallDiagnostic> = ArrayList()
+    override val errors: MutableList<KotlinCallDiagnostic> = SmartList()
     override val hasContradiction: Boolean get() = errors.any { !it.candidateApplicability.isSuccess }
     override val fixedTypeVariables: MutableMap<TypeConstructorMarker, KotlinTypeMarker> = LinkedHashMap()
-    override val postponedTypeVariables: ArrayList<TypeVariableMarker> = ArrayList()
+    override val postponedTypeVariables: MutableList<TypeVariableMarker> = SmartList()
 }

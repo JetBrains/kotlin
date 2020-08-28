@@ -1,1 +1,1 @@
-val x: <selection>kotlin.collections.Map.Entry<kotlin.Array<kotlin.String>, java.sql.Array></selection>
+val x: <selection>kotlin.collections.Map.Entry<kotlin.Array<kotlin.String>, dependency.Array></selection>

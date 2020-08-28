@@ -22,15 +22,15 @@ FILE: equalsAndIdentity.kt
     public final fun test_2(x: R|A?|, y: R|A?|): R|kotlin/Unit| {
         when () {
             ==(R|<local>/x|, R|<local>/y|) ->  {
-                R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
-                R|<local>/y|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+                R|<local>/x|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()
+                R|<local>/y|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()
             }
         }
 
         when () {
             ===(R|<local>/x|, R|<local>/y|) ->  {
-                R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
-                R|<local>/y|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+                R|<local>/x|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()
+                R|<local>/y|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()
             }
         }
 

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 
 class DeprecatedSymbolUsageInWholeProjectFix(
-    element: KtSimpleNameExpression,
+    element: KtReferenceExpression,
     replaceWith: ReplaceWith,
     private val text: String
 ) : DeprecatedSymbolUsageFixBase(element, replaceWith) {
@@ -68,10 +68,10 @@ class DeprecatedSymbolUsageInWholeProjectFix(
         }
 
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-            val (nameExpression, replacement, descriptor) = extractDataFromDiagnostic(diagnostic, true) ?: return null
+            val (referenceExpression, replacement, descriptor) = extractDataFromDiagnostic(diagnostic, true) ?: return null
             val descriptorName = RENDERER.render(descriptor)
             return DeprecatedSymbolUsageInWholeProjectFix(
-                nameExpression,
+                referenceExpression,
                 replacement,
                 KotlinBundle.message("replace.usages.of.0.in.whole.project", descriptorName)
             )

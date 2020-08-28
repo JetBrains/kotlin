@@ -1,5 +1,6 @@
 {
   "mainFile": "a/main.kt",
   "type": "MOVE_KOTLIN_TOP_LEVEL_DECLARATIONS",
-  "targetPackage": "b"
+  "targetPackage": "b",
+  "withRuntime": "true"
 }

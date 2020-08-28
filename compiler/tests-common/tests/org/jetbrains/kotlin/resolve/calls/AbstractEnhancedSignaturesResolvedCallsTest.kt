@@ -40,13 +40,13 @@ abstract class AbstractEnhancedSignaturesResolvedCallsTest : AbstractResolvedCal
 
         return buildString {
             lines.forEachIndexed { lineIndex, line ->
-                appendln(line)
+                appendLine(line)
                 callsByLine[lineIndex]?.let { calls ->
                     val indent = line.takeWhile(Char::isWhitespace) + "    "
                     calls.forEach { resolvedCall ->
-                        appendln("$indent// ${resolvedCall?.status}")
-                        appendln("$indent// ORIGINAL:    ${resolvedCall?.run { resultingDescriptor!!.original.getText() }}")
-                        appendln("$indent// SUBSTITUTED: ${resolvedCall?.run { resultingDescriptor!!.getText() }}")
+                        appendLine("$indent// ${resolvedCall?.status}")
+                        appendLine("$indent// ORIGINAL:    ${resolvedCall?.run { resultingDescriptor!!.original.getText() }}")
+                        appendLine("$indent// SUBSTITUTED: ${resolvedCall?.run { resultingDescriptor!!.getText() }}")
                     }
                 }
             }

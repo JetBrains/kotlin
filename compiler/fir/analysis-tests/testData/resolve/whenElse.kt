@@ -13,7 +13,7 @@ class B()
 class C(val b : B)
 fun get(f: Boolean) = if (f) {A.A1} else {""}
 
-fun case2() {
+<!CONFLICTING_OVERLOADS!>fun case2() {
 
     val flag: Any = get(false) //string
     val l1 = when (flag!!) { // should be NO_ELSE_IN_WHEN
@@ -25,9 +25,9 @@ fun case2() {
         A.A1 -> B()
         A.A2 -> B()
     }
-}
+}<!>
 
-fun case2() {
+<!CONFLICTING_OVERLOADS!>fun case2() {
 
     val flag: Any = get(true)  //A
     val l1 = when (flag!!) {// should be NO_ELSE_IN_WHEN
@@ -39,7 +39,7 @@ fun case2() {
         A.A1 -> B()
         A.A2 -> B()
     }
-}
+}<!>
 
 fun case3() {
 

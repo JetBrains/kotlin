@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,22 +10,24 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.buildAssertionsDisabledField
 import org.jetbrains.kotlin.backend.jvm.lower.hasAssertionsDisabledField
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
@@ -60,13 +62,19 @@ abstract class ClassCodegen protected constructor(
     private val classOrigin = run {
         // The descriptor associated with an IrClass is never modified in lowerings, so it
         // doesn't reflect the state of the lowered class. To make the diagnostics work we
-        // pass in a wrapped descriptor instead.
+        // pass in a wrapped descriptor instead, except for lambdas where we use the descriptor
+        // of the original function.
         // TODO: Migrate class builders away from descriptors
-        val descriptor = WrappedClassDescriptor().apply { bind(irClass) }
+        val descriptor = irClass.toIrBasedDescriptor()
         val psiElement = context.psiSourceManager.findPsiElement(irClass)
         when (irClass.origin) {
             IrDeclarationOrigin.FILE_CLASS ->
                 JvmDeclarationOrigin(JvmDeclarationOriginKind.PACKAGE_PART, psiElement, descriptor)
+            JvmLoweredDeclarationOrigin.LAMBDA_IMPL, JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL ->
+                OtherOrigin(
+                    psiElement,
+                    irClass.attributeOwnerId.safeAs<IrFunctionReference>()?.symbol?.owner?.toIrBasedDescriptor() ?: descriptor
+                )
             else ->
                 OtherOrigin(psiElement, descriptor)
         }
@@ -79,7 +87,7 @@ abstract class ClassCodegen protected constructor(
             throw IllegalStateException("Generating class with invalid name '${type.className}': ${irClass.dump()}")
         }
         defineClass(
-            irClass.descriptor.psiElement,
+            irClass.psiElement,
             state.classFileVersion,
             irClass.flags,
             signature.name,
@@ -88,6 +96,8 @@ abstract class ClassCodegen protected constructor(
             signature.interfaces.toTypedArray()
         )
     }
+
+    private val innerClasses = linkedSetOf<IrClass>()
 
     private var regeneratedObjectNameGenerators = mutableMapOf<String, NameGenerator>()
 
@@ -103,19 +113,34 @@ abstract class ClassCodegen protected constructor(
     private var generatingClInit = false
     private var generated = false
 
-    fun generate(): ReifiedTypeParametersUsages {
+    fun generate(parentDelegatedPropertyTracker: DelegatedPropertyOptimizer? = null): ReifiedTypeParametersUsages {
         // TODO: reject repeated generate() calls; currently, these can happen for objects in finally
         //       blocks since they are `accept`ed once per each CFG edge out of the try-finally.
         if (generated) return reifiedTypeParametersUsages
         generated = true
 
+        // We remove unused cached KProperties.
+        val classDelegatedPropertiesArray = irClass.fields.singleOrNull {
+            it.origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
+        }
+        val delegatedPropertyTracker =
+            if (classDelegatedPropertiesArray != null) DelegatedPropertyOptimizer() else parentDelegatedPropertyTracker
+
         val smap = context.getSourceMapper(irClass)
         for (declaration in irClass.declarations) {
             when (declaration) {
-                is IrClass, classInitializer -> Unit // see below
+                is IrClass, classInitializer, classDelegatedPropertiesArray -> Unit // see below
                 is IrField -> generateField(declaration)
-                is IrFunction -> generateMethod(declaration, smap)
+                is IrFunction -> generateMethod(declaration, smap, delegatedPropertyTracker)
                 else -> throw AssertionError("unexpected class member $declaration at codegen")
+            }
+        }
+
+        // Generate nested classes at the end, to ensure that when the companion's metadata is serialized
+        // everything moved to the outer class has already been recorded in `globalSerializationBindings`.
+        for (declaration in irClass.declarations) {
+            if (declaration is IrClass) {
+                getOrCreate(declaration, context).generate(delegatedPropertyTracker)
             }
         }
 
@@ -123,14 +148,9 @@ abstract class ClassCodegen protected constructor(
         // might need to generate the `$assertionsDisabled` field initializer.
         classInitializer?.let {
             generatingClInit = true
-            generateMethod(it, smap)
-        }
-
-        // Generate nested classes at the end, to ensure that when the companion's metadata is serialized
-        // everything moved to the outer class has already been recorded in `globalSerializationBindings`.
-        for (declaration in irClass.declarations) {
-            if (declaration is IrClass) {
-                getOrCreate(declaration, context).generate()
+            generateMethod(it, smap, delegatedPropertyTracker)
+            if (classDelegatedPropertiesArray != null && delegatedPropertyTracker?.needsDelegatedProperties == true) {
+                generateField(classDelegatedPropertiesArray)
             }
         }
 
@@ -146,11 +166,16 @@ abstract class ClassCodegen protected constructor(
         if (withinInline || !smap.isTrivial) {
             visitor.visitSMAP(smap, !context.state.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax))
         } else {
-            visitor.visitSource(smap.sourceInfo!!.source, null)
+            smap.sourceInfo!!.sourceFileName?.let {
+                visitor.visitSource(it, null)
+            }
         }
 
         visitor.done()
         jvmSignatureClashDetector.reportErrors(classOrigin)
+
+        generateInnerClasses()
+
         return reifiedTypeParametersUsages
     }
 
@@ -168,7 +193,7 @@ abstract class ClassCodegen protected constructor(
             field.initializer!!.expression, context.irBuiltIns.unitType
         )
         if (classInitializer == null) {
-            classInitializer = buildFun {
+            classInitializer = context.irFactory.buildFun {
                 name = Name.special("<clinit>")
                 returnType = context.irBuiltIns.unitType
             }.apply {
@@ -187,7 +212,7 @@ abstract class ClassCodegen protected constructor(
         return null
     }
 
-    abstract protected fun generateKotlinMetadataAnnotation()
+    protected abstract fun generateKotlinMetadataAnnotation()
 
     private fun IrFile.loadSourceFilesInfo(): List<File> {
         val entry = fileEntry
@@ -201,7 +226,16 @@ abstract class ClassCodegen protected constructor(
         fun getOrCreate(
             irClass: IrClass,
             context: JvmBackendContext,
-            parentFunction: IrFunction? = null,
+            // The `parentFunction` is only set for classes nested inside of functions. This is usually safe, since there is no
+            // way to refer to (inline) members of such a class from outside of the function unless the function in question is
+            // itself declared as inline. In that case, the function will be compiled before we can refer to the nested class.
+            //
+            // The one exception to this rule are anonymous objects defined as members of a class. These are nested inside of the
+            // class initializer, but can be referred to from anywhere within the scope of the class. That's why we have to ensure
+            // that all references to classes inside of <clinit> have a non-null `parentFunction`.
+            parentFunction: IrFunction? = irClass.parent.safeAs<IrFunction>()?.takeIf {
+                it.origin == JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER
+            },
         ): ClassCodegen =
             context.classCodegens.getOrPut(irClass) {
                 context.createCodegen(irClass, context, parentFunction) ?: DescriptorBasedClassCodegen(irClass, context, parentFunction)
@@ -220,28 +254,30 @@ abstract class ClassCodegen protected constructor(
     protected abstract fun bindFieldMetadata(field: IrField, fieldType: Type, fieldName: String)
 
     private fun generateField(field: IrField) {
-        if (field.isFakeOverride) return
-
         val fieldType = typeMapper.mapType(field)
         val fieldSignature =
             if (field.origin == IrDeclarationOrigin.PROPERTY_DELEGATE) null
             else context.methodSignatureMapper.mapFieldSignature(field)
         val fieldName = field.name.asString()
+        val flags = field.flags
         val fv = visitor.newField(
-            field.OtherOrigin, field.flags, fieldName, fieldType.descriptor,
+            field.OtherOrigin, flags, fieldName, fieldType.descriptor,
             fieldSignature, (field.initializer?.expression as? IrConst<*>)?.value
         )
 
         jvmSignatureClashDetector.trackField(field, RawSignature(fieldName, fieldType.descriptor, MemberKind.FIELD))
 
         if (field.origin != JvmLoweredDeclarationOrigin.CONTINUATION_CLASS_RESULT_FIELD) {
-            object : AnnotationCodegen(this@ClassCodegen, context) {
+            val skipNullabilityAnnotations =
+                flags and (Opcodes.ACC_SYNTHETIC or Opcodes.ACC_ENUM) != 0 ||
+                        field.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_STATIC_LAMBDA_INSTANCE
+            object : AnnotationCodegen(this@ClassCodegen, context, skipNullabilityAnnotations) {
                 override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
                     return fv.visitAnnotation(descr, visible)
                 }
 
                 override fun visitTypeAnnotation(descr: String?, path: TypePath?, visible: Boolean): AnnotationVisitor {
-                    return fv.visitTypeAnnotation(TypeReference.newTypeReference(TypeReference.FIELD).value,path, descr, visible)
+                    return fv.visitTypeAnnotation(TypeReference.newTypeReference(TypeReference.FIELD).value, path, descr, visible)
                 }
             }.genAnnotations(field, fieldType, field.type)
         }
@@ -251,14 +287,14 @@ abstract class ClassCodegen protected constructor(
 
     private val generatedInlineMethods = mutableMapOf<IrFunction, SMAPAndMethodNode>()
 
-    fun generateMethodNode(method: IrFunction): SMAPAndMethodNode {
+    fun generateMethodNode(method: IrFunction, delegatedPropertyOptimizer: DelegatedPropertyOptimizer?): SMAPAndMethodNode {
         if (!method.isInline && !method.isSuspend) {
             // Inline methods can be used multiple times by `IrSourceCompilerForInline`, suspend methods
             // could be used twice if they capture crossinline lambdas, and everything else is only
             // generated by `generateMethod` below so does not need caching.
-            return FunctionCodegen(method, this).generate()
+            return FunctionCodegen(method, this).generate(delegatedPropertyOptimizer)
         }
-        val (node, smap) = generatedInlineMethods.getOrPut(method) { FunctionCodegen(method, this).generate() }
+        val (node, smap) = generatedInlineMethods.getOrPut(method) { FunctionCodegen(method, this).generate(delegatedPropertyOptimizer) }
         val copy = with(node) { MethodNode(Opcodes.API_VERSION, access, name, desc, signature, exceptions.toTypedArray()) }
         node.instructions.resetLabels()
         node.accept(copy)
@@ -267,13 +303,19 @@ abstract class ClassCodegen protected constructor(
 
     protected abstract fun bindMethodMetadata(method: IrFunction, signature: Method)
 
-    private fun generateMethod(method: IrFunction, classSMAP: SourceMapper) {
+    private fun generateMethod(method: IrFunction, classSMAP: SourceMapper, delegatedPropertyOptimizer: DelegatedPropertyOptimizer?) {
         if (method.isFakeOverride) {
             jvmSignatureClashDetector.trackFakeOverrideMethod(method)
             return
         }
 
-        val (node, smap) = generateMethodNode(method)
+        val (node, smap) = generateMethodNode(method, delegatedPropertyOptimizer)
+        if (delegatedPropertyOptimizer != null) {
+            delegatedPropertyOptimizer.transform(node)
+            if (method.name.asString() == "<clinit>") {
+                delegatedPropertyOptimizer.transformClassInitializer(node)
+            }
+        }
         node.preprocessSuspendMarkers(
             method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE || method.isEffectivelyInlineOnly(),
             method.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
@@ -292,7 +334,7 @@ abstract class ClassCodegen protected constructor(
                 if (method.isSuspend) continuationClassCodegen.value.visitor else visitor
             }
             if (continuationClassCodegen.isInitialized() || method.alwaysNeedsContinuation()) {
-                continuationClassCodegen.value.generate()
+                continuationClassCodegen.value.generate(delegatedPropertyOptimizer)
             }
         } else {
             node.accept(smapCopyingVisitor)
@@ -331,8 +373,14 @@ abstract class ClassCodegen protected constructor(
         // See FileBasedKotlinClass.convertAnnotationVisitor
         generateSequence<IrDeclaration>(innerClass) { it.parent as? IrDeclaration }.takeWhile { !it.isTopLevelDeclaration }.forEach {
             if (it is IrClass) {
-                writeInnerClass(it, typeMapper, context, visitor)
+                innerClasses.add(it)
             }
+        }
+    }
+
+    private fun generateInnerClasses() {
+        for (klass in innerClasses) {
+            writeInnerClass(klass, typeMapper, context, visitor)
         }
     }
 }
@@ -346,12 +394,25 @@ private val IrClass.flags: Int
     }
 
 private val IrField.flags: Int
-    get() = origin.flags or visibility.flags or (correspondingPropertySymbol?.owner?.deprecationFlags ?: 0) or
+    get() = origin.flags or visibility.flags or
+            this.specialDeprecationFlag or (correspondingPropertySymbol?.owner?.deprecationFlags ?: 0) or
+            (if (annotations.hasAnnotation(KOTLIN_DEPRECATED)) Opcodes.ACC_DEPRECATED else 0) or
             (if (isFinal) Opcodes.ACC_FINAL else 0) or
             (if (isStatic) Opcodes.ACC_STATIC else 0) or
             (if (hasAnnotation(VOLATILE_ANNOTATION_FQ_NAME)) Opcodes.ACC_VOLATILE else 0) or
             (if (hasAnnotation(TRANSIENT_ANNOTATION_FQ_NAME)) Opcodes.ACC_TRANSIENT else 0) or
             (if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)) Opcodes.ACC_SYNTHETIC else 0)
+
+private val IrField.specialDeprecationFlag: Int
+    get() = if (shouldHaveSpecialDeprecationFlag()) Opcodes.ACC_DEPRECATED else 0
+
+private val JAVA_LANG_DEPRECATED = FqName("java.lang.Deprecated")
+private val KOTLIN_DEPRECATED = FqName("kotlin.Deprecated")
+
+fun IrField.shouldHaveSpecialDeprecationFlag(): Boolean {
+    return origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE &&
+            annotations.hasAnnotation(JAVA_LANG_DEPRECATED)
+}
 
 private val IrDeclarationOrigin.flags: Int
     get() = (if (isSynthetic) Opcodes.ACC_SYNTHETIC else 0) or
@@ -369,7 +430,19 @@ private val Visibility.flags: Int
     get() = AsmUtil.getVisibilityAccessFlag(this) ?: throw AssertionError("Unsupported visibility $this")
 
 internal val IrDeclaration.OtherOrigin: JvmDeclarationOrigin
-    get() = OtherOrigin(descriptor)
+    get() {
+        val klass = (this as? IrClass) ?: parentAsClass
+        return OtherOrigin(
+            // For declarations inside lambdas, produce a descriptor which refers back to the original function.
+            // This is needed for plugins which check for lambdas inside of inline functions using the descriptor
+            // contained in JvmDeclarationOrigin. This matches the behavior of the JVM backend.
+            if (klass.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL || klass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA) {
+                klass.attributeOwnerId.safeAs<IrFunctionReference>()?.symbol?.owner?.toIrBasedDescriptor() ?: toIrBasedDescriptor()
+            } else {
+                toIrBasedDescriptor()
+            }
+        )
+    }
 
 private fun IrClass.getSuperClassInfo(typeMapper: IrTypeMapper): IrSuperClassInfo {
     if (isInterface) {

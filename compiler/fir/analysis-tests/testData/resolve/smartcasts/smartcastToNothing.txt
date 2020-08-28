@@ -42,8 +42,8 @@ FILE: smartcastToNothing.kt
 
         }
 
-        R|<local>/s|?.R|kotlin/let|<R|A|, R|kotlin/Int|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
+        R|<local>/s|?.{ $subj$.R|kotlin/let|<R|A|, R|kotlin/Int|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
             ^ R|<local>/it|.R|/A.a|
         }
-        )
+        ) }
     }

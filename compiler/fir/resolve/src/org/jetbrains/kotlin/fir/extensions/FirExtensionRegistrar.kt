@@ -16,8 +16,9 @@ abstract class FirExtensionRegistrar {
     ) {
         val AVAILABLE_EXTENSIONS = listOf(
             FirStatusTransformerExtension::class,
-            FirClassGenerationExtension::class,
-            AbstractFirAdditionalCheckersExtension::class
+            FirDeclarationGenerationExtension::class,
+            AbstractFirAdditionalCheckersExtension::class,
+            FirSupertypeGenerationExtension::class
         )
     }
 
@@ -30,8 +31,8 @@ abstract class FirExtensionRegistrar {
         }
 
         @JvmName("plusClassGenerationExtension")
-        operator fun ((FirSession) -> FirClassGenerationExtension).unaryPlus() {
-            registerExtension(FirClassGenerationExtension::class, FirClassGenerationExtension.Factory { this.invoke(it) })
+        operator fun ((FirSession) -> FirDeclarationGenerationExtension).unaryPlus() {
+            registerExtension(FirDeclarationGenerationExtension::class, FirDeclarationGenerationExtension.Factory { this.invoke(it) })
         }
 
         @JvmName("plusAdditionalCheckersExtension")
@@ -40,6 +41,11 @@ abstract class FirExtensionRegistrar {
                 AbstractFirAdditionalCheckersExtension::class,
                 AbstractFirAdditionalCheckersExtension.Factory { this.invoke(it) }
             )
+        }
+
+        @JvmName("plusSupertypeGenerationExtension")
+        operator fun ((FirSession) -> FirSupertypeGenerationExtension).unaryPlus() {
+            registerExtension(FirSupertypeGenerationExtension::class, FirSupertypeGenerationExtension.Factory { this.invoke(it) })
         }
     }
 

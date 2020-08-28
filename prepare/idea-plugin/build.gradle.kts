@@ -13,7 +13,6 @@ repositories {
 // PILL: used in pill importer
 val projectsToShadow by extra(listOf(
         ":plugins:annotation-based-compiler-plugins-ide-support",
-        ":core:type-system",
         ":compiler:backend",
         ":compiler:backend-common",
         ":compiler:backend.jvm",
@@ -27,6 +26,7 @@ val projectsToShadow by extra(listOf(
         ":daemon-common-new",
         ":core:metadata",
         ":core:metadata.jvm",
+        ":core:compiler.common",
         ":core:descriptors",
         ":core:descriptors.jvm",
         ":core:deserialization",
@@ -39,6 +39,7 @@ val projectsToShadow by extra(listOf(
         ":idea:scripting-support",
         ":idea:idea-j2k",
         ":idea:formatter",
+        ":idea:line-indent-provider",
         ":compiler:psi",
         ":compiler:fir:cones",
         ":compiler:fir:checkers",
@@ -48,7 +49,7 @@ val projectsToShadow by extra(listOf(
         ":compiler:fir:java",
         ":compiler:fir:jvm",
         ":compiler:fir:raw-fir:psi2fir",
-        ":compiler:fir:raw-fir:fir-common",
+        ":compiler:fir:raw-fir:raw-fir.common",
         ":compiler:fir:fir2ir",
         ":compiler:fir:fir2ir:jvm-backend",
         ":compiler:frontend",
@@ -61,6 +62,7 @@ val projectsToShadow by extra(listOf(
         ":idea:idea-gradle-native",
         ":compiler:ir.psi2ir",
         ":compiler:ir.tree",
+        ":compiler:ir.tree.impl",
         ":js:js.ast",
         ":js:js.frontend",
         ":js:js.parser",
@@ -93,6 +95,11 @@ val projectsToShadow by extra(listOf(
         ":idea:idea-jvm",
         ":idea:idea-git",
         ":idea:idea-jps-common",
+        ":idea:idea-frontend-independent",
+        ":idea:idea-frontend-fir",
+        ":idea:idea-frontend-api",
+        ":idea:idea-frontend-fir:idea-fir-low-level-api",
+        ":idea:idea-fir",
         *if (Ide.IJ())
             arrayOf(
                 ":idea:idea-maven",
@@ -115,7 +122,7 @@ val libraryProjects = listOf(
     ":kotlin-script-runtime",
     ":kotlin-script-util",
     ":kotlin-scripting-common",
-    ":kotlin-scripting-compiler-impl-unshaded",
+    ":kotlin-scripting-compiler-impl",
     ":kotlin-scripting-intellij",
     ":kotlin-scripting-jvm",
     ":kotlin-util-io",
@@ -137,7 +144,12 @@ val libraries by configurations.creating {
     exclude("org.jetbrains.intellij.deps", "trove4j") // Idea already has trove4j
 }
 
-val jpsPlugin by configurations.creating
+val jpsPlugin by configurations.creating {
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+    }
+}
 
 configurations.all {
     resolutionStrategy {
@@ -150,7 +162,7 @@ dependencies {
         embedded(project(it)) { isTransitive = false }
     }
     embedded(protobufFull())
-    embedded(kotlinBuiltins())
+    embedded(kotlinBuiltins(forJvm = true))
 
     libraries(commonDep("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:${property("versions.kotlinx-collections-immutable")}"))
     libraries(commonDep("javax.inject"))

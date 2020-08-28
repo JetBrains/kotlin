@@ -5,41 +5,60 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
-import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
+import org.jetbrains.kotlin.name.Name
 
 interface FirMetadataSource : MetadataSource {
 
     val session: FirSession
 
     class File(
-        val file: FirFile, override val session: FirSession, descriptors: List<DeclarationDescriptor>
-    ) : MetadataSource.File(descriptors), FirMetadataSource
+        val file: FirFile, override val session: FirSession
+    ) : MetadataSource.File(emptyList()), FirMetadataSource
 
     class Class(
-        val klass: FirClass<*>, descriptor: WrappedClassDescriptor
-    ) : MetadataSource.Class(descriptor), FirMetadataSource {
+        val klass: FirClass<*>
+    ) : FirMetadataSource {
         override val session: FirSession
             get() = klass.session
+
+        override val name: Name?
+            get() = (klass as? FirRegularClass)?.name
     }
 
     class Function(
-        val function: FirFunction<*>, descriptor: FunctionDescriptor
-    ) : MetadataSource.Function(descriptor), FirMetadataSource {
+        val function: FirFunction<*>
+    ) : FirMetadataSource {
         override val session: FirSession
             get() = function.session
+
+        override val name: Name?
+            get() = when (function) {
+                is FirSimpleFunction -> function.name
+                is FirConstructor -> Name.special("<init>")
+                else -> null
+            }
+    }
+
+    class Property(
+        val property: FirProperty
+    ) : FirMetadataSource {
+        override val session: FirSession
+            get() = property.session
+
+        override val name: Name
+            get() = property.name
     }
 
     class Variable(
-        val variable: FirVariable<*>,
-        descriptor: PropertyDescriptor
-    ) : MetadataSource.Property(descriptor), FirMetadataSource {
+        val variable: FirVariable<*>
+    ) : FirMetadataSource {
         override val session: FirSession
             get() = variable.session
+
+        override val name: Name
+            get() = variable.name
     }
 }

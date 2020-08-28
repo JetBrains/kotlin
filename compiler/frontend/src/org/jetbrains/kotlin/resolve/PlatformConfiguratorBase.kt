@@ -36,7 +36,9 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     TailrecFunctionChecker,
     TrailingCommaDeclarationChecker,
     MissingDependencySupertypeChecker.ForDeclarations,
-    FunInterfaceDeclarationChecker()
+    FunInterfaceDeclarationChecker(),
+    DeprecatedSinceKotlinAnnotationChecker,
+    ContractDescriptionBlockChecker
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(
@@ -49,7 +51,8 @@ private val DEFAULT_CALL_CHECKERS = listOf(
     PrimitiveNumericComparisonCallChecker, LambdaWithSuspendModifierCallChecker,
     UselessElvisCallChecker(), ResultTypeWithNullableOperatorsChecker(), NullableVarargArgumentCallChecker,
     NamedFunAsExpressionChecker, ContractNotAllowedCallChecker, ReifiedTypeParameterSubstitutionChecker(),
-    MissingDependencySupertypeChecker.ForCalls, AbstractClassInstantiationChecker,
+    MissingDependencySupertypeChecker.ForCalls, AbstractClassInstantiationChecker, SuspendConversionCallChecker,
+    UnitConversionCallChecker, FunInterfaceConstructorReferenceChecker, NullableExtensionOperatorWithSafeCallChecker
 )
 private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
 private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = listOf(

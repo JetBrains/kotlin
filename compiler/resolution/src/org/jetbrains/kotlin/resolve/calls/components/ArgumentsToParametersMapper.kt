@@ -69,7 +69,7 @@ class ArgumentsToParametersMapper(
 
     private class CallArgumentProcessor(
         val descriptor: CallableDescriptor,
-        val allowMixedNamedAndPositionArguments: Boolean
+        val languageSettingsAllowMixedNamedAndPositionArguments: Boolean
     ) {
         val result: MutableMap<ValueParameterDescriptor, ResolvedCallArgument> = LinkedHashMap()
         private var state = State.POSITION_ARGUMENTS
@@ -148,6 +148,9 @@ class ArgumentsToParametersMapper(
                 addDiagnostic(NamedArgumentNotAllowed(argument, descriptor))
             }
 
+            val stateAllowsMixedNamedAndPositionArguments = state != State.NAMED_ONLY_ARGUMENTS
+            state = State.NAMED_ONLY_ARGUMENTS
+
             val parameter = findParameterByName(argument, name) ?: return
 
             addDiagnostic(NamedArgumentReference(argument, parameter))
@@ -159,7 +162,8 @@ class ArgumentsToParametersMapper(
 
             result[parameter.original] = ResolvedCallArgument.SimpleArgument(argument)
 
-            if (allowMixedNamedAndPositionArguments && parameters.getOrNull(currentPositionedParameterIndex)?.original == parameter.original) {
+            if (stateAllowsMixedNamedAndPositionArguments && languageSettingsAllowMixedNamedAndPositionArguments &&
+                parameters.getOrNull(currentPositionedParameterIndex)?.original == parameter.original) {
                 state = State.POSITION_ARGUMENTS
                 currentPositionedParameterIndex++
             }
@@ -212,7 +216,6 @@ class ArgumentsToParametersMapper(
                     if (state == State.VARARG_POSITION) {
                         completeVarargPositionArguments()
                     }
-                    state = State.NAMED_ONLY_ARGUMENTS
 
                     processNamedArgument(argument, argumentName)
                 }

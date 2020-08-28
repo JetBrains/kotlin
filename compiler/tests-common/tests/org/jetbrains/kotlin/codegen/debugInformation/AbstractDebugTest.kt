@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen.debugInformation
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.PathUtil
 import com.intellij.util.SystemProperties
+import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.VirtualMachine
 import com.sun.jdi.event.*
 import com.sun.jdi.request.EventRequest
@@ -194,13 +195,22 @@ abstract class AbstractDebugTest : CodegenTestCase() {
                     is MethodEntryEvent -> {
                         if (!inBoxMethod && event.location().method().name() == BOX_METHOD) {
                             if (manager.stepRequests().isEmpty()) {
+                                // Create line stepping request to get all normal line steps starting now.
                                 val stepReq = manager.createStepRequest(event.thread(), StepRequest.STEP_LINE, StepRequest.STEP_INTO)
                                 stepReq.setSuspendPolicy(SUSPEND_ALL)
                                 stepReq.addClassExclusionFilter("java.*")
                                 stepReq.addClassExclusionFilter("sun.*")
                                 stepReq.addClassExclusionFilter("kotlin.*")
+                                // Create class prepare request to be able to set breakpoints on class initializer lines.
+                                // There are no line stepping events for class initializers, so we depend on breakpoints.
+                                val prepareReq = manager.createClassPrepareRequest()
+                                prepareReq.setSuspendPolicy(SUSPEND_ALL)
+                                prepareReq.addClassExclusionFilter("java.*")
+                                prepareReq.addClassExclusionFilter("sun.*")
+                                prepareReq.addClassExclusionFilter("kotlin.*")
                             }
                             manager.stepRequests().map { it.enable() }
+                            manager.classPrepareRequests().map { it.enable() }
                             inBoxMethod = true
                             storeStep(loggedItems, event)
                         }
@@ -209,6 +219,8 @@ abstract class AbstractDebugTest : CodegenTestCase() {
                         // Handle the case where an Exception causing program to exit without MethodExitEvent.
                         if (inBoxMethod && event.location().method().name() == "run") {
                             manager.stepRequests().map { it.disable() }
+                            manager.classPrepareRequests().map { it.disable() }
+                            manager.breakpointRequests().map { it.disable() }
                             break@vmLoop
                         }
                         if (inBoxMethod) {
@@ -218,7 +230,26 @@ abstract class AbstractDebugTest : CodegenTestCase() {
                     is MethodExitEvent -> {
                         if (event.location().method().name() == BOX_METHOD) {
                             manager.stepRequests().map { it.disable() }
+                            manager.classPrepareRequests().map { it.disable() }
+                            manager.breakpointRequests().map { it.disable() }
                             break@vmLoop
+                        }
+                    }
+                    is ClassPrepareEvent -> {
+                        if (inBoxMethod) {
+                            val initializer = event.referenceType().methods().find { it.isStaticInitializer }
+                            try {
+                                initializer?.allLineLocations()?.forEach {
+                                    manager.createBreakpointRequest(it).enable()
+                                }
+                            } catch (e: AbsentInformationException) {
+                                // If there is no line information, do not set breakpoints.
+                            }
+                        }
+                    }
+                    is BreakpointEvent -> {
+                        if (inBoxMethod) {
+                            storeStep(loggedItems, event)
                         }
                     }
                     else -> {

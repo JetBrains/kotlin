@@ -1,3 +1,4 @@
+// IGNORE_FIR
 // EXPECTED_DUPLICATED_HIGHLIGHTING
 
 <info descr="null">data</info> class <info descr="null">Box</info>(val <info descr="null">v</info>: <info descr="null">Int</info>)

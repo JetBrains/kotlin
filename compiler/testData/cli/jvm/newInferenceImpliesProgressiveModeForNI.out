@@ -1,0 +1,16 @@
+warning: ATTENTION!
+This build uses unsafe internal compiler arguments:
+
+-XXLanguage:+NewInference
+
+This mode is not recommended for production use,
+as no stability/compatibility guarantees are given on
+compiler or generated code. Use it at your own risk!
+
+compiler/testData/cli/jvm/newInferenceImpliesProgressiveModeForNI.kt:6:13: warning: parameter 'x' is never used
+    fun bar(x: Int = 0): String = ""
+            ^
+compiler/testData/cli/jvm/newInferenceImpliesProgressiveModeForNI.kt:9:13: warning: variable 'r1' is never used
+        val r1 = foo(::bar)
+            ^
+OK

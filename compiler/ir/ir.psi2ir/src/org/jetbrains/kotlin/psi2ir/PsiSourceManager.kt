@@ -113,7 +113,7 @@ class PsiSourceManager : SourceManager {
         (irFile.fileEntry as? PsiFileEntry)?.let { ktFileByFileEntry[it] }
 
     override fun getFileEntry(irFile: IrFile): SourceManager.FileEntry? =
-        fileEntriesByIrFile[irFile]
+        fileEntriesByIrFile[irFile] ?: irFile.fileEntry
 
     fun <E : PsiElement> findPsiElement(irElement: IrElement, irFile: IrFile, psiElementClass: KClass<E>): E? {
         val psiFileEntry = fileEntriesByIrFile[irFile] ?: return null

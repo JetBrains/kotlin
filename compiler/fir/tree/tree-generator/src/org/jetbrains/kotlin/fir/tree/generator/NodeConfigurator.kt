@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.tree.generator.FieldSets.calleeReference
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.classKind
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.controlFlowGraphReferenceField
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.declarations
-import org.jetbrains.kotlin.fir.tree.generator.FieldSets.effectiveVisibility
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.initializer
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.modality
 import org.jetbrains.kotlin.fir.tree.generator.FieldSets.name
@@ -55,11 +54,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         typeParametersOwner.configure {
-            +typeParameters
+            +typeParameters.withTransform()
         }
 
         typeParameterRefsOwner.configure {
-            +typeParameterRefs
+            +typeParameterRefs.withTransform()
         }
 
         resolvable.configure {
@@ -68,6 +67,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         diagnosticHolder.configure {
             +field("diagnostic", coneDiagnosticType)
+        }
+
+        controlFlowGraphOwner.configure {
+            +controlFlowGraphReferenceField
         }
 
         declaration.configure {
@@ -97,10 +100,9 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         function.configure {
             withArg("F", "FirFunction<F>")
             parentArg(callableDeclaration, "F", "F")
-            +controlFlowGraphReferenceField
             +symbol("FirFunctionSymbol", "F")
             +fieldList(valueParameter, withReplace = true).withTransform()
-            +body(nullable = true)
+            +body(nullable = true).withTransform()
         }
 
         errorFunction.configure {
@@ -184,8 +186,12 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             needTransformOtherChildren()
         }
 
-        qualifiedAccessWithoutCallee.configure {
-            +booleanField("safe")
+        elvisExpression.configure {
+            +field("lhs", expression).withTransform()
+            +field("rhs", expression).withTransform()
+        }
+
+        qualifiedAccess.configure {
             +typeArguments.withTransform()
             +receivers
         }
@@ -200,10 +206,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("calleeReference", namedReference)
         }
 
-        operatorCall.configure {
-            +field("operation", operationType)
-        }
-
         comparisonExpression.configure {
             +field("operation", operationType)
             +field("compareToCall", functionCall)
@@ -211,7 +213,18 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         typeOperatorCall.configure {
             +field("operation", operationType)
-            +field("conversionTypeRef", typeRef)
+            +field("conversionTypeRef", typeRef).withTransform()
+            needTransformOtherChildren()
+        }
+
+        assignmentOperatorStatement.configure {
+            +field("operation", operationType)
+            +field("leftArgument", expression).withTransform()
+            +field("rightArgument", expression).withTransform()
+        }
+
+        equalityOperatorCall.configure {
+            +field("operation", operationType)
         }
 
         whenBranch.configure {
@@ -244,17 +257,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("companionObject", regularClass, nullable = true).withTransform()
             +booleanField("hasLazyNestedClassifiers")
             +superTypeRefs(withReplace = true)
-            +controlFlowGraphReferenceField
         }
 
         anonymousObject.configure {
             parentArg(klass, "F", anonymousObject)
             +symbol("FirAnonymousObjectSymbol")
-            +controlFlowGraphReferenceField
-        }
-
-        sealedClass.configure {
-            +fieldList("inheritors", classIdType, withReplace = true)
         }
 
         typeAlias.configure {
@@ -270,7 +277,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             parentArg(function, "F", anonymousFunction)
             +symbol("FirAnonymousFunctionSymbol")
             +field(label, nullable = true)
-            +field(invocationKindType, nullable = true, withReplace = true).apply {
+            +field("invocationKind", eventOccurrencesRangeType, nullable = true, withReplace = true).apply {
                 isMutable = true
             }
             +booleanField("isLambda")
@@ -283,7 +290,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +symbol("FirTypeParameterSymbol")
             +field(varianceType)
             +booleanField("isReified")
-            +fieldList("bounds", typeRef)
+            +fieldList("bounds", typeRef, withReplace = true)
             +annotations
         }
 
@@ -303,11 +310,9 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         property.configure {
             parentArg(variable, "F", property)
             parentArg(callableMemberDeclaration, "F", property)
-            +controlFlowGraphReferenceField
             +symbol("FirPropertySymbol")
             +field("backingFieldSymbol", backingFieldSymbolType)
             +booleanField("isLocal")
-            +typeParameters
             +status
         }
 
@@ -323,12 +328,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         declarationStatus.configure {
             +visibility
-            +effectiveVisibility
             +modality
             generateBooleanFields(
                 "expect", "actual", "override", "operator", "infix", "inline", "tailRec",
                 "external", "const", "lateInit", "inner", "companion", "data", "suspend", "static",
-                "fromSealedClass", "fromEnumClass"
+                "fromSealedClass", "fromEnumClass", "fun"
             )
         }
 
@@ -349,6 +353,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         delegatedConstructorCall.configure {
             +field("constructedTypeRef", typeRef, withReplace = true)
             +field("dispatchReceiver", expression).withTransform()
+            +field("calleeReference", reference, withReplace = true)
             generateBooleanFields("this", "super")
         }
 
@@ -373,6 +378,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             needTransformOtherChildren()
         }
 
+        errorProperty.configure {
+            parentArg(variable, "F", errorProperty)
+            +symbol("FirErrorPropertySymbol")
+        }
+
         enumEntry.configure {
             parentArg(variable, "F", enumEntry)
             parentArg(callableMemberDeclaration, "F", enumEntry)
@@ -387,7 +397,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             parentArg(symbolOwner, "E", anonymousInitializer)
             +body(nullable = true)
             +symbol(anonymousInitializerSymbolType.type)
-            +controlFlowGraphReferenceField
         }
 
         file.configure {
@@ -418,7 +427,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         annotationCall.configure {
             +field("useSiteTarget", annotationUseSiteTargetType, nullable = true)
             +field("annotationTypeRef", typeRef).withTransform()
-            +booleanField("resolved", withReplace = true)
+            +field("resolveStatus", annotationResolveStatusType, withReplace = true)
         }
 
         arraySetCall.configure {
@@ -443,8 +452,21 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("originalType", typeRef)
         }
 
+        safeCallExpression.configure {
+            +field("receiver", expression).withTransform()
+            // Special node that might be used as a reference to receiver of a safe call after null check
+            +field("checkedSubjectRef", safeCallCheckedSubjectReferenceType)
+            // One that uses checkedReceiver as a receiver
+            +field("regularQualifiedAccess", qualifiedAccess, withReplace = true).withTransform()
+        }
+
+        checkedSafeCallSubject.configure {
+            +field("originalReceiverRef", safeCallOriginalReceiverReferenceType)
+        }
+
         callableReferenceAccess.configure {
             +field("calleeReference", namedReference, withReplace = true).withTransform()
+            +booleanField("hasQuestionMarkAtLHS", withReplace = true)
         }
 
         getClassCall.configure {
@@ -469,7 +491,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("relativeClassFqName", fqNameType, nullable = true)
             +field("classId", classIdType, nullable = true)
             +field("symbol", classLikeSymbolType, nullable = true)
-            +booleanField("safe", withReplace = true)
+            +booleanField("isNullableLHSForCallableReference", withReplace = true)
             +typeArguments.withTransform()
         }
 
@@ -490,7 +512,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         whenSubjectExpression.configure {
-            +field("whenSubject", whenSubjectType)
+            +field("whenRef", whenRefType)
         }
 
         wrappedExpression.configure {
@@ -583,13 +605,21 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field(varianceType)
         }
 
+        effectDeclaration.configure {
+            +field("effect", coneEffectDeclarationType)
+        }
+
         rawContractDescription.configure {
-            +field("contractCall", functionCall)
+            +fieldList("rawEffects", expression)
         }
 
         resolvedContractDescription.configure {
-            +fieldList("effects", effectDeclarationType)
+            +fieldList("effects", effectDeclaration)
             +fieldList("unresolvedEffects", statement)
+        }
+
+        legacyRawContractDescription.configure {
+            +field("contractCall", functionCall)
         }
     }
 }

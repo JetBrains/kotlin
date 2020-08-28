@@ -7,6 +7,7 @@ package org.jetbrains.uast.test.kotlin
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.extensions.DefaultPluginDescriptor
 import com.intellij.openapi.util.Disposer
 import com.intellij.patterns.uast.injectionHostUExpression
 import com.intellij.psi.*
@@ -101,6 +102,7 @@ fun registerReferenceContributor(disposable: Disposable, clazz: Class<out PsiRef
     ExtensionTestUtil.maskExtensions(PsiReferenceContributor.EP_NAME,
                                      listOf(PsiReferenceContributorEP().apply {
                                          implementationClass = clazz.name
+                                         pluginDescriptor = DefaultPluginDescriptor("kotlin-uast-test")
                                      }
                                      ), disposable)
 

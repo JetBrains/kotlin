@@ -1,0 +1,27 @@
+package
+
+public fun test1(): kotlin.Unit
+public fun withVararg(/*0*/ vararg xs: kotlin.Int /*kotlin.IntArray*/): kotlin.Int
+public operator fun A.get(/*0*/ i: IFoo): kotlin.Int
+public operator fun A.set(/*0*/ i: IFoo, /*1*/ newValue: kotlin.Int): kotlin.Unit
+
+public object A {
+    private constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public fun interface IFoo {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun foo(/*0*/ i: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public fun interface IFoo2 : IFoo {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ i: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

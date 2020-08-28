@@ -17,49 +17,39 @@
 package org.jetbrains.kotlin.ir.declarations.lazy
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrLazyEnumEntryImpl(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override var origin: IrDeclarationOrigin,
     override val symbol: IrEnumEntrySymbol,
     override val descriptor: ClassDescriptor,
-    stubGenerator: DeclarationStubGenerator,
-    typeTranslator: TypeTranslator
-) : IrLazyDeclarationBase(startOffset, endOffset, origin, stubGenerator, typeTranslator),
-    IrEnumEntry {
-
+    override val stubGenerator: DeclarationStubGenerator,
+    override val typeTranslator: TypeTranslator,
+) : IrEnumEntry(), IrLazyDeclarationBase {
     init {
         symbol.bind(this)
     }
+
+    override var parent: IrDeclarationParent by createLazyParent()
+
+    override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 
     override val name: Name = symbol.descriptor.name
 
     override var correspondingClass: IrClass? = null
 
     override var initializerExpression: IrExpressionBody? = null
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitEnumEntry(this, data)
-    }
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        initializerExpression?.accept(visitor, data)
-        correspondingClass?.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        initializerExpression = initializerExpression?.transform(transformer, data)
-        correspondingClass = correspondingClass?.transform(transformer, data) as? IrClass
-    }
 }

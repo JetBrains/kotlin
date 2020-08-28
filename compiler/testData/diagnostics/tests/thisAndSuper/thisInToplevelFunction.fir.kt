@@ -1,4 +1,4 @@
 fun foo1() : Unit {
-  this
-  this@a
+  <!NO_THIS!>this<!>
+  <!UNRESOLVED_LABEL!>this@a<!>
 }

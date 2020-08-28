@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
@@ -68,7 +69,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
 
         val stubGenerator = DeclarationStubGenerator(
             irModule.descriptor,
-            SymbolTable(signaturer), // TODO
+            SymbolTable(signaturer, IrFactoryImpl), // TODO
             myEnvironment.configuration.languageVersionSettings
         )
 
@@ -179,7 +180,8 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             element.acceptChildrenVoid(this)
         }
 
-        override fun visitDeclaration(declaration: IrDeclaration) {
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
+        override fun visitDeclaration(declaration: IrDeclarationBase) {
             if (declaration is IrSymbolOwner) {
                 declaration.symbol.checkBinding("decl", declaration)
 
@@ -205,18 +207,11 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             visitDeclaration(declaration)
 
             require((declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE) == declaration.isFakeOverride) {
-                "${declaration.descriptor}: origin: ${declaration.origin}; isFakeOverride: ${declaration.isFakeOverride}"
+                "${declaration.render()}: origin: ${declaration.origin}; isFakeOverride: ${declaration.isFakeOverride}"
             }
         }
 
-        override fun visitField(declaration: IrField) {
-            visitDeclaration(declaration)
-
-            require((declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE) == declaration.isFakeOverride) {
-                "${declaration.descriptor}: origin: ${declaration.origin}; isFakeOverride: ${declaration.isFakeOverride}"
-            }
-        }
-
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
         override fun visitFunction(declaration: IrFunction) {
             visitDeclaration(declaration)
 
@@ -257,7 +252,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             visitFunction(declaration)
 
             require((declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE) == declaration.isFakeOverride) {
-                "${declaration.descriptor}: origin: ${declaration.origin}; isFakeOverride: ${declaration.isFakeOverride}"
+                "${declaration.render()}: origin: ${declaration.origin}; isFakeOverride: ${declaration.isFakeOverride}"
             }
         }
 
@@ -283,7 +278,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
 
         private fun IrSymbol.checkBinding(kind: String, irElement: IrElement) {
             if (!isBound) {
-                error("${javaClass.simpleName} $descriptor is unbound @$kind ${irElement.render()}")
+                error("${javaClass.simpleName} descriptor is unbound @$kind ${irElement.render()}")
             } else {
                 val irDeclaration = owner as? IrDeclaration
                 if (irDeclaration != null) {
@@ -297,16 +292,18 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
 
             val otherSymbol = symbolForDeclaration.getOrPut(owner) { this }
             if (this != otherSymbol) {
-                error("Multiple symbols for $descriptor @$kind ${irElement.render()}")
+                error("Multiple symbols for descriptor of @$kind ${irElement.render()}")
             }
         }
 
+        @OptIn(ObsoleteDescriptorBasedAPI::class)
         override fun visitClass(declaration: IrClass) {
             visitDeclaration(declaration)
 
             checkTypeParameters(declaration.descriptor, declaration, declaration.descriptor.declaredTypeParameters)
         }
 
+        @ObsoleteDescriptorBasedAPI
         private fun checkTypeParameters(
             descriptor: DeclarationDescriptor,
             declaration: IrTypeParametersContainer,

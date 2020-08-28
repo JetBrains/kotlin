@@ -26,9 +26,7 @@ kotlin {
     }
     sourceSets {
         commonMain {
-            dependencies {
-                implementation kotlin('stdlib-common')
-            }
+
         }
         commonTest {
             dependencies {
@@ -38,12 +36,14 @@ kotlin {
         }
         androidMain {
             dependencies {
-                implementation kotlin('stdlib-jdk7')
-                implementation 'androidx.core:core-ktx:1.2.0'
+                implementation 'com.google.android.material:material:1.2.0'
             }
         }
         androidTest {
-
+            dependencies {
+                implementation kotlin('test-junit')
+                implementation 'junit:junit:4.12'
+            }
         }
         iosMain {
 
@@ -55,6 +55,7 @@ kotlin {
 }
 android {
     compileSdkVersion 29
+    sourceSets.main.manifest.srcFile('src/androidMain/AndroidManifest.xml')
     defaultConfig {
         minSdkVersion 24
         targetSdkVersion 29

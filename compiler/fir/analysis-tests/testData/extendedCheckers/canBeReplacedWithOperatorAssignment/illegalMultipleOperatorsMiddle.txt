@@ -1,0 +1,6 @@
+FILE: illegalMultipleOperatorsMiddle.kt
+    public final fun foo(): R|kotlin/Unit| {
+        lvar x: R|kotlin/Int| = Int(0)
+        lval y: R|kotlin/Int| = Int(0)
+        R|<local>/x| = R|<local>/y|.R|kotlin/Int.div|(R|<local>/x|).R|kotlin/Int.plus|(Int(0))
+    }

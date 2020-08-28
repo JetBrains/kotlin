@@ -24,14 +24,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.utils.SmartList
 
 class IrVarargImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType,
     override val varargElementType: IrType
-) :
-    IrExpressionBase(startOffset, endOffset, type),
-    IrVararg {
-
+) : IrVararg() {
     constructor(
         startOffset: Int,
         endOffset: Int,

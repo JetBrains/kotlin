@@ -16,7 +16,7 @@ fun foo() {
     val y: Int? = 0
     val z: Int? = 0
     <!INAPPLICABLE_CANDIDATE!>bar<!>(if (y != null) y else z, y)
-    y <!INAPPLICABLE_CANDIDATE!>+<!> 2
+    y <!NONE_APPLICABLE!>+<!> 2
     <!INAPPLICABLE_CANDIDATE!>baz<!>(y, y, if (y == null) return else y, y)
     baz(y, z!!, z, y)
 }

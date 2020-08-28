@@ -150,7 +150,7 @@ sealed class UnstableSmartCast(
         operator fun invoke(
             argument: ExpressionKotlinCallArgument,
             targetType: UnwrappedType,
-            isReceiver: Boolean = false, // for reproducing OI behaviour
+            @Suppress("UNUSED_PARAMETER") isReceiver: Boolean = false, // for reproducing OI behaviour
         ): UnstableSmartCast {
             return UnstableSmartCastResolutionError(argument, targetType)
         }
@@ -242,4 +242,34 @@ class NotEnoughInformationForLambdaParameter(
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCallArgument(lambdaArgument, this)
     }
+}
+
+class CandidateChosenUsingOverloadResolutionByLambdaAnnotation : KotlinCallDiagnostic(RESOLVED) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCall(this)
+    }
+}
+
+class CompatibilityWarning(val candidate: CallableDescriptor) : KotlinCallDiagnostic(RESOLVED) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCall(this)
+    }
+}
+
+class CompatibilityWarningOnArgument(
+    val argument: CallableReferenceKotlinCallArgument,
+    val candidate: CallableDescriptor
+) : KotlinCallDiagnostic(RESOLVED) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCallArgument(argument, this)
+    }
+}
+
+class AdaptedCallableReferenceIsUsedWithReflection(
+    val argument: CallableReferenceKotlinCallArgument,
+) : KotlinCallDiagnostic(RESOLVED_WITH_ERROR) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCallArgument(argument, this)
+    }
+
 }

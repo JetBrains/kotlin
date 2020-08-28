@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.intentions.ConvertReferenceToLambdaIntention
 import org.jetbrains.kotlin.idea.intentions.SpecifyExplicitLambdaSignatureIntention
-import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
+import org.jetbrains.kotlin.idea.references.KtSimpleReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 interface UsageReplacementStrategy {
-    fun createReplacer(usage: KtSimpleNameExpression): (() -> KtElement?)?
+    fun createReplacer(usage: KtReferenceExpression): (() -> KtElement?)?
 }
 
 private val LOG = Logger.getInstance(UsageReplacementStrategy::class.java)
@@ -53,7 +53,7 @@ fun UsageReplacementStrategy.replaceUsagesInWholeProject(
                 val usages = runReadAction {
                     val searchScope = KotlinSourceFilterScope.projectSources(GlobalSearchScope.projectScope(project), project)
                     ReferencesSearch.search(targetPsiElement, searchScope)
-                        .filterIsInstance<KtSimpleNameReference>()
+                        .filterIsInstance<KtSimpleReference<KtReferenceExpression>>()
                         .map { ref -> ref.expression }
                 }
                 this@replaceUsagesInWholeProject.replaceUsages(usages, targetPsiElement, project, commandName, postAction)
@@ -62,7 +62,7 @@ fun UsageReplacementStrategy.replaceUsagesInWholeProject(
 }
 
 fun UsageReplacementStrategy.replaceUsages(
-    usages: Collection<KtSimpleNameExpression>,
+    usages: Collection<KtReferenceExpression>,
     targetPsiElement: PsiElement,
     project: Project,
     commandName: String,
@@ -104,7 +104,7 @@ fun UsageReplacementStrategy.replaceUsages(
  * @return false if some usages were invalidated
  */
 private fun UsageReplacementStrategy.processUsages(
-    usages: List<KtSimpleNameExpression>,
+    usages: List<KtReferenceExpression>,
     targetDeclaration: KtNamedDeclaration?,
     importsToDelete: MutableList<KtImportDirective>
 ): Boolean {
@@ -116,7 +116,7 @@ private fun UsageReplacementStrategy.processUsages(
                 continue
             }
 
-            if (specialUsageProcessing(usage, targetDeclaration)) continue
+            if (usage is KtSimpleNameExpression && specialUsageProcessing(usage, targetDeclaration)) continue
 
             //TODO: keep the import if we don't know how to replace some of the usages
             val importDirective = usage.getStrictParentOfType<KtImportDirective>()

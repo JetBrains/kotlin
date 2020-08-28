@@ -5,17 +5,27 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.name.Name
 
 interface MetadataSource {
-    open class Class(val descriptor: ClassDescriptor) : MetadataSource
+    val name: Name?
 
-    open class File(val descriptors: List<DeclarationDescriptor>) : MetadataSource
+    abstract class DescriptorBased<D : DeclarationDescriptor> internal constructor(val descriptor: D) : MetadataSource {
+        override val name: Name
+            get() = descriptor.name
+    }
 
-    open class Function(val descriptor: FunctionDescriptor) : MetadataSource
+    class Class(descriptor: ClassDescriptor) : DescriptorBased<ClassDescriptor>(descriptor)
 
-    open class Property(val descriptor: PropertyDescriptor) : MetadataSource
+    open class File(val descriptors: List<DeclarationDescriptor>) : MetadataSource {
+        override val name: Name?
+            get() = null
+    }
+
+    class Function(descriptor: FunctionDescriptor) : DescriptorBased<FunctionDescriptor>(descriptor)
+
+    class Property(descriptor: PropertyDescriptor) : DescriptorBased<PropertyDescriptor>(descriptor)
+
+    class LocalDelegatedProperty(descriptor: VariableDescriptorWithAccessors) : DescriptorBased<VariableDescriptorWithAccessors>(descriptor)
 }

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 
 abstract class AbstractFirBlackBoxCodegenTest : AbstractIrBlackBoxCodegenTest() {
     override fun updateConfiguration(configuration: CompilerConfiguration) {
+        super.updateConfiguration(configuration)
         configuration.put(CommonConfigurationKeys.USE_FIR, true)
         configuration.put(JVMConfigurationKeys.IR, true)
     }

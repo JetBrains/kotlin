@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.fir.plugin
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirPluginKey
-import org.jetbrains.kotlin.fir.extensions.AnnotationFqn
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.*
 import org.jetbrains.kotlin.fir.extensions.transform
@@ -21,7 +21,7 @@ class AllOpenStatusTransformer(session: FirSession) : FirStatusTransformerExtens
         private val ALL_OPEN = FqName("org.jetbrains.kotlin.fir.plugin.AllOpen")
     }
 
-    override fun transformStatus(declaration: FirDeclaration, status: FirDeclarationStatus): FirDeclarationStatus {
+    override fun transformStatus(declaration: FirDeclaration, owners: List<FirAnnotatedDeclaration>, status: FirDeclarationStatus): FirDeclarationStatus {
         if (status.modality != null) return status
         return status.transform(modality = Modality.OPEN)
     }

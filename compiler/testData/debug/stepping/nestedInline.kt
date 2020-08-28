@@ -42,22 +42,22 @@ inline fun html(init: () -> Unit) {
 }
 
 // LINENUMBERS
-// test.kt:19
-// test.kt:7
-// test.kt:9
-// 1.kt:18
-// 1.kt:6
-// test.kt:10
-// 1.kt:14
-// 1.kt:10
-// 1.kt:11
-// test.kt:11
-// test.kt:12
-// 1.kt:12
-// 1.kt:14
-// test.kt:13
-// 1.kt:7
-// 1.kt:18
-// test.kt:15
-// test.kt:19
-// test.kt:21
+// test.kt:19 box
+// test.kt:7 box
+// test.kt:9 box
+// 1.kt:18 box
+// 1.kt:6 box
+// test.kt:10 box
+// 1.kt:14 box
+// 1.kt:10 box
+// 1.kt:11 box
+// test.kt:11 box
+// test.kt:12 box
+// 1.kt:12 box
+// 1.kt:14 box
+// test.kt:13 box
+// 1.kt:7 box
+// 1.kt:18 box
+// test.kt:15 box
+// test.kt:19 box
+// test.kt:21 box

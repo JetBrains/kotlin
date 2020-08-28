@@ -93,7 +93,7 @@ public expect open class ArithmeticException : RuntimeException {
     constructor(message: String?)
 }
 
-@Deprecated("This exception type is not supposed to be thrown or caught in common code and will be removed from kotlin-stdlib-common soon.")
+@Deprecated("This exception type is not supposed to be thrown or caught in common code and will be removed from kotlin-stdlib-common soon.", level = DeprecationLevel.ERROR)
 public expect open class NoWhenBranchMatchedException : RuntimeException {
     constructor()
     constructor(message: String?)
@@ -101,7 +101,7 @@ public expect open class NoWhenBranchMatchedException : RuntimeException {
     constructor(cause: Throwable?)
 }
 
-@Deprecated("This exception type is not supposed to be thrown or caught in common code and will be removed from kotlin-stdlib-common soon.")
+@Deprecated("This exception type is not supposed to be thrown or caught in common code and will be removed from kotlin-stdlib-common soon.", level = DeprecationLevel.ERROR)
 public expect class UninitializedPropertyAccessException : RuntimeException {
     constructor()
     constructor(message: String?)
@@ -138,6 +138,7 @@ public expect fun Throwable.stackTraceToString(): String
  * Prints the [detailed description][Throwable.stackTraceToString] of this throwable to the standard output or standard error output.
  */
 @SinceKotlin("1.4")
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 public expect fun Throwable.printStackTrace(): Unit
 
 /**

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.tools.projectWizard.core.Writer
 import org.jetbrains.kotlin.tools.projectWizard.core.div
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplateDescriptor
+import org.jetbrains.kotlin.tools.projectWizard.templates.FileTextDescriptor
 import org.jetbrains.kotlin.tools.projectWizard.templates.Template
 import java.io.StringWriter
 
@@ -30,9 +31,12 @@ abstract class TemplateEngineService : WizardService {
 
     fun Writer.writeTemplate(template: FileTemplate): TaskResult<Unit> {
         val formatter = service<FileFormattingService>()
-        val text = renderTemplate(template.descriptor, template.data).let { text ->
-            formatter.formatFile(text, template.descriptor.relativePath.fileName.toString())
+        val unformattedText = when (val descriptor = template.descriptor) {
+            is FileTemplateDescriptor -> renderTemplate(descriptor, template.data)
+            is FileTextDescriptor -> descriptor.text
         }
+        val fileName = template.descriptor.relativePath?.fileName?.toString()
+        val text = fileName?.let { formatter.formatFile(unformattedText, it) } ?: unformattedText
         return service<FileSystemWizardService>().createFile(template.rootPath / template.descriptor.relativePath, text)
     }
 }

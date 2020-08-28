@@ -34,6 +34,7 @@ class ScriptCompilationConfigurationFromDefinition(
         providedProperties.putIfAny(scriptDefinition.providedProperties.map { it.first to KotlinType(it.second) })
         annotationsForSamWithReceivers.put(scriptDefinition.annotationsForSamWithReceivers.map(::KotlinType))
         platform(scriptDefinition.platform)
+        @Suppress("DEPRECATION")
         compilerOptions.putIfAny(scriptDefinition.additionalCompilerArguments)
         ide {
             acceptedLocations.put(scriptDefinition.scriptExpectedLocations.mapLegacyExpectedLocations())

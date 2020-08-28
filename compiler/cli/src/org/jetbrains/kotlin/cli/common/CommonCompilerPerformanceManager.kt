@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.common
 
 import org.jetbrains.kotlin.util.PerformanceCounter
 import java.io.File
+import java.lang.management.GarbageCollectorMXBean
 import java.lang.management.ManagementFactory
 import java.util.concurrent.TimeUnit
 
@@ -18,16 +19,35 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
     private var analysisStart: Long = 0
     private var generationStart: Long = 0
 
+    private var startGCData = mutableMapOf<String, GCData>()
+
+    private var irTranslationStart: Long = 0
+    private var irGenerationStart: Long = 0
+
+    private var targetDescription: String? = null
+    protected var files: Int? = null
+    protected var lines: Int? = null
+
+    fun getTargetInfo(): String =
+        "$targetDescription, $files files ($lines lines)"
+
     fun getMeasurementResults(): List<PerformanceMeasurement> = measurements
 
     fun enableCollectingPerformanceStatistics() {
         isEnabled = true
         PerformanceCounter.setTimeCounterEnabled(true)
+        ManagementFactory.getGarbageCollectorMXBeans().associateTo(startGCData) { it.name to GCData(it) }
     }
 
-    open fun notifyCompilerInitialized() {
+    private fun deltaTime(start: Long): Long = PerformanceCounter.currentTime() - start
+
+    open fun notifyCompilerInitialized(files: Int, lines: Int, targetDescription: String) {
         if (!isEnabled) return
         recordInitializationTime()
+
+        this.files = files
+        this.lines = lines
+        this.targetDescription = targetDescription
     }
 
     open fun notifyCompilationFinished() {
@@ -41,18 +61,44 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         analysisStart = PerformanceCounter.currentTime()
     }
 
-    open fun notifyAnalysisFinished(files: Int, lines: Int, additionalDescription: String?) {
+    open fun notifyAnalysisFinished() {
         val time = PerformanceCounter.currentTime() - analysisStart
-        measurements += CodeAnalysisMeasurement(files, lines, TimeUnit.NANOSECONDS.toMillis(time), additionalDescription)
+        measurements += CodeAnalysisMeasurement(lines, TimeUnit.NANOSECONDS.toMillis(time))
     }
 
     open fun notifyGenerationStarted() {
         generationStart = PerformanceCounter.currentTime()
     }
 
-    open fun notifyGenerationFinished(lines: Int, files: Int, additionalDescription: String) {
+    open fun notifyGenerationFinished() {
         val time = PerformanceCounter.currentTime() - generationStart
-        measurements += CodeGenerationMeasurement(lines, files, TimeUnit.NANOSECONDS.toMillis(time), additionalDescription)
+        measurements += CodeGenerationMeasurement(lines, TimeUnit.NANOSECONDS.toMillis(time))
+    }
+
+    open fun notifyIRTranslationStarted() {
+        irTranslationStart = PerformanceCounter.currentTime()
+    }
+
+    open fun notifyIRTranslationFinished() {
+        val time = deltaTime(irTranslationStart)
+        measurements += IRMeasurement(
+            lines,
+            TimeUnit.NANOSECONDS.toMillis(time),
+            IRMeasurement.Kind.TRANSLATION
+        )
+    }
+
+    open fun notifyIRGenerationStarted() {
+        irGenerationStart = PerformanceCounter.currentTime()
+    }
+
+    open fun notifyIRGenerationFinished() {
+        val time = deltaTime(irGenerationStart)
+        measurements += IRMeasurement(
+            lines,
+            TimeUnit.NANOSECONDS.toMillis(time),
+            IRMeasurement.Kind.GENERATION
+        )
     }
 
     fun dumpPerformanceReport(destination: File) {
@@ -63,7 +109,14 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         if (!isEnabled) return
 
         ManagementFactory.getGarbageCollectorMXBeans().forEach {
-            measurements += GarbageCollectionMeasurement(it.name, it.collectionTime)
+            val startCounts = startGCData[it.name]
+            val startCollectionTime = startCounts?.collectionTime ?: 0
+            val startCollectionCount = startCounts?.collectionCount ?: 0
+            measurements += GarbageCollectionMeasurement(
+                it.name,
+                it.collectionTime - startCollectionTime,
+                it.collectionCount - startCollectionCount
+            )
         }
     }
 
@@ -87,4 +140,10 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         appendln("$presentableName performance report")
         measurements.map { it.render() }.sorted().forEach { appendln(it) }
     }.toByteArray()
+
+    open fun notifyRepeat(total: Int, number: Int) {}
+
+    private data class GCData(val name: String, val collectionTime: Long, val collectionCount: Long) {
+        constructor(bean: GarbageCollectorMXBean) : this(bean.name, bean.collectionTime, bean.collectionCount)
+    }
 }

@@ -17,14 +17,18 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -35,6 +39,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 class ParcelableIrTransformer(private val context: IrPluginContext, private val androidSymbols: AndroidSymbols) :
     ParcelableExtensionBase, IrElementVisitorVoid {
     private val serializerFactory = IrParcelSerializerFactory(androidSymbols)
@@ -45,7 +50,9 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
     private fun IrPluginContext.createIrBuilder(symbol: IrSymbol) =
         DeclarationIrBuilder(this, symbol, symbol.owner.startOffset, symbol.owner.endOffset)
 
-    private val symbolMap = mutableMapOf<IrFunctionSymbol, IrFunctionSymbol>()
+    private val symbolMap = mutableMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
+
+    private val irFactory: IrFactory = IrFactoryImpl
 
     fun transform(moduleFragment: IrModuleFragment) {
         moduleFragment.accept(this, null)
@@ -63,6 +70,29 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
                 ).apply {
                     copyTypeAndValueArgumentsFrom(expression)
                 }
+            }
+
+            override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
+                val remappedSymbol = symbolMap[expression.symbol]
+                val remappedReflectionTarget = expression.reflectionTarget?.let { symbolMap[it] }
+                if (remappedSymbol == null && remappedReflectionTarget == null)
+                    return super.visitFunctionReference(expression)
+
+                return IrFunctionReferenceImpl(
+                    expression.startOffset, expression.endOffset, expression.type, remappedSymbol ?: expression.symbol,
+                    expression.typeArgumentsCount, expression.valueArgumentsCount, remappedReflectionTarget,
+                    expression.origin
+                ).apply {
+                    copyTypeAndValueArgumentsFrom(expression)
+                }
+            }
+
+            override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
+                // Remap overridden symbols, otherwise the code might break in BridgeLowering
+                declaration.overriddenSymbols = declaration.overriddenSymbols.map { symbol ->
+                    symbolMap[symbol] ?: symbol
+                }
+                return super.visitSimpleFunction(declaration)
             }
         })
     }
@@ -93,7 +123,7 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
                     irExprBody(irInt(flags))
                 }
 
-                (this as IrFunctionImpl).metadata = MetadataSource.Function(
+                metadata = MetadataSource.Function(
                     declaration.descriptor.findFunction(ParcelableSyntheticComponent.ComponentKind.DESCRIBE_CONTENTS)!!
                 )
             }
@@ -148,7 +178,7 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
                     }
                 }
 
-                (this as IrFunctionImpl).metadata = MetadataSource.Function(
+                metadata = MetadataSource.Function(
                     declaration.descriptor.findFunction(ParcelableSyntheticComponent.ComponentKind.WRITE_TO_PARCEL)!!
                 )
             }
@@ -171,7 +201,7 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
                 isFinal = true
             }.apply {
                 val irField = this
-                val creatorClass = buildClass {
+                val creatorClass = irFactory.buildClass {
                     name = Name.identifier("Creator")
                     visibility = Visibilities.LOCAL
                 }.apply {
@@ -256,7 +286,9 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
         }
     }
 
-    private data class ParcelableProperty(val field: IrField, val parceler: IrParcelSerializer)
+    private class ParcelableProperty(val field: IrField, parcelerThunk: () -> IrParcelSerializer) {
+        val parceler by lazy(parcelerThunk)
+    }
 
     private val IrClass.classParceler: IrParcelSerializer
         get() = if (kind == ClassKind.CLASS) {
@@ -275,8 +307,9 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
             return constructor.valueParameters.map { parameter ->
                 val property = properties.first { it.name == parameter.name }
                 val localScope = property.getParcelerScope(toplevelScope)
-                val parceler = serializerFactory.get(parameter.type, parcelizeType = defaultType, strict = true, scope = localScope)
-                ParcelableProperty(property.backingField!!, parceler)
+                ParcelableProperty(property.backingField!!) {
+                    serializerFactory.get(parameter.type, parcelizeType = defaultType, scope = localScope)
+                }
             }
         }
 

@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.ir.backend.js.utils.*
+import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
+import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
+import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -135,7 +138,11 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             return JsBinaryOperation(JsBinaryOperator.ASG, thisRef, arguments.single())
         }
 
-        return JsInvocation(callFuncRef, listOf(thisRef) + arguments)
+        return if (context.staticContext.backendContext.es6mode) {
+            JsInvocation(JsNameRef("super"), arguments)
+        } else {
+            JsInvocation(callFuncRef, listOf(thisRef) + arguments)
+        }
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall, context: JsGenerationContext): JsExpression {
@@ -262,6 +269,15 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
             else -> error("Unexpected operator ${expression.operator}: ${expression.render()}")
         }
+
+    override fun visitRawFunctionReference(expression: IrRawFunctionReference, data: JsGenerationContext): JsExpression {
+        val name = when (val function = expression.symbol.owner) {
+            is IrConstructor -> data.getNameForConstructor(function)
+            is IrSimpleFunction -> data.getNameForStaticFunction(function)
+            else -> error("Unexpected function kind")
+        }
+        return JsNameRef(name)
+    }
 
     private fun prefixOperation(operator: JsUnaryOperator, expression: IrDynamicOperatorExpression, data: JsGenerationContext) =
         JsPrefixOperation(

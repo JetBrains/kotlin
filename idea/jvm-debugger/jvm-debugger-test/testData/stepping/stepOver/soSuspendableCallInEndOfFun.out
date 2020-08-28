@@ -1,9 +1,9 @@
+// IGNORE_BACKEND: JVM_IR
 LineBreakpoint created at soSuspendableCallInEndOfFun.kt:29
 Run Java
 Connected to the target VM
 soSuspendableCallInEndOfFun.kt:29
 soSuspendableCallInEndOfFun.kt:17
-soSuspendableCallInEndOfFun.kt:16
 soSuspendableCallInEndOfFun.kt:18
 soSuspendableCallInEndOfFun.kt:37
 Disconnected from the target VM

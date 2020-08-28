@@ -11,7 +11,7 @@ import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.asJava.LightClassUtil
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -151,11 +151,11 @@ private fun KtAnnotationEntry.getActualTargetList(): List<KotlinTarget> {
 }
 
 private fun KtClass.addAnnotationTargets(annotationTargets: List<KotlinTarget>, psiFactory: KtPsiFactory) {
-    val retentionAnnotationName = KotlinBuiltIns.FQ_NAMES.retention.shortName().asString()
+    val retentionAnnotationName = StandardNames.FqNames.retention.shortName().asString()
     if (annotationTargets.any { it == KotlinTarget.EXPRESSION }) {
         val retentionEntry = annotationEntries.firstOrNull { it.typeReference?.text == retentionAnnotationName }
         val newRetentionEntry = psiFactory.createAnnotationEntry(
-            "@$retentionAnnotationName(${KotlinBuiltIns.FQ_NAMES.annotationRetention.shortName()}.${AnnotationRetention.SOURCE.name})"
+            "@$retentionAnnotationName(${StandardNames.FqNames.annotationRetention.shortName()}.${AnnotationRetention.SOURCE.name})"
         )
         if (retentionEntry == null) {
             addAnnotationEntry(newRetentionEntry)
@@ -164,7 +164,7 @@ private fun KtClass.addAnnotationTargets(annotationTargets: List<KotlinTarget>, 
         }
     }
 
-    val targetAnnotationName = KotlinBuiltIns.FQ_NAMES.target.shortName().asString()
+    val targetAnnotationName = StandardNames.FqNames.target.shortName().asString()
     val targetAnnotationEntry = annotationEntries.find { it.typeReference?.text == targetAnnotationName } ?: run {
         val text = "@$targetAnnotationName${annotationTargets.toArgumentListString()}"
         addAnnotationEntry(psiFactory.createAnnotationEntry(text))
@@ -185,4 +185,4 @@ private fun KtClass.addAnnotationTargets(annotationTargets: List<KotlinTarget>, 
 
 private fun List<KotlinTarget>.toArgumentListString() = joinToString(separator = ", ", prefix = "(", postfix = ")") { it.asNameString() }
 
-private fun KotlinTarget.asNameString() = "${KotlinBuiltIns.FQ_NAMES.annotationTarget.shortName().asString()}.$name"
+private fun KotlinTarget.asNameString() = "${StandardNames.FqNames.annotationTarget.shortName().asString()}.$name"

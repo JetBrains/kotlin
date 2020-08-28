@@ -10,7 +10,7 @@ val s: String = "test"
 
 // FILE: test.kt
 fun ff() {
-    val a = Test?.FOO
-    val b = foo?.s
-    System?.out.println(a + b)
+    val a = Test?.<!UNRESOLVED_REFERENCE!>FOO<!>
+    val b = foo?.<!UNRESOLVED_REFERENCE!>s<!>
+    System?.<!UNRESOLVED_REFERENCE!>out<!>.<!UNRESOLVED_REFERENCE!>println<!>(a + b)
 }

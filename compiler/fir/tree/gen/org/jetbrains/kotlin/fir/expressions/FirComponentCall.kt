@@ -21,7 +21,6 @@ abstract class FirComponentCall : FirFunctionCall() {
     abstract override val source: FirSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotationCall>
-    abstract override val safe: Boolean
     abstract override val typeArguments: List<FirTypeProjection>
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression
@@ -41,6 +40,8 @@ abstract class FirComponentCall : FirFunctionCall() {
     abstract override fun replaceCalleeReference(newCalleeReference: FirNamedReference)
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
+
+    abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirComponentCall
 

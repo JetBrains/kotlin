@@ -53,7 +53,7 @@ object SMAPTestUtil {
             StringReader(file.content).forEachLine { line ->
                 // Strip comments
                 if (!line.startsWith("//")) {
-                    appendln(line.trim())
+                    appendLine(line.trim())
                 }
             }
         }.trim()

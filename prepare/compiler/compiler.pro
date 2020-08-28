@@ -100,6 +100,9 @@
     public protected *;
 }
 
+# temporary workaround for KTI-298
+-keepclassmembers class com.google.common.** { *; }
+
 -keep class org.jetbrains.kotlin.container.** { *; }
 
 -keep class org.jetbrains.org.objectweb.asm.Opcodes { *; }
@@ -239,6 +242,12 @@
 -keep class org.jetbrains.kotlin.utils.addToStdlib.AddToStdlibKt { *; }
 
 -keep class com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem { *; }
+
+# Serialization plugin
+
+-keep class com.intellij.openapi.util.io.JarUtil {
+    public static java.lang.String getJarAttribute(java.io.File, java.util.jar.Attributes$Name);
+}
 
 # used in REPL
 # TODO: pack jline directly to scripting-compiler jars instead

@@ -5,7 +5,6 @@ apply plugin: 'kotlin-platform-js'
 configurePublishing(project)
 
 configurations {
-    sources
     distJs
     distLibrary
 }
@@ -77,12 +76,14 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 artifacts {
     runtime libraryJarWithIr
     archives libraryJarWithIr
+    publishedRuntime libraryJarWithIr
     distLibrary libraryJarWithIr
     archives sourcesJar
-    sources sourcesJar
     distJs(file(compileKotlin2Js.kotlinOptions.outputFile)) {
         builtBy(compileKotlin2Js)
     }
 }
 
-javadocJar()
+configureSourcesJar()
+
+configureJavadocJar()

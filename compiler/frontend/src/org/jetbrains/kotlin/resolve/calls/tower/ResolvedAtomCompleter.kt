@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -181,6 +182,8 @@ class ResolvedAtomCompleter(
 
     private val ResolvedLambdaAtom.isCoercedToUnit: Boolean
         get() {
+            val resultArgumentsInfo = this.resultArgumentsInfo
+                ?: return (subResolvedAtoms!!.single() as ResolvedLambdaAtom).isCoercedToUnit
             val returnTypes =
                 resultArgumentsInfo.nonErrorArguments.map {
                     val type = it.safeAs<SimpleKotlinCallArgument>()?.receiver?.receiverValue?.type ?: return@map null
@@ -199,10 +202,24 @@ class ResolvedAtomCompleter(
         }
 
     private fun completeLambda(lambda: ResolvedLambdaAtom) {
+        @Suppress("NAME_SHADOWING")
+        val lambda = lambda.unwrap()
+        val resultArgumentsInfo = lambda.resultArgumentsInfo!!
         val returnType = if (lambda.isCoercedToUnit) {
             builtIns.unitType
         } else {
             resultSubstitutor.safeSubstitute(lambda.returnType)
+        }
+
+        val approximatedValueParameterTypes = lambda.parameters.map {
+            // Do substitution and approximation only for stub types, which can appear from builder inference (as postponed variables)
+            if (it is StubType) {
+                typeApproximator.approximateDeclarationType(
+                    resultSubstitutor.safeSubstitute(it),
+                    local = true,
+                    languageVersionSettings = topLevelCallContext.languageVersionSettings
+                )
+            } else it
         }
 
         val approximatedReturnType =
@@ -211,9 +228,9 @@ class ResolvedAtomCompleter(
                 local = true,
                 languageVersionSettings = topLevelCallContext.languageVersionSettings
             )
-        updateTraceForLambda(lambda, topLevelTrace, approximatedReturnType)
+        updateTraceForLambda(lambda, topLevelTrace, approximatedReturnType, approximatedValueParameterTypes)
 
-        for (lambdaResult in lambda.resultArgumentsInfo.nonErrorArguments) {
+        for (lambdaResult in resultArgumentsInfo.nonErrorArguments) {
             val resultValueArgument = lambdaResult as? PSIKotlinCallArgument ?: continue
             val newContext =
                 topLevelCallContext.replaceDataFlowInfo(resultValueArgument.dataFlowInfoAfterThisArgument)
@@ -231,7 +248,12 @@ class ResolvedAtomCompleter(
         }
     }
 
-    private fun updateTraceForLambda(lambda: ResolvedLambdaAtom, trace: BindingTrace, returnType: UnwrappedType) {
+    private fun updateTraceForLambda(
+        lambda: ResolvedLambdaAtom,
+        trace: BindingTrace,
+        returnType: UnwrappedType,
+        valueParameters: List<UnwrappedType>
+    ) {
         val psiCallArgument = lambda.atom.psiCallArgument
 
         val ktArgumentExpression: KtExpression
@@ -250,7 +272,14 @@ class ResolvedAtomCompleter(
 
         val functionDescriptor = trace.bindingContext.get(BindingContext.FUNCTION, ktFunction) as? FunctionDescriptorImpl
             ?: throw AssertionError("No function descriptor for resolved lambda argument")
+
         functionDescriptor.setReturnType(returnType)
+
+        for ((i, valueParameter) in functionDescriptor.valueParameters.withIndex()) {
+            if (valueParameter !is ValueParameterDescriptorImpl || valueParameter.type !is StubType)
+                continue
+            valueParameter.setOutType(valueParameters[i])
+        }
 
         val existingLambdaType = trace.getType(ktArgumentExpression)
         if (existingLambdaType == null) {
@@ -303,7 +332,7 @@ class ResolvedAtomCompleter(
         resolvedAtom: ResolvedCallableReferenceAtom
     ) {
         val callableCandidate = resolvedAtom.candidate
-        if (callableCandidate == null) {
+        if (callableCandidate == null || resolvedAtom.completed) {
             // todo report meanfull diagnostic here
             return
         }
@@ -391,6 +420,7 @@ class ResolvedAtomCompleter(
         )
 
         kotlinToResolvedCallTransformer.runCallCheckers(resolvedCall, topLevelCallCheckerContext)
+        resolvedAtom.completed = true
     }
 
     private fun ReceiverValue.updateReceiverValue(substitutor: TypeSubstitutor): ReceiverValue {

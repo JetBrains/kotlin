@@ -135,6 +135,9 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     )
     var irModuleName: String? by NullableStringFreezableVar(null)
 
+    @Argument(value = "-Xir-per-module", description = "Splits generated .js per-module")
+    var irPerModule: Boolean by FreezableVar(false)
+
     @Argument(
         value = "-Xinclude",
         valueDescription = "<path>",
@@ -168,6 +171,9 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
 
     @Argument(value = "-Xenable-js-scripting", description = "Enable experimental support of .kts files using K/JS (with -Xir only)")
     var enableJsScripting: Boolean by FreezableVar(false)
+
+    @Argument(value = "-Xdisable-fake-override-validator", description = "Disable IR fake override validator")
+    var disableFakeOverrideValidator: Boolean by FreezableVar(false)
 
     override fun checkIrSupport(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
         if (!isIrBackendEnabled()) return

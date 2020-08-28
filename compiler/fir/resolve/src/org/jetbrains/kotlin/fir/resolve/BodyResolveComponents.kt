@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
@@ -56,6 +57,7 @@ interface BodyResolveComponents : SessionHolder {
     val dataFlowAnalyzer: FirDataFlowAnalyzer<*>
     val integerLiteralTypeApproximator: IntegerLiteralTypeApproximationTransformer
     val integerOperatorsTypeUpdater: IntegerOperatorsTypeUpdater
+    val outerClassManager: FirOuterClassManager
 
     val <D> AbstractFirBasedSymbol<D>.phasedFir: D where D : FirDeclaration, D : FirSymbolOwner<D>
         get() = phasedFir(FirResolvePhase.DECLARATIONS)

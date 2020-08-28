@@ -41,7 +41,10 @@ import org.jetbrains.kotlin.load.kotlin.DeserializationComponentsForJava
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.TargetEnvironment
+import org.jetbrains.kotlin.resolve.calls.tower.ImplicitsExtensionsResolutionFilter
+import org.jetbrains.kotlin.resolve.createContainer
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.jvm.JvmDiagnosticComponents
 import org.jetbrains.kotlin.resolve.jvm.multiplatform.OptionalAnnotationPackageFragmentProvider
@@ -63,7 +66,8 @@ fun createContainerForLazyResolveWithJava(
     languageVersionSettings: LanguageVersionSettings,
     useBuiltInsProvider: Boolean,
     configureJavaClassFinder: (StorageComponentContainer.() -> Unit)? = null,
-    javaClassTracker: JavaClassesTracker? = null
+    javaClassTracker: JavaClassesTracker? = null,
+    implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter? = null,
 ): StorageComponentContainer = createContainer("LazyResolveWithJava", JvmPlatformAnalyzerServices) {
     configureModule(moduleContext, jvmPlatform, JvmPlatformAnalyzerServices, bindingTrace, languageVersionSettings)
 
@@ -73,6 +77,7 @@ fun createContainerForLazyResolveWithJava(
     useInstance(moduleContentScope)
     useInstance(packagePartProvider)
     useInstance(declarationProviderFactory)
+    useInstanceIfNotNull(implicitsResolutionFilter)
 
     useInstance(VirtualFileFinderFactory.getInstance(moduleContext.project).create(moduleContentScope))
 
@@ -126,7 +131,10 @@ fun StorageComponentContainer.configureJavaSpecificComponents(
 
     useInstance(javaClassTracker ?: JavaClassesTracker.Default)
     useInstance(
-        JavaResolverSettings.create(isReleaseCoroutines = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines))
+        JavaResolverSettings.create(
+            isReleaseCoroutines = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines),
+            correctNullabilityForNotNullTypeParameter = languageVersionSettings.supportsFeature(LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated),
+        )
     )
 
     useImpl<FilesByFacadeFqNameIndexer>()

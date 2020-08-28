@@ -74,6 +74,12 @@ where advanced options include:
   -Xno-param-assertions      Don't generate not-null assertions on parameters of methods accessible from Java
   -Xno-receiver-assertions   Don't generate not-null assertion for extension receiver arguments of platform types
   -Xno-use-ir                Do not use the IR backend. Useful for a custom-built compiler where IR backend is enabled by default
+  -Xprofile=<profilerPath:command:outputDir>
+                             Debug option: Run compiler with async profiler, save snapshots to outputDir, command is passed to async-profiler on start
+                             You'll have to provide async-profiler.jar on classpath to use this
+                             profilerPath is a path to libasyncProfiler.so
+                             Example: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start,framebuf=50000000:<SNAPSHOT_DIR_PATH>
+  -Xrepeat=<number>          Debug option: Repeats modules compilation <number> times
   -Xsanitize-parentheses     Transform '(' and ')' in method names to some other character sequence.
                              This mode can BREAK BINARY COMPATIBILITY and is only supposed to be used to workaround
                              problems with parentheses in identifiers on certain platforms
@@ -94,6 +100,8 @@ where advanced options include:
   -Xuse-javac                Use javac for Java source and class files analysis
   -Xuse-old-class-files-reading Use old class files reading implementation. This may slow down the build and cause problems with Groovy interop.
                              Should be used in case of problems with the new implementation
+  -Xuse-old-spilled-var-type-analysis
+                             Use old, SourceInterpreter-based analysis for fields, used for spilled variables in coroutines
   -Xuse-type-table           Use type table in metadata serialization
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
   -Xallow-result-return-type Allow compiling code when `kotlin.Result` is used as a return type
@@ -104,6 +112,7 @@ where advanced options include:
                              Should be a subset of sources passed as free arguments
   -Xcoroutines={enable|warn|error}
                              Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier
+  -Xdeserialize-fake-overrides Fallback to deserializing fake overrides
   -Xdisable-default-scripting-plugin
                              Do not enable scripting plugin by default
   -Xdisable-phases           Disable backend phases
@@ -144,6 +153,7 @@ where advanced options include:
   -Xskip-prerelease-check    Allow to load pre-release classes
   -Xuse-experimental=<fq.name> Enable, but don't propagate usages of experimental API for marker annotation with the given fully qualified name
   -Xuse-fir                  Compile using Front-end IR. Warning: this feature is far from being production-ready
+  -Xuse-fir-extended-checkers Use extended analysis mode based on Front-end IR. Warning: this feature is far from being production-ready
   -Xuse-mixed-named-arguments Enable Support named arguments in their own position even if the result appears as mixed
   -Xverbose-phases           Be verbose while performing these backend phases
 

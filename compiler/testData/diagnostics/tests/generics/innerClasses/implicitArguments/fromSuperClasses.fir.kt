@@ -7,20 +7,20 @@ open class Outer<X, Y> {
 
 class Derived : Outer<String, Int>() {
     fun foo(): Inner<Char> = null!!
-    fun baz(): Alias<Char> = null!!
+    fun baz(): <!UNRESOLVED_REFERENCE!>Alias<Char><!> = null!!
 }
 
 
 class A : Outer<Double, Short>() {
     class B : Outer<Float, Long>() {
         fun bar(): Inner<String> = null!!
-        fun x(): Alias<String> = null!!
+        fun x(): <!UNRESOLVED_REFERENCE!>Alias<String><!> = null!!
     }
 }
 
 fun foo() {
-    Derived().foo() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Outer<String, Int>.Inner<Char>>() }
-    Derived().baz() <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Map<Char, String>>() }
-    A.B().bar() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Outer<Float, Long>.Inner<String>>() }
-    A.B().x() <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Map<String, Float>>() }
+    Derived().foo() checkType { _<Outer<String, Int>.Inner<Char>>() }
+    Derived().baz() <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Map<Char, String>>() }
+    A.B().bar() checkType { _<Outer<Float, Long>.Inner<String>>() }
+    A.B().x() <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Map<String, Float>>() }
 }

@@ -56,7 +56,9 @@ public abstract class AbstractWriteFlagsTest extends CodegenTestCase {
 
     @Override
     protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<? extends TestFile> files) throws Exception {
-        compile((List<TestFile>)files);
+        @SuppressWarnings("unchecked")
+        List<TestFile> testFiles = (List<TestFile>) files;
+        compile(testFiles);
 
         String fileText = FileUtil.loadFile(wholeFile, true);
 

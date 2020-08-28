@@ -1,0 +1,42 @@
+package error;
+
+public final class NonExistentClass {
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+public abstract @interface Anno {
+}
+
+////////////////////
+
+package test;
+
+import java.lang.System;
+
+@kotlin.Metadata()
+@Anno()
+public final class User {
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String name = "John";
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getName() {
+        return null;
+    }
+
+    public User(@org.jetbrains.annotations.NotNull()
+    java.lang.String name, int age) {
+        super();
+    }
+
+    public User() {
+        super();
+    }
+}

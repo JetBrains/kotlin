@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.declarations.IrSymbolDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -41,7 +40,7 @@ class KotlinNothingValueExceptionLowering(
                 backendContext.createIrBuilder(parent, expression.startOffset, expression.endOffset).run {
                     irBlock(expression, null, context.irBuiltIns.nothingType) {
                         +super.visitCall(expression)
-                        +irCall(backendContext.ir.symbols.ThrowKotlinNothingValueException)
+                        +irCall(backendContext.ir.symbols.throwKotlinNothingValueException)
                     }
                 }
             } else {

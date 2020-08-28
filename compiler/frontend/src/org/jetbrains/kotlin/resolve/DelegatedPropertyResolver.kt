@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve
 
 import com.google.common.collect.Lists
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -174,7 +175,7 @@ class DelegatedPropertyResolver(
     }
 
     private fun KtPsiFactory.createExpressionForProperty(): KtExpression {
-        return createExpression("null as ${KotlinBuiltIns.FQ_NAMES.kPropertyFqName.asString()}<*>")
+        return createExpression("null as ${StandardNames.FqNames.kPropertyFqName.asString()}<*>")
     }
 
     /* Resolve getValue() or setValue() methods from delegate */
@@ -551,6 +552,8 @@ class DelegatedPropertyResolver(
         if (delegateTypeConstructor is IntegerLiteralTypeConstructor)
             delegateType = delegateTypeConstructor.getApproximatedType()
 
+        val delegateTypeForProperType = if (delegateType.isProperType()) delegateType else null
+
         if (languageVersionSettings.supportsFeature(LanguageFeature.OperatorProvideDelegate)) {
             val traceForProvideDelegate = TemporaryBindingTrace.create(traceToResolveDelegatedProperty, "Trace to resolve provide delegate")
 
@@ -571,7 +574,7 @@ class DelegatedPropertyResolver(
                 variableDescriptor, delegateExpression, delegateTypeWithoutNonFixedVariables, contextForProvideDelegate
             )
 
-            if (conventionMethodFound(provideDelegateResults)) {
+            if (provideDelegateResults.isSuccess) {
                 val provideDelegateDescriptor = provideDelegateResults.resultingDescriptor
                 if (provideDelegateDescriptor.isOperator) {
                     delegateType = inverseSubstitution(provideDelegateDescriptor.returnType, substitutionMap) ?: return null
@@ -584,7 +587,9 @@ class DelegatedPropertyResolver(
             }
         }
         return inferDelegateTypeFromGetSetValueMethods(
-            delegateExpression, variableDescriptor, scopeForDelegate, traceToResolveDelegatedProperty, delegateType, delegateDataFlow
+            delegateExpression, variableDescriptor, scopeForDelegate,
+            traceToResolveDelegatedProperty, delegateType, delegateTypeForProperType,
+            delegateDataFlow
         )
     }
 
@@ -626,6 +631,7 @@ class DelegatedPropertyResolver(
         scopeForDelegate: LexicalScope,
         trace: TemporaryBindingTrace,
         delegateType: KotlinType,
+        delegateTypeForProperType: KotlinType?,
         delegateDataFlow: DataFlowInfo
     ): UnwrappedType {
         val expectedType = if (variableDescriptor.type !is DeferredType) variableDescriptor.type.unwrap() else null
@@ -683,7 +689,7 @@ class DelegatedPropertyResolver(
         }
 
         val resolvedDelegateType = extractResolvedDelegateType(delegateExpression, trace, delegateType)
-        trace.recordType(delegateExpression, resolvedDelegateType)
+        trace.recordType(delegateExpression, delegateTypeForProperType ?: resolvedDelegateType)
         trace.commit()
         return resolvedDelegateType.unwrap()
     }

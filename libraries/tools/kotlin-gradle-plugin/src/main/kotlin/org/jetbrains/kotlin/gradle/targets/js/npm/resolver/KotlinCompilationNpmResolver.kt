@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
+import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
+import org.jetbrains.kotlin.gradle.plugin.sources.compilationDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
@@ -53,25 +55,29 @@ internal class KotlinCompilationNpmResolver(
     val publicPackageJsonTaskHolder: TaskProvider<PublicPackageJsonTask> =
         project.registerTask<PublicPackageJsonTask>(
             npmProject.publicPackageJsonTaskName,
-            listOf(nodeJs, npmProject)
+            listOf(compilation)
         ) {
-            it.skipOnEmptyNpmDependencies = true
-            it.dependsOn(nodeJs.npmInstallTask)
+            it.dependsOn(nodeJs.npmInstallTaskProvider)
             it.dependsOn(packageJsonTaskHolder)
         }.also { packageJsonTask ->
-            if (compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME) {
+            if (compilation.isMain()) {
                 project.tasks
                     .withType(Zip::class.java)
                     .named(npmProject.target.artifactsTaskName)
                     .configure {
-                        it.from(packageJsonTask)
+                        it.dependsOn(packageJsonTask)
                     }
             }
         }
 
-    val plugins: List<CompilationResolverPlugin> = projectResolver.resolver.plugins.flatMap {
-        it.createCompilationResolverPlugins(this)
-    }
+    val plugins: List<CompilationResolverPlugin> = projectResolver.resolver.plugins
+        .flatMap {
+            if (compilation.isMain()) {
+                it.createCompilationResolverPlugins(this)
+            } else {
+                emptyList()
+            }
+        }
 
     override fun toString(): String = "KotlinCompilationNpmResolver(${npmProject.name})"
 
@@ -102,7 +108,11 @@ internal class KotlinCompilationNpmResolver(
     fun getResolutionOrResolveIfForced(): KotlinCompilationNpmResolution? {
         if (resolution != null) return resolution
         if (packageJsonTaskHolder.get().state.upToDate) return resolve(skipWriting = true)
-        if (resolver.forceFullResolve && resolution == null) return resolve()
+        if (resolver.forceFullResolve && resolution == null) {
+            // need to force all NPM tasks to be configured in IDEA import
+            project.tasks.implementing(RequiresNpmDependencies::class).all {}
+            return resolve()
+        }
         return null
     }
 
@@ -124,38 +134,22 @@ internal class KotlinCompilationNpmResolver(
         all.isCanBeResolved = true
         all.description = "NPM configuration for $compilation."
 
-        compilation.allKotlinSourceSets.forEach { sourceSet ->
-            KotlinDependencyScope.values().forEach { scope ->
-                val configuration = project.sourceSetDependencyConfigurationByScope(sourceSet, scope)
-                all.extendsFrom(configuration)
+        KotlinDependencyScope.values().forEach { scope ->
+            val compilationConfiguration = project.compilationDependencyConfigurationByScope(
+                compilation,
+                scope
+            )
+            all.extendsFrom(compilationConfiguration)
+            compilation.allKotlinSourceSets.forEach { sourceSet ->
+                val sourceSetConfiguration = project.sourceSetDependencyConfigurationByScope(sourceSet, scope)
+                all.extendsFrom(sourceSetConfiguration)
             }
         }
 
-        createNpmToolsConfiguration()?.let { tools ->
-            all.extendsFrom(tools)
-        }
+        // We don't have `kotlin-js-test-runner` in NPM yet
+        all.dependencies.add(nodeJs.versions.kotlinJsTestRunner.createDependency(project))
 
         return all
-    }
-
-    private fun createNpmToolsConfiguration(): Configuration? {
-        val taskRequirements = projectResolver.taskRequirements.getTaskRequirements(compilation)
-        if (taskRequirements.isEmpty()) return null
-
-        val toolsConfiguration = project.configurations.create(compilation.disambiguateName("npmTools"))
-
-        toolsConfiguration.isVisible = false
-        toolsConfiguration.isCanBeConsumed = false
-        toolsConfiguration.isCanBeResolved = true
-        toolsConfiguration.description = "NPM Tools configuration for $compilation."
-
-        taskRequirements.forEach { requirement ->
-            requirement.requiredNpmDependencies.forEach { requiredNpmDependency ->
-                toolsConfiguration.dependencies.add(requiredNpmDependency.createDependency(project))
-            }
-        }
-
-        return toolsConfiguration
     }
 
     data class ExternalGradleDependency(
@@ -189,6 +183,17 @@ internal class KotlinCompilationNpmResolver(
             if (compilation.name == KotlinCompilation.TEST_COMPILATION_NAME) {
                 val main = compilation.target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME) as KotlinJsCompilation
                 internalDependencies.add(projectResolver[main])
+            }
+
+            val hasPublicNpmDependencies = externalNpmDependencies.isNotEmpty()
+
+            if (compilation.isMain() && hasPublicNpmDependencies) {
+                project.tasks
+                    .withType(Zip::class.java)
+                    .named(npmProject.target.artifactsTaskName)
+                    .configure { task ->
+                        task.from(publicPackageJsonTaskHolder)
+                    }
             }
 
             plugins.forEach {
@@ -302,7 +307,7 @@ internal class KotlinCompilationNpmResolver(
                 internalDependencies.map { it.npmProject.name },
                 internalCompositeDependencies.flatMap { it.getPackages() },
                 externalGradleDependencies.map { it.artifact.file },
-                externalNpmDependencies.map { "${it.scope} ${it.key}:${it.version}" }
+                externalNpmDependencies.map { it.uniqueRepresentation() }
             )
 
         fun createPackageJson(skipWriting: Boolean): KotlinCompilationNpmResolution {
@@ -325,9 +330,14 @@ internal class KotlinCompilationNpmResolver(
             }
                 .filterNotNull()
 
+            val toolsNpmDependencies = nodeJs.taskRequirements
+                .getCompilationNpmRequirements(compilation)
+
+            val allNpmDependencies = externalNpmDependencies + toolsNpmDependencies
+
             val packageJson = packageJson(
                 npmProject,
-                externalNpmDependencies
+                allNpmDependencies
             )
 
             compositeDependencies.forEach {
@@ -347,7 +357,7 @@ internal class KotlinCompilationNpmResolver(
             }
 
             if (!skipWriting) {
-                packageJson.saveTo(npmProject.packageJsonFile)
+                packageJson.saveTo(npmProject.prePackageJsonFile)
             }
 
             return KotlinCompilationNpmResolution(
@@ -356,7 +366,7 @@ internal class KotlinCompilationNpmResolver(
                 resolvedInternalDependencies,
                 compositeDependencies,
                 importedExternalGradleDependencies,
-                externalNpmDependencies,
+                allNpmDependencies,
                 packageJson
             )
         }

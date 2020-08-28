@@ -33,14 +33,14 @@ val seeAlsoDerivedFoo: String = JDerived.foo()
 
 // Referencing nested classes via type alias should be prohibited
 // (in type position and in expression position)
-val testNested1: JT.Nested = JT.<!UNRESOLVED_REFERENCE!>Nested<!>()
-val testNested2: KT.Nested = KT.<!UNRESOLVED_REFERENCE!>Nested<!>()
-val testNested3: IT.Nested = IT.<!UNRESOLVED_REFERENCE!>Nested<!>()
-val testInner1: JT.Inner = JT.<!UNRESOLVED_REFERENCE!>Inner<!>()
-val testInner2: KT.Inner = KT.<!UNRESOLVED_REFERENCE!>Inner<!>()
-fun testNestedAsTypeArgument1(x: List<JT.Nested>) {}
-fun testNestedAsTypeArgument2(x: List<KT.Nested>) {}
-fun testNestedAsTypeArgument3(x: List<IT.Nested>) {}
-fun testInnerAsTypeArgument1(x: List<JT.Inner>) {}
-fun testInnerAsTypeArgument2(x: List<KT.Inner>) {}
+val testNested1: <!UNRESOLVED_REFERENCE!>JT.Nested<!> = JT.<!UNRESOLVED_REFERENCE!>Nested<!>()
+val testNested2: <!UNRESOLVED_REFERENCE!>KT.Nested<!> = KT.<!UNRESOLVED_REFERENCE!>Nested<!>()
+val testNested3: <!UNRESOLVED_REFERENCE!>IT.Nested<!> = IT.<!UNRESOLVED_REFERENCE!>Nested<!>()
+val testInner1: <!UNRESOLVED_REFERENCE!>JT.Inner<!> = JT.<!UNRESOLVED_REFERENCE!>Inner<!>()
+val testInner2: <!UNRESOLVED_REFERENCE!>KT.Inner<!> = KT.<!UNRESOLVED_REFERENCE!>Inner<!>()
+fun testNestedAsTypeArgument1(x: <!UNRESOLVED_REFERENCE!>List<JT.Nested><!>) {}
+fun testNestedAsTypeArgument2(x: <!UNRESOLVED_REFERENCE!>List<KT.Nested><!>) {}
+fun testNestedAsTypeArgument3(x: <!UNRESOLVED_REFERENCE!>List<IT.Nested><!>) {}
+fun testInnerAsTypeArgument1(x: <!UNRESOLVED_REFERENCE!>List<JT.Inner><!>) {}
+fun testInnerAsTypeArgument2(x: <!UNRESOLVED_REFERENCE!>List<KT.Inner><!>) {}
 

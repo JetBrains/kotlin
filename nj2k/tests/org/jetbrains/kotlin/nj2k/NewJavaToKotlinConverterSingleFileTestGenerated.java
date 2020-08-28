@@ -839,6 +839,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/class/ClassShadowing.java");
         }
 
+        @TestMetadata("classToObjectWithAnnotations.java")
+        public void testClassToObjectWithAnnotations() throws Exception {
+            runTest("nj2k/testData/newJ2k/class/classToObjectWithAnnotations.java");
+        }
+
         @TestMetadata("classWithEmptyMethods.java")
         public void testClassWithEmptyMethods() throws Exception {
             runTest("nj2k/testData/newJ2k/class/classWithEmptyMethods.java");
@@ -2422,6 +2427,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/function/functionInFinalClass.java");
         }
 
+        @TestMetadata("genericMemberFunctionRef.java")
+        public void testGenericMemberFunctionRef() throws Exception {
+            runTest("nj2k/testData/newJ2k/function/genericMemberFunctionRef.java");
+        }
+
         @TestMetadata("internal.java")
         public void testInternal() throws Exception {
             runTest("nj2k/testData/newJ2k/function/internal.java");
@@ -2714,6 +2724,24 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         @TestMetadata("withoutElse.java")
         public void testWithoutElse() throws Exception {
             runTest("nj2k/testData/newJ2k/ifStatement/withoutElse.java");
+        }
+    }
+
+    @TestMetadata("nj2k/testData/newJ2k/implicitCasts")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ImplicitCasts extends AbstractNewJavaToKotlinConverterSingleFileTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInImplicitCasts() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("nj2k/testData/newJ2k/implicitCasts"), Pattern.compile("^([^\\.]+)\\.java$"), null, true);
+        }
+
+        @TestMetadata("arithmeticInFunctionCall.java")
+        public void testArithmeticInFunctionCall() throws Exception {
+            runTest("nj2k/testData/newJ2k/implicitCasts/arithmeticInFunctionCall.java");
         }
     }
 
@@ -3041,6 +3069,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         @TestMetadata("kt-19943.java")
         public void testKt_19943() throws Exception {
             runTest("nj2k/testData/newJ2k/issues/kt-19943.java");
+        }
+
+        @TestMetadata("kt-20421.java")
+        public void testKt_20421() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-20421.java");
         }
 
         @TestMetadata("kt-21189.java")
@@ -3536,6 +3569,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         @TestMetadata("kt-15991.java")
         public void testKt_15991() throws Exception {
             runTest("nj2k/testData/newJ2k/literalExpression/kt-15991.java");
+        }
+
+        @TestMetadata("kt-40363.java")
+        public void testKt_40363() throws Exception {
+            runTest("nj2k/testData/newJ2k/literalExpression/kt-40363.java");
         }
 
         @TestMetadata("long.java")
@@ -5054,6 +5092,16 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
 
         public void testAllFilesPresentInTryWithResource() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("nj2k/testData/newJ2k/tryWithResource"), Pattern.compile("^([^\\.]+)\\.java$"), null, true);
+        }
+
+        @TestMetadata("Java9.java")
+        public void testJava9() throws Exception {
+            runTest("nj2k/testData/newJ2k/tryWithResource/Java9.java");
+        }
+
+        @TestMetadata("Java9Multiple.java")
+        public void testJava9Multiple() throws Exception {
+            runTest("nj2k/testData/newJ2k/tryWithResource/Java9Multiple.java");
         }
 
         @TestMetadata("Multiline.java")

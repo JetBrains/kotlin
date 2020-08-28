@@ -24,6 +24,6 @@ FILE: safeCallInvoke.kt
 
     }
     public final fun main(b: R|B?|): R|kotlin/Unit| {
-        R|<local>/b|?.R|/B.bar|?.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
-        R|<local>/b|?.R|/B.foo|?.R|/A.invoke|()
+        R|<local>/b|?.{ $subj$.R|/B.bar|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|() }
+        R|<local>/b|?.{ $subj$.R|/B.foo|.R|/A.invoke|() }
     }

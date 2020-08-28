@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -DEPRECATION
 // Tail calls are not allowed to be Nothing typed. See KT-15051
 import kotlin.coroutines.experimental.*

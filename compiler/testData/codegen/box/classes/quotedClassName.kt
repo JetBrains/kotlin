@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
 // IGNORE_BACKEND: JS
 
 // Exclamation marks are not valid in names in the dex file format.

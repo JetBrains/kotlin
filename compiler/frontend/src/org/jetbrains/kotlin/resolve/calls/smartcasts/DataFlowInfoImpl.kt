@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.util.javaslang.*
 import org.jetbrains.kotlin.utils.newLinkedHashSetWithExpectedSize
 import java.util.*
@@ -302,8 +303,24 @@ internal class DataFlowInfoImpl private constructor(
         when {
             this == null -> other ?: ImmutableLinkedHashSet.empty()
             other == null -> this
-            else -> this.intersect(other)
+            else -> {
+                // Here we cover the case when "this" has T?!! type and "other" has T
+                val thisApproximated = approximateDefinitelyNotNullableTypes(this)
+                val otherApproximated = approximateDefinitelyNotNullableTypes(other)
+                if (thisApproximated == null && otherApproximated == null ||
+                    thisApproximated != null && otherApproximated != null
+                ) {
+                    this.intersect(other)
+                } else {
+                    (thisApproximated ?: this).intersect(otherApproximated ?: other)
+                }
+            }
         }
+
+    private fun approximateDefinitelyNotNullableTypes(set: ImmutableSet<KotlinType>): ImmutableSet<KotlinType>? {
+        if (!set.any { it.isDefinitelyNotNullType }) return null
+        return set.map { if (it is DefinitelyNotNullType) it.original.makeNotNullable() else it }
+    }
 
     override fun or(other: DataFlowInfo): DataFlowInfo {
         if (other === DataFlowInfo.EMPTY) return DataFlowInfo.EMPTY

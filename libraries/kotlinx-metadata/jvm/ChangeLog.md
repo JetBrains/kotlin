@@ -1,5 +1,10 @@
 # kotlinx-metadata-jvm
 
+## 0.1.1
+
+- [`KT-37421`](https://youtrack.jetbrains.com/issue/KT-37421) Add Flag.Class.IS_FUN for functional interfaces
+- Add `KmModule.optionalAnnotationClasses` for the new scheme of compilation of OptionalExpectation annotations in multiplatform projects ([KT-38652](https://youtrack.jetbrains.com/issue/KT-38652))
+
 ## 0.1.0
 
 - [`KT-26602`](https://youtrack.jetbrains.com/issue/KT-26602) Provide a value-based API

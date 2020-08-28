@@ -60,7 +60,7 @@ class FirJavaValueParameterBuilder : FirValueParameterBuilder() {
             name,
             symbol = FirVariableSymbol(name),
             annotations,
-            defaultValue = null,
+            defaultValue,
             isCrossinline = false,
             isNoinline = false,
             isVararg,
@@ -70,42 +70,35 @@ class FirJavaValueParameterBuilder : FirValueParameterBuilder() {
     @Deprecated("Modification of 'resolvePhase' has no impact for FirJavaValueParameterBuilder", level = DeprecationLevel.HIDDEN)
     override var resolvePhase: FirResolvePhase
         get() = throw IllegalStateException()
-        set(value) {
+        set(@Suppress("UNUSED_PARAMETER") value) {
             throw IllegalStateException()
         }
 
     @Deprecated("Modification of '' has no impact for FirJavaValueParameterBuilder", level = DeprecationLevel.HIDDEN)
     override var symbol: FirVariableSymbol<FirValueParameter>
         get() = throw IllegalStateException()
-        set(value) {
-            throw IllegalStateException()
-        }
-
-    @Deprecated("Modification of 'defaultValue' has no impact for FirJavaValueParameterBuilder", level = DeprecationLevel.HIDDEN)
-    override var defaultValue: FirExpression?
-        get() = throw IllegalStateException()
-        set(value) {
+        set(@Suppress("UNUSED_PARAMETER") value) {
             throw IllegalStateException()
         }
 
     @Deprecated("Modification of 'isCrossinline' has no impact for FirJavaValueParameterBuilder", level = DeprecationLevel.HIDDEN)
     override var isCrossinline: Boolean
         get() = throw IllegalStateException()
-        set(value) {
+        set(@Suppress("UNUSED_PARAMETER") value) {
             throw IllegalStateException()
         }
 
     @Deprecated("Modification of 'isNoinline' has no impact for FirJavaValueParameterBuilder", level = DeprecationLevel.HIDDEN)
     override var isNoinline: Boolean
         get() = throw IllegalStateException()
-        set(value) {
+        set(@Suppress("UNUSED_PARAMETER") value) {
             throw IllegalStateException()
         }
 
     @Deprecated("Modification of 'origin' has no impact for FirJavaValueParameterBuilder", level = DeprecationLevel.HIDDEN)
     override var origin: FirDeclarationOrigin
         get() = throw IllegalStateException()
-        set(value) {
+        set(@Suppress("UNUSED_PARAMETER") value) {
             throw IllegalStateException()
         }
 }

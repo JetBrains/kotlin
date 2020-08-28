@@ -135,12 +135,20 @@ class XCoroutineView(val project: Project, val session: XDebugSession) :
     inner class EmptyNode : XValueContainerNode<XValueContainer>(panel.tree, null, true, object : XValueContainer() {})
 
     inner class XCoroutinesRootNode(suspendContext: SuspendContextImpl) :
-        XValueContainerNode<CoroutineGroupContainer>(
+        XValueContainerNode<CoroutineTopGroupContainer>(
             panel.tree, null, false,
-            CoroutineGroupContainer(suspendContext)
+            CoroutineTopGroupContainer(suspendContext)
         )
 
-    inner class CoroutineGroupContainer(val suspendContext: SuspendContextImpl) : XValueContainer() {
+    inner class CoroutineTopGroupContainer(val suspendContext: SuspendContextImpl) : XValueContainer() {
+        override fun computeChildren(node: XCompositeNode) {
+            val children = XValueChildrenList()
+            children.add(CoroutineGroupContainer(suspendContext))
+            node.addChildren(children, true)
+        }
+    }
+
+    inner class CoroutineGroupContainer(val suspendContext: SuspendContextImpl) : RendererContainer(renderer.renderGroup(KotlinDebuggerCoroutinesBundle.message("coroutine.view.node.root"))) {
         override fun computeChildren(node: XCompositeNode) {
             if (suspendContext.suspendPolicy == EventRequest.SUSPEND_ALL) {
                 managerThreadExecutor.on(suspendContext).invoke {

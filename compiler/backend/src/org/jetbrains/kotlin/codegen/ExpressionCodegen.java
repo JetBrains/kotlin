@@ -52,7 +52,6 @@ import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor;
 import org.jetbrains.kotlin.load.kotlin.MethodSignatureMappingKt;
 import org.jetbrains.kotlin.load.kotlin.TypeSignatureMappingKt;
 import org.jetbrains.kotlin.name.Name;
@@ -77,6 +76,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
+import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.receivers.*;
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
 import org.jetbrains.kotlin.types.*;
@@ -173,7 +173,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return null;
     }
 
-    static class BlockStackElement {
+    public static class BlockStackElement {
     }
 
     static class LoopBlockStackElement extends BlockStackElement {
@@ -1585,7 +1585,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             assert topOfStack == tryWithFinallyBlockStackElement : "Top element of stack doesn't equals processing finally block";
 
             KtTryExpression jetTryExpression = tryWithFinallyBlockStackElement.expression;
-            Label finallyStart = new Label();
+            Label finallyStart = linkedLabel();
             v.mark(finallyStart);
             tryWithFinallyBlockStackElement.addGapLabel(finallyStart);
             addGapLabelsForNestedTryCatchWithoutFinally(state, nestedTryBlocksWithoutFinally, finallyStart);
@@ -2224,8 +2224,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             if (!skipPropertyAccessors) {
                 if (isBackingFieldMovedFromCompanion && context.getContextDescriptor() instanceof AccessorForPropertyBackingField) {
-                    propertyDescriptor = (PropertyDescriptor) backingFieldContext.getParentContext()
-                            .getAccessor(propertyDescriptor, AccessorKind.IN_CLASS_COMPANION, delegateType, superCallTarget);
+                    CodegenContext<?> parentContext = backingFieldContext.getParentContext();
+                    propertyDescriptor =
+                            parentContext.getAccessor(propertyDescriptor, AccessorKind.IN_CLASS_COMPANION, delegateType, superCallTarget);
                 }
                 else {
                     propertyDescriptor =
@@ -2835,7 +2836,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             TypeApproximator approximator = new TypeApproximator(state.getModule().getBuiltIns());
 
             KotlinType approximatedType =
-                    CapturedTypeConstructorKt.isCaptured(type) ?
+                    TypeUtils.contains(type, (containedType) -> CapturedTypeConstructorKt.isCaptured(containedType)) ?
                     (KotlinType) approximator.approximateToSuperType(
                             type, TypeApproximatorConfiguration.InternalTypesApproximation.INSTANCE
                     ) : null;
@@ -4103,15 +4104,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         TypeAndNullability right754Type = calcTypeForIeee754ArithmeticIfNeeded(right, getRightOperandType(primitiveNumericComparisonInfo));
         boolean isSame754ArithmeticTypes = left754Type != null && right754Type != null && left754Type.type.equals(right754Type.type);
         boolean properIeee754Comparisons = shouldUseProperIeee754Comparisons();
+        boolean isStandardCompareTo = primitiveNumericComparisonInfo != null;
 
-        if (properIeee754Comparisons && left754Type != null && right754Type != null) {
+        if (properIeee754Comparisons && isStandardCompareTo && left754Type != null && right754Type != null) {
             type = comparisonOperandType(left754Type.type, right754Type.type);
-            //type = comparisonOperandType(leftType, rightType);
             leftValue = gen(left);
             rightValue = gen(right);
         }
-        else if (!properIeee754Comparisons &&
-                 state.getIntrinsics().getIntrinsic((FunctionDescriptor) resolvedCall.getResultingDescriptor()) instanceof CompareTo &&
+        else if (!properIeee754Comparisons && isStandardCompareTo &&
                  ((isPrimitive(leftType) && isPrimitive(rightType)) || isSame754ArithmeticTypes)) {
             type = isSame754ArithmeticTypes ? left754Type.type : comparisonOperandType(leftType, rightType);
             leftValue = gen(left);

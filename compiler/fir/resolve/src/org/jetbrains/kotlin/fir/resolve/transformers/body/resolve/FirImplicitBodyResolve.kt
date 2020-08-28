@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("DuplicatedCode")
-
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.fir.FirElement
@@ -18,7 +16,6 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.*
-import org.jetbrains.kotlin.fir.resolve.transformers.TransformImplicitType
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForLocalClass
 import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -30,7 +27,10 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 
 @OptIn(AdapterForResolveProcessor::class)
-class FirImplicitTypeBodyResolveProcessor(session: FirSession, scopeSession: ScopeSession) : FirTransformerBasedResolveProcessor(session, scopeSession) {
+class FirImplicitTypeBodyResolveProcessor(
+    session: FirSession,
+    scopeSession: ScopeSession
+) : FirTransformerBasedResolveProcessor(session, scopeSession) {
     override val transformer = FirImplicitTypeBodyResolveTransformerAdapter(session, scopeSession)
 }
 
@@ -86,9 +86,9 @@ fun <F : FirClass<F>> F.runContractAndBodiesResolutionForLocalClass(
         components.session, components.scopeSession,
         implicitBodyResolveComputationSession,
         FirResolvePhase.BODY_RESOLVE,
-        outerBodyResolveContext = newContext,
         implicitTypeOnly = false,
-        returnTypeCalculator
+        returnTypeCalculator,
+        outerBodyResolveContext = newContext
     )
 
     val graphBuilder = components.context.dataFlowAnalyzerContext.graphBuilder

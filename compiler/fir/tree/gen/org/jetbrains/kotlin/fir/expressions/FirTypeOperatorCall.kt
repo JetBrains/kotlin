@@ -29,4 +29,8 @@ abstract class FirTypeOperatorCall : FirExpression(), FirCall {
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeOperatorCall
+
+    abstract fun <D> transformConversionTypeRef(transformer: FirTransformer<D>, data: D): FirTypeOperatorCall
+
+    abstract fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirTypeOperatorCall
 }

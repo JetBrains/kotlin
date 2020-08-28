@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM
 // This issue affects AIDL generated files, as reported in KT-25807
 // WITH_RUNTIME
 // FILE: J.java
@@ -27,6 +26,7 @@ fun box() = parcelTest { parcel ->
 
     val bytes = parcel.marshall()
     parcel.unmarshall(bytes, 0, bytes.size)
+    parcel.setDataPosition(0)
 
     val second = J.readParcel(parcel)
     assert(first == second)

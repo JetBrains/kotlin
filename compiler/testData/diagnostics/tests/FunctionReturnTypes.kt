@@ -67,7 +67,7 @@ fun blockAndAndMismatch5() : Int {
     (return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>true<!>) || (return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>false<!>)
 }
 fun blockReturnValueTypeMatch1() : Int {
-    return <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>if (1 > 2) <!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!> else <!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>2.0<!><!>
+    return if (1 > 2) <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!> else <!CONSTANT_EXPECTED_TYPE_MISMATCH!>2.0<!>
 }
 fun blockReturnValueTypeMatch2() : Int {
     return <!TYPE_MISMATCH!><!INVALID_IF_AS_EXPRESSION!>if<!> (1 > 2) 1<!>
@@ -134,8 +134,8 @@ fun blockNoReturnIfUnitInOneBranch(): Int {
         }
     }
     <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
-fun nonBlockReturnIfEmptyIf(): Int = <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>if (1 < 2) <!OI;TYPE_MISMATCH!>{}<!> else <!OI;TYPE_MISMATCH!>{}<!><!>
-fun nonBlockNoReturnIfUnitInOneBranch(): Int = <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>if (1 < 2) <!OI;TYPE_MISMATCH!>{}<!> else 2<!>
+fun nonBlockReturnIfEmptyIf(): Int = if (1 < 2) <!TYPE_MISMATCH!>{}<!> else <!TYPE_MISMATCH!>{}<!>
+fun nonBlockNoReturnIfUnitInOneBranch(): Int = if (1 < 2) <!TYPE_MISMATCH!>{}<!> else 2
 
 val a = <!RETURN_NOT_ALLOWED!>return<!> 1
 
@@ -146,14 +146,14 @@ fun illegalConstantBlock(): String {
     return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>
 }
 fun illegalIfBody(): Int =
-        <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>if (1 < 2) <!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>'a'<!> else { <!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!> }<!>
+        if (1 < 2) <!CONSTANT_EXPECTED_TYPE_MISMATCH!>'a'<!> else <!NI;TYPE_MISMATCH!>{ <!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1.0<!> }<!>
 fun illegalIfBlock(): Boolean {
     if (1 < 2)
         return false
     else { return <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> }
 }
 fun illegalReturnIf(): Char {
-    return <!NI;TYPE_MISMATCH!>if (1 < 2) 'a' else { <!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> }<!>
+    return if (1 < 2) 'a' else <!NI;TYPE_MISMATCH!>{ <!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> }<!>
 }
 
 fun returnNothing(): Nothing {

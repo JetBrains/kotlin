@@ -32,3 +32,18 @@ import kotlin.internal.RequireKotlinVersionKind
 @RequireKotlin("1.2.40", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 annotation class JvmDefault
+
+/**
+ * Prevents the compiler from generating compatibility accessors for the annotated class or interface, and suppresses
+ * any related compatibility warnings. In other words, this annotation makes the compiler generate the annotated class
+ * or interface in the `-Xjvm-default=all` mode, where only JVM default methods are generated, without `DefaultImpls`.
+ *
+ * Annotating an existing class with this annotation is a binary incompatible change. Therefore this annotation makes
+ * the most sense for _new_ classes in libraries which opted into the compatibility mode.
+ *
+ * Used only with `-Xjvm-default=compatibility|all-compatibility`.
+ */
+@SinceKotlin("1.4")
+@RequireKotlin("1.4", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
+@Target(AnnotationTarget.CLASS)
+annotation class JvmDefaultWithoutCompatibility

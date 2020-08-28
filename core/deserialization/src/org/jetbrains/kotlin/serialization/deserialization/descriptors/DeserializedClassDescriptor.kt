@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
+import org.jetbrains.kotlin.utils.addToStdlib.flatMapToNullable
 import java.util.*
 
 class DeserializedClassDescriptor(
@@ -304,6 +305,12 @@ class DeserializedClassDescriptor(
         override fun getNonDeclaredVariableNames(): Set<Name> {
             return classDescriptor.typeConstructor.supertypes.flatMapTo(LinkedHashSet()) {
                 it.memberScope.getVariableNames()
+            }
+        }
+
+        override fun getNonDeclaredClassifierNames(): Set<Name>? {
+            return classDescriptor.typeConstructor.supertypes.flatMapToNullable(LinkedHashSet()) {
+                it.memberScope.getClassifierNames()
             }
         }
 

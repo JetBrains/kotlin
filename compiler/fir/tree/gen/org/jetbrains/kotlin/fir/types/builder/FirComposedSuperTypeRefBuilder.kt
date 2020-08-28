@@ -43,3 +43,15 @@ inline fun buildComposedSuperTypeRef(init: FirComposedSuperTypeRefBuilder.() -> 
     }
     return FirComposedSuperTypeRefBuilder().apply(init).build()
 }
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildComposedSuperTypeRefCopy(original: FirComposedSuperTypeRef, init: FirComposedSuperTypeRefBuilder.() -> Unit = {}): FirComposedSuperTypeRef {
+    contract {
+        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirComposedSuperTypeRefBuilder()
+    copyBuilder.source = original.source
+    copyBuilder.annotations.addAll(original.annotations)
+    copyBuilder.superTypeRefs.addAll(original.superTypeRefs)
+    return copyBuilder.apply(init).build()
+}

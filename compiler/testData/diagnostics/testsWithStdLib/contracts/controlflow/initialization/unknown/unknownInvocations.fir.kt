@@ -14,5 +14,5 @@ fun <T> inPlace(block: () -> T): T {
 fun reassignmentAndNoInitializaiton() {
     val x: Int
     inPlace { x = 42 }
-    x.inc()
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }

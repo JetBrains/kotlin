@@ -72,7 +72,7 @@ private class MappedEnumWhenLowering(context: CommonBackendContext) : EnumWhenLo
     private inner class EnumMappingState {
         val mappings = mutableMapOf<IrClass /* enum */, Pair<MutableMap<IrEnumEntry, Int>, IrField>>()
         val mappingsClass by lazy {
-            buildClass {
+            context.irFactory.buildClass {
                 name = Name.identifier("WhenMappings")
                 origin = JvmLoweredDeclarationOrigin.ENUM_MAPPINGS_FOR_WHEN
             }.apply {

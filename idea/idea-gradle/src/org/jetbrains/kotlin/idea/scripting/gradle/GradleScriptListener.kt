@@ -14,15 +14,26 @@ import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
 class GradleScriptListener(project: Project) : ScriptChangeListener(project) {
     // todo(gradle6): remove
     private val legacy = GradleLegacyScriptListener(project)
-    private val buildRootsManager = GradleBuildRootsManager.getInstance(project)
+
+    private val buildRootsManager
+        get() = GradleBuildRootsManager.getInstance(project)
 
     init {
         // listen changes using VFS events, including gradle-configuration related files
         addVfsListener(this, buildRootsManager)
     }
 
+    // cache buildRootsManager service for hot path under vfs changes listener
+    val fileChangesProcessor: (filePath: String, ts: Long) -> Unit
+        get() {
+            val buildRootsManager = buildRootsManager
+            return { filePath, ts ->
+                buildRootsManager.fileChanged(filePath, ts)
+            }
+        }
+
     fun fileChanged(filePath: String, ts: Long) =
-        buildRootsManager.fileChanged(filePath, ts)
+        fileChangesProcessor(filePath, ts)
 
     override fun isApplicable(vFile: VirtualFile) =
         // todo(gradle6): replace with `isCustomScriptingSupport(vFile)`
@@ -33,7 +44,7 @@ class GradleScriptListener(project: Project) : ScriptChangeListener(project) {
 
     override fun editorActivated(vFile: VirtualFile) {
         if (isCustomScriptingSupport(vFile)) {
-            checkUpToDate(vFile)
+            buildRootsManager.updateNotifications(restartAnalyzer = false) { it == vFile.path }
         } else {
             legacy.editorActivated(vFile)
         }
@@ -42,21 +53,8 @@ class GradleScriptListener(project: Project) : ScriptChangeListener(project) {
     override fun documentChanged(vFile: VirtualFile) {
         fileChanged(vFile.path, System.currentTimeMillis())
 
-        if (isCustomScriptingSupport(vFile)) {
-            checkUpToDate(vFile)
-        } else {
+        if (!isCustomScriptingSupport(vFile)) {
             legacy.documentChanged(vFile)
-        }
-    }
-
-    private fun checkUpToDate(vFile: VirtualFile) {
-        val upToDate = GradleBuildRootsManager.getInstance(project)
-            .getScriptInfo(vFile)?.model?.inputs?.isUpToDate(project, vFile) ?: return
-
-        if (upToDate) {
-            hideNotificationForProjectImport(project)
-        } else {
-            showNotificationForProjectImport(project)
         }
     }
 }

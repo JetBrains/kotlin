@@ -15,7 +15,6 @@ class FirExplicitSimpleImportingScope(
     session: FirSession,
     scopeSession: ScopeSession
 ) : FirAbstractSimpleImportingScope(session, scopeSession) {
-
     override val simpleImports =
         imports.filterIsInstance<FirResolvedImport>()
             .filter { !it.isAllUnder && it.importedName != null }

@@ -6,15 +6,12 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.types.Variance
 
 class SyntheticDeclarationsGenerator(context: GeneratorContext) : DeclarationDescriptorVisitor<Unit, IrDeclarationContainer?> {
 
@@ -22,7 +19,7 @@ class SyntheticDeclarationsGenerator(context: GeneratorContext) : DeclarationDes
     private val symbolTable = context.symbolTable
 
     companion object {
-        private const val offset = UNDEFINED_OFFSET
+        private const val offset = SYNTHETIC_OFFSET
     }
 
     private fun <D : IrDeclaration> D.insertDeclaration(declarationContainer: IrDeclarationContainer): D {
@@ -31,16 +28,15 @@ class SyntheticDeclarationsGenerator(context: GeneratorContext) : DeclarationDes
         return this
     }
 
-    private val errorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
-
-    private fun IrFunction.defaultArgumentFactory(descriptor: ValueParameterDescriptor): IrExpressionBody? {
+    private fun IrFunction.defaultArgumentFactory(parameter: IrValueParameter): IrExpressionBody? {
+        val descriptor = parameter.descriptor as ValueParameterDescriptor
         if (!descriptor.declaresDefaultValue()) return null
 
         val description = "Default Argument Value stub for ${descriptor.name}|${descriptor.index}"
-        return IrExpressionBodyImpl(IrErrorExpressionImpl(startOffset, endOffset, errorType, description))
+        return factory.createExpressionBody(IrErrorExpressionImpl(startOffset, endOffset, parameter.type, description))
     }
 
-    private val defaultFactoryReference: IrFunction.(ValueParameterDescriptor) -> IrExpressionBody? = { defaultArgumentFactory(it) }
+    private val defaultFactoryReference: IrFunction.(IrValueParameter) -> IrExpressionBody? = { defaultArgumentFactory(it) }
 
     override fun visitPackageFragmentDescriptor(descriptor: PackageFragmentDescriptor, data: IrDeclarationContainer?) {
         error("Unexpected declaration descriptor $descriptor")

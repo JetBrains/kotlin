@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 
 //  --------------------------- Variables ---------------------------
 
-
 class ConeTypeVariableForLambdaReturnType(val argument: FirAnonymousFunction, name: String) : ConeTypeVariable(name)
 
 //  -------------------------- Atoms --------------------------
@@ -44,7 +43,7 @@ class ResolvedLambdaAtom(
     val parameters: List<ConeKotlinType>,
     val returnType: ConeKotlinType,
     val typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType?,
-    val candidateOfOuterCall: Candidate?
+    candidateOfOuterCall: Candidate?
 ) : PostponedResolvedAtom() {
     init {
         candidateOfOuterCall?.let {

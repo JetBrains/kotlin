@@ -1,22 +1,23 @@
-9 class C : B(<bold>1</bold>) { (in C)
-15 	<bold>val y</bold> = b.foo (in test(A, B,…))
-15 		val y = <bold>b.foo</bold> (in test(A, B,…))
-7 			open class B(override <bold>val foo: Int</bold>) : A() (in B)
-9 				class C : B(<bold>1</bold>) { (in C)
-
 10 override val foo = <bold>3</bold> (in C.foo)
 15 	<bold>val y</bold> = b.foo (in test(A, B,…))
 15 		val y = <bold>b.foo</bold> (in test(A, B,…))
 10 			override <bold>val foo</bold> = 3 (in C)
 10 				override val foo = <bold>3</bold> (in C.foo)
 
-7 return <bold>5</bold>;
-15 	<bold>val y</bold> = b.foo (in test(A, B,…))
-15 		val y = <bold>b.foo</bold> (in test(A, B,…))
-7 			return <bold>5</bold>;
-
 3 super(<bold>10</bold>);
 15 	<bold>val y</bold> = b.foo (in test(A, B,…))
 15 		val y = <bold>b.foo</bold> (in test(A, B,…))
 7 			open class B(override <bold>val foo: Int</bold>) : A() (in B)
 3 				super(<bold>10</bold>);
+
+7 return <bold>5</bold>;
+15 	<bold>val y</bold> = b.foo (in test(A, B,…))
+15 		val y = <bold>b.foo</bold> (in test(A, B,…))
+7 			return <bold>5</bold>;
+
+9 class C : B(<bold>1</bold>) { (in C)
+15 	<bold>val y</bold> = b.foo (in test(A, B,…))
+15 		val y = <bold>b.foo</bold> (in test(A, B,…))
+7 			open class B(override <bold>val foo: Int</bold>) : A() (in B)
+9 				class C : B(<bold>1</bold>) { (in C)
+

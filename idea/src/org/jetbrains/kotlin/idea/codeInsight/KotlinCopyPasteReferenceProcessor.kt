@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.codeInsight
@@ -19,6 +8,7 @@ package org.jetbrains.kotlin.idea.codeInsight
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.editorActions.CopyPastePostProcessor
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
@@ -33,21 +23,24 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.concurrency.CancellablePromise
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.allowResolveInDispatchThread
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInsight.ReviewAddedImports.reviewAddedImports
 import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedRefactoringRequests
+import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
 import org.jetbrains.kotlin.idea.core.util.end
 import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.core.util.start
 import org.jetbrains.kotlin.idea.imports.importableFqName
-import org.jetbrains.kotlin.idea.kdoc.KDocReference
 import org.jetbrains.kotlin.idea.references.*
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ProgressIndicatorUtils
@@ -110,7 +103,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
 
         val packageName = file.packageDirective?.fqName?.asString() ?: ""
         val imports = file.importDirectives.map { it.text }
-        val endOfImportsOffset = file.importDirectives.map { it.endOffset }.max() ?: file.packageDirective?.endOffset ?: 0
+        val endOfImportsOffset = file.importDirectives.maxOfOrNull { it.endOffset } ?: file.packageDirective?.endOffset ?: 0
         val offsetDelta = if (startOffsets.any { it <= endOfImportsOffset }) 0 else endOfImportsOffset
         val text = file.text.substring(offsetDelta)
         val ranges = startOffsets.indices.map { TextRange(startOffsets[it], endOffsets[it]) }
@@ -173,7 +166,10 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
             }
         }
 
-        val allElementsToResolve = elements.flatMap { it.collectDescendantsOfType<KtElement>() }
+        val allElementsToResolve = runReadAction {
+            elements.flatMap { it.collectDescendantsOfType<KtElement>() }
+        }
+
         // TODO: allowResolveInDispatchThread could be dropped as soon as
         //  ConvertJavaCopyPasteProcessor will perform it on non UI thread
         val bindingContext = runReadAction {
@@ -437,13 +433,30 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
              
             """.trimIndent()
 
+        val sourceFileUrl = transferableData.sourceFileUrl
+        val script = !sourceFileUrl.endsWith(KotlinFileType.EXTENSION)
+        val extension = run {
+            if (!script) return@run KotlinFileType.EXTENSION
+            ScriptDefinitionsManager.getInstance(project).getKnownFilenameExtensions().filter {
+                sourceFileUrl.endsWith(it)
+            }.sortedByDescending { it.length }.firstOrNull() ?: KotlinFileType.EXTENSION
+        }
+
         val dummyOriginalFile = runReadAction {
             KtPsiFactory(project)
                 .createAnalyzableFile(
-                    "dummy-original.kt",
+                    "dummy-original.$extension",
                     "$dummyOrigFileProlog${transferableData.sourceText}",
                     ctxFile
                 )
+        }
+
+        if (script) {
+            val originalFile = runReadAction {
+                val virtualFile = VirtualFileManager.getInstance().findFileByUrl(sourceFileUrl) ?: return@runReadAction null
+                PsiManager.getInstance(project).findFile(virtualFile)
+            } ?: return emptyList()
+            dummyOriginalFile.originalFile = originalFile
         }
 
         val offsetDelta = dummyOrigFileProlog.length - transferableData.sourceTextOffset
@@ -468,6 +481,15 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
         )
     }
 
+    private fun <T> submitNonBlocking(project: Project, indicator: ProgressIndicator, block: () -> T): CancellablePromise<T> =
+        ReadAction.nonBlocking<T> {
+            return@nonBlocking block()
+        }
+            .withDocumentsCommitted(project)
+            .cancelWith(indicator)
+            .expireWith(project)
+            .submit(AppExecutorUtil.getAppExecutorService())
+
     private fun buildDummySourceScope(
         sourcePkgName: String,
         imports: List<String>,
@@ -485,7 +507,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
         // - those source package imports those are not present in a fake package
         // - all rest imports
 
-        val sourceImportPrefix = "import $sourcePkgName"
+        val sourceImportPrefix = "import ${if (sourcePkgName.isEmpty()) fakePkgName else sourcePkgName}"
         val fakeImportPrefix = "import $fakePkgName"
 
         val affectedSourcePkgImports = imports.filter { it.startsWith(sourceImportPrefix) }
@@ -520,7 +542,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
 
         return """
             ${joinLines(dummyFileImports)}
-            import ${sourcePkgName}.*
+            ${if (sourcePkgName.isNotEmpty()) "import ${sourcePkgName}.*" else ""}
             ${joinLines(filteredImports)}
         """
     }

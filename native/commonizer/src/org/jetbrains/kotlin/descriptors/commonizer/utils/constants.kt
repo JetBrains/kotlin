@@ -12,7 +12,7 @@ internal fun checkConstantSupportedInCommonization(
     constantValue: ConstantValue<*>,
     constantName: Name? = null,
     owner: Any,
-    allowAnnotationValues: Boolean = false,
+    allowAnnotationValues: Boolean,
     onError: (String) -> Nothing = ::error
 ) {
     checkConstantSupportedInCommonization(

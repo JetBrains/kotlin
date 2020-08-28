@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
 import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import java.io.File
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class SubpluginsIT : BaseGradleIT() {
@@ -21,14 +21,18 @@ class SubpluginsIT : BaseGradleIT() {
         project.build("compileKotlin", "build") {
             assertSuccessful()
             assertContains("ExampleSubplugin loaded")
+            assertContains("ExampleLegacySubplugin loaded")
             assertContains("Project component registration: exampleValue")
+            assertContains("Project component registration: exampleLegacyValue")
             assertTasksExecuted(":compileKotlin")
         }
 
         project.build("compileKotlin", "build") {
             assertSuccessful()
             assertContains("ExampleSubplugin loaded")
+            assertContains("ExampleLegacySubplugin loaded")
             assertNotContains("Project component registration: exampleValue")
+            assertNotContains("Project component registration: exampleLegacyValue")
             assertTasksUpToDate(":compileKotlin")
         }
     }
@@ -149,25 +153,14 @@ class SubpluginsIT : BaseGradleIT() {
         var isFailed = false
         project.build("build", options = options) {
             val classesDir = kotlinClassesDir("app", "main")
-            if (project.testGradleVersionAtLeast("5.0")) {
-                assertSuccessful()
-                assertFileExists("${classesDir}World.class")
-                assertFileExists("${classesDir}Alice.class")
-                assertFileExists("${classesDir}Bob.class")
+            assertSuccessful()
+            assertFileExists("${classesDir}World.class")
+            assertFileExists("${classesDir}Alice.class")
+            assertFileExists("${classesDir}Bob.class")
 
-                if (withIC) {
-                    // compile iterations are not logged when IC is disabled
-                    assertCompiledKotlinSources(project.relativize(bobGreet, aliceGreet, worldGreet, greetScriptTemplateKt))
-                }
-            } else {
-                val usedGradleVersion =
-                    GradleVersion.version(
-                        System.getProperty("kotlin.gradle.version.for.tests")
-                            ?: project.gradleVersionRequirement.minVersion
-                    )
-                assertEquals(true, usedGradleVersion.version.substringBefore('.').toIntOrNull()?.let { it < 5 }, "Expected gradle version < 5, got ${usedGradleVersion.version}")
-                assertContains("kotlin scripting plugin: incompatible Gradle version")
-                isFailed = true
+            if (withIC) {
+                // compile iterations are not logged when IC is disabled
+                assertCompiledKotlinSources(project.relativize(bobGreet, aliceGreet, worldGreet, greetScriptTemplateKt))
             }
         }
 
@@ -198,6 +191,70 @@ class SubpluginsIT : BaseGradleIT() {
             assertSuccessful()
             assertFileExists("${kotlinClassesDir(sourceSet = "main")}MyClass.class")
             assertFileExists("${kotlinClassesDir(sourceSet = "test")}MyTestClass.class")
+        }
+    }
+
+    @Test
+    fun testKotlinVersionDowngradeInSupbrojectKt39809() = with(Project("android-dagger", directoryPrefix = "kapt2")) {
+        setupWorkingDir()
+
+        gradleBuildScript("app").modify {
+            """
+                buildscript {
+                	repositories {
+                		mavenCentral()
+                	}
+                	dependencies {
+                		classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.72")
+                	}
+                }
+                
+                $it
+            """.trimIndent()
+        }
+        build(
+            ":app:compileDebugKotlin",
+            options = defaultBuildOptions().copy(
+                androidGradlePluginVersion = AGPVersion.v3_4_1,
+                androidHome = KotlinTestUtils.findAndroidSdk()
+            )
+        ) {
+            assertSuccessful()
+        }
+    }
+
+    @Test
+    fun testKotlinVersionDowngradeWithNewerSubpluginsKt39809() = with(Project("multiprojectWithDependency")) {
+        setupWorkingDir()
+
+        val subprojectBuildGradle = projectDir.resolve("projA/build.gradle")
+        val originalScript = subprojectBuildGradle.readText()
+
+        listOf("allopen", "noarg", "sam-with-receiver", "serialization").forEach { plugin ->
+            projectDir.resolve("projA/build.gradle").modify {
+                """
+                    buildscript {
+                        repositories {
+                            mavenLocal()
+                            mavenCentral()
+                        }
+                        dependencies {
+                            classpath("org.jetbrains.kotlin:kotlin-$plugin:${defaultBuildOptions().kotlinVersion}")
+                        }
+                    }
+                    
+                    apply plugin: "org.jetbrains.kotlin.plugin.${plugin.replace("-", ".")}"
+                    
+                    $originalScript
+                """.trimIndent()
+            }
+            build(":projA:compileKotlin", options = defaultBuildOptions().copy(kotlinVersion = "1.3.72")) {
+                assertFailed()
+                assertContains(
+                    "This version of the kotlin-$plugin Gradle plugin is built for a newer Kotlin version. " +
+                            "Please use an older version of kotlin-$plugin or upgrade the Kotlin Gradle plugin version to make them match."
+                )
+            }
         }
     }
 }

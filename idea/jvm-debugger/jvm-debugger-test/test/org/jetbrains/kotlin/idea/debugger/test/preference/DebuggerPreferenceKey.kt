@@ -32,7 +32,6 @@ internal object DebuggerPreferenceKeys {
 
     val DISABLE_KOTLIN_INTERNAL_CLASSES by debuggerPreferenceKey(false)
     val RENDER_DELEGATED_PROPERTIES by debuggerPreferenceKey(false)
-    val IS_FILTER_FOR_STDLIB_ALREADY_ADDED by debuggerPreferenceKey(false)
 
     val FORCE_RANKING by debuggerPreferenceKey(false)
 

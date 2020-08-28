@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
+import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
@@ -35,6 +36,8 @@ interface Candidate {
     val isSuccessful: Boolean
 
     val resultingApplicability: ResolutionCandidateApplicability
+
+    fun addCompatibilityWarning(other: Candidate)
 }
 
 interface CandidateFactory<out C : Candidate> {
@@ -183,7 +186,7 @@ class TowerResolver {
                 TowerData.TowerLevel(localLevel).process()?.let { return it }
             }
 
-            for (scope in implicitScopeTower.lexicalScope.parentsWithSelf) {
+            fun processScope(scope: HierarchicalScope, resolveExtensionsForImplicitReceiver: Boolean): Collection<C>? {
                 if (scope is LexicalScope) {
                     // statics
                     if (!scope.kind.withLocalDescriptors) {
@@ -192,11 +195,22 @@ class TowerResolver {
                     }
 
                     implicitScopeTower.getImplicitReceiver(scope)
-                        ?.let(this::processImplicitReceiver)
+                        ?.let { processImplicitReceiver(it, resolveExtensionsForImplicitReceiver) }
                         ?.let { return it }
                 } else {
                     TowerData.TowerLevel(ImportingScopeBasedTowerLevel(implicitScopeTower, scope as ImportingScope))
                         .process(scope.mayFitForName(name))?.let { return it }
+                }
+                return null
+            }
+
+            if (implicitScopeTower.implicitsResolutionFilter === ImplicitsExtensionsResolutionFilter.Default) {
+                for (scope in implicitScopeTower.lexicalScope.parentsWithSelf) {
+                    processScope(scope, true)?.let { return it }
+                }
+            } else {
+                for (scopeInfo in implicitScopeTower.allScopesWithImplicitsResolutionInfo()) {
+                    processScope(scopeInfo.scope, scopeInfo.resolveExtensionsForImplicitReceiver)?.let { return it }
                 }
             }
 
@@ -205,7 +219,7 @@ class TowerResolver {
             return resultCollector.getFinalCandidates()
         }
 
-        private fun processImplicitReceiver(implicitReceiver: ReceiverValueWithSmartCastInfo): Collection<C>? {
+        private fun processImplicitReceiver(implicitReceiver: ReceiverValueWithSmartCastInfo, resolveExtensions: Boolean): Collection<C>? {
             if (isNameForHidesMember) {
                 // hides members extensions
                 TowerData.BothTowerLevelAndImplicitReceiver(hidesMembersLevel, implicitReceiver).process()?.let { return it }
@@ -218,17 +232,19 @@ class TowerResolver {
             // synthetic properties
             TowerData.BothTowerLevelAndImplicitReceiver(syntheticLevel, implicitReceiver).process()?.let { return it }
 
-            // invokeExtension on local variable
-            TowerData.OnlyImplicitReceiver(implicitReceiver).process()?.let { return it }
+            if (resolveExtensions) {
+                // invokeExtension on local variable
+                TowerData.OnlyImplicitReceiver(implicitReceiver).process()?.let { return it }
 
-            // local extensions for implicit receiver
-            for (localLevel in localLevels) {
-                TowerData.BothTowerLevelAndImplicitReceiver(localLevel, implicitReceiver).process()?.let { return it }
-            }
+                // local extensions for implicit receiver
+                for (localLevel in localLevels) {
+                    TowerData.BothTowerLevelAndImplicitReceiver(localLevel, implicitReceiver).process()?.let { return it }
+                }
 
-            // extension for implicit receiver
-            for (nonLocalLevel in nonLocalLevels) {
-                TowerData.BothTowerLevelAndImplicitReceiver(nonLocalLevel, implicitReceiver).process()?.let { return it }
+                // extension for implicit receiver
+                for (nonLocalLevel in nonLocalLevels) {
+                    TowerData.BothTowerLevelAndImplicitReceiver(nonLocalLevel, implicitReceiver).process()?.let { return it }
+                }
             }
 
             return null
@@ -310,9 +326,27 @@ class TowerResolver {
 
         override fun getSuccessfulCandidates(): Collection<C>? {
             if (!isSuccessful) return null
-            val firstGroupWithResolved = candidateGroups.firstOrNull {
-                it.any(::isSuccessfulCandidate)
-            } ?: return null
+            var compatibilityCandidate: C? = null
+            var compatibilityGroup: Collection<C>? = null
+            var firstGroupWithResolved: Collection<C>? = null
+            outer@ for (group in candidateGroups) {
+                for (candidate in group) {
+                    if (isSuccessfulCandidate(candidate)) {
+                        firstGroupWithResolved = group
+                        break@outer
+                    }
+
+                    if (compatibilityCandidate == null && isSuccessfulPreserveCompatibility(candidate)) {
+                        compatibilityGroup = group
+                        compatibilityCandidate = candidate
+                    }
+                }
+            }
+
+            if (firstGroupWithResolved == null) return null
+            if (compatibilityCandidate != null && compatibilityGroup !== firstGroupWithResolved) {
+                firstGroupWithResolved.forEach { it.addCompatibilityWarning(compatibilityCandidate) }
+            }
 
             return firstGroupWithResolved.filter(::isSuccessfulCandidate)
         }
@@ -321,6 +355,9 @@ class TowerResolver {
             return candidate.resultingApplicability == ResolutionCandidateApplicability.RESOLVED
                     || candidate.resultingApplicability == ResolutionCandidateApplicability.RESOLVED_WITH_ERROR
         }
+
+        private fun isSuccessfulPreserveCompatibility(candidate: C): Boolean =
+            candidate.resultingApplicability == ResolutionCandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY
 
         override fun pushCandidates(candidates: Collection<C>) {
             val thereIsSuccessful = candidates.any { it.isSuccessful }
@@ -339,15 +376,14 @@ class TowerResolver {
         }
 
         override fun getFinalCandidates(): Collection<C> {
-            val moreSuitableGroup = candidateGroups.minBy { it.groupApplicability } ?: return emptyList()
+            val moreSuitableGroup = candidateGroups.minByOrNull { it.groupApplicability } ?: return emptyList()
             val groupApplicability = moreSuitableGroup.groupApplicability
             if (groupApplicability == ResolutionCandidateApplicability.HIDDEN) return emptyList()
 
             return moreSuitableGroup.filter { it.resultingApplicability == groupApplicability }
         }
 
-        private val Collection<C>.groupApplicability
-            get() =
-                minBy { it.resultingApplicability }?.resultingApplicability ?: ResolutionCandidateApplicability.HIDDEN
+        private val Collection<C>.groupApplicability: ResolutionCandidateApplicability
+            get() = minOfOrNull { it.resultingApplicability } ?: ResolutionCandidateApplicability.HIDDEN
     }
 }

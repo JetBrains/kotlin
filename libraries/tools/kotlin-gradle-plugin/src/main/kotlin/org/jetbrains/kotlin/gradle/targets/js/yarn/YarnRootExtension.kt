@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
+import org.gradle.api.Action
 import org.gradle.api.Incubating
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.internal.ConfigurationPhaseAware
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.implementing
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 
@@ -41,6 +44,15 @@ open class YarnRootExtension(val project: Project) : ConfigurationPhaseAware<Yar
             .withType(RootPackageJsonTask::class.java)
             .named(RootPackageJsonTask.NAME)
 
+    var resolutions: MutableList<YarnResolution> = mutableListOf()
+
+    fun resolution(path: String, configure: Action<YarnResolution>) {
+        resolutions.add(
+            YarnResolution(path)
+                .apply { configure.execute(this) }
+        )
+    }
+
     @Incubating
     fun disableGranularWorkspaces() {
         val packageJsonUmbrella = NodeJsRootPlugin.apply(project)
@@ -49,6 +61,11 @@ open class YarnRootExtension(val project: Project) : ConfigurationPhaseAware<Yar
         rootPackageJsonTaskProvider.configure {
             it.dependsOn(packageJsonUmbrella)
         }
+
+        project.allprojects
+            .forEach {
+                it.tasks.implementing(RequiresNpmDependencies::class).all {}
+            }
     }
 
     override fun finalizeConfiguration(): YarnEnv {

@@ -37,7 +37,6 @@ internal class FirComponentCallImpl(
     override val componentIndex: Int,
 ) : FirComponentCall() {
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
-    override val safe: Boolean get() = false
     override var calleeReference: FirNamedReference = FirSimpleNamedReference(source, Name.identifier("component$componentIndex"), null)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -121,5 +120,10 @@ internal class FirComponentCallImpl(
     override fun replaceCalleeReference(newCalleeReference: FirReference) {
         require(newCalleeReference is FirNamedReference)
         replaceCalleeReference(newCalleeReference)
+    }
+
+    override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {
+        require(newExplicitReceiver != null)
+        explicitReceiver = newExplicitReceiver
     }
 }

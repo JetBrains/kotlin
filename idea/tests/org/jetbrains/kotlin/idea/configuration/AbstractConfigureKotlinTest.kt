@@ -10,6 +10,7 @@ import com.intellij.openapi.application.PathMacros
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtil
@@ -20,15 +21,15 @@ import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.FileState
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
-import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.isIgnoredInDatabaseWithLog
+import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
+import org.jetbrains.kotlin.test.runTest
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.nio.file.Path
 
+@WithMutedInDatabaseRunTest
 abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     override fun setUp() {
         super.setUp()
@@ -110,7 +111,7 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     }
 
     override fun doCreateProject(projectFile: Path): Project {
-        return loadProjectCompat(projectFile)
+        return (ProjectManagerEx.getInstanceEx()).loadProject(projectFile)
     }
 
     private val projectName: String
@@ -132,8 +133,8 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
         UsefulTestCase.assertDoesntExist(File(JS_CONFIGURATOR.getDefaultPathToJarFile(project)))
     }
 
-    override fun shouldRunTest(): Boolean {
-        return super.shouldRunTest() && !isIgnoredInDatabaseWithLog(this)
+    override fun runTest() {
+        return runTest { super.runTest() }
     }
 
     companion object {

@@ -42,10 +42,7 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
-import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
-import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl;
 import org.jetbrains.kotlin.resolve.calls.tower.NewVariableAsFunctionResolvedCallImpl;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
@@ -799,12 +796,16 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         CallableDescriptor descriptor = call.getResultingDescriptor();
         if (!(descriptor instanceof FunctionDescriptor)) return;
 
-        recordSamValueForNewInference(call);
+        recordSamValuesForNewInference(call);
         recordSamConstructorIfNeeded(expression, call);
+        recordSamValuesForOldInference(call, descriptor);
+    }
 
+    private void recordSamValuesForOldInference(ResolvedCall<?> call, CallableDescriptor descriptor) {
         FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter((FunctionDescriptor) descriptor);
         if (original == null) return;
 
+        // TODO we can just record SAM_VALUE on relevant value arguments as we do in recordSamValuesForNewInference
         List<ValueParameterDescriptor> valueParametersWithSAMConversion = new SmartList<>();
         for (ValueParameterDescriptor valueParameter : original.getValueParameters()) {
             ValueParameterDescriptor adaptedParameter = descriptor.getValueParameters().get(valueParameter.getIndex());
@@ -814,30 +815,40 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         writeSamValueForValueParameters(valueParametersWithSAMConversion, call.getValueArgumentsByIndex());
     }
 
-    private void recordSamValueForNewInference(@NotNull ResolvedCall<?> call) {
-        NewResolvedCallImpl<?> newResolvedCall = null;
-        if (call instanceof NewVariableAsFunctionResolvedCallImpl) {
-            newResolvedCall = ((NewVariableAsFunctionResolvedCallImpl) call).getFunctionCall();
-        }
-        else if(call instanceof NewResolvedCallImpl) {
-            newResolvedCall = (NewResolvedCallImpl<?>) call;
-        }
+    private void recordSamValuesForNewInference(@NotNull ResolvedCall<?> call) {
+        NewResolvedCallImpl<?> newResolvedCall = getNewResolvedCallForCallWithPossibleSamConversions(call);
         if (newResolvedCall == null) return;
 
-        List<ValueParameterDescriptor> valueParametersWithSAMConversion = new SmartList<>();
         Map<ValueParameterDescriptor, ResolvedValueArgument> arguments = newResolvedCall.getValueArguments();
         for (ValueParameterDescriptor valueParameter : arguments.keySet()) {
             ResolvedValueArgument argument = arguments.get(valueParameter);
-
-            if (!(argument instanceof ExpressionValueArgument)) continue;
-            ValueArgument valueArgument = ((ExpressionValueArgument) argument).getValueArgument();
-
-            if (valueArgument == null || newResolvedCall.getExpectedTypeForSamConvertedArgument(valueArgument) == null) continue;
-
-            valueParametersWithSAMConversion.add(valueParameter);
+            if (argument instanceof ExpressionValueArgument) {
+                ValueArgument valueArgument = ((ExpressionValueArgument) argument).getValueArgument();
+                if (valueArgument != null && newResolvedCall.getExpectedTypeForSamConvertedArgument(valueArgument) != null) {
+                    recordSamTypeOnArgumentExpression(valueParameter, valueArgument);
+                }
+            } else if (argument instanceof VarargValueArgument) {
+                VarargValueArgument varargValueArgument = (VarargValueArgument) argument;
+                for (ValueArgument valueArgument : varargValueArgument.getArguments()) {
+                    if (valueArgument != null && newResolvedCall.getExpectedTypeForSamConvertedArgument(valueArgument) != null) {
+                        recordSamTypeOnArgumentExpression(valueParameter, valueArgument);
+                    }
+                }
+            }
         }
-        writeSamValueForValueParameters(valueParametersWithSAMConversion, newResolvedCall.getValueArgumentsByIndex());
+    }
 
+    @Nullable
+    private static NewResolvedCallImpl<?> getNewResolvedCallForCallWithPossibleSamConversions(@NotNull ResolvedCall<?> call) {
+        if (call instanceof NewVariableAsFunctionResolvedCallImpl) {
+            return ((NewVariableAsFunctionResolvedCallImpl) call).getFunctionCall();
+        }
+        else if (call instanceof NewResolvedCallImpl) {
+            return (NewResolvedCallImpl<?>) call;
+        }
+        else {
+            return null;
+        }
     }
 
     private void writeSamValueForValueParameters(
@@ -854,11 +865,22 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             assert resolvedValueArgument instanceof ExpressionValueArgument : resolvedValueArgument;
             ValueArgument valueArgument = ((ExpressionValueArgument) resolvedValueArgument).getValueArgument();
             assert valueArgument != null;
-            KtExpression argumentExpression = valueArgument.getArgumentExpression();
-            assert argumentExpression != null : valueArgument.asElement().getText();
-
-            bindingTrace.record(CodegenBinding.SAM_VALUE, argumentExpression, samType);
+            recordSamTypeOnArgumentExpression(samType, valueArgument);
         }
+    }
+
+    private void recordSamTypeOnArgumentExpression(ValueParameterDescriptor valueParameter, ValueArgument valueArgument) {
+        SamType samType = SamType.createByValueParameter(valueParameter);
+        if (samType == null) return;
+
+        recordSamTypeOnArgumentExpression(samType, valueArgument);
+    }
+
+    private void recordSamTypeOnArgumentExpression(SamType samType, ValueArgument valueArgument) {
+        KtExpression argumentExpression = valueArgument.getArgumentExpression();
+        assert argumentExpression != null : valueArgument.asElement().getText();
+
+        bindingTrace.record(CodegenBinding.SAM_VALUE, argumentExpression, samType);
     }
 
     @Override
@@ -942,7 +964,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         if (!(operationDescriptor instanceof FunctionDescriptor)) return;
 
         ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, bindingContext);
-        if (resolvedCall != null) recordSamValueForNewInference(resolvedCall);
+        if (resolvedCall != null) recordSamValuesForNewInference(resolvedCall);
 
         FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter((FunctionDescriptor) operationDescriptor);
         if (original == null) return;
@@ -967,7 +989,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         if (!(operationDescriptor instanceof FunctionDescriptor)) return;
 
         ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(expression, bindingContext);
-        if (resolvedCall != null) recordSamValueForNewInference(resolvedCall);
+        if (resolvedCall != null) recordSamValuesForNewInference(resolvedCall);
 
         boolean isSetter = operationDescriptor.getName().asString().equals("set");
         FunctionDescriptor original = SamCodegenUtil.getOriginalIfSamAdapter((FunctionDescriptor) operationDescriptor);

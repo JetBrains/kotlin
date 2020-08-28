@@ -21,10 +21,14 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.IdentifierChecker
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 object JvmSimpleNameBacktickChecker : IdentifierChecker {
     // See The Java Virtual Machine Specification, section 4.7.9.1 https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.9.1
     val INVALID_CHARS = setOf('.', ';', '[', ']', '/', '<', '>', ':', '\\')
+
+    // These characters can cause problems on Windows. '?*"|' are not allowed in file names, and % leads to unexpected env var expansion.
+    private val DANGEROUS_CHARS = setOf('?', '*', '"', '|', '%')
 
     override fun checkIdentifier(simpleNameExpression: KtSimpleNameExpression, diagnosticHolder: DiagnosticSink) {
         reportIfNeeded(simpleNameExpression.getReferencedName(), { simpleNameExpression.getIdentifier() }, diagnosticHolder)
@@ -53,15 +57,23 @@ object JvmSimpleNameBacktickChecker : IdentifierChecker {
 
     private fun reportIfNeeded(name: String, reportOn: () -> PsiElement?, diagnosticHolder: DiagnosticSink) {
         val text = KtPsiUtil.unquoteIdentifier(name)
-        if (text.isEmpty()) {
-            diagnosticHolder.report(Errors.INVALID_CHARACTERS.on(reportOn() ?: return, "should not be empty"))
-        } else if (text.any { it in INVALID_CHARS }) {
-            diagnosticHolder.report(
-                Errors.INVALID_CHARACTERS.on(
-                    reportOn() ?: return,
-                    "contains illegal characters: ${INVALID_CHARS.intersect(text.toSet()).joinToString("")}"
+        when {
+            text.isEmpty() -> {
+                diagnosticHolder.report(Errors.INVALID_CHARACTERS.on(reportOn() ?: return, "should not be empty"))
+            }
+            text.any { it in INVALID_CHARS } -> {
+                diagnosticHolder.report(
+                    Errors.INVALID_CHARACTERS.on(
+                        reportOn() ?: return,
+                        "contains illegal characters: ${INVALID_CHARS.intersect(text.toSet()).joinToString("")}"
+                    )
                 )
-            )
+            }
+            text.any { it in DANGEROUS_CHARS } -> {
+                diagnosticHolder.report(
+                    ErrorsJvm.DANGEROUS_CHARACTERS.on(reportOn() ?: return, DANGEROUS_CHARS.intersect(text.toSet()).joinToString(""))
+                )
+            }
         }
     }
 }

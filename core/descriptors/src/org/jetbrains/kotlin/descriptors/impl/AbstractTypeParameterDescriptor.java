@@ -72,14 +72,14 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
                 return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
                         Annotations.Companion.getEMPTY(),
                         getTypeConstructor(), Collections.<TypeProjection>emptyList(), false,
-                        new LazyScopeAdapter(storageManager.createLazyValue(
+                        new LazyScopeAdapter(
                                 new Function0<MemberScope>() {
                                     @Override
                                     public MemberScope invoke() {
                                         return TypeIntersectionScope.create("Scope for type parameter " + name.asString(), getUpperBounds());
                                     }
                                 }
-                        ))
+                        )
                 );
             }
         });

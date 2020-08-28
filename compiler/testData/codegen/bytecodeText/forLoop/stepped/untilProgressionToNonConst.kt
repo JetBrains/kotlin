@@ -12,19 +12,18 @@ fun box(): String {
 //
 // Expected lowered form of loop (before bytecode optimizations):
 //
-//   // Additional variables:
+//   // Additional statements:
 //   val untilArg = nine()
 //   val nestedLast = untilArg - 1
 //
 //   // Standard form of loop over progression
 //   var inductionVar = 1
 //   val last = getProgressionLastElement(1, nestedLast, 2)
-//   val step = 2
 //   if (untilArg != Int.MIN_VALUE && inductionVar <= last) {
 //     // Loop is not empty
 //     do {
 //       val i = inductionVar
-//       inductionVar += step
+//       inductionVar += 2
 //       // Loop body
 //     } while (i != last)
 //   }

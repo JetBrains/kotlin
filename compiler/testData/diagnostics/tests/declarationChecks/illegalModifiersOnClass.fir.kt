@@ -3,10 +3,10 @@
 // KT-3464 Front-end shouldn't allow override modifier in class declaration
 
 override class A {
-    override companion object {}
-    open companion object {}
-    abstract companion object {}
-    final companion object {}
+    override companion <!REDECLARATION!>object<!> {}
+    open companion <!MANY_COMPANION_OBJECTS, REDECLARATION!>object<!> {}
+    abstract companion <!MANY_COMPANION_OBJECTS, REDECLARATION!>object<!> {}
+    final companion <!MANY_COMPANION_OBJECTS, REDECLARATION!>object<!> {}
 }
 
 override object B1 {}

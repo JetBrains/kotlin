@@ -24,7 +24,7 @@ abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTes
     lateinit var klibName: String
     lateinit var outputDir: File
 
-    override fun getBackend() = TargetBackend.JVM_IR
+    override val backend = TargetBackend.JVM_IR
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         outputDir = javaSourcesOutputDirectory
@@ -56,6 +56,7 @@ abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTes
     }
 
     override fun updateConfiguration(configuration: CompilerConfiguration) {
+        super.updateConfiguration(configuration)
         configuration.put(JVMConfigurationKeys.KLIB_PATHS, listOf(klibName + ".klib"))
     }
 

@@ -1,5 +1,15 @@
 package org.jetbrains.kotlin.codegen.range.inExpression
 
+interface ExpressionCodegen
+interface KtSimpleNameExpression
+interface InExpressionGenerator
+interface StackValue
+open class BranchedValue
+interface Type
+interface KotlinType
+interface Label
+interface InstructionAdapter
+
 class CallBasedInExpressionGenerator(
     val codegen: ExpressionCodegen,
     operatorReference: KtSimpleNameExpression
@@ -8,10 +18,10 @@ class CallBasedInExpressionGenerator(
     private val isInverted = operatorReference.<!UNRESOLVED_REFERENCE!>getReferencedNameElementType<!>() == <!UNRESOLVED_REFERENCE!>KtTokens<!>.<!UNRESOLVED_REFERENCE!>NOT_IN<!>
 
     override fun generate(argument: StackValue): BranchedValue =
-        gen(argument).<!INAPPLICABLE_CANDIDATE!>let<!> { if (isInverted) <!UNRESOLVED_REFERENCE!>Invert<!>(<!UNRESOLVED_REFERENCE!>it<!>) else <!UNRESOLVED_REFERENCE!>it<!> }
+        gen(argument).let { if (isInverted) <!UNRESOLVED_REFERENCE!>Invert<!>(it) else it }
 
     private fun gen(argument: StackValue): BranchedValue =
-        object : BranchedValue(argument, null, argument.<!UNRESOLVED_REFERENCE!>type<!>, <!UNRESOLVED_REFERENCE!>Opcodes<!>.<!UNRESOLVED_REFERENCE!>IFEQ<!>) {
+        object : <!INAPPLICABLE_CANDIDATE!>BranchedValue<!>(argument, null, argument.<!UNRESOLVED_REFERENCE!>type<!>, <!UNRESOLVED_REFERENCE!>Opcodes<!>.<!UNRESOLVED_REFERENCE!>IFEQ<!>) {
             override fun putSelector(type: Type, kotlinType: KotlinType?, v: InstructionAdapter) {
                 invokeFunction(v)
                 <!UNRESOLVED_REFERENCE!>coerceTo<!>(type, kotlinType, v)

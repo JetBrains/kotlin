@@ -18,7 +18,6 @@ import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
 
-
 data class ArgumentMapping(
     // This map should be ordered by arguments as written, e.g.:
     //      fun foo(a: Int, b: Int) {}
@@ -26,7 +25,20 @@ data class ArgumentMapping(
     // parameterToCallArgumentMap.values() should be [ 'bar()', 'foo()' ]
     val parameterToCallArgumentMap: Map<FirValueParameter, ResolvedCallArgument>,
     val diagnostics: List<ResolutionDiagnostic>
-)
+) {
+    fun toArgumentToParameterMapping(): Map<FirExpression, FirValueParameter> {
+        val argumentToParameterMapping = mutableMapOf<FirExpression, FirValueParameter>()
+        parameterToCallArgumentMap.forEach { (valueParameter, resolvedArgument) ->
+            when (resolvedArgument) {
+                is ResolvedCallArgument.SimpleArgument -> argumentToParameterMapping[resolvedArgument.callArgument] = valueParameter
+                is ResolvedCallArgument.VarargArgument -> resolvedArgument.arguments.forEach {
+                    argumentToParameterMapping[it] = valueParameter
+                }
+            }
+        }
+        return argumentToParameterMapping
+    }
+}
 
 private val EmptyArgumentMapping = ArgumentMapping(emptyMap(), emptyList())
 
@@ -84,7 +96,6 @@ private class FirCallArgumentsProcessor(private val function: FirFunction<*>) {
                 if (state == State.VARARG_POSITION) {
                     completeVarargPositionArguments()
                 }
-                state = State.NAMED_ONLY_ARGUMENTS
 
                 processNamedArgument(argument, argumentName)
             }
@@ -125,6 +136,8 @@ private class FirCallArgumentsProcessor(private val function: FirFunction<*>) {
             addDiagnostic(NamedArgumentNotAllowed(argument, function))
         }
 
+        val stateAllowsMixedNamedAndPositionArguments = state != State.NAMED_ONLY_ARGUMENTS
+        state = State.NAMED_ONLY_ARGUMENTS
         val parameter = findParameterByName(argument, name) ?: return
 
         result[parameter]?.let {
@@ -134,7 +147,7 @@ private class FirCallArgumentsProcessor(private val function: FirFunction<*>) {
 
         result[parameter] = ResolvedCallArgument.SimpleArgument(argument)
 
-        if (parameters.getOrNull(currentPositionedParameterIndex) == parameter) {
+        if (stateAllowsMixedNamedAndPositionArguments && parameters.getOrNull(currentPositionedParameterIndex) == parameter) {
             state = State.POSITION_ARGUMENTS
             currentPositionedParameterIndex++
         }
@@ -251,7 +264,9 @@ private class FirCallArgumentsProcessor(private val function: FirFunction<*>) {
     private val FirExpression.argumentName: Name?
         get() = (this as? FirNamedArgumentExpression)?.name
 
-    // TODO: handle java functions
+    // TODO: handle functions with non-stable parameter names, see also
+    //  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.functionProto
+    //  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.constructorProto
     private val FirFunction<*>.hasStableParameterNames: Boolean
         get() = true
 }

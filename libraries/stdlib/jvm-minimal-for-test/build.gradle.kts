@@ -10,7 +10,13 @@ plugins {
 jvmTarget = "1.6"
 javaHome = rootProject.extra["JDK_16"] as String
 
-val builtins by configurations.creating
+val builtins by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+    attributes {
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+    }
+}
 
 val runtime by configurations
 val runtimeJar by configurations.creating {
@@ -43,7 +49,8 @@ val copySources by task<Sync> {
         .include("kotlin/util/Standard.kt",
                  "kotlin/internal/Annotations.kt",
                  "kotlin/contracts/ContractBuilder.kt",
-                 "kotlin/contracts/Effect.kt")
+                 "kotlin/contracts/Effect.kt",
+                 "kotlin/annotations/Experimental.kt")
     into(File(buildDir, "src"))
 }
 

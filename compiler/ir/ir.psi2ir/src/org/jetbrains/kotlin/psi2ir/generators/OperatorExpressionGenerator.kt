@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.types.makeNotNull
-import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -413,7 +412,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         functionDescriptor: FunctionDescriptor,
         receiver: IrExpression
     ): IrExpression {
-        val originalSymbol = context.symbolTable.referenceFunction(functionDescriptor.original)
+        val originalSymbol = context.symbolTable.referenceSimpleFunction(functionDescriptor.original)
         return IrCallImpl(
             startOffset,
             endOffset,
@@ -499,7 +498,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
             ?: throw AssertionError("No type for !! argument")
         val expressionType = argumentType.makeNotNullable()
 
-        val checkNotNull = context.irBuiltIns.checkNotNull
+        val checkNotNull = context.irBuiltIns.checkNotNullSymbol.descriptor
         val checkNotNullSubstituted =
             checkNotNull.substitute(
                 TypeSubstitutor.create(

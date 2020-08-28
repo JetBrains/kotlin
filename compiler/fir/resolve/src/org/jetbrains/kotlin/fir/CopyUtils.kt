@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.contracts.description.InvocationKind
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
@@ -32,7 +32,6 @@ fun FirFunctionCall.copy(
     dispatchReceiver: FirExpression = this.dispatchReceiver,
     extensionReceiver: FirExpression = this.extensionReceiver,
     source: FirSourceElement? = this.source,
-    safe: Boolean = this.safe,
     typeArguments: List<FirTypeProjection> = this.typeArguments,
     resultType: FirTypeRef = this.typeRef
 ): FirFunctionCall {
@@ -47,7 +46,6 @@ fun FirFunctionCall.copy(
     }
     builder.apply {
         this.source = source
-        this.safe = safe
         this.annotations.addAll(annotations)
         this.argumentList = argumentList
         this.explicitReceiver = explicitReceiver
@@ -70,8 +68,8 @@ fun FirAnonymousFunction.copy(
     annotations: List<FirAnnotationCall> = this.annotations,
     typeRef: FirTypeRef = this.typeRef,
     label: FirLabel? = this.label,
-    controlFlowGraphReference: FirControlFlowGraphReference = this.controlFlowGraphReference,
-    invocationKind: InvocationKind? = this.invocationKind
+    controlFlowGraphReference: FirControlFlowGraphReference? = this.controlFlowGraphReference,
+    invocationKind: EventOccurrencesRange? = this.invocationKind
 ): FirAnonymousFunction {
     return buildAnonymousFunction {
         this.source = source

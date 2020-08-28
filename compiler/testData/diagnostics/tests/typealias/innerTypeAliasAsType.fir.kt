@@ -11,12 +11,12 @@ class Outer<T> {
     typealias InnerAlias = Inner
     typealias GenericInnerAlias<TT> = GenericInner<TT>
 
-    fun test1(x: NestedAlias) = x
-    fun test2(x: GenericNestedAlias<Int>) = x
-    fun <T> test3(x: GenericNestedAlias<T>) = x
-    fun test4(x: InnerAlias) = x
-    fun test5(x: GenericInnerAlias<Int>) = x
-    fun <T> test6(x: GenericInnerAlias<T>) = x
+    fun test1(x: <!UNRESOLVED_REFERENCE!>NestedAlias<!>) = x
+    fun test2(x: <!UNRESOLVED_REFERENCE!>GenericNestedAlias<Int><!>) = x
+    fun <T> test3(x: <!UNRESOLVED_REFERENCE!>GenericNestedAlias<T><!>) = x
+    fun test4(x: <!UNRESOLVED_REFERENCE!>InnerAlias<!>) = x
+    fun test5(x: <!UNRESOLVED_REFERENCE!>GenericInnerAlias<Int><!>) = x
+    fun <T> test6(x: <!UNRESOLVED_REFERENCE!>GenericInnerAlias<T><!>) = x
 }
 fun test1(x: Outer<Int>.NestedAlias) = x
 fun <T> test2(x: Outer<T>.NestedAlias) = x

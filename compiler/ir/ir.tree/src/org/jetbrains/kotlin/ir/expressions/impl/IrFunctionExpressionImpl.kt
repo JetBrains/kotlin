@@ -13,15 +13,12 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrFunctionExpressionImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType,
     override var function: IrSimpleFunction,
     override val origin: IrStatementOrigin
-) :
-    IrExpressionBase(startOffset, endOffset, type),
-    IrFunctionExpression {
-
+) : IrFunctionExpression() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitFunctionExpression(this, data)
     }

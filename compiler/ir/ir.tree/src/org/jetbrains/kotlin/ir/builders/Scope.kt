@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.builders
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -34,7 +35,9 @@ import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 class Scope(val scopeOwnerSymbol: IrSymbol) {
+    @ObsoleteDescriptorBasedAPI
     val scopeOwner: DeclarationDescriptor get() = scopeOwnerSymbol.descriptor
 
     fun getLocalDeclarationParent(): IrDeclarationParent {
@@ -78,13 +81,10 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         endOffset: Int = UNDEFINED_OFFSET
     ): IrVariable {
         val originalKotlinType = type ?: irType.toKotlinType()
+        val descriptor = createDescriptorForTemporaryVariable(originalKotlinType, nameHint, isMutable)
         return IrVariableImpl(
-            startOffset, endOffset, origin,
-            createDescriptorForTemporaryVariable(
-                originalKotlinType,
-                nameHint, isMutable
-            ),
-            irType
+            startOffset, endOffset, origin, IrVariableSymbolImpl(descriptor), descriptor.name,
+            irType, isMutable, isConst = false, isLateinit = false
         ).apply {
             parent = getLocalDeclarationParent()
         }

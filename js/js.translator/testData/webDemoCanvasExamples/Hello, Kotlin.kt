@@ -1,6 +1,8 @@
 /*
   This shows simple text floating around.
 */
+@file:Suppress("DEPRECATION_ERROR")
+
 package hello
 
 import jquery.*

@@ -82,6 +82,10 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC, "Using non-JVM static members protected in the superclass companion is unsupported yet");
 
         MAP.put(NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS, "Type mismatch: inferred type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE);
+        MAP.put(NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER,
+                "Type mismatch: type parameter with nullable bounds is used {1} is used where {0} was expected. This warning will become an error soon",
+                RENDER_TYPE, RENDER_TYPE
+        );
         MAP.put(RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
                 "Unsafe use of a nullable receiver of type {0}", RENDER_TYPE);
 
@@ -135,9 +139,9 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
                                                    "See https://youtrack.jetbrains.com/issue/KT-21354 for more details");
 
         MAP.put(JVM_DEFAULT_NOT_IN_INTERFACE,"'@JvmDefault' is only supported on interface members");
-        MAP.put(JVM_DEFAULT_IN_JVM6_TARGET,"'@JvmDefault' is only supported since JVM target 1.8. Recompile with '-jvm-target 1.8'");
+        MAP.put(JVM_DEFAULT_IN_JVM6_TARGET,"''@{0}'' is only supported since JVM target 1.8. Recompile with ''-jvm-target 1.8''", STRING);
         MAP.put(JVM_DEFAULT_REQUIRED_FOR_OVERRIDE, "'@JvmDefault' is required for an override of a '@JvmDefault' member");
-        MAP.put(JVM_DEFAULT_IN_DECLARATION, "Usage of '@JvmDefault' is only allowed with -Xjvm-default option");
+        MAP.put(JVM_DEFAULT_IN_DECLARATION, "Usage of ''@{0}'' is only allowed with -Xjvm-default option", STRING);
         MAP.put(JVM_DEFAULT_THROUGH_INHERITANCE, "Inheritance from an interface with '@JvmDefault' members is only allowed with -Xjvm-default option");
         MAP.put(USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL, "Super calls of '@JvmDefault' members are only allowed with -Xjvm-default option");
         MAP.put(NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT, "Non-@JvmDefault interface method cannot override default Java method. Please annotate this method with @JvmDefault");
@@ -159,6 +163,20 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
         MAP.put(FUNCTION_DELEGATE_MEMBER_NAME_CLASH,
                 "Functional interface member cannot have this name on JVM because it clashes with an internal member getFunctionDelegate");
+
+        MAP.put(EXPLICIT_OVERRIDE_REQUIRED_IN_COMPATIBILITY_MODE,
+                "Compatibility mode requires to explicitly override ''{1}'' with specialization ''{0}'', " +
+                "or annotate the class with @JvmDefaultWithoutCompatibility. " +
+                "Please refer to KT-39603 for details",
+                COMPACT, SHORT_NAMES_IN_TYPES);
+
+        MAP.put(EXPLICIT_OVERRIDE_REQUIRED_IN_MIXED_MODE,
+                "Explicit override is required for ''{0}'' in the ''-Xjvm-default={2}'' mode. " +
+                "Otherwise, implicit class override ''{1}'' (compiled in the old -Xjvm-default mode) " +
+                "is not fully overridden and might be incorrectly called at runtime",
+                SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES, TO_STRING);
+
+        MAP.put(DANGEROUS_CHARACTERS, "Name contains characters which can cause problems on Windows: {0}", STRING);
     }
 
     @NotNull

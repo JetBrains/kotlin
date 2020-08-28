@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase.*
@@ -12,38 +13,65 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitTypeBodyResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirContractResolveProcessor
-import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirGlobalExtensionStatusProcessor
-import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirPluginAnnotationsResolveProcessor
-import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirTransformerBasedExtensionStatusProcessor
+import org.jetbrains.kotlin.fir.resolve.transformers.plugin.*
+import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.compose
 
-fun FirResolvePhase.createProcessorByPhase(
+fun FirResolvePhase.createCompilerProcessorByPhase(
     session: FirSession,
-    scopeSession: ScopeSession,
-    compilerMode: CompilerMode = CompilerMode.CLI
+    scopeSession: ScopeSession
 ): FirResolveProcessor {
     return when (this) {
         RAW_FIR -> throw IllegalStateException("Raw FIR building phase does not have a transformer")
         ANNOTATIONS_FOR_PLUGINS -> FirPluginAnnotationsResolveProcessor(session, scopeSession)
-//        FIRST_PLUGIN_GENERATION -> FirFirstGenerationTransformer()
+        CLASS_GENERATION -> FirGlobalClassGenerationProcessor(session, scopeSession)
         IMPORTS -> FirImportResolveProcessor(session, scopeSession)
         SUPER_TYPES -> FirSupertypeResolverProcessor(session, scopeSession)
         SEALED_CLASS_INHERITORS -> FirSealedClassInheritorsProcessor(session, scopeSession)
         TYPES -> FirTypeResolveProcessor(session, scopeSession)
-        EXTENSION_STATUS_UPDATE -> when (compilerMode) {
-            CompilerMode.CLI -> FirGlobalExtensionStatusProcessor(session, scopeSession)
-            CompilerMode.IDE -> FirTransformerBasedExtensionStatusProcessor(session, scopeSession)
-        }
+        ARGUMENTS_OF_PLUGIN_ANNOTATIONS -> FirAnnotationArgumentsResolveProcessor(session, scopeSession)
+        EXTENSION_STATUS_UPDATE -> FirGlobalExtensionStatusProcessor(session, scopeSession)
         STATUS -> FirStatusResolveProcessor(session, scopeSession)
         CONTRACTS -> FirContractResolveProcessor(session, scopeSession)
+        NEW_MEMBERS_GENERATION -> FirGlobalNewMemberGenerationProcessor(session, scopeSession)
         IMPLICIT_TYPES_BODY_RESOLVE -> FirImplicitTypeBodyResolveProcessor(session, scopeSession)
         BODY_RESOLVE -> FirBodyResolveProcessor(session, scopeSession)
     }
 }
 
-fun FirResolvePhase.createTransformerBasedProcessorByPhase(session: FirSession, scopeSession: ScopeSession): FirTransformerBasedResolveProcessor {
-    return createProcessorByPhase(session, scopeSession, CompilerMode.IDE) as FirTransformerBasedResolveProcessor
+fun FirResolvePhase.createTransformerBasedProcessorByPhase(
+    session: FirSession,
+    scopeSession: ScopeSession
+): FirTransformerBasedResolveProcessor {
+    return when (this) {
+        RAW_FIR -> throw IllegalStateException("Raw FIR building phase does not have a transformer")
+        ANNOTATIONS_FOR_PLUGINS -> FirPluginAnnotationsResolveProcessor(session, scopeSession)
+        CLASS_GENERATION -> FirDummyTransformerBasedProcessor(session, scopeSession) // TODO: remove
+        IMPORTS -> FirImportResolveProcessor(session, scopeSession)
+        SUPER_TYPES -> FirSupertypeResolverProcessor(session, scopeSession)
+        SEALED_CLASS_INHERITORS -> FirSealedClassInheritorsProcessor(session, scopeSession)
+        TYPES -> FirTypeResolveProcessor(session, scopeSession)
+        ARGUMENTS_OF_PLUGIN_ANNOTATIONS -> FirAnnotationArgumentsResolveProcessor(session, scopeSession)
+        EXTENSION_STATUS_UPDATE -> FirTransformerBasedExtensionStatusProcessor(session, scopeSession)
+        STATUS -> FirStatusResolveProcessor(session, scopeSession)
+        CONTRACTS -> FirContractResolveProcessor(session, scopeSession)
+        NEW_MEMBERS_GENERATION -> FirDummyTransformerBasedProcessor(session, scopeSession) // TODO: remove
+        IMPLICIT_TYPES_BODY_RESOLVE -> FirImplicitTypeBodyResolveProcessor(session, scopeSession)
+        BODY_RESOLVE -> FirBodyResolveProcessor(session, scopeSession)
+    }
 }
 
-enum class CompilerMode {
-    CLI, IDE
+private class FirDummyTransformerBasedProcessor(
+    session: FirSession,
+    scopeSession: ScopeSession
+) : FirTransformerBasedResolveProcessor(session, scopeSession) {
+    override val transformer: FirTransformer<Nothing?>
+        get() = DummyTransformer
+
+    private object DummyTransformer : FirTransformer<Nothing?>() {
+        override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
+            return element.compose()
+        }
+    }
 }

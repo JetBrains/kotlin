@@ -210,7 +210,6 @@ public class PropertyCodegen {
         if (kind == OwnerKind.DEFAULT_IMPLS && isDefaultAccessor) return false;
 
         // Delegated or extension properties can only be referenced via accessors
-        //noinspection deprecation
         if (descriptor.isDelegated() || descriptor.getExtensionReceiverParameter() != null) return true;
 
         // Companion object properties should have accessors for non-private properties because these properties can be referenced
@@ -337,11 +336,8 @@ public class PropertyCodegen {
             return;
         }
 
-        @SuppressWarnings("deprecation")
-        boolean isDelegate = descriptor.isDelegated();
-
         Object defaultValue;
-        if (isDelegate) {
+        if (descriptor.isDelegated()) {
             defaultValue = null;
         }
         else if (Boolean.TRUE.equals(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor))) {
@@ -357,7 +353,7 @@ public class PropertyCodegen {
             return;
         }
 
-        generateBackingField(descriptor, isDelegate, defaultValue, isBackingFieldOwner);
+        generateBackingField(descriptor, descriptor.isDelegated(), defaultValue, isBackingFieldOwner);
     }
 
     // Annotations on properties are stored in bytecode on an empty synthetic method. This way they're still
@@ -438,7 +434,13 @@ public class PropertyCodegen {
             );
 
             if (annotatedField != null) {
-                AnnotationCodegen.forField(fv, memberCodegen, state)
+                // Don't emit nullability annotations for backing field if:
+                // - backing field is synthetic;
+                // - property is lateinit (since corresponding field is actually nullable).
+                boolean skipNullabilityAnnotations =
+                        (modifiers & ACC_SYNTHETIC) != 0 ||
+                        propertyDescriptor.isLateInit();
+                AnnotationCodegen.forField(fv, memberCodegen, state, skipNullabilityAnnotations)
                         .genAnnotations(annotatedField, type, propertyDescriptor.getType());
             }
         }
@@ -516,9 +518,7 @@ public class PropertyCodegen {
 
         FunctionGenerationStrategy strategy;
         if (accessor == null || !accessor.hasBody()) {
-            @SuppressWarnings("deprecation")
-            boolean isDelegated = descriptor.getCorrespondingProperty().isDelegated();
-            if (isDelegated) {
+            if (descriptor.getCorrespondingProperty().isDelegated()) {
                 strategy = new DelegatedPropertyAccessorStrategy(state, descriptor);
             }
             else {

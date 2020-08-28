@@ -22,7 +22,7 @@ open class PlusAssignOperatorDesugaringBenchmark : AbstractInferenceBenchmark() 
     }
 
     override fun buildText(): String = buildString {
-        appendln(
+        appendLine(
             """
             class A {
                 operator fun <T : Number> plus(other: (Int) -> T): A = this
@@ -30,19 +30,20 @@ open class PlusAssignOperatorDesugaringBenchmark : AbstractInferenceBenchmark() 
             }
         """.trimIndent()
         )
-        appendln("fun test() {")
-        appendln("var a = A()")
+        appendLine("fun test() {")
+        appendLine("var a = A()")
         for (i in 1..size) {
-            appendln("a += {")
+            appendLine("a += {")
         }
         for (i in 1..size) {
-            appendln(
+            appendLine(
                 """
                 it.inc()
                 1
                 }
-            """.trimIndent())
+            """.trimIndent()
+            )
         }
-        appendln()
+        appendLine()
     }
 }

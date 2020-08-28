@@ -603,7 +603,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
             val bodyExpression = body.statements.singleOrNull()
             val bodyOwner = body.parent as KtDeclarationWithBody
             val useExpressionBodyInspection = UseExpressionBodyInspection()
-            if (bodyExpression != null && !bodyExpression.isMultiLine() && useExpressionBodyInspection.isActiveFor(bodyOwner)) {
+            if (bodyExpression != null && useExpressionBodyInspection.isActiveFor(bodyOwner)) {
                 useExpressionBodyInspection.simplify(bodyOwner, !useExplicitReturnType())
             }
         }
@@ -642,9 +642,9 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         }
 
         val marginalCandidate = if (insertBefore) {
-            anchorCandidates.minBy { it.startOffset }!!
+            anchorCandidates.minByOrNull { it.startOffset }!!
         } else {
-            anchorCandidates.maxBy { it.startOffset }!!
+            anchorCandidates.maxByOrNull { it.startOffset }!!
         }
 
         // Ascend to the level of targetSibling

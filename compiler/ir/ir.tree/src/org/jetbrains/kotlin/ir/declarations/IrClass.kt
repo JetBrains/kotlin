@@ -19,31 +19,52 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.transformInPlace
+import org.jetbrains.kotlin.ir.util.transformIfNeeded
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrClass :
-    IrSymbolDeclaration<IrClassSymbol>, IrDeclarationWithName, IrDeclarationWithVisibility,
-    IrDeclarationContainer, IrTypeParametersContainer, IrAttributeContainer {
+abstract class IrClass :
+    IrDeclarationBase(), IrSymbolDeclaration<IrClassSymbol>, IrDeclarationWithName, IrDeclarationWithVisibility,
+    IrDeclarationContainer, IrTypeParametersContainer, IrAttributeContainer, IrMetadataSourceOwner {
 
-    override val descriptor: ClassDescriptor
+    @ObsoleteDescriptorBasedAPI
+    abstract override val descriptor: ClassDescriptor
 
-    override var visibility: Visibility
+    abstract val kind: ClassKind
+    abstract var modality: Modality
+    abstract val isCompanion: Boolean
+    abstract val isInner: Boolean
+    abstract val isData: Boolean
+    abstract val isExternal: Boolean
+    abstract val isInline: Boolean
+    abstract val isExpect: Boolean
+    abstract val isFun: Boolean
 
-    val kind: ClassKind
-    var modality: Modality
-    val isCompanion: Boolean
-    val isInner: Boolean
-    val isData: Boolean
-    val isExternal: Boolean
-    val isInline: Boolean
-    val isExpect: Boolean
-    val isFun: Boolean
+    abstract val source: SourceElement
 
-    var superTypes: List<IrType>
+    abstract var superTypes: List<IrType>
 
-    var thisReceiver: IrValueParameter?
+    abstract var thisReceiver: IrValueParameter?
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitClass(this, data)
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        thisReceiver?.accept(visitor, data)
+        typeParameters.forEach { it.accept(visitor, data) }
+        declarations.forEach { it.accept(visitor, data) }
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        thisReceiver = thisReceiver?.transform(transformer, data)
+        typeParameters = typeParameters.transformIfNeeded(transformer, data)
+        declarations.transformInPlace(transformer, data)
+    }
 }
 
 fun IrClass.addMember(member: IrDeclaration) {
@@ -53,16 +74,3 @@ fun IrClass.addMember(member: IrDeclaration) {
 fun IrClass.addAll(members: List<IrDeclaration>) {
     declarations.addAll(members)
 }
-
-fun IrClass.getInstanceInitializerMembers() =
-    declarations.filter {
-        when (it) {
-            is IrAnonymousInitializer ->
-                true
-            is IrProperty ->
-                it.backingField?.initializer != null
-            is IrField ->
-                it.initializer != null
-            else -> false
-        }
-    }

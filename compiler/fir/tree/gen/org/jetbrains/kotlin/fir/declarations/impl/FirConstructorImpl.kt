@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -46,7 +45,7 @@ internal class FirConstructorImpl(
     override var body: FirBlock?,
 ) : FirConstructor() {
     override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference
+    override var controlFlowGraphReference: FirControlFlowGraphReference? = null
     override val isPrimary: Boolean get() = false
 
     init {
@@ -57,7 +56,7 @@ internal class FirConstructorImpl(
         returnTypeRef.accept(visitor, data)
         receiverTypeRef?.accept(visitor, data)
         typeParameters.forEach { it.accept(visitor, data) }
-        controlFlowGraphReference.accept(visitor, data)
+        controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
         status.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
@@ -68,13 +67,13 @@ internal class FirConstructorImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirConstructorImpl {
         transformReturnTypeRef(transformer, data)
         transformReceiverTypeRef(transformer, data)
-        typeParameters.transformInplace(transformer, data)
-        transformControlFlowGraphReference(transformer, data)
+        transformTypeParameters(transformer, data)
+        controlFlowGraphReference = controlFlowGraphReference?.transformSingle(transformer, data)
         transformValueParameters(transformer, data)
         transformStatus(transformer, data)
         transformAnnotations(transformer, data)
         transformDelegatedConstructor(transformer, data)
-        body = body?.transformSingle(transformer, data)
+        transformBody(transformer, data)
         return this
     }
 
@@ -88,8 +87,8 @@ internal class FirConstructorImpl(
         return this
     }
 
-    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirConstructorImpl {
-        controlFlowGraphReference = controlFlowGraphReference.transformSingle(transformer, data)
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirConstructorImpl {
+        typeParameters.transformInplace(transformer, data)
         return this
     }
 
@@ -113,6 +112,11 @@ internal class FirConstructorImpl(
         return this
     }
 
+    override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirConstructorImpl {
+        body = body?.transformSingle(transformer, data)
+        return this
+    }
+
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
     }
@@ -123,6 +127,10 @@ internal class FirConstructorImpl(
 
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
         receiverTypeRef = newReceiverTypeRef
+    }
+
+    override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
+        controlFlowGraphReference = newControlFlowGraphReference
     }
 
     override fun replaceValueParameters(newValueParameters: List<FirValueParameter>) {

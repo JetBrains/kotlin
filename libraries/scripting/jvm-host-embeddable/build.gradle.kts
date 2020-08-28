@@ -6,12 +6,12 @@ plugins { java }
 
 dependencies {
     embedded(project(":kotlin-scripting-jvm-host-unshaded")) { isTransitive = false }
-    runtime(project(":kotlin-script-runtime"))
-    runtime(kotlinStdlib())
-    runtime(project(":kotlin-scripting-common"))
-    runtime(project(":kotlin-scripting-jvm"))
-    runtime(project(":kotlin-compiler-embeddable"))
-    runtime(project(":kotlin-scripting-compiler"))
+    runtimeOnly(project(":kotlin-script-runtime"))
+    runtimeOnly(kotlinStdlib())
+    runtimeOnly(project(":kotlin-scripting-common"))
+    runtimeOnly(project(":kotlin-scripting-jvm"))
+    runtimeOnly(project(":kotlin-compiler-embeddable"))
+    runtimeOnly(project(":kotlin-scripting-compiler-embeddable"))
 }
 
 sourceSets {

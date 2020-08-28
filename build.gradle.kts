@@ -27,8 +27,7 @@ buildscript {
     dependencies {
         bootstrapCompilerClasspath(kotlin("compiler-embeddable", bootstrapKotlinVersion))
 
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.17")
-        classpath("com.gradle.publish:plugin-publish-plugin:0.11.0")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.19")
         classpath(kotlin("gradle-plugin", bootstrapKotlinVersion))
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.9.17")
     }
@@ -153,6 +152,7 @@ rootProject.apply {
     from(rootProject.file("gradle/jps.gradle.kts"))
     from(rootProject.file("gradle/checkArtifacts.gradle.kts"))
     from(rootProject.file("gradle/checkCacheability.gradle.kts"))
+    from(rootProject.file("gradle/retryPublishing.gradle.kts"))
 }
 
 IdeVersionConfigurator.setCurrentIde(project)
@@ -178,7 +178,7 @@ extra["versions.jflex"] = "1.7.0"
 extra["versions.markdown"] = "0.1.25"
 extra["versions.trove4j"] = "1.0.20181211"
 extra["versions.completion-ranking-kotlin"] = "0.1.2"
-extra["versions.r8"] = "1.5.70"
+extra["versions.r8"] = "2.0.88"
 val immutablesVersion = "0.3.1"
 extra["versions.kotlinx-collections-immutable"] = immutablesVersion
 extra["versions.kotlinx-collections-immutable-jvm"] = immutablesVersion
@@ -187,12 +187,13 @@ extra["versions.kotlinx-collections-immutable-jvm"] = immutablesVersion
 extra["versions.ktor-network"] = "1.0.1"
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.4-M3-dev-15627"
+    extra["versions.kotlin-native"] = "1.4.20-dev-16314"
 }
 
 val intellijUltimateEnabled by extra(project.kotlinBuildProperties.intellijUltimateEnabled)
 val effectSystemEnabled by extra(project.getBooleanProperty("kotlin.compiler.effectSystemEnabled") ?: false)
 val newInferenceEnabled by extra(project.getBooleanProperty("kotlin.compiler.newInferenceEnabled") ?: false)
+val useJvmIrBackend by extra(project.getBooleanProperty("kotlin.build.useIR") ?: false)
 
 val intellijSeparateSdks = project.getBooleanProperty("intellijSeparateSdks") ?: false
 
@@ -200,7 +201,10 @@ extra["intellijSeparateSdks"] = intellijSeparateSdks
 
 extra["IntellijCoreDependencies"] =
     listOf(
-        if (Platform[191].orHigher()) "asm-all-7.0.1" else "asm-all",
+        when {
+            Platform[202].orHigher() -> "asm-all-8.0.1"
+            else -> "asm-all-7.0.1"
+        },
         "guava",
         "jdom",
         "jna",
@@ -225,6 +229,8 @@ extra["compilerModules"] = arrayOf(
     ":compiler:frontend.java",
     ":compiler:cli-common",
     ":compiler:ir.tree",
+    ":compiler:ir.tree.impl",
+    ":compiler:ir.tree.persistent",
     ":compiler:ir.psi2ir",
     ":compiler:ir.backend.common",
     ":compiler:backend.jvm",
@@ -233,6 +239,7 @@ extra["compilerModules"] = arrayOf(
     ":compiler:ir.serialization.common",
     ":compiler:ir.serialization.js",
     ":compiler:ir.serialization.jvm",
+    ":compiler:ir.interpreter",
     ":kotlin-util-io",
     ":kotlin-util-klib",
     ":kotlin-util-klib-metadata",
@@ -258,17 +265,17 @@ extra["compilerModules"] = arrayOf(
     ":kotlin-build-common",
     ":core:metadata",
     ":core:metadata.jvm",
+    ":core:compiler.common",
     ":core:descriptors",
     ":core:descriptors.jvm",
     ":core:descriptors.runtime",
     ":core:deserialization",
     ":core:util.runtime",
-    ":core:type-system",
     ":compiler:fir:cones",
     ":compiler:fir:resolve",
     ":compiler:fir:fir-serialization",
     ":compiler:fir:tree",
-    ":compiler:fir:raw-fir:fir-common",
+    ":compiler:fir:raw-fir:raw-fir.common",
     ":compiler:fir:raw-fir:psi2fir",
     ":compiler:fir:raw-fir:light-tree2fir",
     ":compiler:fir:fir2ir",
@@ -279,11 +286,32 @@ extra["compilerModules"] = arrayOf(
     ":compiler:fir:analysis-tests"
 )
 
+extra["compilerModulesForJps"] = listOf(
+    ":kotlin-build-common",
+    ":kotlin-util-io",
+    ":kotlin-util-klib",
+    ":kotlin-util-klib-metadata",
+    ":compiler:cli-common",
+    ":kotlin-compiler-runner",
+    ":daemon-common",
+    ":daemon-common-new",
+    ":core:compiler.common",
+    ":core:descriptors",
+    ":core:descriptors.jvm",
+    ":idea:idea-jps-common",
+    ":kotlin-preloader",
+    ":compiler:util",
+    ":compiler:config",
+    ":compiler:config.jvm",
+    ":js:js.config",
+    ":core:util.runtime",
+    ":compiler:compiler.version"
+)
+
 val coreLibProjects = listOfNotNull(
     ":kotlin-stdlib",
     ":kotlin-stdlib-common",
     ":kotlin-stdlib-js",
-    ":kotlin-stdlib-js-ir",
     ":kotlin-stdlib-jdk7",
     ":kotlin-stdlib-jdk8",
     ":kotlin-test:kotlin-test-annotations-common",
@@ -293,21 +321,16 @@ val coreLibProjects = listOfNotNull(
     ":kotlin-test:kotlin-test-junit5",
     ":kotlin-test:kotlin-test-testng",
     ":kotlin-test:kotlin-test-js".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
-    ":kotlin-test:kotlin-test-js-ir".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
     ":kotlin-reflect",
     ":kotlin-coroutines-experimental-compat"
 )
 
 val gradlePluginProjects = listOf(
     ":kotlin-gradle-plugin",
-    ":kotlin-gradle-plugin:plugin-marker",
     ":kotlin-gradle-plugin-api",
-//        ":kotlin-gradle-plugin-integration-tests",  // TODO: build fails
     ":kotlin-allopen",
-    ":kotlin-allopen:plugin-marker",
     ":kotlin-annotation-processing-gradle",
     ":kotlin-noarg",
-    ":kotlin-noarg:plugin-marker",
     ":kotlin-sam-with-receiver"
 )
 
@@ -337,7 +360,23 @@ val ignoreTestFailures by extra(project.kotlinBuildProperties.ignoreTestFailures
 
 allprojects {
 
-    configurations.maybeCreate("embedded")
+    configurations.maybeCreate("embedded").apply {
+        isCanBeConsumed = false
+        isCanBeResolved = true
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+        }
+    }
+
+    configurations.maybeCreate("embeddedElements").apply {
+        extendsFrom(configurations["embedded"])
+        isCanBeConsumed = true
+        isCanBeResolved = false
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named("embedded-java-runtime"))
+        }
+    }
 
     jvmTarget = defaultJvmTarget
     javaHome = defaultJavaHome
@@ -369,9 +408,6 @@ allprojects {
     val commonCompilerArgs = listOfNotNull(
         "-Xopt-in=kotlin.RequiresOptIn",
         "-Xread-deserialized-contracts",
-        "-Xjvm-default=compatibility",
-        "-Xno-optimized-callable-references",
-        "-Xno-kotlin-nothing-value-exception",
         "-progressive".takeIf { hasProperty("test.progressive.mode") }
     )
 
@@ -383,9 +419,20 @@ allprojects {
         }
     }
 
+    val jvmCompilerArgs = listOf(
+        "-Xjvm-default=compatibility",
+        "-Xno-optimized-callable-references",
+        "-Xno-kotlin-nothing-value-exception",
+        "-Xnormalize-constructor-calls=enable"
+    )
+
     tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile> {
         kotlinOptions {
-            freeCompilerArgs = commonCompilerArgs + listOf("-Xnormalize-constructor-calls=enable")
+            freeCompilerArgs = commonCompilerArgs + jvmCompilerArgs
+
+            if (useJvmIrBackend) {
+                useIR = true
+            }
         }
     }
 
@@ -410,11 +457,22 @@ allprojects {
         outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KT-37089") { true }
     }
 
+    tasks.withType<SourceTask>().configureEach {
+        doFirst {
+            source.visit {
+                if (file.isDirectory && file.listFiles()?.isEmpty() == true) {
+                    logger.warn("Empty source directories may cause build cache misses: " + file.absolutePath)
+                }
+            }
+        }
+    }
+
     normalization {
         runtimeClasspath {
             ignore("META-INF/MANIFEST.MF")
             ignore("META-INF/compiler.version")
             ignore("META-INF/plugin.xml")
+            ignore("kotlin/KotlinVersionCurrentValue.class")
         }
     }
 
@@ -471,9 +529,12 @@ gradle.taskGraph.whenReady {
     fun Boolean.toOnOff(): String = if (this) "on" else "off"
     val profile = if (isTeamcityBuild) "CI" else "Local"
 
-    logger.warn("$profile build profile is active (proguard is ${kotlinBuildProperties.proguard.toOnOff()}" +
-                            ", jar compression is ${kotlinBuildProperties.jarCompression.toOnOff()})." +
-                            " Use -Pteamcity=<true|false> to reproduce CI/local build")
+    val proguardMessage = "proguard is ${kotlinBuildProperties.proguard.toOnOff()}"
+    val jarCompressionMessage = "jar compression is ${kotlinBuildProperties.jarCompression.toOnOff()}"
+                val profileMessage = "$profile build profile is active ($proguardMessage, $jarCompressionMessage). " +
+            "Use -Pteamcity=<true|false> to reproduce CI/local build"
+
+    logger.warn("\n\n$profileMessage")
 
     allTasks.filterIsInstance<org.gradle.jvm.tasks.Jar>().forEach { task ->
         task.entryCompression = if (kotlinBuildProperties.jarCompression)
@@ -485,6 +546,10 @@ gradle.taskGraph.whenReady {
 
 val dist = tasks.register("dist") {
     dependsOn(":kotlin-compiler:dist")
+}
+
+val syncMutedTests = tasks.register("syncMutedTests") {
+    dependsOn(":compiler:tests-mutes:run")
 }
 
 val copyCompilerToIdeaPlugin by task<Copy> {
@@ -512,7 +577,7 @@ tasks {
         }
     }
 
-    listOf("clean", "assemble", "install", "dist").forEach { taskName ->
+    listOf("clean", "assemble", "install").forEach { taskName ->
         register("coreLibs${taskName.capitalize()}") {
             coreLibProjects.forEach { projectName -> dependsOn("$projectName:$taskName") }
         }
@@ -521,6 +586,8 @@ tasks {
     register("coreLibsTest") {
         (coreLibProjects + listOf(
             ":kotlin-stdlib:samples",
+            ":kotlin-stdlib-js-ir",
+            ":kotlin-test:kotlin-test-js-ir".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
             ":kotlin-test:kotlin-test-js:kotlin-test-js-it".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
             ":kotlinx-metadata-jvm",
             ":tools:binary-compatibility-validator"
@@ -586,7 +653,6 @@ tasks {
             ":compiler:fir:raw-fir:light-tree2fir:test",
             ":compiler:fir:analysis-tests:test",
             ":compiler:fir:fir2ir:test",
-            ":idea:idea-fir:test",
             ":plugins:fir:fir-plugin-prototype:test"
         )
     }
@@ -598,7 +664,7 @@ tasks {
     register("scriptingTest") {
         dependsOn("dist")
         dependsOn(":kotlin-script-util:test")
-        dependsOn(":kotlin-scripting-compiler:test")
+        dependsOn(":kotlin-scripting-compiler-embeddable:test")
         dependsOn(":kotlin-scripting-common:test")
         dependsOn(":kotlin-scripting-jvm:test")
         dependsOn(":kotlin-scripting-jvm-host-test:test")
@@ -610,6 +676,7 @@ tasks {
         dependsOn(":kotlin-scripting-jsr223-test:embeddableTest")
         dependsOn(":kotlin-main-kts-test:test")
         dependsOn(":kotlin-scripting-ide-services-test:test")
+        dependsOn(":kotlin-scripting-ide-services-test:embeddableTest")
         dependsOn(":kotlin-scripting-js-test:test")
     }
 
@@ -666,16 +733,9 @@ tasks {
         dependsOn(":jps-plugin:test")
     }
 
-    register("idea-plugin-main-tests") {
-        dependsOn("dist")
-        dependsOn(":idea:test")
-    }
-
     register("idea-plugin-additional-tests") {
         dependsOn("dist")
         dependsOn(
-            ":idea:idea-gradle:test",
-            ":idea:idea-gradle-native:test",
             ":idea:idea-maven:test",
             ":j2k:test",
             ":nj2k:test",
@@ -683,8 +743,7 @@ tasks {
             ":idea:jvm-debugger:jvm-debugger-evaluation:test",
             ":idea:jvm-debugger:jvm-debugger-sequence:test",
             ":idea:jvm-debugger:eval4j:test",
-            ":idea:scripting-support:test",
-            ":idea:idea-fir:test"
+            ":idea:scripting-support:test"
         )
     }
 
@@ -696,17 +755,6 @@ tasks {
                 ":libraries:tools:new-project-wizard:new-project-wizard-cli:test",
                 ":idea:idea-new-project-wizard:test"
             )
-        }
-    }
-
-    register("idea-plugin-tests") {
-        dependsOn("dist")
-        dependsOn(
-            "idea-plugin-main-tests",
-            "idea-plugin-additional-tests"
-        )
-        if (Ide.IJ()) {
-            dependsOn("idea-new-project-wizard-tests")
         }
     }
 
@@ -726,10 +774,21 @@ tasks {
         )
     }
 
-    register("plugins-tests") {
-        dependsOn("dist")
+    register("ideaPluginTest") {
         dependsOn(
-            ":kotlin-annotation-processing:test",
+            "mainIdeTests",
+            "gradleIdeTest",
+            "kaptIdeTest",
+            "miscIdeTests"
+        )
+    }
+
+    register("mainIdeTests") {
+        dependsOn(":idea:test")
+    }
+
+    register("miscIdeTests") {
+        dependsOn(
             ":kotlin-allopen-compiler-plugin:test",
             ":kotlin-noarg-compiler-plugin:test",
             ":kotlin-sam-with-receiver-compiler-plugin:test",
@@ -737,21 +796,41 @@ tasks {
             ":kotlin-annotation-processing-gradle:test",
             ":kotlinx-serialization-compiler-plugin:test",
             ":kotlinx-serialization-ide-plugin:test",
-            ":idea:jvm-debugger:jvm-debugger-test:test"
-        )
-    }
-
-
-    register("ideaPluginTest") {
-        dependsOn(
-            "idea-plugin-tests",
+            ":idea:jvm-debugger:jvm-debugger-test:test",
+            "idea-plugin-additional-tests",
             "jps-tests",
-            "plugins-tests",
-            "android-ide-tests",
             ":generators:test"
         )
+        if (Ide.IJ()) {
+            dependsOn("idea-new-project-wizard-tests")
+        }
     }
 
+    register("kaptIdeTest") {
+        dependsOn(":kotlin-annotation-processing:test")
+    }
+
+    register("gradleIdeTest") {
+        dependsOn(
+            ":idea:idea-gradle:test",
+            ":idea:idea-gradle-native:test"
+        )
+    }
+
+    register("kmmTest", AggregateTest::class) {
+        dependsOn(
+            ":idea:idea-gradle:test",
+            ":idea:test",
+            ":compiler:test",
+            ":js:js.tests:test"
+        )
+        if (Ide.IJ193.orHigher())
+            dependsOn(":kotlin-gradle-plugin-integration-tests:test")
+        if (Ide.AS40.orHigher())
+            dependsOn(":kotlin-ultimate:ide:android-studio-native:test")
+
+        testPatternFile = file("tests/mpp/kmm-patterns.csv")
+    }
 
     register("test") {
         doLast {
@@ -770,6 +849,40 @@ tasks {
             }
         }
     }
+
+    register("publishIdeArtifacts") {
+        idePluginDependency {
+            dependsOn(
+                ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for-ide:publish",
+                ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide:publish",
+                ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-tests-for-ide:publish",
+                ":prepare:ide-plugin-dependencies:incremental-compilation-impl-tests-for-ide:publish",
+                ":prepare:ide-plugin-dependencies:kotlin-build-common-tests-for-ide:publish",
+                ":prepare:ide-plugin-dependencies:kotlin-compiler-for-ide:publish",
+                ":prepare:ide-plugin-dependencies:kotlin-dist-for-ide:publish",
+                ":prepare:ide-plugin-dependencies:kotlin-gradle-statistics-for-ide:publish",
+                ":prepare:ide-plugin-dependencies:kotlinx-serialization-compiler-plugin-for-ide:publish",
+                ":prepare:ide-plugin-dependencies:noarg-compiler-plugin-for-ide:publish",
+                ":prepare:ide-plugin-dependencies:sam-with-receiver-compiler-plugin-for-ide:publish",
+                ":prepare:ide-plugin-dependencies:compiler-components-for-jps:publish",
+                ":kotlin-script-runtime:publish",
+                ":kotlin-script-util:publish",
+                ":kotlin-scripting-common:publish",
+                ":kotlin-scripting-jvm:publish",
+                ":kotlin-scripting-compiler:publish",
+                ":kotlin-scripting-compiler-impl:publish",
+                ":kotlin-android-extensions-runtime:publish",
+                ":kotlin-stdlib-common:publish",
+                ":kotlin-stdlib:publish",
+                ":kotlin-stdlib-jdk7:publish",
+                ":kotlin-stdlib-jdk8:publish",
+                ":kotlin-reflect:publish",
+                ":kotlin-main-kts:publish",
+                ":kotlin-stdlib-js:publish",
+                ":kotlin-test:kotlin-test-js:publish"
+            )
+        }
+    }
 }
 
 fun CopySpec.setExecutablePermissions() {
@@ -779,15 +892,15 @@ fun CopySpec.setExecutablePermissions() {
 
 val zipCompiler by task<Zip> {
     dependsOn(dist)
-    destinationDir = file(distDir)
-    archiveName = "kotlin-compiler-$kotlinVersion.zip"
+    destinationDirectory.set(file(distDir))
+    archiveFileName.set("kotlin-compiler-$kotlinVersion.zip")
 
     from(distKotlinHomeDir)
     into("kotlinc")
     setExecutablePermissions()
 
     doLast {
-        logger.lifecycle("Compiler artifacts packed to $archivePath")
+        logger.lifecycle("Compiler artifacts packed to ${archiveFile.get().asFile.absolutePath}")
     }
 }
 
@@ -991,3 +1104,15 @@ val Jar.outputFile: File
 
 val Project.sourceSetsOrNull: SourceSetContainer?
     get() = convention.findPlugin(JavaPluginConvention::class.java)?.sourceSets
+
+val disableVerificationTasks = System.getProperty("disable.verification.tasks") == "true"
+if (disableVerificationTasks) {
+    gradle.taskGraph.whenReady {
+        allTasks.forEach {
+            if (it is VerificationTask) {
+                logger.info("DISABLED: '$it'")
+                it.enabled = false
+            }
+        }
+    }
+}

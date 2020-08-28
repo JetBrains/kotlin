@@ -55,10 +55,10 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
         )
         val result = buildString {
             for (annotationClassId in mapping.moduleData.annotations) {
-                appendln("@$annotationClassId")
+                appendLine("@$annotationClassId")
             }
             for ((fqName, packageParts) in mapping.packageFqName2Parts) {
-                appendln(fqName)
+                appendLine(fqName)
                 for (part in packageParts.parts) {
                     append("  ")
                     append(part)
@@ -68,7 +68,7 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
                         append(facadeName)
                         append(")")
                     }
-                    appendln()
+                    appendLine()
                 }
             }
         }

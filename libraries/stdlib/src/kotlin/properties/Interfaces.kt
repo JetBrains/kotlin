@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,7 +16,7 @@ import kotlin.reflect.KProperty
  * @param T the type of object which owns the delegated property.
  * @param V the type of the property value.
  */
-public interface ReadOnlyProperty<in T, out V> {
+public fun interface ReadOnlyProperty<in T, out V> {
     /**
      * Returns the value of the property for the given object.
      * @param thisRef the object for which the value is requested.
@@ -63,7 +63,7 @@ public interface ReadWriteProperty<in T, V> : ReadOnlyProperty<T, V> {
  * @param D the type of property delegates this provider provides.
  */
 @SinceKotlin("1.4")
-public interface PropertyDelegateProvider<in T, out D> {
+public fun interface PropertyDelegateProvider<in T, out D> {
     /**
      * Returns the delegate of the property for the given object.
      *

@@ -35,7 +35,6 @@ data class WhenEntry(
 
     fun toFirWhenConditionWithoutSubject(): FirExpression {
         return when (val condition = conditions.firstOrNull()) {
-//            is FirOperatorCall -> condition.arguments.first()
             null -> buildErrorExpression(null, ConeSimpleDiagnostic("No expression in condition with expression", DiagnosticKind.Syntax))
             else -> condition
         }

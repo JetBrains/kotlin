@@ -1,0 +1,45 @@
+FILE: anonymousObjectByDelegate.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract var b: R|B|
+            public get(): R|B|
+            public set(value: R|B|): R|kotlin/Unit|
+
+    }
+    public abstract interface B : R|kotlin/Any| {
+    }
+    public final fun R|A|.test_1(): R|kotlin/Unit| {
+        object : R|B| {
+            local final field <$$delegate_0>: R|B|
+
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+                this@R|/<anonymous>|.R|<local>/<$$delegate_0>| = this@R|/test_1|.R|/A.b|
+            }
+
+        }
+
+    }
+    public final fun R|A|.test_2(): R|kotlin/Unit| {
+        object : R|B| {
+            local final field <$$delegate_0>: R|B|
+
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+                this@R|/<anonymous>|.R|<local>/<$$delegate_0>| = this@R|/test_2|.R|/A.b|
+            }
+
+        }
+
+    }
+    public final class D : R|kotlin/Any| {
+        public constructor(x: R|kotlin/String|, y: R|kotlin/String| = this#.<Unresolved name: x>#): R|D| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/String| = R|<local>/x|
+            public get(): R|kotlin/String|
+
+        public final val y: R|kotlin/String| = R|<local>/y|
+            public get(): R|kotlin/String|
+
+    }

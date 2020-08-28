@@ -16,7 +16,6 @@ import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.fileTypes.FileTypeManager
-import com.intellij.openapi.progress.runBackgroundableTask
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.ex.PathUtilEx
@@ -69,6 +68,7 @@ class LoadScriptDefinitionsStartupActivity : StartupActivity {
         } else {
             executeOnPooledThread {
                 ScriptDefinitionsManager.getInstance(project).reloadScriptDefinitionsIfNeeded()
+                ScriptConfigurationManager.getInstance(project).loadPlugins()
             }
         }
     }
@@ -76,6 +76,8 @@ class LoadScriptDefinitionsStartupActivity : StartupActivity {
 
 class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinitionProvider() {
     private var definitionsBySource = mutableMapOf<ScriptDefinitionsSource, List<ScriptDefinition>>()
+
+    @Volatile
     private var definitions: List<ScriptDefinition>? = null
 
     private val failedContributorsHashes = HashSet<Int>()
@@ -83,7 +85,9 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
     private val scriptDefinitionsCacheLock = ReentrantLock()
     private val scriptDefinitionsCache = SLRUMap<String, ScriptDefinition>(10, 10)
 
-    val configurations = (ScriptConfigurationManager.getInstance(project) as CompositeScriptConfigurationManager)
+    // cache service as it's getter is on the hot path
+    // it is safe, since both services are in same plugin
+    val configurations = ScriptConfigurationManager.getInstance(project) as CompositeScriptConfigurationManager
 
     override fun findDefinition(script: SourceCode): ScriptDefinition? {
         val locationId = script.locationId ?: return null
@@ -121,21 +125,26 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
 
     override fun findScriptDefinition(fileName: String): KotlinScriptDefinition? = findDefinition(File(fileName).toScriptSource())?.legacyDefinition
 
-    fun reloadDefinitionsBy(source: ScriptDefinitionsSource) = lock.write {
+    fun reloadDefinitionsBy(source: ScriptDefinitionsSource) {
         if (definitions == null) return // not loaded yet
 
-        if (source !in definitionsBySource) error("Unknown script definition source: $source")
+        lock.write {
+            if (source !in definitionsBySource) error("Unknown script definition source: $source")
+        }
 
-        definitionsBySource[source] = source.safeGetDefinitions()
+        val safeGetDefinitions = source.safeGetDefinitions()
+        lock.write {
+            definitionsBySource[source] = safeGetDefinitions
 
-        definitions = definitionsBySource.values.flattenTo(mutableListOf())
+            definitions = definitionsBySource.values.flattenTo(mutableListOf())
 
-        updateDefinitions()
+            updateDefinitions()
+        }
     }
 
     override val currentDefinitions
         get() =
-            (definitions ?: kotlin.run {
+            (definitions ?: run {
                 reloadScriptDefinitions()
                 definitions!!
             }).asSequence().filter { KotlinScriptingSettings.getInstance(project).isScriptDefinitionEnabled(it) }
@@ -149,40 +158,46 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
         return fromNewEp.dropLast(1) + fromDeprecatedEP + fromNewEp.last()
     }
 
-    fun reloadScriptDefinitionsIfNeeded() = lock.write {
-        if (definitions == null) {
-            loadScriptDefinitions()
-        }
+    fun reloadScriptDefinitionsIfNeeded() {
+        definitions ?: loadScriptDefinitions()
     }
 
-    fun reloadScriptDefinitions() = lock.write {
-        loadScriptDefinitions()
-    }
+    fun reloadScriptDefinitions() = loadScriptDefinitions()
 
     private fun loadScriptDefinitions() {
-        for (source in getSources()) {
-            val definitions = source.safeGetDefinitions()
-            definitionsBySource[source] = definitions
+        val newDefinitionsBySource = getSources().map { it to it.safeGetDefinitions() }.toMap()
+
+        lock.write {
+            definitionsBySource.putAll(newDefinitionsBySource)
+            definitions = definitionsBySource.values.flattenTo(mutableListOf())
+
+            updateDefinitions()
         }
-
-        definitions = definitionsBySource.values.flattenTo(mutableListOf())
-
-        updateDefinitions()
     }
 
-    fun reorderScriptDefinitions() = lock.write {
-        updateDefinitions()
+    fun reorderScriptDefinitions() {
+        definitions?.forEach {
+            val order = KotlinScriptingSettings.getInstance(project).getScriptDefinitionOrder(it)
+            lock.write {
+                it.order = order
+            }
+        }
+        lock.write {
+            definitions = definitions?.sortedBy { it.order }
+
+            updateDefinitions()
+        }
     }
 
-    fun getAllDefinitions(): List<ScriptDefinition> {
-        return definitions ?: kotlin.run {
-            reloadScriptDefinitions()
-            definitions!!
-        }
+    fun getAllDefinitions(): List<ScriptDefinition> = definitions ?: run {
+        reloadScriptDefinitions()
+        definitions!!
     }
 
     fun isReady(): Boolean {
-        return definitions != null && definitionsBySource.keys.all { source ->
+        if (definitions == null) return false
+        val keys = lock.write { definitionsBySource.keys }
+        return keys.all { source ->
             // TODO: implement another API for readiness checking
             (source as? ScriptDefinitionContributor)?.isReady() != false
         }
@@ -196,10 +211,6 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
 
     private fun updateDefinitions() {
         assert(lock.isWriteLocked) { "updateDefinitions should only be called under the write lock" }
-
-        definitions = definitions?.sortedBy {
-            KotlinScriptingSettings.getInstance(project).getScriptDefinitionOrder(it)
-        }
 
         val fileTypeManager = FileTypeManager.getInstance()
 
@@ -231,7 +242,7 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
         } catch (t: Throwable) {
             if (t is ControlFlowException) throw t
             // reporting failed loading only once
-            LOG.error("[kts] cannot load script definitions using $this", t)
+            scriptingErrorLog("[kts] cannot load script definitions using $this", t)
             failedContributorsHashes.add(this@safeGetDefinitions.hashCode())
         }
         return emptyList()
@@ -253,10 +264,11 @@ fun loadDefinitionsFromTemplates(
      * Script template dependencies naturally become (part of) dependencies of the script which is not always desired for resolver dependencies.
      * i.e. gradle resolver may depend on some jars that 'built.gradle.kts' files should not depend on.
      */
-    additionalResolverClasspath: List<File> = emptyList()
+    additionalResolverClasspath: List<File> = emptyList(),
+    defaultCompilerOptions: Iterable<String> = emptyList()
 ): List<ScriptDefinition> {
     val classpath = templateClasspath + additionalResolverClasspath
-    LOG.info("[kts] loading script definitions $templateClassNames using cp: ${classpath.joinToString(File.pathSeparator)}")
+    scriptingInfoLog("Loading script definitions $templateClassNames using cp: ${classpath.joinToString(File.pathSeparator)}")
     val baseLoader = ScriptDefinitionContributor::class.java.classLoader
     val loader = if (classpath.isEmpty()) baseLoader else URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), baseLoader)
 
@@ -270,30 +282,30 @@ fun loadDefinitionsFromTemplates(
             }
             when {
                 template.annotations.firstIsInstanceOrNull<kotlin.script.templates.ScriptTemplateDefinition>() != null -> {
-                    ScriptDefinition.FromLegacyTemplate(hostConfiguration, template, templateClasspath)
+                    ScriptDefinition.FromLegacyTemplate(hostConfiguration, template, templateClasspath, defaultCompilerOptions)
                 }
                 template.annotations.firstIsInstanceOrNull<kotlin.script.experimental.annotations.KotlinScript>() != null -> {
-                    ScriptDefinition.FromTemplate(hostConfiguration, template, ScriptDefinition::class)
+                    ScriptDefinition.FromTemplate(hostConfiguration, template, ScriptDefinition::class, defaultCompilerOptions)
                 }
                 else -> {
-                    LOG.warn("[kts] cannot find a valid script definition annotation on the class $template")
+                    scriptingWarnLog("Cannot find a valid script definition annotation on the class $template")
                     null
                 }
             }
         } catch (e: ClassNotFoundException) {
             // Assuming that direct ClassNotFoundException is the result of versions mismatch and missing subsystems, e.g. gradle
             // so, it only results in warning, while other errors are severe misconfigurations, resulting it user-visible error
-            LOG.warn("[kts] cannot load script definition class $templateClassName")
+            scriptingWarnLog("Cannot load script definition class $templateClassName")
             null
         } catch (e: Throwable) {
             if (e is ControlFlowException) throw e
 
-            val message = "[kts] cannot load script definition class $templateClassName"
+            val message = "Cannot load script definition class $templateClassName"
             val thirdPartyPlugin = PluginManagerCore.getPluginByClassName(templateClassName)
             if (thirdPartyPlugin != null) {
-                LOG.error(PluginException(message, e, thirdPartyPlugin))
+                scriptingErrorLog(message, PluginException(message, e, thirdPartyPlugin))
             } else {
-                LOG.error(message, e)
+                scriptingErrorLog(message, e)
             }
             null
         }

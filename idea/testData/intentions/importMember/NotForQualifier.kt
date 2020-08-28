@@ -1,9 +1,8 @@
 // IS_APPLICABLE: false
 // WITH_RUNTIME
 
-import javax.swing.SwingUtilities
+import java.util.regex.Pattern
 
 fun foo() {
-    <caret>SwingUtilities.invokeLater {
-    }
+    <caret>Pattern.CASE_INSENSITIVE
 }

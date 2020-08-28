@@ -14,18 +14,17 @@ import com.intellij.openapi.roots.LanguageLevelProjectExtension;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
-import com.intellij.openapi.util.registry.RegistryValue;
 import com.intellij.pom.java.LanguageLevel;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
+import com.intellij.testFramework.LightIdeaTestCase;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings;
-import org.jetbrains.kotlin.idea.test.KotlinLightIdeaTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -37,7 +36,7 @@ import java.util.Map;
 
 // Based on from com.intellij.psi.formatter.java.AbstractJavaFormatterTest
 @SuppressWarnings("UnusedDeclaration")
-public abstract class AbstractFormatterTest extends KotlinLightIdeaTestCase {
+public abstract class AbstractFormatterTest extends LightIdeaTestCase {
 
     protected enum Action {REFORMAT, INDENT}
 
@@ -125,7 +124,7 @@ public abstract class AbstractFormatterTest extends KotlinLightIdeaTestCase {
     }
 
     public void doTestInvertedCallSite(@NotNull String expectedFileNameWithExtension) throws Exception {
-        doTest(expectedFileNameWithExtension, true, true);
+        doTest(expectedFileNameWithExtension, true, false);
     }
 
     public void doTestCallSite(@NotNull String expectedFileNameWithExtension) throws Exception {
@@ -137,8 +136,8 @@ public abstract class AbstractFormatterTest extends KotlinLightIdeaTestCase {
         String testFileExtension = expectedFileNameWithExtension.substring(expectedFileNameWithExtension.lastIndexOf("."));
         String originalFileText = FileUtil.loadFile(new File(testFileName + testFileExtension), true);
 
-        CodeStyleSettings codeStyleSettings = CodeStyle.getSettings(getProject_());
-        RegistryValue registryValue = Registry.get("kotlin.formatter.allowTrailingCommaOnCallSite");
+        CodeStyleSettings codeStyleSettings = CodeStyle.getSettings(getProject());
+        KotlinCodeStyleSettings customSettings = codeStyleSettings.getCustomSettings(KotlinCodeStyleSettings.class);
         try {
             Integer rightMargin = InTextDirectivesUtils.getPrefixedInt(originalFileText, "// RIGHT_MARGIN: ");
             if (rightMargin != null) {
@@ -147,7 +146,7 @@ public abstract class AbstractFormatterTest extends KotlinLightIdeaTestCase {
 
             Boolean trailingComma = InTextDirectivesUtils.getPrefixedBoolean(originalFileText, "// TRAILING_COMMA: ");
             if (trailingComma != null) {
-                codeStyleSettings.getCustomSettings(KotlinCodeStyleSettings.class).ALLOW_TRAILING_COMMA = trailingComma;
+                customSettings.ALLOW_TRAILING_COMMA = trailingComma;
             }
 
             SettingsConfigurator configurator = FormatSettingsUtil.createConfigurator(originalFileText, codeStyleSettings);
@@ -158,12 +157,11 @@ public abstract class AbstractFormatterTest extends KotlinLightIdeaTestCase {
                 configurator.configureInvertedSettings();
             }
 
-            registryValue.setValue(callSite);
+            customSettings.ALLOW_TRAILING_COMMA_ON_CALL_SITE = callSite;
             doTextTest(originalFileText, new File(expectedFileNameWithExtension), testFileExtension);
         }
         finally {
             codeStyleSettings.clearCodeStyleSettings();
-            registryValue.resetToDefault();
         }
     }
 }

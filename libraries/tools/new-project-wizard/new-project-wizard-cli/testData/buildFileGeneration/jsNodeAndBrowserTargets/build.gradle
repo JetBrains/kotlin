@@ -19,21 +19,29 @@ kotlin {
     js('browser') {
         browser {
             binaries.executable()
+            webpackTask {
+                cssSupport.enabled = true
+            }
+            runTask {
+                cssSupport.enabled = true
+            }
+            testTask {
+                useKarma {
+                    useChromeHeadless()
+                    webpackConfig.cssSupport.enabled = true
+                }
+            }
         }
     }
     sourceSets {
         nodeJsMain {
-            dependencies {
-                implementation kotlin('stdlib-js')
-            }
+
         }
         nodeJsTest {
 
         }
         browserMain {
-            dependencies {
-                implementation kotlin('stdlib-js')
-            }
+
         }
         browserTest {
             dependencies {

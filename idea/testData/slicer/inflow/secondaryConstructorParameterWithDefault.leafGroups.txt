@@ -1,7 +1,3 @@
-9 class B2: A(1, <bold>"2"</bold>) (in B2)
-5 	@JvmOverloads constructor(n: Int, <bold>s: String</bold> = "???") (in constructor A(Int, String = ...))
-9 		class B2: A(1, <bold>"2"</bold>) (in B2)
-
 12 new A(1, <bold>"2"</bold>);
 5 	@JvmOverloads constructor(n: Int, <bold>s: String</bold> = "???") (in constructor A(Int, String = ...))
 12 		new A(1, <bold>"2"</bold>);
@@ -14,3 +10,8 @@
 5 @JvmOverloads constructor(n: Int, s: String = <bold>"???"</bold>) (in constructor A(Int, String = ...))
 5 	@JvmOverloads constructor(n: Int, <bold>s: String</bold> = "???") (in constructor A(Int, String = ...))
 5 		@JvmOverloads constructor(n: Int, s: String = <bold>"???"</bold>) (in constructor A(Int, String = ...))
+
+9 class B2: A(1, <bold>"2"</bold>) (in B2)
+5 	@JvmOverloads constructor(n: Int, <bold>s: String</bold> = "???") (in constructor A(Int, String = ...))
+9 		class B2: A(1, <bold>"2"</bold>) (in B2)
+

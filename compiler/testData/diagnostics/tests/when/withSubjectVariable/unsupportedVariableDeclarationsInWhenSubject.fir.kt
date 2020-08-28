@@ -12,7 +12,7 @@ fun testSimpleValInWhenSubject() {
 
 fun testValWithoutInitializerWhenSubject() {
     when (val y: Any) {
-        is String -> y.<!UNRESOLVED_REFERENCE!>length<!>
+        is String -> <!UNINITIALIZED_VARIABLE!>y<!>.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
 

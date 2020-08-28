@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public final class Foo {
+    // source: 'inlineOnlyProperty.kt'
     public method <init>(): void
     public synthetic deprecated static @kotlin.internal.InlineOnly method getProp$annotations(): void
     private final method getProp(): java.lang.String
@@ -10,6 +11,7 @@ public final class Foo {
 
 @kotlin.Metadata
 public final class InlineOnlyPropertyKt {
+    // source: 'inlineOnlyProperty.kt'
     public synthetic deprecated static @kotlin.internal.InlineOnly method getProp$annotations(): void
     private final static method getProp(): java.lang.String
     private final static @kotlin.internal.InlineOnly method getProp2(): java.lang.String

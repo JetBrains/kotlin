@@ -50,9 +50,9 @@ private fun parseTask(
 
     fun buildOngoingTask() {
         // check options completeness
-        val missedMandatoryOptions = optionTypes.filterKeys { it !in options }.filterValues { it.mandatory }.keys
-        if (missedMandatoryOptions.isNotEmpty())
-            printUsageAndExit("Mandatory options not specified in task $taskAlias: " + missedMandatoryOptions.joinToString { "-$it" })
+        val missingMandatoryOptions = optionTypes.filterKeys { it !in options }.filterValues { it.mandatory }.keys
+        if (missingMandatoryOptions.isNotEmpty())
+            printUsageAndExit("Mandatory options not specified in task $taskAlias: " + missingMandatoryOptions.joinToString { "-$it" })
 
         tasks += taskType.taskConstructor(options.values)
     }

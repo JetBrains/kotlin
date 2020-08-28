@@ -1,0 +1,6 @@
+// "Add parameter to function 'baz'" "true"
+fun baz(function: (Int) -> String) {}
+
+fun foo() {
+    baz(fun(i: Int): String { return i.toString() }<caret>)
+}

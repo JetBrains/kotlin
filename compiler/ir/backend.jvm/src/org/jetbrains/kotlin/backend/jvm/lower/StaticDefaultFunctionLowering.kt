@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.createStaticFunctionWithReceivers
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
-import org.jetbrains.kotlin.backend.common.phaser.SameTypeNamedPhaseWrapper
+import org.jetbrains.kotlin.backend.common.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.phaser.then
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
@@ -45,7 +45,7 @@ private val callLoweringPhase = makeIrFilePhase(
     description = "Generate calls of static functions for default parameters"
 )
 
-internal val staticDefaultFunctionPhase = SameTypeNamedPhaseWrapper(
+internal val staticDefaultFunctionPhase = NamedCompilerPhase(
     name = "StaticDefaultFunction",
     description = "Make function adapters for default arguments static",
     lower = functionDefinitionLoweringPhase then callLoweringPhase,
@@ -60,7 +60,7 @@ private class StaticDefaultFunctionLowering(val context: JvmBackendContext) : Ir
         irClass.accept(this, null)
     }
 
-    override fun visitFunction(declaration: IrFunction): IrStatement = super.visitFunction(
+    override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement = super.visitFunction(
         if (declaration.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER && declaration.dispatchReceiverParameter != null)
             context.getStaticFunctionWithReceivers(declaration).also {
                 it.body = declaration.moveBodyTo(it)
@@ -103,8 +103,7 @@ private class StaticDefaultCallLowering(
     }
 }
 
-private fun JvmBackendContext.getStaticFunctionWithReceivers(function: IrFunction) =
+private fun JvmBackendContext.getStaticFunctionWithReceivers(function: IrSimpleFunction) =
     staticDefaultStubs.getOrPut(function.symbol) {
-        createStaticFunctionWithReceivers(function.parent, function.name, function)
+        irFactory.createStaticFunctionWithReceivers(function.parent, function.name, function)
     }
-

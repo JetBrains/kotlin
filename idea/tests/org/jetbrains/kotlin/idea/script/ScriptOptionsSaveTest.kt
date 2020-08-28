@@ -20,17 +20,20 @@ class ScriptOptionsSaveTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testSaveAutoReload() {
         val project = myFixture.project
         val settings = KotlinScriptingSettings.getInstance(project)
-        val initialAutoReload = settings.isAutoReloadEnabled
+        val definition = ScriptDefinitionsManager.getInstance(project).getAllDefinitions().first()
+        val initialAutoReload = settings.autoReloadConfigurations(definition)
 
-        settings.isAutoReloadEnabled = !initialAutoReload
+        settings.setAutoReloadConfigurations(definition, !initialAutoReload)
 
         assertEquals(
             "isAutoReloadEnabled should be set to true",
-            "<KotlinScriptingSettings><option name=\"isAutoReloadEnabled\" value=\"true\" /></KotlinScriptingSettings>",
+            "true",
             XMLOutputter().outputString(settings.state)
+                .substringAfter("<autoReloadConfigurations>")
+                .substringBefore("</autoReloadConfigurations>")
         )
 
-        settings.isAutoReloadEnabled = initialAutoReload
+        settings.setAutoReloadConfigurations(definition, initialAutoReload)
     }
 
     fun testSaveScriptDefinitionOff() {
@@ -45,8 +48,10 @@ class ScriptOptionsSaveTest : KotlinLightCodeInsightFixtureTestCase() {
 
         assertEquals(
             "scriptDefinition should be off",
-            "<KotlinScriptingSettings><scriptDefinition><order>0</order><isEnabled>false</isEnabled></scriptDefinition></KotlinScriptingSettings>",
-            XMLOutputter().outputString(settings.state).replace("scriptDefinition .*\">".toRegex(), "scriptDefinition>")
+            "false",
+            XMLOutputter().outputString(settings.state)
+                .substringAfter("<isEnabled>")
+                .substringBefore("</isEnabled>")
         )
 
         settings.setEnabled(scriptDefinition, initialIsEnabled)

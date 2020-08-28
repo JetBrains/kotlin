@@ -1,58 +1,58 @@
 {
-  "5": {
+  "6": {
     "pos": {
       "2": [
         {
-          "specVersion": "0.1-268",
+          "specVersion": "0.1-435",
           "casesNumber": 0,
           "description": "implicit this receiver has higher priority than any companion object receiver",
-          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5/pos/2.1.kt",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos/2.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         },
         {
-          "specVersion": "0.1-268",
+          "specVersion": "0.1-435",
           "casesNumber": 0,
           "description": "implicit this receiver has higher priority than any companion object receiver",
-          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5/pos/2.2.kt",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos/2.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
       ],
       "3": [
         {
-          "specVersion": "0.1-278",
+          "specVersion": "0.1-435",
           "casesNumber": 0,
           "description": "The phantom static implicit this receiver has higher priority than the current class companion object receiver;",
-          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5/pos/3.1.kt",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos/3.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
       ],
       "5": [
         {
-          "specVersion": "0.1-278",
+          "specVersion": "0.1-435",
           "casesNumber": 0,
           "description": "Superclass companion object receivers are prioritized according to the inheritance order",
-          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5/pos/5.1.kt",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos/5.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }
       ],
       "4": [
         {
-          "specVersion": "0.1-278",
+          "specVersion": "0.1-435",
           "casesNumber": 0,
           "description": "Superclass companion object receivers are prioritized according to the inheritance order",
-          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5/pos/5.1.kt",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos/5.1.kt",
           "unexpectedBehaviour": false,
           "linkType": "primary"
         },
         {
-          "specVersion": "0.1-278",
+          "specVersion": "0.1-435",
           "casesNumber": 0,
           "description": "Current class companion object receiver has higher priority than any of the superclass companion objects;",
-          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-5/pos/4.2.kt",
+          "path": "compiler/tests-spec/testData/codegen/box/linked/overload-resolution/receivers/p-6/pos/4.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main"
         }

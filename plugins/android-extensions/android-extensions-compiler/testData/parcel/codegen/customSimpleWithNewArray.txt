@@ -33,15 +33,26 @@ final class User$Companion : java/lang/Object, kotlinx/android/parcel/Parceler {
 public final class User$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final java.lang.Object createFromParcel(android.os.Parcel in)
+    public final User createFromParcel(android.os.Parcel in)
 
-    public final java.lang.Object[] newArray(int size) {
+    public java.lang.Object createFromParcel(android.os.Parcel p0)
+
+    public final User[] newArray(int size) {
         LABEL (L0)
           GETSTATIC (Companion, LUser$Companion;)
           ILOAD (1)
           INVOKEVIRTUAL (User$Companion, newArray, (I)[Ljava/lang/Object;)
           ARETURN
         LABEL (L1)
+    }
+
+    public java.lang.Object[] newArray(int p0) {
+        LABEL (L0)
+        LINENUMBER (9)
+          ALOAD (0)
+          ILOAD (1)
+          INVOKEVIRTUAL (User$Creator, newArray, (I)[LUser;)
+          ARETURN
     }
 }
 

@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -49,7 +48,7 @@ open class FirSimpleFunctionImpl @FirImplementationDetail constructor(
     override val typeParameters: MutableList<FirTypeParameter>,
 ) : FirSimpleFunction() {
     override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference
+    override var controlFlowGraphReference: FirControlFlowGraphReference? = null
 
     init {
         symbol.bind(this)
@@ -58,7 +57,7 @@ open class FirSimpleFunctionImpl @FirImplementationDetail constructor(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
         receiverTypeRef?.accept(visitor, data)
-        controlFlowGraphReference.accept(visitor, data)
+        controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
         status.accept(visitor, data)
@@ -70,13 +69,13 @@ open class FirSimpleFunctionImpl @FirImplementationDetail constructor(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
         transformReturnTypeRef(transformer, data)
         transformReceiverTypeRef(transformer, data)
-        transformControlFlowGraphReference(transformer, data)
+        controlFlowGraphReference = controlFlowGraphReference?.transformSingle(transformer, data)
         transformValueParameters(transformer, data)
-        body = body?.transformSingle(transformer, data)
+        transformBody(transformer, data)
         transformStatus(transformer, data)
         transformContractDescription(transformer, data)
         transformAnnotations(transformer, data)
-        typeParameters.transformInplace(transformer, data)
+        transformTypeParameters(transformer, data)
         return this
     }
 
@@ -90,13 +89,13 @@ open class FirSimpleFunctionImpl @FirImplementationDetail constructor(
         return this
     }
 
-    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
-        controlFlowGraphReference = controlFlowGraphReference.transformSingle(transformer, data)
+    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
+        valueParameters.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
-        valueParameters.transformInplace(transformer, data)
+    override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
+        body = body?.transformSingle(transformer, data)
         return this
     }
 
@@ -115,6 +114,11 @@ open class FirSimpleFunctionImpl @FirImplementationDetail constructor(
         return this
     }
 
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
+        typeParameters.transformInplace(transformer, data)
+        return this
+    }
+
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         resolvePhase = newResolvePhase
     }
@@ -125,6 +129,10 @@ open class FirSimpleFunctionImpl @FirImplementationDetail constructor(
 
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
         receiverTypeRef = newReceiverTypeRef
+    }
+
+    override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
+        controlFlowGraphReference = newControlFlowGraphReference
     }
 
     override fun replaceValueParameters(newValueParameters: List<FirValueParameter>) {

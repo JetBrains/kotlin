@@ -73,10 +73,12 @@ public actual fun UIntArray.asList(): List<UInt> {
             return this@asList[index]
         }
         override fun indexOf(element: UInt): Int {
+            @Suppress("USELESS_CAST")
             if ((element as Any?) !is UInt) return -1
             return this@asList.indexOf(element)
         }
         override fun lastIndexOf(element: UInt): Int {
+            @Suppress("USELESS_CAST")
             if ((element as Any?) !is UInt) return -1
             return this@asList.lastIndexOf(element)
         }
@@ -98,10 +100,12 @@ public actual fun ULongArray.asList(): List<ULong> {
             return this@asList[index]
         }
         override fun indexOf(element: ULong): Int {
+            @Suppress("USELESS_CAST")
             if ((element as Any?) !is ULong) return -1
             return this@asList.indexOf(element)
         }
         override fun lastIndexOf(element: ULong): Int {
+            @Suppress("USELESS_CAST")
             if ((element as Any?) !is ULong) return -1
             return this@asList.lastIndexOf(element)
         }
@@ -123,10 +127,12 @@ public actual fun UByteArray.asList(): List<UByte> {
             return this@asList[index]
         }
         override fun indexOf(element: UByte): Int {
+            @Suppress("USELESS_CAST")
             if ((element as Any?) !is UByte) return -1
             return this@asList.indexOf(element)
         }
         override fun lastIndexOf(element: UByte): Int {
+            @Suppress("USELESS_CAST")
             if ((element as Any?) !is UByte) return -1
             return this@asList.lastIndexOf(element)
         }
@@ -148,10 +154,12 @@ public actual fun UShortArray.asList(): List<UShort> {
             return this@asList[index]
         }
         override fun indexOf(element: UShort): Int {
+            @Suppress("USELESS_CAST")
             if ((element as Any?) !is UShort) return -1
             return this@asList.indexOf(element)
         }
         override fun lastIndexOf(element: UShort): Int {
+            @Suppress("USELESS_CAST")
             if ((element as Any?) !is UShort) return -1
             return this@asList.lastIndexOf(element)
         }

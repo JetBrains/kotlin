@@ -2,7 +2,7 @@ plugins {
     id 'org.jetbrains.kotlin.multiplatform' version '{{kotlin_plugin_version}}'
 }
 repositories {
-    mavenCentral()
+    {{kotlin_plugin_repositories}}
 }
 group 'com.example'
 version '0.0.1'

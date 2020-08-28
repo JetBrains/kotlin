@@ -6,15 +6,13 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 
+@ObsoleteDescriptorBasedAPI
 fun SymbolTable.declareSimpleFunctionWithOverrides(
     startOffset: Int,
     endOffset: Int,
@@ -22,48 +20,24 @@ fun SymbolTable.declareSimpleFunctionWithOverrides(
     descriptor: FunctionDescriptor
 ) =
     declareSimpleFunction(descriptor) {
-        IrFunctionImpl(
-            startOffset, endOffset, origin, it,
-            returnType = IrUninitializedType,
-            descriptor = descriptor,
-            name = nameProvider.nameForDeclaration(descriptor),
-        ).apply {
-            metadata = MetadataSource.Function(descriptor)
+        with(descriptor) {
+            irFactory.createFunction(
+                startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(this),
+                visibility, modality, IrUninitializedType, isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect
+            ).also { declaration ->
+                declaration.metadata = MetadataSource.Function(this)
+            }
         }
     }.also { declaration ->
         generateOverriddenFunctionSymbols(declaration, this)
     }
 
-
+@ObsoleteDescriptorBasedAPI
 fun generateOverriddenFunctionSymbols(
     declaration: IrSimpleFunction,
     symbolTable: ReferenceSymbolTable
 ) {
     declaration.overriddenSymbols = declaration.descriptor.overriddenDescriptors.map {
         symbolTable.referenceSimpleFunction(it.original)
-    }
-}
-
-fun SymbolTable.declareFieldWithOverrides(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
-    descriptor: PropertyDescriptor,
-    type: IrType,
-    hasBackingField: (PropertyDescriptor) -> Boolean
-) =
-    declareField(startOffset, endOffset, origin, descriptor, type).also { declaration ->
-        generateOverriddenFieldSymbols(declaration, this, hasBackingField)
-    }
-
-fun generateOverriddenFieldSymbols(
-    declaration: IrField,
-    symbolTable: SymbolTable,
-    hasBackingField: (PropertyDescriptor) -> Boolean
-) {
-    declaration.overriddenSymbols = declaration.descriptor.overriddenDescriptors.mapNotNull {
-        if (hasBackingField(it)) {
-            symbolTable.referenceField(it.original)
-        } else null
     }
 }

@@ -27,7 +27,7 @@ object JvmMultifileClassStateChecker : DeclarationChecker {
 
         if (!JvmFileClassUtil.getFileClassInfoNoResolve(declaration.containingKtFile).withJvmMultifileClass) return
 
-        if (@Suppress("DEPRECATION") descriptor.isDelegated ||
+        if (descriptor.isDelegated ||
             context.trace.bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) == true) {
             context.trace.report(ErrorsJvm.STATE_IN_MULTIFILE_CLASS.on(declaration))
         }

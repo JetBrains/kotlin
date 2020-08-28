@@ -36,7 +36,6 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class Test {
-    @org.jetbrains.annotations.NotNull()
     public java.lang.String simpleName;
 
     @org.jetbrains.annotations.NotNull()

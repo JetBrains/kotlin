@@ -1,4 +1,4 @@
 // IS_APPLICABLE: false
 // WITH_RUNTIME
 
-import javax.swing.<caret>SwingConstants.CENTER
+import java.util.regex.<caret>Pattern.CASE_INSENSITIVE

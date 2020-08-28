@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,137 +10,71 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.fir.FirModuleBasedSession
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSessionBase
-import org.jetbrains.kotlin.fir.FirSessionProvider
-import org.jetbrains.kotlin.fir.analysis.CheckersComponent
-import org.jetbrains.kotlin.fir.extensions.FirExtensionService
-import org.jetbrains.kotlin.fir.extensions.FirRegisteredPluginAnnotations
-import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
+import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.registerCheckersComponent
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
-import org.jetbrains.kotlin.fir.resolve.FirProvider
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
-import org.jetbrains.kotlin.fir.resolve.calls.jvm.JvmCallConflictResolverFactory
-import org.jetbrains.kotlin.fir.resolve.impl.*
+import org.jetbrains.kotlin.fir.resolve.calls.jvm.registerJvmCallConflictResolverFactory
+import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.*
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
-import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
-import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
-import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.JavaClassFinderImpl
-import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 
-class FirJavaModuleBasedSession(
+class FirJavaModuleBasedSession private constructor(
     moduleInfo: ModuleInfo,
     sessionProvider: FirProjectSessionProvider,
-    scope: GlobalSearchScope,
-    dependenciesProvider: FirSymbolProvider? = null
 ) : FirModuleBasedSession(moduleInfo, sessionProvider) {
+    companion object {
+        fun create(
+            moduleInfo: ModuleInfo,
+            sessionProvider: FirProjectSessionProvider,
+            scope: GlobalSearchScope,
+            dependenciesProvider: FirSymbolProvider? = null
+        ): FirJavaModuleBasedSession {
+            return FirJavaModuleBasedSession(moduleInfo, sessionProvider).apply {
+                registerCommonComponents()
+                registerResolveComponents()
+                registerCheckersComponent()
+                registerJvmCallConflictResolverFactory()
+                registerJavaVisibilityChecker()
+
+                val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
+
+                val firProvider = FirProviderImpl(this, kotlinScopeProvider)
+                register(FirProvider::class, firProvider)
+
+                register(
+                    FirSymbolProvider::class,
+                    FirCompositeSymbolProvider(
+                        this,
+                        listOf(
+                            firProvider.symbolProvider,
+                            JavaSymbolProvider(this, sessionProvider.project, scope),
+                            dependenciesProvider ?: FirDependenciesSymbolProviderImpl(this)
+                        )
+                    ) as FirSymbolProvider
+                )
+
+                Extensions.getArea(sessionProvider.project)
+                    .getExtensionPoint(PsiElementFinder.EP_NAME)
+                    .registerExtension(FirJavaElementFinder(this, sessionProvider.project))
+            }
+        }
+    }
 
 
     init {
-        sessionProvider.sessionCache[moduleInfo] = this
-
-        val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
-
-        val firProvider = FirProviderImpl(this, kotlinScopeProvider)
-        registerComponent(FirProvider::class, firProvider)
-
-        registerComponent(
-            FirSymbolProvider::class,
-            FirCompositeSymbolProvider(
-                listOf(
-                    firProvider,
-                    JavaSymbolProvider(this, sessionProvider.project, scope),
-                    dependenciesProvider ?: FirDependenciesSymbolProviderImpl(this)
-                )
-            ) as FirSymbolProvider
-        )
-
-        registerComponent(
-            FirCorrespondingSupertypesCache::class,
-            FirCorrespondingSupertypesCache(this)
-        )
-
-        registerComponent(
-            ConeCallConflictResolverFactory::class,
-            JvmCallConflictResolverFactory
-        )
-
-        registerComponent(
-            CheckersComponent::class,
-            CheckersComponent.componentWithDefaultCheckers()
-        )
-
-        Extensions.getArea(sessionProvider.project)
-            .getExtensionPoint(PsiElementFinder.EP_NAME)
-            .registerExtension(FirJavaElementFinder(this, sessionProvider.project))
+        sessionProvider.registerSession(moduleInfo, this)
     }
 }
 
 class FirLibrarySession private constructor(
-    moduleInfo: ModuleInfo,
+    override val moduleInfo: ModuleInfo,
     sessionProvider: FirProjectSessionProvider,
-    scope: GlobalSearchScope,
-    packagePartProvider: PackagePartProvider,
-    kotlinClassFinder: KotlinClassFinder,
-    javaClassFinder: JavaClassFinder
-) : FirSessionBase(sessionProvider) {
-
-
-    init {
-        val javaSymbolProvider = JavaSymbolProvider(this, sessionProvider.project, scope)
-
-        val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
-
-        registerComponent(
-            FirSymbolProvider::class,
-            FirCompositeSymbolProvider(
-                listOf(
-                    KotlinDeserializedJvmSymbolsProvider(
-                        this, sessionProvider.project,
-                        packagePartProvider,
-                        javaSymbolProvider,
-                        kotlinClassFinder,
-                        javaClassFinder,
-                        kotlinScopeProvider
-                    ),
-                    FirBuiltinSymbolProvider(this, kotlinScopeProvider),
-                    FirClonableSymbolProvider(this, kotlinScopeProvider),
-                    javaSymbolProvider,
-                    FirDependenciesSymbolProviderImpl(this)
-                )
-            ) as FirSymbolProvider
-        )
-        registerComponent(FirDeclaredMemberScopeProvider::class, FirDeclaredMemberScopeProvider())
-
-        registerComponent(
-            FirCorrespondingSupertypesCache::class,
-            FirCorrespondingSupertypesCache(this)
-        )
-
-        registerComponent(
-            FirExtensionService::class,
-            FirExtensionService(this)
-        )
-
-        registerComponent(
-            FirRegisteredPluginAnnotations::class,
-            FirRegisteredPluginAnnotations.create(this)
-        )
-
-        registerComponent(
-            FirPredicateBasedProvider::class,
-            FirPredicateBasedProvider.create(this)
-        )
-
-        sessionProvider.sessionCache[moduleInfo] = this
-    }
-
+) : FirSession(sessionProvider) {
     companion object {
         fun create(
             moduleInfo: ModuleInfo,
@@ -154,20 +88,51 @@ class FirLibrarySession private constructor(
                 this.setScope(scope)
             }
 
-            return FirLibrarySession(
-                moduleInfo, sessionProvider, scope,
-                packagePartProvider,
-                VirtualFileFinderFactory.getInstance(project).create(scope),
-                javaClassFinder
-            )
+            val kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(scope)
+            return FirLibrarySession(moduleInfo, sessionProvider).apply {
+                registerCommonComponents()
+
+                val javaSymbolProvider = JavaSymbolProvider(this, sessionProvider.project, scope)
+
+                val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
+
+                register(
+                    FirSymbolProvider::class,
+                    FirCompositeSymbolProvider(
+                        this,
+                        listOf(
+                            KotlinDeserializedJvmSymbolsProvider(
+                                this, sessionProvider.project,
+                                packagePartProvider,
+                                javaSymbolProvider,
+                                kotlinClassFinder,
+                                javaClassFinder,
+                                kotlinScopeProvider
+                            ),
+                            FirBuiltinSymbolProvider(this, kotlinScopeProvider),
+                            FirCloneableSymbolProvider(this, kotlinScopeProvider),
+                            javaSymbolProvider,
+                            FirDependenciesSymbolProviderImpl(this)
+                        )
+                    )
+                )
+            }
         }
+    }
+
+    init {
+        sessionProvider.registerSession(moduleInfo, this)
     }
 }
 
-class FirProjectSessionProvider(override val project: Project) : FirSessionProvider {
+open class FirProjectSessionProvider(override val project: Project) : FirSessionProvider {
     override fun getSession(moduleInfo: ModuleInfo): FirSession? {
         return sessionCache[moduleInfo]
     }
 
-    val sessionCache = mutableMapOf<ModuleInfo, FirSession>()
+    fun registerSession(moduleInfo: ModuleInfo, session: FirSession) {
+        sessionCache[moduleInfo] = session
+    }
+
+    protected open val sessionCache: MutableMap<ModuleInfo, FirSession> = mutableMapOf()
 }

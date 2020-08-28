@@ -1,7 +1,0 @@
-FILE: simple.kt
-    @R|org/jetbrains/kotlin/fir/plugin/WithClass|() public final class A : R|kotlin/Any| {
-        public constructor(): R|A| {
-            super<R|kotlin/Any|>()
-        }
-
-    }

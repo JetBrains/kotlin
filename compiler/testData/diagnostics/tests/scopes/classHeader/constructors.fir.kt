@@ -10,8 +10,8 @@ class A(
         cc: Int = Companion.CONST,
         cn: Int = Nested.CONST,
         ci: Int = Interface.CONST,
-        t1: Int = a,
-        t2: Int = b()
+        t1: Int = <!UNRESOLVED_REFERENCE!>a<!>,
+        t2: Int = <!UNRESOLVED_REFERENCE!>b<!>()
 ) {
 
     constructor(
@@ -25,8 +25,8 @@ class A(
             cc: Int = Companion.CONST,
             cn: Int = Nested.CONST,
             ci: Int = Interface.CONST,
-            t1: Int = a,
-            t2: Int = b()
+            t1: Int = <!UNRESOLVED_REFERENCE!>a<!>,
+            t2: Int = <!UNRESOLVED_REFERENCE!>b<!>()
     ) : this(
         foo(),
         Nested(),
@@ -37,8 +37,8 @@ class A(
         Companion.CONST,
         Nested.CONST,
         Interface.CONST,
-        a,
-        b()
+        <!UNRESOLVED_REFERENCE!>a<!>,
+        <!UNRESOLVED_REFERENCE!>b<!>()
     )
 
     class Nested {

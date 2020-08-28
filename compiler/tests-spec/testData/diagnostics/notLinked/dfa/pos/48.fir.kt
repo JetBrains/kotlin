@@ -25,8 +25,8 @@ fun case_2(x: Any?, y: Any?) {
     if (x as Int === y) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Any?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>(10)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>y<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>y<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Any?")!>y<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Any?")!>y<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>(10)
     }
 }
 
@@ -53,7 +53,7 @@ fun case_4(x: Any?, y: Any?) {
     if (y === x as Int) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Any?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>(10)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>y<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>y<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Any?")!>y<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Any?")!>y<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>(10)
     }
 }

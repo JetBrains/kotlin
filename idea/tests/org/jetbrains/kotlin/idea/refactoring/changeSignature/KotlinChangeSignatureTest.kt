@@ -563,6 +563,14 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
         }
     }
 
+    fun testJavaMethodJvmStaticKotlinUsages() {
+        doJavaTest {
+            val first = newParameters[1]
+            newParameters[1] = newParameters[0]
+            newParameters[0] = first
+        }
+    }
+
     fun testJavaConstructorKotlinUsages() {
         doJavaTest { newParameters.removeAt(1) }
     }
@@ -806,6 +814,20 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
                 )
             )
         }
+    }
+
+    fun testPrimaryConstructorOnConstructorKeyword() = doTest {
+        val defaultValueForCall = KtPsiFactory(project).createExpression("\"foo\"")
+        addParameter(
+            KotlinParameterInfo(
+                originalBaseFunctionDescriptor,
+                -1,
+                "s",
+                KotlinTypeInfo(false, BUILT_INS.stringType),
+                null,
+                defaultValueForCall
+            )
+        )
     }
 
     fun testJavaConstructorInDelegationCall() {

@@ -11,8 +11,8 @@ import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.Visibilities
 import org.jetbrains.kotlin.fir.builder.generateResolvedAccessExpression
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirVariable
@@ -89,6 +89,7 @@ inline fun isClassLocal(classNode: LighterASTNode, getParent: LighterASTNode.() 
                 parent?.tokenType == KT_FILE -> return true
                 parent?.tokenType == CLASS_BODY && !(grandParent?.tokenType == OBJECT_DECLARATION && grandParent?.getParent()?.tokenType == OBJECT_LITERAL) -> return true
                 parent?.tokenType == BLOCK && grandParent?.tokenType == SCRIPT -> return true
+                parent?.tokenType == ENUM_ENTRY -> return true
             }
         }
         if (tokenType == BLOCK) {
@@ -122,8 +123,9 @@ fun generateDestructuringBlock(
                 }
                 this.isVar = isVar
                 symbol = FirPropertySymbol(entry.name) // TODO?
+                source = entry.source
                 isLocal = true
-                status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
+                status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                 annotations += entry.annotations
             }
         }

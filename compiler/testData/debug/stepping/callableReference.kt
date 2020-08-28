@@ -11,13 +11,11 @@ fun f(block: () -> Unit) {
 }
 
 // LINENUMBERS
-// test.kt:3
-// test.kt:4
-// test.kt:10
-// test.kt:5
-// test.kt:6
-// test.kt:-1
-// test.kt:-1
-// test.kt:10
-// test.kt:11
-// test.kt:7
+// test.kt:3 box
+// test.kt:4 box
+// test.kt:10 f
+// test.kt:5 invoke
+// test.kt:6 invoke
+// test.kt:10 f
+// test.kt:11 f
+// test.kt:7 box

@@ -128,6 +128,45 @@ class JvmVersionRequirementTest : AbstractVersionRequirementTest() {
         )
     }
 
+    fun testInlineClassReturnTypeMangled() {
+        // Class members returning inline class values are mangled,
+        // and have "since 1.4" version requirement along with "since 1.3" version requirement for inline class in signature
+        doTest(
+            VersionRequirement.Version(1, 4, 0), DeprecationLevel.ERROR, null, LANGUAGE_VERSION, null,
+            fqNamesWithRequirements = listOf(
+                "test.C.returnsInlineClassType",
+                "test.C.propertyOfInlineClassType"
+            ),
+            customLanguageVersion = LanguageVersion.KOTLIN_1_4,
+            shouldBeSingleRequirement = false
+        )
+        // Top-level functions and properties returning inline class values are NOT mangled,
+        // and have "since 1.3" version requirement for inline class in signature only.
+        doTest(
+            VersionRequirement.Version(1, 3, 0), DeprecationLevel.ERROR, null, LANGUAGE_VERSION, null,
+            fqNamesWithRequirements = listOf(
+                "test.C.returnsInlineClassTypeJvmName",
+                "test.returnsInlineClassType",
+                "test.propertyOfInlineClassType"
+            ),
+            shouldBeSingleRequirement = true,
+            customLanguageVersion = LanguageVersion.KOTLIN_1_4
+        )
+        // In Kotlin 1.3, all functions and properties returning inline class values are NOT mangled,
+        // and have "since 1.3" version requirement for inline class in signature only.
+        doTest(
+            VersionRequirement.Version(1, 3, 0), DeprecationLevel.ERROR, null, LANGUAGE_VERSION, null,
+            fqNamesWithRequirements = listOf(
+                "test.returnsInlineClassType",
+                "test.propertyOfInlineClassType",
+                "test.C.returnsInlineClassType",
+                "test.C.propertyOfInlineClassType"
+            ),
+            shouldBeSingleRequirement = true,
+            customLanguageVersion = LanguageVersion.KOTLIN_1_3
+        )
+    }
+
     fun testSuspendFun_1_2() {
         doTest(
             VersionRequirement.Version(1, 1), DeprecationLevel.ERROR, null, LANGUAGE_VERSION, null,

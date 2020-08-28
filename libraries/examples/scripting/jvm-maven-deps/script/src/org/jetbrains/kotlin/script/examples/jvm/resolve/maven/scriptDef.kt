@@ -38,10 +38,10 @@ object ScriptWithMavenDepsConfiguration : ScriptCompilationConfiguration(
 private val resolver = CompoundDependenciesResolver(FileSystemDependenciesResolver(), MavenDependenciesResolver())
 
 fun configureMavenDepsOnAnnotations(context: ScriptConfigurationRefinementContext): ResultWithDiagnostics<ScriptCompilationConfiguration> {
-    val annotations = context.collectedData?.get(ScriptCollectedData.foundAnnotations)?.takeIf { it.isNotEmpty() }
+    val annotations = context.collectedData?.get(ScriptCollectedData.collectedAnnotations)?.takeIf { it.isNotEmpty() }
         ?: return context.compilationConfiguration.asSuccess()
     return runBlocking {
-        resolver.resolveFromAnnotations(annotations)
+        resolver.resolveFromScriptSourceAnnotations(annotations)
     }.onSuccess {
         context.compilationConfiguration.with {
             dependencies.append(JvmDependency(it))

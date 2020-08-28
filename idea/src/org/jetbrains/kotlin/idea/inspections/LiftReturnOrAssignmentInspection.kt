@@ -23,9 +23,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.util.getLineCount
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.BranchedFoldingUtils
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isElseIf
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.lineCount
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -115,7 +115,7 @@ class LiftReturnOrAssignmentInspection @JvmOverloads constructor(private val ski
             keyword: PsiElement,
             skipLongExpressions: Boolean
         ): List<LiftState>? {
-            if (skipLongExpressions && expression.lineCount() > LINES_LIMIT) return null
+            if (skipLongExpressions && expression.getLineCount() > LINES_LIMIT) return null
             if (expression.isElseIf()) return null
 
             val foldableReturns = BranchedFoldingUtils.getFoldableReturns(expression)

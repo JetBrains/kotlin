@@ -1,5 +1,3 @@
-// IGNORE_FIR
-
 val x: Int <caret>by Foo()
 
 class Foo

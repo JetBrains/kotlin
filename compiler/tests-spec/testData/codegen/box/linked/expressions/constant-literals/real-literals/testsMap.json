@@ -137,7 +137,7 @@
     "pos": {
       "1": [
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-435",
           "casesNumber": 0,
           "description": "Real literals suffixed by f/F (float suffix) with an exponent mark.",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-2/pos/1.2.kt",
@@ -145,7 +145,7 @@
           "linkType": "main"
         },
         {
-          "specVersion": "0.1-100",
+          "specVersion": "0.1-435",
           "casesNumber": 0,
           "description": "Simple real literals with an exponent mark.",
           "path": "compiler/tests-spec/testData/codegen/box/linked/expressions/constant-literals/real-literals/p-2/pos/1.1.kt",

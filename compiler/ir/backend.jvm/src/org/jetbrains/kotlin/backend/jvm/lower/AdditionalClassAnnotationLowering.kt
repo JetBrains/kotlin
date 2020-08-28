@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.addChild
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrEnumEntrySymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -61,20 +60,20 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
     private fun buildAnnotationClass(
         className: String,
         classKind: ClassKind = ClassKind.ANNOTATION_CLASS
-    ): IrClass = buildClass {
+    ): IrClass = context.irFactory.buildClass {
         name = Name.identifier(className)
         kind = classKind
     }.apply {
         val irClass = this
         parent = annotationPackage
         annotationPackage.addChild(this)
-        thisReceiver = buildValueParameter {
+        thisReceiver = buildValueParameter(this) {
             name = Name.identifier("\$this")
             type = IrSimpleTypeImpl(irClass.symbol, false, emptyList(), emptyList())
         }
     }
 
-    private fun buildAnnotationConstructor(annotationClass: IrClass): IrConstructor = buildConstructor {
+    private fun buildAnnotationConstructor(annotationClass: IrClass): IrConstructor = context.irFactory.buildConstructor {
         isPrimary = true
     }.apply {
         parent = annotationClass
@@ -128,7 +127,7 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
     }
 
     private fun generateDocumentedAnnotation(irClass: IrClass) {
-        if (!irClass.hasAnnotation(KotlinBuiltIns.FQ_NAMES.mustBeDocumented) ||
+        if (!irClass.hasAnnotation(StandardNames.FqNames.mustBeDocumented) ||
             irClass.hasAnnotation(FqName("java.lang.annotation.Documented"))
         ) return
 
@@ -193,7 +192,7 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
             ?: throw AssertionError("No annotation target map for JVM target $jvmTarget")
 
         val targets = irClass.applicableTargetSet() ?: return
-        val javaTargets = targets.mapNotNull { annotationTargetMap[it] }
+        val javaTargets = targets.mapNotNull { annotationTargetMap[it] }.toSet()
 
         val vararg = IrVarargImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
@@ -229,7 +228,7 @@ private fun IrConstructorCall.getValueArgument(name: Name): IrExpression? {
 private val TARGET_ALLOWED_TARGETS = Name.identifier("allowedTargets")
 
 private fun IrClass.applicableTargetSet(): Set<KotlinTarget>? {
-    val targetEntry = getAnnotation(KotlinBuiltIns.FQ_NAMES.target) ?: return null
+    val targetEntry = getAnnotation(StandardNames.FqNames.target) ?: return null
     return loadAnnotationTargets(targetEntry)
 }
 

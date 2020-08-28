@@ -14,12 +14,12 @@ fun getExceptionMessage(
     location: String?
 ): String = ApplicationManager.getApplication().runReadAction<String> {
     buildString {
-        append(subsystemName).append(" Internal error: ").appendln(message)
+        append(subsystemName).append(" Internal error: ").appendLine(message)
 
         if (location != null) {
-            append("File being compiled: ").appendln(location)
+            append("File being compiled: ").appendLine(location)
         } else {
-            appendln("File is unknown")
+            appendLine("File is unknown")
         }
 
         if (cause != null) {

@@ -9,25 +9,20 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
-import org.jetbrains.kotlin.backend.common.lower.allOverridden
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.codegen.MethodSignatureMapper
-import org.jetbrains.kotlin.backend.jvm.ir.eraseTypeParameters
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.*
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.inlineClassFieldName
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -37,6 +32,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetVariableImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isNullable
@@ -45,7 +41,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val jvmInlineClassPhase = makeIrFilePhase(
@@ -53,7 +48,8 @@ val jvmInlineClassPhase = makeIrFilePhase(
     name = "Inline Classes",
     description = "Lower inline classes",
     // forLoopsPhase may produce UInt and ULong which are inline classes.
-    prerequisite = setOf(forLoopsPhase)
+    // standard library replacements are done on the unmangled names for UInt and ULong classes.
+    prerequisite = setOf(forLoopsPhase, jvmStandardLibraryBuiltInsPhase)
 )
 
 /**
@@ -126,7 +122,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
     private fun transformSimpleFunctionFlat(function: IrSimpleFunction, replacement: IrSimpleFunction): List<IrDeclaration> {
         replacement.valueParameters.forEach { it.transformChildrenVoid() }
         replacement.body = function.body?.transform(this, null)?.patchDeclarationParents(replacement)
-        (replacement as? IrAttributeContainer)?.copyAttributes(function)
+        replacement.copyAttributes(function)
 
         // Don't create a wrapper for functions which are only used in an unboxed context
         if (function.overriddenSymbols.isEmpty() || replacement.dispatchReceiverParameter != null)
@@ -168,7 +164,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
     // but unfortunately this is a special case in the old backend. The bridge method is not marked as such and does not follow the normal
     // visibility rules for bridge methods.
     private fun createBridgeDeclaration(source: IrSimpleFunction, mangledName: Name) =
-        buildFun {
+        context.irFactory.buildFun {
             updateFrom(source)
             name = mangledName
             returnType = source.returnType
@@ -207,7 +203,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
 
             constructor.body?.statements?.forEach { statement ->
                 +statement
-                    .transform(object : IrElementTransformerVoid() {
+                    .transformStatement(object : IrElementTransformerVoid() {
                         // Don't recurse under nested class declarations
                         override fun visitClass(declaration: IrClass): IrStatement {
                             return declaration
@@ -244,8 +240,8 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
                                 +irGet(thisVar)
                             })
                         }
-                    }, null)
-                    .transform(this@JvmInlineClassLowering, null)
+                    })
+                    .transformStatement(this@JvmInlineClassLowering)
                     .patchDeclarationParents(replacement)
             }
 
@@ -255,15 +251,15 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         return listOf(replacement)
     }
 
-    private fun typedArgumentList(function: IrFunction, expression: IrMemberAccessExpression) =
+    private fun typedArgumentList(function: IrFunction, expression: IrMemberAccessExpression<*>) =
         listOfNotNull(
             function.dispatchReceiverParameter?.let { it to expression.dispatchReceiver },
             function.extensionReceiverParameter?.let { it to expression.extensionReceiver }
         ) + function.valueParameters.map { it to expression.getValueArgument(it.index) }
 
-    private fun IrMemberAccessExpression.buildReplacement(
+    private fun IrMemberAccessExpression<*>.buildReplacement(
         originalFunction: IrFunction,
-        original: IrMemberAccessExpression,
+        original: IrMemberAccessExpression<*>,
         replacement: IrSimpleFunction
     ) {
         copyTypeArgumentsFrom(original)
@@ -276,6 +272,9 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
+        if (expression.origin == InlineClassAbi.UNMANGLED_FUNCTION_REFERENCE)
+            return super.visitFunctionReference(expression)
+
         val function = context.inlineClassReplacements.getReplacementFunction(expression.symbol.owner)
             ?: return super.visitFunctionReference(expression)
 
@@ -399,7 +398,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
                 ?: return false
 
             // Before version 1.4, we cannot rely on the Result.equals-impl0 method
-            return (leftClass.fqNameWhenAvailable != DescriptorUtils.RESULT_FQ_NAME) ||
+            return (leftClass.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME) ||
                     context.state.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4
         }
 
@@ -429,7 +428,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             if (statement is IrFunction)
                 transformFunctionFlat(statement)
             else
-                listOf(statement.transform(this, null))
+                listOf(statement.transformStatement(this))
         }
     }
 
@@ -457,10 +456,10 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         valueMap[expression.symbol]?.let {
             return IrSetVariableImpl(
                 expression.startOffset, expression.endOffset,
-                it.type, it.symbol as IrVariableSymbol, expression.origin
-            ).apply {
-                value = expression.value.transform(this@JvmInlineClassLowering, null)
-            }
+                it.type, it.symbol as IrVariableSymbol,
+                expression.value.transform(this@JvmInlineClassLowering, null),
+                expression.origin
+            )
         }
         return super.visitSetVariable(expression)
     }
@@ -476,6 +475,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             // Don't create a default argument stub for the primary constructor
             irConstructor.valueParameters.forEach { it.defaultValue = null }
             copyParameterDeclarationsFrom(irConstructor)
+            annotations += irConstructor.annotations
             body = context.createIrBuilder(this.symbol).irBlockBody(this) {
                 +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
                 +irSetField(

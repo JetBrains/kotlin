@@ -3,3 +3,4 @@ public final fun array(a: R|kotlin/Array<kotlin/Int>|): R|ft<kotlin/Array<ft<kot
 public final fun list(): R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>!>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>!>?>!|
 
 public final fun printStream(): R|ft<java/io/PrintStream, java/io/PrintStream?>!|
+

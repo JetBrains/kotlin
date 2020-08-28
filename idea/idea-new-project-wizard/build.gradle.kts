@@ -13,6 +13,9 @@ dependencies {
     compileOnly(intellijCoreDep())
     compileOnly(intellijDep())
     compileOnly(intellijPluginDep("gradle"))
+    Platform[193].orHigher {
+        compileOnly(intellijPluginDep("gradle-java"))
+    }
 
     testImplementation(projectTests(":idea"))
     testImplementation(project(":libraries:tools:new-project-wizard:new-project-wizard-cli"))
@@ -23,7 +26,7 @@ dependencies {
     testImplementation(intellijDep())
     testImplementation(intellijPluginDep("gradle"))
 
-
+    testImplementation(projectTests(":idea:idea-gradle"))
 
     testRuntimeOnly(toolsJar())
     testRuntimeOnly(project(":plugins:kapt3-idea"))
@@ -43,14 +46,10 @@ dependencies {
         compileOnly(intellijPluginDep("maven"))
     }
 
-    Platform[191].orLower {
-        compileOnly(intellijDep()) { includeJars("java-api", "java-impl") }
-    }
-
     Platform[192].orHigher {
-        compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
-        testCompileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
-        testRuntimeOnly(intellijPluginDep("java")) { includeJars("java-api") }
+        compileOnly(intellijPluginDep("java"))
+        testCompileOnly(intellijPluginDep("java"))
+        testRuntimeOnly(intellijPluginDep("java"))
     }
 }
 
@@ -64,4 +63,5 @@ testsJar()
 projectTest {
     dependsOn(":dist")
     workingDir = rootDir
+    systemProperty("cacheRedirectorEnabled", findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true)
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.ir.declarations.*
@@ -13,12 +14,20 @@ import org.jetbrains.kotlin.ir.util.parentClassOrNull
 class Fir2IrConversionScope {
     private val parentStack = mutableListOf<IrDeclarationParent>()
 
+    private val containingFirClassStack = mutableListOf<FirClass<*>>()
+
     fun <T : IrDeclarationParent?> withParent(parent: T, f: T.() -> Unit): T {
         if (parent == null) return parent
         parentStack += parent
         parent.f()
         parentStack.removeAt(parentStack.size - 1)
         return parent
+    }
+
+    fun withContainingFirClass(containingFirClass: FirClass<*>, f: () -> Unit) {
+        containingFirClassStack += containingFirClass
+        f()
+        containingFirClassStack.removeAt(containingFirClassStack.size - 1)
     }
 
     fun parentFromStack(): IrDeclarationParent = parentStack.last()
@@ -37,6 +46,8 @@ class Fir2IrConversionScope {
         declaration.parent = parentStack.last()
         return declaration
     }
+
+    fun containerFirClass(): FirClass<*>? = containingFirClassStack.lastOrNull()
 
     private val functionStack = mutableListOf<IrFunction>()
 
@@ -65,12 +76,20 @@ class Fir2IrConversionScope {
         return klass
     }
 
-    private val subjectVariableStack = mutableListOf<IrVariable>()
+    private val whenSubjectVariableStack = mutableListOf<IrVariable>()
+    private val safeCallSubjectVariableStack = mutableListOf<IrVariable>()
 
-    fun <T> withSubject(subject: IrVariable?, f: () -> T): T {
-        if (subject != null) subjectVariableStack += subject
+    fun <T> withWhenSubject(subject: IrVariable?, f: () -> T): T {
+        if (subject != null) whenSubjectVariableStack += subject
         val result = f()
-        if (subject != null) subjectVariableStack.removeAt(subjectVariableStack.size - 1)
+        if (subject != null) whenSubjectVariableStack.removeAt(whenSubjectVariableStack.size - 1)
+        return result
+    }
+
+    fun <T> withSafeCallSubject(subject: IrVariable?, f: () -> T): T {
+        if (subject != null) safeCallSubjectVariableStack += subject
+        val result = f()
+        if (subject != null) safeCallSubjectVariableStack.removeAt(safeCallSubjectVariableStack.size - 1)
         return result
     }
 
@@ -98,5 +117,6 @@ class Fir2IrConversionScope {
 
     fun lastClass(): IrClass? = classStack.lastOrNull()
 
-    fun lastSubject(): IrVariable = subjectVariableStack.last()
+    fun lastWhenSubject(): IrVariable = whenSubjectVariableStack.last()
+    fun lastSafeCallSubject(): IrVariable = safeCallSubjectVariableStack.last()
 }

@@ -1,0 +1,13 @@
+package
+
+public fun bar(): kotlin.String
+public fun foo(/*0*/ f: suspend () -> kotlin.Unit): kotlin.Unit
+public fun test(/*0*/ g: () -> kotlin.Double, /*1*/ s: SubInt): kotlin.Unit
+
+public abstract class SubInt : () -> kotlin.Int {
+    public constructor SubInt()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun invoke(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

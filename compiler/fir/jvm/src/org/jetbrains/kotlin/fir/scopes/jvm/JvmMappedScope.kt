@@ -8,18 +8,15 @@ package org.jetbrains.kotlin.fir.scopes.jvm
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSettings
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
 class JvmMappedScope(
     private val declaredMemberScope: FirScope,
     private val javaMappedClassUseSiteScope: FirScope,
     private val signatures: Signatures
-) : FirScope() {
+) : FirTypeScope() {
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         val whiteListSignatures = signatures.whiteListSignaturesByName[name]
@@ -28,14 +25,19 @@ class JvmMappedScope(
             val jvmSignature = symbol.fir.computeJvmDescriptor()
                 .replace("kotlin/Any", "java/lang/Object")
                 .replace("kotlin/String", "java/lang/String")
+                .replace("kotlin/Throwable", "java/lang/Throwable")
             if (jvmSignature in whiteListSignatures) {
                 processor(symbol)
             }
         }
 
-
         declaredMemberScope.processFunctionsByName(name, processor)
     }
+
+    override fun processDirectOverriddenFunctionsWithBaseScope(
+        functionSymbol: FirFunctionSymbol<*>,
+        processor: (FirFunctionSymbol<*>, FirTypeScope) -> ProcessorAction
+    ) = ProcessorAction.NONE
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
         val constructorBlackList = signatures.constructorBlackList
@@ -60,8 +62,21 @@ class JvmMappedScope(
         declaredMemberScope.processPropertiesByName(name, processor)
     }
 
+    override fun processDirectOverriddenPropertiesWithBaseScope(
+        propertySymbol: FirPropertySymbol,
+        processor: (FirPropertySymbol, FirTypeScope) -> ProcessorAction
+    ): ProcessorAction = ProcessorAction.NONE
+
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
         declaredMemberScope.processClassifiersByNameWithSubstitution(name, processor)
+    }
+
+    override fun getCallableNames(): Set<Name> {
+        return declaredMemberScope.getContainingCallableNamesIfPresent()
+    }
+
+    override fun getClassifierNames(): Set<Name> {
+        return declaredMemberScope.getContainingClassifierNamesIfPresent()
     }
 
     companion object {

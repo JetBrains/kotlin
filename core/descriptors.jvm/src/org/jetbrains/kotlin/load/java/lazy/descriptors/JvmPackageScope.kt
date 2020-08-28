@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.scopes.flatMapClassifierNamesOrNull
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.util.collectionUtils.getFirstClassifierDiscriminateHeaders
 import org.jetbrains.kotlin.util.collectionUtils.getFromAllScopes
+import org.jetbrains.kotlin.util.collectionUtils.listOfNonEmptyScopes
 import org.jetbrains.kotlin.utils.Printer
 
 class JvmPackageScope(
@@ -41,9 +42,11 @@ class JvmPackageScope(
     internal val javaScope = LazyJavaPackageScope(c, jPackage, packageFragment)
 
     private val kotlinScopes by c.storageManager.createLazyValue {
-        packageFragment.binaryClasses.values.mapNotNull { partClass ->
-            c.components.deserializedDescriptorResolver.createKotlinPackagePartScope(packageFragment, partClass)
-        }.toList()
+        listOfNonEmptyScopes(
+            packageFragment.binaryClasses.values.mapNotNull { partClass ->
+                c.components.deserializedDescriptorResolver.createKotlinPackagePartScope(packageFragment, partClass)
+            }
+        ).toTypedArray()
     }
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
@@ -78,7 +81,7 @@ class JvmPackageScope(
         addAll(javaScope.getVariableNames())
     }
 
-    override fun getClassifierNames(): Set<Name>? = kotlinScopes.flatMapClassifierNamesOrNull()?.apply {
+    override fun getClassifierNames(): Set<Name>? = kotlinScopes.asIterable().flatMapClassifierNamesOrNull()?.apply {
         addAll(javaScope.getClassifierNames())
     }
 

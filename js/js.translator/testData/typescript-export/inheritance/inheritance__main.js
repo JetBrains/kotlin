@@ -15,6 +15,8 @@ var __extends = (this && this.__extends) || (function () {
 var OC = JS_TESTS.foo.OC;
 var AC = JS_TESTS.foo.AC;
 var FC = JS_TESTS.foo.FC;
+var O1 = JS_TESTS.foo.O1;
+var O2 = JS_TESTS.foo.O2;
 var Impl = /** @class */ (function (_super) {
     __extends(Impl, _super);
     function Impl() {
@@ -24,12 +26,12 @@ var Impl = /** @class */ (function (_super) {
     };
     Object.defineProperty(Impl.prototype, "acAbstractProp", {
         get: function () { return "Impl"; },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     Object.defineProperty(Impl.prototype, "y", {
         get: function () { return true; },
-        enumerable: true,
+        enumerable: false,
         configurable: true
     });
     return Impl;
@@ -56,5 +58,13 @@ function box() {
     if (fc.acAbstractProp !== "FC")
         return "Fail 6";
     fc.z(10);
+    if (O1.y !== true || O2.y !== true)
+        return "Fail 7";
+    if (O1.acAbstractProp != "O1")
+        return "Fail 8";
+    if (O2.acAbstractProp != "O2")
+        return "Fail 9";
+    if (O2.foo() != 10)
+        return "Fail 10";
     return "OK";
 }

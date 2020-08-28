@@ -25,16 +25,8 @@ internal class CandidateFactoriesAndCollectors(
 
     // Callable references
     val stubReceiverCandidateFactory: CandidateFactory?,
-
-    // invoke receivers
-    val invokeReceiverCandidateFactory: CandidateFactory?,
-    val invokeReceiverCollector: CandidateCollector?,
-
-    // invokeExtensionReceivers
-    val invokeBuiltinExtensionReceiverCandidateFactory: CandidateFactory?
 )
 
-typealias EnqueueTasksForInvokeReceiverCandidates = () -> Unit
 
 internal class TowerLevelHandler {
 
@@ -42,61 +34,34 @@ internal class TowerLevelHandler {
     private var processResult = ProcessorAction.NONE
 
     fun handleLevel(
+        collector: CandidateCollector,
+        candidateFactory: CandidateFactory,
+        stubReceiverCandidateFactory: CandidateFactory? = null,
         info: CallInfo,
         explicitReceiverKind: ExplicitReceiverKind,
         group: TowerGroup,
-        candidateFactoriesAndCollectors: CandidateFactoriesAndCollectors,
-        towerLevel: SessionBasedTowerLevel,
-        invokeResolveMode: InvokeResolveMode?,
-        candidateFactory: CandidateFactory,
-        enqueueResolverTasksForInvokeReceiverCandidates: EnqueueTasksForInvokeReceiverCandidates
+        towerLevel: SessionBasedTowerLevel
     ): ProcessorAction {
-        val resultCollector = candidateFactoriesAndCollectors.resultCollector
+        processResult = ProcessorAction.NONE
         val processor =
             TowerScopeLevelProcessor(
                 info.explicitReceiver,
                 explicitReceiverKind,
-                resultCollector,
+                collector,
                 candidateFactory,
                 group
             )
+
         when (info.callKind) {
             CallKind.VariableAccess -> {
                 towerLevel.processProperties(info.name, processor)
 
-                if (!resultCollector.isSuccess()) {
+                if (!collector.isSuccess()) {
                     towerLevel.processObjectsAsVariables(info.name, processor)
                 }
             }
             CallKind.Function -> {
-                val invokeBuiltinExtensionMode =
-                    invokeResolveMode == InvokeResolveMode.RECEIVER_FOR_INVOKE_BUILTIN_EXTENSION
-
-                if (!invokeBuiltinExtensionMode) {
-                    towerLevel.processFunctions(info.name, processor)
-                }
-
-                if (invokeResolveMode == InvokeResolveMode.IMPLICIT_CALL_ON_GIVEN_RECEIVER ||
-                    resultCollector.isSuccess()
-                ) {
-                    return processResult
-                }
-
-                val invokeReceiverProcessor = TowerScopeLevelProcessor(
-                    info.explicitReceiver,
-                    explicitReceiverKind,
-                    candidateFactoriesAndCollectors.invokeReceiverCollector!!,
-                    if (invokeBuiltinExtensionMode) candidateFactoriesAndCollectors.invokeBuiltinExtensionReceiverCandidateFactory!!
-                    else candidateFactoriesAndCollectors.invokeReceiverCandidateFactory!!,
-                    group
-                )
-                candidateFactoriesAndCollectors.invokeReceiverCollector.newDataSet()
-                towerLevel.processProperties(info.name, invokeReceiverProcessor)
-                towerLevel.processObjectsAsVariables(info.name, invokeReceiverProcessor)
-
-                if (candidateFactoriesAndCollectors.invokeReceiverCollector.isSuccess()) {
-                    enqueueResolverTasksForInvokeReceiverCandidates()
-                }
+                towerLevel.processFunctions(info.name, processor)
             }
             CallKind.CallableReference -> {
                 val stubReceiver = info.stubReceiver
@@ -109,21 +74,18 @@ internal class TowerLevelHandler {
                         } else {
                             ExplicitReceiverKind.EXTENSION_RECEIVER
                         },
-                        resultCollector,
-                        candidateFactoriesAndCollectors.stubReceiverCandidateFactory!!, group
+                        collector,
+                        stubReceiverCandidateFactory!!, group
                     )
                     val towerLevelWithStubReceiver = towerLevel.replaceReceiverValue(stubReceiverValue)
                     towerLevelWithStubReceiver.processFunctionsAndProperties(info.name, stubProcessor)
                     // NB: we don't perform this for implicit Unit
-                    if (!resultCollector.isSuccess() && info.explicitReceiver?.typeRef !is FirImplicitBuiltinTypeRef) {
+                    if (!collector.isSuccess() && info.explicitReceiver?.typeRef !is FirImplicitBuiltinTypeRef) {
                         towerLevel.processFunctionsAndProperties(info.name, processor)
                     }
                 } else {
                     towerLevel.processFunctionsAndProperties(info.name, processor)
                 }
-            }
-            CallKind.DelegatingConstructorCall -> {
-                towerLevel.processConstructors(info.name, processor)
             }
             else -> {
                 throw AssertionError("Unsupported call kind in tower resolver: ${info.callKind}")
@@ -151,12 +113,6 @@ internal class TowerLevelHandler {
     ) {
         processFunctions(name, processor)
         processProperties(name, processor)
-    }
-
-    private fun TowerScopeLevel.processConstructors(
-        name: Name, processor: TowerScopeLevel.TowerScopeLevelProcessor<AbstractFirBasedSymbol<*>>
-    ) {
-        processElementsByNameAndStoreResult(TowerScopeLevel.Token.Constructors, name, processor)
     }
 
     private fun TowerScopeLevel.processObjectsAsVariables(
@@ -192,6 +148,7 @@ private class TowerScopeLevelProcessor(
         implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
         builtInExtensionFunctionReceiverValue: ReceiverValue?
     ) {
+        with(candidateFactory.bodyResolveComponents) { symbol.phasedFir }
         // Check explicit extension receiver for default package members
         if (symbol is FirNamedFunctionSymbol && dispatchReceiverValue == null &&
             (implicitExtensionReceiverValue == null) != (explicitReceiver == null) &&
@@ -201,9 +158,7 @@ private class TowerScopeLevelProcessor(
             val extensionReceiverType = explicitReceiver?.typeRef?.coneTypeSafe()
                 ?: implicitExtensionReceiverValue?.type as? ConeClassLikeType
             if (extensionReceiverType != null) {
-                val declarationReceiverTypeRef =
-                    (symbol as? FirCallableSymbol<*>)?.fir?.receiverTypeRef as? FirResolvedTypeRef
-                val declarationReceiverType = declarationReceiverTypeRef?.type
+                val declarationReceiverType = (symbol as? FirCallableSymbol<*>)?.fir?.receiverTypeRef?.coneType
                 if (declarationReceiverType is ConeClassLikeType) {
                     if (!AbstractTypeChecker.isSubtypeOf(
                             candidateFactory.bodyResolveComponents.inferenceComponents.ctx,

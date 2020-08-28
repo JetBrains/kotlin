@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatRootResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.RootResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
+import org.jetbrains.kotlin.gradle.targets.js.yarn.toVersionString
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 
 /**
@@ -33,9 +35,7 @@ internal class KotlinRootNpmResolver internal constructor(
         get() = nodeJs.rootProject
 
     val plugins = mutableListOf<RootResolverPlugin>().also {
-        if (nodeJs.experimental.generateKotlinExternals) {
-            it.add(DukatRootResolverPlugin(this))
-        }
+        it.add(DukatRootResolverPlugin(this))
     }
 
     enum class State {
@@ -68,7 +68,7 @@ internal class KotlinRootNpmResolver internal constructor(
     fun findDependentResolver(src: Project, target: Project): List<KotlinCompilationNpmResolver>? {
         // todo: proper finding using KotlinTargetComponent.findUsageContext
         val targetResolver = this[target]
-        val mainCompilations = targetResolver.compilationResolvers.filter { it.compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME }
+        val mainCompilations = targetResolver.compilationResolvers.filter { it.compilation.isMain() }
 
         return if (mainCompilations.isNotEmpty()) {
             //TODO[Ilya Goncharov] Hack for Mixed mode of legacy and IR tooling
@@ -110,9 +110,13 @@ internal class KotlinRootNpmResolver internal constructor(
 
             gradleNodeModules.close()
 
+            val yarn = YarnPlugin.apply(rootProject)
+
             nodeJs.packageManager.prepareRootProject(
                 rootProject,
-                allNpmPackages
+                allNpmPackages,
+                yarn.resolutions
+                    .associate { it.path to it.toVersionString() }
             )
 
             return Installation(

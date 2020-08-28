@@ -20,11 +20,13 @@ class GradleBuildRootDataSerializerTest {
     @Test
     fun write() {
         val data = GradleBuildRootData(
+            123,
             listOf("a", "b", "c"),
-            listOf("a"),
+            "gradleHome",
+            "javaHome",
             listOf(
                 KotlinDslScriptModel(
-                    "a",
+                    "gradleHome",
                     GradleKotlinScriptConfigurationInputs("b", 1, "a"),
                     listOf("c", "a", "b"),
                     listOf("b", "c", "a"),
@@ -32,7 +34,7 @@ class GradleBuildRootDataSerializerTest {
                     listOf()
                 ),
                 KotlinDslScriptModel(
-                    "a",
+                    "gradleHome",
                     GradleKotlinScriptConfigurationInputs("b", 1, "a"),
                     listOf("c", "a", "b"),
                     listOf("b", "c", "a"),
@@ -40,6 +42,24 @@ class GradleBuildRootDataSerializerTest {
                     listOf()
                 )
             )
+        )
+
+        val buffer = ByteArrayOutputStream()
+        writeKotlinDslScriptModels(DataOutputStream(buffer), data)
+
+        val restored = readKotlinDslScriptModels(DataInputStream(ByteArrayInputStream(buffer.toByteArray())), "a")
+
+        assertEquals(data.toString(), restored.toString())
+    }
+
+    @Test
+    fun writeNullable() {
+        val data = GradleBuildRootData(
+            0,
+            listOf(),
+            "null",
+            null,
+            listOf()
         )
 
         val buffer = ByteArrayOutputStream()

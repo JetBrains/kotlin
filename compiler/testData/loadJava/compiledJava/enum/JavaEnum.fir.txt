@@ -1,8 +1,6 @@
 public final enum class JavaEnum : R|kotlin/Enum<ft<test/JavaEnum, test/JavaEnum?>!>| {
-    public final static field ENTRY: R|test/JavaEnum|
-
-    public final static field ANOTHER: R|test/JavaEnum|
-
+    public final static enum entry ENTRY: R|test/JavaEnum|
+    public final static enum entry ANOTHER: R|test/JavaEnum|
     public final static fun values(): R|kotlin/Array<test/JavaEnum>| {
     }
 

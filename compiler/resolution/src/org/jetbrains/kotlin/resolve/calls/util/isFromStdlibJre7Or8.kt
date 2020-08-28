@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.util
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.SINCE_KOTLIN_FQ_NAME
 
-private val kotlin: FqName = KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
-private val kotlinText: FqName = KotlinBuiltIns.TEXT_PACKAGE_FQ_NAME
-private val kotlinCollections: FqName = KotlinBuiltIns.COLLECTIONS_PACKAGE_FQ_NAME
+private val kotlin: FqName = StandardNames.BUILT_INS_PACKAGE_FQ_NAME
+private val kotlinText: FqName = StandardNames.TEXT_PACKAGE_FQ_NAME
+private val kotlinCollections: FqName = StandardNames.COLLECTIONS_PACKAGE_FQ_NAME
 private val kotlinStreams: FqName = kotlin.child(Name.identifier("streams"))
 
 private val use: Name = Name.identifier("use")
@@ -43,7 +43,7 @@ private val remove: Name = Name.identifier("remove")
 fun CallableDescriptor.isLowPriorityFromStdlibJre7Or8(): Boolean {
     val containingPackage = containingDeclaration as? PackageFragmentDescriptor ?: return false
     val packageFqName = containingPackage.fqName
-    if (!packageFqName.startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) return false
+    if (!packageFqName.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)) return false
 
     val isFromStdlibJre7Or8 =
         packageFqName == kotlin && name == use ||

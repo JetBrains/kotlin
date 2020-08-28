@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.contracts.model.structure
 
-import org.jetbrains.kotlin.contracts.description.InvocationKind
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.contracts.model.ESEffect
 import org.jetbrains.kotlin.contracts.model.ESValue
 import org.jetbrains.kotlin.contracts.model.SimpleEffect
 
-data class ESCalls(val callable: ESValue, val kind: InvocationKind) : SimpleEffect() {
+data class ESCalls(val callable: ESValue, val kind: EventOccurrencesRange) : SimpleEffect() {
     override fun isImplies(other: ESEffect): Boolean? {
         if (other !is ESCalls) return null
 

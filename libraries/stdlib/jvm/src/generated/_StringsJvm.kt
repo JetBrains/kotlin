@@ -31,3 +31,35 @@ public fun CharSequence.toSortedSet(): java.util.SortedSet<Char> {
     return toCollection(java.util.TreeSet<Char>())
 }
 
+/**
+ * Returns the sum of all values produced by [selector] function applied to each character in the char sequence.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("sumOfBigDecimal")
+@kotlin.internal.InlineOnly
+public inline fun CharSequence.sumOf(selector: (Char) -> java.math.BigDecimal): java.math.BigDecimal {
+    var sum: java.math.BigDecimal = 0.toBigDecimal()
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each character in the char sequence.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("sumOfBigInteger")
+@kotlin.internal.InlineOnly
+public inline fun CharSequence.sumOf(selector: (Char) -> java.math.BigInteger): java.math.BigInteger {
+    var sum: java.math.BigInteger = 0.toBigInteger()
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+

@@ -28,10 +28,13 @@ import kotlin.test.assertEquals
 @RunWith(Parameterized::class)
 class BuildCacheRelocationIT : BaseGradleIT() {
 
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.AtLeast("5.6.4")
+
     override fun defaultBuildOptions(): BuildOptions =
         super.defaultBuildOptions().copy(
             withBuildCache = true,
-            androidGradlePluginVersion = AGPVersion.v3_1_0,
+            androidGradlePluginVersion = AGPVersion.v3_6_0,
             androidHome = KotlinTestUtils.findAndroidSdk()
         )
 
@@ -62,7 +65,7 @@ class BuildCacheRelocationIT : BaseGradleIT() {
             firstProject.build(*testCase.taskToExecute) {
                 assertSuccessful()
                 firstOutputHashes = hashOutputFiles(outputRoots)
-                cacheableTaskNames.forEach { assertContains("Packing task ':$it") }
+                cacheableTaskNames.forEach { assertTaskPackedToCache(":$it") }
             }
 
             workingDir = workingDirs[1]

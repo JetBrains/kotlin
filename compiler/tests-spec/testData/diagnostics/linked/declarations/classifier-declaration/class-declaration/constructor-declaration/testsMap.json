@@ -1,0 +1,570 @@
+{
+  "4": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 3,
+          "description": "primary constructor with regular, read-only and mutable parameters at once",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-4/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 1,
+          "description": "top level declaration primary constructor with read-only property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 3,
+          "description": "Primary constructor for nested class with mutable property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 2,
+          "description": "Primary constructor for nested class with regular constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 3,
+          "description": "Primary constructor for nested class with read-only property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 2,
+          "description": "Primary constructor for inner class with regular constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 1,
+          "description": "top level declaration primary constructor with mutable property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 2,
+          "description": "Primary constructor for nested class with mutable property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 3,
+          "description": "Primary constructor for nested class with regular constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 2,
+          "description": "Primary constructor for inner class with mutable property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 2,
+          "description": "Primary constructor for inner class with mutable property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 3,
+          "description": "Primary constructor for nested class with regular constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 2,
+          "description": "Primary constructor for nested class with read-only property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 6,
+          "description": "top level declaration primary constructor with regular constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        }
+      ]
+    },
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 1,
+          "description": "Primary constructor for nested class with mutable property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 2,
+          "description": "Primary constructor for nested class with regular constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 1,
+          "description": "Primary constructor for nested class with mutable property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 3,
+          "description": "Primary constructor for nested class with regular constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    }
+  },
+  "5": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 3,
+          "description": "primary constructor with regular, read-only and mutable parameters at once",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-4/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 2,
+          "description": "Primary constructor for nested class with regular constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 2,
+          "description": "Primary constructor for inner class with regular constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 3,
+          "description": "Primary constructor for nested class with regular constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 3,
+          "description": "Primary constructor for nested class with regular constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 6,
+          "description": "top level declaration primary constructor with regular constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType"
+        }
+      ],
+      "2": [
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 3,
+          "description": "primary constructor with regular, read-only and mutable parameters at once",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-4/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 1,
+          "description": "top level declaration primary constructor with read-only property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 3,
+          "description": "Primary constructor for nested class with read-only property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 2,
+          "description": "Primary constructor for inner class with mutable property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 2,
+          "description": "Primary constructor for nested class with read-only property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType"
+        }
+      ],
+      "3": [
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 3,
+          "description": "primary constructor with regular, read-only and mutable parameters at once",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-4/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 3,
+          "description": "Primary constructor for nested class with mutable property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 1,
+          "description": "top level declaration primary constructor with mutable property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 2,
+          "description": "Primary constructor for nested class with mutable property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 2,
+          "description": "Primary constructor for inner class with mutable property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    },
+    "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 1,
+          "description": "Primary constructor for nested class with mutable property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 2,
+          "description": "Primary constructor for nested class with regular constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 3,
+          "description": "Primary constructor for nested class with regular constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ],
+      "3": [
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 1,
+          "description": "Primary constructor for nested class with mutable property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    }
+  },
+  "2": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 1,
+          "description": "Primary constructor for nested class with mutable property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 2,
+          "description": "Primary constructor for nested class with regular constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 1,
+          "description": "Primary constructor for nested class with mutable property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 3,
+          "description": "Primary constructor for nested class with regular constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/neg/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 1,
+          "description": "top level declaration primary constructor with read-only property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 3,
+          "description": "Primary constructor for nested class with mutable property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 2,
+          "description": "Primary constructor for nested class with regular constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 3,
+          "description": "Primary constructor for nested class with read-only property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 2,
+          "description": "Primary constructor for inner class with regular constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 1,
+          "description": "top level declaration primary constructor with mutable property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 2,
+          "description": "Primary constructor for nested class with mutable property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 3,
+          "description": "Primary constructor for nested class with regular constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.4.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 2,
+          "description": "Primary constructor for inner class with mutable property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 2,
+          "description": "Primary constructor for inner class with mutable property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 3,
+          "description": "Primary constructor for nested class with regular constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.5.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 2,
+          "description": "Primary constructor for nested class with read-only property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 6,
+          "description": "top level declaration primary constructor with regular constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        }
+      ]
+    }
+  },
+  "6": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 1,
+          "description": "top level declaration primary constructor with read-only property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 2,
+          "description": "Primary constructor for nested class with regular constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 2,
+          "description": "Primary constructor for inner class with regular constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 1,
+          "description": "top level declaration primary constructor with mutable property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/3.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 2,
+          "description": "Primary constructor for inner class with mutable property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 2,
+          "description": "Primary constructor for nested class with read-only property constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/2.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        },
+        {
+          "specVersion": "0.1-544",
+          "casesNumber": 6,
+          "description": "top level declaration primary constructor with regular constructor parameter",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/declarations/classifier-declaration/class-declaration/constructor-declaration/p-5/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType"
+        }
+      ]
+    }
+  }
+}

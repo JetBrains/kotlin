@@ -11,7 +11,7 @@ interface B1<T : B0<*>>
 interface AA<T: AA<*>>
 interface BB<S : List<AA<*>>>
 
-interface A<T: List<T, T, T>>
+interface A<T: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>List<T, T, T><!>>
 
 class X<Y>
 class D<T : X<in X<out X<T>>>>

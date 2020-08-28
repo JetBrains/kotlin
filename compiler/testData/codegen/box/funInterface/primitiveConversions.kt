@@ -1,7 +1,5 @@
 // !LANGUAGE: +NewInference +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
 
-// SKIP_DCE_DRIVEN
-
 // This test should check argument coercion between the SAM and the lambda.
 // For now it checks that Char is boxed in JS
 

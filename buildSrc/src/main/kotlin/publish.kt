@@ -23,3 +23,15 @@ fun DependencyHandler.publishedRuntime(
 ): ExternalModuleDependency =
     addDependencyTo(this, "publishedRuntime", dependencyNotation, dependencyConfiguration)
 
+
+val NamedDomainObjectContainer<Configuration>.publishedCompile: NamedDomainObjectProvider<Configuration> get() = named("publishedCompile")
+
+fun DependencyHandler.publishedCompile(dependencyNotation: Any): Dependency? =
+    add("publishedCompile", dependencyNotation)
+
+fun DependencyHandler.publishedCompile(
+    dependencyNotation: String,
+    dependencyConfiguration: Action<ExternalModuleDependency>
+): ExternalModuleDependency =
+    addDependencyTo(this, "publishedCompile", dependencyNotation, dependencyConfiguration)
+

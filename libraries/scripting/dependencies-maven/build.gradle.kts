@@ -23,6 +23,7 @@ dependencies {
     testCompile(projectTests(":kotlin-scripting-dependencies"))
     testCompile(commonDep("junit"))
     testRuntimeOnly("org.slf4j:slf4j-nop:1.7.30")
+    testImplementation(kotlin("reflect"))
 }
 
 sourceSets {

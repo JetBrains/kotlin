@@ -16,7 +16,6 @@ dependencies {
     implementation(project(":c"))
     implementation(project(":d"))
     testImplementation(kotlin("test-junit"))
-    implementation(kotlin("stdlib-jdk8"))
 }
 tasks.withType<KotlinCompile>() {
     kotlinOptions.jvmTarget = "1.8"

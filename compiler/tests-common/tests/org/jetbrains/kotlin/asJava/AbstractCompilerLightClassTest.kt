@@ -31,14 +31,14 @@ abstract class AbstractCompilerLightClassTest : KotlinMultiFileTestWithJava<Kotl
 
     override fun isKotlinSourceRootNeeded(): Boolean = true
 
-    override fun doMultiFileTest(file: File, files: List<TestFile>) {
-        val environment = createEnvironment(file, files)
-        val expectedFile = KotlinTestUtils.replaceExtension(file, "java")
-        val allowFrontendExceptions = InTextDirectivesUtils.isDirectiveDefined(file.readText(), "// ALLOW_FRONTEND_EXCEPTION")
+    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
+        val environment = createEnvironment(wholeFile, files)
+        val expectedFile = KotlinTestUtils.replaceExtension(wholeFile, "java")
+        val allowFrontendExceptions = InTextDirectivesUtils.isDirectiveDefined(wholeFile.readText(), "// ALLOW_FRONTEND_EXCEPTION")
 
         LightClassTestCommon.testLightClass(
             expectedFile,
-            file,
+            wholeFile,
             { fqname -> findLightClass(allowFrontendExceptions, environment, fqname) },
             LightClassTestCommon::removeEmptyDefaultImpls
         )

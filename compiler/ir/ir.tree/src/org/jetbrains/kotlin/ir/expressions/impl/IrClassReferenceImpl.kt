@@ -22,13 +22,12 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrClassReferenceImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
-    symbol: IrClassifierSymbol,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType,
+    override val symbol: IrClassifierSymbol,
     override val classType: IrType
-) : IrTerminalDeclarationReferenceBase<IrClassifierSymbol>(startOffset, endOffset, type, symbol), IrClassReference {
-
+) : IrClassReference() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitClassReference(this, data)
 }

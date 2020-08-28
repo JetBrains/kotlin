@@ -1,5 +1,6 @@
 // WITH_REFLECT
 // IGNORE_BACKEND: JS_IR, JS, NATIVE
+// IGNORE_BACKEND: JS_IR_ES6
 
 // different annotation order
 // IGNORE_BACKEND: ANDROID

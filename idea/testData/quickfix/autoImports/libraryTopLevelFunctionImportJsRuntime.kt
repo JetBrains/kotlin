@@ -3,5 +3,5 @@
 package some
 
 fun testFun() {
-  <caret>jq()
+  <caret>cos(0.0)
 }

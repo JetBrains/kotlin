@@ -14,13 +14,16 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.ModuleDependencyI
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.*
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.isIOS
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectPath
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
+import org.jetbrains.kotlin.tools.projectWizard.settings.JavaPackage
+import org.jetbrains.kotlin.tools.projectWizard.settings.javaPackage
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplateDescriptor
+import org.jetbrains.kotlin.tools.projectWizard.templates.asSrcOf
 import java.nio.file.Path
 import kotlin.reflect.KClass
 
@@ -50,11 +53,17 @@ sealed class ModuleDependencyType(
         }.asSingletonList()
     }
 
-    open fun SettingsWriter.runArbitraryTask(
+    open fun Writer.runArbitraryTask(
         from: Module,
         to: Module,
         toModulePath: Path,
         data: ModulesToIrConversionData
+    ): TaskResult<Unit> =
+        UNIT_SUCCESS
+
+    open fun Writer.runArbitraryTaskBeforeIRsCreated(
+        from: Module,
+        to: Module,
     ): TaskResult<Unit> =
         UNIT_SUCCESS
 
@@ -69,7 +78,14 @@ sealed class ModuleDependencyType(
     object AndroidSinglePlatformToMPP : ModuleDependencyType(
         from = AndroidSinglePlatformModuleConfigurator::class,
         to = MppModuleConfigurator::class
-    )
+    ) {
+        override fun Writer.runArbitraryTask(
+            from: Module,
+            to: Module,
+            toModulePath: Path,
+            data: ModulesToIrConversionData
+        ): TaskResult<Unit> = addExpectFilesForMppModuleForAndroidAndIos(to, data)
+    }
 
     object IOSToMppSinglePlatformToMPP : ModuleDependencyType(
         from = IOSSinglePlatformModuleConfigurator::class,
@@ -78,21 +94,36 @@ sealed class ModuleDependencyType(
         override fun createDependencyIrs(from: Module, to: Module, data: ModulesToIrConversionData): List<BuildSystemIR> =
             emptyList()
 
-        override fun SettingsWriter.runArbitraryTask(
+        override fun Writer.runArbitraryTask(
             from: Module,
             to: Module,
             toModulePath: Path,
             data: ModulesToIrConversionData
-        ): TaskResult<Unit> = withSettingsOf(from) {
-            IOSSinglePlatformModuleConfigurator.dependentModule.reference
-                .setValue(IOSSinglePlatformModuleConfigurator.DependentModuleReference(to))
-            val dummyFilePath = Defaults.SRC_DIR / "${to.iosTargetSafe()!!.name}Main" / to.configurator.kotlinDirectoryName / "dummyFile.kt"
-            TemplatesPlugin::addFileTemplate.execute(
-                FileTemplate(
-                    FileTemplateDescriptor("ios/dummyFile.kt", dummyFilePath),
-                    projectPath / toModulePath
+        ): TaskResult<Unit> = compute {
+            addExpectFilesForMppModuleForAndroidAndIos(to, data)
+            inContextOfModuleConfigurator(from) {
+                IOSSinglePlatformModuleConfigurator.dependentModule.reference.update {
+                    IOSSinglePlatformModuleConfigurator.DependentModuleReference(to).asSuccess()
+                }
+            }.ensure()
+            addDummyFileIfNeeded(to, toModulePath).ensure()
+        }
+
+        private fun Writer.addDummyFileIfNeeded(
+            to: Module,
+            toModulePath: Path,
+        ): TaskResult<Unit> {
+            val needDummyFile = inContextOfModuleConfigurator(to) { MppModuleConfigurator.mppSources.reference.propertyValue.isEmpty() }
+            return if (needDummyFile) {
+                val dummyFilePath =
+                    Defaults.SRC_DIR / "${to.iosTargetSafe()!!.name}Main" / to.configurator.kotlinDirectoryName / "dummyFile.kt"
+                TemplatesPlugin.addFileTemplate.execute(
+                    FileTemplate(
+                        FileTemplateDescriptor("ios/dummyFile.kt", dummyFilePath),
+                        projectPath / toModulePath
+                    )
                 )
-            )
+            } else UNIT_SUCCESS
         }
 
         override fun additionalAcceptanceChecker(from: Module, to: Module): Boolean =
@@ -116,11 +147,23 @@ sealed class ModuleDependencyType(
                         "?:",
                         const("DEBUG")
                     )
-                    "framework" createValue raw {
-                        +"kotlin.targets."
+                    "sdkName" createValue GradleBinaryExpressionIR(
+                        raw { +"System.getenv("; +"SDK_NAME".quotified; +")" },
+                        "?:",
+                        const("iphonesimulator")
+                    )
+                    "targetName" createValue raw {
+                        +iosTargetName.quotified
                         when (dsl) {
-                            GradlePrinter.GradleDsl.KOTLIN -> +"""getByName<KotlinNativeTarget>("$iosTargetName")"""
-                            GradlePrinter.GradleDsl.GROOVY -> +iosTargetName
+                            GradlePrinter.GradleDsl.KOTLIN -> +""" + if (sdkName.startsWith("iphoneos")) "Arm64" else "X64""""
+                            GradlePrinter.GradleDsl.GROOVY -> +""" + (sdkName.startsWith('iphoneos') ? 'Arm64' : 'X64')"""
+                        }
+                    }
+                    "framework" createValue raw {
+                        +"kotlin.targets"
+                        when (dsl) {
+                            GradlePrinter.GradleDsl.KOTLIN -> +""".getByName<KotlinNativeTarget>(targetName)"""
+                            GradlePrinter.GradleDsl.GROOVY -> +"""[targetName]"""
                         }
                         +".binaries.getFramework(mode)"
                     };
@@ -151,4 +194,46 @@ sealed class ModuleDependencyType(
         fun isDependencyPossible(from: Module, to: Module): Boolean =
             getPossibleDependencyType(from, to) != null
     }
+}
+
+private fun Writer.addExpectFilesForMppModuleForAndroidAndIos(mppModule: Module, data: ModulesToIrConversionData): TaskResult<Unit> {
+    val javaPackage = mppModule.javaPackage(data.pomIr)
+
+    val expectFiles = mppSources(javaPackage) {
+        mppFile("Platform.kt") {
+            `class`("Platform") {
+                expectBody = "val platform: String"
+                actualFor(
+                    ModuleSubType.android,
+                    actualBody = """actual val platform: String = "Android ${'$'}{android.os.Build.VERSION.SDK_INT}""""
+                )
+
+                actualFor(
+                    ModuleSubType.iosArm64, ModuleSubType.iosX64, ModuleSubType.ios,
+                    actualBody =
+                    """actual val platform: String = UIDevice.currentDevice.systemName() + " " + UIDevice.currentDevice.systemVersion"""
+                ) {
+                    import("platform.UIKit.UIDevice")
+                }
+            }
+        }
+
+        filesFor(ModuleSubType.common) {
+            file(FileTemplateDescriptor("mppCommon/Greeting.kt.vm", relativePath = null), "Greeting.kt", SourcesetType.main)
+        }
+
+        inContextOfModuleConfigurator(mppModule) {
+            if (MppModuleConfigurator.generateTests.reference.settingValue) {
+                filesFor(ModuleSubType.android) {
+                    file(FileTemplateDescriptor("android/androidTest.kt.vm", relativePath = null), "androidTest.kt", SourcesetType.test)
+                }
+
+                filesFor(ModuleSubType.iosArm64, ModuleSubType.iosX64, ModuleSubType.ios) {
+                    file(FileTemplateDescriptor("ios/iosTest.kt.vm", relativePath = null), "iosTest.kt", SourcesetType.test)
+                }
+            }
+        }
+
+    }
+    return inContextOfModuleConfigurator(mppModule) { MppModuleConfigurator.mppSources.reference.addValues(listOf(expectFiles)) }
 }

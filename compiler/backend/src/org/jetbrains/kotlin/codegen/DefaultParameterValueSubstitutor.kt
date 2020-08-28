@@ -153,18 +153,18 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
             signature.genericsSignature,
             FunctionCodegen.getThrownExceptions(functionDescriptor, typeMapper)
         )
+        val skipNullabilityAnnotations = flags and Opcodes.ACC_PRIVATE != 0 || flags and Opcodes.ACC_SYNTHETIC != 0
 
-        AnnotationCodegen.forMethod(mv, memberCodegen, state).genAnnotations(
-            functionDescriptor,
-            signature.returnType,
-            functionDescriptor.returnType
-        )
+        AnnotationCodegen.forMethod(mv, memberCodegen, state, skipNullabilityAnnotations)
+            .genAnnotations(functionDescriptor, signature.returnType, functionDescriptor.returnType)
 
         if (state.classBuilderMode == ClassBuilderMode.KAPT3) {
             mv.visitAnnotation(ANNOTATION_TYPE_DESCRIPTOR_FOR_JVM_OVERLOADS_GENERATED_METHODS, false)
         }
 
-        FunctionCodegen.generateParameterAnnotations(functionDescriptor, mv, signature, remainingParameters, memberCodegen, state)
+        FunctionCodegen.generateParameterAnnotations(
+            functionDescriptor, mv, signature, remainingParameters, memberCodegen, state, skipNullabilityAnnotations
+        )
 
         if (!state.classBuilderMode.generateBodies) {
             FunctionCodegen.generateLocalVariablesForParameters(

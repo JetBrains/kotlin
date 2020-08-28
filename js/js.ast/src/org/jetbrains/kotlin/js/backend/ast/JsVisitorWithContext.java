@@ -90,6 +90,10 @@ public abstract class JsVisitorWithContext {
     public void endVisit(@NotNull JsCatch x, @NotNull JsContext ctx) {
     }
 
+    public void endVisit(@NotNull JsClass x, @NotNull JsContext ctx) {
+        endVisit((JsExpression) x, ctx);
+    }
+
     public void endVisit(@NotNull JsConditional x, @NotNull JsContext ctx) {
         endVisit((JsExpression) x, ctx);
     }
@@ -243,6 +247,10 @@ public abstract class JsVisitorWithContext {
     }
 
     public boolean visit(@NotNull JsCatch x, @NotNull JsContext ctx) {
+        return true;
+    }
+
+    public boolean visit(@NotNull JsClass x, @NotNull JsContext ctx) {
         return true;
     }
 

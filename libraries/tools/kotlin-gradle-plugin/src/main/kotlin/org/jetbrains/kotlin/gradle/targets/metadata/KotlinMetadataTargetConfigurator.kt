@@ -11,14 +11,12 @@ import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.plugins.BasePlugin
-import org.gradle.api.tasks.AbstractCopyTask
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.*
@@ -29,8 +27,6 @@ import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.setArchiveAppendixCompatible
-import org.jetbrains.kotlin.gradle.utils.setArchiveClassifierCompatible
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import java.util.concurrent.Callable
 
@@ -78,15 +74,15 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
                     // Clear the dependencies of the compilation so that they don't take time resolving during task graph construction:
                     compileDependencyFiles = target.project.files()
                 }
-                compileKotlinTaskHolder.configure { it.onlyIf { target.project.isCompatibilityMetadataVariantEnabled } }
+                compileKotlinTaskProvider.configure { it.onlyIf { target.project.isCompatibilityMetadataVariantEnabled } }
             }
 
             createMergedAllSourceSetsConfigurations(target)
 
-            val allMetadataJar = target.project.tasks.getByName(ALL_METADATA_JAR_NAME) as Jar
+            val allMetadataJar = target.project.tasks.withType<Jar>().named(ALL_METADATA_JAR_NAME)
             createMetadataCompilationsForCommonSourceSets(target, allMetadataJar)
 
-            configureProjectStructureMetadataGeneration(allMetadataJar)
+            configureProjectStructureMetadataGeneration(target.project, allMetadataJar)
 
             setupDependencyTransformationForCommonSourceSets(target)
 
@@ -127,18 +123,18 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
         override val kotlinTask: TaskProvider<out KotlinNativeCompile> =
             with(nativeTargetConfigurator) {
                 project.createKlibCompilationTask(kotlinCompilation)
-            }.thisTaskProvider
+            }
 
         override fun run() = Unit
     }
 
-    override fun createArchiveTasks(target: KotlinMetadataTarget): Zip {
+    override fun createArchiveTasks(target: KotlinMetadataTarget): TaskProvider<out Zip> {
         val result = super.createArchiveTasks(target)
 
         if (target.project.isKotlinGranularMetadataEnabled) {
             target.project.locateTask<Jar>(target.artifactsTaskName)!!.configure {
                 if (!target.project.isCompatibilityMetadataVariantEnabled) {
-                    it.setArchiveClassifierCompatible { "commonMain" }
+                    it.archiveClassifier.set("commonMain")
                 }
                 it.onlyIf { target.project.isCompatibilityMetadataVariantEnabled }
             }
@@ -151,10 +147,10 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
                 allMetadataJar.description = "Assembles a jar archive containing the metadata for all Kotlin source sets."
                 allMetadataJar.group = BasePlugin.BUILD_GROUP
 
-                allMetadataJar.setArchiveAppendixCompatible { target.name.toLowerCase() }
+                allMetadataJar.archiveAppendix.set(target.name.toLowerCase())
 
                 if (target.project.isCompatibilityMetadataVariantEnabled) {
-                    allMetadataJar.setArchiveClassifierCompatible { "all" }
+                    allMetadataJar.archiveClassifier.set("all")
                 }
             }
         }
@@ -174,7 +170,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
 
     private fun createMetadataCompilationsForCommonSourceSets(
         target: KotlinMetadataTarget,
-        allMetadataJar: Jar
+        allMetadataJar: TaskProvider<out Jar>
     ) = target.project.whenEvaluated {
         // Do this after all targets are configured by the user build script
 
@@ -196,14 +192,13 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
         }
     }
 
-    private fun configureProjectStructureMetadataGeneration(allMetadataJar: Jar): AbstractCopyTask {
-        val project = allMetadataJar.project
+    private fun configureProjectStructureMetadataGeneration(project: Project, allMetadataJar: TaskProvider<out Jar>) {
         val generateMetadata = project.createGenerateProjectStructureMetadataTask()
 
-        return allMetadataJar.from(
-            project.files(Callable { generateMetadata.get().resultXmlFile }).builtBy(generateMetadata)
-        ) { spec ->
-            spec.into("META-INF").rename { MULTIPLATFORM_PROJECT_METADATA_FILE_NAME }
+        allMetadataJar.configure {
+            it.from(generateMetadata.map { it.resultXmlFile }) { spec ->
+                spec.into("META-INF").rename { MULTIPLATFORM_PROJECT_METADATA_FILE_NAME }
+            }
         }
     }
 
@@ -251,7 +246,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
     private fun createMetadataCompilation(
         target: KotlinMetadataTarget,
         sourceSet: KotlinSourceSet,
-        allMetadataJar: Jar,
+        allMetadataJar: TaskProvider<out Jar>,
         isHostSpecific: Boolean
     ): AbstractKotlinCompilation<*> {
         val project = target.project
@@ -278,11 +273,11 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
 
             if (!isHostSpecific) {
                 val metadataContent = project.filesWithUnpackedArchives(this@apply.output.allOutputs, setOf("klib"))
-                allMetadataJar.from(metadataContent) { spec -> spec.into(this@apply.defaultSourceSet.name) }
+                allMetadataJar.configure { it.from(metadataContent) { spec -> spec.into(this@apply.defaultSourceSet.name) } }
             } else {
                 if (platformCompilations.filterIsInstance<KotlinNativeCompilation>().none { it.konanTarget.enabledOnCurrentHost }) {
                     // Then we don't have any platform module to put this compiled source set to, so disable the compilation task:
-                    compileKotlinTaskHolder.configure { it.enabled = false }
+                    compileKotlinTaskProvider.configure { it.enabled = false }
                     // Also clear the dependency files (classpath) of the compilation so that the host-specific dependencies are
                     // not resolved:
                     compileDependencyFiles = project.files()
@@ -462,6 +457,31 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
                 }
             }
         )
+        /*
+        val transformedFilesByOriginalFiles = project.provider {
+            transformationTaskHolders
+                .flatMap { it.get().filesByOriginalFiles.toList() }
+                .groupBy({ it.first }, valueTransform = { it.second })
+        }
+
+        val builtBySet = mutableSetOf<FileCollection>()
+        val resultFiles = project.files(Callable {
+            val originalFiles = fromFiles.toSet()
+            val filesToAdd = mutableSetOf<File>()
+            val filesToExclude = mutableSetOf<File>()
+
+            transformedFilesByOriginalFiles.get().forEach { (original, replacement) ->
+                if (original.all { it in originalFiles }) {
+                    builtBySet.addAll(replacement)
+                    filesToAdd += replacement.flatMap { it.files }
+                    filesToExclude += original
+                }
+            }
+
+            originalFiles - filesToExclude + filesToAdd
+        })
+        return resultFiles.builtBy(builtBySet)
+         */
     }
 
     private fun createCommonMainElementsConfiguration(target: KotlinMetadataTarget) {

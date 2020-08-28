@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.commonizer.CommonizationPerformed
 import org.jetbrains.kotlin.descriptors.commonizer.Result
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.test.util.DescriptorValidator.*
 import org.jetbrains.kotlin.types.ErrorUtils
 import java.io.File
@@ -24,11 +24,11 @@ fun assertIsDirectory(file: File) {
 @ExperimentalContracts
 fun assertCommonizationPerformed(result: Result) {
     contract {
-        returns() implies (result is CommonizationPerformed)
+        returns() implies (result is Result.Commonized)
     }
 
-    if (result !is CommonizationPerformed)
-        fail("$result is not instance of ${CommonizationPerformed::class}")
+    if (result !is Result.Commonized)
+        fail("$result is not instance of ${Result.Commonized::class}")
 }
 
 @ExperimentalContracts
@@ -41,6 +41,8 @@ fun assertModulesAreEqual(expected: ModuleDescriptor, actual: ModuleDescriptor, 
 
 fun assertValidModule(module: ModuleDescriptor) = validate(
     object : ValidationVisitor() {
+        override fun validateScope(scopeOwner: DeclarationDescriptor?, scope: MemberScope, collector: DiagnosticCollector) = Unit
+
         override fun visitModuleDeclaration(descriptor: ModuleDescriptor, collector: DiagnosticCollector): Boolean {
             assertValid(descriptor)
             return super.visitModuleDeclaration(descriptor, collector)

@@ -1,1 +1,1 @@
-Value write 9 Foo().x = 1
+Value write 9 Foo(1).x = 1

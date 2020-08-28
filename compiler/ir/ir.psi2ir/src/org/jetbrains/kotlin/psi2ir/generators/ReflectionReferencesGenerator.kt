@@ -22,20 +22,19 @@ import org.jetbrains.kotlin.builtins.isKFunctionType
 import org.jetbrains.kotlin.builtins.isKSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
-import org.jetbrains.kotlin.ir.util.isImmutable
-import org.jetbrains.kotlin.ir.util.referenceClassifier
-import org.jetbrains.kotlin.ir.util.referenceFunction
-import org.jetbrains.kotlin.ir.util.withScope
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -140,7 +139,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
             createAdapterFun(startOffset, endOffset, adapteeDescriptor, ktExpectedParameterTypes, ktExpectedReturnType, callBuilder, callableReferenceType)
         val irCall = createAdapteeCall(startOffset, endOffset, adapteeSymbol, callBuilder, irAdapterFun)
 
-        irAdapterFun.body = IrBlockBodyImpl(startOffset, endOffset).apply {
+        irAdapterFun.body = context.irFactory.createBlockBody(startOffset, endOffset).apply {
             if (KotlinBuiltIns.isUnit(ktExpectedReturnType))
                 statements.add(irCall)
             else
@@ -199,18 +198,13 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
 
         val irType = resolvedDescriptor.returnType!!.toIrType()
 
-        val irCall =
-            if (resolvedDescriptor is ConstructorDescriptor)
-                IrConstructorCallImpl.fromSymbolDescriptor(
-                    startOffset, endOffset, irType,
-                    adapteeSymbol as IrConstructorSymbol
-                )
-            else
-                IrCallImpl(
-                    startOffset, endOffset, irType,
-                    adapteeSymbol,
-                    origin = null, superQualifierSymbol = null
-                )
+        val irCall = when (adapteeSymbol) {
+            is IrConstructorSymbol ->
+                IrConstructorCallImpl.fromSymbolDescriptor(startOffset, endOffset, irType, adapteeSymbol)
+            is IrSimpleFunctionSymbol ->
+                IrCallImpl(startOffset, endOffset, irType, adapteeSymbol, origin = null, superQualifierSymbol = null)
+            else -> error("Unknown symbol kind $adapteeSymbol")
+        }
 
         val hasBoundDispatchReceiver = resolvedCall.dispatchReceiver != null && resolvedCall.dispatchReceiver !is TransientReceiver
         val hasBoundExtensionReceiver = resolvedCall.extensionReceiver != null && resolvedCall.extensionReceiver !is TransientReceiver
@@ -233,12 +227,6 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
 
         return irCall
     }
-
-    private fun IrExpression.isSafeToUseWithoutCopying() =
-        this is IrGetObjectValue ||
-                this is IrGetEnumValue ||
-                this is IrConst<*> ||
-                this is IrGetValue && symbol.isBound && symbol.owner.isImmutable
 
     private fun putAdaptedValueArguments(
         startOffset: Int,
@@ -342,7 +330,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         return context.symbolTable.declareSimpleFunction(
             adapterFunctionDescriptor
         ) { irAdapterSymbol ->
-            IrFunctionImpl(
+            context.irFactory.createFunction(
                 startOffset, endOffset,
                 IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE,
                 irAdapterSymbol,
@@ -355,6 +343,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
                 isTailrec = false,
                 isSuspend = adapteeDescriptor.isSuspend || hasSuspendConversion,
                 isOperator = adapteeDescriptor.isOperator, // TODO ?
+                isInfix = adapteeDescriptor.isInfix,
                 isExpect = false,
                 isFakeOverride = false
             ).also { irAdapterFun ->
@@ -396,7 +385,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         return context.symbolTable.declareValueParameter(
             startOffset, endOffset, IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE, descriptor, type.toIrType()
         ) { irAdapterParameterSymbol ->
-            IrValueParameterImpl(
+            context.irFactory.createValueParameter(
                 startOffset, endOffset,
                 IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE,
                 irAdapterParameterSymbol,
@@ -416,7 +405,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         callableDescriptor: CallableDescriptor,
         typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
         origin: IrStatementOrigin? = null
-    ): IrCallableReference {
+    ): IrCallableReference<*> {
         val startOffset = ktElement.startOffsetSkippingComments
         val endOffset = ktElement.endOffset
         return when (callableDescriptor) {
@@ -486,7 +475,6 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         }
     }
 
-    @Suppress("DEPRECATION")
     private fun getFieldForPropertyReference(originalProperty: PropertyDescriptor) =
         // NB this is a hack, we really don't know if an arbitrary property has a backing field or not
         when {

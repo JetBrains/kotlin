@@ -28,7 +28,7 @@ interface IrElementVisitor<out R, in D> {
     fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: D) = visitPackageFragment(declaration, data)
     fun visitScript(declaration: IrScript, data: D) = visitDeclaration(declaration, data)
 
-    fun visitDeclaration(declaration: IrDeclaration, data: D) = visitElement(declaration, data)
+    fun visitDeclaration(declaration: IrDeclarationBase, data: D) = visitElement(declaration, data)
     fun visitClass(declaration: IrClass, data: D) = visitDeclaration(declaration, data)
     fun visitFunction(declaration: IrFunction, data: D) = visitDeclaration(declaration, data)
     fun visitSimpleFunction(declaration: IrSimpleFunction, data: D) = visitFunction(declaration, data)
@@ -72,7 +72,7 @@ interface IrElementVisitor<out R, in D> {
     fun visitGetField(expression: IrGetField, data: D) = visitFieldAccess(expression, data)
     fun visitSetField(expression: IrSetField, data: D) = visitFieldAccess(expression, data)
 
-    fun visitMemberAccess(expression: IrMemberAccessExpression, data: D) = visitExpression(expression, data)
+    fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: D) = visitExpression(expression, data)
     fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: D) = visitMemberAccess(expression, data)
     fun visitCall(expression: IrCall, data: D) = visitFunctionAccess(expression, data)
     fun visitConstructorCall(expression: IrConstructorCall, data: D) = visitFunctionAccess(expression, data)
@@ -80,11 +80,13 @@ interface IrElementVisitor<out R, in D> {
     fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: D) = visitFunctionAccess(expression, data)
     fun visitGetClass(expression: IrGetClass, data: D) = visitExpression(expression, data)
 
-    fun visitCallableReference(expression: IrCallableReference, data: D) = visitMemberAccess(expression, data)
+    fun visitCallableReference(expression: IrCallableReference<*>, data: D) = visitMemberAccess(expression, data)
     fun visitFunctionReference(expression: IrFunctionReference, data: D) = visitCallableReference(expression, data)
     fun visitPropertyReference(expression: IrPropertyReference, data: D) = visitCallableReference(expression, data)
     fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: D) =
         visitCallableReference(expression, data)
+
+    fun visitRawFunctionReference(expression: IrRawFunctionReference, data: D) = visitDeclarationReference(expression, data)
 
     fun visitFunctionExpression(expression: IrFunctionExpression, data: D) = visitExpression(expression, data)
 

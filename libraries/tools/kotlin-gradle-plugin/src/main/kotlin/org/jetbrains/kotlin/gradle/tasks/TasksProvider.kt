@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.UnknownTaskException
+import org.gradle.api.tasks.TaskCollection
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mapKotlinTaskProperties
@@ -39,7 +40,7 @@ internal fun <T : Task> registerTask(project: Project, name: String, type: Class
 internal inline fun <reified T : Task> Project.registerTask(
     name: String,
     args: List<Any> = emptyList(),
-    noinline body: (T) -> (Unit)
+    noinline body: ((T) -> (Unit))? = null
 ): TaskProvider<T> =
     this@registerTask.registerTask(name, T::class.java, args, body)
 
@@ -47,11 +48,18 @@ internal fun <T : Task> Project.registerTask(
     name: String,
     type: Class<T>,
     constructorArgs: List<Any> = emptyList(),
-    body: (T) -> (Unit)
+    body: ((T) -> (Unit))? = null
 ): TaskProvider<T> {
-    return project.tasks.register(name, type, *constructorArgs.toTypedArray()).apply { configure(body) }
+    val resultProvider = project.tasks.register(name, type, *constructorArgs.toTypedArray())
+    if (body != null) {
+        resultProvider.configure(body)
+    }
+    return resultProvider
 }
 
+internal fun TaskProvider<*>.dependsOn(other: TaskProvider<*>) = configure { it.dependsOn(other) }
+
+internal inline fun <reified S : Task> TaskCollection<in S>.withType(): TaskCollection<S> = withType(S::class.java)
 
 /**
  * Locates a task by [name] and [type], without triggering its creation or configuration.
@@ -68,7 +76,7 @@ internal inline fun <reified T : Task> Project.locateTask(name: String): TaskPro
  * with [name], type [T] and initialization script [body]
  */
 internal inline fun <reified T : Task> Project.locateOrRegisterTask(name: String, noinline body: (T) -> (Unit)): TaskProvider<T> {
-    return project.locateTask(name) ?: registerTask(project, name, T::class.java, body)
+    return project.locateTask(name) ?: project.registerTask(name, T::class.java, body = body)
 }
 
 internal open class KotlinTasksProvider(val targetName: String) {
@@ -80,7 +88,7 @@ internal open class KotlinTasksProvider(val targetName: String) {
     ): TaskProvider<out KotlinCompile> {
         val properties = PropertiesProvider(project)
         val taskClass = taskOrWorkersTask<KotlinCompile, KotlinCompileWithWorkers>(properties)
-        val result = registerTask(project, name, taskClass) {
+        val result = project.registerTask(name, taskClass) {
             configureAction(it)
         }
         configure(result, project, properties, compilation)

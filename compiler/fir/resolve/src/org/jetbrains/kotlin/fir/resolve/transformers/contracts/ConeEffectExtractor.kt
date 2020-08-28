@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.contracts
 
-import org.jetbrains.kotlin.contracts.description.InvocationKind
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.description.*
@@ -13,8 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 
 class ConeEffectExtractor(
@@ -59,13 +58,13 @@ class ConeEffectExtractor(
             }
 
             FirContractsDslNames.RETURNS_NOT_NULL -> {
-                ConeReturnsEffectDeclaration(ConeConstantReference.NULL)
+                ConeReturnsEffectDeclaration(ConeConstantReference.NOT_NULL)
             }
 
             FirContractsDslNames.CALLS_IN_PLACE -> {
                 val reference = functionCall.arguments[0].accept(this, null) as? ConeValueParameterReference
                     ?: return null
-                val kind = functionCall.arguments.getOrNull(1)?.parseInvocationKind() ?: InvocationKind.UNKNOWN
+                val kind = functionCall.arguments.getOrNull(1)?.parseInvocationKind() ?: EventOccurrencesRange.UNKNOWN
                 ConeCallsEffectDeclaration(reference, kind)
             }
 
@@ -97,15 +96,15 @@ class ConeEffectExtractor(
         return ConeBinaryLogicExpression(left, right, binaryLogicExpression.kind)
     }
 
-    override fun visitOperatorCall(operatorCall: FirOperatorCall, data: Nothing?): ConeContractDescriptionElement? {
-        val isNegated = when (operatorCall.operation) {
+    override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: Nothing?): ConeContractDescriptionElement? {
+        val isNegated = when (equalityOperatorCall.operation) {
             FirOperation.EQ -> false
             FirOperation.NOT_EQ -> true
             else -> return null
         }
-        val const = operatorCall.arguments[1] as? FirConstExpression<*> ?: return null
+        val const = equalityOperatorCall.arguments[1] as? FirConstExpression<*> ?: return null
         if (const.kind != FirConstKind.Null) return null
-        val arg = operatorCall.arguments[0].accept(this, null) as? ConeValueParameterReference ?: return null
+        val arg = equalityOperatorCall.arguments[0].accept(this, null) as? ConeValueParameterReference ?: return null
         return ConeIsNullPredicate(arg, isNegated)
     }
 
@@ -116,7 +115,7 @@ class ConeEffectExtractor(
         val symbol = qualifiedAccessExpression.toResolvedCallableSymbol() ?: return null
         val parameter = symbol.fir as? FirValueParameter ?: return null
         val index = valueParameters.indexOf(parameter).takeUnless { it < 0 } ?: return null
-        val type = parameter.returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
+        val type = parameter.returnTypeRef.coneType
 
         val name = parameter.name.asString()
         return toValueParameterReference(type, index, name)
@@ -140,7 +139,7 @@ class ConeEffectExtractor(
     ): ConeContractDescriptionElement? {
         val declaration = thisReceiverExpression.calleeReference.boundSymbol?.fir ?: return null
         return if (declaration == owner) {
-            val type = thisReceiverExpression.typeRef.coneTypeSafe<ConeKotlinType>() ?: return null
+            val type = thisReceiverExpression.typeRef.coneType
             toValueParameterReference(type, -1, "this")
         } else {
             null
@@ -160,19 +159,19 @@ class ConeEffectExtractor(
 
     override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Nothing?): ConeContractDescriptionElement? {
         val arg = typeOperatorCall.argument.accept(this, data) as? ConeValueParameterReference ?: return null
-        val type = typeOperatorCall.conversionTypeRef.coneTypeSafe<ConeKotlinType>() ?: return null
+        val type = typeOperatorCall.conversionTypeRef.coneType
         val isNegated = typeOperatorCall.operation == FirOperation.NOT_IS
         return ConeIsInstancePredicate(arg, type, isNegated)
     }
 
-    private fun FirExpression.parseInvocationKind(): InvocationKind? {
+    private fun FirExpression.parseInvocationKind(): EventOccurrencesRange? {
         if (this !is FirQualifiedAccessExpression) return null
         val resolvedId = toResolvedCallableSymbol()?.callableId ?: return null
         return when (resolvedId) {
-            FirContractsDslNames.EXACTLY_ONCE_KIND -> InvocationKind.EXACTLY_ONCE
-            FirContractsDslNames.AT_LEAST_ONCE_KIND -> InvocationKind.AT_LEAST_ONCE
-            FirContractsDslNames.AT_MOST_ONCE_KIND -> InvocationKind.AT_MOST_ONCE
-            FirContractsDslNames.UNKNOWN_KIND -> InvocationKind.UNKNOWN
+            FirContractsDslNames.EXACTLY_ONCE_KIND -> EventOccurrencesRange.EXACTLY_ONCE
+            FirContractsDslNames.AT_LEAST_ONCE_KIND -> EventOccurrencesRange.AT_LEAST_ONCE
+            FirContractsDslNames.AT_MOST_ONCE_KIND -> EventOccurrencesRange.AT_MOST_ONCE
+            FirContractsDslNames.UNKNOWN_KIND -> EventOccurrencesRange.UNKNOWN
             else -> null
         }
     }

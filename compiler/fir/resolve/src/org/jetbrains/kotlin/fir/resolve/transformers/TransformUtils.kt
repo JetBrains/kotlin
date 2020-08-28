@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
@@ -96,10 +97,13 @@ internal fun FirValueParameter.transformVarargTypeToArrayType() {
 }
 
 internal fun FirTypedDeclaration.transformTypeToArrayType() {
-    val returnType = returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
+    val returnType = returnTypeRef.coneType
     transformReturnTypeRef(
         StoreType,
-        returnTypeRef.withReplacedConeType(ConeKotlinTypeProjectionOut(returnType).createArrayOf())
+        returnTypeRef.withReplacedConeType(
+            ConeKotlinTypeProjectionOut(returnType).createArrayOf(),
+            FirFakeSourceElementKind.ArrayTypeFromVarargParameter
+        )
     )
 }
 

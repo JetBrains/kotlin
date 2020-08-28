@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.project
 
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.util.CachedValue
@@ -12,6 +13,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.SLRUCache
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.cfg.ControlFlowInformationProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.SimpleGlobalContext
@@ -25,6 +27,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.util.analyzeControlFlow
 import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener
 import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListenerCompat
 import org.jetbrains.kotlin.idea.caches.trackers.inBlockModificationCount
+import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.*
@@ -151,6 +154,22 @@ class ResolveElementCache(
             assert(bodyResolveMode == BodyResolveMode.FULL)
         }
 
+        // KT-38687: There are lots of editor specific items like inlays, line markers, injected items etc
+        // those require analysis: it is called with BodyResolveMode.PARTIAL or BodyResolveMode.PARTIAL_WITH_CFA almost simultaneously.
+        // In the same time Kotlin Annotator (e.g. KotlinPsiChecker) requires BodyResolveMode.FULL analysis.
+        //
+        // While results of FULL could be reused by any of PARTIAL or PARTIAL_WITH_CFA analysis,
+        // neither result of PARTIAL nor result of PARTIAL_WITH_CFA analyses could be reused by FULL analysis.
+        //
+        // Force perform FULL analysis to avoid redundant analysis for the current selected files.
+        if (bodyResolveMode != BodyResolveMode.FULL && bodyResolveMode != BodyResolveMode.PARTIAL_FOR_COMPLETION && (!isUnitTestMode() || forceFullAnalysisModeInTests)) {
+            val virtualFile = resolveElement.containingFile.virtualFile
+            // applicable for real (physical) files only
+            if (virtualFile != null && FileEditorManager.getInstance(resolveElement.project).selectedFiles.any { it == virtualFile }) {
+                return getElementsAdditionalResolve(resolveElement, contextElements, BodyResolveMode.FULL)
+            }
+        }
+
         // check if full additional resolve already performed and is up-to-date
         val fullResolveMap = fullResolveCache.value
         val cachedFullResolve = fullResolveMap[resolveElement]
@@ -238,11 +257,14 @@ class ResolveElementCache(
     }
 
     fun resolveToElements(elements: Collection<KtElement>, bodyResolveMode: BodyResolveMode = BodyResolveMode.FULL): BindingContext {
-        val elementsByAdditionalResolveElement: Map<KtElement?, List<KtElement>> = elements.groupBy { findElementOfAdditionalResolve(it) }
+        val elementsByAdditionalResolveElement: Map<KtElement?, List<KtElement>> =
+            elements.groupBy { findElementOfAdditionalResolve(it, bodyResolveMode) }
 
         val bindingContexts = ArrayList<BindingContext>()
         val declarationsToResolve = ArrayList<KtDeclaration>()
         var addResolveSessionBindingContext = false
+
+        ensureFileAnnotationsResolved(elements)
         for ((elementOfAdditionalResolve, contextElements) in elementsByAdditionalResolveElement) {
             if (elementOfAdditionalResolve != null) {
                 if (elementOfAdditionalResolve is KtParameter) {
@@ -272,7 +294,18 @@ class ResolveElementCache(
         return CompositeBindingContext.create(bindingContexts)
     }
 
-    private fun findElementOfAdditionalResolve(element: KtElement): KtElement? {
+    private fun ensureFileAnnotationsResolved(elements: Collection<KtElement>) {
+        val filesToBeAnalyzed = elements.map { it.containingKtFile }.toSet()
+        for (file in filesToBeAnalyzed) {
+            val fileLevelAnnotations = resolveSession.getFileAnnotations(file)
+            doResolveAnnotations(fileLevelAnnotations)
+        }
+    }
+
+    private fun findElementOfAdditionalResolve(element: KtElement, bodyResolveMode: BodyResolveMode): KtElement? {
+        if (element is KtAnnotationEntry && bodyResolveMode == BodyResolveMode.PARTIAL_NO_ADDITIONAL)
+            return element
+
         val elementOfAdditionalResolve = KtPsiUtil.getTopmostParentOfTypes(
             element,
             KtNamedFunction::class.java,
@@ -792,6 +825,11 @@ class ResolveElementCache(
         override fun getOuterDataFlowInfo(): DataFlowInfo = DataFlowInfo.EMPTY
 
         override fun getTopDownAnalysisMode() = topDownAnalysisMode
+    }
+
+    companion object {
+        @set:TestOnly
+        var forceFullAnalysisModeInTests: Boolean = false
     }
 }
 

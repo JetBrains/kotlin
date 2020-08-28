@@ -30,7 +30,6 @@ internal class FirExpressionWithSmartcastImpl(
 
     override val source: FirSourceElement? get() = originalExpression.source
     override val annotations: List<FirAnnotationCall> get() = originalExpression.annotations
-    override val safe: Boolean get() = originalExpression.safe
     override val typeArguments: List<FirTypeProjection> get() = originalExpression.typeArguments
     override val explicitReceiver: FirExpression? get() = originalExpression.explicitReceiver
     override val dispatchReceiver: FirExpression get() = originalExpression.dispatchReceiver
@@ -76,6 +75,10 @@ internal class FirExpressionWithSmartcastImpl(
     }
 
     override fun replaceCalleeReference(newCalleeReference: FirReference) {
+        throw IllegalStateException()
+    }
+
+    override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {
         throw IllegalStateException()
     }
 

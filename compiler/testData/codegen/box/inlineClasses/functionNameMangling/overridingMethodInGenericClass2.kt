@@ -1,5 +1,4 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND_FIR: JVM_IR
 
 abstract class GenericBase<T> {
     abstract fun foo(x: T): T

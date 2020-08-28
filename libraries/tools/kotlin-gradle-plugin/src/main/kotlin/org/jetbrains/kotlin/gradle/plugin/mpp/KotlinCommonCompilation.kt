@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
@@ -22,6 +21,9 @@ class KotlinCommonCompilation(
     target: KotlinTarget,
     name: String
 ) : AbstractKotlinCompilation<KotlinMultiplatformCommonOptions>(target, name), KotlinMetadataCompilation<KotlinMultiplatformCommonOptions> {
+
+    override val kotlinOptions: KotlinMultiplatformCommonOptions = KotlinMultiplatformCommonOptionsImpl()
+
     override val compileKotlinTask: KotlinCompileCommon
         get() = super.compileKotlinTask as KotlinCompileCommon
 

@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.withScopeCleanup
+import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
-import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
@@ -26,16 +26,14 @@ internal abstract class FirAbstractAnnotationResolveTransformer<D, S>(
 ) : FirDefaultTransformer<D>() {
     abstract override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: D): CompositeTransformResult<FirStatement>
 
-    protected val towerScope = FirCompositeScope(mutableListOf())
+    protected lateinit var scope: FirScope
 
     override fun transformFile(file: FirFile, data: D): CompositeTransformResult<FirDeclaration> {
-        return withScopeCleanup(towerScope.scopes) {
-            towerScope.addScopes(createImportingScopes(file, session, scopeSession))
-            val state = beforeChildren(file)
-            file.transformDeclarations(this, data)
-            afterChildren(state)
-            transformAnnotatedDeclaration(file, data)
-        }
+        scope = FirCompositeScope(createImportingScopes(file, session, scopeSession, useCaching = false))
+        val state = beforeChildren(file)
+        file.transformDeclarations(this, data)
+        afterChildren(state)
+        return transformAnnotatedDeclaration(file, data)
     }
 
     override fun transformProperty(property: FirProperty, data: D): CompositeTransformResult<FirDeclaration> {

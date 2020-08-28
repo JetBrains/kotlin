@@ -81,9 +81,15 @@ abstract class DeserializedMemberScope protected constructor(
 
     internal val classNames by c.storageManager.createLazyValue { classNames().toSet() }
 
+
+    private val classifierNamesLazy = c.storageManager.createNullableLazyValue {
+        val nonDeclaredNames = getNonDeclaredClassifierNames() ?: return@createNullableLazyValue null
+        this.classNames + typeAliasNames + nonDeclaredNames
+    }
+
     override fun getFunctionNames() = functionNamesLazy
     override fun getVariableNames() = variableNamesLazy
-    override fun getClassifierNames(): Set<Name>? = classNames + typeAliasNames
+    override fun getClassifierNames(): Set<Name>? = classifierNamesLazy()
 
     override fun definitelyDoesNotContainName(name: Name): Boolean {
         return name !in functionNamesLazy && name !in variableNamesLazy && name !in classNames && name !in typeAliasNames
@@ -256,6 +262,7 @@ abstract class DeserializedMemberScope protected constructor(
 
     protected abstract fun getNonDeclaredFunctionNames(): Set<Name>
     protected abstract fun getNonDeclaredVariableNames(): Set<Name>
+    protected abstract fun getNonDeclaredClassifierNames(): Set<Name>?
 
     protected abstract fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean)
 

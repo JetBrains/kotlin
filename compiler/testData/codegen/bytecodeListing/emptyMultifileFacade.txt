@@ -1,7 +1,10 @@
 @kotlin.Metadata
-public final class test/Foo
+public final class test/Foo {
+    // source: 'emptyMultifileFacade.kt'
+}
 
 @kotlin.Metadata
 synthetic final class test/Foo__EmptyMultifileFacadeKt {
+    // source: 'emptyMultifileFacade.kt'
     private final static method privateOnly$Foo__EmptyMultifileFacadeKt(): void
 }

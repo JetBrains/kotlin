@@ -1,0 +1,69 @@
+FILE: trickyCases.kt
+    @R|kotlin/OptIn|(vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test1(x: R|kotlin/String?|): R|kotlin/Any?|
+        [R|Contract description]
+         <
+            Returns(NOT_NULL) -> x != null
+        >
+     {
+        [StubStatement]
+        ^test1 R|<local>/x|
+    }
+    @R|kotlin/OptIn|(vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test2(x: R|kotlin/String?|): R|kotlin/Any?|
+        [R|Contract description]
+         <
+            Returns(TRUE) -> x != null
+        >
+     {
+        [StubStatement]
+        ^test2 when () {
+            !=(R|<local>/x|, Null(null)) ->  {
+                Boolean(true)
+            }
+            else ->  {
+                Boolean(false)
+            }
+        }
+
+    }
+    @R|kotlin/OptIn|(vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test3(x: R|kotlin/Any?|): R|kotlin/Any?|
+        [R|Contract description]
+         <
+            Returns(NOT_NULL) -> x != null
+        >
+     {
+        [StubStatement]
+        ^test3 when () {
+            Boolean(true) ->  {
+                R|<local>/x|
+            }
+            else ->  {
+                Null(null)
+            }
+        }
+
+    }
+    @R|kotlin/OptIn|(vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test4(x: R|kotlin/Any?|): R|kotlin/Any?|
+        [R|Contract description]
+         <
+            Returns(NOT_NULL) -> x != null
+        >
+     {
+        [StubStatement]
+        ^test4 when () {
+            !=(R|<local>/x|, Null(null)) ->  {
+                when () {
+                    Boolean(true) ->  {
+                        R|<local>/x|
+                    }
+                    else ->  {
+                        Boolean(false)
+                    }
+                }
+
+            }
+            else ->  {
+                Null(null)
+            }
+        }
+
+    }

@@ -452,7 +452,7 @@ class NewMultiplatformIT : BaseGradleIT() {
         }
 
     @Test
-    fun testResourceProcessing() = with(Project("sample-lib", directoryPrefix = "new-mpp-lib-and-app")) {
+    fun testResourceProcessing() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
         val targetsWithResources = listOf("jvm6", "nodeJs", "wasm32", nativeHostTargetName)
         val processResourcesTasks =
             targetsWithResources.map { ":${it}ProcessResources" }
@@ -1386,30 +1386,6 @@ class NewMultiplatformIT : BaseGradleIT() {
                 val failureMsg = "Following dependencies exported in the releaseFramework binary " +
                         "are not specified as API-dependencies of a corresponding source set"
                 assertTrue(output.contains(failureMsg))
-            }
-        }
-    }
-
-    // Check that we still can build binaries from sources if the corresponding property is specified.
-    // TODO: Drop in 1.4
-    @Test
-    fun testLinkNativeBinaryFromSources() = with(
-        transformProjectWithPluginsDsl("groovy-dsl", gradleVersion, "new-mpp-native-binaries")
-    ) {
-        val linkTask = ":linkDebugExecutable${nativeHostTargetName.capitalize()}"
-
-        val prefix = CompilerOutputKind.PROGRAM.prefix(HostManager.host)
-        val suffix = CompilerOutputKind.PROGRAM.suffix(HostManager.host)
-        val fileName = "${prefix}native-binary$suffix"
-        val outputFile = "build/bin/$nativeHostTargetName/debugExecutable/$fileName"
-
-        build(linkTask, "-Pkotlin.native.linkFromSources") {
-            assertSuccessful()
-            assertTasksExecuted(linkTask)
-            assertFileExists(outputFile)
-            checkNativeCommandLineFor(linkTask) {
-                assertTrue(it.contains("-Xcommon-sources="))
-                assertTrue(it.contains(projectDir.resolve("src/commonMain/kotlin/RootMain.kt").absolutePath))
             }
         }
     }

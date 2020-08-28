@@ -1,13 +1,15 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.backend.common.ir.allOverridden
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -19,7 +21,14 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 data class SpecialMethodWithDefaultInfo(
-    val defaultValueGenerator: (IrSimpleFunction) -> IrExpression, val argumentsToCheck: Int, val needsArgumentBoxing: Boolean = false
+    val defaultValueGenerator: (IrSimpleFunction) -> IrExpression,
+    val argumentsToCheck: Int,
+    val needsArgumentBoxing: Boolean = false,
+    val needsGenericSignature: Boolean = false,
+)
+
+class BuiltInWithDifferentJvmName(
+    val needsGenericSignature: Boolean = false,
 )
 
 class SpecialBridgeMethods(val context: CommonBackendContext) {
@@ -53,43 +62,62 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
     private fun getSecondArg(bridge: IrSimpleFunction) =
         IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, bridge.valueParameters[1].symbol)
 
-    private val SPECIAL_METHODS_WITH_DEFAULTS_MAP = mapOf(
-        makeDescription(KotlinBuiltIns.FQ_NAMES.collection, "contains", 1) to SpecialMethodWithDefaultInfo(::constFalse, 1),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.mutableCollection, "remove", 1) to SpecialMethodWithDefaultInfo(::constFalse, 1, true),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.map, "containsKey", 1) to SpecialMethodWithDefaultInfo(::constFalse, 1),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.map, "containsValue", 1) to SpecialMethodWithDefaultInfo(::constFalse, 1),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.mutableMap, "remove", 2) to SpecialMethodWithDefaultInfo(::constFalse, 2),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.map, "getOrDefault", 2) to SpecialMethodWithDefaultInfo(::getSecondArg, 1),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.map, "get", 1) to SpecialMethodWithDefaultInfo(::constNull, 1),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.mutableMap, "remove", 1) to SpecialMethodWithDefaultInfo(::constNull, 1),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.list, "indexOf", 1) to SpecialMethodWithDefaultInfo(::constMinusOne, 1),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.list, "lastIndexOf", 1) to SpecialMethodWithDefaultInfo(::constMinusOne, 1)
+    private val specialMethodsWithDefaults = mapOf(
+        makeDescription(StandardNames.FqNames.collection, "contains", 1) to
+                SpecialMethodWithDefaultInfo(::constFalse, 1),
+        makeDescription(StandardNames.FqNames.mutableCollection, "remove", 1) to
+                SpecialMethodWithDefaultInfo(::constFalse, 1, needsArgumentBoxing = true),
+        makeDescription(StandardNames.FqNames.map, "containsKey", 1) to
+                SpecialMethodWithDefaultInfo(::constFalse, 1),
+        makeDescription(StandardNames.FqNames.map, "containsValue", 1) to
+                SpecialMethodWithDefaultInfo(::constFalse, 1),
+        makeDescription(StandardNames.FqNames.mutableMap, "remove", 2) to
+                SpecialMethodWithDefaultInfo(::constFalse, 2),
+        makeDescription(StandardNames.FqNames.list, "indexOf", 1) to
+                SpecialMethodWithDefaultInfo(::constMinusOne, 1),
+        makeDescription(StandardNames.FqNames.list, "lastIndexOf", 1) to
+                SpecialMethodWithDefaultInfo(::constMinusOne, 1),
+        makeDescription(StandardNames.FqNames.map, "getOrDefault", 2) to
+                SpecialMethodWithDefaultInfo(::getSecondArg, 1, needsGenericSignature = true),
+        makeDescription(StandardNames.FqNames.map, "get", 1) to
+                SpecialMethodWithDefaultInfo(::constNull, 1, needsGenericSignature = true),
+        makeDescription(StandardNames.FqNames.mutableMap, "remove", 1) to
+                SpecialMethodWithDefaultInfo(::constNull, 1, needsGenericSignature = true)
     )
 
-    private val SPECIAL_PROPERTIES_SET = setOf(
-        makeDescription(KotlinBuiltIns.FQ_NAMES.collection, "size"),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.map, "size"),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.charSequence.toSafe(), "length"),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.map, "keys"),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.map, "values"),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.map, "entries")
+    private val specialProperties = mapOf(
+        makeDescription(StandardNames.FqNames.collection, "size") to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.map, "size") to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.charSequence.toSafe(), "length") to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.map, "keys") to BuiltInWithDifferentJvmName(needsGenericSignature = true),
+        makeDescription(StandardNames.FqNames.map, "values") to BuiltInWithDifferentJvmName(needsGenericSignature = true),
+        makeDescription(StandardNames.FqNames.map, "entries") to BuiltInWithDifferentJvmName(needsGenericSignature = true)
     )
 
-    private val SPECIAL_METHODS_SETS = setOf(
-        makeDescription(KotlinBuiltIns.FQ_NAMES.number.toSafe(), "toByte"),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.number.toSafe(), "toShort"),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.number.toSafe(), "toInt"),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.number.toSafe(), "toLong"),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.number.toSafe(), "toFloat"),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.number.toSafe(), "toDouble"),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.mutableList, "removeAt", 1),
-        makeDescription(KotlinBuiltIns.FQ_NAMES.charSequence.toSafe(), "get", 1)
+    private val specialMethods = mapOf(
+        makeDescription(StandardNames.FqNames.number.toSafe(), "toByte") to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.number.toSafe(), "toShort") to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.number.toSafe(), "toInt") to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.number.toSafe(), "toLong") to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.number.toSafe(), "toFloat") to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.number.toSafe(), "toDouble") to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.charSequence.toSafe(), "get", 1) to BuiltInWithDifferentJvmName(),
+        makeDescription(StandardNames.FqNames.mutableList, "removeAt", 1) to BuiltInWithDifferentJvmName(needsGenericSignature = true)
     )
 
-    fun findSpecialWithOverride(irFunction: IrSimpleFunction): Pair<IrSimpleFunction, SpecialMethodWithDefaultInfo>? {
-        irFunction.allOverridden().forEach { overridden ->
+    val specialMethodNames = (specialMethodsWithDefaults + specialMethods).map { (description) -> description.name }.toHashSet()
+    val specialPropertyNames = specialProperties.map { (description) -> description.name }.toHashSet()
+
+    fun findSpecialWithOverride(
+        irFunction: IrSimpleFunction,
+        includeSelf: Boolean = false
+    ): Pair<IrSimpleFunction, SpecialMethodWithDefaultInfo>? {
+        if (irFunction.parent !is IrClass)
+            return null
+
+        for (overridden in irFunction.allOverridden(includeSelf)) {
             val description = overridden.toDescription()
-            SPECIAL_METHODS_WITH_DEFAULTS_MAP[description]?.let {
+            specialMethodsWithDefaults[description]?.let {
                 return Pair(overridden, it)
             }
         }
@@ -98,32 +126,17 @@ class SpecialBridgeMethods(val context: CommonBackendContext) {
 
     fun getSpecialMethodInfo(irFunction: IrSimpleFunction): SpecialMethodWithDefaultInfo? {
         val description = irFunction.toDescription()
-        return SPECIAL_METHODS_WITH_DEFAULTS_MAP[description]
+        return specialMethodsWithDefaults[description]
     }
 
-    fun isBuiltInWithDifferentJvmName(irFunction: IrSimpleFunction): Boolean {
+    fun getBuiltInWithDifferentJvmName(irFunction: IrSimpleFunction): BuiltInWithDifferentJvmName? {
         irFunction.correspondingPropertySymbol?.let {
             val classFqName = irFunction.parentAsClass.fqNameWhenAvailable
-                ?: return false
+                ?: return null
 
-            return makeDescription(classFqName, it.owner.name.asString()) in SPECIAL_PROPERTIES_SET
+            return specialProperties[makeDescription(classFqName, it.owner.name.asString())]
         }
 
-        return irFunction.toDescription() in SPECIAL_METHODS_SETS
+        return specialMethods[irFunction.toDescription()]
     }
-}
-
-fun IrSimpleFunction.allOverridden(): Sequence<IrSimpleFunction> {
-    val visited = mutableSetOf<IrSimpleFunction>()
-
-    fun IrSimpleFunction.search(): Sequence<IrSimpleFunction> {
-        if (this in visited) return emptySequence()
-        return sequence {
-            yield(this@search)
-            visited.add(this@search)
-            overriddenSymbols.forEach { yieldAll(it.owner.search()) }
-        }
-    }
-
-    return search().drop(1) // First element is `this`
 }

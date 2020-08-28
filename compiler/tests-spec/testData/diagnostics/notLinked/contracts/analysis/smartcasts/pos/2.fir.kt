@@ -54,8 +54,8 @@ fun case_6(value_1: Any?, value_2: Any) {
         println(value_2.toByte())
     }
     if (funWithReturnsNotNull(value_1 is String && value_2 is Number) != null) {
-        <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        <!AMBIGUITY!>println<!>(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_1.length)
+        println(value_2.toByte())
     }
     if (funWithReturnsNull(value_1 is String && value_2 is Number) == null) {
         println(value_1.length)
@@ -74,8 +74,8 @@ fun case_7(value_1: Any?, value_2: Any?) {
         println(value_2.toByte())
     }
     if (funWithReturnsNotNullAndInvertCondition(value_1 !is String || value_2 !is Number) != null) {
-        <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        <!AMBIGUITY!>println<!>(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_1.length)
+        println(value_2.toByte())
     }
     if (funWithReturnsNullAndInvertCondition(value_1 !is String || value_2 !is Number) == null) {
         println(value_1.length)
@@ -94,7 +94,7 @@ fun case_8(value_1: Any?, value_2: Any?) {
         <!AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (funWithReturnsNotNullAndInvertCondition(value_1 !is String || value_2 != null) != null) {
-        <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+        println(value_1.length)
         <!AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (funWithReturnsNullAndInvertCondition(value_1 !is String || value_2 != null) == null) {
@@ -114,7 +114,7 @@ fun case_9(value_1: Any?, value_2: Number?) {
         println(value_2?.toByte())
     }
     if (funWithReturnsNotNull(value_1 is Float? && value_1 != null && value_2 != null) != null) {
-        <!AMBIGUITY!>println<!>(value_1.<!AMBIGUITY!>dec<!>())
+        println(value_1.dec())
         println(value_2?.toByte())
     }
     if (funWithReturnsNull(value_1 is Float? && value_1 != null && value_2 != null) == null) {
@@ -140,9 +140,9 @@ class case_10_class {
             println(o.prop_1.plus(3))
         }
         if (funWithReturnsNotNull(value_1 is Float? && value_1 != null && value_2 != null && o.prop_1 != null && this.prop_1 != null) != null) {
-            <!AMBIGUITY!>println<!>(value_1.<!AMBIGUITY!>dec<!>())
+            println(value_1.dec())
             println(value_2?.toByte())
-            <!AMBIGUITY!>println<!>(o.prop_1.<!AMBIGUITY!>plus<!>(3))
+            println(o.prop_1.plus(3))
         }
         if (funWithReturnsNull(value_1 is Float? && value_1 != null && value_2 != null && o.prop_1 != null && this.prop_1 != null) == null) {
             println(value_1.dec())

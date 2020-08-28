@@ -5,7 +5,7 @@ fun main(args: Array<String>) {
     inlineFun()
 }
 
-// ADDITIONAL_BREAKPOINT: stopInInlineInOtherFile.Other.kt: Breakpoint 1
+// ADDITIONAL_BREAKPOINT: stopInInlineInOtherFile.Other.kt / Breakpoint 1
 
 // FILE: stopInInlineInOtherFile.Other.kt
 package stopInInlineInOtherFile

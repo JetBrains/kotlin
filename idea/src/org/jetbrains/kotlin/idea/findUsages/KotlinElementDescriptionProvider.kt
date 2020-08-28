@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.refactoring.rename.RenameJavaSyntheticPropertyHandler
-import org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinPropertyProcessorCompat
+import org.jetbrains.kotlin.idea.refactoring.rename.RenameKotlinPropertyProcessor
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
@@ -148,7 +148,7 @@ class KotlinElementDescriptionProvider : ElementDescriptionProvider {
             is KtImportAlias -> KotlinBundle.message("find.usages.import.alias")
             is RenameJavaSyntheticPropertyHandler.SyntheticPropertyWrapper -> KotlinBundle.message("find.usages.property")
             is KtLightClassForFacade -> KotlinBundle.message("find.usages.facade.class")
-            is RenameKotlinPropertyProcessorCompat.PropertyMethodWrapper -> KotlinBundle.message("find.usages.property.accessor")
+            is RenameKotlinPropertyProcessor.PropertyMethodWrapper -> KotlinBundle.message("find.usages.property.accessor")
             else -> null
         }
 

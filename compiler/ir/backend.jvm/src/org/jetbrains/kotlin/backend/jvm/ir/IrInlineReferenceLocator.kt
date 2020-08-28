@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrBlock
+import org.jetbrains.kotlin.ir.expressions.IrCallableReference
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 internal open class IrInlineReferenceLocator(private val context: JvmBackendContext) : IrElementVisitorVoidWithContext() {
@@ -33,7 +36,7 @@ internal open class IrInlineReferenceLocator(private val context: JvmBackendCont
                 if (valueArgument is IrBlock && valueArgument.origin.isLambda) {
                     val reference = valueArgument.statements.last() as IrFunctionReference
                     visitInlineLambda(reference, function, parameter, currentScope!!.irElement as IrDeclaration)
-                } else if (valueArgument is IrCallableReference) {
+                } else if (valueArgument is IrCallableReference<*>) {
                     visitInlineReference(valueArgument)
                 }
             }
@@ -41,16 +44,16 @@ internal open class IrInlineReferenceLocator(private val context: JvmBackendCont
         return super.visitFunctionAccess(expression)
     }
 
-    open fun visitInlineReference(argument: IrCallableReference) {}
+    open fun visitInlineReference(argument: IrCallableReference<*>) {}
 
     open fun visitInlineLambda(argument: IrFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration) =
         visitInlineReference(argument)
 
     companion object {
-        fun scan(context: JvmBackendContext, element: IrElement): Set<IrCallableReference> =
-            mutableSetOf<IrCallableReference>().apply {
+        fun scan(context: JvmBackendContext, element: IrElement): Set<IrCallableReference<*>> =
+            mutableSetOf<IrCallableReference<*>>().apply {
                 element.accept(object : IrInlineReferenceLocator(context) {
-                    override fun visitInlineReference(argument: IrCallableReference) {
+                    override fun visitInlineReference(argument: IrCallableReference<*>) {
                         add(argument)
                     }
                 }, null)

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.loadIr
+import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
@@ -35,7 +36,10 @@ fun compileWasm(
     exportedDeclarations: Set<FqName> = emptySet()
 ): WasmCompilerResult {
     val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
-        loadIr(project, MainModule.SourceFiles(files), analyzer, configuration, allDependencies, friendDependencies)
+        loadIr(
+            project, MainModule.SourceFiles(files), analyzer, configuration, allDependencies, friendDependencies,
+            PersistentIrFactory
+        )
 
     val moduleDescriptor = moduleFragment.descriptor
     val context = WasmBackendContext(moduleDescriptor, irBuiltIns, symbolTable, moduleFragment, exportedDeclarations, configuration)

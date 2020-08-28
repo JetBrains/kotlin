@@ -16,6 +16,7 @@ import org.gradle.api.internal.artifacts.dependencies.SelfResolvingDependencyInt
 import org.gradle.api.tasks.TaskDependency
 import org.gradle.internal.component.local.model.DefaultLibraryBinaryIdentifier
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency.Scope.DEV
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import java.io.File
@@ -25,7 +26,7 @@ data class NpmDependency(
     private val name: String,
     private val version: String,
     val scope: Scope = Scope.NORMAL,
-    val generateKotlinExternals: Boolean = false
+    val generateExternals: Boolean = false
 ) : SelfResolvingDependency,
     SelfResolvingDependencyInternal,
     ResolvableDependency,
@@ -110,6 +111,9 @@ data class NpmDependency(
     }
 
     override fun getReason(): String? = reason
+
+    fun uniqueRepresentation() =
+        "$scope $key:$version, $generateExternals"
 }
 
 internal fun directoryNpmDependency(
@@ -117,7 +121,7 @@ internal fun directoryNpmDependency(
     name: String,
     directory: File,
     scope: NpmDependency.Scope,
-    generateKotlinExternals: Boolean
+    generateExternals: Boolean
 ): NpmDependency {
     check(directory.isDirectory) {
         "Dependency on local path should point on directory but $directory found"
@@ -128,7 +132,7 @@ internal fun directoryNpmDependency(
         name = name,
         version = fileVersion(directory),
         scope = scope,
-        generateKotlinExternals = generateKotlinExternals
+        generateExternals = generateExternals
     )
 }
 
@@ -138,7 +142,7 @@ internal fun onlyNameNpmDependency(
     throw IllegalArgumentException("NPM dependency '$name' doesn't have version. Please, set version explicitly.")
 }
 
-internal fun String.isFileVersion() =
+fun String.isFileVersion() =
     startsWith(FILE_VERSION_PREFIX)
 
 internal fun fileVersion(directory: File): String =

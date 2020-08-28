@@ -63,8 +63,8 @@ private interface ArgsConverter<T> {
     }
 
     fun tryConvertSingle(parameter: KParameter, arg: NamedArgument<T>): Result
-    fun tryConvertVararg(parameter: KParameter, firstArg: NamedArgument<T>, restArgsIt: Iterator<NamedArgument<T>>): Result
-    fun tryConvertTail(parameter: KParameter, firstArg: NamedArgument<T>, restArgsIt: Iterator<NamedArgument<T>>): Result
+    fun tryConvertVararg(parameter: KParameter, firstArg: NamedArgument<T>, restArgs: Sequence<NamedArgument<T>>): Result
+    fun tryConvertTail(parameter: KParameter, firstArg: NamedArgument<T>, restArgs: Sequence<NamedArgument<T>>): Result
 }
 
 private enum class ArgsTraversalState { UNNAMED, NAMED, TAIL }
@@ -77,7 +77,7 @@ private fun <T> tryCreateCallableMapping(
     val res = mutableMapOf<KParameter, Any?>()
     var state = ArgsTraversalState.UNNAMED
     val unboundParams = callable.parameters.toMutableList()
-    val argIt = args.iterator()
+    val argIt = LookAheadIterator(args.iterator())
     while (argIt.hasNext()) {
         if (unboundParams.isEmpty()) return null // failed to match: no param left for the arg
         val arg = argIt.next()
@@ -102,7 +102,11 @@ private fun <T> tryCreateCallableMapping(
                     res[par] = cvtRes.v
                 } else if (par.type.jvmErasure.java.isArray) {
                     // try vararg
-                    val cvtVRes = converter.tryConvertVararg(par, arg, argIt)
+
+                    // Collect all the arguments that do not have a name
+                    val unnamed = argIt.sequenceUntil { it.name != null }
+
+                    val cvtVRes = converter.tryConvertVararg(par, arg, unnamed)
                     if (cvtVRes is ArgsConverter.Result.Success) {
                         res[par] = cvtVRes.v
                     } else return null // failed to match: no suitable param for unnamed arg
@@ -121,7 +125,7 @@ private fun <T> tryCreateCallableMapping(
             ArgsTraversalState.TAIL -> {
                 assert(arg.name == null)
                 val par = unboundParams.removeAt(unboundParams.lastIndex)
-                val cvtVRes = converter.tryConvertTail(par, arg, argIt)
+                val cvtVRes = converter.tryConvertTail(par, arg, argIt.asSequence())
                 if (cvtVRes is ArgsConverter.Result.Success) {
                     if (argIt.hasNext()) return null // failed to match: not all tail args are consumed
                     res[par] = cvtVRes.v
@@ -162,7 +166,7 @@ private class StringArgsConverter : ArgsConverter<String> {
     override fun tryConvertVararg(
         parameter: KParameter,
         firstArg: NamedArgument<String>,
-        restArgsIt: Iterator<NamedArgument<String>>
+        restArgs: Sequence<NamedArgument<String>>
     ): ArgsConverter.Result {
         fun convertPrimitivesArray(type: KType, args: Sequence<String?>): Any? =
             when (type.classifier) {
@@ -179,7 +183,7 @@ private class StringArgsConverter : ArgsConverter<String> {
 
         val parameterType = parameter.type
         if (parameterType.jvmErasure.java.isArray) {
-            val argsSequence = sequenceOf(firstArg.value) + restArgsIt.asSequence().map { it.value }
+            val argsSequence = sequenceOf(firstArg.value) + restArgs.map { it.value }
             val primArrayArgCandidate = convertPrimitivesArray(parameterType, argsSequence)
             if (primArrayArgCandidate != null)
                 return ArgsConverter.Result.Success(primArrayArgCandidate)
@@ -195,9 +199,9 @@ private class StringArgsConverter : ArgsConverter<String> {
     override fun tryConvertTail(
         parameter: KParameter,
         firstArg: NamedArgument<String>,
-        restArgsIt: Iterator<NamedArgument<String>>
+        restArgs: Sequence<NamedArgument<String>>
     ): ArgsConverter.Result =
-        tryConvertVararg(parameter, firstArg, restArgsIt)
+        tryConvertVararg(parameter, firstArg, restArgs)
 }
 
 private class AnyArgsConverter : ArgsConverter<Any> {
@@ -218,18 +222,33 @@ private class AnyArgsConverter : ArgsConverter<Any> {
                 else -> null
             }
 
-        if (value::class.isSubclassOf(parameter.type.jvmErasure)) return ArgsConverter.Result.Success(value)
+        fun evaluateValue(arg: Any): Any? {
+            if (arg::class.isSubclassOf(parameter.type.jvmErasure)) return arg
+            return convertPrimitivesArray(parameter.type, arg)
+        }
 
-        return convertPrimitivesArray(parameter.type, value)?.let { ArgsConverter.Result.Success(it) }
-            ?: ArgsConverter.Result.Failure
+        evaluateValue(value)?.let { return ArgsConverter.Result.Success(it) }
+
+        // Handle the scenario where [arg::class] is an Array<Any>
+        // but it's values could all still be valid
+        val parameterKClass = parameter.type.classifier as? KClass<*>
+        val arrayComponentType = parameterKClass?.java?.takeIf { it.isArray}?.componentType?.kotlin
+
+        if (value is Array<*> && arrayComponentType != null) {
+            // TODO: Idea! Maybe we should check if the values in the array are compatible with [arrayComponentType]
+            //  if they aren't perhaps we should fail silently
+            convertAnyArray(arrayComponentType, value.asSequence())?.let(::evaluateValue)?.let { return ArgsConverter.Result.Success(it) }
+        }
+
+        return ArgsConverter.Result.Failure
     }
 
     override fun tryConvertVararg(
-        parameter: KParameter, firstArg: NamedArgument<Any>, restArgsIt: Iterator<NamedArgument<Any>>
+        parameter: KParameter, firstArg: NamedArgument<Any>, restArgs: Sequence<NamedArgument<Any>>
     ): ArgsConverter.Result {
         val parameterType = parameter.type
         if (parameterType.jvmErasure.java.isArray) {
-            val argsSequence = sequenceOf(firstArg.value) + restArgsIt.asSequence().map { it.value }
+            val argsSequence = sequenceOf(firstArg.value) + restArgs.map { it.value }
             val arrayElementType = parameterType.arguments.firstOrNull()?.type
             val arrayArgCandidate = convertAnyArray(arrayElementType?.classifier, argsSequence)
             if (arrayArgCandidate != null)
@@ -242,7 +261,7 @@ private class AnyArgsConverter : ArgsConverter<Any> {
     override fun tryConvertTail(
         parameter: KParameter,
         firstArg: NamedArgument<Any>,
-        restArgsIt: Iterator<NamedArgument<Any>>
+        restArgs: Sequence<NamedArgument<Any>>
     ): ArgsConverter.Result =
         tryConvertSingle(parameter, firstArg)
 }
@@ -265,4 +284,39 @@ private fun <T> convertAnyArrayImpl(classifier: KClassifier?, args: Sequence<T?>
         }
     }
     return result
+}
+
+/*
+ An iterator that allows us to read the next value without consuming it.
+ */
+private class LookAheadIterator<T>(private val iterator: Iterator<T>) : Iterator<T> {
+    private var currentLookAhead: T? = null
+
+    override fun hasNext(): Boolean {
+        return currentLookAhead != null || iterator.hasNext()
+    }
+
+    override fun next(): T {
+        currentLookAhead?.let { value ->
+            currentLookAhead = null
+            return value
+        }
+
+        return iterator.next()
+    }
+
+    fun nextWithoutConsuming(): T {
+        return currentLookAhead ?: iterator.next().also { currentLookAhead = it }
+    }
+}
+
+/*
+ Will return a sequence with the values of the iterator until the predicate evaluates to true.
+ */
+private fun <T> LookAheadIterator<T>.sequenceUntil(predicate: (T) -> Boolean): Sequence<T> = sequence {
+    while (hasNext()) {
+        if (predicate(nextWithoutConsuming()))
+            break
+        yield(next())
+    }
 }

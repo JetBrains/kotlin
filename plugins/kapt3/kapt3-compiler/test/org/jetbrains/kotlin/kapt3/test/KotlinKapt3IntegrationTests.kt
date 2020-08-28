@@ -28,6 +28,7 @@ import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
+import javax.lang.model.element.VariableElement
 import kotlin.system.exitProcess
 
 class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), CustomJdkTestLauncher {
@@ -60,6 +61,15 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), Custom
         assert(commentOf("test.Simple") == " KDoc comment.\n")
         assert(commentOf("test.EnumClass") == null) // simple comment - not saved
         assert(commentOf("test.MyAnnotation") == null) // multiline comment - not saved
+    }
+
+    @Test
+    fun testParameterNames() {
+        test("DefaultParameterValues", "test.Anno") { set, roundEnv, env ->
+            val user = roundEnv.getElementsAnnotatedWith(set.single()).single() as TypeElement
+            val nameField = user.enclosedElements.filterIsInstance<VariableElement>().single()
+            assertEquals("John", nameField.constantValue)
+        }
     }
 
     @Test

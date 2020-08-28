@@ -6,6 +6,8 @@ archivesBaseName = 'kotlin-stdlib'
 
 configureJvm6Project(project)
 configurePublishing(project)
+configureJavadocJar()
+configureSourcesJar()
 
 configurations {
     distSources
@@ -39,7 +41,11 @@ sourceSets {
 configurations {
     commonSources
     longRunningTestCompile.extendsFrom(testCompile)
-    builtins
+    builtins {
+        attributes {
+            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements, LibraryElements.JAR))
+        }
+    }
     compileOnly.extendsFrom(builtins)
 }
 
@@ -84,10 +90,9 @@ task distSourcesJar(type: Jar) {
     }
 }
 
-task modularJar(type: Jar) {
+configureModularJar {
     dependsOn(jar)
     manifestAttributes(manifest, project, 'Main', true)
-    classifier = 'modular'
 
     from zipTree(jar.outputs.files.singleFile)
 }
@@ -98,8 +103,6 @@ artifacts {
     distSources distSourcesJar
     archives modularJar
 }
-
-javadocJar()
 
 DexMethodCountKt.dexMethodCount(project) { task ->
     task.from(jar)
@@ -133,6 +136,8 @@ compileTestKotlin {
                 "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
                 "-Xopt-in=kotlin.ExperimentalStdlibApi",
         ]
+        // This is needed for JavaTypeTest; typeOf for non-reified type parameters doesn't work otherwise, for implementation reasons.
+        freeCompilerArgs.remove("-Xno-optimized-callable-references")
     }
 }
 

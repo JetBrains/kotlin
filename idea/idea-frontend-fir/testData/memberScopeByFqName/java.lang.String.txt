@@ -1,0 +1,847 @@
+class: java/lang/String
+
+// SYMBOLS:
+KtFirJavaFieldSymbol:
+  callableIdIfNonLocal: java.lang.String.value
+  isVal: true
+  modality: FINAL
+  name: value
+  origin: JAVA
+  symbolKind: MEMBER
+  type: ft<kotlin/CharArray, kotlin/CharArray?>!
+
+KtFirJavaFieldSymbol:
+  callableIdIfNonLocal: java.lang.String.hash
+  isVal: false
+  modality: OPEN
+  name: hash
+  origin: JAVA
+  symbolKind: MEMBER
+  type: kotlin/Int
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.hash32
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: hash32
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: []
+
+KtFirJavaFieldSymbol:
+  callableIdIfNonLocal: java.lang.String.hash32
+  isVal: false
+  modality: OPEN
+  name: hash32
+  origin: JAVA
+  symbolKind: MEMBER
+  type: kotlin/Int
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.length
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: length
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: []
+
+KtFirPropertySymbol:
+  callableIdIfNonLocal: kotlin.CharSequence.length
+  isExtension: false
+  isVal: true
+  modality: ABSTRACT
+  name: length
+  origin: LIBRARY
+  receiverType: kotlin/Int
+  symbolKind: MEMBER
+  type: kotlin/Int
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.isEmpty
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: isEmpty
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.charAt
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: charAt
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Char
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(index)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.codePointAt
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: codePointAt
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(index)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.codePointBefore
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: codePointBefore
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(index)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.codePointCount
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: codePointCount
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(beginIndex), KtFirFunctionValueParameterSymbol(endIndex)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.offsetByCodePoints
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: offsetByCodePoints
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(index), KtFirFunctionValueParameterSymbol(codePointOffset)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.getChars
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: getChars
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Unit
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(dst), KtFirFunctionValueParameterSymbol(dstBegin)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.getChars
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: getChars
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Unit
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(srcBegin), KtFirFunctionValueParameterSymbol(srcEnd), KtFirFunctionValueParameterSymbol(dst), KtFirFunctionValueParameterSymbol(dstBegin)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.getBytes
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: getBytes
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Unit
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(srcBegin), KtFirFunctionValueParameterSymbol(srcEnd), KtFirFunctionValueParameterSymbol(dst), KtFirFunctionValueParameterSymbol(dstBegin)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.getBytes
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: getBytes
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/ByteArray
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(charsetName)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.getBytes
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: getBytes
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/ByteArray
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(charset)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.getBytes
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: getBytes
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/ByteArray
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.equals
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: OPEN
+  name: equals
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(anObject)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.contentEquals
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: contentEquals
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(sb)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.contentEquals
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: contentEquals
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(cs)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.equalsIgnoreCase
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: equalsIgnoreCase
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(anotherString)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.compareTo
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: OPEN
+  name: compareTo
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(anotherString)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.compareToIgnoreCase
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: compareToIgnoreCase
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(str)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.regionMatches
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: regionMatches
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(toffset), KtFirFunctionValueParameterSymbol(other), KtFirFunctionValueParameterSymbol(ooffset), KtFirFunctionValueParameterSymbol(len)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.regionMatches
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: regionMatches
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(ignoreCase), KtFirFunctionValueParameterSymbol(toffset), KtFirFunctionValueParameterSymbol(other), KtFirFunctionValueParameterSymbol(ooffset), KtFirFunctionValueParameterSymbol(len)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.startsWith
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: startsWith
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(prefix), KtFirFunctionValueParameterSymbol(toffset)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.startsWith
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: startsWith
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(prefix)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.endsWith
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: endsWith
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(suffix)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.hashCode
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: hashCode
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.indexOf
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: indexOf
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(ch)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.indexOf
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: indexOf
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(ch), KtFirFunctionValueParameterSymbol(fromIndex)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.indexOf
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: indexOf
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(str)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.indexOf
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: indexOf
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(str), KtFirFunctionValueParameterSymbol(fromIndex)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.indexOfSupplementary
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: indexOfSupplementary
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(ch), KtFirFunctionValueParameterSymbol(fromIndex)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.lastIndexOf
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: lastIndexOf
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(ch)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.lastIndexOf
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: lastIndexOf
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(ch), KtFirFunctionValueParameterSymbol(fromIndex)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.lastIndexOf
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: lastIndexOf
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(str)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.lastIndexOf
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: lastIndexOf
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(str), KtFirFunctionValueParameterSymbol(fromIndex)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.lastIndexOfSupplementary
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: lastIndexOfSupplementary
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Int
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(ch), KtFirFunctionValueParameterSymbol(fromIndex)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.substring
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: substring
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/String
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(beginIndex)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.substring
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: substring
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/String
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(beginIndex), KtFirFunctionValueParameterSymbol(endIndex)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.subSequence
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: subSequence
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/CharSequence
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(beginIndex), KtFirFunctionValueParameterSymbol(endIndex)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.concat
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: concat
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/String
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(str)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.replace
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: replace
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/String
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(oldChar), KtFirFunctionValueParameterSymbol(newChar)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.replace
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: replace
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/String
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(target), KtFirFunctionValueParameterSymbol(replacement)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.matches
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: matches
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(regex)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.contains
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: OPEN
+  name: contains
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Boolean
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(s)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.replaceFirst
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: replaceFirst
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/String
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(regex), KtFirFunctionValueParameterSymbol(replacement)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.replaceAll
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: replaceAll
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/String
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(regex), KtFirFunctionValueParameterSymbol(replacement)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.split
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: split
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<kotlin/String, kotlin/String?>!>>
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(regex), KtFirFunctionValueParameterSymbol(limit)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.split
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: split
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<kotlin/String, kotlin/String?>!>>
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(regex)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.toLowerCase
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: toLowerCase
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/String
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(locale)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.toLowerCase
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: toLowerCase
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/String
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.toUpperCase
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: toUpperCase
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/String
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(locale)]
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.toUpperCase
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: toUpperCase
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/String
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.trim
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: trim
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/String
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.toString
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: toString
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/String
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.toCharArray
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: toCharArray
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/CharArray
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: java.lang.String.intern
+  isExtension: false
+  isOperator: false
+  isSuspend: false
+  modality: OPEN
+  name: intern
+  origin: JAVA
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/String
+  typeParameters: []
+  valueParameters: []
+
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: kotlin.CharSequence.get
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: ABSTRACT
+  name: get
+  origin: LIBRARY
+  receiverType: null
+  symbolKind: MEMBER
+  type: kotlin/Char
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(index)]
+
+KtFirClassOrObjectSymbol:
+  classIdIfNonLocal: java/lang/String.CaseInsensitiveComparator
+  classKind: CLASS
+  modality: OPEN
+  name: CaseInsensitiveComparator
+  origin: JAVA
+  symbolKind: MEMBER
+  typeParameters: []

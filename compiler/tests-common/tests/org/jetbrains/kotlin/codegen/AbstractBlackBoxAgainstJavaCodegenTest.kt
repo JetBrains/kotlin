@@ -35,6 +35,7 @@ abstract class AbstractBlackBoxAgainstJavaCodegenTest : AbstractBlackBoxCodegenT
     }
 
     override fun updateConfiguration(configuration: CompilerConfiguration) {
+        super.updateConfiguration(configuration)
         configuration.addJvmClasspathRoot(javaClassesOutputDirectory)
     }
 }

@@ -5,18 +5,59 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
+import org.jetbrains.kotlin.fir.analysis.cfa.FirCallsEffectAnalyzer
+import org.jetbrains.kotlin.fir.analysis.cfa.FirPropertyInitializationAnalyzer
+import org.jetbrains.kotlin.fir.analysis.cfa.FirReturnsImpliesAnalyzer
+import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
+
 object CommonDeclarationCheckers : DeclarationCheckers() {
+    override val fileCheckers: List<FirFileChecker> = listOf(
+
+    )
+
     override val declarationCheckers: List<FirBasicDeclarationChecker> = listOf(
         FirAnnotationClassDeclarationChecker,
-        FirModifierChecker
+        FirModifierChecker,
+        FirManyCompanionObjectsChecker,
+        FirLocalEntityNotAllowedChecker,
+        FirTypeParametersInObjectChecker,
+        FirConflictsChecker,
+        FirConstructorInInterfaceChecker,
+        FirConflictingProjectionChecker,
     )
 
     override val memberDeclarationCheckers: List<FirMemberDeclarationChecker> = listOf(
         FirInfixFunctionDeclarationChecker,
-        FirExposedVisibilityChecker
+        FirExposedVisibilityDeclarationChecker,
+        FirCommonConstructorDelegationIssuesChecker,
+        FirSupertypeInitializedWithoutPrimaryConstructor,
+        FirDelegationSuperCallInEnumConstructorChecker,
+        FirPrimaryConstructorRequiredForDataClassChecker,
+        FirMethodOfAnyImplementedInInterfaceChecker,
+        FirSupertypeInitializedInInterfaceChecker,
+        FirDelegationInInterfaceChecker,
+        FirInterfaceWithSuperclassChecker,
+        FirEnumClassSimpleChecker,
+        FirSealedSupertypeChecker,
+        FirInapplicableLateinitChecker,
+        FirTypeMismatchOnOverrideChecker,
+    )
+
+    override val regularClassCheckers: List<FirRegularClassChecker> = listOf(
+
     )
 
     override val constructorCheckers: List<FirConstructorChecker> = listOf(
-        FirConstructorAllowedChecker
+        FirConstructorAllowedChecker,
+    )
+
+    override val controlFlowAnalyserCheckers: List<FirControlFlowChecker> = listOf(
+        FirCallsEffectAnalyzer,
+        FirReturnsImpliesAnalyzer
+    )
+
+    override val variableAssignmentCfaBasedCheckers: List<AbstractFirPropertyInitializationChecker> = listOf(
+        FirPropertyInitializationAnalyzer
     )
 }

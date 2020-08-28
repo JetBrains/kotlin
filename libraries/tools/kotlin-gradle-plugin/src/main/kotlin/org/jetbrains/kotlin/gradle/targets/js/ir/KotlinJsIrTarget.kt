@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
@@ -158,23 +159,21 @@ constructor(
 
     override fun useCommonJs() {
         compilations.all {
-            it.compileKotlinTask.configureCommonJsOptions()
+            it.kotlinOptions.configureCommonJsOptions()
 
             binaries
                 .withType(JsIrBinary::class.java)
                 .all {
                     it.linkTask.configure { linkTask ->
-                        linkTask.configureCommonJsOptions()
+                        linkTask.kotlinOptions.configureCommonJsOptions()
                     }
                 }
         }
     }
 
-    private fun Kotlin2JsCompile.configureCommonJsOptions() {
-        kotlinOptions {
-            moduleKind = "commonjs"
-            sourceMap = true
-            sourceMapEmbedSources = null
-        }
+    private fun KotlinJsOptions.configureCommonJsOptions() {
+        moduleKind = "commonjs"
+        sourceMap = true
+        sourceMapEmbedSources = null
     }
 }

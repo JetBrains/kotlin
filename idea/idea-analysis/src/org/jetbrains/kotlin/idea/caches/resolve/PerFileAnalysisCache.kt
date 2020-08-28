@@ -57,9 +57,11 @@ internal class PerFileAnalysisCache(val file: KtFile, componentProvider: Compone
     private val cache = HashMap<PsiElement, AnalysisResult>()
     private var fileResult: AnalysisResult? = null
     private val lock = ReentrantLock()
-    private val guardLock = CancellableSimpleLock(lock) {
-        ProgressIndicatorProvider.checkCanceled()
-    }
+    private val guardLock = CancellableSimpleLock(lock,
+                                                  checkCancelled = {
+                                                      ProgressIndicatorProvider.checkCanceled()
+                                                  },
+                                                  interruptedExceptionHandler = { throw ProcessCanceledException(it) })
 
     private fun check(element: KtElement) {
         checkWithAttachment(element.containingFile == file, {
@@ -120,6 +122,8 @@ internal class PerFileAnalysisCache(val file: KtFile, componentProvider: Compone
                 // IF there is a cached result for ktFile and there are inBlockModifications
                 fileResult = fileResult?.let { result ->
                     var analysisResult = result
+                    // Force full analysis when existed is erroneous
+                    if (analysisResult.isError()) return@let null
                     for (inBlockModification in inBlockModifications) {
                         val resultCtx = analysisResult.bindingContext
 

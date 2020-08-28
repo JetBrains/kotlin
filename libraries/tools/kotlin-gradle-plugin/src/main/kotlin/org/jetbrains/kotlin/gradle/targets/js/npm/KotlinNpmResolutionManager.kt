@@ -132,7 +132,7 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
                 return (state as ResolutionState.Installed).resolved
             }
 
-            val installUpToDate = nodeJsSettings.npmInstallTask.state.upToDate
+            val installUpToDate = nodeJsSettings.npmInstallTaskProvider.get().state.upToDate
             val forceUpToDate = installUpToDate && !forceFullResolve
 
             val installation = prepareIfNeeded(requireUpToDateReason = reason)
@@ -175,7 +175,7 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
                     when (state1) {
                         is ResolutionState.Prepared -> alreadyResolved(state1.preparedInstallation)
                         is ResolutionState.Configuring -> {
-                            val upToDate = nodeJsSettings.rootPackageJsonTask.state.upToDate
+                            val upToDate = nodeJsSettings.rootPackageJsonTaskProvider.get().state.upToDate
                             if (requireUpToDateReason != null && !upToDate) {
                                 error("NPM dependencies should be resolved $requireUpToDateReason")
                             }

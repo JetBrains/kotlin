@@ -1,6 +1,7 @@
 // !USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi
-// IGNORE_BACKEND: JS, JS_IR, NATIVE
+// IGNORE_BACKEND: NATIVE
 // WITH_REFLECT
+// KJS_WITH_FULL_RUNTIME
 
 package test
 
@@ -15,16 +16,25 @@ fun <X, Y, Z> test() where X : Y?, Y : List<Z>, Z : Set<String>
 
 fun box(): String {
     val type = test<MutableList<Set<String>>?, MutableList<Set<String>>, Set<String>>()
-    assertEquals("test.Container<X>", type.toString())
+    val containerNmae = className("test.Container")
+    assertEquals("$containerNmae<X>", type.toString())
 
     val x = type.arguments.single().type!!.classifier as KTypeParameter
     assertEquals("Y?", x.upperBounds.joinToString())
 
     val y = x.upperBounds.single().classifier as KTypeParameter
-    assertEquals("kotlin.collections.List<Z>", y.upperBounds.joinToString())
+    val listName = className("kotlin.collections.List")
+    assertEquals("$listName<Z>", y.upperBounds.joinToString())
 
     val z = y.upperBounds.single().arguments.single().type!!.classifier as KTypeParameter
-    assertEquals("kotlin.collections.Set<kotlin.String>", z.upperBounds.joinToString())
+    val setName = className("kotlin.collections.Set")
+    val stringName = className("kotlin.String")
+    assertEquals("$setName<$stringName>", z.upperBounds.joinToString())
 
     return "OK"
+}
+
+fun className(fqName: String): String {
+    val isJS = 1 as Any is Double
+    return if (isJS) fqName.substringAfterLast('.') else fqName
 }

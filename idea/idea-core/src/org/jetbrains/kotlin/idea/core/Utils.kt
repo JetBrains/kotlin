@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,13 +7,17 @@ package org.jetbrains.kotlin.idea.core
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.analysis.computeTypeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.references.resolveToDescriptors
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.idea.resolve.getDataFlowValueFactory
+import org.jetbrains.kotlin.idea.resolve.getLanguageVersionSettings
 import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstanceToExpression
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.name.FqName
@@ -114,9 +118,11 @@ fun Call.resolveCandidates(
     val callResolutionContext = BasicCallResolutionContext.create(
         bindingTrace, resolutionScope, this, expectedType, dataFlowInfo,
         ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-        false, resolutionFacade.frontendService(),
-        resolutionFacade.frontendService()
+        false, resolutionFacade.getLanguageVersionSettings(),
+        resolutionFacade.getDataFlowValueFactory()
     ).replaceCollectAllCandidates(true)
+
+    @OptIn(FrontendInternals::class)
     val callResolver = resolutionFacade.frontendService<CallResolver>()
 
     val results = callResolver.resolveFunctionCall(callResolutionContext)
@@ -157,8 +163,6 @@ fun KtCallableDeclaration.canOmitDeclaredType(initializerOrBodyExpression: KtExp
     if (KotlinTypeChecker.DEFAULT.equalTypes(expressionType, declaredType)) return true
     return canChangeTypeToSubtype && expressionType.isSubtypeOf(declaredType)
 }
-
-fun String.unquote(): String = KtPsiUtil.unquoteIdentifier(this)
 
 fun FqName.quoteSegmentsIfNeeded(): String {
     return pathSegments().joinToString(".") { it.asString().quoteIfNeeded() }

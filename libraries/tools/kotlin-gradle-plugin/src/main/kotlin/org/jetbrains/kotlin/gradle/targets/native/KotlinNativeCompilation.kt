@@ -10,22 +10,16 @@ import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
-import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
-import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.util.concurrent.Callable
 
@@ -35,25 +29,40 @@ abstract class AbstractKotlinNativeCompilation(
     compilationName: String
 ) : AbstractKotlinCompilation<KotlinCommonOptions>(target, compilationName) {
 
-    override val kotlinOptions: KotlinCommonOptions
-        get() = compileKotlinTask.kotlinOptions
+    override val kotlinOptions: KotlinCommonOptions = NativeCompileOptions()
+
+    private inner class NativeCompileOptions : KotlinCommonOptions {
+        private val languageSettings: LanguageSettingsBuilder
+            get() = defaultSourceSet.languageSettings
+
+        override var apiVersion: String?
+            get() = languageSettings.apiVersion
+            set(value) { languageSettings.apiVersion = value }
+
+        override var languageVersion: String?
+            get() = languageSettings.languageVersion
+            set(value) { languageSettings.languageVersion = value }
+
+        override var allWarningsAsErrors: Boolean = false
+        override var suppressWarnings: Boolean = false
+        override var verbose: Boolean = false
+
+        override var freeCompilerArgs: List<String> = listOf()
+    }
 
     override val compileKotlinTask: KotlinNativeCompile
         get() = super.compileKotlinTask as KotlinNativeCompile
 
     // A collection containing all source sets used by this compilation
-    // (taking into account dependencies between source sets). Used by both compilation
-    // and linking tasks. Unlike kotlinSourceSets, includes dependency source sets.
-    // TODO: Move into the compilation task when the linking task does klib linking instead of compilation.
-    internal val allSources: MutableSet<SourceDirectorySet> = mutableSetOf()
+    @Suppress("UNCHECKED_CAST")
+    override val compileKotlinTaskProvider: TaskProvider<out KotlinNativeCompile>
+        get() = super.compileKotlinTaskProvider as TaskProvider<out KotlinNativeCompile>
 
-    // TODO: Move into the compilation task when the linking task does klib linking instead of compilation.
-    internal val commonSources: ConfigurableFileCollection = target.project.files()
-
-    override fun addSourcesToCompileTask(sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) {
-        allSources.add(sourceSet.kotlin)
-        commonSources.from(target.project.files(Callable { if (addAsCommonSources.value) sourceSet.kotlin else emptyList<Any>() }))
-    }
+    override fun addSourcesToCompileTask(sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) =
+        compileKotlinTaskProvider.configure { task ->
+            task.source(sourceSet.kotlin)
+            task.commonSources.from(target.project.files(Callable { if (addAsCommonSources.value) sourceSet.kotlin else emptyList<Any>() }))
+        }
 
     // Endorsed library controller.
     var enableEndorsedLibs: Boolean = false
@@ -93,9 +102,6 @@ class KotlinNativeCompilation(
 
     val binariesTaskName: String
         get() = lowerCamelCaseName(target.disambiguationClassifier, compilationName, "binaries")
-
-    override val kotlinOptions: KotlinCommonOptions
-        get() = compileKotlinTask.kotlinOptions
 }
 
 class KotlinSharedNativeCompilation(override val target: KotlinMetadataTarget, val konanTargets: List<KonanTarget>, name: String) :

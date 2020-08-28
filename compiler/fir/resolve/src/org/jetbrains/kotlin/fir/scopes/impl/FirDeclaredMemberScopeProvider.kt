@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.classId
-import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.declaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.name.ClassId
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.utils.getOrPutNullable
 
 class FirDeclaredMemberScopeProvider : FirSessionComponent {
 
-    private val declaredMemberCache = mutableMapOf<FirClass<*>, FirScope>()
+    private val declaredMemberCache = mutableMapOf<FirClass<*>, FirClassDeclaredMemberScope>()
     private val nestedClassifierCache = mutableMapOf<FirClass<*>, FirNestedClassifierScope?>()
 
     fun getClassByClassId(classId: ClassId): FirClass<*>? {
@@ -43,7 +43,7 @@ class FirDeclaredMemberScopeProvider : FirSessionComponent {
         useLazyNestedClassifierScope: Boolean,
         existingNames: List<Name>?,
         symbolProvider: FirSymbolProvider?
-    ): FirScope {
+    ): FirClassDeclaredMemberScope {
         return declaredMemberCache.getOrPut(klass) {
             FirClassDeclaredMemberScope(klass, useLazyNestedClassifierScope, existingNames, symbolProvider)
         }
@@ -56,7 +56,7 @@ class FirDeclaredMemberScopeProvider : FirSessionComponent {
     }
 }
 
-fun declaredMemberScope(klass: FirClass<*>): FirScope {
+fun declaredMemberScope(klass: FirClass<*>): FirClassDeclaredMemberScope {
     return klass
         .session
         .declaredMemberScopeProvider
@@ -89,4 +89,3 @@ fun lazyNestedClassifierScope(
     if (existingNames.isEmpty()) return null
     return FirLazyNestedClassifierScope(classId, existingNames, symbolProvider)
 }
-

@@ -17,10 +17,14 @@
 package org.jetbrains.kotlin.resolve.constants
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.KotlinTypeFactory
+import org.jetbrains.kotlin.types.TypeUtils
 
 interface CompileTimeConstant<out T> {
     val isError: Boolean
@@ -98,7 +102,7 @@ fun createIntegerValueTypeConstant(
 }
 
 fun hasUnsignedTypesInModuleDependencies(module: ModuleDescriptor): Boolean {
-    return module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uInt) != null
+    return module.findClassAcrossModuleDependencies(StandardNames.FqNames.uInt) != null
 }
 
 class UnsignedErrorValueTypeConstant(

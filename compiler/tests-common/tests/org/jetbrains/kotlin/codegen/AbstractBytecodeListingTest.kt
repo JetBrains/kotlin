@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import java.io.File
+import kotlin.test.assertNull
 
 abstract class AbstractBytecodeListingTest : CodegenTestCase() {
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
@@ -20,7 +21,7 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
 
         val prefixes = when {
             backend.isIR -> listOf("_ir", "_1_3", "")
-            coroutinesPackage == DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_RELEASE.asString() -> listOf("_1_3", "")
+            coroutinesPackage == StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE.asString() -> listOf("_1_3", "")
             else -> listOf("")
         }
 
@@ -145,6 +146,9 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
         }
     }
 
+    private fun getModifiers(target: ModifierTarget, access: Int) =
+        MODIFIERS.filter { it.hasModifier(access, target) }.joinToString(separator = " ") { it.text }
+
     private fun classOrInterface(access: Int): String {
         return when {
             access and ACC_ANNOTATION != 0 -> "annotation class"
@@ -174,6 +178,14 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
                 append("}")
             }
         }.toString()
+
+    override fun visitSource(source: String?, debug: String?) {
+        if (source != null) {
+            declarationsInsideClass.add(Declaration("// source: '$source'"))
+        } else {
+            declarationsInsideClass.add(Declaration("// source: null"))
+        }
+    }
 
     override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
         if (!filter.shouldWriteMethod(access, name, desc)) {
@@ -265,6 +277,21 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
         if (!filter.shouldWriteInnerClass(name)) {
             return
         }
-        declarationsInsideClass.add(Declaration("inner class $name"))
+
+        when {
+            innerName == null -> {
+                assertNull(outerName, "Anonymous classes should have neither innerName nor outerName. Name=$name, outerName=$outerName")
+                declarationsInsideClass.add(Declaration("inner (anonymous) class $name"))
+            }
+            outerName == null -> {
+                declarationsInsideClass.add(Declaration("inner (local) class $name $innerName"))
+            }
+            name == "$outerName$$innerName" -> {
+                declarationsInsideClass.add(Declaration("${getModifiers(ModifierTarget.CLASS, access)} inner class $name"))
+            }
+            else -> {
+                declarationsInsideClass.add(Declaration("inner (unrecognized) class $name $outerName $innerName"))
+            }
+        }
     }
 }

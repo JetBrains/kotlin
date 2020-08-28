@@ -294,7 +294,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     val kind = KotlinBaseTest.extractConfigurationKind(testFiles)
                     val jdkKind = KotlinBaseTest.getTestJdkKind(testFiles)
                     val keyConfiguration = CompilerConfiguration()
-                    CodegenTestCase.updateConfigurationByDirectivesInTestFiles(testFiles, keyConfiguration)
+                    KotlinBaseTest.updateConfigurationByDirectivesInTestFiles(testFiles, keyConfiguration)
 
                     val key = ConfigurationKey(kind, jdkKind, keyConfiguration.toString())
                     val compiler = if (isJvm8Target) {
@@ -303,7 +303,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
                     val filesHolder = holders.getOrPut(key) {
                         FilesWriter(compiler, KotlinTestUtils.newConfiguration(kind, jdkKind, KotlinTestUtils.getAnnotationsJar()).apply {
                             println("Creating new configuration by $key")
-                            CodegenTestCase.updateConfigurationByDirectivesInTestFiles(testFiles, this)
+                            KotlinBaseTest.updateConfigurationByDirectivesInTestFiles(testFiles, this)
                         })
                     }
 

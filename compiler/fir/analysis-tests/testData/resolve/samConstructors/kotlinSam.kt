@@ -1,5 +1,4 @@
-// TODO: This interface must be marked as "fun" ones that modifier is supported
-interface MyRunnable {
+fun interface MyRunnable {
     fun foo(x: Int): Boolean
 }
 

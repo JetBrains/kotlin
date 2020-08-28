@@ -43,48 +43,125 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
 
         val calls = callToLabels.map { it.call }
 
-        // Checks if all conditions are CALL EQEQ(tmp_variable, some_constant)
-        if (!areConstComparisons(calls))
-            return null
+        // To generate a switch from a when it must be a comparison of a single
+        // variable, the "subject", against a series of constants. We assume the
+        // subject is the left hand side of the first condition, provided the
+        // first condition is a comparison. If the first condition is of the form:
+        //
+        //     CALL EQEQ(<unsafe-coerce><UInt, Int>(var),_)
+        //
+        // we must be trying to generate an _unsigned_ int switch, and need to
+        // account for unsafe-coerce in all comparisons that arise from the
+        // wrapping and unwrapping of the UInt inline class wrapper. Otherwise,
+        // this is a primitive Int or String switch, with a condition of the form
+        //
+        //     CALL EQEQ(var,_)
 
-        // Subject should be the same for all conditions. Let's pick the first.
-        val subject = callToLabels[0].call.getValueArgument(0)!! as IrGetValue
+        val firstCondition = callToLabels[0].call
+        if (firstCondition.symbol != codegen.classCodegen.context.irBuiltIns.eqeqSymbol) return null
+        val subject = firstCondition.getValueArgument(0)
+        return when {
+            subject is IrCall && subject.isCoerceFromUIntToInt() ->
+                generateUIntSwitch(subject.getValueArgument(0)!! as? IrGetValue, calls, callToLabels, expressionToLabels, elseExpression)
+            subject is IrGetValue ->
+                generatePrimitiveSwitch(subject, calls, callToLabels, expressionToLabels, elseExpression)
+            else ->
+                null
+        }?.genOptimizedIfEnoughCases()
+    }
 
-        // Don't generate repeated cases, which are unreachable but allowed in Kotlin.
-        // Only keep the first encountered case:
-        val cases =
-            callToLabels.map { ValueToLabel((it.call.getValueArgument(1) as IrConst<*>).value, it.label) }.distinctBy { it.value }
+    fun IrCall.isCoerceFromUIntToInt(): Boolean =
+        symbol == codegen.classCodegen.context.ir.symbols.unsafeCoerceIntrinsic
+                && getTypeArgument(0)?.isUInt() == true
+                && getTypeArgument(1)?.isInt() == true
 
-        // Remove labels and "then expressions" that are not reachable.
-        val reachableLabels = HashSet(cases.map { it.label })
-        expressionToLabels.removeIf { it.label !in reachableLabels }
+    private fun generateUIntSwitch(
+        subject: IrGetValue?,
+        conditions: List<IrCall>,
+        callToLabels: ArrayList<CallToLabel>,
+        expressionToLabels: ArrayList<ExpressionToLabel>,
+        elseExpression: IrExpression?
+    ): Switch? {
+        if (subject == null) return null
+        // We check that all conditions are of the form
+        //    CALL EQEQ (<unsafe-coerce><UInt,Int>(subject),
+        //               <unsafe-coerce><UInt,Int>( Constant ))
+        if (!areConstUIntComparisons(conditions)) return null
+
+        // Filter repeated cases. Allowed in Kotlin but unreachable.
+        val cases = callToLabels.map {
+            val constCoercion = it.call.getValueArgument(1)!! as IrCall
+            val constValue = (constCoercion.getValueArgument(0) as IrConst<*>).value
+            ValueToLabel(
+                constValue,
+                it.label
+            )
+        }.distinctBy { it.value }
+
+        expressionToLabels.removeUnreachableLabels(cases)
+
+        return IntSwitch(
+            subject,
+            elseExpression,
+            expressionToLabels,
+            cases
+        )
+    }
+
+    private fun generatePrimitiveSwitch(
+        subject: IrGetValue,
+        conditions: List<IrCall>,
+        callToLabels: ArrayList<CallToLabel>,
+        expressionToLabels: ArrayList<ExpressionToLabel>,
+        elseExpression: IrExpression?
+    ): Switch? {
+        // Checks if all conditions are CALL EQEQ(var,constant)
+        if (!areConstantComparisons(conditions)) return null
 
         return when {
-            areConstIntComparisons(calls) ->
+            areConstIntComparisons(conditions) -> {
+                val cases = extractSwitchCasesAndFilterUnreachableLabels(callToLabels, expressionToLabels)
                 IntSwitch(
                     subject,
                     elseExpression,
                     expressionToLabels,
                     cases
                 )
-            areConstStringComparisons(calls) ->
+            }
+            areConstStringComparisons(conditions) -> {
+                val cases = extractSwitchCasesAndFilterUnreachableLabels(callToLabels, expressionToLabels)
                 StringSwitch(
                     subject,
                     elseExpression,
                     expressionToLabels,
                     cases
                 )
-            else -> null // TODO: Enum, etc.
-        }?.genOptimizedIfEnoughCases()
+            }
+            else ->
+                null
+        }
     }
 
-    private fun areConstComparisons(conditions: List<IrCall>): Boolean {
-        // All branches must be CALL 'EQEQ(Any?, Any?)': Boolean
-        if (conditions.any { it.symbol != codegen.classCodegen.context.irBuiltIns.eqeqSymbol })
-            return false
+    // Check that all conditions are of the form
+    //
+    //  CALL EQEQ (<unsafe-coerce><UInt,Int>(subject), <unsafe-coerce><UInt,Int>( Constant ))
+    //
+    // where subject is taken to be the first variable compared on the left hand side, if any.
+    private fun areConstUIntComparisons(conditions: List<IrCall>): Boolean {
+        val lhs = conditions.map { it.takeIf { it.symbol == codegen.context.irBuiltIns.eqeqSymbol }?.getValueArgument(0) as? IrCall }
+        if (lhs.any { it == null || !it.isCoerceFromUIntToInt() }) return false
+        val lhsVariableAccesses = lhs.map { it!!.getValueArgument(0) as? IrGetValue }
+        if (lhsVariableAccesses.any { it == null || it.symbol != lhsVariableAccesses[0]!!.symbol }) return false
 
-        // All LHS refer to the same tmp variable.
-        val lhs = conditions.map { it.getValueArgument(0) as? IrGetValue }
+        val rhs = conditions.map { it.getValueArgument(1) as? IrCall }
+        if (rhs.any { it == null || !it.isCoerceFromUIntToInt() || it.getValueArgument(0) !is IrConst<*> }) return false
+
+        return true
+    }
+
+    private fun areConstantComparisons(conditions: List<IrCall>): Boolean {
+        // All conditions are equality checks && all LHS refer to the same tmp variable.
+        val lhs = conditions.map { it.takeIf { it.symbol == codegen.context.irBuiltIns.eqeqSymbol }?.getValueArgument(0) as? IrGetValue }
         if (lhs.any { it == null || it.symbol != lhs[0]!!.symbol })
             return false
 
@@ -120,6 +197,25 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
             return false
 
         return true
+    }
+
+    private fun extractSwitchCasesAndFilterUnreachableLabels(
+        callToLabels: List<CallToLabel>,
+        expressionToLabels: ArrayList<ExpressionToLabel>
+    ): List<ValueToLabel> {
+        // Don't generate repeated cases, which are unreachable but allowed in Kotlin.
+        // Only keep the first encountered case:
+        val cases =
+            callToLabels.map { ValueToLabel((it.call.getValueArgument(1) as IrConst<*>).value, it.label) }.distinctBy { it.value }
+
+        expressionToLabels.removeUnreachableLabels(cases)
+
+        return cases
+    }
+
+    private fun ArrayList<ExpressionToLabel>.removeUnreachableLabels(cases: List<ValueToLabel>) {
+        val reachableLabels = HashSet(cases.map { it.label })
+        removeIf { it.label !in reachableLabels }
     }
 
     // psi2ir lowers multiple cases to nested conditions. For example,
@@ -252,7 +348,27 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
         override fun shouldOptimize() = cases.size > 1
 
         override fun genSwitch() {
-            subject.accept(codegen, data).materialize()
+            // Do not generate line numbers for the table switching. In particular,
+            // the subject is extracted from the condition of the first branch which
+            // will give the wrong stepping behavior for code such as:
+            //
+            // when {
+            //   x == 42 -> 1
+            //   x == 32 -> 2
+            //   x == 24 -> 3
+            //   ...
+            // }
+            //
+            // If the subject line number is generated, we will not stop on the line
+            // of the `when` but instead stop on the `x == 42` line. When x is 24,
+            // we would stop on the line `x == 42` and then step to the line `x == 24`.
+            // That is confusing and we prefer to stop on the `when` line and then step
+            // to the `x == 24` line. This is accomplished by ignoring the line number
+            // information for the subject as the `when` line number has already been
+            // emitted.
+            codegen.noLineNumberScope {
+                subject.accept(codegen, data).materialize()
+            }
             genIntSwitch(cases)
         }
     }
@@ -323,13 +439,33 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
 
         override fun genSwitch() {
             with(codegen) {
-                if (subject.type.isNullableString()) {
+                // Do not generate line numbers for the table switching. In particular,
+                // the subject is extracted from the condition of the first branch which
+                // will give the wrong stepping behavior for code such as:
+                //
+                // when {
+                //   x == "x" -> 1
+                //   x == "y" -> 2
+                //   x == "z" -> 3
+                //   ...
+                // }
+                //
+                // If the subject line number is generated, we will not stop on the line
+                // of the `when` but instead stop on the `x == "x"` line. When x is "z",
+                // we would stop on the line `x == "x"` and then step to the line `x == "z"`.
+                // That is confusing and we prefer to stop on the `when` line and then step
+                // to the `x == "z"` line. This is accomplished by ignoring the line number
+                // information for the subject as the `when` line number has already been
+                // emitted.
+                noLineNumberScope {
+                    if (subject.type.isNullableString()) {
+                        subject.accept(codegen, data).materialize()
+                        mv.ifnull(cases.find { it.value == null }?.label ?: defaultLabel)
+                    }
+                    // Reevaluating the subject is fine here because it is a read of a temporary.
                     subject.accept(codegen, data).materialize()
-                    mv.ifnull(cases.find { it.value == null }?.label ?: defaultLabel)
+                    mv.invokevirtual("java/lang/String", "hashCode", "()I", false)
                 }
-                // Reevaluating the subject is fine here because it is a read of a temporary.
-                subject.accept(codegen, data).materialize()
-                mv.invokevirtual("java/lang/String", "hashCode", "()I", false)
                 genIntSwitch(hashAndSwitchLabels)
 
                 // Multiple strings can be hashed into the same bucket.
@@ -337,7 +473,9 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
                 for ((hash, switchLabel) in hashAndSwitchLabels) {
                     mv.visitLabel(switchLabel)
                     for ((string, label) in hashToStringAndExprLabels[hash]!!) {
-                        subject.accept(codegen, data).materialize()
+                        noLineNumberScope {
+                            subject.accept(codegen, data).materialize()
+                        }
                         mv.aconst(string)
                         mv.invokevirtual("java/lang/String", "equals", "(Ljava/lang/Object;)Z", false)
                         mv.ifne(label)

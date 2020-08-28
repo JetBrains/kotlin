@@ -13,9 +13,8 @@ import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirEffectiveVisibilityImpl
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.Visibilities
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
@@ -23,6 +22,7 @@ import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.serialization.FirSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.nonSourceAnnotations
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
@@ -60,21 +60,22 @@ class FirJvmSerializerExtension @JvmOverloads constructor(
     override fun shouldUseTypeTable(): Boolean = useTypeTable
     override fun shouldSerializeFunction(function: FirFunction<*>): Boolean {
         return classBuilderMode != ClassBuilderMode.ABI ||
-                function !is FirSimpleFunction || function.visibility != Visibilities.PRIVATE
+                function !is FirSimpleFunction || function.visibility != Visibilities.Private
     }
 
     override fun shouldSerializeProperty(property: FirProperty): Boolean {
-        return classBuilderMode != ClassBuilderMode.ABI || property.visibility != Visibilities.PRIVATE
+        return classBuilderMode != ClassBuilderMode.ABI || property.visibility != Visibilities.Private
     }
 
     override fun shouldSerializeTypeAlias(typeAlias: FirTypeAlias): Boolean {
-        return classBuilderMode != ClassBuilderMode.ABI || typeAlias.visibility != Visibilities.PRIVATE
+        return classBuilderMode != ClassBuilderMode.ABI || typeAlias.visibility != Visibilities.Private
     }
 
     override fun shouldSerializeNestedClass(nestedClass: FirRegularClass): Boolean {
-        return classBuilderMode != ClassBuilderMode.ABI || nestedClass.effectiveVisibility != FirEffectiveVisibilityImpl.Private
+        return classBuilderMode != ClassBuilderMode.ABI || nestedClass.visibility != Visibilities.Private
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun serializeClass(
         klass: FirClass<*>,
         proto: ProtoBuf.Class.Builder,
@@ -93,7 +94,13 @@ class FirJvmSerializerExtension @JvmOverloads constructor(
         writeVersionRequirementForJvmDefaultIfNeeded(klass, proto, versionRequirementTable)
 
         if (jvmDefaultMode.forAllMethodsWithBody && klass is FirRegularClass && klass.classKind == ClassKind.INTERFACE) {
-            proto.setExtension(JvmProtoBuf.jvmClassFlags, JvmFlags.getClassFlags(true))
+            proto.setExtension(
+                JvmProtoBuf.jvmClassFlags,
+                JvmFlags.getClassFlags(
+                    jvmDefaultMode.forAllMethodsWithBody,
+                    JvmDefaultMode.ALL_COMPATIBILITY == jvmDefaultMode
+                )
+            )
         }
     }
 
@@ -145,6 +152,7 @@ class FirJvmSerializerExtension @JvmOverloads constructor(
         writeLocalProperties(proto, partAsmType, JvmProtoBuf.packageLocalVariable)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     private fun <MessageType : GeneratedMessageLite.ExtendableMessage<MessageType>, BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>> writeLocalProperties(
         proto: BuilderType,
         classAsmType: Type,
@@ -175,12 +183,11 @@ class FirJvmSerializerExtension @JvmOverloads constructor(
         }
     }
 
-    override fun serializeType(type: ConeKotlinType, proto: ProtoBuf.Type.Builder) {
+    override fun serializeType(type: FirTypeRef, proto: ProtoBuf.Type.Builder) {
         // TODO: don't store type annotations in our binary metadata on Java 8, use *TypeAnnotations attributes instead
-        // TODO: (FIR) ConeKotlinType does not store annotations, see KT-30066
-//        for (annotation in type.annotations) {
-//            proto.addExtension(JvmProtoBuf.typeAnnotation, annotationSerializer.serializeAnnotation(annotation))
-//        }
+        for (annotation in type.annotations) {
+            proto.addExtension(JvmProtoBuf.typeAnnotation, annotationSerializer.serializeAnnotation(annotation))
+        }
     }
 
     override fun serializeTypeParameter(typeParameter: FirTypeParameter, proto: ProtoBuf.TypeParameter.Builder) {
@@ -231,8 +238,8 @@ class FirJvmSerializerExtension @JvmOverloads constructor(
     private fun FirFunction<*>.needsInlineParameterNullCheckRequirement(): Boolean =
         this is FirSimpleFunction && isInline && !isSuspend && !isParamAssertionsDisabled &&
                 !Visibilities.isPrivate(visibility) &&
-                (valueParameters.any { it.returnTypeRef.coneTypeSafe<ConeKotlinType>()?.isBuiltinFunctionalType(session) == true } ||
-                        receiverTypeRef?.coneTypeSafe<ConeKotlinType>()?.isBuiltinFunctionalType(session) == true)
+                (valueParameters.any { it.returnTypeRef.coneType.isBuiltinFunctionalType(session) } ||
+                        receiverTypeRef?.coneType?.isBuiltinFunctionalType(session) == true)
 
     override fun serializeProperty(
         property: FirProperty,
@@ -247,14 +254,13 @@ class FirJvmSerializerExtension @JvmOverloads constructor(
         val getterMethod = if (getter == null) null else getBinding(METHOD_FOR_FIR_FUNCTION, getter)
         val setterMethod = if (setter == null) null else getBinding(METHOD_FOR_FIR_FUNCTION, setter)
 
-        // TODO: FIR field metadata
-        //val field = getBinding(JvmSerializationBindings.FIELD_FOR_PROPERTY, property)
+        val field = getBinding(FIELD_FOR_PROPERTY, property)
         val syntheticMethod = getBinding(SYNTHETIC_METHOD_FOR_FIR_VARIABLE, property)
 
         val signature = signatureSerializer.propertySignature(
             property,
-            null, //field?.second,
-            null, //field?.first?.descriptor,
+            field?.second,
+            field?.first?.descriptor,
             if (syntheticMethod != null) signatureSerializer.methodSignature(null, syntheticMethod) else null,
             if (getterMethod != null) signatureSerializer.methodSignature(null, getterMethod) else null,
             if (setterMethod != null) signatureSerializer.methodSignature(null, setterMethod) else null
@@ -303,7 +309,7 @@ class FirJvmSerializerExtension @JvmOverloads constructor(
         super.serializeErrorType(type, builder)
     }
 
-    private fun <K, V> getBinding(slice: JvmSerializationBindings.SerializationMappingSlice<K, V>, key: K): V? =
+    private fun <K : Any, V : Any> getBinding(slice: JvmSerializationBindings.SerializationMappingSlice<K, V>, key: K): V? =
         bindings.get(slice, key) ?: globalBindings.get(slice, key)
 
     private inner class SignatureSerializer {
@@ -399,7 +405,7 @@ class FirJvmSerializerExtension @JvmOverloads constructor(
 
     companion object {
         val METHOD_FOR_FIR_FUNCTION = JvmSerializationBindings.SerializationMappingSlice.create<FirFunction<*>, Method>()
-
+        val FIELD_FOR_PROPERTY = JvmSerializationBindings.SerializationMappingSlice.create<FirProperty, Pair<Type, String>>()
         val SYNTHETIC_METHOD_FOR_FIR_VARIABLE = JvmSerializationBindings.SerializationMappingSlice.create<FirVariable<*>, Method>()
     }
 

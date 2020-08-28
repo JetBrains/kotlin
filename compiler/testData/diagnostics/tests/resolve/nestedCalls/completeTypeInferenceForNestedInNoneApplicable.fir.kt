@@ -5,7 +5,7 @@ fun foo(i: Int) = i
 fun foo(s: String) = s
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(emptyList())
+    <!NONE_APPLICABLE!>foo<!>(emptyList())
 }
 
 fun <T> emptyList(): List<T> {throw Exception()}

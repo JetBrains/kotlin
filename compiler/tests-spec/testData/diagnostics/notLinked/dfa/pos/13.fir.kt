@@ -4305,31 +4305,31 @@ class Case61_3<T>: InterfaceWithTypeParameter1<T>, Case61_1<T>, Case61_2<T> {
 
 fun <T> T.case_61(x: T) where T : InterfaceWithTypeParameter1<T>?, T: Case61_3<T>?, T: Case61_1<T>?, T: Case61_2<T>? {
     if (x != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T!! & T")!>x<!>.<!AMBIGUITY!>ip1test1<!>()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T!! & T")!>x<!>.<!AMBIGUITY!>test2<!>()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T!! & T")!>x<!>.<!AMBIGUITY!>ip1test1<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T!! & T")!>x<!>.ip1test1()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T!! & T")!>x<!>.test2()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T!! & T")!>x<!>.ip1test1()
         <!DEBUG_INFO_EXPRESSION_TYPE("T!! & T")!>x<!>.test4()
 
-        x.<!AMBIGUITY!>ip1test1<!>()
-        x.<!AMBIGUITY!>test2<!>()
-        x.<!AMBIGUITY!>ip1test1<!>()
+        x.ip1test1()
+        x.test2()
+        x.ip1test1()
         x.test4()
         x.apply {
             <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>this<!>
-            <!AMBIGUITY!>ip1test1<!>()
-            <!AMBIGUITY!>test2<!>()
-            <!AMBIGUITY!>ip1test1<!>()
+            ip1test1()
+            test2()
+            ip1test1()
             test4()
-            <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>this<!>.<!AMBIGUITY!>ip1test1<!>()
-            <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>this<!>.<!AMBIGUITY!>test2<!>()
-            <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>this<!>.<!AMBIGUITY!>ip1test1<!>()
+            <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>this<!>.ip1test1()
+            <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>this<!>.test2()
+            <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>this<!>.ip1test1()
             <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>this<!>.test4()
         }
         x.also {
             <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>it<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>it<!>.<!AMBIGUITY!>ip1test1<!>()
-            <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>it<!>.<!AMBIGUITY!>test2<!>()
-            <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>it<!>.<!AMBIGUITY!>ip1test1<!>()
+            <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>it<!>.ip1test1()
+            <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>it<!>.test2()
+            <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>it<!>.ip1test1()
             <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>it<!>.test4()
         }
     }

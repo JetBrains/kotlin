@@ -14,7 +14,7 @@ interface InterfaceWithFun {
 
 class DerivedUsingFun : BaseWithCallableProp(), InterfaceWithFun {
     fun foo(): String =
-    super.fn()
+    super.<!UNRESOLVED_REFERENCE!>fn<!>()
 
     override fun bar(): String =
             super.bar()

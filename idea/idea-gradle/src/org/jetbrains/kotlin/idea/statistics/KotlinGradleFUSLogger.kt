@@ -65,7 +65,7 @@ class KotlinGradleFUSLogger : StartupActivity, DumbAware, Runnable {
                     is BooleanMetrics -> putIfNotNull(metric.name, this.getMetric(metric)?.toStringRepresentation())
                     is StringMetrics -> putIfNotNull(metric.name, this.getMetric(metric)?.toStringRepresentation())
                     is NumericalMetrics -> putIfNotNull(metric.name, this.getMetric(metric)?.toStringRepresentation())
-                    is Pair<*, *> -> putIfNotNull(metric.first.toString(), metric.second.toString())
+                    is Pair<*, *> -> putIfNotNull(metric.first.toString(), metric.second?.toString())
                 }
             }
             if (data.size > 0) {
@@ -94,13 +94,16 @@ class KotlinGradleFUSLogger : StartupActivity, DumbAware, Runnable {
                 BooleanMetrics.ENABLED_COMPILER_PLUGIN_ALL_OPEN,
                 BooleanMetrics.ENABLED_COMPILER_PLUGIN_NO_ARG,
                 BooleanMetrics.ENABLED_COMPILER_PLUGIN_JPA_SUPPORT,
-                BooleanMetrics.ENABLED_COMPILER_PLUGIN_SAM_WITH_RECEIVER
+                BooleanMetrics.ENABLED_COMPILER_PLUGIN_SAM_WITH_RECEIVER,
+                BooleanMetrics.JVM_COMPILER_IR_MODE,
+                StringMetrics.JVM_DEFAULTS
             )
 
             container.log(
                 GradleStatisticsEvents.MPP,
                 StringMetrics.MPP_PLATFORMS,
-                BooleanMetrics.ENABLED_HMPP
+                BooleanMetrics.ENABLED_HMPP,
+                StringMetrics.JS_COMPILER_MODE
             )
 
             container.log(
@@ -152,7 +155,8 @@ class KotlinGradleFUSLogger : StartupActivity, DumbAware, Runnable {
                 NumericalMetrics.GRADLE_BUILD_DURATION,
                 NumericalMetrics.GRADLE_EXECUTION_DURATION,
                 NumericalMetrics.NUMBER_OF_SUBPROJECTS,
-                NumericalMetrics.STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD
+                NumericalMetrics.STATISTICS_VISIT_ALL_PROJECTS_OVERHEAD,
+                NumericalMetrics.STATISTICS_COLLECT_METRICS_OVERHEAD
             )
 
             val finishTime = container.getMetric(NumericalMetrics.BUILD_FINISH_TIME)?.getValue()

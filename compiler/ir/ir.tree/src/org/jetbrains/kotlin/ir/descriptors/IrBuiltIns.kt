@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -27,7 +28,8 @@ import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.withHasQuestionMark
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -41,6 +43,7 @@ class IrBuiltIns(
     val languageVersionSettings = typeTranslator.languageVersionSettings
 
     lateinit var functionFactory: IrAbstractFunctionFactory
+    val irFactory: IrFactory = symbolTable.irFactory
 
     private val builtInsModule = builtIns.builtInsModule
 
@@ -52,23 +55,33 @@ class IrBuiltIns(
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
     fun defineOperator(name: String, returnType: IrType, valueParameterTypes: List<IrType>): IrSimpleFunctionSymbol {
-        val operatorDescriptor = IrSimpleBuiltinOperatorDescriptorImpl(packageFragmentDescriptor, Name.identifier(name), returnType.originalKotlinType!!)
+        val operatorDescriptor =
+            IrSimpleBuiltinOperatorDescriptorImpl(packageFragmentDescriptor, Name.identifier(name), returnType.originalKotlinType!!)
 
         for ((i, valueParameterType) in valueParameterTypes.withIndex()) {
-            val valueParameterDescriptor =
-                IrBuiltinValueParameterDescriptorImpl(operatorDescriptor, Name.identifier("arg$i"), i, valueParameterType.originalKotlinType!!)
-            operatorDescriptor.addValueParameter(valueParameterDescriptor)
+            operatorDescriptor.addValueParameter(
+                IrBuiltinValueParameterDescriptorImpl(
+                    operatorDescriptor, Name.identifier("arg$i"), i, valueParameterType.originalKotlinType!!
+                )
+            )
         }
 
         val symbol = symbolTable.declareSimpleFunctionIfNotExists(operatorDescriptor) {
-            val operator = IrBuiltInOperator(it, Name.identifier(name), returnType)
+            val operator = irFactory.createFunction(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, BUILTIN_OPERATOR, it, Name.identifier(name), Visibilities.PUBLIC, Modality.FINAL,
+                returnType, isInline = false, isExternal = false, isTailrec = false, isSuspend = false,
+                isOperator = false, isInfix = false, isExpect = false, isFakeOverride = false
+            )
             operator.parent = packageFragment
             packageFragment.declarations += operator
 
             operator.valueParameters = valueParameterTypes.withIndex().map { (i, valueParameterType) ->
                 val valueParameterDescriptor = operatorDescriptor.valueParameters[i]
                 val valueParameterSymbol = IrValueParameterSymbolImpl(valueParameterDescriptor)
-                IrBuiltInOperatorValueParameter(valueParameterSymbol, i, valueParameterType).apply {
+                irFactory.createValueParameter(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, BUILTIN_OPERATOR, valueParameterSymbol, Name.identifier("arg$i"), i,
+                    valueParameterType, null, isCrossinline = false, isNoinline = false
+                ).apply {
                     parent = operator
                 }
             }
@@ -107,16 +120,22 @@ class IrBuiltIns(
 
             valueParameterDescriptor = ValueParameterDescriptorImpl(
                 this, null, 0, Annotations.EMPTY, Name.identifier("arg0"), valueKotlinType,
-                false, false, false, null, SourceElement.NO_SOURCE
+                declaresDefaultValue = false, isCrossinline = false, isNoinline = false, varargElementType = null,
+                source = SourceElement.NO_SOURCE
             )
 
             returnKotlinType = typeParameterDescriptor.typeConstructor.makeNonNullType()
 
-            initialize(null, null, listOf(typeParameterDescriptor), listOf(valueParameterDescriptor), returnKotlinType, Modality.FINAL, Visibilities.PUBLIC)
+            initialize(
+                null, null, listOf(typeParameterDescriptor), listOf(valueParameterDescriptor), returnKotlinType,
+                Modality.FINAL, Visibilities.PUBLIC
+            )
         }
 
         val typeParameterSymbol = IrTypeParameterSymbolImpl(typeParameterDescriptor)
-        val typeParameter = IrBuiltInOperatorTypeParameter(typeParameterSymbol, Variance.INVARIANT, 0, true).apply {
+        val typeParameter = irFactory.createTypeParameter(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, BUILTIN_OPERATOR, typeParameterSymbol, Name.identifier("T0"), 0, true, Variance.INVARIANT
+        ).apply {
             superTypes += anyType
         }
 
@@ -135,12 +154,19 @@ class IrBuiltIns(
         }
 
         return symbolTable.declareSimpleFunctionIfNotExists(operatorDescriptor) {
-            val operator = IrBuiltInOperator(it, name, returnIrType)
+            val operator = irFactory.createFunction(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, BUILTIN_OPERATOR, it, name, Visibilities.PUBLIC, Modality.FINAL, returnIrType,
+                isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isOperator = false, isInfix = false,
+                isExpect = false, isFakeOverride = false
+            )
             operator.parent = packageFragment
             packageFragment.declarations += operator
 
             val valueParameterSymbol = IrValueParameterSymbolImpl(valueParameterDescriptor)
-            val valueParameter = IrBuiltInOperatorValueParameter(valueParameterSymbol, 0, valueIrType)
+            val valueParameter = irFactory.createValueParameter(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, BUILTIN_OPERATOR, valueParameterSymbol, Name.identifier("arg0"), 0,
+                valueIrType, null, isCrossinline = false, isNoinline = false
+            )
 
             valueParameter.parent = operator
             typeParameter.parent = operator
@@ -159,7 +185,6 @@ class IrBuiltIns(
         associate { it.classifierOrFail to defineComparisonOperator(name, it) }
 
     val any = builtIns.anyType
-    val anyN = builtIns.nullableAnyType
     val anyType = any.toIrType()
     val anyClass = builtIns.any.toIrSymbol()
     val anyNType = anyType.withHasQuestionMark(true)
@@ -201,7 +226,6 @@ class IrBuiltIns(
     val doubleClass = builtIns.double.toIrSymbol()
 
     val nothing = builtIns.nothingType
-    val nothingN = builtIns.nullableNothingType
     val nothingType = nothing.toIrType()
     val nothingClass = builtIns.nothing.toIrSymbol()
     val nothingNType = nothingType.withHasQuestionMark(true)
@@ -286,22 +310,15 @@ class IrBuiltIns(
 
     val checkNotNullSymbol = defineCheckNotNullOperator()
 
-    val checkNotNull = checkNotNullSymbol.descriptor
-
     private fun TypeConstructor.makeNonNullType() = KotlinTypeFactory.simpleType(Annotations.EMPTY, this, listOf(), false)
     private fun TypeConstructor.makeNullableType() = KotlinTypeFactory.simpleType(Annotations.EMPTY, this, listOf(), true)
 
     val dataClassArrayMemberHashCodeSymbol = defineOperator("dataClassArrayMemberHashCode", intType, listOf(anyType))
-    val dataClassArrayMemberHashCode = dataClassArrayMemberHashCodeSymbol.descriptor
 
     val dataClassArrayMemberToStringSymbol = defineOperator("dataClassArrayMemberToString", stringType, listOf(anyNType))
-    val dataClassArrayMemberToString = dataClassArrayMemberToStringSymbol.descriptor
 
     fun function(n: Int): IrClassSymbol = functionFactory.functionN(n).symbol
     fun suspendFunction(n: Int): IrClassSymbol = functionFactory.suspendFunctionN(n).symbol
-
-    fun kFunction(n: Int): IrClassSymbol = functionFactory.kFunctionN(n).symbol
-    fun kSuspendFunction(n: Int): IrClassSymbol = functionFactory.kSuspendFunctionN(n).symbol
 
     companion object {
         val KOTLIN_INTERNAL_IR_FQN = FqName("kotlin.internal.ir")

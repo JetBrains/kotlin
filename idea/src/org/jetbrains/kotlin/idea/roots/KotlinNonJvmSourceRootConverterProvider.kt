@@ -14,7 +14,6 @@ import com.intellij.openapi.roots.impl.ContentEntryImpl
 import com.intellij.openapi.roots.impl.SourceFolderImpl
 import com.intellij.openapi.roots.impl.libraries.ApplicationLibraryTable
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
-import com.intellij.openapi.roots.impl.libraries.LibraryImpl
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.LibraryKind
 import com.intellij.openapi.roots.libraries.LibraryTablesRegistrar
@@ -107,7 +106,7 @@ class KotlinNonJvmSourceRootConverterProvider : ConverterProvider("kotlin-non-jv
 
     class ConverterImpl(private val context: ConversionContext) : ProjectConverter() {
         private val projectLibrariesByName by lazy {
-            context.projectLibrariesSettings.projectLibraries.groupBy { it.getAttributeValue(LibraryImpl.LIBRARY_NAME_ATTR) }
+            context.projectLibrariesSettings.projectLibraries.groupBy { it.getAttributeValue(NAME_ATTRIBUTE) }
         }
 
         private fun findGlobalLibrary(name: String) = ApplicationLibraryTable.getApplicationTable().getLibraryByName(name)

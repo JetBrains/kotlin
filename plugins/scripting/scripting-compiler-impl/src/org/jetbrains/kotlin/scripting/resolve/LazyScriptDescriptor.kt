@@ -83,7 +83,7 @@ class LazyScriptDescriptor(
         return if (type != null && !type.isUnit() && !type.isNothing()) {
             resultFieldName()?.let {
                 ReplResultPropertyDescriptor(
-                    Name.identifier(it),
+                    it,
                     type,
                     this.thisAsReceiverParameter,
                     this,
@@ -93,11 +93,11 @@ class LazyScriptDescriptor(
         } else null
     }
 
-    fun resultFieldName(): String? {
+    fun resultFieldName(): Name? {
         // TODO: implement robust REPL/script selection
         val replSnippetId =
             scriptInfo.script.getUserData(ScriptPriorities.PRIORITY_KEY)?.toString()
-        return if (replSnippetId != null) {
+        val identifier = if (replSnippetId != null) {
             // assuming repl
             scriptCompilationConfiguration()[ScriptCompilationConfiguration.repl.resultFieldPrefix]?.takeIf { it.isNotBlank() }?.let {
                 "$it$replSnippetId"
@@ -105,6 +105,7 @@ class LazyScriptDescriptor(
         } else {
             scriptCompilationConfiguration()[ScriptCompilationConfiguration.resultField]?.takeIf { it.isNotBlank() }
         }
+        return identifier?.let { Name.identifier(it) }
     }
 
     private val sourceElement = scriptInfo.script.toSourceElement()

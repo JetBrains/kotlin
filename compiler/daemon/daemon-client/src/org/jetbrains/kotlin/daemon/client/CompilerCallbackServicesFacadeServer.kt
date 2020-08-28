@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.utils.isProcessCanceledException
 import java.io.File
 import java.rmi.server.UnicastRemoteObject
 
-
 open class CompilerCallbackServicesFacadeServer(
     val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
     val lookupTracker: LookupTracker? = null,
@@ -40,7 +39,7 @@ open class CompilerCallbackServicesFacadeServer(
     val incrementalResultsConsumer: IncrementalResultsConsumer? = null,
     val incrementalDataProvider: IncrementalDataProvider? = null,
     port: Int = SOCKET_ANY_FREE_PORT
-) : CompilerCallbackServicesFacade,
+) : @Suppress("DEPRECATION") CompilerCallbackServicesFacade,
     UnicastRemoteObject(
         port,
         LoopbackNetworkInterface.clientLoopbackSocketFactory,

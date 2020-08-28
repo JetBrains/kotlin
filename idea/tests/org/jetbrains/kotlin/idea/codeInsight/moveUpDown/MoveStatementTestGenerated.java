@@ -1339,6 +1339,24 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
         }
     }
 
+    @TestMetadata("idea/testData/codeInsight/moveUpDown/line")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Line extends AbstractMoveStatementTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestLine, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInLine() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/codeInsight/moveUpDown/line"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("fileAnnotation.kt")
+        public void testFileAnnotation() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/line/fileAnnotation.kt");
+        }
+    }
+
     @TestMetadata("idea/testData/codeInsight/moveUpDown/parametersAndArguments")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -1391,6 +1409,11 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/callArgs8.kt");
         }
 
+        @TestMetadata("callArgsWithComment1.kt")
+        public void testCallArgsWithComment1() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/callArgsWithComment1.kt");
+        }
+
         @TestMetadata("classParams1.kt")
         public void testClassParams1() throws Exception {
             runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/classParams1.kt");
@@ -1429,6 +1452,26 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
         @TestMetadata("classParams8.kt")
         public void testClassParams8() throws Exception {
             runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/classParams8.kt");
+        }
+
+        @TestMetadata("classParamsWithComment1.kt")
+        public void testClassParamsWithComment1() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/classParamsWithComment1.kt");
+        }
+
+        @TestMetadata("classParamsWithComment2.kt")
+        public void testClassParamsWithComment2() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/classParamsWithComment2.kt");
+        }
+
+        @TestMetadata("classParamsWithComment3.kt")
+        public void testClassParamsWithComment3() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/classParamsWithComment3.kt");
+        }
+
+        @TestMetadata("classParamsWithComment4.kt")
+        public void testClassParamsWithComment4() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/classParamsWithComment4.kt");
         }
 
         @TestMetadata("funParams1.kt")

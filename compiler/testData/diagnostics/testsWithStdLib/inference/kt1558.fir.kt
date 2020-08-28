@@ -20,7 +20,7 @@ fun testArrays(ci: List<Int?>, cii: List<Int?>?) {
 
     checkSubtype<Array<Int?>>(c1)
     checkSubtype<Array<Int?>>(c2)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Array<Int?>>(c3)
+    checkSubtype<Array<Int?>>(c3)
     checkSubtype<Array<Int?>>(c4)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Array<Int?>>(c5)
+    checkSubtype<Array<Int?>>(c5)
 }

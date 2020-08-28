@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.spec.utils.tasks
 
-import org.jetbrains.kotlin.generators.tests.generator.testGroup
+import org.jetbrains.kotlin.generators.tests.generator.testGroupSuite
 import org.jetbrains.kotlin.spec.checkers.AbstractDiagnosticsTestSpec
 import org.jetbrains.kotlin.spec.checkers.AbstractFirDiagnosticsTestSpec
 import org.jetbrains.kotlin.spec.codegen.AbstractBlackBoxCodegenTestSpec
@@ -38,32 +38,34 @@ fun detectDirsWithTestsMapFileOnly(dirName: String): List<String> {
 fun generateTests() {
     val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
 
-    testGroup(SPEC_TEST_PATH, SPEC_TESTDATA_PATH) {
-        testClass<AbstractDiagnosticsTestSpec> {
-            model(
-                "diagnostics",
-                excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),
-                excludedPattern = excludedFirTestdataPattern
-            )
-        }
+    testGroupSuite {
+        testGroup(SPEC_TEST_PATH, SPEC_TESTDATA_PATH) {
+            testClass<AbstractDiagnosticsTestSpec> {
+                model(
+                    "diagnostics",
+                    excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),
+                    excludedPattern = excludedFirTestdataPattern
+                )
+            }
 
-        testClass<AbstractFirDiagnosticsTestSpec> {
-            model(
-                "diagnostics",
-                excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),
-                excludedPattern = excludedFirTestdataPattern
-            )
-        }
+            testClass<AbstractFirDiagnosticsTestSpec> {
+                model(
+                    "diagnostics",
+                    excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),
+                    excludedPattern = excludedFirTestdataPattern
+                )
+            }
 
-        testClass<AbstractParsingTestSpec> {
-            model(
-                relativeRootPath = "psi",
-                testMethod = "doParsingTest",
-                excludeDirs = listOf("helpers", "templates") + detectDirsWithTestsMapFileOnly("psi")
-            )
-        }
-        testClass<AbstractBlackBoxCodegenTestSpec> {
-            model("codegen/box", excludeDirs = listOf("helpers", "templates") + detectDirsWithTestsMapFileOnly("codegen/box"))
+            testClass<AbstractParsingTestSpec> {
+                model(
+                    relativeRootPath = "psi",
+                    testMethod = "doParsingTest",
+                    excludeDirs = listOf("helpers", "templates") + detectDirsWithTestsMapFileOnly("psi")
+                )
+            }
+            testClass<AbstractBlackBoxCodegenTestSpec> {
+                model("codegen/box", excludeDirs = listOf("helpers", "templates") + detectDirsWithTestsMapFileOnly("codegen/box"))
+            }
         }
     }
 }

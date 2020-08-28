@@ -37,8 +37,7 @@ import org.jetbrains.uast.kotlin.internal.KotlinUElementWithComments
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 
-abstract class KotlinAbstractUElement(private val givenParent: UElement?) : KotlinUElementWithComments,
-    JvmDeclarationUElementPlaceholder {
+abstract class KotlinAbstractUElement(private val givenParent: UElement?) : KotlinUElementWithComments {
 
     final override val uastParent: UElement? by lz {
         givenParent ?: convertParent()
@@ -251,8 +250,7 @@ private fun findAnnotationClassFromConstructorParameter(parameter: KtParameter):
 
 abstract class KotlinAbstractUExpression(givenParent: UElement?) :
     KotlinAbstractUElement(givenParent),
-    UExpression,
-    JvmDeclarationUElementPlaceholder {
+    UExpression {
 
     override val javaPsi: PsiElement? = null
 

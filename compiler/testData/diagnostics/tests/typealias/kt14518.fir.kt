@@ -5,6 +5,6 @@ class OuterClass<T1> {
     typealias NestedType<T> = NestedClass<T>
 }
 
-typealias ON1<T1, T2> = OuterClass<T1>.NestedClass<T2>
+typealias ON1<T1, T2> = <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>OuterClass<T1>.NestedClass<T2><!>
 typealias ON2<T1, T2> = OuterClass<T1>.NestedType<T2>
 typealias ON3<T2> = OuterClass.NestedType<T2>

@@ -31,27 +31,27 @@ FILE: jumpFromRhsOfOperator.kt
     }
     public final fun test_5(a: R|A?|): R|kotlin/Unit| {
         ==(R|<local>/a|, Null(null)) || throw R|java/lang/Exception.Exception|()
-        R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+        R|<local>/a|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()
     }
     public final fun teat_6(a: R|A?|): R|kotlin/Unit| {
         !=(R|<local>/a|, Null(null)) && throw R|java/lang/Exception.Exception|()
-        R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+        R|<local>/a|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()
     }
     public final fun test_7(a: R|A?|): R|kotlin/Unit| {
         when () {
             ==(R|<local>/a|, Null(null)) || throw R|java/lang/Exception.Exception|() ->  {
-                R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+                R|<local>/a|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()
             }
         }
 
-        R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+        R|<local>/a|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()
     }
     public final fun test_8(a: R|A?|): R|kotlin/Unit| {
         when () {
             !=(R|<local>/a|, Null(null)) && throw R|java/lang/Exception.Exception|() ->  {
-                R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+                R|<local>/a|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()
             }
         }
 
-        R|<local>/a|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+        R|<local>/a|.<Inapplicable(WRONG_RECEIVER): /A.foo>#()
     }

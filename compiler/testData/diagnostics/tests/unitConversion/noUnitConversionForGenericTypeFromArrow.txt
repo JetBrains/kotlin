@@ -1,0 +1,12 @@
+package
+
+public fun runAsync(/*0*/ cb: (Either) -> kotlin.Unit): kotlin.Unit
+public fun unsafeRunAsync(/*0*/ cb: (Either) -> kotlin.Unit): kotlin.Unit
+public infix fun </*0*/ A, /*1*/ B, /*2*/ C> ((A) -> B).andThen(/*0*/ g: (B) -> C): (A) -> C
+
+public final class Either {
+    public constructor Either()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

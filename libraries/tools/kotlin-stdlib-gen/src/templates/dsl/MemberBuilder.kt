@@ -66,7 +66,7 @@ class MemberBuilder(
     var returns: String? = null; private set
     val throwsExceptions = mutableListOf<ThrowsException>()
     var body: String? = null; private set
-    val annotations: MutableList<String> = mutableListOf()
+    val annotations: MutableSet<String> = mutableSetOf()
     val suppressions: MutableList<String> = mutableListOf()
 
     fun sourceFile(file: SourceFile) { sourceFile = file }
@@ -327,7 +327,15 @@ class MemberBuilder(
                     deprecated.replaceWith?.let { "ReplaceWith(\"$it\")" },
                     deprecated.level.let { if (it != DeprecationLevel.WARNING) "level = DeprecationLevel.$it" else null }
             )
-            builder.append("@Deprecated(${args.joinToString(", ")})\n")
+            builder.appendLine("@Deprecated(${args.joinToString(", ")})")
+            val versionArgs = listOfNotNull(
+                deprecated.warningSince?.let { "warningSince = \"$it\"" },
+                deprecated.errorSince?.let { "errorSince = \"$it\"" },
+                deprecated.hiddenSince?.let { "hiddenSince = \"$it\"" }
+            )
+            if (versionArgs.any()) {
+                builder.appendLine("@DeprecatedSinceKotlin(${versionArgs.joinToString(", ")})")
+            }
         }
 
         if (!f.isPrimitiveSpecialization && primitive != null) {

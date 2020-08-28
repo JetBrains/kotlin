@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.mainKts
 
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.kotlin.mainKts.impl.Directories
 import org.jetbrains.kotlin.mainKts.impl.IvyResolver
 import java.io.File
+import java.nio.ByteBuffer
 import java.security.MessageDigest
 import kotlin.script.dependencies.ScriptContents
 import kotlin.script.dependencies.ScriptDependenciesResolver
@@ -24,6 +26,7 @@ import kotlin.script.experimental.jvmhost.CompiledScriptJarsCache
 import kotlin.script.experimental.jvmhost.jsr223.configureProvidedPropertiesFromJsr223Context
 import kotlin.script.experimental.jvmhost.jsr223.importAllBindings
 import kotlin.script.experimental.jvmhost.jsr223.jsr223
+import kotlin.script.experimental.util.filterByAnnotationType
 
 @Suppress("unused")
 @KotlinScript(
@@ -36,6 +39,7 @@ abstract class MainKtsScript(val args: Array<String>)
 
 const val COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR = "KOTLIN_MAIN_KTS_COMPILED_SCRIPTS_CACHE_DIR"
 const val COMPILED_SCRIPTS_CACHE_DIR_PROPERTY = "kotlin.main.kts.compiled.scripts.cache.dir"
+const val COMPILED_SCRIPTS_CACHE_VERSION = 1
 
 class MainKtsScriptDefinition : ScriptCompilationConfiguration(
     {
@@ -70,8 +74,8 @@ class MainKtsHostConfiguration : ScriptingHostConfiguration(
             val cacheExtSetting = System.getProperty(COMPILED_SCRIPTS_CACHE_DIR_PROPERTY)
                 ?: System.getenv(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR)
             val cacheBaseDir = when {
-                cacheExtSetting == null -> System.getProperty("java.io.tmpdir")
-                    ?.let(::File)?.takeIf { it.exists() && it.isDirectory }
+                cacheExtSetting == null -> Directories(System.getProperties(), System.getenv()).cache
+                    ?.takeIf { it.exists() && it.isDirectory }
                     ?.let { File(it, "main.kts.compiled.cache").apply { mkdir() } }
                 cacheExtSetting.isBlank() -> null
                 else -> File(cacheExtSetting)
@@ -117,22 +121,22 @@ class MainKtsConfigurator : RefineScriptCompilationConfigurationHandler {
             )
         }
 
-        val annotations = context.collectedData?.get(ScriptCollectedData.foundAnnotations)?.takeIf { it.isNotEmpty() }
+        val annotations = context.collectedData?.get(ScriptCollectedData.collectedAnnotations)?.takeIf { it.isNotEmpty() }
             ?: return context.compilationConfiguration.asSuccess()
 
         val scriptBaseDir = (context.script as? FileBasedScriptSource)?.file?.parentFile
-        val importedSources = annotations.flatMap {
-            (it as? Import)?.paths?.map { sourceName ->
+        val importedSources = annotations.filterByAnnotationType<Import>().flatMap {
+            it.annotation.paths.map { sourceName ->
                 FileScriptSource(scriptBaseDir?.resolve(sourceName) ?: File(sourceName))
-            } ?: emptyList()
+            }
         }
-        val compileOptions = annotations.flatMap {
-            (it as? CompilerOptions)?.options?.toList() ?: emptyList()
+        val compileOptions = annotations.filterByAnnotationType<CompilerOptions>().flatMap {
+            it.annotation.options.toList()
         }
 
         val resolveResult = try {
             runBlocking {
-                resolver.resolveFromAnnotations( annotations.filter { it is DependsOn || it is Repository })
+                resolver.resolveFromScriptSourceAnnotations(annotations.filter { it.annotation is DependsOn || it.annotation is Repository })
             }
         } catch (e: Throwable) {
             ResultWithDiagnostics.Failure(*diagnostics.toTypedArray(), e.asDiagnostics(path = context.script.locationId))
@@ -149,15 +153,26 @@ class MainKtsConfigurator : RefineScriptCompilationConfigurationHandler {
 }
 
 private fun compiledScriptUniqueName(script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration): String {
-    val digestWrapper = MessageDigest.getInstance("MD5")
-    digestWrapper.update(script.text.toByteArray())
+    val digestWrapper = MessageDigest.getInstance("SHA-256")
+
+    fun addToDigest(chunk: String) = with(digestWrapper) {
+        val chunkBytes = chunk.toByteArray()
+        update(chunkBytes.size.toByteArray())
+        update(chunkBytes)
+    }
+
+    digestWrapper.update(COMPILED_SCRIPTS_CACHE_VERSION.toByteArray())
+    addToDigest(script.text)
     scriptCompilationConfiguration.notTransientData.entries
         .sortedBy { it.key.name }
         .forEach {
-            digestWrapper.update(it.key.name.toByteArray())
-            digestWrapper.update(it.value.toString().toByteArray())
+            addToDigest(it.key.name)
+            addToDigest(it.value.toString())
         }
     return digestWrapper.digest().toHexString()
 }
 
 private fun ByteArray.toHexString(): String = joinToString("", transform = { "%02x".format(it) })
+
+private fun Int.toByteArray() = ByteBuffer.allocate(Int.SIZE_BYTES).also { it.putInt(this) }.array()
+

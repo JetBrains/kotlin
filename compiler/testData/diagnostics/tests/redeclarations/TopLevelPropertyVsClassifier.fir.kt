@@ -1,13 +1,13 @@
-val Test1 = null
-class Test1
+<!REDECLARATION!>val Test1 = null<!>
+<!REDECLARATION!>class Test1<!>
 
-val Test2 = null
-interface Test2
+<!REDECLARATION!>val Test2 = null<!>
+<!REDECLARATION!>interface Test2<!>
 
-val Test3 = null
-object Test3
+<!REDECLARATION!>val Test3 = null<!>
+<!REDECLARATION!>object Test3<!>
 
-val Test4 = null
-class Test4
-interface Test4
-object Test4
+<!REDECLARATION!>val Test4 = null<!>
+<!REDECLARATION!>class Test4<!>
+<!REDECLARATION!>interface Test4<!>
+<!REDECLARATION!>object Test4<!>

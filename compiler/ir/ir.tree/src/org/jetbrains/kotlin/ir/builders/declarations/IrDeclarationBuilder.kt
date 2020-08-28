@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.builders.declarations
 
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.builders.IrElementBuilder
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -14,10 +15,10 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
 import org.jetbrains.kotlin.name.Name
 
 abstract class IrDeclarationBuilder : IrElementBuilder() {
-
     var origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
     var visibility: Visibility = Visibilities.PUBLIC
 
+    var wrappedDescriptorAnnotations: Annotations = Annotations.EMPTY
     lateinit var name: Name
 
     fun updateFrom(from: IrDeclaration) {
@@ -26,5 +27,4 @@ abstract class IrDeclarationBuilder : IrElementBuilder() {
         origin = from.origin
         visibility = if (from is IrDeclarationWithVisibility) from.visibility else Visibilities.PUBLIC
     }
-
 }

@@ -18,6 +18,8 @@ package kotlin.sequences
  * Returns a sequence containing all elements that are instances of specified class.
  *
  * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIsInstanceJVM
  */
 public fun <R> Sequence<*>.filterIsInstance(klass: Class<R>): Sequence<R> {
     @Suppress("UNCHECKED_CAST")
@@ -28,6 +30,8 @@ public fun <R> Sequence<*>.filterIsInstance(klass: Class<R>): Sequence<R> {
  * Appends all elements that are instances of specified class to the given [destination].
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIsInstanceToJVM
  */
 public fun <C : MutableCollection<in R>, R> Sequence<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
     @Suppress("UNCHECKED_CAST")
@@ -53,5 +57,41 @@ public fun <T : Comparable<T>> Sequence<T>.toSortedSet(): java.util.SortedSet<T>
  */
 public fun <T> Sequence<T>.toSortedSet(comparator: Comparator<in T>): java.util.SortedSet<T> {
     return toCollection(java.util.TreeSet<T>(comparator))
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("sumOfBigDecimal")
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.sumOf(selector: (T) -> java.math.BigDecimal): java.math.BigDecimal {
+    var sum: java.math.BigDecimal = 0.toBigDecimal()
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+/**
+ * Returns the sum of all values produced by [selector] function applied to each element in the sequence.
+ *
+ * The operation is _terminal_.
+ */
+@SinceKotlin("1.4")
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName("sumOfBigInteger")
+@kotlin.internal.InlineOnly
+public inline fun <T> Sequence<T>.sumOf(selector: (T) -> java.math.BigInteger): java.math.BigInteger {
+    var sum: java.math.BigInteger = 0.toBigInteger()
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
 }
 

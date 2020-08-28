@@ -68,7 +68,7 @@ class KotlinFieldBreakpoint(
         }
     }
 
-    fun getField(): KtCallableDeclaration? {
+    private fun getField(): KtCallableDeclaration? {
         val sourcePosition = sourcePosition
         return getProperty(sourcePosition)
     }
@@ -115,7 +115,7 @@ class KotlinFieldBreakpoint(
 
         val vm = debugProcess.virtualMachineProxy
         try {
-            if (properties.WATCH_INITIALIZATION) {
+            if (properties.watchInitialization) {
                 val sourcePosition = sourcePosition
                 if (sourcePosition != null) {
                     debugProcess.positionManager
@@ -136,14 +136,14 @@ class KotlinFieldBreakpoint(
                     val field = refType.fieldByName(getFieldName())
                     if (field != null) {
                         val manager = debugProcess.requestsManager
-                        if (properties.WATCH_MODIFICATION && vm.canWatchFieldModification()) {
+                        if (properties.watchModification && vm.canWatchFieldModification()) {
                             val request = manager.createModificationWatchpointRequest(this, field)
                             debugProcess.requestsManager.enableRequest(request)
                             if (LOG.isDebugEnabled) {
                                 LOG.debug("Modification request added")
                             }
                         }
-                        if (properties.WATCH_ACCESS && vm.canWatchFieldAccess()) {
+                        if (properties.watchAccess && vm.canWatchFieldAccess()) {
                             val request = manager.createAccessWatchpointRequest(this, field)
                             debugProcess.requestsManager.enableRequest(request)
                             if (LOG.isDebugEnabled) {
@@ -155,14 +155,14 @@ class KotlinFieldBreakpoint(
                 BreakpointType.METHOD -> {
                     val fieldName = getFieldName()
 
-                    if (properties.WATCH_ACCESS) {
+                    if (properties.watchAccess) {
                         val getter = refType.methodsByName(JvmAbi.getterName(fieldName)).firstOrNull()
                         if (getter != null) {
                             createMethodBreakpoint(debugProcess, refType, getter)
                         }
                     }
 
-                    if (properties.WATCH_MODIFICATION) {
+                    if (properties.watchModification) {
                         val setter = refType.methodsByName(JvmAbi.setterName(fieldName)).firstOrNull()
                         if (setter != null) {
                             createMethodBreakpoint(debugProcess, refType, setter)
@@ -219,7 +219,7 @@ class KotlinFieldBreakpoint(
         }
     }
 
-    inline private fun <reified T : EventRequest> findRequest(
+    private inline fun <reified T : EventRequest> findRequest(
         debugProcess: DebugProcessImpl,
         requestClass: Class<T>,
         requestor: Requestor
@@ -321,17 +321,17 @@ class KotlinFieldBreakpoint(
 
     @TestOnly
     fun setWatchAccess(value: Boolean) {
-        properties.WATCH_ACCESS = value
+        properties.watchAccess = value
     }
 
     @TestOnly
     fun setWatchModification(value: Boolean) {
-        properties.WATCH_MODIFICATION = value
+        properties.watchModification = value
     }
 
     @TestOnly
     fun setWatchInitialization(value: Boolean) {
-        properties.WATCH_INITIALIZATION = value
+        properties.watchInitialization = value
     }
 
     override fun getDisabledIcon(isMuted: Boolean): Icon {

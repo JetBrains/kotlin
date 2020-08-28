@@ -17,6 +17,7 @@ abstract class InapplicableArgumentDiagnostic : ResolutionDiagnostic(CandidateAp
 }
 
 class MixingNamedAndPositionArguments(override val argument: FirExpression) : InapplicableArgumentDiagnostic()
+
 class TooManyArguments(
     val argument: FirExpression,
     val function: FirFunction<*>

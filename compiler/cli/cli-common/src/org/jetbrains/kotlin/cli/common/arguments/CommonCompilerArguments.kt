@@ -318,6 +318,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var useFir: Boolean by FreezableVar(false)
 
     @Argument(
+        value = "-Xuse-fir-extended-checkers",
+        description = "Use extended analysis mode based on Front-end IR. Warning: this feature is far from being production-ready"
+    )
+    var useFirExtendedCheckers: Boolean by FreezableVar(false)
+
+    @Argument(
         value = "-Xuse-mixed-named-arguments",
         description = "Enable Support named arguments in their own position even if the result appears as mixed"
     )
@@ -339,6 +345,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                 "Use 'warning' level to issue warnings instead of errors."
     )
     var explicitApi: String by FreezableVar(ExplicitApiMode.DISABLED.state)
+
+    @Argument(
+        value = "-Xdeserialize-fake-overrides",
+        description = "Fallback to deserializing fake overrides"
+    )
+    var deserializeFakeOverrides: Boolean by FreezableVar(false)
 
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
@@ -382,6 +394,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                 put(LanguageFeature.NewInference, LanguageFeature.State.ENABLED)
                 put(LanguageFeature.SamConversionPerArgument, LanguageFeature.State.ENABLED)
                 put(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType, LanguageFeature.State.ENABLED)
+                put(LanguageFeature.DisableCompatibilityModeForNewInference, LanguageFeature.State.ENABLED)
             }
 
             if (inlineClasses) {
@@ -461,6 +474,8 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
             if (!functionReferenceWithDefaultValueFeaturePassedExplicitly)
                 put(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType, LanguageFeature.State.ENABLED)
+
+            put(LanguageFeature.DisableCompatibilityModeForNewInference, LanguageFeature.State.ENABLED)
         }
 
         if (featuresThatForcePreReleaseBinaries.isNotEmpty()) {

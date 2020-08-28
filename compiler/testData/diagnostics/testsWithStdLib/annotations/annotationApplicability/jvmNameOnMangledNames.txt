@@ -4,6 +4,7 @@ package
 @kotlin.jvm.JvmName(name = "good") public fun baz(/*0*/ r: kotlin.Result<kotlin.Int>): kotlin.Unit
 @kotlin.jvm.JvmName(name = "test") public fun returnsInlineClass(): Foo
 @kotlin.jvm.JvmName(name = "test") public fun returnsKotlinResult(/*0*/ a: kotlin.Result<kotlin.Int>): kotlin.Result<kotlin.Int>
+@kotlin.jvm.JvmName(name = "extensionFun") public fun Foo.extensionFun(): kotlin.Unit
 
 public final class C {
     public constructor C()

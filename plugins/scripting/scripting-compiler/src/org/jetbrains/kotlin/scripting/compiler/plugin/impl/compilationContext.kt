@@ -9,8 +9,10 @@ import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.cli.common.arguments.validateArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.common.reportArgumentParseProblems
 import org.jetbrains.kotlin.cli.common.setupCommonArguments
 import org.jetbrains.kotlin.cli.jvm.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -147,6 +149,8 @@ internal fun createInitialConfigurations(
         ScriptDefinition.FromConfigurations(hostConfiguration, scriptCompilationConfiguration, null)
     )
 
+    kotlinCompilerConfiguration.loadPlugins()
+
     initialScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]?.let { compilerOptions ->
         kotlinCompilerConfiguration.updateWithCompilerOptions(compilerOptions, messageCollector, ignoredOptionsReportingState, false)
     }
@@ -163,6 +167,13 @@ private fun CompilerConfiguration.updateWithCompilerOptions(
     val compilerArguments = K2JVMCompilerArguments()
     parseCommandLineArguments(compilerOptions, compilerArguments)
 
+    validateArguments(compilerArguments.errors)?.let {
+        messageCollector.report(CompilerMessageSeverity.ERROR, it)
+        return
+    }
+
+    messageCollector.reportArgumentParseProblems(compilerArguments)
+
     reportArgumentsIgnoredGenerally(
         compilerArguments,
         messageCollector,
@@ -175,6 +186,8 @@ private fun CompilerConfiguration.updateWithCompilerOptions(
             ignoredOptionsReportingState
         )
     }
+
+    processPluginsCommandLine(compilerArguments)
 
     setupCommonArguments(compilerArguments)
 

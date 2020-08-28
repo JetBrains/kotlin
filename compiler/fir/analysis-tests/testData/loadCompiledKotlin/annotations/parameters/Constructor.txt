@@ -12,6 +12,6 @@ public final class Class : R|kotlin/Any| {
     public final val x: R|kotlin/Int|
         public get(): R|kotlin/Int|
 
-    public constructor(x: R|kotlin/Int|, y: R|kotlin/String|): R|test/Class|
+    public constructor(@R|test/A|() x: R|kotlin/Int|, @R|test/B|() y: R|kotlin/String|): R|test/Class|
 
 }

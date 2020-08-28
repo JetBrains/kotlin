@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.inspections.RedundantUnitExpressionInspection
+import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -34,6 +36,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class CodeInliner<TCallElement : KtElement>(
     private val nameExpression: KtSimpleNameExpression,
@@ -174,12 +177,19 @@ class CodeInliner<TCallElement : KtElement>(
         for (parameter in descriptor.valueParameters.asReversed()) {
             val argument = argumentForParameter(parameter, descriptor) ?: continue
 
-            argument.expression.put(PARAMETER_VALUE_KEY, parameter)
+            val expression = argument.expression.apply {
+                if (this is KtCallElement) {
+                    insertExplicitTypeArgument()
+                }
+
+                put(PARAMETER_VALUE_KEY, parameter)
+            }
 
             val parameterName = parameter.name
             val usages = codeToInline.collectDescendantsOfType<KtExpression> {
                 it[CodeToInline.PARAMETER_USAGE_KEY] == parameterName
             }
+
             usages.forEach {
                 val usageArgument = it.parent as? KtValueArgument
                 if (argument.isNamed) {
@@ -188,17 +198,29 @@ class CodeInliner<TCallElement : KtElement>(
                 if (argument.isDefaultValue) {
                     usageArgument?.mark(DEFAULT_PARAMETER_VALUE_KEY)
                 }
-                codeToInline.replaceExpression(it, argument.expression)
+
+                codeToInline.replaceExpression(it, expression.copied())
             }
 
-            //TODO: sometimes we need to add explicit type arguments here because we don't have expected type in the new context
-
-            if (argument.expression.shouldKeepValue(usageCount = usages.size)) {
-                introduceValuesForParameters.add(IntroduceValueForParameter(parameter, argument.expression, argument.expressionType))
+            if (expression.shouldKeepValue(usageCount = usages.size)) {
+                introduceValuesForParameters.add(IntroduceValueForParameter(parameter, expression, argument.expressionType))
             }
         }
 
         return introduceValuesForParameters
+    }
+
+    private fun KtCallElement.insertExplicitTypeArgument() {
+        if (InsertExplicitTypeArgumentsIntention.isApplicableTo(this, bindingContext)) {
+            InsertExplicitTypeArgumentsIntention.createTypeArguments(this, bindingContext)?.let { typeArgumentList ->
+                clear(USER_CODE_KEY)
+                for (child in children) {
+                    child.safeAs<KtElement>()?.mark(USER_CODE_KEY)
+                }
+
+                addAfter(typeArgumentList, calleeExpression)
+            }
+        }
     }
 
     private data class IntroduceValueForParameter(
@@ -407,26 +429,28 @@ class CodeInliner<TCallElement : KtElement>(
     }
 
     private fun postProcessInsertedCode(range: PsiChildRange, lexicalScope: LexicalScope?): PsiChildRange {
-        val elements = range.filterIsInstance<KtElement>().toList()
-        if (elements.isEmpty()) return PsiChildRange.EMPTY
+        val pointers = range.filterIsInstance<KtElement>().map { it.createSmartPointer() }.toList()
+        if (pointers.isEmpty()) return PsiChildRange.EMPTY
 
         lexicalScope?.let {
-            renameDuplicates(elements.dropLast(1).filterIsInstance<KtNamedDeclaration>(), it)
+            renameDuplicates(pointers.dropLast(1).mapNotNull { pointer -> pointer.element as? KtNamedDeclaration }, it)
         }
 
-        elements.forEach {
-            introduceNamedArguments(it)
+        for (pointer in pointers) {
+            val element = pointer.element ?: continue
+            introduceNamedArguments(element)
 
-            restoreFunctionLiteralArguments(it)
+            restoreFunctionLiteralArguments(element)
 
             //TODO: do this earlier
-            dropArgumentsForDefaultValues(it)
+            dropArgumentsForDefaultValues(element)
 
-            simplifySpreadArrayOfArguments(it)
+            simplifySpreadArrayOfArguments(element)
 
-            removeExplicitTypeArguments(it)
+            removeExplicitTypeArguments(element)
+
+            removeRedundantUnitExpressions(element)
         }
-
 
         val shortenFilter = { element: PsiElement ->
             if (element[USER_CODE_KEY]) {
@@ -440,11 +464,13 @@ class CodeInliner<TCallElement : KtElement>(
             }
         }
 
-        val newElements = elements.map {
-            ShortenReferences { ShortenReferences.Options(removeThis = true) }.process(it, elementFilter = shortenFilter)
+        val newElements = pointers.mapNotNull {
+            it.element?.let { element ->
+                ShortenReferences { ShortenReferences.Options(removeThis = true) }.process(element, elementFilter = shortenFilter)
+            }
         }
 
-        newElements.forEach { element ->
+        for (element in newElements) {
             // clean up user data
             element.forEachDescendantOfType<KtExpression> {
                 it.clear(USER_CODE_KEY)
@@ -460,7 +486,15 @@ class CodeInliner<TCallElement : KtElement>(
             }
         }
 
-        return PsiChildRange(newElements.first(), newElements.last())
+        return if (newElements.isEmpty()) PsiChildRange.EMPTY else PsiChildRange(newElements.first(), newElements.last())
+    }
+
+    private fun removeRedundantUnitExpressions(result: KtElement) {
+        result.forEachDescendantOfType<KtReferenceExpression> {
+            if (RedundantUnitExpressionInspection.isRedundantUnit(it)) {
+                it.delete()
+            }
+        }
     }
 
     private fun introduceNamedArguments(result: KtElement) {
@@ -537,9 +571,11 @@ class CodeInliner<TCallElement : KtElement>(
     }
 
     private fun removeExplicitTypeArguments(result: KtElement) {
-        result.collectDescendantsOfType<KtTypeArgumentList>(canGoInside = { !it[USER_CODE_KEY] }) {
-            RemoveExplicitTypeArgumentsIntention.isApplicableTo(it, approximateFlexible = true)
-        }.forEach { it.delete() }
+        for (typeArgumentList in result.collectDescendantsOfType<KtTypeArgumentList>(canGoInside = { !it[USER_CODE_KEY] })) {
+            if (RemoveExplicitTypeArgumentsIntention.isApplicableTo(typeArgumentList, approximateFlexible = true)) {
+                typeArgumentList.delete()
+            }
+        }
     }
 
     private fun simplifySpreadArrayOfArguments(result: KtElement) {

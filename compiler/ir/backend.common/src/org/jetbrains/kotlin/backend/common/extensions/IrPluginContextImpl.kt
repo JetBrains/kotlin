@@ -9,29 +9,38 @@ import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.IrDeserializer
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
-open class IrPluginContextImpl(
+open class IrPluginContextImpl constructor(
     private val module: ModuleDescriptor,
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val bindingContext: BindingContext,
     override val languageVersionSettings: LanguageVersionSettings,
     private val st: ReferenceSymbolTable,
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val typeTranslator: TypeTranslator,
     override val irBuiltIns: IrBuiltIns,
-    private val linker: IrDeserializer,
+    val linker: IrDeserializer,
     override val symbols: BuiltinSymbolsBase = BuiltinSymbolsBase(irBuiltIns, irBuiltIns.builtIns, st)
 ) : IrPluginContext {
 
+    override val platform: TargetPlatform? = module.platform
+
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val moduleDescriptor: ModuleDescriptor = module
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val symbolTable: ReferenceSymbolTable = st
 
     private fun resolveMemberScope(fqName: FqName): MemberScope? {
@@ -77,6 +86,16 @@ open class IrPluginContextImpl(
             val classDescriptor = scope.getContributedClassifier(fqName.shortName(), NoLookupLocation.FROM_BACKEND) as? ClassDescriptor?
             classDescriptor?.let {
                 st.referenceClass(it)
+            }
+        }
+    }
+
+    override fun referenceTypeAlias(fqName: FqName): IrTypeAliasSymbol? {
+        assert(!fqName.isRoot)
+        return resolveSymbol(fqName.parent()) { scope ->
+            val aliasDescriptor = scope.getContributedClassifier(fqName.shortName(), NoLookupLocation.FROM_BACKEND) as? TypeAliasDescriptor?
+            aliasDescriptor?.let {
+                st.referenceTypeAlias(it)
             }
         }
     }

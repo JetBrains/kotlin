@@ -11,6 +11,10 @@ plugins {
     id("jps-compatible")
 }
 
+configure<GradlePluginDevelopmentExtension> {
+    isAutomatedPublishing = false
+}
+
 publish()
 
 val jarContents by configurations.creating
@@ -43,7 +47,7 @@ dependencies {
     compileOnly(project(":kotlin-compiler-runner"))
     compileOnly(project(":kotlin-annotation-processing"))
     compileOnly(project(":kotlin-annotation-processing-gradle"))
-    compileOnly(project(":kotlin-scripting-compiler-unshaded"))
+    compileOnly(project(":kotlin-scripting-compiler"))
     compileOnly(project(":kotlin-gradle-statistics"))
     embedded(project(":kotlin-gradle-statistics"))
 
@@ -60,13 +64,13 @@ dependencies {
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
-    runtime(projectRuntimeJar(":kotlin-compiler-embeddable"))
-    runtime(projectRuntimeJar(":kotlin-annotation-processing-gradle"))
-    runtime(projectRuntimeJar(":kotlin-android-extensions"))
-    runtime(projectRuntimeJar(":kotlin-compiler-runner"))
-    runtime(projectRuntimeJar(":kotlin-scripting-compiler"))
-    runtime(projectRuntimeJar(":kotlin-scripting-compiler-impl"))
-    runtime(project(":kotlin-reflect"))
+    runtimeOnly(projectRuntimeJar(":kotlin-compiler-embeddable"))
+    runtimeOnly(projectRuntimeJar(":kotlin-annotation-processing-gradle"))
+    runtimeOnly(projectRuntimeJar(":kotlin-android-extensions"))
+    runtimeOnly(projectRuntimeJar(":kotlin-compiler-runner"))
+    runtimeOnly(projectRuntimeJar(":kotlin-scripting-compiler-embeddable"))
+    runtimeOnly(projectRuntimeJar(":kotlin-scripting-compiler-impl-embeddable"))
+    runtimeOnly(project(":kotlin-reflect"))
 
     jarContents(compileOnly(intellijDep()) {
         includeJars("asm-all", "gson", "serviceMessages", rootProject = rootProject)
@@ -135,7 +139,7 @@ tasks {
         failOnWarning = true
     }
 
-    named<Upload>("install") {
+    named("install") {
         dependsOn(named("validateTaskProperties"))
     }
 
@@ -202,3 +206,5 @@ pluginBundle {
         display = "Kotlin Native plugin for CocoaPods integration"
     )
 }
+
+publishPluginMarkers()

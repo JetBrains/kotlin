@@ -16,29 +16,59 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrElementBase
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrBody : IrElement {
+abstract class IrBody : IrElementBase() {
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrBody =
         accept(transformer, data) as IrBody
 }
 
-interface IrExpressionBody : IrBody {
-    var expression: IrExpression
+abstract class IrExpressionBody : IrBody() {
+    abstract val factory: IrFactory
+
+    abstract var expression: IrExpression
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitExpressionBody(this, data)
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrExpressionBody =
         accept(transformer, data) as IrExpressionBody
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        expression.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        expression = expression.transform(transformer, data)
+    }
 }
 
-interface IrBlockBody : IrBody, IrStatementContainer
+abstract class IrBlockBody : IrBody(), IrStatementContainer {
+    abstract val factory: IrFactory
 
-interface IrSyntheticBody : IrBody {
-    val kind: IrSyntheticBodyKind
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitBlockBody(this, data)
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        statements.forEach { it.accept(visitor, data) }
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        statements.forEachIndexed { i, irStatement ->
+            statements[i] = irStatement.transform(transformer, data) as IrStatement
+        }
+    }
+}
+
+abstract class IrSyntheticBody : IrBody() {
+    abstract val kind: IrSyntheticBodyKind
 }
 
 enum class IrSyntheticBodyKind {
     ENUM_VALUES,
     ENUM_VALUEOF
 }
-

@@ -39,7 +39,7 @@ fun <T> listOf2(x1: T, x2: T): List<T> = null!!
 fun <T> arrayOf2(x1: T, x2: T): Array<T> = null!!
 
 fun test() {
-    val test1: Base = <!NI;INACCESSIBLE_TYPE!>if (true) d1 else d2<!>
+    val test1: Base = if (true) d1 else d2
 
     val test2 = <!INACCESSIBLE_TYPE!>if (true) d1 else d2<!>
 
@@ -48,10 +48,10 @@ fun test() {
         else -> d2
     }<!>
 
-    val test4: Base = <!NI;INACCESSIBLE_TYPE!>when {
+    val test4: Base = when {
         true -> d1
         else -> d2
-    }<!>
+    }
 
     val test5 = <!INACCESSIBLE_TYPE!>select(d1, d2)<!>
 

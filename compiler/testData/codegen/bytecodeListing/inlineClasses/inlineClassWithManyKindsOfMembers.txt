@@ -3,38 +3,49 @@
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public annotation class A
+public annotation class A {
+    // source: 'inlineClassWithManyKindsOfMembers.kt'
+}
 
 @kotlin.annotation.Target
 @kotlin.annotation.Retention
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public annotation class AGet
+public annotation class AGet {
+    // source: 'inlineClassWithManyKindsOfMembers.kt'
+}
 
 @kotlin.annotation.Target
 @kotlin.annotation.Retention
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public annotation class AReceiver
+public annotation class AReceiver {
+    // source: 'inlineClassWithManyKindsOfMembers.kt'
+}
 
 @kotlin.annotation.Target
 @kotlin.annotation.Retention
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public annotation class ASet
+public annotation class ASet {
+    // source: 'inlineClassWithManyKindsOfMembers.kt'
+}
 
 @kotlin.annotation.Target
 @kotlin.annotation.Retention
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public annotation class ASetParam
+public annotation class ASetParam {
+    // source: 'inlineClassWithManyKindsOfMembers.kt'
+}
 
 @kotlin.Metadata
 public interface IFoo {
+    // source: 'inlineClassWithManyKindsOfMembers.kt'
     public abstract method getOverridingExtVal(@org.jetbrains.annotations.NotNull p0: java.lang.String): int
     public abstract method getOverridingExtVar(@org.jetbrains.annotations.NotNull p0: java.lang.String): int
     public abstract method getOverridingVal(): int
@@ -47,13 +58,14 @@ public interface IFoo {
 
 @kotlin.Metadata
 public final class Z {
+    // source: 'inlineClassWithManyKindsOfMembers.kt'
     private final field x: int
     private synthetic method <init>(p0: int): void
-    public synthetic final static @org.jetbrains.annotations.NotNull method box-impl(p0: int): Z
+    public synthetic final static method box-impl(p0: int): Z
     public static method constructor-impl(p0: int): int
     public static method constructor-impl(p0: long): int
     public method equals(p0: java.lang.Object): boolean
-    public static method equals-impl(p0: int, @org.jetbrains.annotations.Nullable p1: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int): boolean
     public synthetic deprecated static @A method getNonOverridingExtVal$annotations(p0: java.lang.String): void
     public final static @AGet method getNonOverridingExtVal-impl(p0: int, @AReceiver @org.jetbrains.annotations.NotNull p1: java.lang.String): int

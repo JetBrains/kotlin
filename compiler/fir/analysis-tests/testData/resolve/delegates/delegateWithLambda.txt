@@ -24,15 +24,7 @@ FILE: delegateWithLambda.kt
         }
 
         public final val x: R|kotlin/String|by R|/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| {
-            lval y: R|kotlin/String| = when (lval <elvis>: R|kotlin/String?| = (R|/getAny|() as? R|kotlin/String|)) {
-                ==($subj$, Null(null)) ->  {
-                    String()
-                }
-                else ->  {
-                    R|<local>/<elvis>|
-                }
-            }
-
+            lval y: R|kotlin/String| = (R|/getAny|() as? R|kotlin/String|) ?: String()
             ^ R|<local>/y|
         }
         )

@@ -16,13 +16,9 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 
-
-interface IrReturn : IrExpression {
-    var value: IrExpression
-    val returnTarget: FunctionDescriptor
-    val returnTargetSymbol: IrReturnTargetSymbol
+abstract class IrReturn : IrExpression() {
+    abstract var value: IrExpression
+    abstract val returnTargetSymbol: IrReturnTargetSymbol
 }
-

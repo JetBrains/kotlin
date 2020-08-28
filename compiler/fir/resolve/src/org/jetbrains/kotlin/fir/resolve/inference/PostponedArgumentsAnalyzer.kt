@@ -41,7 +41,6 @@ interface LambdaAnalyzer {
     ): ReturnArgumentsAnalysisResult
 }
 
-
 class PostponedArgumentsAnalyzer(
     private val lambdaAnalyzer: LambdaAnalyzer,
     private val components: InferenceComponents,
@@ -74,24 +73,24 @@ class PostponedArgumentsAnalyzer(
 
         val callableReferenceAccess = atom.reference
         atom.analyzed = true
-        val (candidate, applicability) = atom.resultingCandidate
+        val (resultingCandidate, applicability) = atom.resultingCandidate
             ?: Pair(null, CandidateApplicability.INAPPLICABLE)
 
         val namedReference = when {
-            candidate == null || applicability < CandidateApplicability.SYNTHETIC_RESOLVED ->
+            resultingCandidate == null || applicability < CandidateApplicability.SYNTHETIC_RESOLVED ->
                 buildErrorNamedReference {
                     source = callableReferenceAccess.source
                     diagnostic = ConeUnresolvedReferenceError(callableReferenceAccess.calleeReference.name)
                 }
-            else -> FirNamedReferenceWithCandidate(callableReferenceAccess.source, callableReferenceAccess.calleeReference.name, candidate)
+            else -> FirNamedReferenceWithCandidate(callableReferenceAccess.source, callableReferenceAccess.calleeReference.name, resultingCandidate)
         }
 
-        val transformedCalleeReference = callableReferenceAccess.transformCalleeReference(
+        callableReferenceAccess.transformCalleeReference(
             StoreNameReference,
             namedReference
         ).apply {
-            if (candidate != null) {
-                replaceTypeRef(buildResolvedTypeRef { type = candidate.resultingTypeForCallableReference!! })
+            if (resultingCandidate != null) {
+                replaceTypeRef(buildResolvedTypeRef { type = resultingCandidate.resultingTypeForCallableReference!! })
             }
         }
     }
@@ -102,7 +101,7 @@ class PostponedArgumentsAnalyzer(
         candidate: Candidate
         //diagnosticHolder: KotlinDiagnosticsHolder
     ) {
-        val unitType = components.session.builtinTypes.unitType.type//Unit(components.session.firSymbolProvider).constructType(emptyArray(), false)
+        val unitType = components.session.builtinTypes.unitType.type
         val stubsForPostponedVariables = c.bindingStubsForPostponedVariables()
         val currentSubstitutor = c.buildCurrentSubstitutor(stubsForPostponedVariables.mapKeys { it.key.freshTypeConstructor(c) })
 
@@ -130,6 +129,24 @@ class PostponedArgumentsAnalyzer(
             stubsForPostponedVariables
         )
 
+        if (inferenceSession != null) {
+            val storageSnapshot = c.getBuilder().currentStorage()
+
+            val postponedVariables = inferenceSession.inferPostponedVariables(lambda, storageSnapshot)
+
+            if (postponedVariables == null) {
+                c.getBuilder().removePostponedVariables()
+            } else {
+                for ((constructor, resultType) in postponedVariables) {
+                    val variableWithConstraints = storageSnapshot.notFixedTypeVariables[constructor] ?: continue
+                    val variable = variableWithConstraints.typeVariable as ConeTypeVariable
+
+                    c.getBuilder().unmarkPostponedVariable(variable)
+                    c.getBuilder().addEqualityConstraint(variable.defaultType, resultType, CoroutinePosition())
+                }
+            }
+        }
+
         returnArguments.forEach { c.addSubsystemFromExpression(it) }
 
         val checkerSink: CheckerSink = CheckerSinkImpl(components)
@@ -145,8 +162,7 @@ class PostponedArgumentsAnalyzer(
                 lambda.atom.returnTypeRef, // TODO: proper ref
                 checkerSink,
                 isReceiver = false,
-                isDispatch = false,
-                isSafeCall = false
+                isDispatch = false
             )
         }
 
@@ -158,20 +174,6 @@ class PostponedArgumentsAnalyzer(
 
         lambda.analyzed = true
         lambda.returnStatements = returnArguments
-
-        if (inferenceSession != null) {
-            val storageSnapshot = c.getBuilder().currentStorage()
-
-            val postponedVariables = inferenceSession.inferPostponedVariables(lambda, storageSnapshot)
-
-            for ((constructor, resultType) in postponedVariables) {
-                val variableWithConstraints = storageSnapshot.notFixedTypeVariables[constructor] ?: continue
-                val variable = variableWithConstraints.typeVariable as ConeTypeVariable
-
-                c.getBuilder().unmarkPostponedVariable(variable)
-                c.getBuilder().addEqualityConstraint(variable.defaultType, resultType, CoroutinePosition())
-            }
-        }
     }
 }
 

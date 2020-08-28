@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.components.serviceIfCreated
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.util.Key
@@ -61,6 +62,8 @@ class IdeScriptDependenciesProvider(project: Project) : ScriptDependenciesProvid
  * of opened files when configuration will be loaded or updated.
  */
 interface ScriptConfigurationManager {
+    fun loadPlugins()
+
     /**
      * Get cached configuration for [file] or load it.
      * May return null even configuration was loaded but was not yet applied.
@@ -108,6 +111,9 @@ interface ScriptConfigurationManager {
     fun getAllScriptDependenciesSources(): List<VirtualFile>
 
     companion object {
+        fun getServiceIfCreated(project: Project): ScriptConfigurationManager? =
+            ServiceManager.getServiceIfCreated(project, ScriptConfigurationManager::class.java)
+
         @JvmStatic
         fun getInstance(project: Project): ScriptConfigurationManager =
             ServiceManager.getService(project, ScriptConfigurationManager::class.java)

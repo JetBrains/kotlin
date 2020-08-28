@@ -1,0 +1,37 @@
+FILE: inLocalClass.kt
+    @R|kotlin/contracts/ExperimentalContracts|() public final fun foo(a: R|() -> kotlin/Unit|, b: R|() -> kotlin/Unit|, c: R|() -> kotlin/Unit|, d: R|() -> kotlin/Unit|, e: R|() -> kotlin/Unit|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            CallsInPlace(a, AT_MOST_ONCE)
+            CallsInPlace(b, AT_MOST_ONCE)
+            CallsInPlace(c, AT_MOST_ONCE)
+            CallsInPlace(d, AT_MOST_ONCE)
+            CallsInPlace(e, AT_MOST_ONCE)
+        >
+     {
+        [StubStatement]
+        local final class LocalClass : R|kotlin/Any| {
+            public final val leakedVal: R|() -> kotlin/Unit| = R|<local>/a|
+                public get(): R|() -> kotlin/Unit|
+
+            public final val leaked: R|kotlin/Any|
+                public get(): R|kotlin/Any|
+
+            public constructor(): R|LocalClass| {
+                super<R|kotlin/Any|>()
+                R|<local>/b|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+            }
+
+            init {
+                this@R|/LocalClass|.R|/LocalClass.leaked| = R|<local>/c|
+            }
+
+            public final fun run(): R|kotlin/Unit| {
+                R|<local>/d|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+            }
+
+        }
+
+        R|/LocalClass.LocalClass|().R|/LocalClass.run|()
+        R|<local>/e|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+    }

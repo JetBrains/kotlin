@@ -18,5 +18,5 @@ fun bar(a: Boolean, b: Boolean): Int {
     when (b) {
         false -> x = 3
     }
-    return x
+    return <!UNINITIALIZED_VARIABLE!>x<!>
 }

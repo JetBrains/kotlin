@@ -11,9 +11,10 @@
  * DESCRIPTION: Abstract classes may contain one or more abstract members, which should be implemented in a subtype of this abstract class
  */
 
-// TESTCASE NUMBER: 1
-
-<!REDUNDANT_MODIFIER!>open<!>     abstract class Base {
+// FILE: TestCase1.kt
+// TESTCASE NUMBER:1
+package testPackCase1
+<!REDUNDANT_MODIFIER!>open<!> abstract class Base {
 
     abstract val a: Any
     abstract var b: Any
@@ -24,22 +25,34 @@
     abstract fun foo()
     internal abstract fun boo(): Any
 }
-
 fun case1() {
-    val impl = BaseImplCase2(1, "1", 1.0)
+    val impl = BaseImplCase1(1, "1", 1.0)
 }
 
-class BaseImplCase2(
+class BaseImplCase1(
     override var a: Any, override
     <!VAR_OVERRIDDEN_BY_VAL!>val<!>  b: Any, override var c: Any, override
 
- <!VAR_OVERRIDDEN_BY_VAL!>val<!>  d: Any = "5") : Base()
+    <!VAR_OVERRIDDEN_BY_VAL!>val<!>  d: Any = "5") : Base()
 {
     override fun foo() {}
     override internal fun boo() {}
 }
 
+// FILE: TestCase2.kt
 // TESTCASE NUMBER: 2
+package testPackCase2
+<!REDUNDANT_MODIFIER!>open<!> abstract class Base {
+
+    abstract val a: Any
+    abstract var b: Any
+    internal abstract val c: Any
+    internal abstract var d: Any
+
+
+    abstract fun foo()
+    internal abstract fun boo(): Any
+}
 
 fun case2() {
     val impl = ImplBaseCase2()
@@ -68,10 +81,22 @@ class ImplBaseCase2() : Base() {
     }
 }
 
-/*
-* TESTCASE NUMBER: 3
-* NOTE: property is not implemented
-*/
+// FILE: TestCase.kt
+// TESTCASE NUMBER: 3
+
+package testPackCase3
+<!REDUNDANT_MODIFIER!>open<!> abstract class Base {
+
+    abstract val a: Any
+    abstract var b: Any
+    internal abstract val c: Any
+    internal abstract var d: Any
+
+
+    abstract fun foo()
+    internal abstract fun boo(): Any
+}
+
 fun case3() {
     ImplBaseCase3()
 }
@@ -95,10 +120,21 @@ fun case3() {
     }
 }
 
-/*
-* TESTCASE NUMBER: 4
-* NOTE: function is not implemented
-*/
+// FILE: TestCase.kt
+// TESTCASE NUMBER: 4
+package testPackCase4
+<!REDUNDANT_MODIFIER!>open<!> abstract class Base {
+
+    abstract val a: Any
+    abstract var b: Any
+    internal abstract val c: Any
+    internal abstract var d: Any
+
+
+    abstract fun foo()
+    internal abstract fun boo(): Any
+}
+
 
 fun case4() {
     ImplBaseCase4()
@@ -125,4 +161,4 @@ fun case4() {
 * TESTCASE NUMBER: 5
 * NOTE: incompatible modifiers final and abstract
 */
-<!INCOMPATIBLE_MODIFIERS!>final<!>   <!INCOMPATIBLE_MODIFIERS!>abstract<!>   class Case5() {}
+<!INCOMPATIBLE_MODIFIERS!>final<!> <!INCOMPATIBLE_MODIFIERS!>abstract<!> class Case5() {}

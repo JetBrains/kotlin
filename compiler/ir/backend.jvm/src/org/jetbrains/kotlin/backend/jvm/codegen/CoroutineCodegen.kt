@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
+import org.jetbrains.kotlin.backend.common.ir.allOverridden
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
-import org.jetbrains.kotlin.backend.common.lower.allOverridden
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_IMPL_NAME_SUFFIX
 import org.jetbrains.kotlin.codegen.coroutines.reportSuspensionPointInsideMonitor
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
@@ -44,9 +46,9 @@ internal fun MethodNode.acceptWithStateMachine(
     val languageVersionSettings = state.languageVersionSettings
     assert(languageVersionSettings.isReleaseCoroutines()) { "Experimental coroutines are unsupported in JVM_IR backend" }
     val element = if (irFunction.isSuspend)
-        irFunction.symbol.descriptor.psiElement ?: classCodegen.irClass.descriptor.psiElement
+        irFunction.psiElement ?: classCodegen.irClass.psiElement
     else
-        classCodegen.context.suspendLambdaToOriginalFunctionMap[classCodegen.irClass.attributeOwnerId]!!.symbol.descriptor.psiElement
+        classCodegen.context.suspendLambdaToOriginalFunctionMap[classCodegen.irClass.attributeOwnerId]!!.psiElement
     val visitor = CoroutineTransformerMethodVisitor(
         methodVisitor, access, name, desc, signature, exceptions.toTypedArray(),
         obtainClassBuilderForCoroutineState = obtainContinuationClassBuilder,
@@ -63,16 +65,14 @@ internal fun MethodNode.acceptWithStateMachine(
         putContinuationParameterToLvt = false,
         disableTailCallOptimizationForFunctionReturningUnit = irFunction.isSuspend && irFunction.suspendFunctionOriginal().let {
             it.returnType.isUnit() && it.anyOfOverriddenFunctionsReturnsNonUnit()
-        }
+        },
+        useOldSpilledVarTypeAnalysis = state.configuration.getBoolean(JVMConfigurationKeys.USE_OLD_SPILLED_VAR_TYPE_ANALYSIS)
     )
     accept(visitor)
 }
 
-private fun IrFunction.anyOfOverriddenFunctionsReturnsNonUnit(): Boolean {
-    return (this as? IrSimpleFunction)?.allOverridden()?.toList()?.let { functions ->
-        functions.isNotEmpty() && functions.any { !it.returnType.isUnit() }
-    } == true
-}
+private fun IrFunction.anyOfOverriddenFunctionsReturnsNonUnit(): Boolean =
+    this is IrSimpleFunction && allOverridden().any { !it.returnType.isUnit() }
 
 internal fun IrFunction.suspendForInlineToOriginal(): IrSimpleFunction? {
     if (origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE &&
@@ -110,7 +110,8 @@ internal fun IrFunction.isInvokeSuspendOfContinuation(): Boolean =
     name.asString() == INVOKE_SUSPEND_METHOD_NAME && parentAsClass.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
 
 private fun IrFunction.isInvokeOfSuspendCallableReference(): Boolean =
-    isSuspend && name.asString() == "invoke" && parentAsClass.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
+    isSuspend && name.asString().let { name -> name == "invoke" || name.startsWith("invoke-") }
+            && parentAsClass.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
 
 private fun IrFunction.isBridgeToSuspendImplMethod(): Boolean =
     isSuspend && this is IrSimpleFunction && parentAsClass.functions.any {
@@ -118,9 +119,9 @@ private fun IrFunction.isBridgeToSuspendImplMethod(): Boolean =
     }
 
 private fun IrFunction.isStaticInlineClassReplacementDelegatingCall(): Boolean =
-    this is IrAttributeContainer && origin != JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT &&
+    this is IrAttributeContainer && !isStaticInlineClassReplacement &&
             parentAsClass.declarations.find { it is IrAttributeContainer && it.attributeOwnerId == attributeOwnerId && it !== this }
-                ?.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT
+                ?.isStaticInlineClassReplacement == true
 
 internal fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isInvokeSuspendOfContinuation() &&
         // These are tail-call bridges and do not require any bytecode modifications.
@@ -128,8 +129,11 @@ internal fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isInvokeSuspen
         origin != JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER &&
         origin != JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE &&
         origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR &&
+        origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR &&
         origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE &&
+        origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY &&
         origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC &&
+        origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY_SYNTHETIC &&
         origin != IrDeclarationOrigin.BRIDGE &&
         origin != IrDeclarationOrigin.BRIDGE_SPECIAL &&
         origin != IrDeclarationOrigin.DELEGATED_MEMBER &&

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.ir.util.getSimpleFunction
 internal class OperatorExpressionGenerator(
     private val components: Fir2IrComponents,
     private val visitor: Fir2IrVisitor,
-    private val callGenerator: CallAndReferenceGenerator
+    private val conversionScope: Fir2IrConversionScope
 ) : Fir2IrComponents by components {
 
     fun convertComparisonExpression(comparisonExpression: FirComparisonExpression): IrExpression {
@@ -33,9 +34,9 @@ internal class OperatorExpressionGenerator(
         }
     }
 
-    fun convertOperatorCall(operatorCall: FirOperatorCall): IrExpression {
-        return operatorCall.convertWithOffsets { startOffset, endOffset ->
-            generateOperatorCall(startOffset, endOffset, operatorCall.operation, operatorCall.arguments)
+    fun convertEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall): IrExpression {
+        return equalityOperatorCall.convertWithOffsets { startOffset, endOffset ->
+            generateEqualityOperatorCall(startOffset, endOffset, equalityOperatorCall.operation, equalityOperatorCall.arguments)
         }
     }
 
@@ -83,16 +84,15 @@ internal class OperatorExpressionGenerator(
         }
     }
 
-    private fun generateOperatorCall(
+    private fun generateEqualityOperatorCall(
         startOffset: Int, endOffset: Int, operation: FirOperation, arguments: List<FirExpression>
     ): IrExpression = when (operation) {
-        FirOperation.EQ, FirOperation.NOT_EQ -> generateEqualityOperatorCall(startOffset, endOffset, operation, arguments)
-        FirOperation.IDENTITY, FirOperation.NOT_IDENTITY -> generateIdentityOperatorCall(startOffset, endOffset, operation, arguments)
-        FirOperation.EXCL -> visitor.convertToIrExpression(arguments[0]).negate(IrStatementOrigin.EXCL)
+        FirOperation.EQ, FirOperation.NOT_EQ -> transformEqualityOperatorCall(startOffset, endOffset, operation, arguments)
+        FirOperation.IDENTITY, FirOperation.NOT_IDENTITY -> transformIdentityOperatorCall(startOffset, endOffset, operation, arguments)
         else -> error("Unexpected operation: $operation")
     }
 
-    private fun generateEqualityOperatorCall(
+    private fun transformEqualityOperatorCall(
         startOffset: Int, endOffset: Int, operation: FirOperation, arguments: List<FirExpression>
     ): IrExpression {
         val origin = when (operation) {
@@ -116,7 +116,7 @@ internal class OperatorExpressionGenerator(
         }
     }
 
-    private fun generateIdentityOperatorCall(
+    private fun transformIdentityOperatorCall(
         startOffset: Int, endOffset: Int, operation: FirOperation, arguments: List<FirExpression>
     ): IrExpression {
         val origin = when (operation) {
@@ -144,21 +144,32 @@ internal class OperatorExpressionGenerator(
         targetType: ConeClassLikeType?
     ): IrExpression {
         if (targetType == null) return this
-        if (operandType == null) throw AssertionError("operandType should be non-null")
+        if (operandType == null) error("operandType should be non-null if targetType is non-null")
 
         val operandClassId = operandType.lookupTag.classId
         val targetClassId = targetType.lookupTag.classId
         if (operandClassId == targetClassId) return this
         val conversionFunction =
             typeConverter.classIdToSymbolMap[operandClassId]?.getSimpleFunction("to${targetType.lookupTag.classId.shortClassName.asString()}")
-                ?: throw AssertionError("No conversion function for $operandType ~> $targetType")
+                ?: error("No conversion function for $operandType ~> $targetType")
 
         val dispatchReceiver = this@asComparisonOperand
-        val unsafeIrCall = IrCallImpl(startOffset, endOffset, conversionFunction.owner.returnType, conversionFunction).also {
+        val unsafeIrCall = IrCallImpl(
+            startOffset, endOffset,
+            conversionFunction.owner.returnType,
+            conversionFunction,
+            valueArgumentsCount = 0,
+            typeArgumentsCount = 0
+        ).also {
             it.dispatchReceiver = dispatchReceiver
         }
         return if (operandType.isNullable) {
-            callGenerator.convertToSafeIrCall(unsafeIrCall, dispatchReceiver, isDispatch = true)
+            val (receiverVariable, receiverVariableSymbol) =
+                components.createTemporaryVariableForSafeCallConstruction(dispatchReceiver, conversionScope)
+
+            unsafeIrCall.dispatchReceiver = IrGetValueImpl(startOffset, endOffset, receiverVariableSymbol)
+
+            components.createSafeCallConstruction(receiverVariable, receiverVariableSymbol, unsafeIrCall, isReceiverNullable = true)
         } else {
             unsafeIrCall
         }

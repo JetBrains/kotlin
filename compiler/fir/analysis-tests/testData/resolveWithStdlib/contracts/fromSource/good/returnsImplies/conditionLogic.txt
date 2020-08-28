@@ -1,0 +1,118 @@
+FILE: conditionLogic.kt
+    @R|kotlin/OptIn|(vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test1(x: R|kotlin/String?|): R|kotlin/Any?|
+        [R|Contract description]
+         <
+            Returns(NOT_NULL) -> !x == null
+        >
+     {
+        [StubStatement]
+        ^test1 R|<local>/x|
+    }
+    @R|kotlin/OptIn|(vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test2(x: R|kotlin/String?|): R|kotlin/Any?|
+        [R|Contract description]
+         <
+        >
+     {
+        [StubStatement]
+        ^test2 R|<local>/x|
+    }
+    @R|kotlin/OptIn|(vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test3(x: R|kotlin/String?|): R|kotlin/Any?|
+        [R|Contract description]
+         <
+            Returns(NOT_NULL) -> x is kotlin/String? || x is kotlin/Any?
+        >
+     {
+        [StubStatement]
+        ^test3 R|<local>/x|
+    }
+    @R|kotlin/OptIn|(vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test4(x: R|kotlin/String?|, y: R|kotlin/String?|): R|kotlin/Any?|
+        [R|Contract description]
+         <
+            Returns(TRUE) -> x != null && y != null
+        >
+     {
+        [StubStatement]
+        ^test4 !=(R|<local>/x|, Null(null)) && !=(R|<local>/y|, Null(null))
+    }
+    @R|kotlin/OptIn|(vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test5(x: R|kotlin/Any?|): R|kotlin/Any?|
+        [R|Contract description]
+         <
+            Returns(TRUE) -> x != null || x is kotlin/Any
+        >
+     {
+        [StubStatement]
+        ^test5 !=(R|<local>/x|, Null(null))
+    }
+    @R|kotlin/OptIn|(vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test6(x: R|kotlin/Any?|): R|kotlin/Any?|
+        [R|Contract description]
+         <
+        >
+     {
+        [StubStatement]
+        ^test6 (R|<local>/x| is R|kotlin/String|)
+    }
+    @R|kotlin/OptIn|(vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test7(x: R|kotlin/Any?|): R|kotlin/Any?|
+        [R|Contract description]
+         <
+        >
+     {
+        [StubStatement]
+        ^test7 (R|<local>/x| is R|kotlin/String|)
+    }
+    @R|kotlin/OptIn|(vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test8(x: R|kotlin/Any?|): R|kotlin/Any?|
+        [R|Contract description]
+         <
+            Returns(TRUE) -> x is kotlin/String || x is kotlin/Int
+        >
+     {
+        [StubStatement]
+        ^test8 (R|<local>/x| is R|kotlin/String|) || (R|<local>/x| is R|kotlin/Int|)
+    }
+    @R|kotlin/OptIn|(vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test9(x: R|kotlin/Any?|): R|kotlin/Any?|
+        [R|Contract description]
+         <
+            Returns(TRUE) -> x is kotlin/String || x is kotlin/Int
+        >
+     {
+        [StubStatement]
+        when () {
+            (R|<local>/x| is R|kotlin/String|) ->  {
+                ^test9 Boolean(true)
+            }
+        }
+
+        ^test9 (R|<local>/x| is R|kotlin/Int|)
+    }
+    @R|kotlin/OptIn|(vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test10(x: R|kotlin/Any?|): R|kotlin/Any?|
+        [R|Contract description]
+         <
+            Returns(TRUE) -> x is kotlin/Comparable<*> || x is kotlin/CharSequence
+        >
+     {
+        [StubStatement]
+        ^test10 (R|<local>/x| is R|kotlin/String|)
+    }
+    @R|kotlin/OptIn|(vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test11(x: R|kotlin/Any?|): R|kotlin/Any?|
+        [R|Contract description]
+         <
+        >
+     {
+        [StubStatement]
+        ^test11 (R|<local>/x| is R|kotlin/String|)
+    }
+    @R|kotlin/OptIn|(vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test12(x: R|kotlin/Any?|): R|kotlin/Any?|
+        [R|Contract description]
+         <
+        >
+     {
+        [StubStatement]
+        ^test12 (R|<local>/x| is R|kotlin/String|) || (R|<local>/x| is R|kotlin/Int|)
+    }
+    @R|kotlin/OptIn|(vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test13(x: R|kotlin/Any?|): R|kotlin/Any?|
+        [R|Contract description]
+         <
+        >
+     {
+        [StubStatement]
+        ^test13 (R|<local>/x| is R|kotlin/String|) || (R|<local>/x| is R|kotlin/Int|)
+    }

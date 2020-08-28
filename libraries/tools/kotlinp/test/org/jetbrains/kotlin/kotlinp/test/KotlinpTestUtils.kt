@@ -87,8 +87,8 @@ private fun compile(file: File, disposable: Disposable, tmpdir: File, forEachOut
 }
 
 private fun StringBuilder.appendFileName(file: File) {
-    appendln("// ${file.invariantSeparatorsPath}")
-    appendln("// ------------------------------------------")
+    appendLine("// ${file.invariantSeparatorsPath}")
+    appendLine("// ------------------------------------------")
 }
 
 // Reads the class file and writes it back with *Writer visitors.

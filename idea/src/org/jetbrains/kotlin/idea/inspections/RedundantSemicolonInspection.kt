@@ -86,16 +86,30 @@ class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalIns
                 return false // case with statement starting with '{' and call on the previous line
             }
 
+            return !isSemicolonRequired(semicolon)
+        }
+
+        private fun isSemicolonRequired(semicolon: PsiElement): Boolean {
             if (isRequiredForCompanion(semicolon)) {
-                return false
+                return true
             }
 
-            val prevNameReference = semicolon.getPrevSiblingIgnoringWhitespaceAndComments() as? KtNameReferenceExpression
-            if (prevNameReference != null && prevNameReference.text in softModifierKeywords
-                && semicolon.getNextSiblingIgnoringWhitespaceAndComments() is KtDeclaration
-            ) return false
+            val prevSibling = semicolon.getPrevSiblingIgnoringWhitespaceAndComments()
+            val nextSibling = semicolon.getNextSiblingIgnoringWhitespaceAndComments()
 
-            return true
+            if (prevSibling.safeAs<KtNameReferenceExpression>()?.text in softModifierKeywords && nextSibling is KtDeclaration) {
+                // enum; class Foo
+                return true
+            }
+
+            if (nextSibling is KtPrefixExpression && nextSibling.operationToken == KtTokens.EXCL) {
+                val typeElement = semicolon.prevLeaf()?.getStrictParentOfType<KtTypeReference>()?.typeElement
+                if (typeElement != null) {
+                    return typeElement !is KtNullableType // trailing '?' fixes parsing
+                }
+            }
+
+            return false
         }
 
         private fun isRequiredForCompanion(semicolon: PsiElement): Boolean {

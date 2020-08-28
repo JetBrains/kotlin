@@ -32,10 +32,11 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             fields from klass without listOf("symbol", "resolvePhase", "attributes")
         }
 
-        val regularClassBuilder by builder("AbstractFirRegularClassBuilder") {
+        builder(regularClass) {
             parents += classBuilder
             parents += typeParameterRefsOwnerBuilder
-            fields from regularClass without "attributes"
+            defaultNull("companionObject")
+            openBuilder()
         }
 
         val qualifiedAccessBuilder by builder {
@@ -81,17 +82,6 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             openBuilder()
         }
 
-        builder(regularClass) {
-            parents += regularClassBuilder
-            defaultNull("companionObject")
-            openBuilder()
-        }
-
-        builder(sealedClass) {
-            parents += regularClassBuilder
-            defaultNull("companionObject")
-        }
-
         builder(anonymousObject) {
             parents += classBuilder
         }
@@ -105,6 +95,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             default("argumentList") {
                 value = "FirEmptyArgumentList"
             }
+            default("resolveStatus", "FirAnnotationResolveStatus.Unresolved")
             useTypes(emptyArgumentListType)
         }
 
@@ -121,7 +112,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             parents += qualifiedAccessBuilder
             defaultNull("explicitReceiver")
             defaultNoReceivers()
-            defaultFalse("safe")
+            defaultFalse("hasQuestionMarkAtLHS")
         }
 
         builder(componentCall) {
@@ -160,7 +151,6 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         builder(functionCall) {
             parents += qualifiedAccessBuilder
             parents += callBuilder
-            defaultFalse("safe")
             defaultNoReceivers()
             openBuilder()
             default("argumentList") {
@@ -171,7 +161,6 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         builder(qualifiedAccessExpression) {
             parents += qualifiedAccessBuilder
-            defaultFalse("safe")
             defaultNoReceivers()
         }
 
@@ -183,10 +172,6 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             parents += typeParametersOwnerBuilder
             defaultNull("getter", "setter", "containerSource", "delegateFieldSymbol")
             default("resolvePhase", "FirResolvePhase.RAW_FIR")
-        }
-
-        builder(operatorCall) {
-            parents += callBuilder
         }
 
         builder(typeOperatorCall) {
@@ -212,9 +197,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         builder(anonymousFunction) {
             parents += functionBuilder
-            defaultNull("invocationKind", "label", "body")
-            default("controlFlowGraphReference", "FirEmptyControlFlowGraphReference")
-            useTypes(emptyCfgReferenceType)
+            defaultNull("invocationKind", "label", "body", "controlFlowGraphReference")
         }
 
         builder(propertyAccessor) {
@@ -233,6 +216,31 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         builder(resolvedTypeRef) {
             defaultFalse("isSuspend")
             defaultNull("delegatedTypeRef")
+            withCopy()
+        }
+
+        builder(errorTypeRef) {
+            withCopy()
+        }
+
+        builder(delegatedTypeRef) {
+            withCopy()
+        }
+
+        builder(functionTypeRef) {
+            withCopy()
+        }
+
+        builder(resolvedFunctionTypeRef) {
+            withCopy()
+        }
+
+        builder(implicitTypeRef) {
+            withCopy()
+        }
+
+        builder(composedSuperTypeRef) {
+            withCopy()
         }
 
         builder(breakExpression) {
@@ -261,6 +269,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             default("contractDescription", "FirEmptyContractDescription")
             useTypes(emptyContractDescriptionType)
             openBuilder()
+            withCopy()
         }
 
         builder(tryExpression) {
@@ -273,9 +282,40 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             useTypes(stubReferenceType)
         }
 
+        builder(elvisExpression) {
+            default("calleeReference", "FirStubReference")
+            useTypes(stubReferenceType)
+        }
+
         builder(anonymousInitializer) {
             default("symbol", "FirAnonymousInitializerSymbol()")
         }
+
+        val abstractResolvedQualifierBuilder by builder {
+            fields from resolvedQualifier
+        }
+
+        builder(resolvedQualifier) {
+            parents += abstractResolvedQualifierBuilder
+            defaultFalse("isNullableLHSForCallableReference")
+        }
+
+        builder(errorResolvedQualifier) {
+            parents += abstractResolvedQualifierBuilder
+            defaultFalse("isNullableLHSForCallableReference")
+        }
+
+//        builder(safeCallExpression) {
+//            useTypes(safeCallCheckedSubjectType)
+//        }
+//
+//        builder(checkedSafeCallSubject) {
+//            useTypes(expressionType)
+//        }
+//
+//        builder(whenSubjectExpression) {
+//            useTypes(whenExpressionType)
+//        }
 
         val elementsWithDefaultTypeRef = listOf(
             thisReceiverExpression,
@@ -290,7 +330,9 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             resolvedQualifier,
             resolvedReifiedParameterReference,
             expression to "FirExpressionStub",
-            varargArgumentsExpression
+            varargArgumentsExpression,
+            checkedSafeCallSubject,
+            safeCallExpression
         )
         elementsWithDefaultTypeRef.forEach {
             val (element, name) = when (it) {

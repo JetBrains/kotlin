@@ -21,7 +21,8 @@ class KotlinCocoaPodsModelBuilder : AbstractModelBuilderService() {
 
     override fun buildAll(modelName: String, project: Project, context: ModelBuilderContext): Any? {
         val startParameter = project.gradle.startParameter
-        val taskNames = startParameter.taskNames
+        val taskNames = mutableListOf<String>()
+        taskNames.addAll(startParameter.taskNames)
 
         if (project.tasks.findByPath(POD_IMPORT_TASK_NAME) != null && POD_IMPORT_TASK_NAME !in taskNames) {
             taskNames.add(POD_IMPORT_TASK_NAME)

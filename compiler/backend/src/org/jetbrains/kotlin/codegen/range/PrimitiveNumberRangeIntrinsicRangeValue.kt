@@ -69,9 +69,10 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
                     ?: throw AssertionError("Floating point intrinsic range value should be a range literal")
                 InFloatingPointRangeLiteralExpressionGenerator(operatorReference, rangeLiteral, comparisonGenerator, codegen.frameMap)
             }
-            else -> InIntegralContinuousRangeExpressionGenerator(
-                operatorReference, rangeContainsTypeInfo, getBoundedValue(codegen), comparisonGenerator, codegen.frameMap
-            )
+            else ->
+                InIntegralContinuousRangeExpressionGenerator(
+                    operatorReference, rangeContainsTypeInfo, getBoundedValue(codegen), comparisonGenerator, codegen.frameMap
+                )
         }
     }
 

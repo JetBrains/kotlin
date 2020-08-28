@@ -53,6 +53,7 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
     public int WRAP_ELVIS_EXPRESSIONS = 1;
     public boolean IF_RPAREN_ON_NEW_LINE = false;
     public boolean ALLOW_TRAILING_COMMA = false;
+    public boolean ALLOW_TRAILING_COMMA_ON_CALL_SITE = false;
     public int BLANK_LINES_BEFORE_DECLARATION_WITH_COMMENT_OR_ANNOTATION_ON_SEPARATE_LINE = 1;
 
     @ReflectionUtil.SkipInEquals
@@ -79,6 +80,7 @@ public class KotlinCodeStyleSettings extends CustomCodeStyleSettings {
         if (!ApplicationManager.getApplication().isUnitTestMode()) {
             PACKAGES_TO_USE_STAR_IMPORTS.addEntry(new KotlinPackageEntry("java.util", false));
             PACKAGES_TO_USE_STAR_IMPORTS.addEntry(new KotlinPackageEntry("kotlinx.android.synthetic", true));
+            PACKAGES_TO_USE_STAR_IMPORTS.addEntry(new KotlinPackageEntry("io.ktor", true));
         }
 
         // Many of test data actually depend on this order of imports,

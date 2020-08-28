@@ -35,7 +35,7 @@ abstract class AbstractBreakpointApplicabilityTest : KotlinLightCodeInsightFixtu
 
     private fun checkBreakpoints(file: KtFile, checker: BreakpointChecker): String {
         val lineCount = file.getLineCount()
-        return (0..lineCount).joinToString("\n") { line -> checkLine(file, line, checker) }
+        return (0 until lineCount).joinToString("\n") { line -> checkLine(file, line, checker) }
     }
 
     private fun checkLine(file: KtFile, line: Int, checker: BreakpointChecker): String {

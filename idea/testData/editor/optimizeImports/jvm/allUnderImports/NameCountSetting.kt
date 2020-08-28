@@ -7,7 +7,7 @@ import java.io.File
 import java.io.PrintStream
 import dependency.*
 
-fun foo(c: C) {
+fun foo(c: Int) {
     val v = HashMap<File, ArrayList<Int>>()
     "".extFun()
     "".extFun(1)

@@ -1,21 +1,20 @@
-// TODO: These interfaces must be marked as "fun" ones that modifier is supported
-interface MyRunnable {
+fun interface MyRunnable {
     fun foo(x: Int): Boolean
 }
 
-interface WithProperty {
+fun interface WithProperty {
     val x: Int
 }
 
-interface TwoAbstract : MyRunnable {
+fun interface TwoAbstract : MyRunnable {
     fun bar()
 }
 
-interface Super {
+fun interface Super {
     fun foo(x: Int): Any
 }
 
-interface Derived : Super {
+fun interface Derived : Super {
     override fun foo(x: Int): Boolean
 }
 

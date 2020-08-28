@@ -1,0 +1,10 @@
+LineBreakpoint created at test.kt:8
+Run Java
+Connected to the target VM
+test.kt:8
+Compile bytecode for runReadAction { "hello" }
+test.kt:8
+Disconnected from the target VM
+
+Process finished with exit code 0
+hello

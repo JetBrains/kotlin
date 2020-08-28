@@ -48,7 +48,7 @@ class DataClassMembersGenerator(
         MyDataClassMethodGenerator(ktClassOrObject, irClass, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER).generate()
     }
 
-    fun IrMemberAccessExpression.commitSubstituted(descriptor: CallableDescriptor) = context.run { commitSubstituted(descriptor) }
+    fun IrMemberAccessExpression<*>.commitSubstituted(descriptor: CallableDescriptor) = context.run { commitSubstituted(descriptor) }
 
     private fun declareSimpleFunction(startOffset: Int, endOffset: Int, origin: IrDeclarationOrigin, function: FunctionDescriptor) =
         context.symbolTable.declareSimpleFunctionWithOverrides(
@@ -81,7 +81,7 @@ class DataClassMembersGenerator(
             override fun transform(typeParameterDescriptor: TypeParameterDescriptor): IrType =
                 typeParameterDescriptor.defaultType.toIrType()
 
-            override fun commitSubstituted(irMemberAccessExpression: IrMemberAccessExpression, descriptor: CallableDescriptor) {
+            override fun commitSubstituted(irMemberAccessExpression: IrMemberAccessExpression<*>, descriptor: CallableDescriptor) {
                 irMemberAccessExpression.commitSubstituted(descriptor)
             }
         }

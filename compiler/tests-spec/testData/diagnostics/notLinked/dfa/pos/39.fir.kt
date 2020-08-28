@@ -21,8 +21,8 @@ fun case_2(x: Number) {
     val y: Int? = null
 
     if (x === y) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number")!>x<!>.inv()
     }
 }
 
@@ -31,8 +31,8 @@ fun case_3(x: Number) {
     var y: Int? = null
 
     if (x === y) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Number")!>x<!>.inv()
     }
 }
 

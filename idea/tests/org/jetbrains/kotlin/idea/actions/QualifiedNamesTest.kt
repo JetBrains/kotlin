@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.actions
 
 import com.intellij.ide.actions.CopyReferenceAction
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase
+import com.intellij.testFramework.LightCodeInsightTestCase
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
@@ -16,9 +16,9 @@ import java.util.*
 
 @Suppress("DEPRECATION")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class QualifiedNamesTest : KotlinLightCodeInsightTestCase() {
+class QualifiedNamesTest : LightCodeInsightTestCase() {
     fun testClassRef() {
-        configureFromFileText_(
+        configureFromFileText(
             "class.kt",
             """
                     package foo.bar
@@ -35,7 +35,8 @@ class QualifiedNamesTest : KotlinLightCodeInsightTestCase() {
 
                     val anonymous = object {
                     }
-                """
+                """,
+            false
         )
         assertEquals(
             listOf(
@@ -51,7 +52,7 @@ class QualifiedNamesTest : KotlinLightCodeInsightTestCase() {
     }
 
     fun testFunRef() {
-        configureFromFileText_(
+        configureFromFileText(
             "fun.kt",
             """
                     package foo.bar
@@ -66,7 +67,8 @@ class QualifiedNamesTest : KotlinLightCodeInsightTestCase() {
                     fun topLevelFun()
 
                     val topLevelVal = ":)"
-                """
+                """,
+            false
         )
         assertEquals(
             listOf(
@@ -82,7 +84,7 @@ class QualifiedNamesTest : KotlinLightCodeInsightTestCase() {
 
     private fun getQualifiedNamesForDeclarations(): List<String?> {
         val result = ArrayList<String?>()
-        file_.accept(object : KtVisitorVoid() {
+        file.accept(object : KtVisitorVoid() {
             override fun visitElement(element: PsiElement) {
                 element.acceptChildren(this)
             }

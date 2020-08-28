@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.dsl
 
 import groovy.lang.Closure
+import org.gradle.api.GradleException
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
 interface KotlinJsSubTargetContainerDsl : KotlinTarget {
     val nodejs: KotlinJsNodeDsl
@@ -55,6 +57,15 @@ interface KotlinJsTargetDsl : KotlinTarget {
 
     val binaries: KotlinJsBinaryContainer
 
+    @Deprecated(
+        message = "produceExecutable() was changed on binaries.executable()",
+        replaceWith = ReplaceWith("binaries.executable()"),
+        level = DeprecationLevel.ERROR
+    )
+    fun produceExecutable() {
+        throw GradleException("Please change produceExecutable() on binaries.executable()")
+    }
+
     val testRuns: NamedDomainObjectContainer<KotlinJsReportAggregatingTestRun>
 
     // Need to compatibility when users use KotlinJsCompilation specific in build script
@@ -73,6 +84,13 @@ interface KotlinJsSubTargetDsl {
 }
 
 interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
+    fun commonWebpackConfig(body: KotlinWebpackConfig.() -> Unit)
+    fun commonWebpackConfig(fn: Closure<*>) {
+        commonWebpackConfig {
+            ConfigureUtil.configure(fn, this)
+        }
+    }
+
     fun runTask(body: KotlinWebpack.() -> Unit)
     fun runTask(fn: Closure<*>) {
         runTask {

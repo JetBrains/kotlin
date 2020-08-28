@@ -175,7 +175,7 @@ class PluginDeclarationProviderFactory(
                 append(it.name)
                 append(" isPhysical=${it.isPhysical}")
                 append(" modStamp=${it.modificationStamp}")
-                appendln()
+                appendLine()
             }
         }
     }

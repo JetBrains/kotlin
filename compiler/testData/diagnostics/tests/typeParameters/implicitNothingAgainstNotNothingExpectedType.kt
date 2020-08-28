@@ -19,16 +19,16 @@ class Foo<T> {
 fun test() {
     if (true) materialize() else null
 
-    val x1: String? = if (true) <!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>materialize<!>() else null
+    val x1: String? = if (true) materialize() else null
 
-    val x2: String? = if (true) <!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>materializeWithGenericArg<!>("") else null
+    val x2: String? = if (true) materializeWithGenericArg("") else null
 
     val x3: String? = if (true) {
-        if (true) <!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>materialize<!>() else null
+        if (true) materialize() else null
     } else null
 
     val x4: String? = if (true) {
-        select(<!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>materialize<!>(), null)
+        select(materialize(), null)
     } else null
 
     val x5: String? = select(if (true) <!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>materialize<!>() else null, null)
@@ -61,7 +61,7 @@ fun test() {
 
     val x16: String? = when (boolean) {
         true -> null
-        false -> <!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>materialize<!>()
+        false -> materialize()
         null -> null
     }
 
@@ -72,7 +72,7 @@ fun test() {
     }
 
     val x18: String? = try {
-        <!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>materialize<!>()
+        materialize()
     } catch (e: Exception) {
         null
     }
@@ -81,11 +81,11 @@ fun test() {
 
     val x20: String? = if (true) materialize<String?>() else null
 
-    val x21: String? = if (true) <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>materialize<!>() else TODO()
+    val x21: String? = if (true) materialize() else TODO()
 
-    val x22: String? = if (true) return else <!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>materialize<!>()
+    val x22: String? = if (true) return else materialize()
 
-    val x23: String? = if (true) <!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>id<!>(null) else null
+    val x23: String? = if (true) id(null) else null
 
     foo1(if (true) <!IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE!>materialize<!>() else null)
 

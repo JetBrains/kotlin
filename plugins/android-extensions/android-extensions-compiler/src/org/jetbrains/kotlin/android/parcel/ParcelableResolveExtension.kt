@@ -44,6 +44,11 @@ open class ParcelableResolveExtension : SyntheticResolveExtension {
             return module.findClassAcrossModuleDependencies(ClassId.topLevel(FqName("android.os.Parcel")))?.defaultType
         }
 
+        fun resolveParcelableCreatorClassType(module: ModuleDescriptor): SimpleType? {
+            val creatorClassId = ClassId(FqName("android.os"), FqName("Parcelable.Creator"), false)
+            return module.findClassAcrossModuleDependencies(creatorClassId)?.defaultType
+        }
+
         fun createMethod(
                 classDescriptor: ClassDescriptor,
                 componentKind: ParcelableSyntheticComponent.ComponentKind,

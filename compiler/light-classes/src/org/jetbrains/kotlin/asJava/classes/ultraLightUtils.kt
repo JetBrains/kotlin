@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.asJava.elements.KotlinLightTypeParameterListBuilder
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.psiType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
@@ -35,8 +36,8 @@ import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
@@ -311,11 +312,41 @@ private fun packMethodFlags(access: Int, isInterface: Boolean): Int {
 }
 
 internal fun KtModifierListOwner.isHiddenByDeprecation(support: KtUltraLightSupport): Boolean {
-    val jetModifierList = this.modifierList ?: return false
-    if (jetModifierList.annotationEntries.isEmpty()) return false
+    if (annotationEntries.isEmpty()) return false
+    val annotations = annotationEntries.filter { annotation ->
+        annotation.looksLikeDeprecated()
+    }
+    if (annotations.isNotEmpty()) { // some candidates found
+        val deprecated = support.findAnnotation(this, StandardNames.FqNames.deprecated)?.second
+        return (deprecated?.argumentValue("level") as? EnumValue)?.enumEntryName?.asString() == "HIDDEN"
+    } else {
+        return false
+    }
+}
 
-    val deprecated = support.findAnnotation(this, KotlinBuiltIns.FQ_NAMES.deprecated)?.second
-    return (deprecated?.argumentValue("level") as? EnumValue)?.enumEntryName?.asString() == "HIDDEN"
+fun KtAnnotationEntry.looksLikeDeprecated(): Boolean {
+    val arguments = valueArguments.filterIsInstance<KtValueArgument>().filterIndexed { index, valueArgument ->
+        index == 2 || valueArgument.looksLikeLevelArgument() // for named/not named arguments
+    }
+    for (argument in arguments) {
+        val hiddenByDotQualifiedCandidates = argument.children.filterIsInstance<KtDotQualifiedExpression>().filter {
+            val lastChild = it.children.last()
+            if (lastChild is KtNameReferenceExpression)
+                lastChild.getReferencedName() == "HIDDEN"
+            else
+                false
+        }
+        val hiddenByNameReferenceExpressionCandidates = argument.children.filterIsInstance<KtNameReferenceExpression>().filter {
+            it.getReferencedName() == "HIDDEN"
+        }
+        if (hiddenByDotQualifiedCandidates.isNotEmpty() || hiddenByNameReferenceExpressionCandidates.isNotEmpty())
+            return true
+    }
+    return false
+}
+
+fun KtValueArgument.looksLikeLevelArgument(): Boolean {
+    return children.filterIsInstance<KtValueArgumentName>().any { it.asName.asString() == "level" }
 }
 
 internal fun KtAnnotated.isJvmStatic(support: KtUltraLightSupport): Boolean =
@@ -328,25 +359,23 @@ internal fun KtDeclaration.simpleVisibility(): String = when {
 }
 
 internal fun KtModifierListOwner.isDeprecated(support: KtUltraLightSupport? = null): Boolean {
-    val jetModifierList = this.modifierList ?: return false
-    if (jetModifierList.annotationEntries.isEmpty()) return false
+    val modifierList = this.modifierList ?: return false
+    if (modifierList.annotationEntries.isEmpty()) return false
 
-    val deprecatedFqName = KotlinBuiltIns.FQ_NAMES.deprecated
+    val deprecatedFqName = StandardNames.FqNames.deprecated
     val deprecatedName = deprecatedFqName.shortName().asString()
 
-    for (annotationEntry in jetModifierList.annotationEntries) {
-        val typeReference = annotationEntry.typeReference ?: continue
-
-        val typeElement = typeReference.typeElement as? KtUserType ?: continue
-        // If it's not a user type, it's definitely not a ref to deprecated
+    for (annotationEntry in modifierList.annotationEntries) {
+        // If it's not a user type, it's definitely not a reference to deprecated
+        val typeElement = annotationEntry.typeReference?.typeElement as? KtUserType ?: continue
 
         val fqName = toQualifiedName(typeElement) ?: continue
 
-        if (deprecatedFqName == fqName) return true
-        if (deprecatedName == fqName.asString()) return true
+        if (fqName == deprecatedFqName) return true
+        if (fqName.asString() == deprecatedName) return true
     }
 
-    return support?.findAnnotation(this, KotlinBuiltIns.FQ_NAMES.deprecated) !== null
+    return support?.findAnnotation(this, StandardNames.FqNames.deprecated) !== null
 }
 
 private fun toQualifiedName(userType: KtUserType): FqName? {
@@ -442,8 +471,11 @@ inline fun <T> runReadAction(crossinline runnable: () -> T): T {
     return ApplicationManager.getApplication().runReadAction(Computable { runnable() })
 }
 
+@Suppress("NOTHING_TO_INLINE")
 inline fun KtClassOrObject.safeIsLocal(): Boolean = runReadAction { this.isLocal }
 
+@Suppress("NOTHING_TO_INLINE")
 inline fun KtFile.safeIsScript() = runReadAction { this.isScript() }
 
+@Suppress("NOTHING_TO_INLINE")
 inline fun KtFile.safeScript() = runReadAction { this.script }

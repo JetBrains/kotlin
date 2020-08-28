@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.linkage.IrDeserializer
+import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -35,8 +38,7 @@ typealias Psi2IrPostprocessingStep = (IrModuleFragment) -> Unit
 
 class Psi2IrTranslator(
     val languageVersionSettings: LanguageVersionSettings,
-    val configuration: Psi2IrConfiguration = Psi2IrConfiguration(),
-    val signaturer: IdSignatureComposer
+    val configuration: Psi2IrConfiguration,
 ) {
     private val postprocessingSteps = SmartList<Psi2IrPostprocessingStep>()
 
@@ -44,36 +46,34 @@ class Psi2IrTranslator(
         postprocessingSteps.add(step)
     }
 
-    // NOTE: used only for test purpose
-    fun generateModule(
-        moduleDescriptor: ModuleDescriptor,
-        ktFiles: Collection<KtFile>,
-        bindingContext: BindingContext,
-        generatorExtensions: GeneratorExtensions,
-        nameProvider: NameProvider = NameProvider.DEFAULT
-    ): IrModuleFragment {
-        val context = createGeneratorContext(moduleDescriptor, bindingContext, nameProvider, extensions = generatorExtensions)
-        val irProviders = generateTypicalIrProviderList(
-            moduleDescriptor, context.irBuiltIns, context.symbolTable, extensions = generatorExtensions
-        )
-        return generateModuleFragment(context, ktFiles, irProviders)
-    }
-
     fun createGeneratorContext(
         moduleDescriptor: ModuleDescriptor,
         bindingContext: BindingContext,
-        nameProvider: NameProvider = NameProvider.DEFAULT,
-        symbolTable: SymbolTable = SymbolTable(signaturer, nameProvider),
+        symbolTable: SymbolTable,
         extensions: GeneratorExtensions = GeneratorExtensions()
-    ): GeneratorContext =
-        createGeneratorContext(
-            configuration, moduleDescriptor, bindingContext, languageVersionSettings, symbolTable, extensions
+    ): GeneratorContext {
+        val typeTranslator = TypeTranslator(symbolTable, languageVersionSettings, moduleDescriptor.builtIns, extensions = extensions)
+        val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
+        typeTranslator.constantValueGenerator = constantValueGenerator
+        constantValueGenerator.typeTranslator = typeTranslator
+        return GeneratorContext(
+            configuration,
+            moduleDescriptor,
+            bindingContext,
+            languageVersionSettings,
+            symbolTable,
+            extensions,
+            typeTranslator,
+            constantValueGenerator,
+            IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable),
         )
+    }
 
     fun generateModuleFragment(
         context: GeneratorContext,
         ktFiles: Collection<KtFile>,
         irProviders: List<IrProvider>,
+        linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>,
         expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>? = null
     ): IrModuleFragment {
         val moduleGenerator = ModuleGenerator(context)
@@ -83,16 +83,21 @@ class Psi2IrTranslator(
         expectDescriptorToSymbol?.let { referenceExpectsForUsedActuals(it, context.symbolTable, irModule) }
         postprocess(context, irModule)
 
-        irProviders.filterIsInstance<IrDeserializer>().forEach { it.init(irModule) }
+        val deserializers = irProviders.filterIsInstance<IrDeserializer>()
+        deserializers.forEach { it.init(irModule, linkerExtensions) }
 
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
 
-        assert(context.symbolTable.allUnbound.isEmpty())
+        deserializers.forEach { it.postProcess() }
+        val allUnbound = context.symbolTable.allUnbound
+        assert(allUnbound.isEmpty()) { "Unbound symbols not allowed\n${allUnbound.joinToString("\n\t", "\t")}" }
+
         postprocessingSteps.forEach { it.invoke(irModule) }
 //        assert(context.symbolTable.allUnbound.isEmpty()) // TODO: fix IrPluginContext to make it not produce additional external reference
 
         // TODO: remove it once plugin API improved
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
+        deserializers.forEach { it.postProcess() }
 
         return irModule
     }

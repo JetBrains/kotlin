@@ -23,3 +23,5 @@ enum class E {
 
     internal open fun <caret>foo(n: Int): Int = n
 }
+
+// DISABLE-ERRORS

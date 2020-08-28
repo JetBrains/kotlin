@@ -38,6 +38,17 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         }
     }
 
+    val jvmTarget = get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
+    if (jvmTarget.bytecodeVersion < JvmTarget.JVM_1_8.bytecodeVersion) {
+        val jvmDefaultMode = languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
+        if (jvmDefaultMode.forAllMethodsWithBody) {
+            messageCollector.report(
+                ERROR,
+                "'-Xjvm-default=${jvmDefaultMode.description}' is only supported since JVM target 1.8. Recompile with '-jvm-target 1.8'"
+            )
+        }
+    }
+
     addAll(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, arguments.additionalJavaModules?.asList())
 }
 
@@ -198,6 +209,7 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
 
     put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage)
     put(JVMConfigurationKeys.USE_SINGLE_MODULE, arguments.singleModule)
+    put(JVMConfigurationKeys.USE_OLD_SPILLED_VAR_TYPE_ANALYSIS, arguments.useOldSpilledVarTypeAnalysis)
 
     arguments.declarationsOutputPath?.let { put(JVMConfigurationKeys.DECLARATIONS_JSON_PATH, it) }
 }

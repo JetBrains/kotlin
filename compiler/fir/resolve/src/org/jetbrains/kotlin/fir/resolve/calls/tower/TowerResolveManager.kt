@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.fir.resolve.calls.tower
 import org.jetbrains.kotlin.fir.resolve.calls.CandidateCollector
 import java.util.*
 import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.createCoroutineUnintercepted
+import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
+import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 
 class TowerResolveManager private constructor(private val shouldStopAtTheLevel: (TowerGroup) -> Boolean) {
 
@@ -19,7 +22,13 @@ class TowerResolveManager private constructor(private val shouldStopAtTheLevel: 
         queue.clear()
     }
 
-    private suspend fun suspendResolverTask(group: TowerGroup) = suspendCoroutine<Unit> { queue += SuspendedResolverTask(it, group) }
+    private suspend fun suspendResolverTask(group: TowerGroup) =
+        suspendCoroutineUninterceptedOrReturn<Unit> {
+            val nextTask = queue.poll()
+            queue += SuspendedResolverTask(it, group)
+            if (nextTask != null) resumeTask(nextTask)
+            COROUTINE_SUSPENDED
+        }
 
     suspend fun requestGroup(requested: TowerGroup) {
         if (shouldStopAtTheLevel(requested)) {
@@ -34,7 +43,7 @@ class TowerResolveManager private constructor(private val shouldStopAtTheLevel: 
         }
     }
 
-    private suspend fun stopResolverTask(): Nothing = suspendCoroutine { }
+    private suspend fun stopResolverTask(): Nothing = suspendCoroutineUninterceptedOrReturn { COROUTINE_SUSPENDED }
 
     private data class SuspendedResolverTask(
         val continuation: Continuation<Unit>,
@@ -46,7 +55,7 @@ class TowerResolveManager private constructor(private val shouldStopAtTheLevel: 
     }
 
     fun enqueueResolverTask(group: TowerGroup = TowerGroup.Start, task: suspend () -> Unit) {
-        val continuation = task.createCoroutine(
+        val continuation = task.createCoroutineUnintercepted(
             object : Continuation<Unit> {
                 override val context: CoroutineContext
                     get() = EmptyCoroutineContext
@@ -60,18 +69,17 @@ class TowerResolveManager private constructor(private val shouldStopAtTheLevel: 
         queue += SuspendedResolverTask(continuation, group)
     }
 
+    private fun resumeTask(task: SuspendedResolverTask) {
+        if (shouldStopAtTheLevel(task.group)) {
+            return
+        }
+        task.continuation.resume(Unit)
+    }
+
     fun runTasks() {
         while (queue.isNotEmpty()) {
             val current = queue.poll()
-            if (shouldStopAtTheLevel(current.group)) {
-                return
-            }
-            current.continuation.resume(Unit)
+            resumeTask(current)
         }
     }
-}
-
-enum class InvokeResolveMode {
-    IMPLICIT_CALL_ON_GIVEN_RECEIVER,
-    RECEIVER_FOR_INVOKE_BUILTIN_EXTENSION
 }

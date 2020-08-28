@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.configuration.cache.CachedConfigurationInputs
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.DefaultScriptConfigurationLoader
 import org.jetbrains.kotlin.idea.core.script.configuration.loader.ScriptConfigurationLoadingContext
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.idea.core.util.EDT
 import org.jetbrains.kotlin.idea.scripting.gradle.getGradleScriptInputsStamp
 import org.jetbrains.kotlin.idea.scripting.gradle.isGradleKotlinScript
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
-import org.jetbrains.kotlin.idea.scripting.gradle.useScriptConfigurationFromImportOnly
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -28,41 +26,27 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
  *
  * TODO(gradle6): remove
  */
-class GradleLegacyScriptConfigurationLoaderForOutOfProjectScripts(project: Project) : DefaultScriptConfigurationLoader(project) {
-    override fun loadDependencies(
-        isFirstLoad: Boolean,
-        ktFile: KtFile,
-        scriptDefinition: ScriptDefinition,
-        context: ScriptConfigurationLoadingContext
-    ): Boolean {
-        val vFile = ktFile.originalFile.virtualFile
+class GradleLegacyScriptConfigurationLoader(project: Project) : DefaultScriptConfigurationLoader(project) {
+    private val buildRootsManager
+        get() = GradleBuildRootsManager.getInstance(project)
 
-        // Gradle read files from FS
-        GlobalScope.launch(EDT(project)) {
-            runWriteAction {
-                FileDocumentManager.getInstance().saveAllDocuments()
-            }
+    override fun interceptBackgroundLoading(file: VirtualFile, isFirstLoad: Boolean, doLoad: () -> Unit): Boolean {
+        if (!isGradleKotlinScript(file)) return false
+
+        GradleStandaloneScriptActionsManager.getInstance(project).add {
+            GradleStandaloneScriptActions(it, file, isFirstLoad, doLoad)
         }
-
-        val result = getConfigurationThroughScriptingApi(ktFile, vFile, scriptDefinition)
-
-        context.saveNewConfiguration(vFile, result)
 
         return true
     }
-}
 
-/**
- * Loader that performs loading for .gralde.kts scripts configuration through the [DefaultScriptingSupport]
- *
- * TODO(gradle6): remove
- */
-class GradleLegacyScriptConfigurationLoader(project: Project) : DefaultScriptConfigurationLoader(project) {
-    private val buildRootsManager = GradleBuildRootsManager.getInstance(project)
+    override fun hideInterceptedNotification(file: VirtualFile) {
+        if (!isGradleKotlinScript(file)) return
 
-    override fun shouldRunInBackground(scriptDefinition: ScriptDefinition): Boolean {
-        return if (useScriptConfigurationFromImportOnly()) false else super.shouldRunInBackground(scriptDefinition)
+        GradleStandaloneScriptActionsManager.getInstance(project).remove(file)
     }
+
+    override fun shouldRunInBackground(scriptDefinition: ScriptDefinition) = true
 
     override fun loadDependencies(
         isFirstLoad: Boolean,
@@ -74,20 +58,15 @@ class GradleLegacyScriptConfigurationLoader(project: Project) : DefaultScriptCon
 
         if (!isGradleKotlinScript(vFile)) return false
 
-        if (useScriptConfigurationFromImportOnly()) {
-            // do nothing, project import notification will be already showed
-            // and configuration for gradle build scripts will be saved at the end of import
-            return true
-        }
+        hideInterceptedNotification(vFile)
 
         if (!buildRootsManager.isAffectedGradleProjectFile(vFile.path)) {
-            ScriptConfigurationManager.markFileWithManualConfigurationLoading(vFile)
+            // not known gradle file and not configured as standalone script
+            // skip
             return true
         }
 
-        ScriptConfigurationManager.clearManualConfigurationLoadingIfNeeded(vFile)
-
-        // Gradle read files from FS
+        // Gradle read files from FS, so let's save all docs
         GlobalScope.launch(EDT(project)) {
             runWriteAction {
                 FileDocumentManager.getInstance().saveAllDocuments()

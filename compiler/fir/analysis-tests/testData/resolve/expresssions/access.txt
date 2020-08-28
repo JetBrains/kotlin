@@ -36,8 +36,8 @@ FILE: access.kt
             ^plus String()
         }
 
-        public final fun R|Foo|.check(): <ERROR TYPE REF: Inapplicable(INAPPLICABLE): [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]> {
-            ^check this@R|/Bar.check|.R|/Foo.abc|().<Inapplicable(INAPPLICABLE): [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(this@R|/Bar|.R|/Bar.bar|())
+        public final fun R|Foo|.check(): R|ERROR CLASS: Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]| {
+            ^check this@R|/Bar.check|.R|/Foo.abc|().<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(this@R|/Bar|.R|/Bar.bar|())
         }
 
         public final fun R|Foo|.check2(): R|kotlin/String| {
@@ -57,7 +57,7 @@ FILE: access.kt
         lval a: R|kotlin/Int| = Int(10)
         lval b: R|kotlin/Int| = R|<local>/a|
         lval d: R|kotlin/String| = String()
-        lval c: <ERROR TYPE REF: Unresolved name: c> = <Unresolved name: c>#
+        lval c: R|ERROR CLASS: Unresolved name: c| = <Unresolved name: c>#
         <Unresolved name: abc>#()
         local final fun bcd(): R|kotlin/Unit| {
         }

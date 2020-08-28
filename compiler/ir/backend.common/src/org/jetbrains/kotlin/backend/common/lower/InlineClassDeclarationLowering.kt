@@ -15,8 +15,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -74,7 +73,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
             val irClass = irConstructor.parentAsClass
 
             // Copied and adapted from Kotlin/Native InlineClassTransformer
-            staticMethod.body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+            staticMethod.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                 statements += context.createIrBuilder(staticMethod.symbol).irBlockBody(staticMethod) {
 
                     // Secondary ctors of inline class must delegate to some other constructors.
@@ -85,7 +84,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
                     }
 
                     (irConstructor.body as IrBlockBody).statements.forEach { statement ->
-                        +statement.transform(object : IrElementTransformerVoid() {
+                        +statement.transformStatement(object : IrElementTransformerVoid() {
                             override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
                                 expression.transformChildrenVoid()
                                 return irBlock(expression) {
@@ -107,7 +106,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
                                 return expression
                             }
 
-                            override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
+                            override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
                                 declaration.transformChildrenVoid(this)
                                 if (declaration.parent == irConstructor)
                                     declaration.parent = staticMethod
@@ -126,7 +125,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
                                 return expression
                             }
 
-                        }, null)
+                        })
                     }
                     +irReturn(irGet(thisVar))
                 }.statements
@@ -140,11 +139,11 @@ class InlineClassLowering(val context: CommonBackendContext) {
             val functionBody = function.body
 
             // Move function body to static method, transforming value parameters and nested declarations
-            staticMethod.body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+            staticMethod.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                 statements.addAll((functionBody as IrBlockBody).statements)
 
                 transformChildrenVoid(object : IrElementTransformerVoid() {
-                    override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
+                    override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
                         declaration.transformChildrenVoid(this)
                         if (declaration.parent == function)
                             declaration.parent = staticMethod
@@ -178,7 +177,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
 
         private fun delegateToStaticMethod(function: IrSimpleFunction, staticMethod: IrSimpleFunction): IrBlockBody {
             // Delegate original function to static implementation
-            return IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+            return context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                 statements += context.createIrBuilder(function.symbol).irBlockBody {
                     +irReturn(
                         irCall(staticMethod).apply {
@@ -221,12 +220,11 @@ class InlineClassLowering(val context: CommonBackendContext) {
 
                 override fun visitCall(expression: IrCall): IrExpression {
                     expression.transformChildrenVoid(this)
-                    val function = expression.symbol.owner
+                    val function: IrSimpleFunction = expression.symbol.owner
                     if (function.parent !is IrClass ||
                         function.isStaticMethodOfClass ||
                         !function.parentAsClass.isInline ||
-                        (function is IrSimpleFunction && !function.isReal) ||
-                        (function is IrConstructor && function.isPrimary)
+                        !function.isReal
                     ) {
                         return expression
                     }
@@ -234,7 +232,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
                     return irCall(
                         expression,
                         getOrCreateStaticMethod(function),
-                        receiversAsArguments = (function is IrSimpleFunction)
+                        receiversAsArguments = true
                     )
                 }
 
@@ -244,7 +242,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
                     val klass = function.parentAsClass
                     return when {
                         !klass.isInline -> expression
-                        function.isPrimary -> irConstructorCall(expression, function)
+                        function.isPrimary -> irConstructorCall(expression, function.symbol)
                         else -> irCall(expression, getOrCreateStaticMethod(function))
                     }
                 }
@@ -258,5 +256,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
     }
 
     private fun createStaticBodilessMethod(function: IrFunction): IrSimpleFunction =
-        createStaticFunctionWithReceivers(function.parent, function.name.toInlineClassImplementationName(), function)
+        context.irFactory.createStaticFunctionWithReceivers(
+            function.parent, function.name.toInlineClassImplementationName(), function
+        )
 }

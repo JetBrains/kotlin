@@ -23,19 +23,19 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.intermediate.*
+import org.jetbrains.kotlin.psi2ir.resolveFakeOverride
 import org.jetbrains.kotlin.psi2ir.unwrappedGetMethod
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 class CallGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
@@ -119,10 +119,9 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         typeArguments: Map<TypeParameterDescriptor, KotlinType>?,
         origin: IrStatementOrigin? = null
     ) =
-        @Suppress("DEPRECATION")
         if (descriptor is LocalVariableDescriptor && descriptor.isDelegated) {
             val getterDescriptor = descriptor.getter!!
-            val getterSymbol = context.symbolTable.referenceFunction(getterDescriptor.original)
+            val getterSymbol = context.symbolTable.referenceSimpleFunction(getterDescriptor.original)
             IrCallImpl(
                 startOffset, endOffset, descriptor.type.toIrType(), getterSymbol, origin ?: IrStatementOrigin.GET_LOCAL_PROPERTY
             ).apply {
@@ -159,9 +158,12 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         return call.callReceiver.call { dispatchReceiver, extensionReceiver ->
             if (dispatchReceiver != null) throw AssertionError("Dispatch receiver should be null: $dispatchReceiver")
             if (extensionReceiver != null) throw AssertionError("Extension receiver should be null: $extensionReceiver")
-            val constructorSymbol = context.symbolTable.referenceConstructor(constructorDescriptor.original)
+            val descriptor = constructorDescriptor.original
+            val constructorSymbol = context.symbolTable.referenceConstructor(descriptor)
             val returnType = constructorDescriptor.returnType.toIrType()
-            val irCall = IrEnumConstructorCallImpl(startOffset, endOffset, returnType, constructorSymbol)
+            val irCall = IrEnumConstructorCallImpl(
+                startOffset, endOffset, returnType, constructorSymbol, descriptor.typeParametersCount, descriptor.valueParameters.size
+            )
             context.callToSubstitutedDescriptorMap[irCall] = constructorDescriptor
             addParametersToCall(startOffset, endOffset, call, irCall, irCall.type)
         }
@@ -174,12 +176,14 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         call: CallBuilder
     ): IrExpression {
         val getMethodDescriptor = descriptor.unwrappedGetMethod
-        val superQualifierSymbol = call.superQualifier?.let { context.symbolTable.referenceClass(it) }
         val irType = descriptor.type.toIrType()
 
         return if (getMethodDescriptor == null) {
             call.callReceiver.call { dispatchReceiverValue, _ ->
-                val fieldSymbol = context.symbolTable.referenceField(descriptor.original)
+                val superQualifierSymbol = (call.superQualifier ?: descriptor.containingDeclaration as? ClassDescriptor)?.let {
+                    context.symbolTable.referenceClass(it)
+                }
+                val fieldSymbol = context.symbolTable.referenceField(descriptor.resolveFakeOverride().original)
                 IrGetFieldImpl(
                     startOffset, endOffset,
                     fieldSymbol,
@@ -190,6 +194,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                 ).also { context.callToSubstitutedDescriptorMap[it] = descriptor }
             }
         } else {
+            val superQualifierSymbol = call.superQualifier?.let { context.symbolTable.referenceClass(it) }
             call.callReceiver.adjustForCallee(getMethodDescriptor).call { dispatchReceiverValue, extensionReceiverValue ->
                 if (descriptor.isDynamic()) {
                     val dispatchReceiver = getDynamicExpressionReceiver(dispatchReceiverValue, extensionReceiverValue, descriptor)
@@ -201,7 +206,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                         dispatchReceiver
                     )
                 } else {
-                    val getterSymbol = context.symbolTable.referenceFunction(getMethodDescriptor.original)
+                    val getterSymbol = context.symbolTable.referenceSimpleFunction(getMethodDescriptor.original)
                     IrCallImpl(
                         startOffset, endOffset,
                         irType,
@@ -327,7 +332,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                         )
                 }
             } else {
-                val originalSymbol = context.symbolTable.referenceFunction(functionDescriptor.original)
+                val originalSymbol = context.symbolTable.referenceSimpleFunction(functionDescriptor.original)
                 IrCallImpl(
                     startOffset, endOffset,
                     irType,
@@ -406,7 +411,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
 
 fun IrExpression.hasNoSideEffects() =
     this is IrFunctionExpression ||
-            (this is IrCallableReference && dispatchReceiver == null && extensionReceiver == null) ||
+            (this is IrCallableReference<*> && dispatchReceiver == null && extensionReceiver == null) ||
             this is IrClassReference ||
             this is IrConst<*> ||
             this is IrGetValue

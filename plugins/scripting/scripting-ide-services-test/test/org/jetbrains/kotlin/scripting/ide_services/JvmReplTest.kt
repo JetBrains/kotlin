@@ -6,16 +6,23 @@
 package org.jetbrains.kotlin.scripting.ide_services
 
 import junit.framework.TestCase
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
-import org.jetbrains.kotlin.scripting.ide_services.test_util.JvmTestRepl
-import org.jetbrains.kotlin.scripting.ide_services.test_util.SourceCodeTestImpl
+import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocationWithRange
+import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.scripting.ide_services.test_util.*
 import java.io.File
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
-import kotlin.script.experimental.util.LinkedSnippet
-import kotlin.script.experimental.util.get
+import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.jvm.util.isError
 import kotlin.script.experimental.jvm.util.isIncomplete
+import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
+import kotlin.script.experimental.util.LinkedSnippet
+import kotlin.script.experimental.util.get
 
 // Adapted form GenericReplTest
 
@@ -86,6 +93,8 @@ class JvmIdeServicesTest : TestCase() {
                     } else {
                         assertEquals(3, loc.line)
                         assertEquals(11, loc.column)
+                        assertEquals(3, loc.lineEnd)
+                        assertEquals(14, loc.columnEnd)
                     }
                 } else {
                     fail("Result should be an error")
@@ -115,6 +124,8 @@ class JvmIdeServicesTest : TestCase() {
                     } else {
                         assertEquals(3, loc.line)
                         assertEquals(13, loc.column)
+                        assertEquals(3, loc.lineEnd)
+                        assertEquals(16, loc.columnEnd)
                     }
                 } else {
                     fail("Result should be an error")
@@ -264,11 +275,78 @@ class JvmIdeServicesTest : TestCase() {
                 )
             }
     }
+
+    fun testDependency() {
+        val resolver = ScriptDependenciesResolver()
+
+        val conf = ScriptCompilationConfiguration {
+            jvm {
+                updateClasspath(scriptCompilationClasspathFromContext("test", classLoader = DependsOn::class.java.classLoader))
+            }
+            defaultImports(DependsOn::class)
+            refineConfiguration {
+                onAnnotations(DependsOn::class, handler = { configureMavenDepsOnAnnotations(it, resolver) })
+            }
+        }
+
+        JvmTestRepl(conf)
+            .use { repl ->
+                val outputJarName = "kt35651.jar"
+                val (exitCode, outputJarPath) = compileFile("stringTo.kt", outputJarName)
+                assertEquals(ExitCode.OK, exitCode)
+
+                assertEvalUnit(
+                    repl, """
+                        @file:DependsOn("$outputJarPath")
+                        import example.dependency.*
+                        
+                        val x = listOf<String>()
+                    """.trimIndent()
+                )
+
+                // This snippet is needed to be evaluated to ensure that importing scopes were created
+                // (but default ones were not)
+                assertEvalUnit(
+                    repl, """
+                        import kotlin.math.*
+                        
+                        val y = listOf<String>()
+                    """.trimIndent()
+                )
+
+                assertEvalResult(repl, """ "a" to "a" """, "aa")
+            }
+    }
+
+    companion object {
+        private const val MODULE_PATH = "plugins/scripting/scripting-ide-services-test"
+        private val outputJarDir = createTempDir("temp-ide-services").toPath()
+
+        private data class CliCompilationResult(val exitCode: ExitCode, val outputJarPath: String)
+
+        private fun compileFile(inputKtFileName: String, outputJarName: String): CliCompilationResult {
+            val jarPath = outputJarDir.resolve(outputJarName).toAbsolutePath().toString().replace('\\', '/')
+
+            val compilerArgs = arrayOf(
+                "$MODULE_PATH/testData/$inputKtFileName",
+                "-kotlin-home", "dist/kotlinc",
+                "-d", jarPath
+            )
+
+            val exitCode = K2JVMCompiler().exec(
+                MessageCollector.NONE,
+                Services.EMPTY,
+                K2JVMCompilerArguments().apply {
+                    K2JVMCompiler().parseArguments(compilerArgs, this)
+                }
+            )
+
+            return CliCompilationResult(exitCode, jarPath)
+        }
+    }
 }
 
-// Artificial split into several testsuites, to speed up parallel testing
-class LegacyReplTestLong1 : TestCase() {
-
+class LegacyReplTestLong : TestCase() {
     fun test256Evals() {
         JvmTestRepl()
             .use { repl ->
@@ -298,10 +376,6 @@ class LegacyReplTestLong1 : TestCase() {
                 assertEquals(evaluated.toString(), evals, (evaluated?.result as ResultValue.Value?)?.value)
             }
     }
-}
-
-// Artificial split into several testsuites, to speed up parallel testing
-class LegacyReplTestLong2 : TestCase() {
 
     fun testReplSlowdownKt22740() {
         JvmTestRepl()
@@ -383,17 +457,19 @@ private fun checkCompile(repl: JvmTestRepl, line: String): LinkedSnippet<KJvmCom
 
 private data class CompilationErrors(
     val message: String,
-    val location: CompilerMessageLocation?
+    val location: CompilerMessageLocationWithRange?
 )
 
 private fun <T> ResultWithDiagnostics<T>.getErrors(): CompilationErrors =
     CompilationErrors(
         reports.joinToString("\n") { report ->
             report.location?.let { loc ->
-                CompilerMessageLocation.create(
+                CompilerMessageLocationWithRange.create(
                     report.sourcePath,
                     loc.start.line,
                     loc.start.col,
+                    loc.end?.line,
+                    loc.end?.col,
                     null
                 )?.toString()?.let {
                     "$it "
@@ -408,10 +484,12 @@ private fun <T> ResultWithDiagnostics<T>.getErrors(): CompilationErrors =
             }
         }?.let {
             val loc = it.location ?: return@let null
-            CompilerMessageLocation.create(
+            CompilerMessageLocationWithRange.create(
                 it.sourcePath,
                 loc.start.line,
                 loc.start.col,
+                loc.end?.line,
+                loc.end?.col,
                 null
             )
         }

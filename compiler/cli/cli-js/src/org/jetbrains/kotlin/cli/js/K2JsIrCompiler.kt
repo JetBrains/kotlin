@@ -24,13 +24,17 @@ import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
@@ -193,6 +197,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     configuration = config.configuration,
                     allDependencies = resolvedLibraries,
                     friendDependencies = friendDependencies,
+                    irFactory = PersistentIrFactory,
                     outputKlibPath = outputKlibPath,
                     nopack = arguments.irProduceKlibDir
                 )
@@ -229,14 +234,19 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     mainArguments = mainCallArguments,
                     generateFullJs = !arguments.irDce,
                     generateDceJs = arguments.irDce,
-                    dceDriven = arguments.irDceDriven
+                    dceDriven = arguments.irDceDriven,
+                    multiModule = arguments.irPerModule,
+                    relativeRequirePath = true
                 )
             } catch (e: JsIrCompilationError) {
                 return COMPILATION_ERROR
             }
 
             val jsCode = if (arguments.irDce && !arguments.irDceDriven) compiledModule.dceJsCode!! else compiledModule.jsCode!!
-            outputFile.writeText(jsCode)
+            outputFile.writeText(jsCode.mainModule)
+            jsCode.dependencies.forEach { (name, content) ->
+                outputFile.resolveSibling("$name.js").writeText(content)
+            }
             if (arguments.generateDts) {
                 val dtsFile = outputFile.withReplacedExtensionOrNull(outputFile.extension, "d.ts")!!
                 dtsFile.writeText(compiledModule.tsDefinitions ?: error("No ts definitions"))
@@ -322,6 +332,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         }
 
         configuration.put(JSConfigurationKeys.PRINT_REACHABILITY_INFO, arguments.irDcePrintReachabilityInfo)
+        configuration.put(JSConfigurationKeys.DISABLE_FAKE_OVERRIDE_VALIDATOR, arguments.disableFakeOverrideValidator)
     }
 
     override fun executableScriptFileName(): String {

@@ -1,0 +1,16 @@
+callable: kotlin/collections/List.get
+
+// SYMBOLS:
+KtFirFunctionSymbol:
+  callableIdIfNonLocal: kotlin.collections.List.get
+  isExtension: false
+  isOperator: true
+  isSuspend: false
+  modality: ABSTRACT
+  name: get
+  origin: LIBRARY
+  receiverType: null
+  symbolKind: MEMBER
+  type: E
+  typeParameters: []
+  valueParameters: [KtFirFunctionValueParameterSymbol(index)]

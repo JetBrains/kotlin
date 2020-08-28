@@ -17,11 +17,11 @@ class C1
 // FILE: 2.kt
 package pp
 
-@A(<!INAPPLICABLE_CANDIDATE!>foo<!>)
+<!HIDDEN!>@A(<!HIDDEN!>foo<!>)<!>
 fun f2() {}
 
-@A(<!INAPPLICABLE_CANDIDATE!>foo<!>)
+<!HIDDEN!>@A(<!HIDDEN!>foo<!>)<!>
 val p2 = ""
 
-@A(<!INAPPLICABLE_CANDIDATE!>foo<!>)
+<!HIDDEN!>@A(<!HIDDEN!>foo<!>)<!>
 class C2

@@ -33,6 +33,9 @@ open class ScriptConfigurationMemoryCache(
         memoryCache.put(file, old.copy(applied = configurationSnapshot))
     }
 
+    override fun remove(file: VirtualFile) =
+        memoryCache.remove(file)
+
     @Synchronized
     override fun setLoaded(file: VirtualFile, configurationSnapshot: ScriptConfigurationSnapshot) {
         val old = memoryCache[file] ?: ScriptConfigurationState()

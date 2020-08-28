@@ -42,7 +42,7 @@ fun test() {
 inline fun <reified T : Any> reifiedNull(): T? = null
 
 fun testFrom13648() {
-    <!INAPPLICABLE_CANDIDATE!>takeNotNull<!>(reifiedNull() ?: "")
+    takeNotNull(reifiedNull() ?: "")
 }
 
 fun bar() = <!UNRESOLVED_REFERENCE!>unresolved<!>

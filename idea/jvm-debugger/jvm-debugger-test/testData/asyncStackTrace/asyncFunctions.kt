@@ -5,12 +5,15 @@ suspend fun main() {
     val b = 7
     none()
     foo()
+    val dead1 = a
+    val dead2 = b
 }
 
 suspend fun foo() {
     val x = "foo"
     none()
     bar()
+    val dead = x
 }
 
 suspend fun bar() {
@@ -19,6 +22,7 @@ suspend fun bar() {
     val z = "bar"
     //Breakpoint!
     val a = 5
+    val dead = y
 }
 
 suspend fun none() {}

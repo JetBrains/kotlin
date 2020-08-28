@@ -9,13 +9,11 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.record
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.sam.*
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScope
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceMapNotNull
 
 class FunInterfaceConstructorsScopeProvider(
     storageManager: StorageManager,
@@ -40,18 +38,17 @@ class FunInterfaceConstructorsSyntheticScope(
             createSamConstructorFunction(classifier.containingDeclaration, classifier, samResolver, samConversionOracle)
         }
 
-    override fun getSyntheticConstructors(scope: ResolutionScope, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
-        val classifier = scope.getContributedClassifier(name, location) ?: return emptyList()
-        recordSamLookupsToClassifier(classifier, location)
+    override fun getSyntheticConstructors(
+        contributedClassifier: ClassifierDescriptor,
+        location: LookupLocation
+    ): Collection<FunctionDescriptor> {
+        recordSamLookupsToClassifier(contributedClassifier, location)
 
-        return listOfNotNull(getSamConstructor(classifier))
+        return listOfNotNull(getSamConstructor(contributedClassifier))
     }
 
-    override fun getSyntheticConstructors(scope: ResolutionScope): Collection<FunctionDescriptor> {
-        val classifiers = scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS).filterIsInstance<ClassifierDescriptor>()
-
-        return classifiers.mapNotNull { getSamConstructor(it) }
-    }
+    override fun getSyntheticConstructors(classifierDescriptors: Collection<DeclarationDescriptor>): Collection<FunctionDescriptor> =
+        classifierDescriptors.filterIsInstanceMapNotNull<ClassifierDescriptor, FunctionDescriptor> { getSamConstructor(it) }
 
     private fun getSamConstructor(classifier: ClassifierDescriptor): SamConstructorDescriptor? {
         if (classifier is TypeAliasDescriptor) {

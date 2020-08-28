@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.Visibilities.*
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirSetter
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPropertySetter
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirPropertySetterFactory
 import org.junit.Test
 
-class PropertySetterCommonizerTest : AbstractCommonizerTest<CirSetter?, CirSetter?>() {
+class PropertySetterCommonizerTest : AbstractCommonizerTest<CirPropertySetter?, CirPropertySetter?>() {
 
     @Test
     fun absentOnly() = super.doTestSuccess(
@@ -88,13 +89,13 @@ class PropertySetterCommonizerTest : AbstractCommonizerTest<CirSetter?, CirSette
 
     private fun doTestSuccess(expected: Visibility?, vararg variants: Visibility?) =
         super.doTestSuccess(
-            expected = expected?.let { CirSetter.createDefaultNoAnnotations(expected) },
-            *variants.map { it?.let(CirSetter.Companion::createDefaultNoAnnotations) }.toTypedArray()
+            expected = expected?.let { CirPropertySetterFactory.createDefaultNoAnnotations(expected) },
+            *variants.map { it?.let(CirPropertySetterFactory::createDefaultNoAnnotations) }.toTypedArray()
         )
 
     private fun doTestFailure(vararg variants: Visibility?) =
         super.doTestFailure(
-            *variants.map { it?.let(CirSetter.Companion::createDefaultNoAnnotations) }.toTypedArray(),
+            *variants.map { it?.let(CirPropertySetterFactory::createDefaultNoAnnotations) }.toTypedArray(),
             shouldFailOnFirstVariant = false
         )
 

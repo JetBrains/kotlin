@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.checkers.isBuiltInCoroutineContext
 import org.jetbrains.kotlin.resolve.calls.context.*
+import org.jetbrains.kotlin.resolve.calls.inference.CoroutineInferenceSession
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -49,10 +50,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.expressions.FunctionWithBigAritySupport.LanguageVersionDependent
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
-import org.jetbrains.kotlin.types.typeUtil.builtIns
-import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 import java.util.*
 import javax.inject.Inject
@@ -81,21 +79,6 @@ private fun KotlinTypeRefiner.refineBareType(type: PossiblyBareType): PossiblyBa
     if (type.isBare) return type
     val newType = type.actualType.let { refineType(it) }
     return PossiblyBareType.type(newType)
-}
-
-@OptIn(TypeRefinement::class)
-private fun <T : DoubleColonLHS> KotlinTypeRefiner.refineLHS(lhs: T): T = when (lhs) {
-    is DoubleColonLHS.Expression -> {
-        val newType = lhs.typeInfo.type?.let { refineType(it) }
-        DoubleColonLHS.Expression(
-            lhs.typeInfo.replaceType(newType),
-            lhs.isObjectQualifier
-        ) as T
-    }
-    is DoubleColonLHS.Type -> {
-        DoubleColonLHS.Type(refineType(lhs.type), refineBareType(lhs.possiblyBareType)) as T
-    }
-    else -> throw IllegalStateException()
 }
 
 // Returns true if this expression has the form "A<B>" which means it's a type on the LHS of a double colon expression
@@ -325,7 +308,7 @@ class DoubleColonExpressionResolver(
     }
 
     private fun resolveReservedExpressionSyntaxOnDoubleColonLHS(doubleColonExpression: KtDoubleColonExpression, c: ExpressionTypingContext):
-            Pair<Boolean, DoubleColonLHS?> {
+            ReservedDoubleColonLHSResolutionResult {
         val resultForReservedExpr = tryResolveLHS(
             doubleColonExpression, c,
             this::shouldTryResolveLHSAsReservedExpression,
@@ -335,7 +318,7 @@ class DoubleColonExpressionResolver(
             val lhs = resultForReservedExpr.lhs
             if (lhs != null) {
                 c.trace.report(RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS.on(resultForReservedExpr.expression))
-                return Pair(true, resultForReservedExpr.commit())
+                return ReservedDoubleColonLHSResolutionResult(true, resultForReservedExpr.commit(), resultForReservedExpr.traceAndCache)
             }
         }
 
@@ -349,11 +332,13 @@ class DoubleColonExpressionResolver(
             if (lhs != null) {
                 c.trace.report(RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS.on(resultForReservedCallChain.expression))
                 // DO NOT commit trace from resultForReservedCallChain here
-                return Pair(true, null)
+                return ReservedDoubleColonLHSResolutionResult(true, null, resultForReservedExpr?.traceAndCache)
             }
         }
 
-        return Pair(false, null)
+        return ReservedDoubleColonLHSResolutionResult(
+            false, null, resultForReservedExpr?.traceAndCache ?: resultForReservedCallChain?.traceAndCache
+        )
     }
 
     internal fun resolveDoubleColonLHS(doubleColonExpression: KtDoubleColonExpression, c: ExpressionTypingContext): DoubleColonLHS? {
@@ -367,7 +352,9 @@ class DoubleColonExpressionResolver(
             }
         }
 
-        val (isReservedExpressionSyntax, doubleColonLHS) = resolveReservedExpressionSyntaxOnDoubleColonLHS(doubleColonExpression, c)
+        val (isReservedExpressionSyntax, doubleColonLHS, traceAndCacheFromReservedDoubleColonLHS) =
+            resolveReservedExpressionSyntaxOnDoubleColonLHS(doubleColonExpression, c)
+
         if (isReservedExpressionSyntax) return doubleColonLHS
 
         val resultForType = tryResolveLHS(doubleColonExpression, c, this::shouldTryResolveLHSAsType) { expression, context ->
@@ -390,13 +377,24 @@ class DoubleColonExpressionResolver(
             }
         }
 
-        // If the LHS could be resolved neither as an expression nor as a type, we should still type-check it to allow all diagnostics
-        // to be reported and references to be resolved. For that, we commit one of the applicable traces here, preferring the expression
         if (resultForExpr != null) return resultForExpr.commit()
         if (resultForType != null) return resultForType.commit()
 
+        /*
+         * If the LHS could be resolved neither as an expression nor as a type,
+         * but it was resolved as expression with reserved syntax like `foo?::bar?::bar`,
+         * then we commit the trace of that resolution result.
+         */
+        traceAndCacheFromReservedDoubleColonLHS?.commit()
+
         return null
     }
+
+    private data class ReservedDoubleColonLHSResolutionResult(
+        val isReservedExpressionSyntax: Boolean,
+        val lhs: DoubleColonLHS?,
+        val traceAndCache: TemporaryTraceAndCache?
+    )
 
     private class LHSResolutionResult<out T : DoubleColonLHS>(
         val lhs: T?,
@@ -543,6 +541,11 @@ class DoubleColonExpressionResolver(
         val (lhs, resolutionResults) = resolveCallableReference(expression, c, ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS)
         val result = getCallableReferenceType(expression, lhs, resolutionResults, c)
         val dataFlowInfo = (lhs as? DoubleColonLHS.Expression)?.dataFlowInfo ?: c.dataFlowInfo
+
+        if (c.inferenceSession is CoroutineInferenceSession && result?.contains { it is StubType } == true) {
+            c.inferenceSession.addSimpleCall(expression)
+        }
+
         return dataFlowAnalyzer.checkType(createTypeInfo(result, dataFlowInfo), expression, c)
     }
 

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.codegen.inline.addFakeContinuationConstructorCallMar
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.codegen.inline.preprocessSuspendMarkers
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JVMConstructorCallNormalizationMode
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -95,7 +96,8 @@ class SuspendFunctionGenerationStrategy(
             languageVersionSettings = languageVersionSettings,
             disableTailCallOptimizationForFunctionReturningUnit = originalSuspendDescriptor.returnType?.isUnit() == true &&
                     originalSuspendDescriptor.overriddenDescriptors.isNotEmpty() &&
-                    !originalSuspendDescriptor.allOverriddenFunctionsReturnUnit()
+                    !originalSuspendDescriptor.allOverriddenFunctionsReturnUnit(),
+            useOldSpilledVarTypeAnalysis = state.configuration.getBoolean(JVMConfigurationKeys.USE_OLD_SPILLED_VAR_TYPE_ANALYSIS)
         )
     }
 

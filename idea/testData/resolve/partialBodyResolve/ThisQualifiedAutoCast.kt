@@ -7,6 +7,6 @@ class C(val s: String?) {
             print(this.s!!)
         }
 
-        <caret>s.length()
+        <caret>s.length
     }
 }

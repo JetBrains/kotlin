@@ -3,4 +3,4 @@ enum class MyEnum {
     SECOND
 }
 
-fun foo(me: MyEnum): Boolean = me is MyEnum.FIRST
+fun foo(me: MyEnum): Boolean = me is <!UNRESOLVED_REFERENCE!>MyEnum.FIRST<!>

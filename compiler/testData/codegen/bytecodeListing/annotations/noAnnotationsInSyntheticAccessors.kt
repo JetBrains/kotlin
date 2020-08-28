@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 annotation class Ann
 
 class Foo private @Ann constructor(@Ann s: String) {

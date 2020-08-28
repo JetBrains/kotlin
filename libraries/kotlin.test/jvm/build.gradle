@@ -2,8 +2,13 @@ description = 'Kotlin Test'
 
 apply plugin: 'kotlin-platform-jvm'
 
+archivesBaseName = 'kotlin-test'
+
 configureJvm6Project(project)
-configurePublishing(project)
+
+configurePublishing(project) {
+    artifactId = archivesBaseName
+}
 
 def includeJava9 = BuildPropertiesExtKt.getIncludeJava9(project.kotlinBuildProperties)
 
@@ -20,8 +25,6 @@ dependencies {
     testCompile('junit:junit:4.12')
 }
 
-archivesBaseName = 'kotlin-test'
-
 jar {
     manifestAttributes(manifest, project, 'Test', true)
     if (includeJava9) {
@@ -29,21 +32,16 @@ jar {
     }
 }
 
-task modularJar(type: Jar) {
+configureModularJar {
     dependsOn(jar)
     manifestAttributes(manifest, project, 'Test', true)
-    classifier = 'modular'
 
     from zipTree(jar.outputs.files.singleFile)
 }
 
-artifacts {
-    archives sourcesJar
-    sources sourcesJar
-    archives modularJar
-}
+configureSourcesJar()
 
-javadocJar()
+configureJavadocJar()
 
 compileKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-Xnormalize-constructor-calls=enable",

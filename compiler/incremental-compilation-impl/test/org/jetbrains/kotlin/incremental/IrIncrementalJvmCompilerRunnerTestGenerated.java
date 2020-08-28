@@ -311,6 +311,11 @@ public class IrIncrementalJvmCompilerRunnerTestGenerated extends AbstractIrIncre
             runTest("jps-plugin/testData/incremental/pureKotlin/inlineUsedWhereDeclared/");
         }
 
+        @TestMetadata("innerClassesFromSupertypes")
+        public void testInnerClassesFromSupertypes() throws Exception {
+            runTest("jps-plugin/testData/incremental/pureKotlin/innerClassesFromSupertypes/");
+        }
+
         @TestMetadata("internalClassChanged")
         public void testInternalClassChanged() throws Exception {
             runTest("jps-plugin/testData/incremental/pureKotlin/internalClassChanged/");
@@ -742,6 +747,11 @@ public class IrIncrementalJvmCompilerRunnerTestGenerated extends AbstractIrIncre
         @TestMetadata("inferredTypeChanged")
         public void testInferredTypeChanged() throws Exception {
             runTest("jps-plugin/testData/incremental/classHierarchyAffected/inferredTypeChanged/");
+        }
+
+        @TestMetadata("interfaceAnyMethods")
+        public void testInterfaceAnyMethods() throws Exception {
+            runTest("jps-plugin/testData/incremental/classHierarchyAffected/interfaceAnyMethods/");
         }
 
         @TestMetadata("lambdaParameterAffected")
@@ -1939,6 +1949,11 @@ public class IrIncrementalJvmCompilerRunnerTestGenerated extends AbstractIrIncre
                 runTest("jps-plugin/testData/incremental/withJava/other/defaultValueInConstructorAdded/");
             }
 
+            @TestMetadata("inlineFunctionWithJvmNameInClass")
+            public void testInlineFunctionWithJvmNameInClass() throws Exception {
+                runTest("jps-plugin/testData/incremental/withJava/other/inlineFunctionWithJvmNameInClass/");
+            }
+
             @TestMetadata("inlineTopLevelFunctionWithJvmName")
             public void testInlineTopLevelFunctionWithJvmName() throws Exception {
                 runTest("jps-plugin/testData/incremental/withJava/other/inlineTopLevelFunctionWithJvmName/");
@@ -2129,6 +2144,19 @@ public class IrIncrementalJvmCompilerRunnerTestGenerated extends AbstractIrIncre
 
                 public void testAllFilesPresentInDefaultValueInConstructorAdded() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/withJava/other/defaultValueInConstructorAdded"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                }
+            }
+
+            @TestMetadata("jps-plugin/testData/incremental/withJava/other/inlineFunctionWithJvmNameInClass")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class InlineFunctionWithJvmNameInClass extends AbstractIrIncrementalJvmCompilerRunnerTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInInlineFunctionWithJvmNameInClass() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/withJava/other/inlineFunctionWithJvmNameInClass"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
                 }
             }
 

@@ -1,4 +1,6 @@
 // "Optimize imports" "true"
 // WITH_RUNTIME
 
-val (a, b, c) = Triple(1, 2, 3)
+fun test() {
+    val (a, b, c) = Triple(1, 2, 3)
+}

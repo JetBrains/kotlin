@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -15,23 +15,21 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrConstructorCallImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType,
     override val symbol: IrConstructorSymbol,
     typeArgumentsCount: Int,
     override val constructorTypeArgumentsCount: Int,
     valueArgumentsCount: Int,
-    origin: IrStatementOrigin? = null
-) :
-    IrCallWithIndexedArgumentsBase(startOffset, endOffset, type, typeArgumentsCount, valueArgumentsCount, origin),
-    IrConstructorCall {
-
+    override val origin: IrStatementOrigin? = null,
+) : IrConstructorCall(typeArgumentsCount, valueArgumentsCount) {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitConstructorCall(this, data)
 
     companion object {
 
+        @ObsoleteDescriptorBasedAPI
         fun fromSymbolDescriptor(
             startOffset: Int,
             endOffset: Int,
@@ -47,10 +45,10 @@ class IrConstructorCallImpl(
                 startOffset, endOffset,
                 type,
                 constructorSymbol,
-                totalTypeParametersCount,
-                totalTypeParametersCount - classTypeParametersCount,
-                valueParametersCount,
-                origin
+                typeArgumentsCount = totalTypeParametersCount,
+                constructorTypeArgumentsCount = totalTypeParametersCount - classTypeParametersCount,
+                valueArgumentsCount = valueParametersCount,
+                origin = origin
             )
         }
 
@@ -91,7 +89,9 @@ class IrConstructorCallImpl(
         }
 
         fun fromSymbolOwner(type: IrType, constructorSymbol: IrConstructorSymbol, origin: IrStatementOrigin? = null) =
-            fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, constructorSymbol, constructorSymbol.owner.parentAsClass.typeParameters.size, origin)
+            fromSymbolOwner(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, constructorSymbol, constructorSymbol.owner.parentAsClass.typeParameters.size,
+                origin
+            )
     }
 }
-

@@ -20,7 +20,8 @@ inline fun <reified T : Annotation> KAnnotatedElement.findAnnotation(): T? =
 /**
  * Returns true if this element is annotated with an annotation of type [T].
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.3")
+@SinceKotlin("1.4")
+@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@WasExperimental(ExperimentalStdlibApi::class)
 inline fun <reified T : Annotation> KAnnotatedElement.hasAnnotation(): Boolean =
     findAnnotation<T>() != null

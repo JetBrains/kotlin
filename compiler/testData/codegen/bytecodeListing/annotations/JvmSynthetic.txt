@@ -1,7 +1,8 @@
 @kotlin.Metadata
 public final class Example {
+    // source: 'JvmSynthetic.kt'
     private field prop2: int
-    private synthetic final @org.jetbrains.annotations.NotNull field prop: java.lang.String
+    private synthetic final field prop: java.lang.String
     private field useSite2: int
     private synthetic final field useSite: int
     public method <init>(): void

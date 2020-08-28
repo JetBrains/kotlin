@@ -14,11 +14,13 @@ dependencies {
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:backend.js"))
     compileOnly(project(":core:descriptors.runtime"))
+    compileOnly(project(":compiler:ir.tree.impl"))
+    compileOnly(project(":kotlin-reflect-api"))
     compile(project(":kotlin-scripting-common"))
     compile(project(":kotlin-scripting-js"))
     compile(project(":kotlin-util-klib"))
     compile(project(":kotlin-scripting-jvm"))
-    compile(project(":kotlin-scripting-compiler-impl-unshaded"))
+    compile(project(":kotlin-scripting-compiler-impl"))
     compile(kotlinStdlib())
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 

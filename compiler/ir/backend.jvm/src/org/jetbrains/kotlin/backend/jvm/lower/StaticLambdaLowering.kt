@@ -10,24 +10,30 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.constructedClass
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import java.util.*
 
 internal val staticLambdaPhase = makeIrFilePhase(
     ::StaticLambdaLowering,
@@ -36,12 +42,14 @@ internal val staticLambdaPhase = makeIrFilePhase(
 )
 
 class StaticLambdaLowering(val backendContext: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
+    private val staticLambdaFields = HashMap<IrClass, IrField>()
+
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 
     override fun visitClass(declaration: IrClass): IrStatement {
         declaration.transformChildrenVoid()
         if (declaration.isSyntheticSingleton) {
-            declaration.declarations += backendContext.declarationFactory.getFieldForObjectInstance(declaration).also { field ->
+            declaration.declarations += getFieldForStaticLambdaInstance(declaration).also { field ->
                 field.initializer = backendContext.createIrBuilder(field.symbol).run {
                     irExprBody(irCall(declaration.primaryConstructor!!))
                 }
@@ -50,12 +58,26 @@ class StaticLambdaLowering(val backendContext: JvmBackendContext) : FileLowering
         return declaration
     }
 
+    private fun getFieldForStaticLambdaInstance(lambdaClass: IrClass): IrField =
+        staticLambdaFields.getOrPut(lambdaClass) {
+            backendContext.irFactory.buildField {
+                name = Name.identifier(JvmAbi.INSTANCE_FIELD)
+                type = lambdaClass.defaultType
+                origin = JvmLoweredDeclarationOrigin.FIELD_FOR_STATIC_LAMBDA_INSTANCE
+                isFinal = true
+                isStatic = true
+                visibility = Visibilities.PUBLIC
+            }.apply {
+                parent = lambdaClass
+            }
+        }
+
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
         val constructor = expression.symbol.owner
         if (!constructor.constructedClass.isSyntheticSingleton)
             return super.visitConstructorCall(expression)
 
-        val instanceField = backendContext.declarationFactory.getFieldForObjectInstance(constructor.constructedClass)
+        val instanceField = getFieldForStaticLambdaInstance(constructor.constructedClass)
         return IrGetFieldImpl(expression.startOffset, expression.endOffset, instanceField.symbol, expression.type)
     }
 
@@ -78,7 +100,7 @@ class StaticLambdaLowering(val backendContext: JvmBackendContext) : FileLowering
                         element.acceptChildrenVoid(this)
                 }
 
-                override fun visitMemberAccess(expression: IrMemberAccessExpression) {
+                override fun visitMemberAccess(expression: IrMemberAccessExpression<*>) {
                     for (i in 0 until expression.typeArgumentsCount) {
                         if (expression.getTypeArgument(i)?.isReified == true) {
                             containsReified = true

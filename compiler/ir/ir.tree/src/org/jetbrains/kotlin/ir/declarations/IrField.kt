@@ -6,26 +6,39 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrField :
-    IrSymbolDeclaration<IrFieldSymbol>, IrOverridableDeclaration<IrFieldSymbol>,
-    IrDeclarationWithName, IrDeclarationWithVisibility, IrDeclarationParent {
+abstract class IrField :
+    IrDeclarationBase(),
+    IrSymbolDeclaration<IrFieldSymbol>,
+    IrDeclarationWithName, IrDeclarationWithVisibility, IrDeclarationParent, IrMetadataSourceOwner {
 
-    override val descriptor: PropertyDescriptor
+    @ObsoleteDescriptorBasedAPI
+    abstract override val descriptor: PropertyDescriptor
 
-    val type: IrType
-    val isFinal: Boolean
-    val isExternal: Boolean
-    val isStatic: Boolean
-    val isFakeOverride: Boolean
+    abstract val type: IrType
+    abstract val isFinal: Boolean
+    abstract val isExternal: Boolean
+    abstract val isStatic: Boolean
 
-    var initializer: IrExpressionBody?
+    abstract var initializer: IrExpressionBody?
 
-    var correspondingPropertySymbol: IrPropertySymbol?
+    abstract var correspondingPropertySymbol: IrPropertySymbol?
 
-    override val metadata: MetadataSource.Property?
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitField(this, data)
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        initializer?.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        initializer = initializer?.transform(transformer, data)
+    }
 }

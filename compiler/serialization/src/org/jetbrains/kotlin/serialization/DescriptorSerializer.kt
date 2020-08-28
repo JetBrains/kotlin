@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -45,7 +45,8 @@ class DescriptorSerializer private constructor(
     private val extension: SerializerExtension,
     val typeTable: MutableTypeTable,
     private val versionRequirementTable: MutableVersionRequirementTable?,
-    private val serializeTypeTableToFunction: Boolean
+    private val serializeTypeTableToFunction: Boolean,
+    val plugins: List<DescriptorSerializerPlugin> = emptyList()
 ) {
     private val contractSerializer = ContractSerializer()
 
@@ -152,6 +153,8 @@ class DescriptorSerializer private constructor(
 
         extension.serializeClass(classDescriptor, builder, versionRequirementTable, this)
 
+        plugins.forEach { it.afterClass(classDescriptor, builder, versionRequirementTable, this, extension) }
+
         writeVersionRequirementForInlineClasses(classDescriptor, builder, versionRequirementTable)
 
         val versionRequirementTableProto = versionRequirementTable.serialize()
@@ -237,7 +240,7 @@ class DescriptorSerializer private constructor(
             ProtoEnumFlags.modality(descriptor.modality),
             ProtoEnumFlags.memberKind(descriptor.kind),
             descriptor.isVar, hasGetter, hasSetter, hasConstant, descriptor.isConst, descriptor.isLateInit, descriptor.isExternal,
-            @Suppress("DEPRECATION") descriptor.isDelegated, descriptor.isExpect
+            descriptor.isDelegated, descriptor.isExpect
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -288,6 +291,14 @@ class DescriptorSerializer private constructor(
         else
             descriptor.visibility
 
+    private fun shouldSerializeHasStableParameterNames(descriptor: CallableMemberDescriptor): Boolean {
+        return when {
+            descriptor.hasStableParameterNames() -> true
+            descriptor.kind == CallableMemberDescriptor.Kind.DELEGATION -> true // remove this line to fix KT-4758
+            else -> false
+        }
+    }
+
     fun functionProto(descriptor: FunctionDescriptor): ProtoBuf.Function.Builder? {
         if (!extension.shouldSerializeFunction(descriptor)) return null
 
@@ -301,7 +312,7 @@ class DescriptorSerializer private constructor(
             ProtoEnumFlags.modality(descriptor.modality),
             ProtoEnumFlags.memberKind(descriptor.kind),
             descriptor.isOperator, descriptor.isInfix, descriptor.isInline, descriptor.isTailrec, descriptor.isExternal,
-            descriptor.isSuspend, descriptor.isExpect
+            descriptor.isSuspend, descriptor.isExpect, shouldSerializeHasStableParameterNames(descriptor)
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -364,7 +375,8 @@ class DescriptorSerializer private constructor(
         val local = createChildSerializer(descriptor)
 
         val flags = Flags.getConstructorFlags(
-            hasAnnotations(descriptor), ProtoEnumFlags.visibility(normalizeVisibility(descriptor)), !descriptor.isPrimary
+            hasAnnotations(descriptor), ProtoEnumFlags.visibility(normalizeVisibility(descriptor)), !descriptor.isPrimary,
+            shouldSerializeHasStableParameterNames(descriptor)
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -449,7 +461,7 @@ class DescriptorSerializer private constructor(
         }
 
         for (annotation in descriptor.nonSourceAnnotations) {
-            builder.addAnnotation(extension.annotationSerializer.serializeAnnotation(annotation))
+            builder.addAnnotation(extension.annotationSerializer.serializeAnnotation(annotation)!!)
         }
 
         extension.serializeTypeAlias(descriptor, builder)
@@ -741,6 +753,13 @@ class DescriptorSerializer private constructor(
     )
 
     companion object {
+        private val plugins: MutableSet<DescriptorSerializerPlugin> = mutableSetOf()
+
+        @JvmStatic
+        fun registerSerializerPlugin(plugin: DescriptorSerializerPlugin) {
+            plugins.add(plugin)
+        }
+
         @JvmStatic
         fun createTopLevel(extension: SerializerExtension): DescriptorSerializer =
             DescriptorSerializer(
@@ -775,7 +794,8 @@ class DescriptorSerializer private constructor(
                 MutableTypeTable(),
                 if (container is ClassDescriptor && !isVersionRequirementTableWrittenCorrectly(extension.metadataVersion))
                     parent.versionRequirementTable else MutableVersionRequirementTable(),
-                serializeTypeTableToFunction = false
+                serializeTypeTableToFunction = false,
+                plugins.toList()
             )
             for (typeParameter in descriptor.declaredTypeParameters) {
                 serializer.typeParameters.intern(typeParameter)

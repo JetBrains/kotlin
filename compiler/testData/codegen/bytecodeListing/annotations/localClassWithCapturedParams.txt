@@ -1,9 +1,10 @@
 @kotlin.Metadata
 public final class LocalClassWithCapturedParamsKt$localCaptured$A {
+    // source: 'localClassWithCapturedParams.kt'
     synthetic final field $z: int
     private final field x: int
     private final @org.jetbrains.annotations.NotNull field z: java.lang.String
-    inner class LocalClassWithCapturedParamsKt$localCaptured$A
+    inner (local) class LocalClassWithCapturedParamsKt$localCaptured$A A
     public method <init>(p0: int, @Simple @org.jetbrains.annotations.NotNull p1: java.lang.String): void
     public final method getX(): int
     public final @org.jetbrains.annotations.NotNull method getZ(): java.lang.String
@@ -11,12 +12,14 @@ public final class LocalClassWithCapturedParamsKt$localCaptured$A {
 
 @kotlin.Metadata
 public final class LocalClassWithCapturedParamsKt {
-    inner class LocalClassWithCapturedParamsKt$localCaptured$A
+    // source: 'localClassWithCapturedParams.kt'
+    inner (local) class LocalClassWithCapturedParamsKt$localCaptured$A A
     public final static @org.jetbrains.annotations.NotNull method localCaptured(): java.lang.Object
 }
 
 @java.lang.annotation.Retention
 @kotlin.Metadata
 public annotation class Simple {
+    // source: 'localClassWithCapturedParams.kt'
     public abstract method value(): java.lang.String
 }

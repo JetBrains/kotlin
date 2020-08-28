@@ -6,7 +6,6 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.templates.Template
 import java.nio.file.Paths
 import kotlin.reflect.KClass
-import kotlin.reflect.full.isSubclassOf
 
 data class ParsingState(
     val idToTemplate: Map<String, Template>,
@@ -87,10 +86,6 @@ fun <T : Any> valueParserM(parser: suspend ParsingContext.(value: Any?, path: St
         }
     }
 
-inline fun <reified T : Any> valueParser() = valueParser { value, path ->
-    value.parseAs(path, T::class).get()
-}
-
 fun Any?.classMismatchError(@NonNls path: String, expected: KClass<*>): ParseError {
     val classpath = this?.let { it::class.simpleName } ?: "null"
     return ParseError("Expected ${expected.simpleName!!} for `$path` but $classpath was found")
@@ -98,11 +93,6 @@ fun Any?.classMismatchError(@NonNls path: String, expected: KClass<*>): ParseErr
 
 inline fun <reified V : Any> Any?.parseAs(@NonNls path: String) =
     safeAs<V>().toResult { classMismatchError(path, V::class) }
-
-
-inline fun <reified T : Any> Any?.parseAs(@NonNls path: String, klass: KClass<T>): TaskResult<T> =
-    this?.takeIf { it::class.isSubclassOf(klass) }?.safeAs<T>()
-        .toResult { classMismatchError(path, klass) }
 
 
 inline fun <reified V : Any> Map<*, *>.parseValue(@NonNls path: String, @NonNls name: String) =
@@ -123,13 +113,6 @@ inline fun <reified V : Any, R : Any> Map<*, *>.parseValue(
         parser(result)
     }
 }
-
-inline fun <reified T : Any> Map<*, *>.parseValue(
-    @NonNls path: String,
-    @NonNls name: String,
-    klass: KClass<T>
-) = get(path).parseAs("$path.$name", klass)
-
 
 fun <R : Any> Map<*, *>.parseValue(
     context: ParsingContext,

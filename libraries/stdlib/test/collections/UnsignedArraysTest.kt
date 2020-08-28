@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -419,99 +419,99 @@ class UnsignedArraysTest {
     }
 
     @Test
-    fun min() {
-        expect(null) { arrayOf<UByte>().min() }
-        expect(1u) { arrayOf<UShort>(1).min() }
-        expect(2u) { arrayOf<UInt>(2, 3).min() }
-        expect(2uL) { arrayOf<ULong>(3, 2).min() }
+    fun minOrNull() {
+        expect(null) { arrayOf<UByte>().minOrNull() }
+        expect(1u) { arrayOf<UShort>(1).minOrNull() }
+        expect(2u) { arrayOf<UInt>(2, 3).minOrNull() }
+        expect(2uL) { arrayOf<ULong>(3, 2).minOrNull() }
     }
 
     @Test
-    fun minInUnsignedArrays() {
-        expect(null) { ubyteArrayOf().min() }
-        expect(1u) { ushortArrayOf(1).min() }
-        expect(2u) { uintArrayOf(2, 3).min() }
-        expect(2uL) { ulongArrayOf(3, 2).min() }
+    fun minOrNullInUnsignedArrays() {
+        expect(null) { ubyteArrayOf().minOrNull() }
+        expect(1u) { ushortArrayOf(1).minOrNull() }
+        expect(2u) { uintArrayOf(2, 3).minOrNull() }
+        expect(2uL) { ulongArrayOf(3, 2).minOrNull() }
     }
 
     @Test
-    fun max() {
-        expect(null) { arrayOf<UByte>().max() }
-        expect(1u) { arrayOf<UShort>(1).max() }
-        expect(3u) { arrayOf<UInt>(2, 3).max() }
-        expect(3uL) { arrayOf<ULong>(3, 2).max() }
+    fun maxOrNull() {
+        expect(null) { arrayOf<UByte>().maxOrNull() }
+        expect(1u) { arrayOf<UShort>(1).maxOrNull() }
+        expect(3u) { arrayOf<UInt>(2, 3).maxOrNull() }
+        expect(3uL) { arrayOf<ULong>(3, 2).maxOrNull() }
     }
 
     @Test
-    fun maxInUnsignedArrays() {
-        expect(null) { ubyteArrayOf().max() }
-        expect(1u) { ushortArrayOf(1).max() }
-        expect(3u) { uintArrayOf(2, 3).max() }
-        expect(3uL) { ulongArrayOf(3, 2).max() }
+    fun maxOrNullInUnsignedArrays() {
+        expect(null) { ubyteArrayOf().maxOrNull() }
+        expect(1u) { ushortArrayOf(1).maxOrNull() }
+        expect(3u) { uintArrayOf(2, 3).maxOrNull() }
+        expect(3uL) { ulongArrayOf(3, 2).maxOrNull() }
     }
 
     @Test
-    fun minWith() {
-        expect(null) { arrayOf<UByte>().minWith(naturalOrder()) }
-        expect(1u) { arrayOf<UShort>(1).minWith(naturalOrder()) }
-        expect(2u) { arrayOf<UInt>(2, 3).minWith(naturalOrder()) }
-        expect(2uL) { arrayOf<ULong>(3, 2).minWith(naturalOrder()) }
+    fun minWitOrNullh() {
+        expect(null) { arrayOf<UByte>().minWithOrNull(naturalOrder()) }
+        expect(1u) { arrayOf<UShort>(1).minWithOrNull(naturalOrder()) }
+        expect(2u) { arrayOf<UInt>(2, 3).minWithOrNull(naturalOrder()) }
+        expect(2uL) { arrayOf<ULong>(3, 2).minWithOrNull(naturalOrder()) }
     }
 
     @Test
-    fun minWithInUnsignedArrays() {
-        expect(null) { ubyteArrayOf().minWith(reverseOrder()) }
-        expect(1u) { ushortArrayOf(1).minWith(reverseOrder()) }
-        expect(3u) { uintArrayOf(2, 3).minWith(reverseOrder()) }
-        expect(3uL) { ulongArrayOf(3, 2).minWith(reverseOrder()) }
+    fun minWithOrNullInUnsignedArrays() {
+        expect(null) { ubyteArrayOf().minWithOrNull(reverseOrder()) }
+        expect(1u) { ushortArrayOf(1).minWithOrNull(reverseOrder()) }
+        expect(3u) { uintArrayOf(2, 3).minWithOrNull(reverseOrder()) }
+        expect(3uL) { ulongArrayOf(3, 2).minWithOrNull(reverseOrder()) }
     }
 
     @Test
-    fun maxWith() {
-        expect(null) { arrayOf<UByte>().maxWith(naturalOrder()) }
-        expect(1u) { arrayOf<UShort>(1).maxWith(naturalOrder()) }
-        expect(3u) { arrayOf<UInt>(2, 3).maxWith(naturalOrder()) }
-        expect(3uL) { arrayOf<ULong>(3, 2).maxWith(naturalOrder()) }
+    fun maxWithOrNull() {
+        expect(null) { arrayOf<UByte>().maxWithOrNull(naturalOrder()) }
+        expect(1u) { arrayOf<UShort>(1).maxWithOrNull(naturalOrder()) }
+        expect(3u) { arrayOf<UInt>(2, 3).maxWithOrNull(naturalOrder()) }
+        expect(3uL) { arrayOf<ULong>(3, 2).maxWithOrNull(naturalOrder()) }
     }
 
     @Test
-    fun maxWithInUnsignedArrays() {
-        expect(null) { ubyteArrayOf().maxWith(reverseOrder()) }
-        expect(1u) { ushortArrayOf(1).maxWith(reverseOrder()) }
-        expect(2u) { uintArrayOf(2, 3).maxWith(reverseOrder()) }
-        expect(2uL) { ulongArrayOf(3, 2).maxWith(reverseOrder()) }
+    fun maxWithOrNullInUnsignedArrays() {
+        expect(null) { ubyteArrayOf().maxWithOrNull(reverseOrder()) }
+        expect(1u) { ushortArrayOf(1).maxWithOrNull(reverseOrder()) }
+        expect(2u) { uintArrayOf(2, 3).maxWithOrNull(reverseOrder()) }
+        expect(2uL) { ulongArrayOf(3, 2).maxWithOrNull(reverseOrder()) }
     }
 
     @Test
-    fun minBy() {
-        expect(null) { arrayOf<UByte>().minBy { it * it } }
-        expect(1u) { arrayOf<UShort>(1).minBy { it * it } }
-        expect(2u) { arrayOf<UInt>(2, 3).minBy { it * it } }
-        expect(3uL) { arrayOf<ULong>(3, 2).minBy { it - 3 } }
+    fun minByOrNull() {
+        expect(null) { arrayOf<UByte>().minByOrNull { it * it } }
+        expect(1u) { arrayOf<UShort>(1).minByOrNull { it * it } }
+        expect(2u) { arrayOf<UInt>(2, 3).minByOrNull { it * it } }
+        expect(3uL) { arrayOf<ULong>(3, 2).minByOrNull { it - 3 } }
     }
 
     @Test
-    fun minByInUnsignedArrays() {
-        expect(null) { ubyteArrayOf().minBy { it * it } }
-        expect(1u) { ushortArrayOf(1).minBy { it * it } }
-        expect(2u) { uintArrayOf(2, 3).minBy { it * it } }
-        expect(3uL) { ulongArrayOf(3, 2).minBy { it - 3 } }
+    fun minByOrNullInUnsignedArrays() {
+        expect(null) { ubyteArrayOf().minByOrNull { it * it } }
+        expect(1u) { ushortArrayOf(1).minByOrNull { it * it } }
+        expect(2u) { uintArrayOf(2, 3).minByOrNull { it * it } }
+        expect(3uL) { ulongArrayOf(3, 2).minByOrNull { it - 3 } }
     }
 
     @Test
-    fun maxBy() {
-        expect(null) { arrayOf<UByte>().maxBy { it + 1 } }
-        expect(1u) { arrayOf<UShort>(1).maxBy { it + 1 } }
-        expect(2u) { arrayOf<UInt>(2, 3).maxBy { it - 3 } }
-        expect(3uL) { arrayOf<ULong>(3, 2).maxBy { it + 1 } }
+    fun maxByOrNull() {
+        expect(null) { arrayOf<UByte>().maxByOrNull { it + 1 } }
+        expect(1u) { arrayOf<UShort>(1).maxByOrNull { it + 1 } }
+        expect(2u) { arrayOf<UInt>(2, 3).maxByOrNull { it - 3 } }
+        expect(3uL) { arrayOf<ULong>(3, 2).maxByOrNull { it + 1 } }
     }
 
     @Test
-    fun maxByInUnsignedArrays() {
-        expect(null) { ubyteArrayOf().maxBy { it + 1 } }
-        expect(1u) { ushortArrayOf(1).maxBy { it + 1 } }
-        expect(2u) { uintArrayOf(2, 3).maxBy { it - 3 } }
-        expect(3uL) { ulongArrayOf(3, 2).maxBy { it + 1 } }
+    fun maxByOrNullInUnsignedArrays() {
+        expect(null) { ubyteArrayOf().maxByOrNull { it + 1 } }
+        expect(1u) { ushortArrayOf(1).maxByOrNull { it + 1 } }
+        expect(2u) { uintArrayOf(2, 3).maxByOrNull { it - 3 } }
+        expect(3uL) { ulongArrayOf(3, 2).maxByOrNull { it + 1 } }
     }
 
     @Test
@@ -982,6 +982,14 @@ class UnsignedArraysTest {
     }
 
     @Test
+    fun flatMapIndexed() {
+        assertEquals(listOf(), ubyteArrayOf().flatMapIndexed { index, _ -> listOf(index) })
+        assertEquals(listOf<UShort>(2, 3, 3), ushortArrayOf(1, 2, 3).flatMapIndexed { index, e -> List(index) { e } })
+        assertEquals(listOf<UInt>(2, 2, 3, 3, 3, 3), uintArrayOf(1, 2, 3).flatMapIndexed { index, e -> List(index * 2) { e } })
+        assertEquals(listOf(), ulongArrayOf(1, 2, 3).flatMapIndexed { _, _ -> listOf<ULong>() })
+    }
+
+    @Test
     fun withIndex() {
         fun <T> assertIterableContentEquals(expected: Iterable<T>, actual: Iterable<T>) {
             compare(expected.iterator(), actual.iterator()) { iteratorBehavior() }
@@ -996,7 +1004,7 @@ class UnsignedArraysTest {
             ),
             ushortArrayOf(1, 2, 3).withIndex()
         )
-        assertEquals(IndexedValue(1, 2.toUInt()), uintArrayOf(1, 2, 3).withIndex().minBy { it.value % 2 })
+        assertEquals(IndexedValue(1, 2.toUInt()), uintArrayOf(1, 2, 3).withIndex().minByOrNull { it.value % 2 })
         assertIterableContentEquals(listOf(0, 1, 2), ulongArrayOf(1, 2, 3).withIndex().map { it.index })
     }
 

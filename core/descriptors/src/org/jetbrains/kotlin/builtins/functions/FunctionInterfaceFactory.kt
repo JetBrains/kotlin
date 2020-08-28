@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.builtins.functions
 
 import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
-import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAME
+import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE
+import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
@@ -15,7 +16,6 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_RELEASE
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.storage.StorageManager
@@ -78,7 +78,7 @@ fun functionInterfacePackageFragmentProvider(
     val classFactory = BuiltInFictitiousFunctionClassFactory(storageManager, module)
     val fragments = listOf(
         KOTLIN_REFLECT_FQ_NAME,
-        KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME,
+        BUILT_INS_PACKAGE_FQ_NAME,
         COROUTINES_PACKAGE_FQ_NAME_RELEASE
     ).map { fqName ->
         FunctionInterfacePackageFragmentImpl(classFactory, module, fqName)

@@ -23,8 +23,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.isAnyEquals
 import org.jetbrains.kotlin.idea.intentions.isOperatorOrCompatible
 import org.jetbrains.kotlin.idea.intentions.isReceiverExpressionWithValue
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.resolve.getDataFlowValueFactory
 import org.jetbrains.kotlin.idea.util.calleeTextRangeInThis
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -47,7 +48,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getKotlinTypeWithPossibleSmartCastToFP
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
@@ -139,16 +139,16 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
         return when (operation) {
             KtTokens.EXCLEQ -> {
                 val prefixExpression = element.getWrappingPrefixExpressionIfAny() ?: return null
-                val newExpression = factory.createExpressionByPattern("$0 != $1", receiver, argument)
+                val newExpression = factory.createExpressionByPattern("$0 != $1", receiver, argument, reformat = false)
                 prefixExpression to newExpression
             }
             in OperatorConventions.COMPARISON_OPERATIONS -> {
                 val binaryParent = element.parent as? KtBinaryExpression ?: return null
-                val newExpression = factory.createExpressionByPattern("$0 ${operation.value} $1", receiver, argument)
+                val newExpression = factory.createExpressionByPattern("$0 ${operation.value} $1", receiver, argument, reformat = false)
                 binaryParent to newExpression
             }
             else -> {
-                val newExpression = factory.createExpressionByPattern("$0 ${operation.value} $1", receiver, argument)
+                val newExpression = factory.createExpressionByPattern("$0 ${operation.value} $1", receiver, argument, reformat = false)
                 element to newExpression
             }
         }
@@ -201,9 +201,10 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
 
     private fun KtDotQualifiedExpression.isFloatingPointNumberEquals(): Boolean {
         val resolvedCall = resolveToCall() ?: return false
-        val context = analyze(BodyResolveMode.PARTIAL)
+        val resolutionFacade = getResolutionFacade()
+        val context = analyze(resolutionFacade, BodyResolveMode.PARTIAL)
         val declarationDescriptor = containingDeclarationForPseudocode?.resolveToDescriptorIfAny()
-        val dataFlowValueFactory = getResolutionFacade().getFrontendService(DataFlowValueFactory::class.java)
+        val dataFlowValueFactory = resolutionFacade.getDataFlowValueFactory()
         val defaultType: (KotlinType, Set<KotlinType>) -> KotlinType = { givenType, stableTypes -> stableTypes.firstOrNull() ?: givenType }
         val receiverType = resolvedCall.getReceiverExpression()?.getKotlinTypeWithPossibleSmartCastToFP(
             context, declarationDescriptor, languageVersionSettings, dataFlowValueFactory, defaultType

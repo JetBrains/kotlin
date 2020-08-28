@@ -2,9 +2,7 @@ Resolved c()
 Resolved fieldWithType()
 Resolved methodWithType()
 Resolved o()
-Resolved o()
 Resolved o.methodNoType()()
-Resolved o.methodWithType()()
 Resolved o.methodWithType()()
 Searched references to GroovyClass
 Searched references to GroovyClass.fieldWithType in non-Java files

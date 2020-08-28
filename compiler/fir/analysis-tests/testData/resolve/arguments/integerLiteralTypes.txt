@@ -20,9 +20,9 @@ FILE: integerLiteralTypes.kt
         R|/takeLong|(Long(1))
     }
     public final fun test_2(): R|kotlin/Unit| {
-        <Inapplicable(INAPPLICABLE): [/takeInt]>#(Long(10000000000))
+        <Inapplicable(INAPPLICABLE): /takeInt>#(Long(10000000000))
         R|/takeLong|(Long(10000000000))
-        <Inapplicable(INAPPLICABLE): [/takeByte]>#(Int(1000))
+        <Inapplicable(INAPPLICABLE): /takeByte>#(Int(1000))
     }
     public final fun test_3(): R|kotlin/Unit| {
         R|/takeInt|(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
@@ -46,8 +46,8 @@ FILE: integerLiteralTypes.kt
         ))
     }
     public final fun test_5(): R|kotlin/Unit| {
-        <Inapplicable(INAPPLICABLE): [/takeString]>#(Int(1))
-        <Inapplicable(INAPPLICABLE): [/takeString]>#(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
+        <Inapplicable(INAPPLICABLE): /takeString>#(Int(1))
+        <Inapplicable(INAPPLICABLE): /takeString>#(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
             ^ Int(1)
         }
         ))
@@ -61,6 +61,6 @@ FILE: integerLiteralTypes.kt
             public get(): R|kotlin/Byte|
 
     }
-    @R|Ann|(Int(10)) public final fun test_6(): R|kotlin/Unit| {
+    @R|Ann|(Byte(10)) public final fun test_6(): R|kotlin/Unit| {
         @R|Ann|(Int(300)) lval x: R|kotlin/String| = String()
     }

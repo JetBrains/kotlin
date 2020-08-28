@@ -1,7 +1,7 @@
 public final class test/SomeClass$Creator : java/lang/Object, android/os/Parcelable$Creator {
     public void <init>()
 
-    public final java.lang.Object createFromParcel(android.os.Parcel in) {
+    public final test.SomeClass createFromParcel(android.os.Parcel in) {
         LABEL (L0)
           ALOAD (1)
           LDC (in)
@@ -23,7 +23,18 @@ public final class test/SomeClass$Creator : java/lang/Object, android/os/Parcela
         LABEL (L4)
     }
 
-    public final java.lang.Object[] newArray(int size)
+    public java.lang.Object createFromParcel(android.os.Parcel p0) {
+        LABEL (L0)
+        LINENUMBER (10)
+          ALOAD (0)
+          ALOAD (1)
+          INVOKEVIRTUAL (test/SomeClass$Creator, createFromParcel, (Landroid/os/Parcel;)Ltest/SomeClass;)
+          ARETURN
+    }
+
+    public final test.SomeClass[] newArray(int size)
+
+    public java.lang.Object[] newArray(int p0)
 }
 
 public final class test/SomeClass : java/lang/Object, android/os/Parcelable {

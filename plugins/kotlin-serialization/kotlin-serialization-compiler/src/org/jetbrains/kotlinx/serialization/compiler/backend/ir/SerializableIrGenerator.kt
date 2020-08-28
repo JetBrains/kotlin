@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
@@ -30,11 +35,7 @@ class SerializableIrGenerator(
     bindingContext: BindingContext
 ) : SerializableCodegen(irClass.descriptor, bindingContext), IrBuilderExtension {
 
-    private fun IrClass.getSuperClassOrAny(): IrClass {
-        val superClasses = superTypes.mapNotNull { it.classOrNull }.map { it.owner }
 
-        return superClasses.singleOrNull { it.kind == ClassKind.CLASS } ?: compilerContext.irBuiltIns.anyClass.owner
-    }
 
     private fun IrClass.hasSerializableAnnotationWithoutArgs(): Boolean {
         val annot = getAnnotation(SerializationAnnotations.serializableAnnotationFqName) ?: return false
@@ -76,12 +77,12 @@ class SerializableIrGenerator(
                 val prop = serializableProperties[index]
                 val paramRef = ctor.valueParameters[index + seenVarsOffset]
                 // assign this.a = a in else branch
-                val assignParamExpr = irSetField(irGet(thiz), prop.irField, irGet(paramRef))
+                val assignParamExpr = setProperty(irGet(thiz), prop.irProp, irGet(paramRef))
 
                 val ifNotSeenExpr: IrExpression = if (prop.optional) {
                     val initializerBody =
                         requireNotNull(transformFieldInitializer(prop.irField)) { "Optional value without an initializer" } // todo: filter abstract here
-                    irSetField(irGet(thiz), prop.irField, initializerBody)
+                    setProperty(irGet(thiz), prop.irProp, initializerBody)
                 } else {
                     irThrow(irInvoke(null, exceptionCtorRef, irString(prop.name), typeHint = exceptionType))
                 }

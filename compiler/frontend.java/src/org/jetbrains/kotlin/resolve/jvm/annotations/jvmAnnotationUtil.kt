@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.resolve.jvm.annotations
 
 import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
@@ -17,8 +15,10 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
+import org.jetbrains.kotlin.util.findImplementationFromInterface
 
 val JVM_DEFAULT_FQ_NAME = FqName("kotlin.jvm.JvmDefault")
+val JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME = FqName("kotlin.jvm.JvmDefaultWithoutCompatibility")
 val JVM_OVERLOADS_FQ_NAME = FqName("kotlin.jvm.JvmOverloads")
 val JVM_SYNTHETIC_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSynthetic")
 
@@ -61,8 +61,19 @@ fun CallableMemberDescriptor.isCompiledToJvmDefault(jvmDefault: JvmDefaultMode):
     return JvmProtoBufUtil.isNewPlaceForBodyGeneration(clazz.classProto)
 }
 
+fun FunctionDescriptor.checkIsImplementationCompiledToJvmDefault(jvmDefaultMode: JvmDefaultMode): Boolean {
+    val actualImplementation =
+        (if (kind.isReal) this else findImplementationFromInterface(this))
+            ?: error("Can't find actual implementation for $this")
+    return actualImplementation.isCallableMemberCompiledToJvmDefault(jvmDefaultMode)
+}
+
 fun CallableMemberDescriptor.hasJvmDefaultAnnotation(): Boolean =
     DescriptorUtils.getDirectMember(this).annotations.hasAnnotation(JVM_DEFAULT_FQ_NAME)
+
+fun DeclarationDescriptor.hasJvmDefaultNoCompatibilityAnnotation(): Boolean =
+    this.annotations.hasAnnotation(JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME)
+
 
 fun CallableMemberDescriptor.hasPlatformDependentAnnotation(): Boolean =
     DescriptorUtils.getDirectMember(this).annotations.hasAnnotation(PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME)

@@ -1,3 +1,3 @@
 plugins {
-    kotlin("jvm") version "1.2.70"
+    kotlin("jvm") version "{{kotlin_plugin_version}}"
 }

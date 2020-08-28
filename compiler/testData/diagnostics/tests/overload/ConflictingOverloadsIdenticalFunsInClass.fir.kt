@@ -1,7 +1,7 @@
 class A() {
-    fun b() {
-    }
+    <!CONFLICTING_OVERLOADS!>fun b() {
+    }<!>
 
-    fun b() {
-    }
+    <!CONFLICTING_OVERLOADS!>fun b() {
+    }<!>
 }

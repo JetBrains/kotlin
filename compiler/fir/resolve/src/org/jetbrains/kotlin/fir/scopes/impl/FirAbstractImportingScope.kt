@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
@@ -25,7 +26,7 @@ abstract class FirAbstractImportingScope(
 ) : FirAbstractProviderBasedScope(session, lookupInFir) {
 
     // TODO: Rewrite somehow?
-    private fun getStaticsScope(classId: ClassId): FirScope? {
+    fun getStaticsScope(classId: ClassId): FirScope? {
         val symbol = provider.getClassLikeSymbolByFqName(classId) ?: return null
         if (symbol is FirTypeAliasSymbol) {
             val expansionSymbol = symbol.fir.expandedConeType?.lookupTag?.toSymbol(session)
@@ -33,7 +34,12 @@ abstract class FirAbstractImportingScope(
                 return getStaticsScope(expansionSymbol.classId)
             }
         } else {
-            return (symbol as FirClassSymbol<*>).fir.unsubstitutedScope(session, scopeSession)
+            val firClass = (symbol as FirClassSymbol<*>).fir
+
+            return if (firClass.classKind == ClassKind.OBJECT)
+                FirObjectImportedCallableScope(classId, firClass.unsubstitutedScope(session, scopeSession))
+            else
+                firClass.scopeProvider.getStaticScope(firClass, session, scopeSession)
         }
 
         return null

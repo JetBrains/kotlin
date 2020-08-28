@@ -131,7 +131,7 @@ class IfNullExpressionsFusionLowering(val context: CommonBackendContext) : FileL
                 is IrConstructorCall,
                 is IrGetSingletonValue,
                 is IrFunctionExpression,
-                is IrCallableReference,
+                is IrCallableReference<*>,
                 is IrClassReference,
                 is IrGetClass ->
                     return false
@@ -177,16 +177,13 @@ class IfNullExpressionsFusionLowering(val context: CommonBackendContext) : FileL
         return IfNullExpr(whenExpr.type, subjectVar, branch0.result, elseResult)
     }
 
-    private fun IrBranch.getElseBranchResultOrNull() =
-        when {
-            this is IrElseBranch ->
-                result
-            // deserialization generates a simple branch with const 'true' condition
-            condition is IrConst<*> && condition.value == true ->
-                result
-            else ->
-                null
-        }
+    private fun IrBranch.getElseBranchResultOrNull(): IrExpression? {
+        val branchCondition = condition
+        return if (branchCondition is IrConst<*> && branchCondition.value == true)
+            result
+        else
+            null
+    }
 
     private fun IrExpression.isTrivial() =
         this is IrExpressionWithCopy

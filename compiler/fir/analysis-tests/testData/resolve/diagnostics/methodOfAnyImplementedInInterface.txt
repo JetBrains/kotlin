@@ -1,0 +1,45 @@
+FILE: methodOfAnyImplementedInInterface.kt
+    public abstract interface A : R|kotlin/Any| {
+        public open override fun toString(): R|kotlin/String| {
+            ^toString String(Hello)
+        }
+
+        public open override fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(true)
+        }
+
+        public open override fun hashCode(): R|kotlin/Int| {
+            ^hashCode Int(42)
+        }
+
+    }
+    public abstract interface B : R|kotlin/Any| {
+        public abstract override fun toString(): R|kotlin/String|
+
+        public abstract override fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+        public abstract override fun hashCode(): R|kotlin/Int|
+
+    }
+    public abstract interface C : R|kotlin/Any| {
+        public open override operator fun toString(): R|kotlin/String| {
+            ^toString String(Rest)
+        }
+
+        public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals Boolean(false)
+        }
+
+        public open override operator fun hashCode(): R|kotlin/Int| {
+            ^hashCode Int(2)
+        }
+
+    }
+    public abstract interface D : R|kotlin/Any| {
+        public abstract override operator fun toString(): R|kotlin/String|
+
+        public abstract override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+        public abstract override operator fun hashCode(): R|kotlin/Int|
+
+    }

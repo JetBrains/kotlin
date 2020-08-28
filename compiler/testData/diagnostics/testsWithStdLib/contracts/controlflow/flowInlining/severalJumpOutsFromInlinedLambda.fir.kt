@@ -33,7 +33,7 @@ fun exitOnlyThroughLocalReturns(b: Boolean) {
     }
 
     x.inc()
-    s.length
+    <!UNINITIALIZED_VARIABLE!>s<!>.length
 }
 
 fun exitOnlyThroughNonLocalReturns(b: Boolean?) {
@@ -49,7 +49,7 @@ fun exitOnlyThroughNonLocalReturns(b: Boolean?) {
             x = 54
         }
 
-        if (x == 42) {
+        if (<!UNINITIALIZED_VARIABLE!>x<!> == 42) {
             return
         }
         else {
@@ -59,8 +59,8 @@ fun exitOnlyThroughNonLocalReturns(b: Boolean?) {
         }
     }
 
-    x.inc()
-    s.length
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
+    <!UNINITIALIZED_VARIABLE!>s<!>.length
 }
 
 fun nonLocalReturnAndOrdinaryExit(b: Boolean) {

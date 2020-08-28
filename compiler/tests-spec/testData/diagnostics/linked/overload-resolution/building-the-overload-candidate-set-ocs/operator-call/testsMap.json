@@ -146,5 +146,95 @@
         }
       ]
     }
+  },
+  "1": {
+    "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-448",
+          "casesNumber": 2,
+          "description": "call with lambda as argument",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-448",
+          "casesNumber": 1,
+          "description": "inline plusAssign functions",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.5.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-448",
+          "casesNumber": 2,
+          "description": "without inline plusAssign functions",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.4.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-448",
+          "casesNumber": 1,
+          "description": "without inline plusAssign functions",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.9.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-448",
+          "casesNumber": 1,
+          "description": "without inline plusAssign functions",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.8.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-448",
+          "casesNumber": 1,
+          "description": "without inline plusAssign functions",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.7.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-448",
+          "casesNumber": 1,
+          "description": "plusAssign as inline function",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-448",
+          "casesNumber": 1,
+          "description": "without inline plusAssign functions",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/neg/2.6.kt",
+          "unexpectedBehaviour": true,
+          "linkType": "main"
+        }
+      ]
+    },
+    "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-448",
+          "casesNumber": 3,
+          "description": "Non-extension member callables",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        },
+        {
+          "specVersion": "0.1-448",
+          "casesNumber": 1,
+          "description": "plusAssign as inline function",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/overload-resolution/building-the-overload-candidate-set-ocs/operator-call/p-1/pos/2.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main"
+        }
+      ]
+    }
   }
 }

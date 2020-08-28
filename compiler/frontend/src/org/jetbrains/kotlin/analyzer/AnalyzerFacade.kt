@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ModuleContext
+import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDependencies
@@ -44,6 +45,7 @@ abstract class ResolverForProject<M : ModuleInfo> {
     fun resolverForModule(moduleInfo: M): ResolverForModule = resolverForModuleDescriptor(descriptorForModule(moduleInfo))
     abstract fun tryGetResolverForModule(moduleInfo: M): ResolverForModule?
     abstract fun descriptorForModule(moduleInfo: M): ModuleDescriptor
+    abstract fun moduleInfoForModuleDescriptor(moduleDescriptor: ModuleDescriptor): M
     abstract fun resolverForModuleDescriptor(descriptor: ModuleDescriptor): ResolverForModule
     abstract fun diagnoseUnknownModuleInfo(infos: List<ModuleInfo>): Nothing
 
@@ -73,6 +75,10 @@ class EmptyResolverForProject<M : ModuleInfo> : ResolverForProject<M>() {
     override fun descriptorForModule(moduleInfo: M) = diagnoseUnknownModuleInfo(listOf(moduleInfo))
     override val allModules: Collection<M> = listOf()
     override fun diagnoseUnknownModuleInfo(infos: List<ModuleInfo>) = throw IllegalStateException("Should not be called for $infos")
+
+    override fun moduleInfoForModuleDescriptor(moduleDescriptor: ModuleDescriptor): M {
+        throw IllegalStateException("$moduleDescriptor is not contained in this resolver")
+    }
 }
 
 data class ModuleContent<out M : ModuleInfo>(
@@ -208,4 +214,5 @@ interface ResolverForModuleComputationTracker {
 
 
 @Suppress("UNCHECKED_CAST")
-fun <T> ModuleInfo.getCapability(capability: ModuleDescriptor.Capability<T>) = capabilities[capability] as? T
+fun <T> ModuleInfo.getCapability(capability: ModuleCapability<T>) = capabilities[capability] as? T
+

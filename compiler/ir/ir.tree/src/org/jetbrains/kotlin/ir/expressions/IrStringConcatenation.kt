@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-interface IrStringConcatenation : IrExpression {
-    val arguments: List<IrExpression>
-    fun addArgument(argument: IrExpression)
-}
+abstract class IrStringConcatenation : IrExpression() {
+    abstract val arguments: List<IrExpression>
 
+    abstract fun addArgument(argument: IrExpression)
+}

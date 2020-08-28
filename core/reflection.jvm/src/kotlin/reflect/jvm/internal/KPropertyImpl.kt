@@ -79,7 +79,7 @@ internal abstract class KPropertyImpl<out V> private constructor(
     val javaField: Field? get() = _javaField()
 
     protected fun computeDelegateField(): Field? =
-        if (@Suppress("DEPRECATION") descriptor.isDelegated) javaField else null
+        if (descriptor.isDelegated) javaField else null
 
     protected fun getDelegate(field: Field?, receiver: Any?): Any? =
         try {

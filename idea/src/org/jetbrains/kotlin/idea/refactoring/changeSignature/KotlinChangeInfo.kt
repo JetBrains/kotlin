@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaOrKotlinMemberDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.util.javaResolutionFacade
 import org.jetbrains.kotlin.idea.j2k.j2k
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor.Kind
@@ -45,10 +44,10 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCaller
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.isError
@@ -372,9 +371,9 @@ open class KotlinChangeInfo(
             val currentSignatures = initCurrentSignatures(currentPsiMethods)
             return originalSignatures.associateBy({ it.method }) { originalSignature ->
                 var constrainedCurrentSignatures = currentSignatures.map { it.constrainBy(originalSignature) }
-                val maxMandatoryCount = constrainedCurrentSignatures.maxBy { it.mandatoryParams.size }!!.mandatoryParams.size
+                val maxMandatoryCount = constrainedCurrentSignatures.maxOf { it.mandatoryParams.size }
                 constrainedCurrentSignatures = constrainedCurrentSignatures.filter { it.mandatoryParams.size == maxMandatoryCount }
-                val maxDefaultCount = constrainedCurrentSignatures.maxBy { it.defaultValues.size }!!.defaultValues.size
+                val maxDefaultCount = constrainedCurrentSignatures.maxOf { it.defaultValues.size }
                 constrainedCurrentSignatures.last { it.defaultValues.size == maxDefaultCount }.method
             }
         }

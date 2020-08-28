@@ -31,7 +31,7 @@ class PropertyAccessorInlineLowering(private val context: CommonBackendContext) 
         override fun visitCall(expression: IrCall): IrExpression {
             expression.transformChildrenVoid(this)
 
-            val callee = expression.symbol.owner as IrSimpleFunction
+            val callee = expression.symbol.owner
             val property = callee.correspondingPropertySymbol?.owner ?: return expression
 
             // Some devirtualization required here

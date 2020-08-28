@@ -17,6 +17,7 @@
 
 // FILE: LibCase1.kt
 // TESTCASE NUMBER: 1, 2
+// TESTCASE NUMBER: 1, 2
 package libPackage
 
 import testPackCase1.Case

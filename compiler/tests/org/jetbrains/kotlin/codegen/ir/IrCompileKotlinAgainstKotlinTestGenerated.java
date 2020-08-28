@@ -38,6 +38,11 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
         runTest("compiler/testData/compileKotlinAgainstKotlin/annotationInInterface.kt");
     }
 
+    @TestMetadata("annotationOnTypeUseInTypeAlias.kt")
+    public void testAnnotationOnTypeUseInTypeAlias() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/annotationOnTypeUseInTypeAlias.kt");
+    }
+
     @TestMetadata("annotationsOnTypeAliases.kt")
     public void testAnnotationsOnTypeAliases() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/annotationsOnTypeAliases.kt");
@@ -343,6 +348,11 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
         runTest("compiler/testData/compileKotlinAgainstKotlin/simpleValAnonymousObject.kt");
     }
 
+    @TestMetadata("specialBridgesInDependencies.kt")
+    public void testSpecialBridgesInDependencies() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/specialBridgesInDependencies.kt");
+    }
+
     @TestMetadata("starImportEnum.kt")
     public void testStarImportEnum() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/starImportEnum.kt");
@@ -505,9 +515,29 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/interop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
                 }
 
+                @TestMetadata("likeMemberClash.kt")
+                public void testLikeMemberClash() throws Exception {
+                    runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/interop/likeMemberClash.kt");
+                }
+
+                @TestMetadata("likeSpecialization.kt")
+                public void testLikeSpecialization() throws Exception {
+                    runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/interop/likeSpecialization.kt");
+                }
+
                 @TestMetadata("newAndOldSchemes.kt")
                 public void testNewAndOldSchemes() throws Exception {
                     runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes.kt");
+                }
+
+                @TestMetadata("newAndOldSchemes2.kt")
+                public void testNewAndOldSchemes2() throws Exception {
+                    runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes2.kt");
+                }
+
+                @TestMetadata("newAndOldSchemes2Compatibility.kt")
+                public void testNewAndOldSchemes2Compatibility() throws Exception {
+                    runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes2Compatibility.kt");
                 }
 
                 @TestMetadata("newSchemeWithJvmDefault.kt")

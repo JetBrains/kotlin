@@ -1,0 +1,51 @@
+FILE: fromLocalMembers.kt
+    public final fun test1(): R|kotlin/Unit| {
+        lval x: R|kotlin/Int|
+        local final fun func(): R|kotlin/Unit| {
+            R|<local>/x| = Int(0)
+        }
+
+        R|kotlin/io/println|(R|<local>/x|)
+    }
+    public final fun test2(): R|kotlin/Unit| {
+        lval x: R|kotlin/Int|
+        lval y: R|kotlin/Int|
+        object : R|kotlin/Any| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+            init {
+                R|<local>/x| = Int(0)
+            }
+
+            public final fun localFunc(): R|kotlin/Unit| {
+                R|<local>/y| = Int(0)
+            }
+
+        }
+
+        R|kotlin/io/println|(R|<local>/x|)
+        R|kotlin/io/println|(R|<local>/x|)
+    }
+    public final fun test3(): R|kotlin/Unit| {
+        lval x: R|kotlin/Int|
+        lval y: R|kotlin/Int|
+        local final class A : R|kotlin/Any| {
+            public constructor(): R|A| {
+                super<R|kotlin/Any|>()
+            }
+
+            init {
+                R|<local>/x| = Int(0)
+            }
+
+            public final fun localFunc(): R|kotlin/Unit| {
+                R|<local>/y| = Int(0)
+            }
+
+        }
+
+        R|kotlin/io/println|(R|<local>/x|)
+        R|kotlin/io/println|(R|<local>/x|)
+    }

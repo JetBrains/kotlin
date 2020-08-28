@@ -1,5 +1,4 @@
 // !LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
-// IGNORE_BACKEND: JVM_IR
 
 import kotlin.reflect.KProperty
 

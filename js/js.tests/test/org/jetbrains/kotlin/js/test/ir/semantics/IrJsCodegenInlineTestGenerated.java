@@ -121,6 +121,11 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
             runTest("compiler/testData/codegen/boxInline/anonymousObject/defineClass.kt");
         }
 
+        @TestMetadata("functionExpression.kt")
+        public void testFunctionExpression() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/anonymousObject/functionExpression.kt");
+        }
+
         @TestMetadata("inlineCallInsideInlineLambda.kt")
         public void testInlineCallInsideInlineLambda() throws Exception {
             runTest("compiler/testData/codegen/boxInline/anonymousObject/inlineCallInsideInlineLambda.kt");
@@ -1686,9 +1691,34 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
+        @TestMetadata("inlineClassWithInlineValReturningInlineClass.kt")
+        public void testInlineClassWithInlineValReturningInlineClass() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/inlineClasses/inlineClassWithInlineValReturningInlineClass.kt");
+        }
+
         @TestMetadata("inlineFunctionInsideInlineClassesBox.kt")
         public void testInlineFunctionInsideInlineClassesBox() throws Exception {
             runTest("compiler/testData/codegen/boxInline/inlineClasses/inlineFunctionInsideInlineClassesBox.kt");
+        }
+
+        @TestMetadata("noReturnTypeManglingFun.kt")
+        public void testNoReturnTypeManglingFun() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/inlineClasses/noReturnTypeManglingFun.kt");
+        }
+
+        @TestMetadata("noReturnTypeManglingVal.kt")
+        public void testNoReturnTypeManglingVal() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/inlineClasses/noReturnTypeManglingVal.kt");
+        }
+
+        @TestMetadata("withReturnTypeManglingFun.kt")
+        public void testWithReturnTypeManglingFun() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/inlineClasses/withReturnTypeManglingFun.kt");
+        }
+
+        @TestMetadata("withReturnTypeManglingVal.kt")
+        public void testWithReturnTypeManglingVal() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/inlineClasses/withReturnTypeManglingVal.kt");
         }
     }
 
@@ -3368,6 +3398,11 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/crossinlineSuspendLambdaInsideCrossinlineSuspendLambda.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("delegatedProperties.kt")
+        public void testDelegatedProperties_1_3() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/delegatedProperties.kt", "kotlin.coroutines");
+        }
+
         @TestMetadata("doubleRegenerationWithNonSuspendingLambda.kt")
         public void testDoubleRegenerationWithNonSuspendingLambda_1_3() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/doubleRegenerationWithNonSuspendingLambda.kt", "kotlin.coroutines");
@@ -3823,6 +3858,11 @@ public class IrJsCodegenInlineTestGenerated extends AbstractIrJsCodegenInlineTes
             @TestMetadata("privateInCrossInline.kt")
             public void testPrivateInCrossInline() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda/privateInCrossInline.kt");
+            }
+
+            @TestMetadata("privateInDefaultStubArgument.kt")
+            public void testPrivateInDefaultStubArgument() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda/privateInDefaultStubArgument.kt");
             }
 
             @TestMetadata("protectedInCrossinline.kt")

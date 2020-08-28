@@ -2,7 +2,7 @@ FILE: B.kt
     public abstract expect interface Other : R|kotlin/Any| {
     }
     public final expect class Another : R|kotlin/Any| {
-        public constructor(): R|b/d/Another| {
+        public expect constructor(): R|b/d/Another| {
             super<R|kotlin/Any|>()
         }
 

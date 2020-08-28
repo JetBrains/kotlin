@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.context
 
+import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -86,9 +87,9 @@ class MutableModuleContextImpl(
 
 fun GlobalContext(debugName: String): GlobalContextImpl {
     val tracker = ExceptionTracker()
-    return GlobalContextImpl(LockBasedStorageManager.createWithExceptionHandling(debugName, tracker) {
+    return GlobalContextImpl(LockBasedStorageManager.createWithExceptionHandling(debugName, tracker, {
         ProgressManager.checkCanceled()
-    }, tracker)
+    }, { throw ProcessCanceledException(it) }), tracker)
 }
 
 fun ProjectContext(project: Project, debugName: String): ProjectContext = ProjectContextImpl(project, GlobalContext(debugName))

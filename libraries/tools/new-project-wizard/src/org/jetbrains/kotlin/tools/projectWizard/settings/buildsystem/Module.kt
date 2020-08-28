@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem
 
-import kotlinx.collections.immutable.PersistentList
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.GeneratedIdentificator
 import org.jetbrains.kotlin.tools.projectWizard.Identificator
@@ -23,7 +22,9 @@ enum class ModuleKind : DisplayableSettingItem {
     target,
     singleplatformJvm,
     singleplatformAndroid,
-    singleplatformJs, ;
+    singleplatformJsBrowser,
+    singleplatformJsNode,
+    ;
 
     override val text: String
         get() = name
@@ -68,12 +69,14 @@ class Module(
             configurator == MppModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.mpp.module")
             configurator == AndroidSinglePlatformModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.android.module")
             configurator == IOSSinglePlatformModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.ios.module")
-            configurator == JsSingleplatformModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.js.module")
+            configurator == BrowserJsSinglePlatformModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.js.browser.module")
+            configurator == NodeJsSinglePlatformModuleConfigurator -> KotlinNewProjectWizardBundle.message("module.kind.js.node.module")
             else -> KotlinNewProjectWizardBundle.message("module.kind.module")
         }
 
     fun SettingsWriter.initDefaultValuesForSettings() {
         configurator.safeAs<ModuleConfiguratorWithSettings>()?.apply { initDefaultValuesFor(this@Module) }
+        configurator.safeAs<ModuleConfiguratorWithProperties>()?.apply { initDefaultValuesForProperties(this@Module) }
         template?.apply { initDefaultValuesFor(this@Module) }
     }
 
@@ -112,7 +115,7 @@ class Module(
         }
 
         val moduleConfiguratorValidator = settingValidator<Module> { module ->
-            withSettingsOf(module) {
+            inContextOfModuleConfigurator(module) {
                 allSettingsOfModuleConfigurator(module.configurator).map { setting ->
                     val reference = when (setting) {
                         is PluginSetting<Any, SettingType<Any>> -> setting.reference

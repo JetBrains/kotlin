@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
+import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.LEGACY
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
@@ -55,7 +56,7 @@ constructor(
 
     val disambiguationClassifierInPlatform: String?
         get() = if (irTarget != null) {
-            disambiguationClassifier?.removeJsCompilerSuffix(KotlinJsCompilerType.LEGACY)
+            disambiguationClassifier?.removeJsCompilerSuffix(LEGACY)
         } else {
             disambiguationClassifier
         }
@@ -70,7 +71,7 @@ constructor(
 
             val componentName =
                 if (project.kotlinExtension is KotlinMultiplatformExtension)
-                    targetName
+                    irTarget?.let { targetName.removeJsCompilerSuffix(LEGACY) } ?: targetName
                 else PRIMARY_SINGLE_COMPONENT_NAME
 
             val result = createKotlinVariant(componentName, mainCompilation, usageContexts)
@@ -104,7 +105,7 @@ constructor(
     ): KotlinVariant {
         return super.createKotlinVariant(componentName, compilation, usageContexts).apply {
             irTarget?.let {
-                artifactTargetName = targetName.removeJsCompilerSuffix(KotlinJsCompilerType.LEGACY)
+                artifactTargetName = targetName.removeJsCompilerSuffix(LEGACY)
             }
         }
     }
@@ -131,9 +132,15 @@ constructor(
             it.description = "Run js on all configured platforms"
         }
 
+    private val propertiesProvider = PropertiesProvider(project)
+
     private val browserLazyDelegate = lazy {
         project.objects.newInstance(KotlinBrowserJs::class.java, this).also {
             it.configure()
+
+            if (propertiesProvider.jsGenerateExecutableDefault && irTarget == null) {
+                binaries.executable()
+            }
 
             browserConfiguredHandlers.forEach { handler ->
                 handler(it)
@@ -157,6 +164,11 @@ constructor(
     private val nodejsLazyDelegate = lazy {
         project.objects.newInstance(KotlinNodeJs::class.java, this).also {
             it.configure()
+
+            if (propertiesProvider.jsGenerateExecutableDefault && irTarget == null) {
+                binaries.executable()
+            }
+
             nodejsConfiguredHandlers.forEach { handler ->
                 handler(it)
             }
@@ -195,7 +207,7 @@ constructor(
 
     override fun useCommonJs() {
         compilations.all {
-            it.compileKotlinTask.kotlinOptions {
+            it.kotlinOptions {
                 moduleKind = "commonjs"
                 sourceMap = true
                 sourceMapEmbedSources = null

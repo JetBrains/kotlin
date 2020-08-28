@@ -14,8 +14,8 @@ fun foo(k: KotlinClass2) {
     useInt(k.something2)
     useInt(k.getSomethingKotlin1())
     useInt(k.getSomethingKotlin2())
-    k.somethingKotlin1
-    k.somethingKotlin2
+    k.<!UNRESOLVED_REFERENCE!>somethingKotlin1<!>
+    k.<!UNRESOLVED_REFERENCE!>somethingKotlin2<!>
 }
 
 fun useInt(i: Int) {}

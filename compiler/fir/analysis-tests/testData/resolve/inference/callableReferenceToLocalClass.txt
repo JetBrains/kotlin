@@ -4,11 +4,11 @@ FILE: callableReferenceToLocalClass.kt
     }
     public final fun test_1(): R|kotlin/Unit| {
         local final class Data : R|kotlin/Any| {
-            public[local] constructor(x: R|kotlin/Int|): R|Data| {
+            public constructor(x: R|kotlin/Int|): R|Data| {
                 super<R|kotlin/Any|>()
             }
 
-            public[local] final val x: R|kotlin/Int| = R|<local>/x|
+            public final val x: R|kotlin/Int| = R|<local>/x|
                 public get(): R|kotlin/Int|
 
         }

@@ -43,11 +43,11 @@ class ProjectTemplateBasedTestWizard(
         super.apply(services, setOf(GenerationPhase.PREPARE), onTaskExecuting).ensure()
         context.writeSettings {
             applyProjectTemplate(projectTemplate)
-            BuildSystemPlugin::type.reference.setValue(buildSystem.buildSystemType)
-            StructurePlugin::projectPath.reference.setValue(projectDirectory)
-            StructurePlugin::name.reference.setValue(projectTemplate.id)
-            StructurePlugin::groupId.reference.setValue(GROUP_ID)
-            StructurePlugin::artifactId.reference.setValue(ARTIFACT_ID)
+            BuildSystemPlugin.type.reference.setValue(buildSystem.buildSystemType)
+            StructurePlugin.projectPath.reference.setValue(projectDirectory)
+            StructurePlugin.name.reference.setValue(projectTemplate.id)
+            StructurePlugin.groupId.reference.setValue(GROUP_ID)
+            StructurePlugin.artifactId.reference.setValue(ARTIFACT_ID)
         }
         applyAdditionalSettingsFromYaml().ensure()
 

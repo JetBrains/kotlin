@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.resolve.calls.components.transformToResolvedLambda
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -12,6 +13,8 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
+import org.jetbrains.kotlin.types.model.safeSubstitute
+import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.collections.LinkedHashSet
@@ -24,7 +27,8 @@ class KotlinConstraintSystemCompleter(
 
     enum class ConstraintSystemCompletionMode {
         FULL,
-        PARTIAL
+        PARTIAL,
+        UNTIL_FIRST_LAMBDA
     }
 
     interface Context : VariableFixationFinder.Context, ResultTypeResolver.Context {
@@ -69,10 +73,11 @@ class KotlinConstraintSystemCompleter(
         c: Context,
         topLevelType: UnwrappedType,
         topLevelAtoms: List<ResolvedAtom>,
+        completionMode: ConstraintSystemCompletionMode,
         diagnosticsHolder: KotlinDiagnosticsHolder
     ) {
         c.runCompletion(
-            ConstraintSystemCompletionMode.FULL,
+            completionMode,
             topLevelAtoms,
             topLevelType,
             diagnosticsHolder,
@@ -82,7 +87,6 @@ class KotlinConstraintSystemCompleter(
         }
     }
 
-    // TODO: investigate type variables fixation order and incorporation depth (see `diagnostics/tests/inference/completion/postponedArgumentsAnalysis/lackOfDeepIncorporation.kt`)
     private fun Context.runCompletion(
         completionMode: ConstraintSystemCompletionMode,
         topLevelAtoms: List<ResolvedAtom>,
@@ -92,7 +96,9 @@ class KotlinConstraintSystemCompleter(
         analyze: (PostponedResolvedAtom) -> Unit
     ) {
         completion@ while (true) {
+            // TODO
             val postponedArguments = getOrderedNotAnalyzedPostponedArguments(topLevelAtoms)
+            if (completionMode == ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA && hasLambdaToAnalyze(postponedArguments)) return
 
             // Stage 1: analyze postponed arguments with fixed parameter types
             if (analyzeArgumentWithFixedParameterTypes(postponedArguments, analyze))
@@ -211,6 +217,35 @@ class KotlinConstraintSystemCompleter(
         return false
     }
 
+    fun prepareLambdaAtomForFactoryPattern(
+        atom: ResolvedLambdaAtom,
+        candidate: KotlinResolutionCandidate,
+        diagnosticsHolder: KotlinDiagnosticsHolder,
+    ): ResolvedLambdaAtom {
+        val returnVariable = TypeVariableForLambdaReturnType(candidate.callComponents.builtIns, "_R")
+        val csBuilder = candidate.csBuilder
+        csBuilder.registerVariable(returnVariable)
+        val functionalType: KotlinType = csBuilder.buildCurrentSubstitutor().safeSubstitute(candidate.getSystem().asConstraintSystemCompleterContext(), atom.expectedType!!) as KotlinType
+        val expectedType = KotlinTypeFactory.simpleType(
+            functionalType.annotations,
+            functionalType.constructor,
+            functionalType.arguments.dropLast(1) + returnVariable.defaultType.asTypeProjection(),
+            functionalType.isMarkedNullable
+        )
+        csBuilder.addSubtypeConstraint(
+            expectedType,
+            functionalType,
+            ArgumentConstraintPosition(atom.atom)
+        )
+        return atom.transformToResolvedLambda(csBuilder, diagnosticsHolder, expectedType, returnVariable)
+    }
+
+    private fun Context.hasLambdaToAnalyze(
+        postponedArguments: List<PostponedResolvedAtom>
+    ): Boolean {
+        return analyzeArgumentWithFixedParameterTypes(postponedArguments) {}
+    }
+
     private fun findPostponedArgumentWithRevisableExpectedType(postponedArguments: List<PostponedResolvedAtom>) =
         postponedArguments.firstOrNull { argument -> argument is PostponedAtomWithRevisableExpectedType }
 
@@ -245,12 +280,12 @@ class KotlinConstraintSystemCompleter(
         diagnosticsHolder: KotlinDiagnosticsHolder
     ): Boolean {
         while (true) {
-            val variableForFixation = getVariableReadyForFixation(
+            val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
+                this,
+                getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms),
+                postponedArguments,
                 completionMode,
-                topLevelAtoms,
-                topLevelType,
-                collectVariablesFromContext,
-                postponedArguments
+                topLevelType
             ) ?: break
 
             if (!variableForFixation.hasProperConstraint && completionMode == ConstraintSystemCompletionMode.PARTIAL)
@@ -349,27 +384,15 @@ class KotlinConstraintSystemCompleter(
         return result.toList()
     }
 
-    private fun Context.getVariableReadyForFixation(
-        completionMode: ConstraintSystemCompletionMode,
-        topLevelAtoms: List<ResolvedAtom>,
-        topLevelType: UnwrappedType,
-        collectVariablesFromContext: Boolean,
-        postponedArguments: List<PostponedResolvedAtom>
-    ) = variableFixationFinder.findFirstVariableForFixation(
-        this,
-        getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms),
-        postponedArguments,
-        completionMode,
-        topLevelType
-    )
-
     private fun Context.isThereAnyReadyForFixationVariable(
         completionMode: ConstraintSystemCompletionMode,
         topLevelAtoms: List<ResolvedAtom>,
         topLevelType: UnwrappedType,
         collectVariablesFromContext: Boolean,
         postponedArguments: List<PostponedResolvedAtom>
-    ) = getVariableReadyForFixation(completionMode, topLevelAtoms, topLevelType, collectVariablesFromContext, postponedArguments) != null
+    ) = variableFixationFinder.findFirstVariableForFixation(
+        this, getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms), postponedArguments, completionMode, topLevelType
+    ) != null
 
     companion object {
         fun getOrderedNotAnalyzedPostponedArguments(topLevelAtoms: List<ResolvedAtom>): List<PostponedResolvedAtom> {

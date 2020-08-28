@@ -1,0 +1,119 @@
+digraph inAnonymousObject_kt {
+    graph [nodesep=3]
+    node [shape=box penwidth=2]
+    edge [penwidth=2]
+
+    subgraph cluster_0 {
+        color=red
+        0 [label="Enter function foo" style="filled" fillcolor=red];
+        subgraph cluster_1 {
+            color=blue
+            1 [label="Enter block"];
+            2 [label="Exit anonymous object"];
+            3 [label="Variable declaration: lval obj: R|<anonymous>|"];
+            4 [label="Access variable R|<local>/obj|"];
+            5 [label="Function call: R|<local>/obj|.R|/<anonymous>.run|()"];
+            6 [label="Function call: R|<local>/d|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            7 [label="Exit block"];
+        }
+        8 [label="Exit function foo" style="filled" fillcolor=red];
+    }
+    subgraph cluster_2 {
+        color=blue
+        9 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
+        subgraph cluster_3 {
+            color=blue
+            10 [label="Part of class initialization"];
+            subgraph cluster_4 {
+                color=blue
+                11 [label="Part of class initialization"];
+                12 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
+            }
+            0 -> {1};
+            1 -> {2};
+            1 -> {13 18 16 21 23 29} [color=red];
+            2 -> {3};
+            2 -> {13 29 9} [color=green];
+            2 -> {13 29 9} [style=dashed];
+            3 -> {4};
+            4 -> {5};
+            5 -> {6};
+            6 -> {7};
+            7 -> {8};
+            9 -> {10} [color=green];
+            10 -> {11} [style=dotted];
+            10 -> {18} [color=green];
+            10 -> {18} [style=dashed];
+            11 -> {12} [style=dotted];
+            11 -> {23} [color=green];
+            11 -> {23} [style=dashed];
+
+            subgraph cluster_5 {
+                color=red
+                13 [label="Enter function <init>" style="filled" fillcolor=red];
+                14 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+                15 [label="Exit function <init>" style="filled" fillcolor=red];
+            }
+            13 -> {14};
+            14 -> {15};
+
+            subgraph cluster_6 {
+                color=red
+                16 [label="Enter function getter" style="filled" fillcolor=red];
+                17 [label="Exit function getter" style="filled" fillcolor=red];
+            }
+            16 -> {17};
+
+            subgraph cluster_7 {
+                color=red
+                18 [label="Enter property" style="filled" fillcolor=red];
+                19 [label="Access variable R|<local>/a|"];
+                20 [label="Exit property" style="filled" fillcolor=red];
+            }
+            18 -> {19};
+            19 -> {20};
+            20 -> {11} [color=green];
+
+            subgraph cluster_8 {
+                color=red
+                21 [label="Enter function getter" style="filled" fillcolor=red];
+                22 [label="Exit function getter" style="filled" fillcolor=red];
+            }
+            21 -> {22};
+
+            subgraph cluster_9 {
+                color=red
+                23 [label="Enter init block" style="filled" fillcolor=red];
+                subgraph cluster_10 {
+                    color=blue
+                    24 [label="Enter block"];
+                    25 [label="Access variable R|<local>/b|"];
+                    26 [label="Assignment: R|/<anonymous>.leaked|"];
+                    27 [label="Exit block"];
+                }
+                28 [label="Exit init block" style="filled" fillcolor=red];
+            }
+            23 -> {24};
+            24 -> {25};
+            25 -> {26};
+            26 -> {27};
+            27 -> {28};
+            28 -> {12} [color=green];
+
+            subgraph cluster_11 {
+                color=red
+                29 [label="Enter function run" style="filled" fillcolor=red];
+                subgraph cluster_12 {
+                    color=blue
+                    30 [label="Enter block"];
+                    31 [label="Function call: R|<local>/c|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+                    32 [label="Exit block"];
+                }
+                33 [label="Exit function run" style="filled" fillcolor=red];
+            }
+            29 -> {30};
+            30 -> {31};
+            31 -> {32};
+            32 -> {33};
+
+        }

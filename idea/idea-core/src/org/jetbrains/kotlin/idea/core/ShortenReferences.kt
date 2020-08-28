@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.getImportableTargets
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.references.resolveToDescriptors
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
@@ -94,13 +95,20 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         }
     }
 
-    @JvmOverloads
     fun process(
         element: KtElement,
         elementFilter: (PsiElement) -> FilterResult = { FilterResult.PROCESS },
         actionRunningMode: ActionRunningMode = ActionRunningMode.RUN_IN_CURRENT_THREAD
     ): KtElement {
         return process(listOf(element), elementFilter, actionRunningMode).single()
+    }
+
+    @JvmOverloads
+    fun process(
+        element: KtElement,
+        elementFilter: (PsiElement) -> FilterResult = { FilterResult.PROCESS },
+    ): KtElement {
+        return process(element, elementFilter, ActionRunningMode.RUN_IN_CURRENT_THREAD)
     }
 
     @JvmOverloads
@@ -338,12 +346,11 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
                         val tryImport = result.descriptors.isNotEmpty()
                                 && result.descriptors.none { it in failedToImportDescriptors }
                                 && result.descriptors.all { mayImport(it, file) }
-                        toBeShortened = if (tryImport) {
+
+                        if (tryImport) {
                             descriptorsToImport.addAll(result.descriptors)
-                            true
-                        } else {
-                            false
                         }
+                        toBeShortened = tryImport
                     }
 
                     AnalyzeQualifiedElementResult.Skip -> {
@@ -516,10 +523,8 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             element: KtDotQualifiedExpression,
             bindingContext: BindingContext
         ): AnalyzeQualifiedElementResult {
-            if (PsiTreeUtil.getParentOfType(
-                    element,
-                    KtImportDirective::class.java, KtPackageDirective::class.java
-                ) != null || !canBePossibleToDropReceiver(element, bindingContext)
+            if (PsiTreeUtil.getParentOfType(element, KtImportDirective::class.java, KtPackageDirective::class.java) != null ||
+                !canBePossibleToDropReceiver(element, bindingContext)
             ) return AnalyzeQualifiedElementResult.Skip
 
             val selector = element.selectorExpression ?: return AnalyzeQualifiedElementResult.Skip
@@ -555,7 +560,10 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             // targetMatch == false, but shorten still can be preformed
             // TODO: Add possibility to check if descriptor from completion can't be resolved after shorten and not preform shorten than
             val resolvedCallsMatch = if (resolvedCall != null && resolvedCallWhenShort != null) {
-                resolvedCall.resultingDescriptor.original == resolvedCallWhenShort.resultingDescriptor.original
+                val originalCallDescriptor = resolvedCall.resultingDescriptor.original.unwrapIfFakeOverride()
+                val shortenedCallDescriptor = resolvedCallWhenShort.resultingDescriptor.original.unwrapIfFakeOverride()
+
+                originalCallDescriptor == shortenedCallDescriptor
             } else {
                 val resolvedCalls = selector.getCall(bindingContext)?.resolveCandidates(bindingContext, resolutionFacade) ?: emptyList()
                 val callWhenShort = selectorAfterShortening.getCall(newContext)
@@ -719,11 +727,9 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
 
             val receiver = element.receiverExpression
 
-            if (PsiTreeUtil.getParentOfType(
-                    element,
-                    KtImportDirective::class.java, KtPackageDirective::class.java
-                ) != null
-            ) return AnalyzeQualifiedElementResult.Skip
+            if (PsiTreeUtil.getParentOfType(element, KtImportDirective::class.java, KtPackageDirective::class.java) != null) {
+                return AnalyzeQualifiedElementResult.Skip
+            }
 
             val receiverTarget = receiver.singleTarget(bindingContext) as? ClassDescriptor ?: return AnalyzeQualifiedElementResult.Skip
 
@@ -740,11 +746,9 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
             // TODO: More generic solution may be possible
             if (selectorsSelectorTarget is PropertyDescriptor) {
                 val source = selectorsSelectorTarget.source.getPsi() as? KtProperty
-                if (source != null && isEnumCompanionPropertyWithEntryConflict(
-                        source,
-                        source.name ?: ""
-                    )
-                ) return AnalyzeQualifiedElementResult.Skip
+                if (source != null && isEnumCompanionPropertyWithEntryConflict(source, source.name ?: "")) {
+                    return AnalyzeQualifiedElementResult.Skip
+                }
             }
 
             return AnalyzeQualifiedElementResult.ShortenNow

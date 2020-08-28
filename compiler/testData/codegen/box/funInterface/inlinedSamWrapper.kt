@@ -1,6 +1,5 @@
 // !LANGUAGE: +NewInference +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
 // WITH_RUNTIME
-// SKIP_DCE_DRIVEN
 
 fun interface MyRunnable {
     fun invoke()

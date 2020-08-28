@@ -42,6 +42,7 @@ class ProvisionalFunctionExpressionLowering :
                     startOffset, endOffset, type,
                     function.symbol,
                     typeArgumentsCount = 0,
+                    valueArgumentsCount = function.valueParameters.size,
                     reflectionTarget = null,
                     origin = origin
                 )

@@ -6,26 +6,37 @@
 package org.jetbrains.kotlin.resolve.deprecation
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.DefaultImplementation
-import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
 import org.jetbrains.kotlin.container.PlatformSpecificExtension
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
-import org.jetbrains.kotlin.resolve.constants.AnnotationValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun Deprecation.deprecatedByOverriddenMessage(): String? = (this as? DeprecatedByOverridden)?.additionalMessage()
 
-fun Deprecation.deprecatedByAnnotationReplaceWithExpression(): String? {
-    val annotation = (this as? DeprecatedByAnnotation)?.annotation ?: return null
-    val replaceWithAnnotation =
-        annotation.argumentValue(kotlin.Deprecated::replaceWith.name)?.safeAs<AnnotationValue>()?.value ?: return null
-    return replaceWithAnnotation.argumentValue(kotlin.ReplaceWith::expression.name)?.safeAs<StringValue>()?.value
+fun Deprecation.deprecatedByAnnotationReplaceWithExpression(): String? = (this as? DeprecatedByAnnotation)?.replaceWithValue
+
+// The function extracts value of warningSince/errorSince/hiddenSince from DeprecatedSinceKotlin annotation
+fun AnnotationDescriptor.getSinceVersion(name: String): ApiVersion? =
+    argumentValue(name)?.safeAs<StringValue>()?.value?.takeUnless(String::isEmpty)?.let(ApiVersion.Companion::parse)
+
+fun computeLevelForDeprecatedSinceKotlin(annotation: AnnotationDescriptor, apiVersion: ApiVersion): DeprecationLevelValue? {
+    val hiddenSince = annotation.getSinceVersion("hiddenSince")
+    if (hiddenSince != null && apiVersion >= hiddenSince) return HIDDEN
+
+    val errorSince = annotation.getSinceVersion("errorSince")
+    if (errorSince != null && apiVersion >= errorSince) return ERROR
+
+    val warningSince = annotation.getSinceVersion("warningSince")
+    if (warningSince != null && apiVersion >= warningSince) return WARNING
+
+    return null
 }
 
 internal fun createDeprecationDiagnostic(

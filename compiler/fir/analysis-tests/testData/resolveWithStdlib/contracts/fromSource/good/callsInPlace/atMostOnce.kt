@@ -21,7 +21,7 @@ fun test_1() {
     inlineRun {
         x = 1
     }
-    x.inc()
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }
 
 fun test_2() {
@@ -29,5 +29,5 @@ fun test_2() {
     myRun {
         x = 1
     }
-    x.inc()
+    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
 }

@@ -979,6 +979,11 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
             runTest("jps-plugin/testData/incremental/pureKotlin/inlineUsedWhereDeclared/");
         }
 
+        @TestMetadata("innerClassesFromSupertypes")
+        public void testInnerClassesFromSupertypes() throws Exception {
+            runTest("jps-plugin/testData/incremental/pureKotlin/innerClassesFromSupertypes/");
+        }
+
         @TestMetadata("internalClassChanged")
         public void testInternalClassChanged() throws Exception {
             runTest("jps-plugin/testData/incremental/pureKotlin/internalClassChanged/");
@@ -2134,6 +2139,11 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
                 runTest("jps-plugin/testData/incremental/withJava/other/defaultValueInConstructorAdded/");
             }
 
+            @TestMetadata("inlineFunctionWithJvmNameInClass")
+            public void testInlineFunctionWithJvmNameInClass() throws Exception {
+                runTest("jps-plugin/testData/incremental/withJava/other/inlineFunctionWithJvmNameInClass/");
+            }
+
             @TestMetadata("inlineTopLevelFunctionWithJvmName")
             public void testInlineTopLevelFunctionWithJvmName() throws Exception {
                 runTest("jps-plugin/testData/incremental/withJava/other/inlineTopLevelFunctionWithJvmName/");
@@ -2324,6 +2334,19 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
 
                 public void testAllFilesPresentInDefaultValueInConstructorAdded() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/withJava/other/defaultValueInConstructorAdded"), Pattern.compile("^([^\\.]+)$"), null, true);
+                }
+            }
+
+            @TestMetadata("jps-plugin/testData/incremental/withJava/other/inlineFunctionWithJvmNameInClass")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class InlineFunctionWithJvmNameInClass extends AbstractIncrementalJvmJpsTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInInlineFunctionWithJvmNameInClass() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/withJava/other/inlineFunctionWithJvmNameInClass"), Pattern.compile("^([^\\.]+)$"), null, true);
                 }
             }
 
@@ -3015,6 +3038,11 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
             runTest("jps-plugin/testData/incremental/classHierarchyAffected/inferredTypeChanged/");
         }
 
+        @TestMetadata("interfaceAnyMethods")
+        public void testInterfaceAnyMethods() throws Exception {
+            runTest("jps-plugin/testData/incremental/classHierarchyAffected/interfaceAnyMethods/");
+        }
+
         @TestMetadata("lambdaParameterAffected")
         public void testLambdaParameterAffected() throws Exception {
             runTest("jps-plugin/testData/incremental/classHierarchyAffected/lambdaParameterAffected/");
@@ -3383,6 +3411,19 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
 
             public void testAllFilesPresentInInferredTypeChanged() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/classHierarchyAffected/inferredTypeChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+            }
+        }
+
+        @TestMetadata("jps-plugin/testData/incremental/classHierarchyAffected/interfaceAnyMethods")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class InterfaceAnyMethods extends AbstractIncrementalJvmJpsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInInterfaceAnyMethods() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/classHierarchyAffected/interfaceAnyMethods"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.core.*
-import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.properties.ModuleConfiguratorProperty
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.GradlePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
@@ -16,7 +16,11 @@ import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplateDescriptor
 import java.nio.file.Path
 
-object IOSSinglePlatformModuleConfigurator : SinglePlatformModuleConfigurator, ModuleConfiguratorSettings() {
+object IOSSinglePlatformModuleConfigurator : SinglePlatformModuleConfigurator,
+    ModuleConfiguratorSettings(),
+    ModuleConfiguratorProperties,
+    ModuleConfiguratorWithProperties {
+
     @NonNls
     override val id = "IOS Module"
 
@@ -36,7 +40,7 @@ object IOSSinglePlatformModuleConfigurator : SinglePlatformModuleConfigurator, M
         module: Module,
         modulePath: Path
     ): TaskResult<Unit> =
-        GradlePlugin::gradleProperties.addValues("xcodeproj" to "./${module.name}")
+        GradlePlugin.gradleProperties.addValues("xcodeproj" to "./${module.name}")
 
     override fun Reader.createTemplates(
         configurationData: ModulesToIrConversionData,
@@ -51,7 +55,7 @@ object IOSSinglePlatformModuleConfigurator : SinglePlatformModuleConfigurator, M
             +fileTemplate("$DEFAULT_APP_NAME.xcodeproj" / "project.pbxproj")
 
             +fileTemplate(DEFAULT_APP_NAME / "AppDelegate.swift")
-            +fileTemplate(DEFAULT_APP_NAME / "ContentView.swift")
+            +fileTemplate(DEFAULT_APP_NAME / "ContentView.swift.vm")
             +fileTemplate(DEFAULT_APP_NAME / "SceneDelegate.swift")
             +fileTemplate(DEFAULT_APP_NAME / "Info.plist")
 
@@ -62,7 +66,7 @@ object IOSSinglePlatformModuleConfigurator : SinglePlatformModuleConfigurator, M
             +fileTemplate(DEFAULT_APP_NAME / "Preview_Content" / "Preview_Assets.xcassets" / "Contents.json")
 
             +fileTemplate("${DEFAULT_APP_NAME}Tests" / "Info.plist")
-            +fileTemplate("${DEFAULT_APP_NAME}Tests" / "${DEFAULT_APP_NAME}Tests.swift")
+            +fileTemplate("${DEFAULT_APP_NAME}Tests" / "${DEFAULT_APP_NAME}Tests.swift.vm")
 
             +fileTemplate("${DEFAULT_APP_NAME}UITests" / "Info.plist")
             +fileTemplate("${DEFAULT_APP_NAME}UITests" / "${DEFAULT_APP_NAME}UITests.swift")
@@ -70,8 +74,8 @@ object IOSSinglePlatformModuleConfigurator : SinglePlatformModuleConfigurator, M
     }
 
     private fun Reader.createTemplatesSettingValues(module: Module): Map<String, Any?> {
-        val dependentModule = withSettingsOf(module) {
-            dependentModule.reference.notRequiredSettingValue?.module
+        val dependentModule = inContextOfModuleConfigurator(module) {
+            dependentModule.reference.propertyValue.module
         }
 
         return mapOf(
@@ -93,13 +97,10 @@ object IOSSinglePlatformModuleConfigurator : SinglePlatformModuleConfigurator, M
     @NonNls
     private const val DEFAULT_APP_NAME = "appName"
 
-    val dependentModule by valueSetting<DependentModuleReference>(
-        "",
-        GenerationPhase.PROJECT_GENERATION,
-        alwaysFailingParser("Dependent module setting should not be parsed")
-    ) {
-        defaultValue = value(DependentModuleReference.EMPTY)
-    }
+    val dependentModule by property(DependentModuleReference.EMPTY)
+
+    override fun getConfiguratorProperties(): List<ModuleConfiguratorProperty<*>> =
+        listOf(dependentModule)
 
     data class DependentModuleReference(val module: Module?) {
         companion object {

@@ -15,7 +15,7 @@ public final annotation class Anno : R|kotlin/Annotation| {
 
 }
 
-@R|test/Anno|(klass = <getClass>(<getClass>(R|kotlin/String|)), klasses = <implicitArrayOf>(<getClass>(R|kotlin/Int|), <getClass>(R|kotlin/String|), <getClass>(R|kotlin/Float|)), sarKlass = <getClass>(<getClass>(R|kotlin/String|)), d2arKlass = <getClass>(<getClass>(R|kotlin/DoubleArray|))) public final class Klass : R|kotlin/Any| {
+@R|test/Anno|(klass = <getClass>(<getClass>(R|kotlin/String|)), klasses = <implicitArrayOf>(<getClass>(<getClass>(R|kotlin/Int|)), <getClass>(<getClass>(R|kotlin/String|)), <getClass>(<getClass>(R|kotlin/Float|))), sarKlass = <getClass>(<getClass>(R|kotlin/String|)), d2arKlass = <getClass>(<getClass>(R|kotlin/DoubleArray|))) public final class Klass : R|kotlin/Any| {
     public constructor(): R|test/Klass|
 
 }

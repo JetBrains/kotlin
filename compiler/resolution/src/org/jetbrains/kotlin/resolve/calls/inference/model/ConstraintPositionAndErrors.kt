@@ -19,8 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.model
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.INAPPLICABLE
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
+import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.DetailedReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -82,9 +81,10 @@ class DelegatedPropertyConstraintPosition(val topLevelCall: KotlinCall) : Constr
     override fun toString() = "Constraint from call $topLevelCall for delegated property"
 }
 
-class IncorporationConstraintPosition(
+data class IncorporationConstraintPosition(
     val from: ConstraintPosition,
-    val initialConstraint: InitialConstraint
+    val initialConstraint: InitialConstraint,
+    var isFromDeclaredUpperBound: Boolean = false
 ) : ConstraintPosition() {
     override fun toString() =
         "Incorporate $initialConstraint from position $from"
@@ -94,7 +94,7 @@ class CoroutinePosition() : ConstraintPosition() {
     override fun toString(): String = "for coroutine call"
 }
 
-@Deprecated("Should be used only in SimpleConstraintSystemImpl")
+// TODO: should be used only in SimpleConstraintSystemImpl
 object SimpleConstraintSystemConstraintPosition : ConstraintPosition()
 
 abstract class ConstraintSystemCallDiagnostic(applicability: ResolutionCandidateApplicability) : KotlinCallDiagnostic(applicability) {
@@ -123,3 +123,5 @@ class ConstrainingTypeIsError(
     val constraintType: KotlinTypeMarker,
     val position: IncorporationConstraintPosition
 ) : ConstraintSystemCallDiagnostic(INAPPLICABLE)
+
+object LowerPriorityToPreserveCompatibility : ConstraintSystemCallDiagnostic(RESOLVED_NEED_PRESERVE_COMPATIBILITY)

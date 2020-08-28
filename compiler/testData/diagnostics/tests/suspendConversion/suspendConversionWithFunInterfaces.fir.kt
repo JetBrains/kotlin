@@ -14,8 +14,8 @@ fun bar3() {}
 suspend fun bar3(s: String = ""): Int = 0
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>foo1<!>(::bar1)
-    <!INAPPLICABLE_CANDIDATE!>foo1<!>(::bar2)
+    foo1(::bar1)
+    foo1(::bar2)
 
     foo1(::bar3) // Should be ambiguity
 }

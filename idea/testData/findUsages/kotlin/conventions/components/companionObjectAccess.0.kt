@@ -12,3 +12,5 @@ data class B(val x: Int, val y: Int)
 fun foo() {
     val (x, y) = A.b()
 }
+
+// DISABLE-ERRORS

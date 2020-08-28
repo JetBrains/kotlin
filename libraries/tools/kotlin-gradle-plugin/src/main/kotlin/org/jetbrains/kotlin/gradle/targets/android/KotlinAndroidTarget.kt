@@ -13,7 +13,6 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.Usage.JAVA_RUNTIME_JARS
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
-import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 open class KotlinAndroidTarget(

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 suspend fun baz() = 1
 suspend fun unit() {}
 

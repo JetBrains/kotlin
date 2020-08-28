@@ -1,21 +1,21 @@
-object A<T>
-object B<in T, out R>
-object C<T : Comparable<T>>
+<!TYPE_PARAMETERS_IN_OBJECT!>object A<!><T>
+<!TYPE_PARAMETERS_IN_OBJECT!>object B<!><in T, out R>
+<!TYPE_PARAMETERS_IN_OBJECT!>object C<!><T : Comparable<T>>
 
 class D {
-    companion object<T>
+    companion <!TYPE_PARAMETERS_IN_OBJECT!>object<!><T>
 }
 
 class E {
-    companion object<in T, out R>
+    companion <!TYPE_PARAMETERS_IN_OBJECT!>object<!><in T, out R>
 }
 
 class F {
-    companion object C<T : Comparable<T>>
+    companion <!TYPE_PARAMETERS_IN_OBJECT!>object C<!><T : Comparable<T>>
 }
 
 class G {
-    companion object F<T>
+    companion <!TYPE_PARAMETERS_IN_OBJECT!>object F<!><T>
 }
 
-object H<T, R><!CONSTRUCTOR_IN_OBJECT!>()<!>
+<!TYPE_PARAMETERS_IN_OBJECT!>object H<!><T, R><!CONSTRUCTOR_IN_OBJECT!>()<!>

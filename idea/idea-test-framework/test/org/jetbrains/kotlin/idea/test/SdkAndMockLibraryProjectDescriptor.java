@@ -33,41 +33,47 @@ import org.jetbrains.kotlin.utils.PathUtil;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import static java.util.Collections.emptyList;
 
 public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescriptor {
     public static final String LIBRARY_NAME = "myKotlinLib";
 
-    private final String sourcesPath;
     private final boolean withSources;
     private final boolean withRuntime;
     private final boolean isJsLibrary;
     private final boolean allowKotlinPackage;
+    private final String sourcesPath;
     private final List<String> classpath;
 
-    public SdkAndMockLibraryProjectDescriptor(String sourcesPath, boolean withSources) {
+    public SdkAndMockLibraryProjectDescriptor(@NotNull String sourcesPath, boolean withSources) {
         this(sourcesPath, withSources, false, false, false);
     }
 
     public SdkAndMockLibraryProjectDescriptor(
-            String sourcesPath, boolean withSources, boolean withRuntime, boolean isJsLibrary, boolean allowKotlinPackage) {
+            @NotNull String sourcesPath,
+            boolean withSources, boolean withRuntime, boolean isJsLibrary, boolean allowKotlinPackage
+    ) {
         this(sourcesPath, withSources, withRuntime, isJsLibrary, allowKotlinPackage, emptyList());
     }
 
     public SdkAndMockLibraryProjectDescriptor(
-            String sourcesPath, boolean withSources, boolean withRuntime, boolean isJsLibrary, boolean allowKotlinPackage, List<String> classpath
+            @NotNull String sourcesPath,
+            boolean withSources, boolean withRuntime, boolean isJsLibrary, boolean allowKotlinPackage,
+            @NotNull List<String> classpath
     ) {
-        this.sourcesPath = sourcesPath;
         this.withSources = withSources;
         this.withRuntime = withRuntime;
         this.isJsLibrary = isJsLibrary;
         this.allowKotlinPackage = allowKotlinPackage;
+        this.sourcesPath = sourcesPath;
         this.classpath = classpath;
     }
 
     @Override
     public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model) {
+        @SuppressWarnings("SpellCheckingInspection")
         List<String> extraOptions = allowKotlinPackage ? Collections.singletonList("-Xallow-kotlin-package") : emptyList();
         File libraryJar =
                 isJsLibrary
@@ -75,7 +81,8 @@ public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
                 : MockLibraryUtil.compileJvmLibraryToJar(sourcesPath, LIBRARY_NAME, withSources, true, extraOptions, classpath);
         String jarUrl = getJarUrl(libraryJar);
 
-        Library.ModifiableModel libraryModel = model.getModuleLibraryTable().getModifiableModel().createLibrary(LIBRARY_NAME).getModifiableModel();
+        Library.ModifiableModel libraryModel =
+                model.getModuleLibraryTable().getModifiableModel().createLibrary(LIBRARY_NAME).getModifiableModel();
         libraryModel.addRoot(jarUrl, OrderRootType.CLASSES);
         if (withRuntime && !isJsLibrary) {
             libraryModel.addRoot(getJarUrl(PathUtil.getKotlinPathsForDistDirectory().getStdlibPath()), OrderRootType.CLASSES);
@@ -84,7 +91,7 @@ public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
             ((LibraryEx.ModifiableModelEx) libraryModel).setKind(JSLibraryKind.INSTANCE);
         }
         if (withSources) {
-            libraryModel.addRoot(jarUrl + "src/", OrderRootType.SOURCES);
+            libraryModel.addRoot(jarUrl + "src", OrderRootType.SOURCES);
         }
 
         libraryModel.commit();
@@ -108,23 +115,17 @@ public class SdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         SdkAndMockLibraryProjectDescriptor that = (SdkAndMockLibraryProjectDescriptor) o;
-
-        if (withSources != that.withSources) return false;
-        if (withRuntime != that.withRuntime) return false;
-        if (isJsLibrary != that.isJsLibrary) return false;
-        if (!sourcesPath.equals(that.sourcesPath)) return false;
-
-        return true;
+        return withSources == that.withSources &&
+               withRuntime == that.withRuntime &&
+               isJsLibrary == that.isJsLibrary &&
+               allowKotlinPackage == that.allowKotlinPackage &&
+               sourcesPath.equals(that.sourcesPath) &&
+               classpath.equals(that.classpath);
     }
 
     @Override
     public int hashCode() {
-        int result = sourcesPath.hashCode();
-        result = 31 * result + (withSources ? 1 : 0);
-        result = 31 * result + (withRuntime ? 1 : 0);
-        result = 31 * result + (isJsLibrary ? 1 : 0);
-        return result;
+        return Objects.hash(withSources, withRuntime, isJsLibrary, allowKotlinPackage, sourcesPath, classpath);
     }
 }

@@ -34,7 +34,7 @@ internal class JKCommentPrinter(val printer: JKPrinter) {
         for (comment in this@createText) {
             if (comment.shouldBeDropped()) continue
             val text = comment.createText() ?: continue
-            if (needNewLine && comment.indent?.let { StringUtil.containsLineBreak(it) } != true) appendln()
+            if (needNewLine && comment.indent?.let { StringUtil.containsLineBreak(it) } != true) appendLine()
             append(comment.indent ?: ' ')
             append(text)
             needNewLine = text.startsWith("//") || '\n' in text

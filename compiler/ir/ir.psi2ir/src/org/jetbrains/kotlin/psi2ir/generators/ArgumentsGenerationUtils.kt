@@ -23,11 +23,12 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.irBlock
+import org.jetbrains.kotlin.ir.builders.irBlockBody
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
@@ -112,7 +113,7 @@ fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffse
         }
 
         if (receiverExpression is IrExpressionWithCopy)
-            RematerializableValue(receiverExpression)
+            RematerializableValue(receiverExpression.type, receiverExpression)
         else
             OnceExpressionValue(receiverExpression)
     }
@@ -166,14 +167,7 @@ private fun StatementGenerator.generateThisOrSuperReceiver(receiver: ReceiverVal
 fun IrExpression.implicitCastTo(expectedType: IrType?): IrExpression {
     if (expectedType == null) return this
 
-    return IrTypeOperatorCallImpl(
-        startOffset, endOffset,
-        expectedType,
-        IrTypeOperator.IMPLICIT_CAST,
-        expectedType
-    ).also {
-        it.argument = this
-    }
+    return IrTypeOperatorCallImpl(startOffset, endOffset, expectedType, IrTypeOperator.IMPLICIT_CAST, expectedType, this)
 }
 
 fun StatementGenerator.generateBackingFieldReceiver(
@@ -251,7 +245,7 @@ private fun StatementGenerator.generateReceiverForCalleeImportedFromObject(
 private fun StatementGenerator.generateVarargExpressionUsing(
     varargArgument: VarargValueArgument,
     valueParameter: ValueParameterDescriptor,
-    resolvedCall: ResolvedCall<*>, // TODO resolvedCall is required for suspend conversions, see KT-38604
+    @Suppress("UNUSED_PARAMETER") resolvedCall: ResolvedCall<*>, // TODO resolvedCall is required for suspend conversions, see KT-38604
     generateArgumentExpression: (KtExpression) -> IrExpression?
 ): IrExpression? {
     if (varargArgument.arguments.isEmpty()) {
@@ -389,7 +383,7 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
     val irAdapterFun = context.symbolTable.declareSimpleFunction(
         adapterFunctionDescriptor
     ) { irAdapterSymbol ->
-        IrFunctionImpl(
+        context.irFactory.createFunction(
             startOffset, endOffset,
             IrDeclarationOrigin.ADAPTER_FOR_SUSPEND_CONVERSION,
             irAdapterSymbol,
@@ -398,7 +392,7 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
             irSuspendFunReturnType,
             isInline = false, isExternal = false, isTailrec = false,
             isSuspend = true,
-            isOperator = false, isExpect = false, isFakeOverride = false
+            isOperator = false, isInfix = false, isExpect = false, isFakeOverride = false
         )
     }
     adapterFunctionDescriptor.bind(irAdapterFun)
@@ -415,7 +409,7 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
                 adaptedParameterDescriptor,
                 irParameterType,
             ) { irValueParameterSymbol ->
-                IrValueParameterImpl(
+                context.irFactory.createValueParameter(
                     startOffset, endOffset, IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION,
                     irValueParameterSymbol,
                     Name.identifier("p$index"),
@@ -619,10 +613,11 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
     for (i in underlyingValueParameters.indices) {
         val underlyingValueParameter = underlyingValueParameters[i]
 
+        val expectedSamConversionTypesForVararg = ArrayList<KotlinType?>()
         if (expectSamConvertedArgumentToBeAvailableInResolvedCall && resolvedCall is NewResolvedCallImpl<*>) {
-            // TODO support SAM conversion of varargs
-            val argument = resolvedCall.valueArguments[originalValueParameters[i]]?.arguments?.singleOrNull() ?: continue
-            resolvedCall.getExpectedTypeForSamConvertedArgument(argument) ?: continue
+            val arguments = resolvedCall.valueArguments[originalValueParameters[i]]?.arguments ?: continue
+            arguments.mapTo(expectedSamConversionTypesForVararg) { resolvedCall.getExpectedTypeForSamConvertedArgument(it) }
+            if (expectedSamConversionTypesForVararg.all { it == null }) continue
         } else {
             // When the method is `f(T)` with `T` = a SAM type, the substituted type is a SAM while the original is not;
             // when the method is `f(X<T>)` with `T` = `out V` where `X` is a SAM type, the substituted type is `Nothing`
@@ -678,11 +673,16 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
                     substitutedVarargType.toIrType(),
                     irSamType
                 ).apply {
-                    originalArgument.elements.mapTo(elements) {
-                        if (it is IrExpression)
-                            samConvertScalarExpression(it)
-                        else
+                    originalArgument.elements.mapIndexedTo(elements) { index, element ->
+                        if (element is IrExpression) {
+                            val samType = expectedSamConversionTypesForVararg[index]
+                            if (samType != null)
+                                samConvertScalarExpression(element)
+                            else
+                                element
+                        } else {
                             throw AssertionError("Unsupported: spread vararg element with SAM conversion")
+                        }
                     }
                 }
             }

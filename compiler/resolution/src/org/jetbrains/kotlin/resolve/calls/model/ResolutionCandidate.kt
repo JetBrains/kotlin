@@ -16,22 +16,22 @@
 
 package org.jetbrains.kotlin.resolve.calls.model
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceResolver
-import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
-import org.jetbrains.kotlin.resolve.calls.components.NewConstraintSystemImpl
-import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper
+import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.LowerPriorityToPreserveCompatibility
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.utils.SmartList
 
 
 abstract class ResolutionPart {
@@ -165,6 +165,12 @@ class KotlinResolutionCandidate(
             return maxOf(currentApplicability, systemApplicability, variableApplicability)
         }
 
+    override fun addCompatibilityWarning(other: Candidate) {
+        if (this !== other && other is KotlinResolutionCandidate) {
+            addDiagnostic(CompatibilityWarning(other.resolvedCall.candidateDescriptor))
+        }
+    }
+
     override fun toString(): String {
         val descriptor = DescriptorRenderer.COMPACT.render(resolvedCall.candidateDescriptor)
         val okOrFail = if (currentApplicability.isSuccess) "OK" else "FAIL"
@@ -187,6 +193,7 @@ class MutableResolvedCallAtom(
     lateinit var argumentToCandidateParameter: Map<KotlinCallArgument, ValueParameterDescriptor>
     private var samAdapterMap: HashMap<KotlinCallArgument, SamConversionDescription>? = null
     private var suspendAdapterMap: HashMap<KotlinCallArgument, UnwrappedType>? = null
+    private var unitAdapterMap: HashMap<KotlinCallArgument, UnwrappedType>? = null
     private var signedUnsignedConstantConversions: HashMap<KotlinCallArgument, IntegerValueTypeConstant>? = null
 
     val hasSamConversion: Boolean
@@ -200,6 +207,9 @@ class MutableResolvedCallAtom(
 
     override val argumentsWithSuspendConversion: Map<KotlinCallArgument, UnwrappedType>
         get() = suspendAdapterMap ?: emptyMap()
+
+    override val argumentsWithUnitConversion: Map<KotlinCallArgument, UnwrappedType>
+        get() = unitAdapterMap ?: emptyMap()
 
     override val argumentsWithConstantConversion: Map<KotlinCallArgument, IntegerValueTypeConstant>
         get() = signedUnsignedConstantConversions ?: emptyMap()
@@ -218,6 +228,13 @@ class MutableResolvedCallAtom(
         suspendAdapterMap!![argument] = convertedType
     }
 
+    fun registerArgumentWithUnitConversion(argument: KotlinCallArgument, convertedType: UnwrappedType) {
+        if (unitAdapterMap == null)
+            unitAdapterMap = hashMapOf()
+
+        unitAdapterMap!![argument] = convertedType
+    }
+
     fun registerArgumentWithConstantConversion(argument: KotlinCallArgument, convertedConstant: IntegerValueTypeConstant) {
         if (signedUnsignedConstantConversions == null)
             signedUnsignedConstantConversions = hashMapOf()
@@ -233,3 +250,12 @@ class MutableResolvedCallAtom(
     override fun toString(): String = "$atom, candidate = $candidateDescriptor"
 }
 
+fun KotlinResolutionCandidate.markCandidateForCompatibilityResolve() {
+    if (callComponents.languageVersionSettings.supportsFeature(LanguageFeature.DisableCompatibilityModeForNewInference)) return
+    addDiagnostic(LowerPriorityToPreserveCompatibility)
+}
+
+fun CallableReferencesCandidateFactory.markCandidateForCompatibilityResolve(diagnostics: SmartList<KotlinCallDiagnostic>) {
+    if (callComponents.languageVersionSettings.supportsFeature(LanguageFeature.DisableCompatibilityModeForNewInference)) return
+    diagnostics.add(LowerPriorityToPreserveCompatibility)
+}

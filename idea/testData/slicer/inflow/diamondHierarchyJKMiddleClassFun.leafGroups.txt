@@ -1,10 +1,11 @@
+11 return <bold>4</bold>;
+9 	<bold>val y</bold> = b.foo() (in test(A, B,…))
+9 		val y = <bold>b.foo()</bold> (in test(A, B,…))
+11 			return <bold>4</bold>;
+
 4 override fun foo() = <bold>2</bold> (in B.foo())
 9 	<bold>val y</bold> = b.foo() (in test(A, B,…))
 9 		val y = <bold>b.foo()</bold> (in test(A, B,…))
 4 			override <bold>fun foo()</bold> = 2 (in B)
 4 				override fun foo() = <bold>2</bold> (in B.foo())
 
-11 return <bold>4</bold>;
-9 	<bold>val y</bold> = b.foo() (in test(A, B,…))
-9 		val y = <bold>b.foo()</bold> (in test(A, B,…))
-11 			return <bold>4</bold>;

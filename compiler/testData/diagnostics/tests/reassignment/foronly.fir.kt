@@ -5,5 +5,5 @@ fun foo(k: Int): Int {
     for (j in 1..k) {
         i = j
     }
-    return i
+    return <!UNINITIALIZED_VARIABLE!>i<!>
 }

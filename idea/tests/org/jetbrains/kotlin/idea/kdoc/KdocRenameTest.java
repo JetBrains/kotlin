@@ -8,16 +8,16 @@ package org.jetbrains.kotlin.idea.kdoc;
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.rename.RenameProcessor;
+import com.intellij.testFramework.LightCodeInsightTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.CompatKt;
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner;
 import org.junit.runner.RunWith;
 
 @SuppressWarnings("deprecation")
 @RunWith(JUnit3WithIdeaConfigurationRunner.class)
-public class KdocRenameTest extends KotlinLightCodeInsightTestCase {
+public class KdocRenameTest extends LightCodeInsightTestCase {
     @NotNull
     @Override
     protected String getTestDataPath() {
@@ -45,7 +45,7 @@ public class KdocRenameTest extends KotlinLightCodeInsightTestCase {
     private void doTest(String newName) {
         configureByFile(getTestName(false) + ".kt");
         PsiElement element = TargetElementUtil
-                .findTargetElement(getEditor_(),
+                .findTargetElement(getEditor(),
                                    TargetElementUtil.ELEMENT_NAME_ACCEPTED | TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED);
         assertNotNull(element);
         new RenameProcessor(getProject(), element, newName, true, true).run();

@@ -2,6 +2,8 @@
 
 // FILE: test.kt
 import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.*
+import kotlinx.serialization.encoding.*
 
 @Serializable(NopeNullableSerializer::class)
 class Nope {}

@@ -41,7 +41,7 @@ interface FirAbstractConstructorBuilder : FirFunctionBuilder {
     abstract var resolvePhase: FirResolvePhase
     abstract var receiverTypeRef: FirTypeRef?
     abstract val typeParameters: MutableList<FirTypeParameterRef>
-    abstract var controlFlowGraphReference: FirControlFlowGraphReference
+    abstract var controlFlowGraphReference: FirControlFlowGraphReference?
     abstract var status: FirDeclarationStatus
     abstract var containerSource: DeserializedContainerSource?
     abstract var symbol: FirConstructorSymbol

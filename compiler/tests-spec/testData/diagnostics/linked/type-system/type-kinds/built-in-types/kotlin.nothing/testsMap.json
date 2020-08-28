@@ -14,18 +14,16 @@
       ]
     },
     "pos": {
-      "2": [
+      "1": [
         {
-          "specVersion": "0.1-213",
+          "specVersion": "0.1-464",
           "casesNumber": 2,
           "description": "Check of Nothing as a subtype of any type",
-          "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos/2.1.kt",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.nothing/p-1/pos/1.2.kt",
           "unexpectedBehaviour": false,
           "linkType": "main",
           "helpers": "checkType, functions"
-        }
-      ],
-      "1": [
+        },
         {
           "specVersion": "0.1-213",
           "casesNumber": 2,

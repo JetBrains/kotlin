@@ -32,5 +32,5 @@ fun x(r: Runnable) {
     A.bar(null as CharSequence?) checkType { _<String>() }
 
     A.bar("") checkType { _<String>() }
-    A.<!INAPPLICABLE_CANDIDATE!>bar<!>(123)
+    A.<!NONE_APPLICABLE!>bar<!>(123)
 }

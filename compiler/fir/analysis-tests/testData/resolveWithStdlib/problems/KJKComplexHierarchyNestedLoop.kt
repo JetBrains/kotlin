@@ -1,6 +1,6 @@
 // FILE: K1.kt
 class K2: J1() {
-    class Q : Nested()
+    class Q : <!UNRESOLVED_REFERENCE!>Nested<!>()
     fun bar() {
         <!UNRESOLVED_REFERENCE!>foo<!>()
         <!UNRESOLVED_REFERENCE!>baz<!>()

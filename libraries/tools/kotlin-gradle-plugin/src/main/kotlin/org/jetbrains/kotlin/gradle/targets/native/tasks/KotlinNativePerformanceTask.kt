@@ -70,15 +70,15 @@ open class NativePerformanceReport : DefaultTask() {
     }
 
     private fun getPerformanceCompilerOptions() =
-        (compilerFlagsFromBinary() + binary.linkTask.compilation.kotlinOptions.freeCompilerArgs)
+        (compilerFlagsFromBinary() + binary.linkTask.compilation.get().kotlinOptions.freeCompilerArgs)
             .filter { it in listOf("-g", "-opt", "-Xg0") }.map { "\"$it\"" }
 
     @TaskAction
     fun generate() {
         val compileTasks = if (settings.includeAssociatedTasks)
-            getAllExecutedTasks(binary.linkTask.compilation)
+            getAllExecutedTasks(binary.linkTask.compilation.get())
         else
-            listOf(binary.linkTask.compilation.compileKotlinTask)
+            listOf(binary.linkTask.compilation.get().compileKotlinTask)
         val allExecutedTasks = listOf(binary.linkTask) + compileTasks
         val upToDateTasks = allExecutedTasks.filter { it.state.upToDate }.map { it.name }
         if (upToDateTasks.isNotEmpty()) {

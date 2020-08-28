@@ -7,6 +7,7 @@
 // ACTION: Create property 'maximumSizeOfGroup'
 // ACTION: Introduce local variable
 // ACTION: Rename reference
+// ACTION: Expand boolean expression to 'if else'
 // ERROR: A 'return' expression required in a function with a block body ('{...}')
 // ERROR: The expression cannot be a selector (occur after a dot)
 // ERROR: Type inference failed: inline fun <T> Iterable<T>.firstOrNull(predicate: (T) -> Boolean): T?<br>cannot be applied to<br>receiver: Collection<List<String>>  arguments: ((List<String>) -> () -> Boolean)<br>

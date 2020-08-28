@@ -2,8 +2,8 @@
 // JS
 package some
 
-import jquery.jq
+import kotlin.math.cos
 
 fun testFun() {
-  jq()
+  cos(0.0)
 }

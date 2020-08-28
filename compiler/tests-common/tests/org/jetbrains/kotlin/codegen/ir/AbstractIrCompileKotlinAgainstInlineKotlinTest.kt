@@ -9,5 +9,5 @@ import org.jetbrains.kotlin.codegen.AbstractCompileKotlinAgainstInlineKotlinTest
 import org.jetbrains.kotlin.test.TargetBackend
 
 abstract class AbstractIrCompileKotlinAgainstInlineKotlinTest : AbstractCompileKotlinAgainstInlineKotlinTest() {
-    override fun getBackend() = TargetBackend.JVM_IR
+    override val backend = TargetBackend.JVM_IR
 }

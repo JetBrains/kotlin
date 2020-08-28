@@ -10,10 +10,10 @@ open class BaseDerived2<X> : BaseDerived1<String, X>()
 
 class Derived : BaseDerived2<Int>() {
     fun foo(): Inner<Char> = null!!
-    fun baz(): Alias<Char> = null!!
+    fun baz(): <!UNRESOLVED_REFERENCE!>Alias<Char><!> = null!!
 }
 
 fun foo() {
-    Derived().foo() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Outer<Int, String>.Inner<Char>>() }
-    Derived().baz() <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><Map<Char, Int>>() }
+    Derived().foo() checkType { _<Outer<Int, String>.Inner<Char>>() }
+    Derived().baz() <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Map<Char, Int>>() }
 }

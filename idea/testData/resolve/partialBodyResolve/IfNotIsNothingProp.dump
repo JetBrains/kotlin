@@ -7,5 +7,5 @@ fun foo(p: Any) {
     if (p !is String) {
         prop
     }
-    println(<caret>p.length())
+    println(<caret>p.length)
 }

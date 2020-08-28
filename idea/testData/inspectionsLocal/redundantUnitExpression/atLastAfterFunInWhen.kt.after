@@ -1,0 +1,7 @@
+fun test(b: Boolean): Unit = when (b) {
+    true -> {
+        fun a() {}
+    }
+    else -> {
+    }
+}

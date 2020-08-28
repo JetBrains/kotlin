@@ -11,16 +11,18 @@ plugins {
 val JDK_18: String by rootProject.extra
 val jarBaseName = property("archivesBaseName") as String
 
+val localPackagesToRelocate =
+    listOf(
+        "kotlinx.coroutines"
+    )
+
 val proguardLibraryJars by configurations.creating {
     attributes {
-        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_API))
     }
 }
-val relocatedJarContents by configurations.creating  {
-    attributes {
-        attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
-    }
-}
+
+val relocatedJarContents by configurations.creating
         
 val embedded by configurations
 
@@ -29,10 +31,9 @@ dependencies {
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":kotlin-scripting-jvm-host-unshaded"))
     compileOnly(project(":kotlin-scripting-dependencies"))
-    runtime(project(":kotlin-compiler-embeddable"))
-    runtime(project(":kotlin-scripting-compiler"))
-    runtime(project(":kotlin-scripting-jvm-host"))
-    runtime(project(":kotlin-reflect"))
+    runtimeOnly(project(":kotlin-scripting-compiler-embeddable"))
+    runtimeOnly(kotlinStdlib())
+    runtimeOnly(project(":kotlin-reflect"))
     embedded(project(":kotlin-scripting-common")) { isTransitive = false }
     embedded(project(":kotlin-scripting-jvm")) { isTransitive = false }
     embedded(project(":kotlin-scripting-jvm-host-unshaded")) { isTransitive = false }
@@ -73,7 +74,7 @@ val relocatedJar by task<ShadowJar> {
     from("jar-resources")
 
     if (kotlinBuildProperties.relocation) {
-        packagesToRelocate.forEach {
+        (packagesToRelocate + localPackagesToRelocate).forEach {
             relocate(it, "$kotlinEmbeddableRootPackage.$it")
         }
     }
@@ -108,6 +109,7 @@ val resultJar by task<Jar> {
 }
 
 addArtifact("runtime", resultJar)
+addArtifact("runtimeElements", resultJar)
 addArtifact("archives", resultJar)
 
 sourcesJar()

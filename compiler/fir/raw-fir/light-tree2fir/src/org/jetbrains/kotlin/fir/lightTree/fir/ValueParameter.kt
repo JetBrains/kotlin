@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.fir.lightTree.fir
 
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.copyWithNewSourceKind
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -35,7 +37,7 @@ class ValueParameter(
         return isVal || isVar
     }
 
-    fun toFirProperty(session: FirSession, callableId: CallableId): FirProperty {
+    fun toFirProperty(session: FirSession, callableId: CallableId, isExpect: Boolean): FirProperty {
         val name = this.firValueParameter.name
         var type = this.firValueParameter.returnTypeRef
         if (type is FirImplicitTypeRef) {
@@ -46,7 +48,7 @@ class ValueParameter(
             source = firValueParameter.source
             this.session = session
             origin = FirDeclarationOrigin.Source
-            returnTypeRef = type
+            returnTypeRef = type.copyWithNewSourceKind(FirFakeSourceElementKind.PropertyFromParameter)
             this.name = name
             initializer = buildQualifiedAccessExpression {
                 calleeReference = buildPropertyFromParameterResolvedNamedReference {
@@ -58,15 +60,27 @@ class ValueParameter(
             symbol = FirPropertySymbol(callableId)
             isLocal = false
             status = FirDeclarationStatusImpl(modifiers.getVisibility(), modifiers.getModality()).apply {
-                isExpect = modifiers.hasExpect()
+                this.isExpect = isExpect
                 isActual = modifiers.hasActual()
                 isOverride = modifiers.hasOverride()
                 isConst = false
                 isLateInit = false
             }
             annotations += this@ValueParameter.firValueParameter.annotations
-            getter = FirDefaultPropertyGetter(null, session, FirDeclarationOrigin.Source, type, modifiers.getVisibility())
-            setter = if (this.isVar) FirDefaultPropertySetter(null, session, FirDeclarationOrigin.Source, type, modifiers.getVisibility()) else null
+            getter = FirDefaultPropertyGetter(
+                null,
+                session,
+                FirDeclarationOrigin.Source,
+                type.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
+                modifiers.getVisibility()
+            )
+            setter = if (this.isVar) FirDefaultPropertySetter(
+                null,
+                session,
+                FirDeclarationOrigin.Source,
+                type.copyWithNewSourceKind(FirFakeSourceElementKind.DefaultAccessor),
+                modifiers.getVisibility()
+            ) else null
         }.apply {
             this.isFromVararg = firValueParameter.isVararg
         }

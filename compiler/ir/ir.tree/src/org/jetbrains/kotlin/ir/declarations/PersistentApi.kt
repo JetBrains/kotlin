@@ -10,31 +10,29 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 
 // TODO threadlocal
 // TODO make a IrDeclarationBase field? (requires IR factory)
-var stageController: StageController = object : StageController {}
+var stageController: StageController = StageController()
 
 // TODO make a class
-interface StageController {
-    val currentStage: Int get() = 0
+open class StageController(open val currentStage: Int = 0) {
+    open fun lazyLower(declaration: IrDeclaration) {}
 
-    fun lazyLower(declaration: IrDeclaration) {}
+    open fun lazyLower(body: IrBody) {}
 
-    fun lazyLower(body: IrBody) {}
+    open fun <T> withStage(stage: Int, fn: () -> T): T = fn()
 
-    fun <T> withStage(stage: Int, fn: () -> T): T = fn()
+    open val bodiesEnabled: Boolean get() = true
 
-    val bodiesEnabled: Boolean get() = true
+    open fun <T> withInitialIr(block: () -> T): T = block()
 
-    fun <T> withInitialIr(block: () -> T): T = block()
+    open fun <T> restrictTo(declaration: IrDeclaration, fn: () -> T): T = fn()
 
-    fun <T> restrictTo(declaration: IrDeclaration, fn: () -> T): T = fn()
+    open fun <T> bodyLowering(fn: () -> T): T = fn()
 
-    fun <T> bodyLowering(fn: () -> T): T = fn()
+    open fun canModify(element: IrElement): Boolean = true
 
-    fun canModify(element: IrElement): Boolean = true
+    open fun <T> unrestrictDeclarationListsAccess(fn: () -> T): T = fn()
 
-    fun <T> unrestrictDeclarationListsAccess(fn: () -> T): T = fn()
-
-    fun canAccessDeclarationsOf(irClass: IrClass): Boolean = true
+    open fun canAccessDeclarationsOf(irClass: IrClass): Boolean = true
 }
 
 @Suppress("NOTHING_TO_INLINE")

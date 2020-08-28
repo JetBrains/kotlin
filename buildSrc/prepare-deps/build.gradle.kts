@@ -1,16 +1,15 @@
 @file:Suppress("PropertyName", "HasPlatformType", "UnstableApiUsage")
 
 import org.gradle.internal.os.OperatingSystem
+import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import java.io.Closeable
-import java.io.FileWriter
 import java.io.OutputStreamWriter
 import java.net.URI
 import java.text.SimpleDateFormat
+import java.time.Duration
+import java.time.Instant
 import java.util.*
 import javax.xml.stream.XMLOutputFactory
-
-import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
-import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 
 plugins {
     base
@@ -24,7 +23,7 @@ val androidStudioRelease = rootProject.findProperty("versions.androidStudioRelea
 val androidStudioBuild = rootProject.findProperty("versions.androidStudioBuild") as String?
 val intellijSeparateSdks: Boolean by rootProject.extra
 val installIntellijCommunity = !intellijUltimateEnabled || intellijSeparateSdks
-val installIntellijUltimate = intellijUltimateEnabled
+val installIntellijUltimate = intellijUltimateEnabled && androidStudioRelease == null
 
 val intellijVersionDelimiterIndex = intellijVersion.indexOfAny(charArrayOf('.', '-'))
 if (intellijVersionDelimiterIndex == -1) {
@@ -143,21 +142,7 @@ dependencies {
     }
 }
 
-
-val cleanupIntellijCore = tasks.register<CleanDataTask>("cleanupIntellijCore") {
-    cleanableStoreProvider = provider { CleanableStore[repoDir.resolve("intellij-core").absolutePath] }
-}
-
-val cleanupIntellijAnnotation = tasks.register<CleanDataTask>("cleanupIntellijAnnotation") {
-    cleanableStoreProvider = provider { CleanableStore[repoDir.resolve(intellijRuntimeAnnotations).absolutePath] }
-}
-
-val cleanupDependencies = tasks.register("cleanupDependencies") {
-    dependsOn(cleanupIntellijCore)
-    dependsOn(cleanupIntellijAnnotation)
-}
-
-val makeIntellijCore = buildIvyRepositoryTaskAndRegisterCleanupTask(intellijCore, customDepsOrg, customDepsRepoDir)
+val makeIntellijCore = buildIvyRepositoryTask(intellijCore, customDepsOrg, customDepsRepoDir)
 
 val makeIntellijAnnotations by tasks.registering(Copy::class) {
     dependsOn(makeIntellijCore)
@@ -165,11 +150,16 @@ val makeIntellijAnnotations by tasks.registering(Copy::class) {
     val intellijCoreRepo = CleanableStore[repoDir.resolve("intellij-core").absolutePath][intellijVersion].use()
     from(intellijCoreRepo.resolve("artifacts/annotations.jar"))
 
-    val targetDir = CleanableStore[repoDir.resolve(intellijRuntimeAnnotations).absolutePath][intellijVersion].use()
+    val annotationsStore = CleanableStore[repoDir.resolve(intellijRuntimeAnnotations).absolutePath]
+    val targetDir = annotationsStore[intellijVersion].use()
     into(targetDir)
 
     val ivyFile = File(targetDir, "$intellijRuntimeAnnotations.ivy.xml")
     outputs.files(ivyFile)
+
+    doFirst {
+        annotationsStore.cleanStore()
+    }
 
     doLast {
         writeIvyXml(
@@ -189,7 +179,10 @@ val mergeSources by tasks.creating(Jar::class.java) {
     dependsOn(sources)
     isPreserveFileTimestamps = false
     isReproducibleFileOrder = true
-    from(provider { sources.map(::zipTree) })
+    isZip64 = true
+    if (!kotlinBuildProperties.isTeamcityBuild) {
+        from(provider { sources.map(::zipTree) })
+    }
     destinationDirectory.set(File(repoDir, sources.name))
     archiveBaseName.set("intellij")
     archiveClassifier.set("sources")
@@ -199,7 +192,7 @@ val mergeSources by tasks.creating(Jar::class.java) {
 val sourcesFile = mergeSources.outputs.files.singleFile
 
 val makeIde = if (androidStudioBuild != null) {
-    buildIvyRepositoryTaskAndRegisterCleanupTask(
+    buildIvyRepositoryTask(
         androidStudio,
         customDepsOrg,
         customDepsRepoDir,
@@ -210,9 +203,9 @@ val makeIde = if (androidStudioBuild != null) {
     )
 } else {
     val task = if (installIntellijUltimate) {
-        buildIvyRepositoryTaskAndRegisterCleanupTask(intellijUltimate, customDepsOrg, customDepsRepoDir, null, sourcesFile)
+        buildIvyRepositoryTask(intellijUltimate, customDepsOrg, customDepsRepoDir, null, sourcesFile)
     } else {
-        buildIvyRepositoryTaskAndRegisterCleanupTask(intellij, customDepsOrg, customDepsRepoDir, null, sourcesFile)
+        buildIvyRepositoryTask(intellij, customDepsOrg, customDepsRepoDir, null, sourcesFile)
     }
 
     task.configure {
@@ -222,7 +215,7 @@ val makeIde = if (androidStudioBuild != null) {
     task
 }
 
-val buildJpsStandalone = buildIvyRepositoryTaskAndRegisterCleanupTask(jpsStandalone, customDepsOrg, customDepsRepoDir, null, sourcesFile)
+val buildJpsStandalone = buildIvyRepositoryTask(jpsStandalone, customDepsOrg, customDepsRepoDir, null, sourcesFile)
 
 tasks.named("build") {
     dependsOn(
@@ -236,24 +229,15 @@ tasks.named("build") {
 
 if (installIntellijUltimate) {
     val buildNodeJsPlugin =
-        buildIvyRepositoryTaskAndRegisterCleanupTask(nodeJSPlugin, customDepsOrg, customDepsRepoDir, ::skipToplevelDirectory, sourcesFile)
+        buildIvyRepositoryTask(nodeJSPlugin, customDepsOrg, customDepsRepoDir, ::skipToplevelDirectory, sourcesFile)
     tasks.named("build") { dependsOn(buildNodeJsPlugin) }
 }
 
-tasks.named("build") { dependsOn(cleanupDependencies) }
-
-// Task to delete legacy repo locations
-tasks.register<Delete>("cleanLegacy") {
-    delete("$projectDir/android-dx")
-    delete("$projectDir/intellij-sdk")
-}
-
 tasks.named<Delete>("clean") {
-    //TODO specify repos to clean? Use CleanDataTask
     delete(customDepsRepoDir)
 }
 
-fun buildIvyRepositoryTaskAndRegisterCleanupTask(
+fun buildIvyRepositoryTask(
     configuration: Configuration,
     organization: String,
     repoDirectory: File,
@@ -266,7 +250,7 @@ fun buildIvyRepositoryTaskAndRegisterCleanupTask(
     fun ResolvedArtifact.moduleDirectory(): File =
         storeDirectory()[moduleVersion.id.version].use()
 
-    val buildIvyRepositoryTask = tasks.register("buildIvyRepositoryFor${configuration.name.capitalize()}") {
+    return tasks.register("buildIvyRepositoryFor${configuration.name.capitalize()}") {
         dependsOn(configuration)
         inputs.files(configuration)
 
@@ -279,6 +263,9 @@ fun buildIvyRepositoryTaskAndRegisterCleanupTask(
         doFirst {
             val artifact = configuration.resolvedConfiguration.resolvedArtifacts.single()
             val moduleDirectory = artifact.moduleDirectory()
+
+            artifact.storeDirectory().cleanStore()
+
             if (moduleDirectory.exists()) {
                 logger.info("Path ${moduleDirectory.absolutePath} already exists, skipping unpacking.")
                 return@doFirst
@@ -342,19 +329,9 @@ fun buildIvyRepositoryTaskAndRegisterCleanupTask(
             }
         }
     }
-
-    val cleanupIvyRepositoryTask = tasks.register<CleanDataTask>("cleanupIvyRepositoryFor${configuration.name.capitalize()}") {
-        cleanableStoreProvider = provider {
-            configuration.resolvedConfiguration.resolvedArtifacts.single().storeDirectory()
-        }
-    }
-
-    cleanupDependencies {
-        dependsOn(cleanupIvyRepositoryTask)
-    }
-
-    return buildIvyRepositoryTask
 }
+
+fun CleanableStore.cleanStore() = cleanDir(Instant.now().minus(Duration.ofDays(30)))
 
 fun writeIvyXml(
     organization: String,

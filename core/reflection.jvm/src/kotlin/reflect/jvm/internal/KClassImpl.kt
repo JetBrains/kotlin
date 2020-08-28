@@ -40,7 +40,9 @@ import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
 import org.jetbrains.kotlin.descriptors.runtime.structure.functionClassArity
 import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
 
-internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclarationContainerImpl(), KClass<T>, KClassifierImpl {
+internal class KClassImpl<T : Any>(
+    override val jClass: Class<T>
+) : KDeclarationContainerImpl(), KClass<T>, KClassifierImpl, KTypeParameterOwnerImpl {
     inner class Data : KDeclarationContainerImpl.Data() {
         val descriptor: ClassDescriptor by ReflectProperties.lazySoft {
             val classId = classId
@@ -115,7 +117,7 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
         }
 
         val typeParameters: List<KTypeParameter> by ReflectProperties.lazySoft {
-            descriptor.declaredTypeParameters.map(::KTypeParameterImpl)
+            descriptor.declaredTypeParameters.map { descriptor -> KTypeParameterImpl(this@KClassImpl, descriptor) }
         }
 
         val supertypes: List<KType> by ReflectProperties.lazySoft {
@@ -279,7 +281,6 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
     override val isCompanion: Boolean
         get() = descriptor.isCompanionObject
 
-    @Suppress("NOTHING_TO_OVERRIDE") // Temporary workaround for the JPS build until bootstrap
     override val isFun: Boolean
         get() = descriptor.isFun
 

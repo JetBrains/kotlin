@@ -15,13 +15,16 @@ import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
 import org.jetbrains.kotlin.ir.AbstractIrTextTestCase
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import java.io.File
 
 abstract class AbstractFir2IrTextTest : AbstractIrTextTestCase() {
@@ -86,9 +89,12 @@ abstract class AbstractFir2IrTextTest : AbstractIrTextTestCase() {
         return Fir2IrConverter.createModuleFragment(
             session, resolveTransformer.scopeSession, firFiles,
             myEnvironment.configuration.languageVersionSettings,
-            signaturer = signaturer,
+            signaturer,
             // TODO: differentiate JVM resolve from other targets, such as JS resolve.
-            generatorExtensions = JvmGeneratorExtensions(generateFacades = false)
+            JvmGeneratorExtensions(generateFacades = false),
+            FirJvmKotlinMangler(session),
+            IrFactoryImpl,
+            FirJvmVisibilityConverter
         ).irModuleFragment
     }
 }

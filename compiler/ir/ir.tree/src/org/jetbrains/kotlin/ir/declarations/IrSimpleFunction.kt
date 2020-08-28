@@ -5,23 +5,27 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrSimpleFunction :
-    IrFunction,
+abstract class IrSimpleFunction :
+    IrFunction(),
     IrSymbolDeclaration<IrSimpleFunctionSymbol>,
     IrOverridableDeclaration<IrSimpleFunctionSymbol>,
+    IrOverridableMember,
     IrAttributeContainer {
 
-    val modality: Modality
-    val isTailrec: Boolean
-    val isSuspend: Boolean
-    val isFakeOverride: Boolean
-    val isOperator: Boolean
+    abstract val isTailrec: Boolean
+    abstract val isSuspend: Boolean
+    abstract val isFakeOverride: Boolean
+    abstract val isOperator: Boolean
+    abstract val isInfix: Boolean
 
-    var correspondingPropertySymbol: IrPropertySymbol?
+    abstract var correspondingPropertySymbol: IrPropertySymbol?
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitSimpleFunction(this, data)
 }
 
 val IrFunction.isPropertyAccessor: Boolean

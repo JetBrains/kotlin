@@ -490,7 +490,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
             )
         }
 
-        fun isJavacSkipTest(wholeFile: File, files: List<TestFile>): Boolean {
+        fun isJavacSkipTest(wholeFile: File): Boolean {
             val testDataFileText = wholeFile.readText()
             if (isDirectiveDefined(testDataFileText, "// JAVAC_SKIP")) {
                 return true
@@ -499,7 +499,7 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         }
 
         //TODO: merge with isJavacSkipTest
-        fun isSkipJavacTest(wholeFile: File, files: List<TestFile>): Boolean {
+        fun isSkipJavacTest(wholeFile: File): Boolean {
             val testDataFileText = wholeFile.readText()
             if (isDirectiveDefined(testDataFileText, "// SKIP_JAVAC")) {
                 return true

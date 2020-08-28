@@ -16,15 +16,15 @@ public final annotation class B : R|kotlin/Annotation| {
 
 public abstract interface I : R|kotlin/Any| {
     public abstract var getterAndSetter: R|kotlin/Int|
-        public get(): R|kotlin/Int|
-        public set(value: R|kotlin/Int|): R|kotlin/Unit|
+        @R|test/A|(value = String(getter)) public get(): R|kotlin/Int|
+        @R|test/B|(value = <implicitArrayOf>(String(setter))) public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
     public abstract var propertyAndGetter: R|kotlin/Int|
-        public get(): R|kotlin/Int|
+        @R|test/B|(value = <implicitArrayOf>(String(getter))) public get(): R|kotlin/Int|
         public set(value: R|kotlin/Int|): R|kotlin/Unit|
 
     public abstract var propertyAndSetter: R|kotlin/Int|
         public get(): R|kotlin/Int|
-        public set(value: R|kotlin/Int|): R|kotlin/Unit|
+        @R|test/B|(value = <implicitArrayOf>(String(setter))) public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
 
 }

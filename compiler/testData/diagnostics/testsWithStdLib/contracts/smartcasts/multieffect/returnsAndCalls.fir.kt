@@ -34,14 +34,14 @@ fun inPresenceOfLazy(x: Any?, unknownBoolean: Boolean) {
     val y: Int
 
     if (unknownBoolean && callsAndInverts(x !is String) { y = 42 }) {
-        println(y)
+        println(<!UNINITIALIZED_VARIABLE!>y<!>)
         x.length
     }
     else {
-        println(y)
+        println(<!UNINITIALIZED_VARIABLE!>y<!>)
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
-    println(y)
+    println(<!UNINITIALIZED_VARIABLE!>y<!>)
 }
 
 fun isPresenceOfLazy2(x: Any?, unknownBoolean: Boolean) {
@@ -50,10 +50,10 @@ fun isPresenceOfLazy2(x: Any?, unknownBoolean: Boolean) {
         x.length
     }
     else {
-        println(y)
+        println(<!UNINITIALIZED_VARIABLE!>y<!>)
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
-    println(y)
+    println(<!UNINITIALIZED_VARIABLE!>y<!>)
 }
 
 fun isPresenceOfLazy3(x: Any?, unknownBoolean: Boolean) {
@@ -64,5 +64,5 @@ fun isPresenceOfLazy3(x: Any?, unknownBoolean: Boolean) {
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
-    println(y)
+    println(<!UNINITIALIZED_VARIABLE!>y<!>)
 }

@@ -38,17 +38,25 @@ object TypeConversions {
         val samConversionData = performConversionBeforeSubtyping(
             candidate, argument, candidateParameter, candidateExpectedType, SamTypeConversions
         )
-        val suspendConversionData = if (samConversionData.convertedType == null) {
-            performConversionBeforeSubtyping(candidate, argument, candidateParameter, candidateExpectedType, SuspendTypeConversions)
-        } else {
-            null
-        }
+
+        val suspendConversionData = performConversionBeforeSubtyping(
+            candidate, argument, candidateParameter,
+            candidateExpectedType = samConversionData.convertedType ?: candidateExpectedType,
+            SuspendTypeConversions
+        )
+
+        val unitConversionData = performConversionBeforeSubtyping(
+            candidate, argument, candidateParameter,
+            candidateExpectedType = suspendConversionData.convertedType ?: samConversionData.convertedType ?: candidateExpectedType,
+            UnitTypeConversions
+        )
 
         return ConversionData(
-            convertedType = samConversionData.convertedType ?: suspendConversionData?.convertedType,
-            wasConversion = samConversionData.wasConversion || suspendConversionData?.wasConversion == true,
+            convertedType = unitConversionData.convertedType ?: suspendConversionData.convertedType ?: samConversionData.convertedType,
+            wasConversion = samConversionData.wasConversion || suspendConversionData.wasConversion || unitConversionData.wasConversion,
             conversionDefinitelyNotNeeded = samConversionData.conversionDefinitelyNotNeeded &&
-                    (suspendConversionData == null || suspendConversionData.conversionDefinitelyNotNeeded)
+                    suspendConversionData.conversionDefinitelyNotNeeded &&
+                    unitConversionData.conversionDefinitelyNotNeeded
         )
     }
 
@@ -62,9 +70,19 @@ object TypeConversions {
             candidate, argument, candidateParameter, candidateExpectedType, SamTypeConversions
         )
 
-        if (samConvertedType != null) return samConvertedType
+        val suspendConvertedType = performConversionAfterSubtyping(
+            candidate, argument, candidateParameter,
+            candidateExpectedType = samConvertedType ?: candidateExpectedType,
+            SuspendTypeConversions
+        )
 
-        return performConversionAfterSubtyping(candidate, argument, candidateParameter, candidateExpectedType, SuspendTypeConversions)
+        val unitConvertedType = performConversionAfterSubtyping(
+            candidate, argument, candidateParameter,
+            candidateExpectedType = suspendConvertedType ?: samConvertedType ?: candidateExpectedType,
+            UnitTypeConversions
+        )
+
+        return unitConvertedType ?: suspendConvertedType ?: samConvertedType
     }
 
     private fun performConversionAfterSubtyping(

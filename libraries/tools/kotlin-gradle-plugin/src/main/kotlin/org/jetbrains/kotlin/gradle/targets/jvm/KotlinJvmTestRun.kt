@@ -64,6 +64,7 @@ open class KotlinJvmTestRun(testRunName: String, override val target: KotlinJvmT
         get() = _executionSource
         private set(value) {
             setTestTaskClasspathAndClassesDirs(value.classpath, value.testClassesDirs)
+            _executionSource = value
         }
 
     private fun setTestTaskClasspathAndClassesDirs(classpath: FileCollection, testClassesDirs: FileCollection) {

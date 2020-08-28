@@ -10,7 +10,8 @@ import org.jetbrains.kotlin.descriptors.commonizer.builder.CommonizedMemberScope
 import org.jetbrains.kotlin.descriptors.commonizer.builder.DeclarationsBuilderVisitor1.Companion.asListContaining
 import org.jetbrains.kotlin.descriptors.commonizer.builder.DeclarationsBuilderVisitor1.Companion.noContainingDeclarations
 import org.jetbrains.kotlin.descriptors.commonizer.builder.DeclarationsBuilderVisitor1.Companion.noReturningDeclarations
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.dimension
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 
@@ -29,7 +30,7 @@ internal class DeclarationsBuilderVisitor2(
         check(components.targetComponents.size == node.dimension)
 
         // visit module descriptors:
-        for (moduleNode in node.modules) {
+        for (moduleNode in node.modules.values) {
             moduleNode.accept(this, noContainingDeclarations())
         }
 
@@ -38,7 +39,7 @@ internal class DeclarationsBuilderVisitor2(
 
     override fun visitModuleNode(node: CirModuleNode, data: List<DeclarationDescriptor?>): List<ModuleDescriptorImpl?> {
         // visit package fragment descriptors:
-        for (packageNode in node.packages) {
+        for (packageNode in node.packages.values) {
             packageNode.accept(this, noContainingDeclarations())
         }
 
@@ -50,14 +51,14 @@ internal class DeclarationsBuilderVisitor2(
 
         // build non-classifier package members:
         val packageMemberScopes = packageFragments.map { it?.getMemberScope() }
-        for (propertyNode in node.properties) {
+        for (propertyNode in node.properties.values) {
             packageMemberScopes += propertyNode.accept(this, packageFragments)
         }
-        for (functionNode in node.functions) {
+        for (functionNode in node.functions.values) {
             packageMemberScopes += functionNode.accept(this, packageFragments)
         }
 
-        for (classNode in node.classes) {
+        for (classNode in node.classes.values) {
             classNode.accept(this, noContainingDeclarations())
         }
 
@@ -65,25 +66,25 @@ internal class DeclarationsBuilderVisitor2(
     }
 
     override fun visitPropertyNode(node: CirPropertyNode, data: List<DeclarationDescriptor?>): List<PropertyDescriptor?> {
-        val propertyDescriptorsGroup = CommonizedGroup<PropertyDescriptor>(node.dimension)
-        node.buildDescriptors(components, propertyDescriptorsGroup, data)
+        val propertyDescriptors = CommonizedGroup<PropertyDescriptor>(node.dimension)
+        node.buildDescriptors(components, propertyDescriptors, data)
 
-        return propertyDescriptorsGroup.toList()
+        return propertyDescriptors
     }
 
     override fun visitFunctionNode(node: CirFunctionNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
-        val functionDescriptorsGroup = CommonizedGroup<SimpleFunctionDescriptor>(node.dimension)
-        node.buildDescriptors(components, functionDescriptorsGroup, data)
+        val functionDescriptors = CommonizedGroup<SimpleFunctionDescriptor>(node.dimension)
+        node.buildDescriptors(components, functionDescriptors, data)
 
-        return functionDescriptorsGroup.toList()
+        return functionDescriptors
     }
 
     override fun visitClassNode(node: CirClassNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
-        val classes = components.cache.getCachedClasses(node.fqName)
+        val classes = components.cache.getCachedClasses(node.classId)
 
         // build class constructors:
         val allConstructorsByTargets = Array<MutableList<CommonizedClassConstructorDescriptor>>(node.dimension) { ArrayList() }
-        for (constructorNode in node.constructors) {
+        for (constructorNode in node.constructors.values) {
             val constructorsByTargets = constructorNode.accept(this, classes).asListContaining<CommonizedClassConstructorDescriptor>()
             constructorsByTargets.forEachIndexed { index, constructor ->
                 if (constructor != null) allConstructorsByTargets[index].add(constructor)
@@ -97,14 +98,14 @@ internal class DeclarationsBuilderVisitor2(
 
         // build class members:
         val classMemberScopes = classes.map { it?.unsubstitutedMemberScope }
-        for (propertyNode in node.properties) {
+        for (propertyNode in node.properties.values) {
             classMemberScopes += propertyNode.accept(this, classes)
         }
-        for (functionNode in node.functions) {
+        for (functionNode in node.functions.values) {
             classMemberScopes += functionNode.accept(this, classes)
         }
 
-        for (classNode in node.classes) {
+        for (classNode in node.classes.values) {
             classNode.accept(this, noContainingDeclarations())
         }
 
@@ -114,10 +115,10 @@ internal class DeclarationsBuilderVisitor2(
     override fun visitClassConstructorNode(node: CirClassConstructorNode, data: List<DeclarationDescriptor?>): List<DeclarationDescriptor?> {
         val containingDeclarations = data.asListContaining<CommonizedClassDescriptor>()
 
-        val constructorsGroup = CommonizedGroup<ClassConstructorDescriptor>(node.dimension)
-        node.buildDescriptors(components, constructorsGroup, containingDeclarations)
+        val constructors = CommonizedGroup<ClassConstructorDescriptor>(node.dimension)
+        node.buildDescriptors(components, constructors, containingDeclarations)
 
-        return constructorsGroup.toList()
+        return constructors
     }
 
     override fun visitTypeAliasNode(node: CirTypeAliasNode, data: List<DeclarationDescriptor?>) =

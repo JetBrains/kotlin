@@ -18,14 +18,42 @@ class DtsResolver(val npmProject: NpmProject) {
         indexFileSuffixes = listOf(".d.ts")
     )
 
-    fun getAllDts(externalNpmDependencies: Collection<NpmDependency>): List<Dts> {
+    fun getAllDts(
+        externalNpmDependencies: Collection<NpmDependency>,
+        considerGeneratingFlag: Boolean = true
+    ): List<Dts> {
         return externalNpmDependencies
             .asSequence()
-            .filter { it.generateKotlinExternals }
+            .filter { !considerGeneratingFlag || it.generateExternals }
             .filter { it.scope == NORMAL || it.scope == OPTIONAL }
-            .mapNotNullTo(mutableSetOf()) { typeModules.resolve(it.key)?.let { file -> Dts(file.canonicalFile, it) } }
+            .mapNotNullTo(mutableSetOf()) { dependency ->
+                getDtsFromDependency(dependency, considerGeneratingFlag)
+            }
             .sortedBy { it.inputKey }
             .toList()
+    }
+
+    private fun getDtsFromDependency(
+        dependency: NpmDependency,
+        considerGeneratingFlag: Boolean
+    ): Dts? {
+        val dts = typeModules.resolve(dependency.key)
+            ?.let { file ->
+                Dts(file.canonicalFile, dependency)
+            }
+        if (dts == null && considerGeneratingFlag) {
+            warningOnMissedDTs(dependency)
+        }
+        return dts
+    }
+
+    private fun warningOnMissedDTs(dependency: NpmDependency) {
+        npmProject.project.logger.warn(
+            """
+            No `types` or `typings` found for '$dependency'.
+            To find d.ts for dependency, fields `types` and `typings` should be declared in `package.json`
+            """.trimIndent()
+        )
     }
 
     class Dts(val file: File, val npmDependency: NpmDependency) {

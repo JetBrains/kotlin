@@ -15,23 +15,22 @@ import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.backend.jvm.codegen.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.codegen.MethodSignatureMapper
 import org.jetbrains.kotlin.backend.jvm.codegen.createFakeContinuation
-import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDeclarationFactory
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSharedVariablesManager
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
+import org.jetbrains.kotlin.backend.jvm.lower.BridgeLowering
 import org.jetbrains.kotlin.backend.jvm.lower.CollectionStubComputer
+import org.jetbrains.kotlin.backend.jvm.lower.JvmInnerClassesSupport
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.MemoizedInlineClassReplacements
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
@@ -61,6 +60,8 @@ class JvmBackendContext(
 
     override val extractedLocalClasses: MutableSet<IrClass> = hashSetOf()
 
+    override val irFactory: IrFactory = IrFactoryImpl
+
     override val scriptMode: Boolean = false
     override val lateinitNullableFields = mutableMapOf<IrField, IrField>()
 
@@ -68,7 +69,8 @@ class JvmBackendContext(
     val typeMapper = IrTypeMapper(this)
     val methodSignatureMapper = MethodSignatureMapper(this)
 
-    override val declarationFactory: JvmDeclarationFactory = JvmDeclarationFactory(methodSignatureMapper, state.languageVersionSettings)
+    internal val innerClassesSupport = JvmInnerClassesSupport(irFactory)
+    internal val cachedDeclarations = JvmCachedDeclarations(this, methodSignatureMapper, state.languageVersionSettings)
 
     override val mapping: Mapping = DefaultMapping()
 
@@ -76,7 +78,7 @@ class JvmBackendContext(
 
     override val ir = JvmIr(irModuleFragment, this.symbolTable)
 
-    override val sharedVariablesManager = JvmSharedVariablesManager(state.module, ir.symbols, irBuiltIns)
+    override val sharedVariablesManager = JvmSharedVariablesManager(state.module, ir.symbols, irBuiltIns, irFactory)
 
     val irIntrinsics by lazy { IrIntrinsicMethods(irBuiltIns, ir.symbols) }
 
@@ -98,11 +100,12 @@ class JvmBackendContext(
     internal val multifileFacadesToAdd = mutableMapOf<JvmClassName, MutableList<IrClass>>()
     val multifileFacadeForPart = mutableMapOf<IrClass, JvmClassName>()
     internal val multifileFacadeClassForPart = mutableMapOf<IrClass, IrClass>()
-    internal val multifileFacadeMemberToPartMember = mutableMapOf<IrFunction, IrFunction>()
+    internal val multifileFacadeMemberToPartMember = mutableMapOf<IrSimpleFunction, IrSimpleFunction>()
 
-    internal val hiddenConstructors = mutableMapOf<IrConstructor, IrConstructorImpl>()
+    internal val hiddenConstructors = mutableMapOf<IrConstructor, IrConstructor>()
 
     internal val collectionStubComputer = CollectionStubComputer(this)
+    internal val bridgeLoweringCache = BridgeLowering.BridgeLoweringCache(this)
 
     override var inVerbosePhase: Boolean = false
 
@@ -114,21 +117,15 @@ class JvmBackendContext(
     val suspendFunctionOriginalToView = mutableMapOf<IrFunction, IrFunction>()
     val fakeContinuation: IrExpression = createFakeContinuation(this)
 
-    val staticDefaultStubs = mutableMapOf<IrFunctionSymbol, IrFunction>()
+    val staticDefaultStubs = mutableMapOf<IrSimpleFunctionSymbol, IrSimpleFunction>()
 
-    val inlineClassReplacements = MemoizedInlineClassReplacements()
+    val inlineClassReplacements = MemoizedInlineClassReplacements(state.functionsWithInlineClassReturnTypesMangled, irFactory)
 
     internal fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol =
         symbolTable.lazyWrapper.referenceClass(descriptor)
 
     internal fun referenceTypeParameter(descriptor: TypeParameterDescriptor): IrTypeParameterSymbol =
         symbolTable.lazyWrapper.referenceTypeParameter(descriptor)
-
-    internal fun referenceFunction(descriptor: FunctionDescriptor): IrFunctionSymbol =
-        if (descriptor is ClassConstructorDescriptor)
-            symbolTable.lazyWrapper.referenceConstructor(descriptor)
-        else
-            symbolTable.lazyWrapper.referenceSimpleFunction(descriptor)
 
     override fun log(message: () -> String) {
         /*TODO*/

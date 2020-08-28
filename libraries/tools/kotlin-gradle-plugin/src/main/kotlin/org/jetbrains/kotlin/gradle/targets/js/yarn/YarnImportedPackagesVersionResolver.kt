@@ -10,6 +10,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.npm.GradleNodeModule
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
+import org.jetbrains.kotlin.gradle.targets.js.npm.fileVersion
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import java.io.File
 
@@ -18,7 +19,7 @@ class YarnImportedPackagesVersionResolver(
     private val npmProjects: Collection<KotlinCompilationNpmResolution>,
     private val nodeJsWorldDir: File
 ) {
-    private val resolvedVersion = mutableMapOf<String, String>()
+    private val resolvedVersion = mutableMapOf<String, ResolvedNpmDependency>()
     private val importedProjectWorkspaces = mutableListOf<String>()
     private val externalModules = npmProjects.flatMapTo(mutableSetOf()) {
         it.externalGradleDependencies
@@ -29,14 +30,23 @@ class YarnImportedPackagesVersionResolver(
     }
 
     fun resolveAndUpdatePackages(): MutableList<String> {
-        resolveAndUpdate(externalModules, false)
-        resolveAndUpdate(internalCompositeModules, true)
-        return importedProjectWorkspaces
-    }
+        resolve(externalModules, false)
+        resolve(internalCompositeModules, true)
 
-    private fun resolveAndUpdate(modules: MutableSet<GradleNodeModule>, isWorkspace: Boolean) {
-        resolve(modules, isWorkspace)
-        updatePackages(modules)
+        npmProjects.forEach {
+            writePackageJson(
+                packageJson = it.packageJson,
+                path = it.npmProject.packageJsonFile,
+                forceWrite = true
+            )
+        }
+
+        if (resolvedVersion.isNotEmpty()) {
+            updatePackages(externalModules)
+            updatePackages(internalCompositeModules)
+        }
+
+        return importedProjectWorkspaces
     }
 
     private fun resolve(modules: MutableSet<GradleNodeModule>, isWorkspace: Boolean) {
@@ -48,7 +58,10 @@ class YarnImportedPackagesVersionResolver(
                             "Only latest version will be used."
                 )
                 val selected = sorted.last()
-                resolvedVersion[name] = selected.version
+                resolvedVersion[name] = ResolvedNpmDependency(
+                    version = selected.version,
+                    file = selected.path
+                )
                 selected
             } else versions.single()
 
@@ -59,28 +72,27 @@ class YarnImportedPackagesVersionResolver(
     }
 
     private fun updatePackages(modules: MutableSet<GradleNodeModule>) {
-        if (resolvedVersion.isEmpty()) return
-
-        npmProjects.forEach {
-            updatePackageJson(it.packageJson, it.npmProject.packageJsonFile)
-        }
-
         modules.forEach {
             val packageJsonFile = it.path.resolve(NpmProject.PACKAGE_JSON)
             val packageJson = packageJsonFile.reader().use {
                 Gson().fromJson<PackageJson>(it, PackageJson::class.java)
             }
 
-            updatePackageJson(packageJson, packageJsonFile)
+            writePackageJson(
+                packageJson = packageJson,
+                path = packageJsonFile,
+                forceWrite = false
+            )
         }
     }
 
-    private fun updatePackageJson(
+    private fun writePackageJson(
         packageJson: PackageJson,
-        path: File
+        path: File,
+        forceWrite: Boolean
     ) {
         val updates = listOf(packageJson.dependencies, packageJson.devDependencies).map { updateVersionsMap(it) }
-        if (updates.any { it }) {
+        if (forceWrite || updates.any { it }) {
             packageJson.saveTo(path)
         }
     }
@@ -89,11 +101,16 @@ class YarnImportedPackagesVersionResolver(
         var doneSomething = false
         map.iterator().forEachRemaining {
             val resolved = resolvedVersion[it.key]
-            if (resolved != null && it.value != resolved) {
-                it.setValue(resolved)
+            if (resolved != null && it.value != resolved.version) {
+                it.setValue(fileVersion(resolved.file))
                 doneSomething = true
             }
         }
         return doneSomething
     }
 }
+
+private data class ResolvedNpmDependency(
+    val version: String,
+    val file: File
+)

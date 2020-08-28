@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.js.translate.reference;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.js.backend.ast.JsExpression;
@@ -52,7 +52,7 @@ public final class ReferenceTranslator {
     private static final Set<FqNameUnsafe> DECLARATIONS_WITHOUT_SIDE_EFFECTS = new HashSet<>(Arrays.asList(
             new FqNameUnsafe("kotlin.coroutines.experimental.intrinsics.COROUTINE_SUSPENDED"),
             new FqNameUnsafe("kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED"),
-            KotlinBuiltIns.FQ_NAMES.unit
+            StandardNames.FqNames.unit
     ));
 
     private ReferenceTranslator() {

@@ -21,7 +21,8 @@ interface NpmApi {
 
     fun prepareRootProject(
         rootProject: Project,
-        subProjects: Collection<KotlinCompilationNpmResolution>
+        subProjects: Collection<KotlinCompilationNpmResolution>,
+        resolutions: Map<String, String>
     )
 
     fun resolveRootProject(

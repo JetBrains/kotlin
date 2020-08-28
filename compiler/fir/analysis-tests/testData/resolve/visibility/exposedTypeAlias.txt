@@ -5,7 +5,7 @@ FILE: exposedTypeAlias.kt
         }
 
         private final inner class Inner : R|kotlin/Any| {
-            public[private] constructor(): R|A.Inner| {
+            public constructor(): R|A.Inner| {
                 super<R|kotlin/Any|>()
             }
 
@@ -37,3 +37,7 @@ FILE: exposedTypeAlias.kt
     }
     public final typealias AInner0 = R|A.Inner|
     public final typealias BInner0 = R|B.Inner|
+    private final typealias MyString = R|kotlin/String|
+    public final fun foo(): R|MyString| {
+        ^foo String()
+    }

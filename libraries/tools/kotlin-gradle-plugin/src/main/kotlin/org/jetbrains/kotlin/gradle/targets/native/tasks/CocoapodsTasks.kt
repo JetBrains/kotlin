@@ -7,11 +7,16 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.Project
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.wrapper.Wrapper
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.COCOAPODS_EXTENSION_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.GENERATE_WRAPPER_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.KOTLIN_TARGET_FOR_IOS_DEVICE
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.KOTLIN_TARGET_FOR_WATCHOS_DEVICE
@@ -26,16 +31,23 @@ import java.io.File
  */
 open class PodspecTask : DefaultTask() {
 
-    private val specName = project.name.asValidFrameworkName()
+    @get:Input
+    internal val specName = project.name.asValidFrameworkName()
 
     @get:OutputFile
-    internal val outputFileProvider: Provider<File> = project.provider { project.file("$specName.podspec") }
+    internal val outputFileProvider: Provider<File>
+        get() = project.provider { project.file("$specName.podspec") }
 
     @get:Nested
     internal lateinit var cocoapodsExtension: CocoapodsExtension
 
+    init {
+        onlyIf { cocoapodsExtension.needPodspec }
+    }
+
     @TaskAction
     fun generate() {
+
         val frameworkDir = project.cocoapodsBuildDirs.framework.relativeTo(outputFileProvider.get().parentFile).path
         val dependencies = cocoapodsExtension.pods.map { pod ->
             val versionSuffix = if (pod.version != null) ", '${pod.version}'" else ""
@@ -56,6 +68,13 @@ open class PodspecTask : DefaultTask() {
         val gradleCommand = "\$REPO_ROOT/${gradleWrapper!!.toRelativeString(project.projectDir)}"
         val syncTask = "${project.path}:$SYNC_TASK_NAME"
 
+        val deploymentTargets = run {
+            with(cocoapodsExtension) {
+                listOf(ios, osx, tvos, watchos).filter { it.deploymentTarget != null }.joinToString("\n") {
+                    "|    spec.${it.name}.deployment_target = '${it.deploymentTarget}'"
+                }
+            }
+        }
 
         with(outputFileProvider.get()) {
             writeText(
@@ -73,6 +92,8 @@ open class PodspecTask : DefaultTask() {
                 |    spec.vendored_frameworks      = "$frameworkDir/${cocoapodsExtension.frameworkName}.framework"
                 |    spec.libraries                = "c++"
                 |    spec.module_name              = "#{spec.name}_umbrella"
+                |
+                $deploymentTargets
                 |
                 $dependencies
                 |
@@ -93,7 +114,7 @@ open class PodspecTask : DefaultTask() {
                 |            :shell_path => '/bin/sh',
                 |            :script => <<-SCRIPT
                 |                set -ev
-                |                REPO_ROOT="${'$'}PODS_TARGET_SRCROOT/"
+                |                REPO_ROOT="${'$'}PODS_TARGET_SRCROOT"
                 |                "$gradleCommand" -p "${'$'}REPO_ROOT" $syncTask \
                 |                    -P${KotlinCocoapodsPlugin.TARGET_PROPERTY}=${'$'}KOTLIN_TARGET \
                 |                    -P${KotlinCocoapodsPlugin.CONFIGURATION_PROPERTY}=${'$'}CONFIGURATION \
@@ -107,16 +128,29 @@ open class PodspecTask : DefaultTask() {
         """.trimMargin()
             )
 
-            logger.quiet(
-                """
-            Generated a podspec file at: ${absolutePath}.
-            To include it in your Xcode project, add the following dependency snippet in your Podfile:
+            if (hasPodfileOwnOrParent(project)) {
+                logger.quiet(
+                    """
+                    Generated a podspec file at: ${absolutePath}.
+                    To include it in your Xcode project, check that the following dependency snippet exists in your Podfile:
 
-                pod '$specName', :path => '${parentFile.absolutePath}'
+                    pod '$specName', :path => '${parentFile.absolutePath}'
 
             """.trimIndent()
-            )
+                )
+            }
+
         }
+    }
+
+    companion object {
+        private val KotlinMultiplatformExtension?.cocoapodsExtensionOrNull: CocoapodsExtension?
+            get() = (this as? ExtensionAware)?.extensions?.findByName(COCOAPODS_EXTENSION_NAME) as? CocoapodsExtension
+
+        private fun hasPodfileOwnOrParent(project: Project): Boolean =
+            if (project.rootProject == project) project.multiplatformExtensionOrNull?.cocoapodsExtensionOrNull?.podfile != null
+            else project.multiplatformExtensionOrNull?.cocoapodsExtensionOrNull?.podfile != null
+                    || (project.parent?.let { hasPodfileOwnOrParent(it) } ?: false)
     }
 }
 
@@ -137,10 +171,10 @@ open class DummyFrameworkTask : DefaultTask() {
     val destinationDir = project.cocoapodsBuildDirs.framework
 
     @Input
-    val frameworkNameProvider: Provider<String> = project.provider { settings.frameworkName }
+    val frameworkNameProvider: Provider<String> = project.provider { cocoapodsExtension.frameworkName }
 
     @get:Nested
-    internal lateinit var settings: CocoapodsExtension
+    internal lateinit var cocoapodsExtension: CocoapodsExtension
 
     private val frameworkDir: File
         get() = destinationDir.resolve("${frameworkNameProvider.get()}.framework")
@@ -157,8 +191,10 @@ open class DummyFrameworkTask : DefaultTask() {
     private fun copyTextResource(from: String, to: File, transform: (String) -> String = { it }) {
         to.parentFile.mkdirs()
         to.printWriter().use { file ->
-            javaClass.getResourceAsStream(from).reader().forEachLine {
-                file.println(transform(it))
+            javaClass.getResourceAsStream(from).use {
+                it.reader().forEachLine { str ->
+                    file.println(transform(str))
+                }
             }
         }
     }
@@ -190,7 +226,7 @@ open class DummyFrameworkTask : DefaultTask() {
         // Copy files for the dummy framework.
         copyFrameworkFile("Info.plist")
         copyFrameworkFile("dummy", frameworkNameProvider.get())
-        copyFrameworkFile("Headers/dummy.h")
+        copyFrameworkFile("Headers/placeholder.h")
         copyFrameworkTextFile("Modules/module.modulemap") {
             if (it == "framework module dummy {") {
                 it.replace("dummy", frameworkNameProvider.get())

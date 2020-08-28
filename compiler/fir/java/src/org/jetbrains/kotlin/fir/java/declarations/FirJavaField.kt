@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.fir.java.declarations
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.Visibility
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirFieldBuilder
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
@@ -42,7 +41,6 @@ class FirJavaField @FirImplementationDetail constructor(
     override val isVar: Boolean,
     override val annotations: MutableList<FirAnnotationCall>,
     override val typeParameters: MutableList<FirTypeParameter>,
-    val isEnumEntry: Boolean
 ) : FirField() {
     init {
         symbol.bind(this)
@@ -73,7 +71,6 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirField {
         transformAnnotations(transformer, data)
-        typeParameters.transformInplace(transformer, data)
         return this
     }
 
@@ -93,6 +90,7 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirJavaField {
         transformReturnTypeRef(transformer, data)
+        transformTypeParameters(transformer, data)
         transformOtherChildren(transformer, data)
         return this
     }
@@ -108,6 +106,11 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirJavaField {
         annotations.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirField {
+        typeParameters.transformInplace(transformer, data)
         return this
     }
 
@@ -138,19 +141,11 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
     var modality: Modality? = null
     lateinit var visibility: Visibility
     var isStatic: Boolean by Delegates.notNull()
-    var isEnumEntry: Boolean by Delegates.notNull()
 
     override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirJavaField {
-        val status: FirDeclarationStatus = FirDeclarationStatusImpl(visibility, modality).apply {
-            isStatic = this@FirJavaFieldBuilder.isStatic
-            isExpect = false
-            isActual = false
-            isOverride = false
-        }
-
         return FirJavaField(
             source,
             session,
@@ -162,14 +157,13 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
             isVar,
             annotations,
             typeParameters,
-            isEnumEntry
         )
     }
 
     @Deprecated("Modification of 'origin' has no impact for FirJavaFieldBuilder", level = DeprecationLevel.HIDDEN)
     override var origin: FirDeclarationOrigin
         get() = throw IllegalStateException()
-        set(value) {
+        set(@Suppress("UNUSED_PARAMETER") value) {
             throw IllegalStateException()
         }
 }

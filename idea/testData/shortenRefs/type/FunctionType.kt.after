@@ -1,7 +1,6 @@
-import java.awt.Container
 import java.io.File
 import java.util.ArrayList
 
 class A {
-    var x: ((File, ArrayList<String>) -> Container)? = null
+    var x: ((File) -> ArrayList<String>)? = null
 }

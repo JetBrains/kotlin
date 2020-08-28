@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.CompilerResult
+import org.jetbrains.kotlin.ir.backend.js.JsCode
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.eliminateDeadDeclarations
 import org.jetbrains.kotlin.ir.backend.js.export.ExportModelGenerator
@@ -26,16 +26,17 @@ import org.jetbrains.kotlin.utils.DFS
 
 class IrModuleToJsTransformer(
     private val backendContext: JsIrBackendContext,
-    private val mainFunction: IrSimpleFunction?,
     private val mainArguments: List<String>?,
     private val generateScriptModule: Boolean = false,
-    var namer: NameTables = NameTables(emptyList())
+    var namer: NameTables = NameTables(emptyList()),
+    private val fullJs: Boolean = true,
+    private val dceJs: Boolean = false,
+    private val multiModule: Boolean = false,
+    private val relativeRequirePath: Boolean = false
 ) {
-    val moduleName = backendContext.configuration[CommonConfigurationKeys.MODULE_NAME]!!
-    private val moduleKind = backendContext.configuration[JSConfigurationKeys.MODULE_KIND]!!
     private val generateRegionComments = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_REGION_COMMENTS)
 
-    fun generateModule(module: IrModuleFragment, fullJs: Boolean = true, dceJs: Boolean = false): CompilerResult {
+    fun generateModule(modules: Iterable<IrModuleFragment>): CompilerResult {
         val additionalPackages = with(backendContext) {
             externalPackageFragment.values + listOf(
                 bodilessBuiltInsPackageFragment,
@@ -43,32 +44,92 @@ class IrModuleToJsTransformer(
             ) + packageLevelJsModules
         }
 
-        val exportedModule = ExportModelGenerator(backendContext).generateExport(module)
+        val exportedModule = ExportModelGenerator(backendContext).generateExport(modules)
         val dts = exportedModule.toTypeScript()
 
-        module.files.forEach { StaticMembersLowering(backendContext).lower(it) }
+        modules.forEach { module ->
+            module.files.forEach { StaticMembersLowering(backendContext).lower(it) }
+        }
 
-        namer.merge(module.files, additionalPackages)
+        if (multiModule) {
+            breakCrossModuleFieldAccess(backendContext, modules)
+        }
 
-        val jsCode = if (fullJs) generateWrappedModuleBody(module, exportedModule, namer) else null
+        modules.forEach { module ->
+            namer.merge(module.files, additionalPackages)
+        }
+
+        val jsCode = if (fullJs) generateWrappedModuleBody(modules, exportedModule, namer) else null
 
         val dceJsCode = if (dceJs) {
-            eliminateDeadDeclarations(module, backendContext, mainFunction)
+            eliminateDeadDeclarations(modules, backendContext)
             // Use a fresh namer for DCE so that we could compare the result with DCE-driven
             // TODO: is this mode relevant for scripting? If yes, refactor so that the external name tables are used here when needed.
             val namer = NameTables(emptyList())
-            namer.merge(module.files, additionalPackages)
-            generateWrappedModuleBody(module, exportedModule, namer)
+            namer.merge(modules.flatMap { it.files }, additionalPackages)
+            generateWrappedModuleBody(modules, exportedModule, namer)
         } else null
 
         return CompilerResult(jsCode, dceJsCode, dts)
     }
 
-    private fun generateWrappedModuleBody(module: IrModuleFragment, exportedModule: ExportedModule, namer: NameTables): String {
-        val program = JsProgram()
+    private fun generateWrappedModuleBody(modules: Iterable<IrModuleFragment>, exportedModule: ExportedModule, namer: NameTables): JsCode {
+        if (multiModule) {
 
-        val nameGenerator = IrNamerImpl(
-            newNameTables = namer
+            val refInfo = buildCrossModuleReferenceInfo(modules)
+
+            val rM = modules.reversed()
+
+            val main = rM.first()
+            val others = rM.drop(1)
+
+            val mainModule = generateWrappedModuleBody2(
+                listOf(main),
+                others,
+                exportedModule,
+                namer,
+                refInfo
+            )
+
+            val dependencies = others.mapIndexed { index, module ->
+                val moduleName = sanitizeName(module.safeName)
+
+                val exportedDeclarations = ExportModelGenerator(backendContext).let { module.files.flatMap { file -> it.generateExport(file) } }
+
+                moduleName to generateWrappedModuleBody2(
+                    listOf(module),
+                    others.drop(index + 1),
+                    ExportedModule(moduleName, exportedModule.moduleKind, exportedDeclarations),
+                    namer,
+                    refInfo
+                )
+            }.reversed()
+
+            return JsCode(mainModule, dependencies)
+        } else {
+            return JsCode(
+                generateWrappedModuleBody2(
+                    modules,
+                    emptyList(),
+                    exportedModule,
+                    namer,
+                    EmptyCrossModuleReferenceInfo
+                )
+            )
+        }
+    }
+
+    private fun generateWrappedModuleBody2(
+        modules: Iterable<IrModuleFragment>,
+        dependencies: Iterable<IrModuleFragment>,
+        exportedModule: ExportedModule,
+        namer: NameTables,
+        refInfo: CrossModuleReferenceInfo
+    ): String {
+
+        val nameGenerator = refInfo.withReferenceTracking(
+            IrNamerImpl(newNameTables = namer),
+            modules
         )
         val staticContext = JsStaticContext(
             backendContext = backendContext,
@@ -79,51 +140,105 @@ class IrModuleToJsTransformer(
             staticContext = staticContext
         )
 
-        val rootFunction = JsFunction(program.rootScope, JsBlock(), "root function")
-        val internalModuleName = JsName("_")
-
         val (importStatements, importedJsModules) =
             generateImportStatements(
                 getNameForExternalDeclaration = { rootContext.getNameForStaticDeclaration(it) },
                 declareFreshGlobal = { JsName(sanitizeName(it)) } // TODO: Declare fresh name
             )
 
-        val moduleBody = generateModuleBody(module, rootContext)
-        val exportStatements = ExportModelToJsStatements(internalModuleName, namer)
-            .generateModuleExport(exportedModule)
+        val moduleBody = generateModuleBody(modules, rootContext)
 
+        val internalModuleName = JsName("_")
+        val globalNames = NameTable<String>(namer.globalNames)
+        val exportStatements = ExportModelToJsStatements(internalModuleName, nameGenerator, { globalNames.declareFreshName(it, it)}).generateModuleExport(exportedModule)
+
+        val callToMain = generateCallToMain(modules, rootContext)
+
+        val (crossModuleImports, importedKotlinModules) = generateCrossModuleImports(nameGenerator, modules, dependencies, { JsName(sanitizeName(it)) })
+        val crossModuleExports = generateCrossModuleExports(modules, refInfo, internalModuleName)
+
+        val program = JsProgram()
         if (generateScriptModule) {
             with(program.globalBlock) {
-                statements.addWithComment("block: imports", importStatements)
+                statements.addWithComment("block: imports", importStatements + crossModuleImports)
                 statements += moduleBody
-                statements.addWithComment("block: exports", exportStatements)
+                statements.addWithComment("block: exports", exportStatements + crossModuleExports)
             }
         } else {
-            with(rootFunction) {
+            val rootFunction = JsFunction(program.rootScope, JsBlock(), "root function").apply {
                 parameters += JsParameter(internalModuleName)
-                parameters += importedJsModules.map { JsParameter(it.internalName) }
+                parameters += (importedJsModules + importedKotlinModules).map { JsParameter(it.internalName) }
                 with(body) {
-                    statements.addWithComment("block: imports", importStatements)
+                    statements.addWithComment("block: imports", importStatements + crossModuleImports)
                     statements += moduleBody
-                    statements.addWithComment("block: exports", exportStatements)
-                    statements += generateCallToMain(rootContext)
+                    statements.addWithComment("block: exports", exportStatements + crossModuleExports)
+                    statements += callToMain
                     statements += JsReturn(internalModuleName.makeRef())
                 }
             }
 
             program.globalBlock.statements += ModuleWrapperTranslation.wrap(
-                moduleName,
+                exportedModule.name,
                 rootFunction,
-                importedJsModules,
+                importedJsModules + importedKotlinModules,
                 program,
-                kind = moduleKind
+                kind = exportedModule.moduleKind
             )
         }
 
         return program.toString()
     }
 
-    private fun generateModuleBody(module: IrModuleFragment, context: JsGenerationContext): List<JsStatement> {
+    private fun generateCrossModuleImports(
+        namerWithImports: IrNamerWithImports,
+        currentModules: Iterable<IrModuleFragment>,
+        allowedDependencies: Iterable<IrModuleFragment>,
+        declareFreshGlobal: (String) -> JsName
+    ): Pair<MutableList<JsStatement>, List<JsImportedModule>> {
+        val imports = mutableListOf<JsStatement>()
+        val modules = mutableListOf<JsImportedModule>()
+
+        namerWithImports.imports().forEach { (module, names) ->
+            check(module in allowedDependencies) {
+                val deps = if (names.size > 10) "[${names.take(10).joinToString()}, ...]" else "$names"
+                "Module ${currentModules.map { it.name.asString() }} depend on module ${module.name.asString()} via $deps"
+            }
+
+            val moduleName = declareFreshGlobal(module.safeName)
+            modules += JsImportedModule(moduleName.ident, moduleName, moduleName.makeRef(), relativeRequirePath)
+
+            names.forEach {
+                imports += JsVars(JsVars.JsVar(JsName(it), JsNameRef(it, JsNameRef("\$crossModule\$", moduleName.makeRef()))))
+            }
+        }
+
+        return imports to modules
+    }
+
+    private fun generateCrossModuleExports(
+        modules: Iterable<IrModuleFragment>,
+        refInfo: CrossModuleReferenceInfo,
+        internalModuleName: JsName
+    ): List<JsStatement> {
+        return modules.flatMap {
+            refInfo.exports(it).map {
+                jsAssignment(
+                    JsNameRef(it, JsNameRef("\$crossModule\$", internalModuleName.makeRef())),
+                    JsNameRef(it)
+                ).makeStmt()
+            }
+        }.let {
+            if (!it.isEmpty()) {
+                val createExportBlock = jsAssignment(
+                    JsNameRef("\$crossModule\$", internalModuleName.makeRef()),
+                    JsAstUtils.or(JsNameRef("\$crossModule\$", internalModuleName.makeRef()), JsObjectLiteral())
+                ).makeStmt()
+                return listOf(createExportBlock) + it
+            } else it
+        }
+    }
+
+    private fun generateModuleBody(modules: Iterable<IrModuleFragment>, context: JsGenerationContext): List<JsStatement> {
         val statements = mutableListOf<JsStatement>().also {
             if (!generateScriptModule) it += JsStringLiteral("use strict").makeStmt()
         }
@@ -136,31 +251,33 @@ class IrModuleToJsTransformer(
         val generateFilePaths = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH)
         val pathPrefixMap = backendContext.configuration.getMap(JSConfigurationKeys.FILE_PATHS_PREFIX_MAP)
 
-        module.files.forEach {
-            val fileStatements = it.accept(IrFileToJsTransformer(), context).statements
-            if (fileStatements.isNotEmpty()) {
-                var startComment = ""
+        modules.forEach { module ->
+            module.files.forEach {
+                val fileStatements = it.accept(IrFileToJsTransformer(), context).statements
+                if (fileStatements.isNotEmpty()) {
+                    var startComment = ""
 
-                if (generateRegionComments) {
-                    startComment = "region "
+                    if (generateRegionComments) {
+                        startComment = "region "
+                    }
+
+                    if (generateRegionComments || generateFilePaths) {
+                        val originalPath = it.path
+                        val path = pathPrefixMap.entries
+                            .find { (k, _) -> originalPath.startsWith(k) }
+                            ?.let { (k, v) -> v + originalPath.substring(k.length) }
+                            ?: originalPath
+
+                        startComment += "file: $path"
+                    }
+
+                    if (startComment.isNotEmpty()) {
+                        statements.add(JsSingleLineComment(startComment))
+                    }
+
+                    statements.addAll(fileStatements)
+                    statements.endRegion()
                 }
-
-                if (generateRegionComments || generateFilePaths) {
-                    val originalPath = it.path
-                    val path = pathPrefixMap.entries
-                        .find { (k, _) -> originalPath.startsWith(k) }
-                        ?.let { (k, v) -> v + originalPath.substring(k.length) }
-                        ?: originalPath
-
-                    startComment += "file: $path"
-                }
-
-                if (startComment.isNotEmpty()) {
-                    statements.add(JsSingleLineComment(startComment))
-                }
-
-                statements.addAll(fileStatements)
-                statements.endRegion()
             }
         }
 
@@ -170,10 +287,12 @@ class IrModuleToJsTransformer(
         statements.addWithComment("block: post-declaration", postDeclarationBlock.statements)
         statements.addWithComment("block: init", context.staticContext.initializerBlock.statements)
 
-        if (backendContext.hasTests) {
-            statements.startRegion("block: tests")
-            statements += JsInvocation(context.getNameForStaticFunction(backendContext.testContainer).makeRef()).makeStmt()
-            statements.endRegion()
+        modules.forEach {
+            backendContext.testRoots[it]?.let { testContainer ->
+                statements.startRegion("block: tests")
+                statements += JsInvocation(context.getNameForStaticFunction(testContainer).makeRef()).makeStmt()
+                statements.endRegion()
+            }
         }
 
         return statements
@@ -192,8 +311,9 @@ class IrModuleToJsTransformer(
         return listOfNotNull(mainArgumentsArray, continuation)
     }
 
-    private fun generateCallToMain(rootContext: JsGenerationContext): List<JsStatement> {
+    private fun generateCallToMain(modules: Iterable<IrModuleFragment>, rootContext: JsGenerationContext): List<JsStatement> {
         if (mainArguments == null) return emptyList() // in case `NO_MAIN` and `main(..)` exists
+        val mainFunction = JsMainFunctionDetector.getMainFunctionOrNull(modules.last())
         return mainFunction?.let {
             val jsName = rootContext.getNameForStaticFunction(it)
             listOf(JsInvocation(jsName.makeRef(), generateMainArguments(it, rootContext)).makeStmt())

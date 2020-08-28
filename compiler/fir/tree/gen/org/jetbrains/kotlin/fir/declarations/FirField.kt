@@ -65,6 +65,8 @@ abstract class FirField : FirVariable<FirField>(), FirTypeParametersOwner, FirCa
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirField
 
+    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirField
+
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirField
 
     abstract override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirField

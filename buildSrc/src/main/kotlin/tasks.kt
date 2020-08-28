@@ -31,6 +31,46 @@ import java.lang.Character.isUpperCase
 import java.nio.file.Files
 import java.nio.file.Path
 
+fun Task.dependsOnKotlinPluginInstall() {
+    dependsOn(
+        ":kotlin-allopen:install",
+        ":kotlin-noarg:install",
+        ":kotlin-sam-with-receiver:install",
+        ":kotlin-android-extensions:install",
+        ":kotlin-build-common:install",
+        ":kotlin-compiler-embeddable:install",
+        ":native:kotlin-native-utils:install",
+        ":kotlin-util-klib:install",
+        ":kotlin-util-io:install",
+        ":kotlin-compiler-runner:install",
+        ":kotlin-daemon-embeddable:install",
+        ":kotlin-daemon-client:install",
+        ":kotlin-gradle-plugin-api:install",
+        ":kotlin-gradle-plugin:install",
+        ":kotlin-gradle-plugin-model:install",
+        ":kotlin-reflect:install",
+        ":kotlin-annotation-processing-gradle:install",
+        ":kotlin-test:kotlin-test-common:install",
+        ":kotlin-test:kotlin-test-annotations-common:install",
+        ":kotlin-test:kotlin-test-jvm:install",
+        ":kotlin-test:kotlin-test-js:install",
+        ":kotlin-test:kotlin-test-junit:install",
+        ":kotlin-gradle-subplugin-example:install",
+        ":kotlin-stdlib-common:install",
+        ":kotlin-stdlib:install",
+        ":kotlin-stdlib-jdk8:install",
+        ":kotlin-stdlib-js:install",
+        ":examples:annotation-processor-example:install",
+        ":kotlin-script-runtime:install",
+        ":kotlin-scripting-common:install",
+        ":kotlin-scripting-jvm:install",
+        ":kotlin-scripting-compiler-embeddable:install",
+        ":kotlin-scripting-compiler-impl-embeddable:install",
+        ":kotlin-test-js-runner:install",
+        ":native:kotlin-klib-commonizer-embeddable:install"
+    )
+}
+
 fun Project.projectTest(
     taskName: String = "test",
     parallel: Boolean = false,
@@ -79,21 +119,20 @@ fun Project.projectTest(
         }
     }
 
-    doFirst {
-        val agent = tasks.findByPath(":test-instrumenter:jar")!!.outputs.files.singleFile
-
-        val args = project.findProperty("kotlin.test.instrumentation.args")?.let { "=$it" }.orEmpty()
-
-        jvmArgs("-javaagent:$agent$args")
+    if (project.findProperty("kotlin.test.instrumentation.disable")?.toString()?.toBoolean() != true) {
+        doFirst {
+            val agent = tasks.findByPath(":test-instrumenter:jar")!!.outputs.files.singleFile
+            val args = project.findProperty("kotlin.test.instrumentation.args")?.let { "=$it" }.orEmpty()
+            jvmArgs("-javaagent:$agent$args")
+        }
+        dependsOn(":test-instrumenter:jar")
     }
-
-    dependsOn(":test-instrumenter:jar")
 
     jvmArgs(
         "-ea",
         "-XX:+HeapDumpOnOutOfMemoryError",
         "-XX:+UseCodeCacheFlushing",
-        "-XX:ReservedCodeCacheSize=128m",
+        "-XX:ReservedCodeCacheSize=256m",
         "-Djna.nosys=true"
     )
 
@@ -106,6 +145,11 @@ fun Project.projectTest(
     environment("PROJECT_BUILD_DIR", buildDir)
     systemProperty("jps.kotlin.home", rootProject.extra["distKotlinHomeDir"]!!)
     systemProperty("kotlin.ni", if (rootProject.hasProperty("newInferenceTests")) "true" else "false")
+    systemProperty("org.jetbrains.kotlin.skip.muted.tests", if (rootProject.hasProperty("skipMutedTests")) "true" else "false")
+
+    if (Platform[202].orHigher()) {
+        systemProperty("idea.ignore.disabled.plugins", "true")
+    }
 
     var subProjectTempRoot: Path? = null
     doFirst {

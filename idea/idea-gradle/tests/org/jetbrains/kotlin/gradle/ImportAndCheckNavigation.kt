@@ -9,7 +9,8 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.runInEdtAndGet
-import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
+import org.jetbrains.kotlin.idea.codeInsight.gradle.MasterPluginVersionGradleImportingTestCase
+import org.jetbrains.kotlin.idea.codeInsight.gradle.mppImportTestMinVersionForMaster
 import org.jetbrains.kotlin.idea.core.util.toPsiFile
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
@@ -17,13 +18,10 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.junit.Test
 
-// TODO: run this test on the Gradle plugin from the current build
-//  1. specify appropriate 'pluginVersion' in [PluginTargetVersions]
-//  2. avoid using fixed Gradle plugin version in testdata
-class ImportAndCheckNavigation : MultiplePluginVersionGradleImportingTestCase() {
+class ImportAndCheckNavigation : MasterPluginVersionGradleImportingTestCase() {
 
     @Test
-    @PluginTargetVersions(gradleVersion = "5.0+", pluginVersion = "1.3.50+")
+    @PluginTargetVersions(gradleVersion = "6.0+", pluginVersion = "1.4+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testNavigationToCommonizedLibrary() {
         val files = configureAndImportProject()
 

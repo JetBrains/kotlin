@@ -16,14 +16,6 @@ annotation class JsAnnotationForAnnotationClassesOnly(val text: String)
 @CommonAnnotationForAnnotationClassesOnly("annotation-class")
 annotation class JsAnnotation(val text: String)
 
-//@Target(AnnotationTarget.CLASS)
-//annotation class CommonOuterAnnotation(val inner: CommonInnerAnnotation)
-//annotation class CommonInnerAnnotation(val text: String)
-//
-//@Target(AnnotationTarget.CLASS)
-//annotation class JsOuterAnnotation(val inner: JsInnerAnnotation)
-//annotation class JsInnerAnnotation(val text: String)
-
 @JsAnnotation("property")
 @CommonAnnotation("property")
 var propertyWithoutBackingField
@@ -53,10 +45,14 @@ fun <@JsAnnotation("type-parameter") @CommonAnnotation("type-parameter") Q : @Js
 @CommonAnnotation("class")
 class AnnotatedClass @JsAnnotation("constructor") @CommonAnnotation("constructor") constructor(val value: String)
 
-@JsAnnotation("type-alias")
-@CommonAnnotation("type-alias")
-typealias AnnotatedTypeAlias = AnnotatedClass
+@JsAnnotation("js-only-class")
+@CommonAnnotation("js-only-class")
+class JsOnlyAnnotatedClass @JsAnnotation("js-only-constructor") @CommonAnnotation("js-only-constructor") constructor(val value: String)
 
-//@JsOuterAnnotation(inner = JsInnerAnnotation("nested-annotations"))
-//@CommonOuterAnnotation(inner = CommonInnerAnnotation("nested-annotations"))
-//object ObjectWithNestedAnnotations
+@JsAnnotation("lifted-up-type-alias")
+@CommonAnnotation("lifted-up-type-alias")
+typealias AnnotatedLiftedUpTypeAlias = AnnotatedClass
+
+@JsAnnotation("non-lifted-up-type-alias")
+@CommonAnnotation("non-lifted-up-type-alias")
+typealias AnnotatedNonLiftedUpTypeAlias = JsOnlyAnnotatedClass

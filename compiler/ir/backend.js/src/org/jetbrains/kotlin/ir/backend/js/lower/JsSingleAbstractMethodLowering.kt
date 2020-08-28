@@ -5,14 +5,55 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.SingleAbstractMethodLowering
+import org.jetbrains.kotlin.backend.common.ScopeWithIr
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.render
 
-class JsSingleAbstractMethodLowering(context: JsIrBackendContext) : SingleAbstractMethodLowering(context) {
+class JsSingleAbstractMethodLowering(context: JsIrBackendContext) : SingleAbstractMethodLowering(context), BodyLoweringPass {
+
+    override fun getWrapperVisibility(expression: IrTypeOperatorCall, scopes: List<ScopeWithIr>): Visibility {
+        return Visibilities.PRIVATE
+    }
+
+    private var enclosingBodyContainer: IrDeclaration? = null
+
+    override fun lower(irFile: IrFile) {
+        super<SingleAbstractMethodLowering>.lower(irFile)
+    }
+
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        cachedImplementations.clear()
+        inlineCachedImplementations.clear()
+        enclosingContainer = container.parentClassOrNull ?: container.file
+        enclosingBodyContainer = container
+
+        irBody.transformChildrenVoid()
+
+        for (wrapper in cachedImplementations.values + inlineCachedImplementations.values) {
+            val parentClass = wrapper.parent as IrDeclarationContainer
+            stageController.unrestrictDeclarationListsAccess {
+                parentClass.declarations += wrapper
+            }
+        }
+    }
+
+    override fun currentScopeSymbol(): IrSymbol? {
+        return super.currentScopeSymbol() ?: (enclosingBodyContainer as? IrSymbolOwner)?.symbol
+    }
+
     override fun getSuperTypeForWrapper(typeOperand: IrType): IrType {
         // FE doesn't allow type parameters for now.
         // And since there is a to-do in common SingleAbstractMethodLowering (at function visitTypeOperator),

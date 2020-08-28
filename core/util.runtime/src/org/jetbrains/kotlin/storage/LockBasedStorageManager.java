@@ -66,17 +66,18 @@ public class LockBasedStorageManager implements StorageManager {
             @NotNull String debugText,
             @NotNull ExceptionHandlingStrategy exceptionHandlingStrategy
     ) {
-        return createWithExceptionHandling(debugText, exceptionHandlingStrategy, null);
+        return createWithExceptionHandling(debugText, exceptionHandlingStrategy, null, null);
     }
 
     @NotNull
     public static LockBasedStorageManager createWithExceptionHandling(
             @NotNull String debugText,
             @NotNull ExceptionHandlingStrategy exceptionHandlingStrategy,
-            @Nullable Runnable checkCancelled
+            @Nullable Runnable checkCancelled,
+            @Nullable Function1<InterruptedException, Unit> interruptedExceptionHandler
     ) {
         return new LockBasedStorageManager(debugText, exceptionHandlingStrategy,
-                                           SimpleLock.Companion.simpleLock(checkCancelled));
+                                           SimpleLock.Companion.simpleLock(checkCancelled, interruptedExceptionHandler));
     }
 
     protected final SimpleLock lock;
@@ -94,11 +95,15 @@ public class LockBasedStorageManager implements StorageManager {
     }
 
     public LockBasedStorageManager(String debugText) {
-        this(debugText, null);
+        this(debugText, (Runnable) null, null);
     }
 
-    public LockBasedStorageManager(String debugText, @Nullable Runnable checkCancelled) {
-        this(debugText, ExceptionHandlingStrategy.THROW, SimpleLock.Companion.simpleLock(checkCancelled));
+    public LockBasedStorageManager(
+            String debugText,
+            @Nullable Runnable checkCancelled,
+            @Nullable Function1<InterruptedException, Unit> interruptedExceptionHandler
+    ) {
+        this(debugText, ExceptionHandlingStrategy.THROW, SimpleLock.Companion.simpleLock(checkCancelled, interruptedExceptionHandler));
     }
 
     @Override

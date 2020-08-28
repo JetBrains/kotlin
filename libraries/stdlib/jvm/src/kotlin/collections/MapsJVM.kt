@@ -113,6 +113,18 @@ public fun <K, V> Map<out K, V>.toSortedMap(comparator: Comparator<in K>): Sorte
 public fun <K : Comparable<K>, V> sortedMapOf(vararg pairs: Pair<K, V>): SortedMap<K, V> =
     TreeMap<K, V>().apply { putAll(pairs) }
 
+/**
+ * Returns a new [SortedMap] with the specified contents, given as a list of pairs
+ * where the first value is the key and the second is the value.
+ *
+ * The resulting [SortedMap] determines the equality and order of keys according to the sorting order provided by the given [comparator].
+ *
+ * @sample samples.collections.Maps.Instantiation.sortedMapWithComparatorFromPairs
+ */
+@SinceKotlin("1.4")
+public fun <K, V> sortedMapOf(comparator: Comparator<in K>, vararg pairs: Pair<K, V>): SortedMap<K, V> =
+    TreeMap<K, V>(comparator).apply { putAll(pairs) }
+
 
 /**
  * Converts this [Map] to a [Properties] object.

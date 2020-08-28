@@ -83,50 +83,6 @@ internal abstract class KotlinNativeToolRunner(
     override fun transformArgs(args: List<String>) = listOf(toolName) + args
 
     final override fun getCustomJvmArgs() = project.jvmArgs
-
-    final override fun runInProcess(args: List<String>) {
-        withParallelExecutionGuard {
-            super.runInProcess(args)
-        }
-    }
-
-    // TODO: Remove once KT-37550 is fixed
-    private inline fun withParallelExecutionGuard(action: () -> Unit) {
-        try {
-            if (PropertiesProvider(project).nativeEnableParallelExecutionCheck) {
-                System.getProperties().compute(PARALLEL_EXECUTION_GUARD_PROPERTY) { _, value ->
-                    check(value == null) { PARALLEL_EXECUTION_ERROR_MESSAGE }
-                    "true"
-                }
-            }
-
-            action()
-
-        } finally {
-            if (PropertiesProvider(project).nativeEnableParallelExecutionCheck) {
-                System.clearProperty(PARALLEL_EXECUTION_GUARD_PROPERTY)
-            }
-        }
-    }
-
-    companion object {
-        private const val PARALLEL_EXECUTION_GUARD_PROPERTY = "org.jetbrains.kotlin.native.compiler.running"
-
-        private val PARALLEL_EXECUTION_ERROR_MESSAGE = """
-            Parallel in-process execution of the Kotlin/Native compiler detected.
-            
-            At this moment the parallel execution of several compiler instances in the same process is not supported.
-            To fix this, you can do one of the following things:
-            
-            - Disable in-process execution. To do this, set '${PropertiesProvider.KOTLIN_NATIVE_DISABLE_COMPILER_DAEMON}=true' project property.
-
-            - Disable parallel task execution. To do this, set 'org.gradle.parallel=false' project property.
-            
-            If you still want to run the compiler in-process in parallel, you may disable this check by setting project
-            property '${PropertiesProvider.KOTLIN_NATIVE_ENABLE_PARALLEL_EXECUTION_CHECK}=false'. Note that in this case the compiler may fail.
-            
-        """.trimIndent()
-    }
 }
 
 /** A common ancestor for all runners that run the cinterop tool. */

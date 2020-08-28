@@ -1,6 +1,7 @@
 // !USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi
-// IGNORE_BACKEND: JS, JS_IR, NATIVE
+// IGNORE_BACKEND: NATIVE
 // WITH_REFLECT
+// KJS_WITH_FULL_RUNTIME
 
 package test
 
@@ -15,7 +16,13 @@ class C<X> {
 }
 
 fun box(): String {
-    assertEquals("test.Container<X>", C<Any>().notNull().toString())
-    assertEquals("test.Container<X?>", C<Any>().nullable().toString())
+    val fqn = className("test.Container")
+    assertEquals("$fqn<X>", C<Any>().notNull().toString())
+    assertEquals("$fqn<X?>", C<Any>().nullable().toString())
     return "OK"
+}
+
+fun className(fqName: String): String {
+    val isJS = 1 as Any is Double
+    return if (isJS) fqName.substringAfterLast('.') else fqName
 }

@@ -19,7 +19,7 @@ import kotlin.script.experimental.jvm.jdkHome
 import kotlin.script.experimental.jvm.jvm
 
 class GradleScriptInfo(
-    val buildRoot: GradleBuildRoot.Imported,
+    val buildRoot: Imported,
     scriptDefinition: ScriptDefinition?,
     val model: KotlinDslScriptModel
 ) : ScriptClassRootsCache.LightScriptInfo(scriptDefinition) {

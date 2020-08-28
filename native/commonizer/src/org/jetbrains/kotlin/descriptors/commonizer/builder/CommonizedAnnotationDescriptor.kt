@@ -5,13 +5,10 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.builder
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind.ANNOTATION_CLASS
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirAnnotation
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.utils.concat
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.constants.AnnotationValue
 import org.jetbrains.kotlin.storage.getValue
 
@@ -19,14 +16,8 @@ class CommonizedAnnotationDescriptor(
     targetComponents: TargetDeclarationsBuilderComponents,
     cirAnnotation: CirAnnotation
 ) : AnnotationDescriptor {
-    override val fqName: FqName = cirAnnotation.fqName
-
     override val type by targetComponents.storageManager.createLazyValue {
-        val annotationClass = findClassOrTypeAlias(targetComponents, fqName)
-        check(annotationClass is ClassDescriptor && annotationClass.kind == ANNOTATION_CLASS) {
-            "Not an annotation class: ${annotationClass::class.java}, $annotationClass"
-        }
-        annotationClass.defaultType
+        cirAnnotation.type.buildType(targetComponents, TypeParameterResolver.EMPTY)
     }
 
     override val allValueArguments by targetComponents.storageManager.createLazyValue {

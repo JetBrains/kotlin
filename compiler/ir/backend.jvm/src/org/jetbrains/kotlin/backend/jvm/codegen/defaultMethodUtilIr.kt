@@ -20,9 +20,7 @@ fun extractDefaultLambdaOffsetAndDescriptor(
 
     val valueParameterOffset = if (irFunction.extensionReceiverParameter != null) 1 else 0
 
-    return irFunction.valueParameters.filter {
-        it.defaultValue != null && it.isInlineParameter(it.defaultValue!!.expression.type)
-    }.associateBy {
+    return irFunction.valueParameters.filter { it.defaultValue != null && it.isInlineParameter() }.associateBy {
         parameterOffsets[valueParameterOffset + it.index]
     }
 }

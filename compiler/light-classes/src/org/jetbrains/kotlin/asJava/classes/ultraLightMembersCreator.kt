@@ -108,9 +108,9 @@ internal class UltraLightMembersCreator(
         forcePrivate: Boolean = false
     ): Collection<KtLightMethod> {
 
-        if (ktFunction.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) ||
-            ktFunction.hasReifiedParameters() ||
-            ktFunction.hasExpectModifier()
+        if (ktFunction.hasExpectModifier()
+            || ktFunction.hasReifiedParameters()
+            || ktFunction.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)
         ) return emptyList()
 
 

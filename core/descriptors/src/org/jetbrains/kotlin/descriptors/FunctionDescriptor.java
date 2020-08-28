@@ -105,6 +105,7 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
         CopyBuilder<D> setTypeParameters(@NotNull List<TypeParameterDescriptor> parameters);
 
         @NotNull
+        @Override
         CopyBuilder<D> setReturnType(@NotNull KotlinType type);
 
         @NotNull

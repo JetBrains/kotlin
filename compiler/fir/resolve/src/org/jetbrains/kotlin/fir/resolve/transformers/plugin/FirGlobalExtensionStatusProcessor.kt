@@ -29,11 +29,11 @@ class FirGlobalExtensionStatusProcessor(
         if (extensions.isEmpty()) return
         val provider = session.predicateBasedProvider
         for (extension in extensions) {
-            val declarations = provider.getSymbolsByPredicate(extension.predicate)
-            for (declaration in declarations) {
+            val declarations = provider.getSymbolsWithOwnersByPredicate(extension.predicate)
+            for ((declaration, owners) in declarations) {
                 // TODO: maybe replace with visitor?
                 if (declaration is FirMemberDeclaration) {
-                    val newStatus = extension.transformStatus(declaration, declaration.status)
+                    val newStatus = extension.transformStatus(declaration, owners, declaration.status)
                     declaration.transformStatus(ReplaceStatus, newStatus)
                 }
             }
@@ -49,12 +49,15 @@ class FirTransformerBasedExtensionStatusProcessor(
 
     private inner class StatusUpdater : FirDefaultTransformer<Nothing?>() {
         private val extensions = session.extensionService.statusTransformerExtensions
+        private val predicateBasedProvider = session.predicateBasedProvider
 
         private fun FirMemberDeclaration.updateStatus() {
             if (extensions.isEmpty()) return
+            val owners = predicateBasedProvider.getOwnersOfDeclaration(this)
+            requireNotNull(owners)
             var status = this.status
             for (extension in extensions) {
-                status = extension.transformStatus(this, status)
+                status = extension.transformStatus(this, owners, status)
             }
             transformStatus(ReplaceStatus, status)
         }
@@ -102,7 +105,6 @@ class FirTransformerBasedExtensionStatusProcessor(
         }
     }
 }
-
 
 private object ReplaceStatus : FirTransformer<FirDeclarationStatus>() {
     override fun <E : FirElement> transformElement(element: E, data: FirDeclarationStatus): CompositeTransformResult<E> {

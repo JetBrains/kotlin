@@ -1,1 +1,1 @@
-Function call 9 Foo().bar(1)
+Function call 9 Foo(1).bar(1)

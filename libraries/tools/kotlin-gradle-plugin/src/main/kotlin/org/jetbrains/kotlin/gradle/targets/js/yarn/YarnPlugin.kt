@@ -8,13 +8,17 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
+import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
+import org.jetbrains.kotlin.gradle.tasks.registerTask
 
 open class YarnPlugin : Plugin<Project> {
     override fun apply(project: Project): Unit = project.run {
+        MultiplePluginDeclarationDetector.detect(project)
+
         check(project == project.rootProject) {
             "YarnPlugin can be applied only to root project"
         }
@@ -22,8 +26,8 @@ open class YarnPlugin : Plugin<Project> {
         val yarnRootExtension = this.extensions.create(YarnRootExtension.YARN, YarnRootExtension::class.java, this)
         val nodeJs = NodeJsRootPlugin.apply(this)
 
-        tasks.create(YarnSetupTask.NAME, YarnSetupTask::class.java) {
-            it.dependsOn(nodeJs.nodeJsSetupTask)
+        registerTask<YarnSetupTask>(YarnSetupTask.NAME) {
+            it.dependsOn(nodeJs.nodeJsSetupTaskProvider)
         }
 
         val rootClean = project.rootProject.tasks.named(BasePlugin.CLEAN_TASK_NAME)

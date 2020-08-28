@@ -12,17 +12,20 @@ import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrAnonymousInitializerImpl
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.mapValueParametersIndexed
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.withReferenceScope
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
@@ -69,15 +72,15 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
             }
         }
 
-        val annonimousInit = irClass.run {
+        val anonymousInit = irClass.run {
             val symbol = IrAnonymousInitializerSymbolImpl(descriptor)
-            IrAnonymousInitializerImpl(startOffset, endOffset, SERIALIZABLE_PLUGIN_ORIGIN, symbol).also {
+            irClass.factory.createAnonymousInitializer(startOffset, endOffset, SERIALIZABLE_PLUGIN_ORIGIN, symbol).also {
                 it.parent = this
                 declarations.add(it)
             }
         }
 
-        annonimousInit.buildWithScope { initIrBody ->
+        anonymousInit.buildWithScope { initIrBody ->
             compilerContext.symbolTable.withReferenceScope(initIrBody.descriptor) {
                 initIrBody.body =
                     DeclarationIrBuilder(compilerContext, initIrBody.symbol, initIrBody.startOffset, initIrBody.endOffset).irBlockBody {
@@ -137,8 +140,9 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
             if (classProp.transient) continue
             +addFieldCall(classProp)
             // add property annotations
+            val property = classProp.irProp
             copySerialInfoAnnotationsToDescriptor(
-                classProp.irField.correspondingPropertySymbol?.owner?.annotations.orEmpty(),
+                property.annotations,
                 localDescriptor,
                 serialDescImplClass.referenceMethod(CallingConventions.addAnnotation)
             )
@@ -245,15 +249,26 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
         val objectToSerialize = saveFunc.valueParameters[1]
         val localOutput = irTemporary(call, "output")
 
-        fun SerializableProperty.irGet(): IrGetField {
+        fun SerializableProperty.irGet(): IrExpression {
             val ownerType = objectToSerialize.symbol.owner.type
-            return irGetField(
+            return getProperty(
                 irGet(
                     type = ownerType,
                     variable = objectToSerialize.symbol
-                ), irField
+                ), irProp
             )
         }
+
+        // Ignore comparing to default values of properties from superclass,
+        // because we do not have access to their fields (and initializers), if superclass is in another module.
+        // In future, IR analogue of JVM's write$Self should be implemented.
+        val superClass = irClass.getSuperClassOrAny().descriptor
+        val ignoreIndexTo = if (superClass.isInternalSerializable) {
+            bindingContext.serializablePropertiesFor(superClass).size
+        } else {
+            -1
+        }
+
 
         //  internal serialization via virtual calls?
         for ((index, property) in serializableProperties.filter { !it.transient }.withIndex()) {
@@ -287,7 +302,7 @@ open class SerializerIrGenerator(val irClass: IrClass, final override val compil
             val elementCall = irInvoke(irGet(localOutput), writeFunc, typeArguments = typeArgs, valueArguments = args)
 
             // check for call to .shouldEncodeElementDefault
-            if (!property.optional) {
+            if (!property.optional || index < ignoreIndexTo) {
                 // emit call right away
                 +elementCall
             } else {

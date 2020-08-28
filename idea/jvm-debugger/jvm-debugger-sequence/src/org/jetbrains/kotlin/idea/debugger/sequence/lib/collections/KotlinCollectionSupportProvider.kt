@@ -18,11 +18,9 @@ import org.jetbrains.kotlin.idea.debugger.sequence.trace.dsl.KotlinStatementFact
 import org.jetbrains.kotlin.idea.debugger.sequence.trace.impl.KotlinTraceExpressionBuilder
 
 class KotlinCollectionSupportProvider : LibrarySupportProvider {
-    private companion object {
-        val builder: StreamChainBuilder = KotlinCollectionChainBuilder()
-        val support: LibrarySupport = KotlinCollectionLibrarySupport()
-        val dsl = DslImpl(KotlinStatementFactory(KotlinCollectionsPeekCallFactory()))
-    }
+    private val builder: StreamChainBuilder = KotlinCollectionChainBuilder()
+    private val support: LibrarySupport by lazy { KotlinCollectionLibrarySupport() }
+    private val dsl by lazy { DslImpl(KotlinStatementFactory(KotlinCollectionsPeekCallFactory())) }
 
     override fun getLanguageId(): String = KotlinLanguage.INSTANCE.id
 

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.contracts.description.InvocationKind
+import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
@@ -31,13 +31,13 @@ abstract class FirAnonymousFunction : FirFunction<FirAnonymousFunction>, FirExpr
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverTypeRef: FirTypeRef?
-    abstract override val controlFlowGraphReference: FirControlFlowGraphReference
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val valueParameters: List<FirValueParameter>
     abstract override val body: FirBlock?
     abstract override val typeRef: FirTypeRef
     abstract override val symbol: FirAnonymousFunctionSymbol
     abstract val label: FirLabel?
-    abstract val invocationKind: InvocationKind?
+    abstract val invocationKind: EventOccurrencesRange?
     abstract val isLambda: Boolean
     abstract override val typeParameters: List<FirTypeParameter>
 
@@ -49,11 +49,13 @@ abstract class FirAnonymousFunction : FirFunction<FirAnonymousFunction>, FirExpr
 
     abstract override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
 
+    abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
+
     abstract override fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
-    abstract fun replaceInvocationKind(newInvocationKind: InvocationKind?)
+    abstract fun replaceInvocationKind(newInvocationKind: EventOccurrencesRange?)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
 
@@ -61,7 +63,9 @@ abstract class FirAnonymousFunction : FirFunction<FirAnonymousFunction>, FirExpr
 
     abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
 
-    abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
-
     abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
+
+    abstract override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
+
+    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
 }

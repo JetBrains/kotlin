@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.fir.scopes
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.classId
+import org.jetbrains.kotlin.fir.declarations.isExpect
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.*
@@ -26,19 +29,11 @@ class KotlinScopeProvider(
         scopeSession: ScopeSession
     ) -> FirScope = { _, declaredMemberScope, _, _ -> declaredMemberScope }
 ) : FirScopeProvider() {
-
-
-    private fun substitutor(symbol: FirRegularClassSymbol, type: ConeClassLikeType, useSiteSession: FirSession): ConeSubstitutor {
-        if (type.typeArguments.isEmpty()) return ConeSubstitutor.Empty
-        val originalSubstitution = createSubstitution(symbol.fir.typeParameters, type.typeArguments, useSiteSession)
-        return substitutorByMap(originalSubstitution)
-    }
-
     override fun getUseSiteMemberScope(
         klass: FirClass<*>,
         useSiteSession: FirSession,
         scopeSession: ScopeSession
-    ): FirScope {
+    ): FirTypeScope {
         return scopeSession.getOrBuild(klass.symbol, USE_SITE) {
             val declaredScope = declaredMemberScope(klass)
             val decoratedDeclaredMemberScope =
@@ -51,18 +46,31 @@ class KotlinScopeProvider(
                     if (symbol is FirRegularClassSymbol) {
                         symbol.fir.scope(
                             substitutor(symbol, useSiteSuperType, useSiteSession),
-                            useSiteSession, scopeSession, skipPrivateMembers = true, klass.classId
-                        )
+                            useSiteSession, scopeSession,
+                            skipPrivateMembers = true,
+                            classId = klass.classId,
+                            isFromExpectClass = (klass as? FirRegularClass)?.isExpect == true
+                        ).let {
+                            it as? FirTypeScope ?: error("$it is expected to be FirOverrideAwareScope")
+                        }
                     } else {
                         null
                     }
                 }
             FirClassUseSiteMemberScope(
                 useSiteSession,
-                FirSuperTypeScope.prepareSupertypeScope(useSiteSession, FirStandardOverrideChecker(useSiteSession), scopes),
+                FirTypeIntersectionScope.prepareIntersectionScope(
+                    useSiteSession, FirStandardOverrideChecker(useSiteSession), scopes
+                ),
                 decoratedDeclaredMemberScope
             )
         }
+    }
+
+    private fun substitutor(symbol: FirRegularClassSymbol, type: ConeClassLikeType, useSiteSession: FirSession): ConeSubstitutor {
+        if (type.typeArguments.isEmpty()) return ConeSubstitutor.Empty
+        val originalSubstitution = createSubstitution(symbol.fir.typeParameters, type.typeArguments, useSiteSession)
+        return substitutorByMap(originalSubstitution)
     }
 
     override fun getStaticMemberScopeForCallables(
@@ -83,10 +91,10 @@ class KotlinScopeProvider(
 
 
 data class ConeSubstitutionScopeKey(
-    val classId: ClassId?, val substitutor: ConeSubstitutor
+    val classId: ClassId?, val isFromExpectClass: Boolean, val substitutor: ConeSubstitutor
 ) : ScopeSessionKey<FirClass<*>, FirClassSubstitutionScope>()
 
-fun FirClass<*>.unsubstitutedScope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope {
+fun FirClass<*>.unsubstitutedScope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope {
     return scopeProvider.getUseSiteMemberScope(this, useSiteSession, scopeSession)
 }
 
@@ -95,16 +103,20 @@ internal fun FirClass<*>.scope(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     skipPrivateMembers: Boolean,
-    classId: ClassId? = this.classId
-): FirScope {
+    classId: ClassId? = this.classId,
+    isFromExpectClass: Boolean = false
+): FirTypeScope {
     val basicScope = scopeProvider.getUseSiteMemberScope(
         this, useSiteSession, scopeSession
     )
     if (substitutor == ConeSubstitutor.Empty) return basicScope
 
     return scopeSession.getOrBuild(
-        this, ConeSubstitutionScopeKey(classId, substitutor)
+        this, ConeSubstitutionScopeKey(classId, isFromExpectClass, substitutor)
     ) {
-        FirClassSubstitutionScope(useSiteSession, basicScope, scopeSession, substitutor, skipPrivateMembers, classId)
+        FirClassSubstitutionScope(
+            useSiteSession, basicScope, scopeSession, substitutor,
+            skipPrivateMembers, classId, makeExpect = isFromExpectClass
+        )
     }
 }

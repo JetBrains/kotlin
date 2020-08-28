@@ -33,26 +33,26 @@ fun main(args: Array<String>) {
         val pkg = e.value.first().second
 
         File(dir, fileName).bufferedWriter().use { w ->
-            w.appendln("package $pkg;")
-            w.appendln()
-            w.appendln()
+            w.appendLine("package $pkg;")
+            w.appendLine()
+            w.appendLine()
 
             e.value.forEach { (url) ->
                 println("Loading $url...")
 
-                w.appendln("// Downloaded from $url")
+                w.appendLine("// Downloaded from $url")
                 val content = fetch(url)
 
                 if (content != null) {
                     if (url.endsWith(".idl")) {
-                        w.appendln(content)
+                        w.appendLine(content)
                     } else {
                         extractIDLText(content, w)
                     }
                 }
             }
 
-            w.appendln()
+            w.appendLine()
         }
     }
 }
@@ -69,9 +69,9 @@ private fun fetch(url: String): String? {
 
 private fun Appendable.append(element: Element) {
     val text = element.text()
-    appendln(text)
+    appendLine(text)
     if (!text.trimEnd().endsWith(";")) {
-        appendln(";")
+        appendLine(";")
     }
 }
 

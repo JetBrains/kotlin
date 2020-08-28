@@ -10,6 +10,7 @@ package kotlin
 import kotlin.contracts.*
 import kotlin.internal.InlineOnly
 import kotlin.jvm.JvmField
+import kotlin.jvm.JvmName
 
 /**
  * A discriminated union that encapsulates a successful outcome with a value of type [T]
@@ -84,14 +85,18 @@ public inline class Result<out T> @PublishedApi internal constructor(
         /**
          * Returns an instance that encapsulates the given [value] as successful value.
          */
+        @Suppress("INAPPLICABLE_JVM_NAME")
         @InlineOnly
+        @JvmName("success")
         public inline fun <T> success(value: T): Result<T> =
             Result(value)
 
         /**
          * Returns an instance that encapsulates the given [Throwable] [exception] as failure.
          */
+        @Suppress("INAPPLICABLE_JVM_NAME")
         @InlineOnly
+        @JvmName("failure")
         public inline fun <T> failure(exception: Throwable): Result<T> =
             Result(createFailure(exception))
     }
@@ -294,7 +299,6 @@ public inline fun <R, T : R> Result<T>.recover(transform: (exception: Throwable)
 @InlineOnly
 @SinceKotlin("1.3")
 public inline fun <R, T : R> Result<T>.recoverCatching(transform: (exception: Throwable) -> R): Result<R> {
-    val value = value // workaround for inline classes BE bug
     return when (val exception = exceptionOrNull()) {
         null -> this
         else -> runCatching { transform(exception) }

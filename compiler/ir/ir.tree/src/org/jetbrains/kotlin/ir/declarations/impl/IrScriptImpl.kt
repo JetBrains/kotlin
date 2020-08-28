@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
-import org.jetbrains.kotlin.ir.util.transform
+import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
@@ -22,7 +23,7 @@ private val SCRIPT_ORIGIN = object : IrDeclarationOriginImpl("FIELD_FOR_OBJECT_I
 class IrScriptImpl(
     override val symbol: IrScriptSymbol,
     override val name: Name
-) : IrScript, IrDeclaration {
+) : IrScript() {
     override val startOffset: Int get() = UNDEFINED_OFFSET
     override val endOffset: Int get() = UNDEFINED_OFFSET
     override var origin: IrDeclarationOrigin = SCRIPT_ORIGIN
@@ -36,13 +37,18 @@ class IrScriptImpl(
         }
 
     override var annotations: List<IrConstructorCall> = SmartList()
-    override val metadata: MetadataSource? get() = null
 
     override val declarations: MutableList<IrDeclaration> = mutableListOf()
     override val statements: MutableList<IrStatement> = mutableListOf()
 
     override lateinit var thisReceiver: IrValueParameter
-    override val descriptor: ScriptDescriptor = symbol.descriptor
+
+    @ObsoleteDescriptorBasedAPI
+    override val descriptor: ScriptDescriptor
+        get() = symbol.descriptor
+
+    override val factory: IrFactory
+        get() = error("Create IrScriptImpl directly")
 
     init {
         symbol.bind(this)
@@ -59,8 +65,8 @@ class IrScriptImpl(
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        declarations.transform { it.transform(transformer, data) }
-        statements.transform { it.transform(transformer, data) }
+        declarations.transformInPlace(transformer, data)
+        statements.transformInPlace(transformer, data)
         thisReceiver = thisReceiver.transform(transformer, data)
     }
 }

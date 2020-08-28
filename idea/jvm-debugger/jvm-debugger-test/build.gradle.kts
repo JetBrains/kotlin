@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     testCompileOnly(intellijDep())
+    testCompileOnly(project(":kotlin-reflect-api"))
 
     testCompile(project(":idea:jvm-debugger:jvm-debugger-core"))
     testCompile(project(":idea:jvm-debugger:jvm-debugger-evaluation"))
@@ -18,10 +19,6 @@ dependencies {
     testCompile(commonDep("junit:junit"))
 
     testCompile(intellijPluginDep("stream-debugger"))
-
-    Platform[191].orLower {
-        testCompileOnly(intellijDep()) { includeJars("java-api", "java-impl") }
-    }
 
     Platform[192].orHigher {
         testCompileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl", "aether-dependency-resolver") }

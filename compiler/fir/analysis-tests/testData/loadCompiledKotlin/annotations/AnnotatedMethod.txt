@@ -1,5 +1,5 @@
 public open class AnnotatedMethod : R|kotlin/Any| {
-    public open fun f(): R|kotlin/Unit|
+    @R|kotlin/Deprecated|(message = String(Deprecated in Java)) public open fun f(): R|kotlin/Unit|
 
     public constructor(): R|test/AnnotatedMethod|
 

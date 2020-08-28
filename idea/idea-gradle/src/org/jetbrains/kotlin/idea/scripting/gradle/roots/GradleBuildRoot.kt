@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle.roots
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.idea.core.script.scriptingDebugLog
 import org.jetbrains.kotlin.idea.core.script.ucache.ScriptClassRootsBuilder
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptDefinitionsContributor
 import org.jetbrains.kotlin.idea.scripting.gradle.LastModifiedFiles
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import java.io.File
+import java.util.concurrent.atomic.AtomicReference
 
 /**
  * [GradleBuildRoot] is a linked gradle build (don't confuse with gradle project and included build).
@@ -25,130 +27,119 @@ import java.io.File
  *
  * See [GradleBuildRootsManager] for more details.
  */
-sealed class GradleBuildRoot {
-    /**
-     * The script not related to any Gradle build that is linked to IntelliJ Project,
-     * or we cannot known what is it
-     */
-    @Suppress("CanSealedSubClassBeObject")
-    class Unlinked : GradleBuildRoot()
+sealed class GradleBuildRoot(
+    private val lastModifiedFiles: LastModifiedFiles
+) {
+    enum class ImportingStatus {
+        importing, updatingCaches, updated
+    }
 
-    /**
-     * Linked project, that may be itself: [Legacy], [New] or [Imported].
-     */
-    abstract class Linked : GradleBuildRoot() {
-        @Volatile
-        var importing = false
+    val importing = AtomicReference(ImportingStatus.updated)
 
-        abstract val manager: GradleBuildRootsManager
+    abstract val pathPrefix: String
 
-        abstract val pathPrefix: String
+    abstract val projectRoots: Collection<String>
 
-        abstract val projectRoots: Collection<String>
+    val dir: VirtualFile?
+        get() = LocalFileSystem.getInstance().findFileByPath(pathPrefix)
 
-        val dir: VirtualFile?
-            get() = LocalFileSystem.getInstance().findFileByPath(pathPrefix)
+    fun saveLastModifiedFiles() {
+        scriptingDebugLog { "LasModifiedFiles saved: $lastModifiedFiles" }
+        LastModifiedFiles.write(dir ?: return, lastModifiedFiles)
+    }
 
-        private lateinit var lastModifiedFiles: LastModifiedFiles
+    fun areRelatedFilesChangedBefore(file: VirtualFile, lastModified: Long): Boolean =
+        lastModifiedFiles.lastModifiedTimeStampExcept(file.path) < lastModified
 
-        fun loadLastModifiedFiles() {
-            lastModifiedFiles = dir?.let { LastModifiedFiles.read(it) } ?: LastModifiedFiles()
+    fun fileChanged(filePath: String, ts: Long) {
+        lastModifiedFiles.fileChanged(ts, filePath)
+    }
+
+    fun isImportingInProgress(): Boolean {
+        return importing.get() != ImportingStatus.updated
+    }
+}
+
+sealed class WithoutScriptModels(
+    settings: GradleProjectSettings,
+    lastModifiedFiles: LastModifiedFiles
+) : GradleBuildRoot(lastModifiedFiles) {
+    final override val pathPrefix = settings.externalProjectPath!!
+    final override val projectRoots = settings.modules.takeIf { it.isNotEmpty() } ?: listOf(pathPrefix)
+}
+
+/**
+ * Gradle build with old Gradle version (<6.0)
+ */
+class Legacy(
+    settings: GradleProjectSettings,
+    lastModifiedFiles: LastModifiedFiles = settings.loadLastModifiedFiles() ?: LastModifiedFiles()
+) : WithoutScriptModels(settings, lastModifiedFiles)
+
+/**
+ * Linked but not yet imported Gradle build.
+ */
+class New(
+    settings: GradleProjectSettings,
+    lastModifiedFiles: LastModifiedFiles = settings.loadLastModifiedFiles() ?: LastModifiedFiles()
+) : WithoutScriptModels(settings, lastModifiedFiles)
+
+/**
+ * Imported Gradle build.
+ * Each imported build have info about all of it's Kotlin Build Scripts.
+ */
+class Imported(
+    override val pathPrefix: String,
+    val data: GradleBuildRootData,
+    lastModifiedFiles: LastModifiedFiles
+) : GradleBuildRoot(lastModifiedFiles) {
+    override val projectRoots: Collection<String>
+        get() = data.projectRoots
+
+    val javaHome = data.javaHome?.takeIf { it.isNotBlank() }?.let { File(it) }
+
+    fun collectConfigurations(builder: ScriptClassRootsBuilder) {
+        if (javaHome != null) {
+            builder.sdks.addSdk(javaHome)
         }
 
-        fun saveLastModifiedFiles() {
-            LastModifiedFiles.write(dir ?: return, lastModifiedFiles)
+        val definitions = GradleScriptDefinitionsContributor.getDefinitions(builder.project, pathPrefix, data.gradleHome, data.javaHome)
+        if (definitions == null) {
+            // needed to recreate classRoots if correct script definitions weren't loaded at this moment
+            // in this case classRoots will be recreated after script definitions update
+            builder.useCustomScriptDefinition()
         }
 
-        fun areRelatedFilesChangedBefore(file: VirtualFile, lastModified: Long): Boolean =
-            lastModifiedFiles.lastModifiedTimeStampExcept(file.path) < lastModified
+        builder.addTemplateClassesRoots(GradleScriptDefinitionsContributor.getDefinitionsTemplateClasspath(data.gradleHome))
 
-        fun fileChanged(filePath: String, ts: Long) {
-            lastModifiedFiles.fileChanged(ts, filePath)
-            manager.scheduleLastModifiedFilesSave()
+        data.models.forEach { script ->
+            val definition = definitions?.let { selectScriptDefinition(script, it) }
+
+            builder.addCustom(
+                script.file,
+                script.classPath,
+                script.sourcePath,
+                GradleScriptInfo(this, definition, script)
+            )
         }
     }
 
-    abstract class WithoutScriptModels(settings: GradleProjectSettings) : Linked() {
-        final override val pathPrefix = settings.externalProjectPath!!
-        final override val projectRoots = settings.modules.takeIf { it.isNotEmpty() } ?: listOf(pathPrefix)
-
-        init {
-            loadLastModifiedFiles()
-        }
+    private fun selectScriptDefinition(
+        script: KotlinDslScriptModel,
+        definitions: List<ScriptDefinition>
+    ): ScriptDefinition? {
+        val file = LocalFileSystem.getInstance().findFileByPath(script.file) ?: return null
+        val scriptSource = VirtualFileScriptSource(file)
+        return definitions.firstOrNull { it.isScript(scriptSource) }
     }
+}
 
-    /**
-     * Gradle build with old Gradle version (<6.0)
-     */
-    class Legacy(
-        override val manager: GradleBuildRootsManager,
-        settings: GradleProjectSettings
-    ) : WithoutScriptModels(settings) {
-        init {
-            loadLastModifiedFiles()
-        }
-    }
+fun GradleProjectSettings.loadLastModifiedFiles(): LastModifiedFiles? {
+    val externalProjectPath = externalProjectPath ?: return null
+    return loadLastModifiedFiles(externalProjectPath)
+}
 
-    /**
-     * Linked but not yet imported Gradle build.
-     */
-    class New(
-        override val manager: GradleBuildRootsManager,
-        settings: GradleProjectSettings
-    ) : WithoutScriptModels(settings) {
-        init {
-            loadLastModifiedFiles()
-        }
-    }
-
-    /**
-     * Imported Gradle build.
-     * Each imported build have info about all of it's Kotlin Build Scripts.
-     */
-    class Imported(
-        override val manager: GradleBuildRootsManager,
-        override val pathPrefix: String,
-        val javaHome: File?,
-        val data: GradleBuildRootData
-    ) : Linked() {
-        val project: Project
-            get() = manager.project
-
-        override val projectRoots: Collection<String>
-            get() = data.projectRoots
-
-        init {
-            loadLastModifiedFiles()
-        }
-
-        fun collectConfigurations(builder: ScriptClassRootsBuilder) {
-            if (javaHome != null) {
-                builder.sdks.addSdk(javaHome)
-            }
-
-            val definitions = GradleScriptDefinitionsContributor.getDefinitions(project)
-
-            builder.addTemplateClassesRoots(data.templateClasspath)
-
-            data.models.forEach { script ->
-                val definition = selectScriptDefinition(script, definitions)
-
-                builder.addCustom(
-                    script.file,
-                    script.classPath,
-                    script.sourcePath,
-                    GradleScriptInfo(this, definition, script)
-                )
-            }
-        }
-
-        private fun selectScriptDefinition(
-            script: KotlinDslScriptModel,
-            definitions: List<ScriptDefinition>
-        ): ScriptDefinition? {
-            val file = LocalFileSystem.getInstance().findFileByPath(script.file) ?: return null
-            val scriptSource = VirtualFileScriptSource(file)
-            return definitions.firstOrNull { it.isScript(scriptSource) }
-        }
-    }
+fun loadLastModifiedFiles(rootDirPath: String): LastModifiedFiles? {
+    val vFile = LocalFileSystem.getInstance().findFileByPath(rootDirPath) ?: return null
+    return LastModifiedFiles.read(vFile)
 }

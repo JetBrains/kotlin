@@ -1,10 +1,12 @@
 @kotlin.Metadata
 public final class test/Foo {
+    // source: 'InlineOnlyPropertyMultifile.kt'
     public final static method foo(): void
 }
 
 @kotlin.Metadata
 synthetic final class test/Foo__InlineOnlyPropertyMultifileKt {
+    // source: 'InlineOnlyPropertyMultifile.kt'
     public final static method foo(): void
     public synthetic deprecated static @kotlin.internal.InlineOnly method getProp$annotations(): void
     private final static method getProp(): java.lang.String

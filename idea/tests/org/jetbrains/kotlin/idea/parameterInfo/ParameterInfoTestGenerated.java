@@ -121,6 +121,16 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
             runTest("idea/testData/parameterInfo/functionCall/Deprecated.kt");
         }
 
+        @TestMetadata("deprecatedSinceKotlinApplicable.kt")
+        public void testDeprecatedSinceKotlinApplicable() throws Exception {
+            runTest("idea/testData/parameterInfo/functionCall/deprecatedSinceKotlinApplicable.kt");
+        }
+
+        @TestMetadata("deprecatedSinceKotlinNotApplicable.kt")
+        public void testDeprecatedSinceKotlinNotApplicable() throws Exception {
+            runTest("idea/testData/parameterInfo/functionCall/deprecatedSinceKotlinNotApplicable.kt");
+        }
+
         @TestMetadata("ExtensionOnCapturedScopeChange.kt")
         public void testExtensionOnCapturedScopeChange() throws Exception {
             runTest("idea/testData/parameterInfo/functionCall/ExtensionOnCapturedScopeChange.kt");

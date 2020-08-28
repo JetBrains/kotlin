@@ -1,0 +1,10 @@
+// WITH_RUNTIME
+interface Foo {
+    fun foo(): String
+}
+
+class Bar : Foo {
+    override fun foo(): String {
+        return java.lang.String.valueOf(42)
+    }
+}

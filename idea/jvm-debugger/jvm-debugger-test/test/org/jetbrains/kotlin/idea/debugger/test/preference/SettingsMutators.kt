@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.idea.debugger.DebuggerUtils
 import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerSettings
 import org.jetbrains.kotlin.idea.debugger.ToggleKotlinVariablesState
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferenceKeys.DISABLE_KOTLIN_INTERNAL_CLASSES
-import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferenceKeys.IS_FILTER_FOR_STDLIB_ALREADY_ADDED
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferenceKeys.RENDER_DELEGATED_PROPERTIES
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferenceKeys.SKIP_CLASSLOADERS
 import org.jetbrains.kotlin.idea.debugger.test.preference.DebuggerPreferenceKeys.SKIP_CONSTRUCTORS
@@ -27,9 +26,8 @@ internal val SettingsMutators: List<SettingsMutator<*>> = listOf(
     DebuggerSettingsMutator(SKIP_CLASSLOADERS, DebuggerSettings::SKIP_CLASSLOADERS),
     DebuggerSettingsMutator(TRACING_FILTERS_ENABLED, DebuggerSettings::TRACING_FILTERS_ENABLED),
     DebuggerSettingsMutator(SKIP_GETTERS, DebuggerSettings::SKIP_GETTERS),
-    KotlinSettingsMutator(DISABLE_KOTLIN_INTERNAL_CLASSES, KotlinDebuggerSettings::DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES),
-    KotlinSettingsMutator(RENDER_DELEGATED_PROPERTIES, KotlinDebuggerSettings::DEBUG_RENDER_DELEGATED_PROPERTIES),
-    KotlinSettingsMutator(IS_FILTER_FOR_STDLIB_ALREADY_ADDED, KotlinDebuggerSettings::DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED),
+    KotlinSettingsMutator(DISABLE_KOTLIN_INTERNAL_CLASSES, KotlinDebuggerSettings::disableKotlinInternalClasses),
+    KotlinSettingsMutator(RENDER_DELEGATED_PROPERTIES, KotlinDebuggerSettings::renderDelegatedProperties),
     KotlinVariablesModeSettingsMutator,
     JvmTargetSettingsMutator,
     ForceRankingSettingsMutator

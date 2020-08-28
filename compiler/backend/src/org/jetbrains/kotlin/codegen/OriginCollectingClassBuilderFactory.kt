@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.codegen.state.JvmMethodExceptionTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -42,7 +43,7 @@ class OriginCollectingClassBuilderFactory(private val builderMode: ClassBuilderM
                 name: String,
                 desc: String,
                 signature: String?,
-                exceptions: Array<out String>?
+                exceptions: JvmMethodExceptionTypes
         ): MethodVisitor {
             val methodNode = super.newMethod(origin, access, name, desc, signature, exceptions) as MethodNode
             origins[methodNode] = origin

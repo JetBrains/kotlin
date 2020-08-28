@@ -14,8 +14,8 @@ FILE: safeCalls.kt
 
     }
     public final fun test_1(x: R|A?|): R|kotlin/Unit| {
-        R|<local>/x|?.R|/A.foo|()?.R|/A.bar|()
+        R|<local>/x|?.{ $subj$.R|/A.foo|() }?.{ $subj$.R|/A.bar|() }
     }
     public final fun test_2(x: R|B?|): R|kotlin/Unit| {
-        R|<local>/x|?.R|/B.foo|?.R|/B.bar|
+        R|<local>/x|?.{ $subj$.R|/B.foo| }?.{ $subj$.R|/B.bar| }
     }

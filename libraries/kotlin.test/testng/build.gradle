@@ -30,12 +30,8 @@ jar {
     }
 }
 
-artifacts {
-    archives sourcesJar
-    sources sourcesJar
-}
-
-javadocJar()
+configureSourcesJar()
+configureJavadocJar()
 
 compileKotlin {
     kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-module-name", project.name]

@@ -4,52 +4,57 @@ FILE fqName:<root> fileName:/arrayAsVarargAfterSamArgument.kt
     VALUE_PARAMETER name:r index:1 type:java.lang.Runnable
     VALUE_PARAMETER name:arr index:2 type:kotlin.Array<kotlin.String>
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/Test.foo1]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /Test.foo1>#' type=kotlin.String?
         FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
                 GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
         GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
-      CALL 'public open fun foo1 (r: java.lang.Runnable?, vararg strs: kotlin.String?): kotlin.String? declared in <root>.Test' type=kotlin.String? origin=null
-        r: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
-          FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
-              BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
-                  GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-        strs: VARARG type=kotlin.Array<out kotlin.String?>? varargElementType=kotlin.String?
-          SPREAD_ELEMENT
-            GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/Test.foo1]>#' type=IrErrorType
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun foo1 (r: java.lang.Runnable?, vararg strs: kotlin.String?): kotlin.String? declared in <root>.Test' type=kotlin.String? origin=null
+          r: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+            FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
+                    GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+          strs: VARARG type=kotlin.Array<out kotlin.String?>? varargElementType=kotlin.String?
+            SPREAD_ELEMENT
+              GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /Test.foo1>#' type=kotlin.String?
         GET_VAR 'fn: kotlin.Function0<kotlin.Unit> declared in <root>.test' type=kotlin.Function0<kotlin.Unit> origin=null
         GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
-      CALL 'public open fun foo1 (r: java.lang.Runnable?, vararg strs: kotlin.String?): kotlin.String? declared in <root>.Test' type=kotlin.String? origin=null
-        r: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
-          GET_VAR 'fn: kotlin.Function0<kotlin.Unit> declared in <root>.test' type=kotlin.Function0<kotlin.Unit> origin=null
-        strs: VARARG type=kotlin.Array<out kotlin.String?>? varargElementType=kotlin.String?
-          SPREAD_ELEMENT
-            GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
-      CALL 'public open fun foo1 (r: java.lang.Runnable?, vararg strs: kotlin.String?): kotlin.String? declared in <root>.Test' type=kotlin.String? origin=null
-        r: GET_VAR 'r: java.lang.Runnable declared in <root>.test' type=java.lang.Runnable origin=null
-        strs: VARARG type=kotlin.Array<out kotlin.String?>? varargElementType=kotlin.String?
-          CONST String type=kotlin.String value=""
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/Test.foo1]>#' type=IrErrorType
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun foo1 (r: java.lang.Runnable?, vararg strs: kotlin.String?): kotlin.String? declared in <root>.Test' type=kotlin.String? origin=null
+          r: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+            GET_VAR 'fn: kotlin.Function0<kotlin.Unit> declared in <root>.test' type=kotlin.Function0<kotlin.Unit> origin=null
+          strs: VARARG type=kotlin.Array<out kotlin.String?>? varargElementType=kotlin.String?
+            SPREAD_ELEMENT
+              GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun foo1 (r: java.lang.Runnable?, vararg strs: kotlin.String?): kotlin.String? declared in <root>.Test' type=kotlin.String? origin=null
+          r: GET_VAR 'r: java.lang.Runnable declared in <root>.test' type=java.lang.Runnable origin=null
+          strs: VARARG type=kotlin.Array<out kotlin.String?>? varargElementType=kotlin.String?
+            CONST String type=kotlin.String value=""
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /Test.foo1>#' type=kotlin.String?
         GET_VAR 'fn: kotlin.Function0<kotlin.Unit> declared in <root>.test' type=kotlin.Function0<kotlin.Unit> origin=null
         GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
-      CALL 'public open fun foo1 (r: java.lang.Runnable?, vararg strs: kotlin.String?): kotlin.String? declared in <root>.Test' type=kotlin.String? origin=null
-        r: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
-          GET_VAR 'fn: kotlin.Function0<kotlin.Unit> declared in <root>.test' type=kotlin.Function0<kotlin.Unit> origin=null
-        strs: VARARG type=kotlin.Array<out kotlin.String?>? varargElementType=kotlin.String?
-          SPREAD_ELEMENT
-            GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
-      CALL 'public open fun foo1 (r: java.lang.Runnable?, vararg strs: kotlin.String?): kotlin.String? declared in <root>.Test' type=kotlin.String? origin=null
-        r: GET_VAR 'r: java.lang.Runnable declared in <root>.test' type=java.lang.Runnable origin=null
-        strs: VARARG type=kotlin.Array<out kotlin.String?>? varargElementType=kotlin.String?
-          SPREAD_ELEMENT
-            GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun foo1 (r: java.lang.Runnable?, vararg strs: kotlin.String?): kotlin.String? declared in <root>.Test' type=kotlin.String? origin=null
+          r: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+            GET_VAR 'fn: kotlin.Function0<kotlin.Unit> declared in <root>.test' type=kotlin.Function0<kotlin.Unit> origin=null
+          strs: VARARG type=kotlin.Array<out kotlin.String?>? varargElementType=kotlin.String?
+            SPREAD_ELEMENT
+              GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public open fun foo1 (r: java.lang.Runnable?, vararg strs: kotlin.String?): kotlin.String? declared in <root>.Test' type=kotlin.String? origin=null
+          r: GET_VAR 'r: java.lang.Runnable declared in <root>.test' type=java.lang.Runnable origin=null
+          strs: VARARG type=kotlin.Array<out kotlin.String?>? varargElementType=kotlin.String?
+            SPREAD_ELEMENT
+              GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
       VAR name:i1 type:IrErrorType [val]
-        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/Test.Test, /Test.Test]>#' type=IrErrorType
+        ERROR_CALL 'Unresolved reference: <Ambiguity: Test, [/Test.Test, /Test.Test]>#' type=IrErrorType
           FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
               BLOCK_BODY
@@ -68,7 +73,7 @@ FILE fqName:<root> fileName:/arrayAsVarargAfterSamArgument.kt
             SPREAD_ELEMENT
               GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
       VAR name:i3 type:IrErrorType [val]
-        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/Test.Test, /Test.Test]>#' type=IrErrorType
+        ERROR_CALL 'Unresolved reference: <Ambiguity: Test, [/Test.Test, /Test.Test]>#' type=IrErrorType
           FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
               BLOCK_BODY

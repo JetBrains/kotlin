@@ -22,7 +22,7 @@ class KotlinMetadataTargetPreset(
     override fun getName(): String = PRESET_NAME
 
     override fun createCompilationFactory(
-        forTarget: KotlinOnlyTarget<AbstractKotlinCompilation<*>>
+        forTarget: KotlinMetadataTarget
     ): KotlinCompilationFactory<AbstractKotlinCompilation<*>> =
         object : KotlinCompilationFactory<AbstractKotlinCompilation<*>> {
             override val itemClass: Class<AbstractKotlinCompilation<*>>
@@ -57,8 +57,9 @@ class KotlinMetadataTargetPreset(
 
             project.whenEvaluated {
                 // Since there's no default source set, apply language settings from commonMain:
-                val compileKotlinMetadata = mainCompilation.compileKotlinTask
-                applyLanguageSettingsToKotlinOptions(commonMainSourceSet.languageSettings, compileKotlinMetadata.kotlinOptions)
+                mainCompilation.compileKotlinTaskProvider.configure { compileKotlinMetadata ->
+                    applyLanguageSettingsToKotlinOptions(commonMainSourceSet.languageSettings, compileKotlinMetadata.kotlinOptions)
+                }
             }
         }
 }

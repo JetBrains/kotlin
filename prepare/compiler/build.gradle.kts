@@ -1,6 +1,5 @@
 @file:Suppress("HasPlatformType")
 
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import java.util.regex.Pattern.quote
 
 description = "Kotlin Compiler"
@@ -13,7 +12,13 @@ plugins {
 
 val JDK_18: String by rootProject.extra
 
-val fatJarContents by configurations.creating
+val fatJarContents by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+    attributes {
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+    }
+}
 val fatJarContentsStripMetadata by configurations.creating
 val fatJarContentsStripServices by configurations.creating
 val fatJarContentsStripVersions by configurations.creating
@@ -41,9 +46,6 @@ val proguardLibraries by configurations.creating {
 // Libraries to copy to the lib directory
 val libraries by configurations.creating {
     exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
-    attributes {
-        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
-    }
 }
 
 val librariesStripVersion by configurations.creating
@@ -93,8 +95,8 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-runner",
     ":kotlin-script-runtime",
     ":kotlin-scripting-common",
-    ":kotlin-scripting-compiler-unshaded",
-    ":kotlin-scripting-compiler-impl-unshaded",
+    ":kotlin-scripting-compiler",
+    ":kotlin-scripting-compiler-impl",
     ":kotlin-scripting-jvm",
     ":kotlin-scripting-js",
     ":js:js.engines",
@@ -204,6 +206,12 @@ dependencies {
 
     fatJarContents(intellijCoreDep()) { includeJars("intellij-core") }
     fatJarContents(intellijDep()) { includeJars("jna-platform") }
+
+    if (Platform.P202()) {
+        fatJarContents(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-1") }
+    } else if (Platform.P203.orHigher()) {
+        fatJarContents(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-3") }
+    }
 
     if (Platform.P192.orHigher()) {
         fatJarContents(intellijDep()) { includeJars("lz4-java", rootProject = rootProject) }

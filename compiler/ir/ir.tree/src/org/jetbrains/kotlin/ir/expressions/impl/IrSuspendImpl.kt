@@ -14,14 +14,13 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrSuspensionPointImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType,
     override var suspensionPointIdParameter: IrVariable,
     override var result: IrExpression,
     override var resumeResult: IrExpression
-) : IrExpressionBase(startOffset, endOffset, type), IrSuspensionPoint {
-
+) : IrSuspensionPoint() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitSuspensionPoint(this, data)
 
@@ -39,13 +38,12 @@ class IrSuspensionPointImpl(
 }
 
 class IrSuspendableExpressionImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType,
     override var suspensionPointId: IrExpression,
     override var result: IrExpression
-) : IrExpressionBase(startOffset, endOffset, type), IrSuspendableExpression {
-
+) : IrSuspendableExpression() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitSuspendableExpression(this, data)
 

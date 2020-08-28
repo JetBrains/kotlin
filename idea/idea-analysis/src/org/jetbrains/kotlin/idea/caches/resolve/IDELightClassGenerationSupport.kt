@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.lightClasses.IDELightClassContexts
 import org.jetbrains.kotlin.idea.caches.lightClasses.LazyLightClassDataHolder
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
@@ -66,7 +67,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
                 it.shortName == fqName.shortName() || owner.containingKtFile.hasAlias(it.shortName)
             }
             for (entry in candidates) {
-                val descriptor = analyze(entry).get(BindingContext.ANNOTATION, entry)
+                val descriptor = analyzeAnnotation(entry)
                 if (descriptor?.fqName == fqName) {
                     return Pair(entry, descriptor)
                 }
@@ -90,7 +91,9 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             return null
         }
 
-        override val deprecationResolver: DeprecationResolver get() = resolutionFacade.getFrontendService(DeprecationResolver::class.java)
+        @OptIn(FrontendInternals::class)
+        override val deprecationResolver: DeprecationResolver
+            get() = resolutionFacade.getFrontendService(DeprecationResolver::class.java)
 
 
         override val typeMapper: KotlinTypeMapper by lazyPub {
@@ -205,6 +208,7 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
         )
     }
 
+    @OptIn(FrontendInternals::class)
     private fun KtElement.getDiagnosticsHolder() =
         getResolutionFacade().frontendService<LazyLightClassDataHolder.DiagnosticsHolder>()
 
@@ -217,6 +221,8 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
     }
 
     override fun analyze(element: KtElement) = element.analyze(BodyResolveMode.PARTIAL)
+
+    override fun analyzeAnnotation(element: KtAnnotationEntry): AnnotationDescriptor? = element.resolveToDescriptorIfAny()
 
     override fun analyzeWithContent(element: KtClassOrObject) = element.analyzeWithContent()
 }

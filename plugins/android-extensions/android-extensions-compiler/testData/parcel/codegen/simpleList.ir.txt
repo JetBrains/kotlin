@@ -10,7 +10,7 @@ public final class Test$Creator : java/lang/Object, android/os/Parcelable$Creato
     public java.lang.Object[] newArray(int size)
 }
 
-public final class Test : java/lang/Object {
+public final class Test : java/lang/Object, android/os/Parcelable {
     public final static android.os.Parcelable$Creator CREATOR
 
     private final java.util.List names

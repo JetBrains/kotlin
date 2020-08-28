@@ -146,6 +146,10 @@ internal class JKCodeBuilder(context: NewJ2kConverterContext) {
             printer.renderSymbol(methodAccessExpression.identifier, methodAccessExpression)
         }
 
+        override fun visitTypeQualifierExpression(typeQualifierExpression: JKTypeQualifierExpression) {
+            printer.renderType(typeQualifierExpression.type, typeQualifierExpression)
+        }
+
         override fun visitFileRaw(file: JKFile) {
             if (file.packageDeclaration.name.value.isNotEmpty()) {
                 file.packageDeclaration.accept(this)
@@ -222,7 +226,7 @@ internal class JKCodeBuilder(context: NewJ2kConverterContext) {
                             ?.let { it as? JKDelegationConstructorCall }
                     if (delegationCall != null) {
                         printer.par { delegationCall.arguments.accept(this) }
-                    } else if (!superType.isInterface() && primaryConstructor != null) {
+                    } else if (!superType.isInterface() && (primaryConstructor != null || parentClass.isObjectOrCompanionObject)) {
                         printer.print("()")
                     }
                 }

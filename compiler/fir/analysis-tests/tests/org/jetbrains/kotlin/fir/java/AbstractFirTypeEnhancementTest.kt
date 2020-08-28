@@ -24,17 +24,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.createSession
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaConstructor
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
-import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
-import org.jetbrains.kotlin.fir.java.scopes.JavaClassEnhancementScope
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.buildUseSiteMemberScope
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
-import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -154,16 +146,14 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
             val symbolProvider = session.firSymbolProvider as FirCompositeSymbolProvider
             val javaProvider = symbolProvider.providers.filterIsInstance<JavaSymbolProvider>().first()
 
+            val topLevelJavaClasses = topPsiClasses.map { it.classId(FqName.ROOT) }
+
             fun processClassWithChildren(psiClass: PsiClass, parentFqName: FqName) {
-                val psiFile = psiClass.containingFile
-                val packageStatement = psiFile.children.filterIsInstance<PsiPackageStatement>().firstOrNull()
-                val packageName = packageStatement?.packageName
-                val fqName = parentFqName.child(Name.identifier(psiClass.name!!))
-                val classId = ClassId(packageName?.let { FqName(it) } ?: FqName.ROOT, fqName, false)
+                val classId = psiClass.classId(parentFqName)
                 javaProvider.getClassLikeSymbolByFqName(classId)
                     ?: throw AssertionError(classId.asString())
                 psiClass.innerClasses.forEach {
-                    processClassWithChildren(psiClass = it, parentFqName = fqName)
+                    processClassWithChildren(psiClass = it, parentFqName = classId.relativeClassName)
                 }
             }
             for (psiClass in topPsiClasses) {
@@ -171,64 +161,24 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
             }
 
             val processedJavaClasses = mutableSetOf<FirJavaClass>()
-            for (javaClass in javaProvider.getJavaTopLevelClasses().sortedBy { it.name }) {
+            for (javaClassId in topLevelJavaClasses.sortedBy { it.shortClassName }) {
+                val javaClass = javaProvider.getClassLikeSymbolByFqName(javaClassId)?.fir ?: continue
                 if (javaClass !is FirJavaClass || javaClass in processedJavaClasses) continue
-                val enhancementScope = javaClass.buildUseSiteMemberScope(session, ScopeSession()).let {
-                    when (it) {
-                        is FirCompositeScope -> it.scopes.filterIsInstance<JavaClassEnhancementScope>().first()
-                        is JavaClassEnhancementScope -> it
-                        else -> null
-                    }
-                }
-                if (enhancementScope == null) {
-                    javaClass.accept(renderer, null)
-                } else {
-                    renderer.visitMemberDeclaration(javaClass)
-                    renderer.renderSupertypes(javaClass)
-                    renderer.renderInBraces {
-                        val renderedDeclarations = mutableListOf<FirDeclaration>()
-                        for (declaration in javaClass.declarations) {
-                            if (declaration in renderedDeclarations) continue
-                            when (declaration) {
-                                is FirJavaConstructor -> enhancementScope.processDeclaredConstructors { symbol ->
-                                    val enhanced = symbol.fir
-                                    if (enhanced !in renderedDeclarations) {
-                                        enhanced.accept(renderer, null)
-                                        renderer.newLine()
-                                        renderedDeclarations += enhanced
-                                    }
-                                }
-                                is FirJavaMethod -> enhancementScope.processFunctionsByName(declaration.name) { symbol ->
-                                    val enhanced = symbol.fir
-                                    if (enhanced !in renderedDeclarations) {
-                                        enhanced.accept(renderer, null)
-                                        renderer.newLine()
-                                        renderedDeclarations += enhanced
-                                    }
-                                }
-                                is FirJavaField -> enhancementScope.processPropertiesByName(declaration.name) { symbol ->
-                                    val enhanced = symbol.fir
-                                    if (enhanced !in renderedDeclarations) {
-                                        enhanced.accept(renderer, null)
-                                        renderer.newLine()
-                                        renderedDeclarations += enhanced
-                                    }
-                                }
-                                else -> {
-                                    declaration.accept(renderer, null)
-                                    renderer.newLine()
-                                    renderedDeclarations += declaration
-                                }
-                            }
-                        }
-                    }
-                }
+                renderJavaClass(renderer, javaClass, session)
                 processedJavaClasses += javaClass
             }
         }.toString()
 
         val expectedFile = File(javaFile.absolutePath.replace(".java", ".fir.txt"))
         KotlinTestUtils.assertEqualsToFile(expectedFile, javaFirDump)
+    }
+
+    private fun PsiClass.classId(parentFqName: FqName): ClassId {
+        val psiFile = this.containingFile
+        val packageStatement = psiFile.children.filterIsInstance<PsiPackageStatement>().firstOrNull()
+        val packageName = packageStatement?.packageName
+        val fqName = parentFqName.child(Name.identifier(this.name!!))
+        return ClassId(packageName?.let { FqName(it) } ?: FqName.ROOT, fqName, false)
     }
 
     companion object {

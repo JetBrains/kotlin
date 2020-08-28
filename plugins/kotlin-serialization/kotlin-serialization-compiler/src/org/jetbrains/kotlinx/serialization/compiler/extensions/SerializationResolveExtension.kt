@@ -42,6 +42,10 @@ open class SerializationResolveExtension : SyntheticResolveExtension {
         else -> listOf()
     }
 
+    override fun getPossibleSyntheticNestedClassNames(thisDescriptor: ClassDescriptor): List<Name>? {
+        return listOf(SerialEntityNames.IMPL_NAME, SerialEntityNames.SERIALIZER_CLASS_NAME)
+    }
+
     override fun getSyntheticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> = when {
         thisDescriptor.isSerializableObject || thisDescriptor.isCompanionObject && getSerializableClassDescriptorByCompanion(thisDescriptor) != null ->
             listOf(SerialEntityNames.SERIALIZER_PROVIDER_NAME)

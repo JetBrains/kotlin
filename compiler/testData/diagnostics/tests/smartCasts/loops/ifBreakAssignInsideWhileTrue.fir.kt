@@ -4,7 +4,7 @@ public fun foo(x: String?): Int {
         y = if (x == null) break else x
     }
     // In future we can infer this initialization
-    y.hashCode()
+    <!UNINITIALIZED_VARIABLE!>y<!>.hashCode()
     // x is null because of the break
     return x.<!INAPPLICABLE_CANDIDATE!>length<!>
 }

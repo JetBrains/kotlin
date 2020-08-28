@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.idea.core.util.runInReadActionWithWriteActionPriorit
 import org.jetbrains.kotlin.idea.patterns.KotlinFunctionPattern
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.references.resolveToDescriptors
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -346,9 +347,14 @@ class KotlinLanguageInjector(
     }
 
     private fun injectionForKotlinCall(argument: KtValueArgument, ktFunction: KtFunction, reference: PsiReference): InjectionInfo? {
+        val argumentName = argument.getArgumentName()?.asName
         val argumentIndex = (argument.parent as KtValueArgumentList).arguments.indexOf(argument)
-        val ktParameter = ktFunction.valueParameters.getOrNull(argumentIndex) ?: return null
-
+        // Prefer using argument name if present
+        val ktParameter = if (argumentName != null) {
+            ktFunction.valueParameters.firstOrNull { it.nameAsName == argumentName }
+        } else {
+            ktFunction.valueParameters.getOrNull(argumentIndex)
+        } ?: return null
         val patternInjection = findInjection(ktParameter, configuration.getInjections(KOTLIN_SUPPORT_ID))
         if (patternInjection != null) {
             return patternInjection
@@ -362,7 +368,11 @@ class KotlinLanguageInjector(
             ktReference.resolveToDescriptors(bindingContext).singleOrNull() as? FunctionDescriptor
         } ?: return null
 
-        val parameterDescriptor = functionDescriptor.valueParameters.getOrNull(argumentIndex) ?: return null
+        val parameterDescriptor = if (argumentName != null) {
+            functionDescriptor.valueParameters.firstOrNull { it.name == argumentName }
+        } else {
+            functionDescriptor.valueParameters.getOrNull(argumentIndex)
+        } ?: return null
         return injectionInfoByAnnotation(parameterDescriptor)
     }
 

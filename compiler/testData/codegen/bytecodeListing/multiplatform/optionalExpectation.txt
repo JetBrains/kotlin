@@ -1,15 +1,17 @@
 @kotlin.Metadata
 public interface Foo$Nested {
-    inner class Foo$Nested
+    // source: 'optionalExpectation.kt'
+    public inner class Foo$Nested
 }
 
 @kotlin.Metadata
 public final class Foo {
+    // source: 'optionalExpectation.kt'
     private field x: int
-    inner class Foo$Nested
     public method <init>(p0: int): void
     public final method bar(): void
     public synthetic deprecated static method getX$annotations(): void
     public final method getX(): int
     public final method setX(p0: int): void
+    public inner class Foo$Nested
 }

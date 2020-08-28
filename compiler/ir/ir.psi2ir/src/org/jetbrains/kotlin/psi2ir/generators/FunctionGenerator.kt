@@ -9,12 +9,14 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.psi.*
@@ -26,6 +28,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -148,7 +151,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
         val startOffset = irAccessor.startOffset
         val endOffset = irAccessor.endOffset
-        val irBody = IrBlockBodyImpl(startOffset, endOffset)
+        val irBody = context.irFactory.createBlockBody(startOffset, endOffset)
 
         val receiver = generateReceiverExpressionForDefaultPropertyAccessor(property, irAccessor)
 
@@ -175,7 +178,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
         val startOffset = irAccessor.startOffset
         val endOffset = irAccessor.endOffset
-        val irBody = IrBlockBodyImpl(startOffset, endOffset)
+        val irBody = context.irFactory.createBlockBody(startOffset, endOffset)
 
         val receiver = generateReceiverExpressionForDefaultPropertyAccessor(property, irAccessor)
 
@@ -218,7 +221,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             if (
                 primaryConstructorDescriptor.isExpect ||
                 DescriptorUtils.isAnnotationClass(primaryConstructorDescriptor.constructedClass) ||
-                primaryConstructorDescriptor.constructedClass.isExternal
+                primaryConstructorDescriptor.constructedClass.isEffectivelyExternal()
             )
                 null
             else
@@ -229,7 +232,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         val constructorDescriptor = getOrFail(BindingContext.CONSTRUCTOR, ktConstructor) as ClassConstructorDescriptor
         return declareConstructor(ktConstructor, ktConstructor, constructorDescriptor) {
             when {
-                constructorDescriptor.constructedClass.isExternal ->
+                constructorDescriptor.constructedClass.isEffectivelyExternal() ->
                     null
 
                 ktConstructor.isConstructorDelegatingToSuper(context.bindingContext) ->
@@ -250,15 +253,13 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         val startOffset = ktConstructorElement.getStartOffsetOfConstructorDeclarationKeywordOrNull() ?: ktConstructorElement.pureStartOffset
         val endOffset = ktConstructorElement.pureEndOffset
         val origin = IrDeclarationOrigin.DEFINED
-        return context.symbolTable.declareConstructor(
-            constructorDescriptor
-        ) {
-            IrConstructorImpl(
-                startOffset, endOffset, origin, it,
-                returnType = IrUninitializedType,
-                descriptor = constructorDescriptor,
-                name = context.symbolTable.nameProvider.nameForDeclaration(constructorDescriptor),
-            ).apply {
+        return context.symbolTable.declareConstructor(constructorDescriptor) {
+            with(constructorDescriptor) {
+                context.irFactory.createConstructor(
+                    startOffset, endOffset, origin, it, context.symbolTable.nameProvider.nameForDeclaration(this),
+                    visibility, IrUninitializedType, isInline, isEffectivelyExternal(), isPrimary, isExpect
+                )
+            }.apply {
                 metadata = MetadataSource.Function(it.descriptor)
             }
         }.buildWithScope { irConstructor ->
@@ -346,7 +347,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         val constantDefaultValue =
             ConstantExpressionEvaluator.getConstant(valueExpression, context.bindingContext)?.toConstantValue(valueParameterDescriptor.type)
                 ?: error("Constant value expected for default parameter value in annotation, got $valueExpression")
-        return IrExpressionBodyImpl(
+        return context.irFactory.createExpressionBody(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             context.constantValueGenerator.generateConstantValueAsExpression(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, constantDefaultValue, valueParameterDescriptor.varargElementType

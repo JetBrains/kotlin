@@ -42,10 +42,12 @@ import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor.
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJdkKind.FULL_JDK
+import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
 import org.jetbrains.kotlin.test.runTest
 import org.junit.Assert.assertNotEquals
 import org.junit.runner.RunWith
 
+@WithMutedInDatabaseRunTest
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleHighlighting/"

@@ -1,0 +1,19 @@
+package
+
+public fun foo(/*0*/ r: KRunnable): kotlin.Unit
+public fun test(/*0*/ f: () -> kotlin.Int, /*1*/ s: SubInt): kotlin.Unit
+
+public fun interface KRunnable {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun run(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class SubInt : () -> kotlin.Int {
+    public constructor SubInt()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun invoke(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

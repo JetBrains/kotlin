@@ -5,6 +5,8 @@ fun foo1(f: suspend () -> String) {}
 fun foo2(f: suspend (Int) -> String) {}
 fun foo3(f: suspend () -> Unit) {}
 
+fun bar(): String = ""
+
 fun test(
     f0: suspend () -> String,
     f1: () -> String,
@@ -17,6 +19,8 @@ fun test(
     <!INAPPLICABLE_CANDIDATE!>foo1<!>(f1)
     <!INAPPLICABLE_CANDIDATE!>foo2<!>(f2)
     <!INAPPLICABLE_CANDIDATE!>foo3<!>(f3)
+
+    foo1(::bar)
 
     <!INAPPLICABLE_CANDIDATE!>foo1<!>(f2)
     <!INAPPLICABLE_CANDIDATE!>foo1<!>(f3)

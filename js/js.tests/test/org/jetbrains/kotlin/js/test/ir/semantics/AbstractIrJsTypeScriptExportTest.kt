@@ -7,15 +7,19 @@ package org.jetbrains.kotlin.js.test.ir.semantics
 
 import org.jetbrains.kotlin.js.test.BasicIrBoxTest
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.File
 import java.lang.Boolean.getBoolean
 
 @Suppress("ConstantConditionIf")
-abstract class AbstractIrJsTypeScriptExportTest : BasicIrBoxTest(
+abstract class AbstractIrJsTypeScriptExportTest(
+    targetBackend: TargetBackend = TargetBackend.JS_IR
+) : BasicIrBoxTest(
     pathToTestDir = TEST_DATA_DIR_PATH + "typescript-export/",
     testGroupOutputDirPrefix = "typescript-export/",
-    pathToRootOutputDir = TEST_DATA_DIR_PATH
+    pathToRootOutputDir = TEST_DATA_DIR_PATH,
+    targetBackend = targetBackend
 ) {
     override val generateDts = true
     private val updateReferenceDtsFiles = getBoolean("kotlin.js.updateReferenceDtsFiles")

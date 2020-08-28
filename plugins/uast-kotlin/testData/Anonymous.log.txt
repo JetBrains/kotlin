@@ -20,7 +20,7 @@ UFile (package = )
                     ULocalVariable (name = runnable2)
                         UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
                             UIdentifier (Identifier (Runnable))
-                            USimpleNameReferenceExpression (identifier = Runnable, resolvesTo = Runnable)
+                            USimpleNameReferenceExpression (identifier = Runnable, resolvesTo = PsiClass: Runnable)
                             ULambdaExpression
                                 UBlockExpression
                                     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))

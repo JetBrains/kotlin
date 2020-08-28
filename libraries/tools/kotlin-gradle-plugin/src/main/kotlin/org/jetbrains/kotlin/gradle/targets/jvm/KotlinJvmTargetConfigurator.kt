@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.jvm
 
+import org.gradle.api.Task
 import org.gradle.api.plugins.JavaBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.Kotlin2JvmSourceSetProcessor
@@ -12,6 +13,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import org.jetbrains.kotlin.gradle.tasks.dependsOn
+import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
@@ -49,8 +52,8 @@ class KotlinJvmTargetConfigurator(kotlinPluginVersion: String) :
     ): KotlinJvmTestRun = KotlinJvmTestRun(name, target).apply {
         val testTaskOrProvider = target.project.registerTask<KotlinJvmTest>(testTaskName) { testTask ->
             testTask.targetName = target.disambiguationClassifier
-            testTask.project.tasks.findByName(JavaBasePlugin.CHECK_TASK_NAME)?.dependsOn(testTask)
         }
+        target.project.locateTask<Task>(JavaBasePlugin.CHECK_TASK_NAME)?.dependsOn(testTaskOrProvider)
 
         executionTask = testTaskOrProvider
 

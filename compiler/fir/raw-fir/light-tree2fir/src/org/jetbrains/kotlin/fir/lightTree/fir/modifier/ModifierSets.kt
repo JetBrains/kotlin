@@ -14,7 +14,8 @@ object ModifierSets {
         ANNOTATION_KEYWORD,
         DATA_KEYWORD,
         INNER_KEYWORD,
-        COMPANION_KEYWORD
+        COMPANION_KEYWORD,
+        FUN_KEYWORD
     )
     val MEMBER_MODIFIER = TokenSet.create(OVERRIDE_KEYWORD, LATEINIT_KEYWORD)
     val VISIBILITY_MODIFIER = TokenSet.create(

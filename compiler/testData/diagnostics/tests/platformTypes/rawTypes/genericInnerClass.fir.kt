@@ -28,7 +28,7 @@ val strList: List<String> = null!!
 fun main() {
     val rawA = Test.rawAField
     var rawInner = rawA.<!INAPPLICABLE_CANDIDATE!>Inner<!><Double>("", "", strList)
-    rawInner.<!UNRESOLVED_REFERENCE!>foo<!>("", "", strList)
-    rawInner.<!UNRESOLVED_REFERENCE!>bar<!>().<!UNRESOLVED_REFERENCE!>foo<!>("")
+    rawInner.<!INAPPLICABLE_CANDIDATE!>foo<!>("", "", strList)
+    rawInner.bar().<!INAPPLICABLE_CANDIDATE!>foo<!>("")
 }
 

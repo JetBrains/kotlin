@@ -31,35 +31,62 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
         customLanguageVersion: LanguageVersion = LanguageVersionSettingsImpl.DEFAULT.languageVersion,
         analysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap(),
         fqNamesWithRequirements: List<String>,
-        fqNamesWithoutRequirement: List<String> = emptyList()
+        fqNamesWithoutRequirement: List<String> = emptyList(),
+        shouldBeSingleRequirement: Boolean = true
     ) {
-        compileFiles(listOf(File("compiler/testData/versionRequirement/${getTestName(true)}.kt")), tmpdir, customLanguageVersion, analysisFlags)
+        compileFiles(
+            listOf(File("compiler/testData/versionRequirement/${getTestName(true)}.kt")),
+            tmpdir, customLanguageVersion, analysisFlags
+        )
         val module = loadModule(tmpdir)
 
         for (fqName in fqNamesWithRequirements) {
             val descriptor = module.findUnambiguousDescriptorByFqName(fqName)
 
-            val requirement = extractRequirement(descriptor) ?: throw AssertionError("No VersionRequirement for $descriptor")
+            val requirements = extractRequirement(descriptor)
+            if (requirements.isEmpty()) throw AssertionError("No VersionRequirement for $descriptor")
 
-            assertEquals("Incorrect version for $fqName", expectedVersionRequirement, requirement.version)
-            assertEquals("Incorrect level for $fqName", expectedLevel, requirement.level)
-            assertEquals("Incorrect message for $fqName", expectedMessage, requirement.message)
-            assertEquals("Incorrect versionKind for $fqName", expectedVersionKind, requirement.kind)
-            assertEquals("Incorrect errorCode for $fqName", expectedErrorCode, requirement.errorCode)
+            if (shouldBeSingleRequirement && requirements.size > 1) {
+                throw AssertionError(
+                    "Single VersionRequirement expected, got ${requirements.size}:\n" +
+                            requirements.joinToString(separator = "\n") { it.toDebugString() }
+                )
+            }
+
+            requirements.firstOrNull {
+                expectedVersionRequirement == it.version &&
+                        expectedLevel == it.level &&
+                        expectedMessage == it.message &&
+                        expectedVersionKind == it.kind &&
+                        expectedErrorCode == it.errorCode
+            }
+                ?: throw AssertionError(
+                    "Version requirement not found, expected:\n" +
+                            "versionRequirement=" + expectedVersionRequirement +
+                            "; level=" + expectedLevel +
+                            "; message=" + expectedMessage +
+                            "; versionKind=" + expectedVersionKind +
+                            "; errorCode=" + expectedErrorCode +
+                            "\nActual requirements:\n" +
+                            requirements.joinToString(separator = "\n") { it.toDebugString() }
+                )
         }
 
         for (fqName in fqNamesWithoutRequirement) {
             val descriptor = module.findUnambiguousDescriptorByFqName(fqName)
 
-            val requirenment = extractRequirement(descriptor)
-            assertNull("Expecting absence of any requirements for $fqName, but `$requirenment`", requirenment)
+            val requirement = extractRequirement(descriptor)
+            assertTrue("Expecting absence of any requirements for $fqName, but `$requirement`", requirement.isEmpty())
         }
     }
 
-    private fun extractRequirement(descriptor: DeclarationDescriptor): VersionRequirement? {
+    private fun VersionRequirement.toDebugString(): String =
+        "versionRequirement=$version; level=$level; message=$message; versionKind=$kind; errorCode=$errorCode"
+
+    private fun extractRequirement(descriptor: DeclarationDescriptor): List<VersionRequirement> {
         return when (descriptor) {
-            is DeserializedMemberDescriptor -> descriptor.versionRequirements.singleOrNull()
-            is DeserializedClassDescriptor -> descriptor.versionRequirements.singleOrNull()
+            is DeserializedMemberDescriptor -> descriptor.versionRequirements
+            is DeserializedClassDescriptor -> descriptor.versionRequirements
             else -> throw AssertionError("Unknown descriptor: $descriptor")
         }
     }

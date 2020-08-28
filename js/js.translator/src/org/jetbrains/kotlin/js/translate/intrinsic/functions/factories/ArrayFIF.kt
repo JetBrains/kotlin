@@ -17,11 +17,8 @@
 package org.jetbrains.kotlin.js.translate.intrinsic.functions.factories
 
 import com.intellij.openapi.util.text.StringUtil.decapitalize
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.PrimitiveType.*
-import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
-import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
@@ -144,7 +141,7 @@ object ArrayFIF : CompositeFIF() {
     }
 
     init {
-        val arrayName = KotlinBuiltIns.FQ_NAMES.array.shortName()
+        val arrayName = StandardNames.FqNames.array.shortName()
 
         val arrayTypeNames = mutableListOf(arrayName)
         PrimitiveType.values().mapTo(arrayTypeNames) { it.arrayTypeName }

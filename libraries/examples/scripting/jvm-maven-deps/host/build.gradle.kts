@@ -12,7 +12,7 @@ dependencies {
 
     testRuntimeOnly(project(":kotlin-compiler"))
     testRuntimeOnly(project(":kotlin-reflect"))
-    testRuntimeOnly(project(":kotlin-scripting-compiler-unshaded"))
+    testRuntimeOnly(project(":kotlin-scripting-compiler"))
 
     testCompile(commonDep("junit"))
 }

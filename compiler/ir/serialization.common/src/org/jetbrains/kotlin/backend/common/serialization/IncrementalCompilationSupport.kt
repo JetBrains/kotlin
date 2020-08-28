@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.DeserializedDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -105,12 +103,13 @@ class CurrentModuleWithICDeserializer(
         icDeserializer.deserializeReachableDeclarations()
     }
 
-    override fun postProcess() {
-        icDeserializer.postProcess()
-    }
-
     private fun DeclarationDescriptor.isDirtyDescriptor(): Boolean {
         if (this is PropertyAccessorDescriptor) return correspondingProperty.isDirtyDescriptor()
+        // Since descriptors for FO methods of `kotlin.Any` (toString, equals, hashCode) are Deserialized even in
+        // dirty files make test more precise checking containing declaration for non-static members
+        if (this is CallableMemberDescriptor && dispatchReceiverParameter != null) {
+            return containingDeclaration.isDirtyDescriptor()
+        }
         return this !is DeserializedDescriptor
     }
 
@@ -134,4 +133,6 @@ class CurrentModuleWithICDeserializer(
         get() = delegate.moduleFragment
     override val moduleDependencies: Collection<IrModuleDeserializer>
         get() = delegate.moduleDependencies
+    override val isCurrent: Boolean
+        get() = delegate.isCurrent
 }

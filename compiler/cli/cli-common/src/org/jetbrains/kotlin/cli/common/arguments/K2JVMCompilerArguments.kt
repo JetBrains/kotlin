@@ -352,6 +352,29 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var noKotlinNothingValueException: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xprofile",
+        valueDescription = "<profilerPath:command:outputDir>",
+        description = "Debug option: Run compiler with async profiler, save snapshots to outputDir, command is passed to async-profiler on start\n" +
+                "You'll have to provide async-profiler.jar on classpath to use this\n" +
+                "profilerPath is a path to libasyncProfiler.so\n" +
+                "Example: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start,framebuf=50000000:<SNAPSHOT_DIR_PATH>"
+    )
+    var profileCompilerCommand: String? by NullableStringFreezableVar(null)
+
+    @Argument(
+        value = "-Xrepeat",
+        valueDescription = "<number>",
+        description = "Debug option: Repeats modules compilation <number> times"
+    )
+    var repeatCompileModules: String? by NullableStringFreezableVar(null)
+
+    @Argument(
+        value = "-Xuse-old-spilled-var-type-analysis",
+        description = "Use old, SourceInterpreter-based analysis for fields, used for spilled variables in coroutines"
+    )
+    var useOldSpilledVarTypeAnalysis: Boolean by FreezableVar(false)
+
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector)
         result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics

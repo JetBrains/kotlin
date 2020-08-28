@@ -43,10 +43,9 @@ class TryCatchExpressionGenerator(statementGenerator: StatementGenerator) : Stat
                     ktCatchParameter.startOffsetSkippingComments, ktCatchParameter.endOffset,
                     IrDeclarationOrigin.CATCH_PARAMETER,
                     catchParameterDescriptor, catchParameterDescriptor.type.toIrType()
-                )
-            ).apply {
-                result = ktCatchBody.genExpr()
-            }
+                ),
+                ktCatchBody.genExpr()
+            )
 
             irTryCatch.catches.add(irCatch)
         }

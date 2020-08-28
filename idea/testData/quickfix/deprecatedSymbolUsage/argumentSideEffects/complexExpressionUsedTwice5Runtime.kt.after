@@ -11,7 +11,7 @@ fun oldFun(p: List<String>) {
 fun newFun(p1: List<String>, p2: List<String>){}
 
 fun foo() {
-    val p: List<String> = bar()
+    val p = bar<String>()
     <caret>newFun(p, p)
 }
 

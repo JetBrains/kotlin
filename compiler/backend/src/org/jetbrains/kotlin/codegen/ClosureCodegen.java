@@ -185,6 +185,12 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         generateBridges();
         generateClosureBody();
 
+        if (samType != null) {
+            SamWrapperCodegen.generateDelegatesToDefaultImpl(
+                    asmType, classDescriptor, samType.getClassDescriptor(), functionCodegen, state
+            );
+        }
+
         this.constructor = generateConstructor();
 
         if (isConst(closure)) {
@@ -259,7 +265,9 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         Method method = v.getSerializationBindings().get(METHOD_FOR_FUNCTION, frontendFunDescriptor);
         assert method != null : "No method for " + frontendFunDescriptor;
 
-        FunctionDescriptor freeLambdaDescriptor = FakeDescriptorsForReferencesKt.createFreeFakeLambdaDescriptor(frontendFunDescriptor);
+        FunctionDescriptor freeLambdaDescriptor = FakeDescriptorsForReferencesKt.createFreeFakeLambdaDescriptor(
+                frontendFunDescriptor, state.getTypeApproximator()
+        );
         v.getSerializationBindings().put(METHOD_FOR_FUNCTION, freeLambdaDescriptor, method);
 
         DescriptorSerializer serializer =

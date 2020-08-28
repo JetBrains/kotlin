@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.resolve.transformers.withScopeCleanup
+import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
+import org.jetbrains.kotlin.fir.scopes.impl.createCurrentScopeList
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -39,7 +41,7 @@ open class FirBodyResolveTransformer(
     final override val components: BodyResolveTransformerComponents =
         BodyResolveTransformerComponents(session, scopeSession, this, context)
 
-    internal val expressionsTransformer = FirExpressionsResolveTransformer(this)
+    internal open val expressionsTransformer = FirExpressionsResolveTransformer(this)
     protected open val declarationsTransformer = FirDeclarationsResolveTransformer(this)
     private val controlFlowStatementsTransformer = FirControlFlowStatementsResolveTransformer(this)
 
@@ -72,7 +74,7 @@ open class FirBodyResolveTransformer(
         if (typeRef is FirResolvedTypeRef) {
             return typeRef.compose()
         }
-        return typeResolverTransformer.transformTypeRef(typeRef, null)
+        return typeResolverTransformer.transformTypeRef(typeRef, FirCompositeScope(components.createCurrentScopeList()))
     }
 
     override fun transformImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: ResolutionMode): CompositeTransformResult<FirTypeRef> {
@@ -80,6 +82,8 @@ open class FirBodyResolveTransformer(
             return implicitTypeRef.compose()
         return data.expectedTypeRef.compose()
     }
+
+    open fun onBeforeStatementResolution(statement: FirStatement) {}
 
     // ------------------------------------- Expressions -------------------------------------
 
@@ -130,12 +134,22 @@ open class FirBodyResolveTransformer(
         return expressionsTransformer.transformComparisonExpression(comparisonExpression, data)
     }
 
-    override fun transformOperatorCall(operatorCall: FirOperatorCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
-        return expressionsTransformer.transformOperatorCall(operatorCall, data)
-    }
-
     override fun transformTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         return expressionsTransformer.transformTypeOperatorCall(typeOperatorCall, data)
+    }
+
+    override fun transformAssignmentOperatorStatement(
+        assignmentOperatorStatement: FirAssignmentOperatorStatement,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
+        return expressionsTransformer.transformAssignmentOperatorStatement(assignmentOperatorStatement, data)
+    }
+
+    override fun transformEqualityOperatorCall(
+        equalityOperatorCall: FirEqualityOperatorCall,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
+        return expressionsTransformer.transformEqualityOperatorCall(equalityOperatorCall, data)
     }
 
     override fun transformCheckNotNullCall(
@@ -187,6 +201,20 @@ open class FirBodyResolveTransformer(
 
     override fun transformAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         return expressionsTransformer.transformAugmentedArraySetCall(augmentedArraySetCall, data)
+    }
+
+    override fun transformSafeCallExpression(
+        safeCallExpression: FirSafeCallExpression,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
+        return expressionsTransformer.transformSafeCallExpression(safeCallExpression, data)
+    }
+
+    override fun transformCheckedSafeCallSubject(
+        checkedSafeCallSubject: FirCheckedSafeCallSubject,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
+        return expressionsTransformer.transformCheckedSafeCallSubject(checkedSafeCallSubject, data)
     }
 
     // ------------------------------------- Declarations -------------------------------------
@@ -286,6 +314,10 @@ open class FirBodyResolveTransformer(
 
     override fun transformThrowExpression(throwExpression: FirThrowExpression, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         return controlFlowStatementsTransformer.transformThrowExpression(throwExpression, data)
+    }
+
+    override fun transformElvisExpression(elvisExpression: FirElvisExpression, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+        return controlFlowStatementsTransformer.transformElvisExpression(elvisExpression, data)
     }
 
     // --------------------------------------------------------------------------

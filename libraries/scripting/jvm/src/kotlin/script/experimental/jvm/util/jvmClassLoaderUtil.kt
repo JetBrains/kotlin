@@ -15,12 +15,12 @@ import java.util.jar.JarFile
 import java.util.jar.JarInputStream
 import kotlin.script.experimental.jvm.impl.toFileOrNull
 
-fun ClassLoader.forAllMatchingFiles(namePattern: String, body: (String, InputStream) -> Unit) {
+fun ClassLoader.forAllMatchingFiles(namePattern: String, vararg keyResourcePaths: String, body: (String, InputStream) -> Unit) {
     val processedDirs = HashSet<File>()
     val processedJars = HashSet<URL>()
     val nameRegex = namePatternToRegex(namePattern)
 
-    fun iterateResources(vararg keyResourcePaths: String) {
+    fun iterateResources(keyResourcePaths: Array<out String>) {
         for (keyResourcePath in keyResourcePaths) {
             val resourceRootCalc = ClassLoaderResourceRootFIlePathCalculator(keyResourcePath)
             for (url in getResources(keyResourcePath)) {
@@ -49,7 +49,7 @@ fun ClassLoader.forAllMatchingFiles(namePattern: String, body: (String, InputStr
         }
     }
 
-    iterateResources("", JAR_MANIFEST_RESOURCE_NAME)
+    iterateResources(if (keyResourcePaths.isEmpty()) arrayOf("", JAR_MANIFEST_RESOURCE_NAME) else keyResourcePaths)
 }
 
 internal val wildcardChars = "*?".toCharArray()

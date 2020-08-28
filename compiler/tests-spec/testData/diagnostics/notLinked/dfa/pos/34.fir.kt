@@ -73,20 +73,20 @@ fun case_5(a: Any?) {
     if (
         a is ClassLevel1
         && if (true) {b = a; false} else {b = a;true}
-        && b as ClassLevel2 is ClassLevel2
-        && if (true) {c = b;false} else {c = b;false}
-        && try {c as ClassLevel3;true} finally {c as ClassLevel3;false}
-        && when (true) {else -> {d = c;true}}
-        && when (true) {else -> {d as ClassLevel4;false}}
-        && if (true) {e = d;false} else {e = d;true}
-        && if (true) {e as? ClassLevel5 ?: e as ClassLevel5;true} else {e as? ClassLevel5 ?: e as ClassLevel5;false}
+        && <!UNINITIALIZED_VARIABLE!>b<!> as ClassLevel2 is ClassLevel2
+        && if (true) {c = <!UNINITIALIZED_VARIABLE!>b<!>;false} else {c = <!UNINITIALIZED_VARIABLE!>b<!>;false}
+        && try {<!UNINITIALIZED_VARIABLE!>c<!> as ClassLevel3;true} finally {<!UNINITIALIZED_VARIABLE!>c<!> as ClassLevel3;false}
+        && when (true) {else -> {d = <!UNINITIALIZED_VARIABLE!>c<!>;true}}
+        && when (true) {else -> {<!UNINITIALIZED_VARIABLE!>d<!> as ClassLevel4;false}}
+        && if (true) {e = <!UNINITIALIZED_VARIABLE!>d<!>;false} else {e = <!UNINITIALIZED_VARIABLE!>d<!>;true}
+        && if (true) {<!UNINITIALIZED_VARIABLE!>e<!> as? ClassLevel5 ?: <!UNINITIALIZED_VARIABLE!>e<!> as ClassLevel5;true} else {<!UNINITIALIZED_VARIABLE!>e<!> as? ClassLevel5 ?: <!UNINITIALIZED_VARIABLE!>e<!> as ClassLevel5;false}
             ) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5 & kotlin.Any?")!>e<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5 & kotlin.Any?")!>e<!>.test1()
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5 & kotlin.Any?")!>e<!>.test2()
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5 & kotlin.Any?")!>e<!>.test3()
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5 & kotlin.Any?")!>e<!>.test4()
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5 & kotlin.Any?")!>e<!>.test5()
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5 & kotlin.Any?"), UNINITIALIZED_VARIABLE!>e<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5 & kotlin.Any?"), UNINITIALIZED_VARIABLE!>e<!>.test1()
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5 & kotlin.Any?"), UNINITIALIZED_VARIABLE!>e<!>.test2()
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5 & kotlin.Any?"), UNINITIALIZED_VARIABLE!>e<!>.test3()
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5 & kotlin.Any?"), UNINITIALIZED_VARIABLE!>e<!>.test4()
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel5 & kotlin.Any?"), UNINITIALIZED_VARIABLE!>e<!>.test5()
     }
 }
 

@@ -9,6 +9,6 @@ FILE: K2.kt
     public final fun main(): R|kotlin/Unit| {
         Q|JavaClass|.R|/JavaClass.baz|(R|/KotlinClass.KotlinClass|<R|ft<kotlin/Int, kotlin/Int?>!|>())
         Q|JavaClass|.R|/JavaClass.baz|(R|/KotlinClass.KotlinClass|<R|kotlin/Int|>())
-        Q|JavaClass|.<Inapplicable(INAPPLICABLE): [/JavaClass.baz]>#(R|/KotlinClass.KotlinClass|<R|kotlin/String|>())
-        Q|JavaClass|.<Inapplicable(INAPPLICABLE): [/JavaClass.baz]>#(String())
+        Q|JavaClass|.<Inapplicable(INAPPLICABLE): /JavaClass.baz>#(R|/KotlinClass.KotlinClass|<R|kotlin/String|>())
+        Q|JavaClass|.<Inapplicable(INAPPLICABLE): /JavaClass.baz>#(String())
     }

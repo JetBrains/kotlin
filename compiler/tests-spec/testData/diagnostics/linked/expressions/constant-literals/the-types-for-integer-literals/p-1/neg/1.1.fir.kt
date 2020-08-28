@@ -11,13 +11,13 @@ val value_3 = <!ILLEGAL_CONST_EXPRESSION!>0Xl<!>
 val value_4 = <!ILLEGAL_CONST_EXPRESSION!>0xL<!>
 
 // TESTCASE NUMBER: 5
-val value_5 = <!ILLEGAL_CONST_EXPRESSION!>0b_l<!>
+val value_5 = <!ILLEGAL_UNDERSCORE!>0b_l<!>
 
 // TESTCASE NUMBER: 6
-val value_6 = <!ILLEGAL_CONST_EXPRESSION!>0B_L<!>
+val value_6 = <!ILLEGAL_UNDERSCORE!>0B_L<!>
 
 // TESTCASE NUMBER: 7
-val value_7 = <!ILLEGAL_CONST_EXPRESSION!>0X____l<!>
+val value_7 = <!ILLEGAL_UNDERSCORE!>0X____l<!>
 
 // TESTCASE NUMBER: 8
-val value_8 = <!ILLEGAL_CONST_EXPRESSION!>0x_L<!>
+val value_8 = <!ILLEGAL_UNDERSCORE!>0x_L<!>

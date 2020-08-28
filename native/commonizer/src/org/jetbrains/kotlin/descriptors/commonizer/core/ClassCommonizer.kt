@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClass
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassifiersCache
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirCommonClass
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
 import org.jetbrains.kotlin.name.Name
 
 class ClassCommonizer(cache: CirClassifiersCache) : AbstractStandardCommonizer<CirClass, CirClass>() {
@@ -21,15 +21,20 @@ class ClassCommonizer(cache: CirClassifiersCache) : AbstractStandardCommonizer<C
     private var isInline = false
     private var isCompanion = false
 
-    override fun commonizationResult() = CirCommonClass(
+    override fun commonizationResult() = CirClassFactory.create(
+        annotations = emptyList(),
         name = name,
         typeParameters = typeParameters.result,
-        kind = kind,
-        modality = modality.result,
         visibility = visibility.result,
+        modality = modality.result,
+        kind = kind,
+        companion = null,
         isCompanion = isCompanion,
+        isData = false,
         isInline = isInline,
-        isInner = isInner
+        isInner = isInner,
+        isExternal = false,
+        supertypes = mutableListOf()
     )
 
     override fun initialize(first: CirClass) {

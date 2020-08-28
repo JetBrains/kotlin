@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.*
@@ -37,7 +36,12 @@ fun IrDeclaration.hasStaticDispatch() = when (this) {
 fun List<IrExpression>.toJsArrayLiteral(context: JsIrBackendContext, arrayType: IrType, elementType: IrType): IrExpression {
     val irVararg = IrVarargImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, arrayType, elementType, this)
 
-    return IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, arrayType, context.intrinsics.arrayLiteral).apply {
+    return IrCallImpl(
+        UNDEFINED_OFFSET, UNDEFINED_OFFSET, arrayType,
+        context.intrinsics.arrayLiteral,
+        valueArgumentsCount = 1,
+        typeArgumentsCount = 0
+    ).apply {
         putValueArgument(0, irVararg)
     }
 }

@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -33,6 +31,8 @@ class VariableStorage(private val session: FirSession) {
     private val realVariables: MutableMap<Identifier, RealVariable> = HashMap()
     private val syntheticVariables: MutableMap<FirElement, SyntheticVariable> = HashMap()
 
+    fun clear(): VariableStorage = VariableStorage(session)
+
     fun getOrCreateRealVariableWithoutUnwrappingAlias(flow: Flow, symbol: AbstractFirBasedSymbol<*>, fir: FirElement): RealVariable {
         val realFir = fir.unwrapElement()
         val identifier = getIdentifierBySymbol(flow, symbol, realFir)
@@ -41,12 +41,14 @@ class VariableStorage(private val session: FirSession) {
 
     private fun getOrCreateRealVariable(flow: Flow, symbol: AbstractFirBasedSymbol<*>, fir: FirElement): RealVariable {
         val variable = getOrCreateRealVariableWithoutUnwrappingAlias(flow, symbol, fir)
-        return flow.directAliasMap[variable] ?: variable
+        return flow.directAliasMap[variable]?.variable ?: variable
     }
 
     private fun FirElement.unwrapElement(): FirElement = when (this) {
-        is FirWhenSubjectExpression -> whenSubject.whenExpression.let { it.subjectVariable ?: it.subject }?.unwrapElement() ?: this
+        is FirWhenSubjectExpression -> whenRef.value.let { it.subjectVariable ?: it.subject }?.unwrapElement() ?: this
         is FirExpressionWithSmartcast -> originalExpression.unwrapElement()
+        is FirSafeCallExpression -> regularQualifiedAccess.unwrapElement()
+        is FirCheckedSafeCallSubject -> originalReceiverRef.value.unwrapElement()
         else -> this
     }
 
@@ -71,7 +73,7 @@ class VariableStorage(private val session: FirSession) {
         val isThisReference: Boolean
         val expression: FirQualifiedAccess? = when (originalFir) {
             is FirQualifiedAccessExpression -> originalFir
-            is FirWhenSubjectExpression -> originalFir.whenSubject.whenExpression.subject as? FirQualifiedAccessExpression
+            is FirWhenSubjectExpression -> originalFir.whenRef.value.subject as? FirQualifiedAccessExpression
             is FirVariableAssignment -> originalFir
             else -> null
         }
@@ -85,13 +87,7 @@ class VariableStorage(private val session: FirSession) {
         }
 
         val receiverVariable = receiver?.let { getOrCreateVariable(flow, it) }
-        val originalType: ConeKotlinType = when (originalFir) {
-            is FirExpression -> originalFir.typeRef.coneTypeUnsafe()
-            is FirProperty -> originalFir.returnTypeRef.coneTypeUnsafe()
-            is FirVariableAssignment -> identifier.symbol.fir.extractReturnType()
-            else -> throw IllegalStateException("Should not be here: $originalFir")
-        }
-        return RealVariable(identifier, isThisReference, receiverVariable, originalType, counter++)
+        return RealVariable(identifier, isThisReference, receiverVariable, counter++)
     }
 
     @JvmName("getOrCreateRealVariableOrNull")
@@ -143,12 +139,6 @@ class VariableStorage(private val session: FirSession) {
     fun removeSyntheticVariable(variable: DataFlowVariable) {
         if (variable !is SyntheticVariable) return
         syntheticVariables.remove(variable.fir)
-    }
-
-    fun reset() {
-        counter = 0
-        realVariables.clear()
-        syntheticVariables.clear()
     }
 
     @OptIn(ExperimentalContracts::class)

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_EXPRESSION
 
 // FILE: foo/View.java

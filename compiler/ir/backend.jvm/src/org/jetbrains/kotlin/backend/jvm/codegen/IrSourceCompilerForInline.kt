@@ -14,14 +14,15 @@ import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.incremental.components.LocationInfo
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.Position
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.psi.doNotAnalyze
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.SUSPENSION_POINT_INSIDE_MONITOR
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -70,7 +70,11 @@ class IrSourceCompilerForInline(
         get() = codegen.context.psiSourceManager.getKtFile(codegen.irFunction.fileParent)
 
     override val contextKind: OwnerKind
-        get() = OwnerKind.getMemberOwnerKind(callElement.symbol.descriptor.containingDeclaration)
+        get() = when (val parent = callElement.symbol.owner.parent) {
+            is IrPackageFragment -> OwnerKind.PACKAGE
+            is IrClass -> OwnerKind.IMPLEMENTATION
+            else -> throw AssertionError("Unexpected declaration container: $parent")
+        }
 
     override val inlineCallSiteInfo: InlineCallSiteInfo
         get() {
@@ -89,7 +93,7 @@ class IrSourceCompilerForInline(
         get() = codegen.smap
 
     override fun generateLambdaBody(lambdaInfo: ExpressionLambda): SMAPAndMethodNode =
-        FunctionCodegen((lambdaInfo as IrExpressionLambdaImpl).function, codegen.classCodegen, codegen).generate()
+        FunctionCodegen((lambdaInfo as IrExpressionLambdaImpl).function, codegen.classCodegen, codegen).generate(codegen.delegatedPropertyOptimizer)
 
     override fun doCreateMethodNodeFromSource(
         callableDescriptor: FunctionDescriptor,
@@ -97,8 +101,7 @@ class IrSourceCompilerForInline(
         callDefault: Boolean,
         asmMethod: Method
     ): SMAPAndMethodNode {
-        assert(callableDescriptor == callee.symbol.descriptor.original) { "Expected $callableDescriptor got ${callee.descriptor.original}" }
-        return ClassCodegen.getOrCreate(callee.parentAsClass, codegen.context).generateMethodNode(callee)
+        return ClassCodegen.getOrCreate(callee.parentAsClass, codegen.context).generateMethodNode(callee, null)
     }
 
     override fun hasFinallyBlocks() = data.hasFinallyBlocks()
@@ -111,7 +114,7 @@ class IrSourceCompilerForInline(
     override fun createCodegenForExternalFinallyBlockGenerationOnNonLocalReturn(finallyNode: MethodNode, curFinallyDepth: Int) =
         ExpressionCodegen(
             codegen.irFunction, codegen.signature, codegen.frameMap, InstructionAdapter(finallyNode), codegen.classCodegen,
-            codegen.inlinedInto, codegen.smap
+            codegen.inlinedInto, codegen.smap, codegen.delegatedPropertyOptimizer
         ).also {
             it.finallyDepth = curFinallyDepth
         }
@@ -143,5 +146,5 @@ class IrSourceCompilerForInline(
             .report(SUSPENSION_POINT_INSIDE_MONITOR, stackTraceElement)
     }
 
-    private fun findElement() = (callElement.symbol.descriptor.original as? DeclarationDescriptorWithSource)?.source?.getPsi() as? KtElement
+    private fun findElement() = callElement.psiElement as? KtElement
 }

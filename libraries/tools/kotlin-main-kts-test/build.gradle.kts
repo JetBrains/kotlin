@@ -10,7 +10,8 @@ dependencies {
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(project(":kotlin-scripting-jvm-host-unshaded"))
     testCompile(commonDep("junit"))
-    testCompile(projectTests(":kotlin-scripting-compiler-unshaded")) { isTransitive = false }
+    testCompile(projectTests(":kotlin-scripting-compiler")) { isTransitive = false }
+    testRuntime(project(":kotlin-compiler-embeddable"))
 }
 
 sourceSets {

@@ -1,0 +1,68 @@
+{
+  "1": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 8,
+          "description": "intersection type inferred for parametrized functions",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType, functions"
+        },
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 6,
+          "description": "intersection type inferred for function",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType, functions"
+        },
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 2,
+          "description": "intersection type inferred for enum classes",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "main",
+          "helpers": "checkType, functions"
+        }
+      ]
+    }
+  },
+  "2": {
+    "pos": {
+      "3": [
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 8,
+          "description": "intersection type inferred for parametrized functions",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1/pos/1.2.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType, functions"
+        },
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 6,
+          "description": "intersection type inferred for function",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1/pos/1.3.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType, functions"
+        },
+        {
+          "specVersion": "0.1-464",
+          "casesNumber": 2,
+          "description": "intersection type inferred for enum classes",
+          "path": "compiler/tests-spec/testData/diagnostics/linked/type-system/subtyping/subtyping-for-intersection-types/p-1/pos/1.1.kt",
+          "unexpectedBehaviour": false,
+          "linkType": "primary",
+          "helpers": "checkType, functions"
+        }
+      ]
+    }
+  }
+}

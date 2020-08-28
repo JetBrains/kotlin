@@ -55,9 +55,24 @@ class AddJvmNameAnnotationFix(element: KtElement, private val jvmName: String) :
                 function,
                 NewDeclarationNameValidator.Target.FUNCTIONS_AND_CLASSES
             )
-
-            val jvmName = KotlinNameSuggester.suggestNameByName(functionName, nameValidator)
+            val receiverTypeElements = function.receiverTypeReference?.typeElements()?.joinToString("") { it.text } ?: ""
+            val jvmName = KotlinNameSuggester.suggestNameByName(functionName + receiverTypeElements, nameValidator)
             return AddJvmNameAnnotationFix(function.findAnnotation(JVM_NAME_FQ_NAME) ?: function, jvmName)
+        }
+
+        private fun KtTypeReference.typeElements(): List<KtTypeElement> {
+            val typeElements = mutableListOf<KtTypeElement>()
+            fun collect(typeReference: KtTypeReference) {
+                val typeElement = typeReference.typeElement ?: return
+                val typeArguments = typeElement.typeArgumentsAsTypes
+                if (typeArguments.isEmpty()) {
+                    typeElements.add(typeElement)
+                } else {
+                    typeArguments.forEach { collect(it) }
+                }
+            }
+            typeElement?.typeArgumentsAsTypes?.forEach { collect(it) }
+            return typeElements
         }
     }
 }

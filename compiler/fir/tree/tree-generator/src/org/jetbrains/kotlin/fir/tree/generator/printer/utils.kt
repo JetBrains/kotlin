@@ -35,7 +35,9 @@ fun Builder.collectImports(): List<String> {
 fun Implementation.collectImports(base: List<String> = emptyList(), kind: ImportKind = ImportKind.Implementation): List<String> {
     return element.collectImportsInternal(
         base + listOf(element.fullQualifiedName)
-                + usedTypes.mapNotNull { it.fullQualifiedName } + parents.mapNotNull { it.fullQualifiedName }
+                + usedTypes.mapNotNull { it.fullQualifiedName }
+                + arbitraryImportables.mapNotNull { it.fullQualifiedName }
+                + parents.mapNotNull { it.fullQualifiedName }
                 + listOfNotNull(
             pureAbstractElementType.fullQualifiedName?.takeIf { needPureAbstractElement },
             firImplementationDetailType.fullQualifiedName?.takeIf { isPublic || requiresOptIn },
@@ -94,10 +96,13 @@ fun transformFunctionDeclaration(transformName: String, returnType: String): Str
     return "fun <D> transform$transformName(transformer: FirTransformer<D>, data: D): $returnType"
 }
 
-fun Field.replaceFunctionDeclaration(overridenType: Importable? = null): String {
+fun Field.replaceFunctionDeclaration(overridenType: Importable? = null, forceNullable: Boolean = false): String {
     val capName = name.capitalize()
     val type = overridenType?.typeWithArguments ?: typeWithArguments
-    return "fun replace$capName(new$capName: $type)"
+
+    val typeWithNullable = if (forceNullable && !type.endsWith("?")) "$type?" else type
+
+    return "fun replace$capName(new$capName: $typeWithNullable)"
 }
 
 val Field.mutableType: String

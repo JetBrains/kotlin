@@ -102,7 +102,7 @@ class MethodInliner(
         }
 
         //substitute returns with "goto end" instruction to keep non local returns in lambdas
-        val end = Label()
+        val end = linkedLabel()
         val isTransformingAnonymousObject = nodeRemapper is RegeneratedLambdaFieldRemapper
         transformedNode = doInline(transformedNode)
         if (!isTransformingAnonymousObject) {

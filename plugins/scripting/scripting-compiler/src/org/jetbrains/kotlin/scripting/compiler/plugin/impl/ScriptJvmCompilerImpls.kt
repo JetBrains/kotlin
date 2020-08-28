@@ -114,13 +114,17 @@ private fun compileImpl(
         )
             .valueOr { return it }
 
+    if (messageCollector.hasErrors()) return failure(messageCollector)
+
     val (sourceFiles, sourceDependencies) = collectRefinedSourcesAndUpdateEnvironment(
         context,
         mainKtFile,
         messageCollector
     )
 
-    if (sourceDependencies.any { it.sourceDependencies is ResultWithDiagnostics.Failure }) return failure(messageCollector)
+    if (messageCollector.hasErrors() || sourceDependencies.any { it.sourceDependencies is ResultWithDiagnostics.Failure }) {
+        return failure(messageCollector)
+    }
 
     val dependenciesProvider = ScriptDependenciesProvider.getInstance(context.environment.project)
     val getScriptConfiguration = { ktFile: KtFile ->

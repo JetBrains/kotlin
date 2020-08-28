@@ -6,8 +6,12 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiComment
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.inspections.findExistingEditor
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class MergeIfsIntention : SelfTargetingIntention<KtIfExpression>(KtIfExpression::class.java, KotlinBundle.lazyMessage("merge.if.s")) {
     override fun isApplicableTo(element: KtIfExpression, caretOffset: Int): Boolean {
@@ -32,6 +36,18 @@ class MergeIfsIntention : SelfTargetingIntention<KtIfExpression>(KtIfExpression:
             val nestedBody = nestedIf.then ?: return -1
 
             val factory = KtPsiFactory(element)
+
+            val comments = element.allChildren.filter { it is PsiComment }.toList() +
+                    (element.then as? KtBlockExpression)?.allChildren?.filter { it is PsiComment }?.toList().orEmpty()
+            if (comments.isNotEmpty()) {
+                val parent = element.parent
+                comments.forEach { comment ->
+                    parent.addBefore(comment, element)
+                    parent.addBefore(factory.createNewLine(), element)
+                    comment.delete()
+                }
+                element.findExistingEditor()?.caretModel?.moveToOffset(element.startOffset)
+            }
 
             condition.replace(factory.createExpressionByPattern("$0 && $1", condition, secondCondition))
             val newBody = element.then!!.replace(nestedBody)

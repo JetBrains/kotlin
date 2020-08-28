@@ -2,10 +2,13 @@
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
 @kotlin.Metadata
-public annotation class Anno
+public annotation class Anno {
+    // source: 'kt27895.kt'
+}
 
 @kotlin.Metadata
 public final class C {
+    // source: 'kt27895.kt'
     private final @Anno @org.jetbrains.annotations.NotNull field json: java.lang.String
     private final field x: int
     public method <init>(p0: int): void

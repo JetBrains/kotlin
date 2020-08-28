@@ -30,7 +30,7 @@ fun test_4(x: A?) {
     x.<!INAPPLICABLE_CANDIDATE!>id<!>()
 }
 
-fun Any?.boo(b: Boolean)
+fun Any?.boo(b: Boolean) {}
 
 fun test_5(x: A?) {
     x?.let { return }?.boo(x.bool())

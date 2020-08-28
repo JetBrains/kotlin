@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public final class Foo {
+    // source: 'deprecatedJvmOverloads.kt'
     public method <init>(): void
     public synthetic deprecated static method bar$default(p0: Foo, p1: java.lang.String, p2: int, p3: java.lang.Object): void
     public deprecated final @kotlin.Deprecated @kotlin.jvm.JvmOverloads method bar(): void

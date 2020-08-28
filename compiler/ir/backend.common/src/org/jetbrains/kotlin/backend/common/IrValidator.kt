@@ -98,7 +98,7 @@ object CheckDeclarationParentsVisitor : IrElementVisitor<Unit, IrDeclarationPare
         element.acceptChildren(this, element as? IrDeclarationParent ?: data)
     }
 
-    override fun visitDeclaration(declaration: IrDeclaration, data: IrDeclarationParent?) {
+    override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent?) {
         checkParent(declaration, data)
         super.visitDeclaration(declaration, data)
     }
@@ -107,11 +107,11 @@ object CheckDeclarationParentsVisitor : IrElementVisitor<Unit, IrDeclarationPare
         val parent = try {
             declaration.parent
         } catch (e: Throwable) {
-            error("$declaration for ${declaration.descriptor} has no parent")
+            error("$declaration for ${declaration.render()} has no parent")
         }
 
         if (parent != expectedParent) {
-            error("$declaration for ${declaration.descriptor} has unexpected parent $parent")
+            error("$declaration for ${declaration.render()} has unexpected parent $parent")
         }
     }
 }

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
@@ -61,7 +62,7 @@ class CommonResolverForModuleFactory(
 ) : ResolverForModuleFactory() {
     private class SourceModuleInfo(
         override val name: Name,
-        override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>,
+        override val capabilities: Map<ModuleCapability<*>, Any?>,
         private val dependencies: Iterable<ModuleInfo>,
         override val expectedBy: List<ModuleInfo>,
         override val platform: TargetPlatform,
@@ -116,7 +117,7 @@ class CommonResolverForModuleFactory(
         fun analyzeFiles(
             files: Collection<KtFile>, moduleName: Name, dependOnBuiltIns: Boolean, languageVersionSettings: LanguageVersionSettings,
             targetPlatform: TargetPlatform,
-            capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap(),
+            capabilities: Map<ModuleCapability<*>, Any?> = emptyMap(),
             dependenciesContainer: CommonDependenciesContainer? = null,
             metadataPartProviderFactory: (ModuleContent<ModuleInfo>) -> MetadataPartProvider
         ): AnalysisResult {

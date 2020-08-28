@@ -68,7 +68,6 @@ val KotlinCallArgument.psiExpression: KtExpression?
 class ParseErrorKotlinCallArgument(
     override val valueArgument: ValueArgument,
     override val dataFlowInfoAfterThisArgument: DataFlowInfo,
-    builtIns: KotlinBuiltIns
 ) : ExpressionKotlinCallArgument, SimplePSIKotlinCallArgument() {
     override val receiver = ReceiverValueWithSmartCastInfo(
         TransientReceiver(ErrorUtils.createErrorType("Error type for ParseError-argument $valueArgument")),
@@ -110,6 +109,12 @@ class LambdaKotlinCallArgumentImpl(
 ) : PSIFunctionKotlinCallArgument(outerCallContext, valueArgument, dataFlowInfoBeforeThisArgument, argumentName) {
     override val ktFunction get() = ktLambdaExpression.functionLiteral
     override val expression get() = containingBlockForLambda
+
+    override var hasBuilderInferenceAnnotation = false
+        set(value) {
+            assert(!field)
+            field = value
+        }
 }
 
 class FunctionExpressionImpl(

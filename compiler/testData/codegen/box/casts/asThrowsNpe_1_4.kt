@@ -1,5 +1,4 @@
 // !API_VERSION: LATEST
-// IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM
 
 fun box(): String {

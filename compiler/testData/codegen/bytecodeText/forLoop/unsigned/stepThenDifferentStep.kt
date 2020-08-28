@@ -14,18 +14,17 @@ fun box(): String {
 //
 // Expected lowered form of loop:
 //
-//   // Additional variables:
+//   // Additional statements:
 //   val outerNestedLast = getProgressionLastElement(1u, 7u, 3)
 //
 //   // Standard form of loop over progression
 //   var inductionVar = 1u
 //   val last = getProgressionLastElement(1u, outerNestedLast, 2)
-//   val step = 2
 //   if (inductionVar <= last) {
 //     // Loop is not empty
 //     do {
 //       val i = inductionVar
-//       inductionVar += step
+//       inductionVar += 2
 //       // Loop body
 //     } while (i != last)
 //   }

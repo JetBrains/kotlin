@@ -8,8 +8,10 @@
 // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
@@ -25,6 +27,9 @@ open class KotlinJsCompilation(
     target: KotlinTarget,
     name: String
 ) : AbstractKotlinCompilationToRunnableFiles<KotlinJsOptions>(target, name), KotlinCompilationWithResources<KotlinJsOptions> {
+
+    override val kotlinOptions: KotlinJsOptions = KotlinJsOptionsImpl()
+
     internal val binaries: KotlinJsBinaryContainer =
         target.project.objects.newInstance(
             KotlinJsBinaryContainer::class.java,
@@ -48,6 +53,10 @@ open class KotlinJsCompilation(
 
     override val compileKotlinTask: Kotlin2JsCompile
         get() = super.compileKotlinTask as Kotlin2JsCompile
+
+    @Suppress("UNCHECKED_CAST")
+    override val compileKotlinTaskProvider: TaskProvider<out Kotlin2JsCompile>
+        get() = super.compileKotlinTaskProvider as TaskProvider<out Kotlin2JsCompile>
 
     internal val packageJsonHandlers = mutableListOf<PackageJson.() -> Unit>()
 

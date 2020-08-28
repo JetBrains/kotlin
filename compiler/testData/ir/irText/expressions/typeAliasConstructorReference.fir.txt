@@ -1,4 +1,6 @@
 FILE fqName:<root> fileName:/typeAliasConstructorReference.kt
+  TYPEALIAS name:CA visibility:public expandedType:<root>.C
+  TYPEALIAS name:NA visibility:public expandedType:<root>.Host.Nested
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.C [primary]

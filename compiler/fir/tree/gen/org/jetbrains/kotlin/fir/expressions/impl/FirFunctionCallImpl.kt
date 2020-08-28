@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
@@ -27,14 +26,13 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
     override val source: FirSourceElement?,
     override var typeRef: FirTypeRef,
     override val annotations: MutableList<FirAnnotationCall>,
-    override var safe: Boolean,
     override val typeArguments: MutableList<FirTypeProjection>,
     override var explicitReceiver: FirExpression?,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
     override var argumentList: FirArgumentList,
     override var calleeReference: FirNamedReference,
-) : FirFunctionCall(), FirModifiableQualifiedAccess {
+) : FirFunctionCall() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
@@ -103,6 +101,10 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
         typeArguments.clear()
         typeArguments.addAll(newTypeArguments)
+    }
+
+    override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {
+        explicitReceiver = newExplicitReceiver
     }
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {

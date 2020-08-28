@@ -87,7 +87,7 @@ internal class BreakpointCreator(
                         createLineBreakpoint(breakpointManager, file, lineIndex, ordinal, condition)
                     }
                     comment.startsWith("//FunctionBreakpoint!") -> {
-                        createFunctionBreakpoint(breakpointManager, file, lineIndex)
+                        createFunctionBreakpoint(breakpointManager, file, lineIndex, false)
                     }
                     else -> throw AssertionError("Cannot create breakpoint at line ${lineIndex + 1}")
                 }
@@ -104,19 +104,23 @@ internal class BreakpointCreator(
     fun createAdditionalBreakpoints(fileContents: String) {
         val breakpoints = findLinesWithPrefixesRemoved(fileContents, "// ADDITIONAL_BREAKPOINT: ")
         for (breakpoint in breakpoints) {
-            val position = breakpoint.split(".kt:")
-            assert(position.size == 2) { "Couldn't parse position from test directive: directive = $breakpoint" }
+            val chunks = breakpoint.split('/').map { it.trim() }
+            val fileName = chunks.getOrNull(0) ?: continue
+            val lineMarker = chunks.getOrNull(1) ?: continue
+            val kind = chunks.getOrElse(2) { "line" }
+            val ordinal = chunks.getOrNull(3)?.toInt()
 
-            var lineMarker = position[1]
-            var ordinal: Int? = null
+            val breakpointManager = XDebuggerManager.getInstance(project).breakpointManager
 
-            if (lineMarker.contains(":(") && lineMarker.endsWith(")")) {
-                val lineMarkerAndOrdinal = lineMarker.split(":(")
-                lineMarker = lineMarkerAndOrdinal[0]
-                ordinal = lineMarkerAndOrdinal[1].substringBefore(")").toInt()
+            when (kind) {
+                "line" -> createBreakpoint(fileName, lineMarker) { psiFile, lineNumber ->
+                    createLineBreakpoint(breakpointManager, psiFile, lineNumber + 1, ordinal, null)
+                }
+                "fun" -> createBreakpoint(fileName, lineMarker) { psiFile, lineNumber ->
+                    createFunctionBreakpoint(breakpointManager, psiFile, lineNumber, true)
+                }
+                else -> error("Unknown breakpoint kind: $kind")
             }
-
-            createBreakpoint(position[0], lineMarker, ordinal)
         }
     }
 
@@ -133,34 +137,35 @@ internal class BreakpointCreator(
         return null
     }
 
-    private fun createBreakpoint(fileName: String, lineMarker: String, ordinal: Int?) {
+    private fun createBreakpoint(fileName: String, lineMarker: String, action: (PsiFile, Int) -> Unit) {
         val sourceFiles = runReadAction {
             FilenameIndex.getAllFilesByExt(project, "kt")
-                .filter { it.name.contains(fileName) && it.contentsToByteArray().toString(Charsets.UTF_8).contains(lineMarker) }
+                .filter { it.name == fileName && it.contentsToByteArray().toString(Charsets.UTF_8).contains(lineMarker) }
         }
 
-        assert(sourceFiles.size == 1) { "One source file should be found: name = $fileName, sourceFiles = $sourceFiles" }
+        val sourceFile = sourceFiles.singleOrNull()
+            ?: error("Single source file should be found: name = $fileName, sourceFiles = $sourceFiles")
 
         val runnable = Runnable {
-            val psiSourceFile = PsiManager.getInstance(project).findFile(sourceFiles.first())!!
+            val psiSourceFile = PsiManager.getInstance(project).findFile(sourceFile)
+                ?: error("Psi file not found for $sourceFile")
 
-            val breakpointManager = XDebuggerManager.getInstance(project).breakpointManager
             val document = PsiDocumentManager.getInstance(project).getDocument(psiSourceFile)!!
 
             val index = psiSourceFile.text!!.indexOf(lineMarker)
-            val lineNumber = document.getLineNumber(index) + 1 // lineMarker is for previous line
-
-            createLineBreakpoint(breakpointManager, psiSourceFile, lineNumber, ordinal, null)
+            val lineNumber = document.getLineNumber(index)
+            action(psiSourceFile, lineNumber)
         }
 
         DebuggerInvocationUtil.invokeAndWait(project, runnable, ModalityState.defaultModalityState())
     }
 
-    private fun createFunctionBreakpoint(breakpointManager: XBreakpointManager, file: PsiFile, lineIndex: Int) {
+    private fun createFunctionBreakpoint(breakpointManager: XBreakpointManager, file: PsiFile, lineIndex: Int, fromLibrary: Boolean) {
         val breakpointType = findBreakpointType(KotlinFunctionBreakpointType::class.java)
         val breakpoint = createBreakpointOfType(breakpointManager, breakpointType, lineIndex, file.virtualFile)
         if (breakpoint is KotlinFunctionBreakpoint) {
-            logger("FunctionBreakpoint created at ${file.virtualFile.name}:${lineIndex + 1}")
+            val lineNumberSuffix = if (fromLibrary) "" else ":${lineIndex + 1}"
+            logger("FunctionBreakpoint created at ${file.virtualFile.name}$lineNumberSuffix")
         }
     }
 

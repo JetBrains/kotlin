@@ -7,28 +7,33 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassConstructor
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirClassifiersCache
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.CirCommonClassConstructor
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassConstructor
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassConstructorFactory
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirContainingClassDetailsFactory
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
 
 class ClassConstructorCommonizer(cache: CirClassifiersCache) : AbstractStandardCommonizer<CirClassConstructor, CirClassConstructor>() {
     private var isPrimary = false
     private lateinit var kind: CallableMemberDescriptor.Kind
     private val visibility = VisibilityCommonizer.equalizing()
     private val typeParameters = TypeParameterListCommonizer(cache)
-    private val valueParameters = ValueParameterListCommonizer(cache)
-    private var hasStableParameterNames = true
-    private var hasSynthesizedParameterNames = false
+    private val valueParameters = CallableValueParametersCommonizer(cache)
 
-    override fun commonizationResult() = CirCommonClassConstructor(
-        isPrimary = isPrimary,
-        kind = kind,
-        visibility = visibility.result,
-        typeParameters = typeParameters.result,
-        valueParameters = valueParameters.result,
-        hasStableParameterNames = hasStableParameterNames,
-        hasSynthesizedParameterNames = hasSynthesizedParameterNames
-    )
+    override fun commonizationResult(): CirClassConstructor {
+        val valueParameters = valueParameters.result
+        valueParameters.patchCallables()
+
+        return CirClassConstructorFactory.create(
+            annotations = emptyList(),
+            typeParameters = typeParameters.result,
+            visibility = visibility.result,
+            containingClassDetails = CirContainingClassDetailsFactory.DOES_NOT_MATTER,
+            valueParameters = valueParameters.valueParameters,
+            hasStableParameterNames = valueParameters.hasStableParameterNames,
+            isPrimary = isPrimary,
+            kind = kind
+        )
+    }
 
     override fun initialize(first: CirClassConstructor) {
         isPrimary = first.isPrimary
@@ -36,19 +41,12 @@ class ClassConstructorCommonizer(cache: CirClassifiersCache) : AbstractStandardC
     }
 
     override fun doCommonizeWith(next: CirClassConstructor): Boolean {
-        val result = !next.containingClassKind.isSingleton // don't commonize constructors for objects and enum entries
-                && next.containingClassModality != Modality.SEALED // don't commonize constructors for sealed classes (not not their subclasses)
+        return !next.containingClassDetails.kind.isSingleton // don't commonize constructors for objects and enum entries
+                && next.containingClassDetails.modality != Modality.SEALED // don't commonize constructors for sealed classes (not not their subclasses)
                 && isPrimary == next.isPrimary
                 && kind == next.kind
                 && visibility.commonizeWith(next)
                 && typeParameters.commonizeWith(next.typeParameters)
-                && valueParameters.commonizeWith(next.valueParameters)
-
-        if (result) {
-            hasStableParameterNames = hasStableParameterNames && next.hasStableParameterNames
-            hasSynthesizedParameterNames = hasSynthesizedParameterNames || next.hasSynthesizedParameterNames
-        }
-
-        return result
+                && valueParameters.commonizeWith(next)
     }
 }

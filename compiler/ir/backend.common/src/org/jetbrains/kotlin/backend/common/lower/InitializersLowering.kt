@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.util.constructedClass
@@ -112,7 +111,9 @@ class InitializersCleanupLowering(
             } else {
                 declaration.initializer?.let {
                     declaration.initializer =
-                        IrExpressionBodyImpl(it.startOffset, it.endOffset) { expression = it.expression.deepCopyWithSymbols() }
+                        context.irFactory.createExpressionBody(it.startOffset, it.endOffset) {
+                            expression = it.expression.deepCopyWithSymbols()
+                        }
                 }
             }
         }

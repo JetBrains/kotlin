@@ -13,7 +13,6 @@ import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.LightVirtualFile
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -26,21 +25,15 @@ import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Severity
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
-import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
-import org.jetbrains.kotlin.fir.java.FirLibrarySession
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.fir.createSession
+import org.jetbrains.kotlin.fir.java.FirJavaElementFinder
 import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.storage.ExceptionTracker
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
@@ -66,10 +59,10 @@ private val JDK_PATH = File("${System.getProperty("java.home")!!}/lib/rt.jar")
 private val RUNTIME_JAR = File(System.getProperty("kotlin.runtime.path") ?: "dist/kotlinc/lib/kotlin-runtime.jar")
 
 private val LANGUAGE_FEATURE_SETTINGS =
-        LanguageVersionSettingsImpl(
-                LanguageVersion.KOTLIN_1_3, ApiVersion.KOTLIN_1_3,
-                specificFeatures = mapOf(LanguageFeature.NewInference to LanguageFeature.State.ENABLED)
-        )
+    LanguageVersionSettingsImpl(
+        LanguageVersion.KOTLIN_1_3, ApiVersion.KOTLIN_1_3,
+        specificFeatures = mapOf(LanguageFeature.NewInference to LanguageFeature.State.ENABLED)
+    )
 
 private fun newConfiguration(useNewInference: Boolean): CompilerConfiguration {
     val configuration = CompilerConfiguration()
@@ -81,10 +74,10 @@ private fun newConfiguration(useNewInference: Boolean): CompilerConfiguration {
 
     val newInferenceState = if (useNewInference) LanguageFeature.State.ENABLED else LanguageFeature.State.DISABLED
     configuration.languageVersionSettings = LanguageVersionSettingsImpl(
-            LanguageVersion.KOTLIN_1_3, ApiVersion.KOTLIN_1_3,
-            specificFeatures = mapOf(
-                    LanguageFeature.NewInference to newInferenceState
-            )
+        LanguageVersion.KOTLIN_1_3, ApiVersion.KOTLIN_1_3,
+        specificFeatures = mapOf(
+            LanguageFeature.NewInference to newInferenceState
+        )
     )
     return configuration
 }
@@ -105,21 +98,21 @@ abstract class AbstractSimpleFileBenchmark {
     fun setUp() {
         if (isIR && !useNewInference) error("Invalid configuration")
         env = KotlinCoreEnvironment.createForTests(
-                myDisposable, 
-                newConfiguration(useNewInference),
-                EnvironmentConfigFiles.JVM_CONFIG_FILES
+            myDisposable,
+            newConfiguration(useNewInference),
+            EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
 
         if (isIR) {
             Extensions.getArea(env.project)
-                    .getExtensionPoint(PsiElementFinder.EP_NAME)
-                    .unregisterExtension(JavaElementFinder::class.java)
+                .getExtensionPoint(PsiElementFinder.EP_NAME)
+                .unregisterExtension(JavaElementFinder::class.java)
         }
 
         file = createFile(
-                "test.kt",
-                buildText(),
-                env.project
+            "test.kt",
+            buildText(),
+            env.project
         )
     }
 
@@ -134,22 +127,22 @@ abstract class AbstractSimpleFileBenchmark {
     private fun analyzeGreenFileFrontend(bh: Blackhole) {
         val tracker = ExceptionTracker()
         val storageManager: StorageManager =
-                LockBasedStorageManager.createWithExceptionHandling("benchmarks", tracker)
+            LockBasedStorageManager.createWithExceptionHandling("benchmarks", tracker)
 
         val context = SimpleGlobalContext(storageManager, tracker)
         val module =
-                ModuleDescriptorImpl(
-                        Name.special("<benchmark>"), storageManager,
-                        JvmBuiltIns(storageManager, JvmBuiltIns.Kind.FROM_DEPENDENCIES)
-                )
+            ModuleDescriptorImpl(
+                Name.special("<benchmark>"), storageManager,
+                JvmBuiltIns(storageManager, JvmBuiltIns.Kind.FROM_DEPENDENCIES)
+            )
         val moduleContext = context.withProject(env.project).withModule(module)
 
         val result = TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
-                moduleContext.project,
-                listOf(file),
-                NoScopeRecordCliBindingTrace(),
-                env.configuration,
-                { scope -> JvmPackagePartProvider(LANGUAGE_FEATURE_SETTINGS, scope) }
+            moduleContext.project,
+            listOf(file),
+            NoScopeRecordCliBindingTrace(),
+            env.configuration,
+            { scope -> JvmPackagePartProvider(LANGUAGE_FEATURE_SETTINGS, scope) }
         )
 
         assert(result.bindingContext.diagnostics.none { it.severity == Severity.ERROR })
@@ -159,7 +152,7 @@ abstract class AbstractSimpleFileBenchmark {
 
     private fun analyzeGreenFileIr(bh: Blackhole) {
         val scope = GlobalSearchScope.filesScope(env.project, listOf(file.virtualFile))
-                .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(env.project))
+            .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(env.project))
         val session = createSession(env, scope)
         val firProvider = session.firProvider as FirProviderImpl
         val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
@@ -170,43 +163,10 @@ abstract class AbstractSimpleFileBenchmark {
         totalTransformer.process(listOf(firFile))
 
         bh.consume(firFile.hashCode())
+        Extensions.getArea(env.project)
+            .getExtensionPoint(PsiElementFinder.EP_NAME)
+            .unregisterExtension(FirJavaElementFinder::class.java)
     }
 
     protected abstract fun buildText(): String
-}
-
-fun createSession(
-        environment: KotlinCoreEnvironment,
-        sourceScope: GlobalSearchScope,
-        librariesScope: GlobalSearchScope = GlobalSearchScope.notScope(sourceScope)
-): FirSession {
-    val moduleInfo = FirTestModuleInfo()
-    val project = environment.project
-    val provider = FirProjectSessionProvider(project)
-    return FirJavaModuleBasedSession(moduleInfo, provider, sourceScope).also {
-        createSessionForDependencies(provider, moduleInfo, librariesScope, environment)
-    }
-}
-
-private fun createSessionForDependencies(
-        provider: FirProjectSessionProvider,
-        moduleInfo: FirTestModuleInfo,
-        librariesScope: GlobalSearchScope,
-        environment: KotlinCoreEnvironment
-) {
-    val dependenciesInfo = FirTestModuleInfo()
-    moduleInfo.dependencies.add(dependenciesInfo)
-    FirLibrarySession.create(
-            dependenciesInfo, provider, librariesScope, environment.project,
-            environment.createPackagePartProvider(librariesScope)
-    )
-}
-
-class FirTestModuleInfo(
-        override val name: Name = Name.identifier("TestModule"),
-        val dependencies: MutableList<ModuleInfo> = mutableListOf(),
-        override val platform: TargetPlatform = JvmPlatforms.unspecifiedJvmPlatform,
-        override val analyzerServices: PlatformDependentAnalyzerServices = JvmPlatformAnalyzerServices
-) : ModuleInfo {
-    override fun dependencies(): List<ModuleInfo> = dependencies
 }

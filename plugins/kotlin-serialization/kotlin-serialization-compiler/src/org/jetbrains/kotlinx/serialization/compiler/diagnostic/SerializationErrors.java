@@ -1,15 +1,12 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlinx.serialization.compiler.diagnostic;
 
 import com.intellij.psi.PsiElement;
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1;
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2;
-import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.diagnostics.*;
 import org.jetbrains.kotlin.psi.KtAnnotationEntry;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -31,6 +28,11 @@ public interface SerializationErrors {
     DiagnosticFactory0<PsiElement> TRANSIENT_MISSING_INITIALIZER = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<PsiElement> TRANSIENT_IS_REDUNDANT = DiagnosticFactory0.create(WARNING);
+
+    DiagnosticFactory0<PsiElement> INCORRECT_TRANSIENT = DiagnosticFactory0.create(WARNING);
+
+    DiagnosticFactory3<KtAnnotationEntry, String, String, String> REQUIRED_KOTLIN_TOO_HIGH = DiagnosticFactory3.create(ERROR);
+    DiagnosticFactory3<KtAnnotationEntry, String, String, String> PROVIDED_RUNTIME_TOO_LOW = DiagnosticFactory3.create(ERROR);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

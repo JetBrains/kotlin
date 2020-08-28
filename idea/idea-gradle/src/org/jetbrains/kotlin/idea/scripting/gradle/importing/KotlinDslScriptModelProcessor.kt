@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.scripting.gradle.importing
 
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
 import com.intellij.openapi.vfs.VfsUtil
 import org.gradle.tooling.model.kotlin.dsl.EditorReportSeverity
@@ -16,10 +15,31 @@ import org.jetbrains.kotlin.gradle.BrokenKotlinDslScriptsModel
 import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.scripting.gradle.getGradleScriptInputsStamp
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
-import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
+import org.jetbrains.plugins.gradle.model.BuildScriptClasspathModel
+import org.jetbrains.plugins.gradle.service.project.DefaultProjectResolverContext
 import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext
 import java.io.File
-import java.util.concurrent.ConcurrentHashMap
+
+fun saveGradleBuildEnvironment(resolverCtx: ProjectResolverContext) {
+    val task = resolverCtx.externalSystemTaskId
+    val tasks = KotlinDslSyncListener.instance.tasks
+    val sync = synchronized(tasks) { tasks[task] }
+    if (sync != null) {
+        val gradleHome = resolverCtx.getExtraProject(BuildScriptClasspathModel::class.java)?.gradleHomeDir?.canonicalPath
+            ?: resolverCtx.settings?.gradleHome
+        synchronized(sync) {
+            sync.gradleVersion = resolverCtx.projectGradleVersion
+            sync.javaHome = (resolverCtx as? DefaultProjectResolverContext)
+                ?.buildEnvironment
+                ?.java?.javaHome?.canonicalPath
+                ?.let { toSystemIndependentName(it) }
+
+            if (gradleHome != null) {
+                sync.gradleHome = toSystemIndependentName(gradleHome)
+            }
+        }
+    }
+}
 
 fun processScriptModel(
     resolverCtx: ProjectResolverContext,
@@ -43,14 +63,24 @@ fun processScriptModel(
             }
         }
 
-        if (models.containsErrors()) {
-            throw IllegalStateException(KotlinIdeaGradleBundle.message("title.kotlin.build.script"))
+        val errors = models.collectErrors()
+        if (errors.isNotEmpty()) {
+            if (sync != null) {
+                synchronized(sync) {
+                    sync.failed = true
+                }
+            }
+            throw IllegalStateException(
+                KotlinIdeaGradleBundle.message("title.kotlin.build.script")
+                        + ":\n"
+                        + errors.joinToString("\n") { it.text + "\n" + it.details }
+            )
         }
     }
 }
 
-private fun Collection<KotlinDslScriptModel>.containsErrors(): Boolean {
-    return any { it.messages.any { it.severity == KotlinDslScriptModel.Severity.ERROR } }
+private fun Collection<KotlinDslScriptModel>.collectErrors(): List<KotlinDslScriptModel.Message> {
+    return this.flatMap { it.messages.filter { it.severity == KotlinDslScriptModel.Severity.ERROR } }
 }
 
 private fun KotlinDslScriptsModel.toListOfScriptModels(project: Project): List<KotlinDslScriptModel> =
@@ -101,10 +131,18 @@ private fun KotlinDslScriptsModel.toListOfScriptModels(project: Project): List<K
     }
 
 class KotlinDslGradleBuildSync(val workingDir: String, val taskId: ExternalSystemTaskId) {
+    val ts = System.currentTimeMillis()
     var project: Project? = null
+    var gradleVersion: String? = null
+    var gradleHome: String? = null
+    var javaHome: String? = null
     val projectRoots = mutableSetOf<String>()
     val models = mutableListOf<KotlinDslScriptModel>()
     var failed = false
+
+    override fun toString(): String {
+        return "KotlinGradleDslSync(workingDir=$workingDir, gradleVersion=$gradleVersion, gradleHome=$gradleHome, javaHome=$javaHome, projectRoots=$projectRoots, failed=$failed)"
+    }
 }
 
 fun saveScriptModels(project: Project, build: KotlinDslGradleBuildSync) {

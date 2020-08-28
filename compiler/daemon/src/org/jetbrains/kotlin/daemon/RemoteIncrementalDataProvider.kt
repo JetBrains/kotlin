@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.daemon
 
-import org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade
 import org.jetbrains.kotlin.daemon.common.Profiler
 import org.jetbrains.kotlin.daemon.common.withMeasure
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
@@ -13,8 +12,10 @@ import org.jetbrains.kotlin.incremental.js.IrTranslationResultValue
 import org.jetbrains.kotlin.incremental.js.TranslationResultValue
 import java.io.File
 
-class RemoteIncrementalDataProvider(val facade: CompilerCallbackServicesFacade, val rpcProfiler: Profiler) :
-    IncrementalDataProvider {
+class RemoteIncrementalDataProvider(
+    @Suppress("DEPRECATION") val facade: org.jetbrains.kotlin.daemon.common.CompilerCallbackServicesFacade,
+    val rpcProfiler: Profiler
+) : IncrementalDataProvider {
     override val serializedIrFiles: Map<File, IrTranslationResultValue>
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
 

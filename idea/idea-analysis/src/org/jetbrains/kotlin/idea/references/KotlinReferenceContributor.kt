@@ -1,33 +1,23 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.references
 
-import org.jetbrains.kotlin.idea.kdoc.KDocReference
+import com.intellij.openapi.paths.GlobalPathReferenceProvider
+import com.intellij.openapi.paths.WebReference
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiReference
+import org.jetbrains.kotlin.idea.kdoc.KDocReferenceDescriptorsImpl
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtImportDirective
-import org.jetbrains.kotlin.psi.KtNameReferenceExpression
-import org.jetbrains.kotlin.psi.KtPackageDirective
-import org.jetbrains.kotlin.psi.KtUserType
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
 
-internal class KotlinReferenceContributor : KotlinReferenceProviderContributor {
+class KotlinReferenceContributor : KotlinReferenceProviderContributor {
     override fun registerReferenceProviders(registrar: KotlinPsiReferenceRegistrar) {
         with(registrar) {
-            registerProvider(factory = ::KtSimpleNameReference)
+            registerProvider(factory = ::KtSimpleNameReferenceDescriptorsImpl)
 
             registerMultiProvider<KtNameReferenceExpression> { nameReferenceExpression ->
                 if (nameReferenceExpression.getReferencedNameElementType() != KtTokens.IDENTIFIER) return@registerMultiProvider emptyArray()
@@ -37,32 +27,47 @@ internal class KotlinReferenceContributor : KotlinReferenceProviderContributor {
 
                 when (nameReferenceExpression.readWriteAccess(useResolveForReadWrite = false)) {
                     ReferenceAccess.READ ->
-                        arrayOf(SyntheticPropertyAccessorReference.Getter(nameReferenceExpression))
+                        arrayOf(SyntheticPropertyAccessorReferenceDescriptorImpl(nameReferenceExpression, getter = true))
                     ReferenceAccess.WRITE ->
-                        arrayOf(SyntheticPropertyAccessorReference.Setter(nameReferenceExpression))
+                        arrayOf(SyntheticPropertyAccessorReferenceDescriptorImpl(nameReferenceExpression, getter = false))
                     ReferenceAccess.READ_WRITE ->
                         arrayOf(
-                            SyntheticPropertyAccessorReference.Getter(nameReferenceExpression),
-                            SyntheticPropertyAccessorReference.Setter(nameReferenceExpression)
+                            SyntheticPropertyAccessorReferenceDescriptorImpl(nameReferenceExpression, getter = true),
+                            SyntheticPropertyAccessorReferenceDescriptorImpl(nameReferenceExpression, getter = false)
                         )
                 }
             }
 
-            registerProvider(factory = ::KtConstructorDelegationReference)
+            registerProvider(factory = ::KtConstructorDelegationReferenceDescriptorsImpl)
 
-            registerProvider(factory = ::KtInvokeFunctionReference)
+            registerProvider(factory = ::KtInvokeFunctionReferenceDescriptorsImpl)
 
-            registerProvider(factory = ::KtArrayAccessReference)
+            registerProvider(factory = ::KtArrayAccessReferenceDescriptorsImpl)
 
-            registerProvider(factory = ::KtCollectionLiteralReference)
+            registerProvider(factory = ::KtCollectionLiteralReferenceDescriptorsImpl)
 
-            registerProvider(factory = ::KtForLoopInReference)
+            registerProvider(factory = ::KtForLoopInReferenceDescriptorsImpl)
 
-            registerProvider(factory = ::KtPropertyDelegationMethodsReference)
+            registerProvider(factory = ::KtPropertyDelegationMethodsReferenceDescriptorsImpl)
 
-            registerProvider(factory = ::KtDestructuringDeclarationReference)
+            registerProvider(factory = ::KtDestructuringDeclarationReferenceDescriptorsImpl)
 
-            registerProvider(factory = ::KDocReference)
+            registerProvider(factory = ::KDocReferenceDescriptorsImpl)
+
+            registerProvider(KotlinDefaultAnnotationMethodImplicitReferenceProvider)
+
+            registerMultiProvider<KtStringTemplateEntry> { stringTemplateEntry ->
+                val texts = stringTemplateEntry.text.split(Regex("\\s"))
+                val results = mutableListOf<PsiReference>()
+                var startIndex = 0
+                texts.forEach { text ->
+                    if (GlobalPathReferenceProvider.isWebReferenceUrl(text)) {
+                        results.add(WebReference(stringTemplateEntry, TextRange(startIndex, startIndex + text.length), text))
+                    }
+                    startIndex += text.length + 1
+                }
+                results.toTypedArray()
+            }
         }
     }
 }

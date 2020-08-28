@@ -8,5 +8,8 @@
         <place><![CDATA[
             receiver().ofFunction(kotlinFunction().withName("toRegex").withReceiver("kotlin.String").definedInPackage("kotlin.text"))
             ]]></place>
+        <place><![CDATA[
+            receiver().ofFunction(kotlinFunction().withName("toPattern").withReceiver("kotlin.String").definedInPackage("kotlin.text"))
+            ]]></place>
     </injection>
 </component>

@@ -1,6 +1,7 @@
 org.jetbrains.kotlin.gradle.KotlinGradleModelBuilder
 org.jetbrains.kotlin.gradle.KotlinMPPGradleModelBuilder
 org.jetbrains.kotlin.gradle.KotlinCocoaPodsModelBuilder
+org.jetbrains.kotlin.gradle.KotlinCommonizerModelBuilder
 org.jetbrains.kotlin.allopen.ide.AllOpenModelBuilderService
 org.jetbrains.kotlin.kapt.idea.KaptModelBuilderService
 org.jetbrains.kotlin.noarg.ide.NoArgModelBuilderService

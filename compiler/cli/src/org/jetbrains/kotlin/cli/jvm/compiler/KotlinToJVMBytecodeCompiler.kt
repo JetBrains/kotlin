@@ -52,10 +52,18 @@ import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
+import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.analysis.registerExtendedCheckersComponent
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmClassCodegen
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
 import org.jetbrains.kotlin.fir.extensions.extensionService
@@ -64,11 +72,12 @@ import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
 import org.jetbrains.kotlin.fir.java.FirLibrarySession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.modules.Module
@@ -80,6 +89,7 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
+import org.jetbrains.kotlin.resolve.diagnostics.SimpleDiagnostics
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
@@ -160,8 +170,23 @@ object KotlinToJVMBytecodeCompiler {
         }
     }
 
-    internal fun compileModules(environment: KotlinCoreEnvironment, buildFile: File?, chunk: List<Module>): Boolean {
+    internal fun compileModules(
+        environment: KotlinCoreEnvironment,
+        buildFile: File?,
+        chunk: List<Module>,
+        repeat: Boolean = false
+    ): Boolean {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+
+        val repeats = environment.configuration[CLIConfigurationKeys.REPEAT_COMPILE_MODULES]
+        if (repeats != null && !repeat) {
+            val performanceManager = environment.configuration[CLIConfigurationKeys.PERF_MANAGER]
+            return (0 until repeats).map {
+                val result = compileModules(environment, buildFile, chunk, repeat = true)
+                performanceManager?.notifyRepeat(repeats, it)
+                result
+            }.last()
+        }
 
         val moduleVisibilityManager = ModuleVisibilityManager.SERVICE.getInstance(environment.project)
         for (module in chunk) {
@@ -175,12 +200,11 @@ object KotlinToJVMBytecodeCompiler {
 
         val projectConfiguration = environment.configuration
         if (projectConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-            return compileModulesUsingFrontendIR(environment, buildFile, chunk)
+            val extendedAnalysisMode = projectConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR_EXTENDED_CHECKERS)
+            return compileModulesUsingFrontendIR(environment, buildFile, chunk, extendedAnalysisMode)
         }
 
-        val targetDescription = "in targets [" + chunk.joinToString { input -> input.getModuleName() + "-" + input.getModuleType() } + "]"
-
-        val result = repeatAnalysisIfNeeded(analyze(environment, targetDescription), environment, targetDescription)
+        val result = repeatAnalysisIfNeeded(analyze(environment), environment)
         if (result == null || !result.shouldGenerateCode) return false
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
@@ -285,8 +309,15 @@ object KotlinToJVMBytecodeCompiler {
         configuration.addAll(JVMConfigurationKeys.MODULES, chunk)
     }
 
-    private fun compileModulesUsingFrontendIR(environment: KotlinCoreEnvironment, buildFile: File?, chunk: List<Module>): Boolean {
+    private fun compileModulesUsingFrontendIR(
+        environment: KotlinCoreEnvironment,
+        buildFile: File?,
+        chunk: List<Module>,
+        extendedAnalysisMode: Boolean
+    ): Boolean {
         val project = environment.project
+        val performanceManager = environment.configuration.get(CLIConfigurationKeys.PERF_MANAGER)
+
         Extensions.getArea(project)
             .getExtensionPoint(PsiElementFinder.EP_NAME)
             .unregisterExtension(JavaElementFinder::class.java)
@@ -295,6 +326,7 @@ object KotlinToJVMBytecodeCompiler {
         val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
         val outputs = newLinkedHashMapWithExpectedSize<Module, GenerationState>(chunk.size)
         for (module in chunk) {
+            performanceManager?.notifyAnalysisStarted()
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
             val ktFiles = module.getSourceFiles(environment, localFileSystem, chunk.size > 1, buildFile)
@@ -322,7 +354,7 @@ object KotlinToJVMBytecodeCompiler {
             }
 
             val moduleInfo = FirJvmModuleInfo(module.getModuleName())
-            val session: FirSession = FirJavaModuleBasedSession(moduleInfo, provider, scope).also {
+            val session: FirSession = FirJavaModuleBasedSession.create(moduleInfo, provider, scope).also {
                 val dependenciesInfo = FirJvmModuleInfo(Name.special("<dependencies>"))
                 moduleInfo.dependencies.add(dependenciesInfo)
                 val librariesScope = ProjectScope.getLibrariesScope(project)
@@ -331,30 +363,55 @@ object KotlinToJVMBytecodeCompiler {
                     project, environment.createPackagePartProvider(librariesScope)
                 )
                 it.extensionService.registerExtensions(BunchOfRegisteredExtensions.empty())
+                if (extendedAnalysisMode) {
+                    it.registerExtendedCheckersComponent()
+                }
             }
             val firProvider = (session.firProvider as FirProviderImpl)
             val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
             val resolveTransformer = FirTotalResolveProcessor(session)
+            val collector = FirDiagnosticsCollector.create(session)
+            val firDiagnostics = mutableListOf<FirDiagnostic<*>>()
             val firFiles = ktFiles.map {
                 val firFile = builder.buildFirFile(it)
                 firProvider.recordFile(firFile)
                 firFile
-            }.also {
+            }.also { firFiles ->
                 try {
-                    resolveTransformer.process(it)
+                    resolveTransformer.process(firFiles)
+                    firFiles.forEach {
+                        firDiagnostics += collector.collectDiagnostics(it)
+                    }
                 } catch (e: Exception) {
                     throw e
                 }
             }
+            AnalyzerWithCompilerReport.reportDiagnostics(
+                SimpleDiagnostics(
+                    firDiagnostics.map { it.toRegularDiagnostic() }
+                ),
+                environment.messageCollector
+            )
+            performanceManager?.notifyAnalysisFinished()
 
+            if (firDiagnostics.any { it.severity == Severity.ERROR }) {
+                return false
+            }
+
+            performanceManager?.notifyGenerationStarted()
             val signaturer = IdSignatureDescriptor(JvmManglerDesc())
 
-            val (moduleFragment, symbolTable, sourceManager) =
+            performanceManager?.notifyIRTranslationStarted()
+            val (moduleFragment, symbolTable, sourceManager, components) =
                 Fir2IrConverter.createModuleFragment(
                     session, resolveTransformer.scopeSession, firFiles,
-                    moduleConfiguration.languageVersionSettings, signaturer = signaturer,
-                    generatorExtensions = JvmGeneratorExtensions()
+                    moduleConfiguration.languageVersionSettings, signaturer,
+                    JvmGeneratorExtensions(), FirJvmKotlinMangler(session), IrFactoryImpl,
+                    FirJvmVisibilityConverter
                 )
+
+            performanceManager?.notifyIRTranslationFinished()
+
             val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
             val codegenFactory = JvmIrCodegenFactory(moduleConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases))
@@ -370,12 +427,13 @@ object KotlinToJVMBytecodeCompiler {
                 createOutputFilesFlushingCallbackIfPossible(moduleConfiguration)
             ).isIrBackend(
                 true
+            ).jvmBackendClassResolver(
+                FirJvmBackendClassResolver(components)
             ).build()
 
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
-            val performanceManager = environment.configuration.get(CLIConfigurationKeys.PERF_MANAGER)
-            performanceManager?.notifyGenerationStarted()
+            performanceManager?.notifyIRGenerationStarted()
             generationState.beforeCompile()
             codegenFactory.generateModuleInFrontendIRMode(
                 generationState, moduleFragment, symbolTable, sourceManager
@@ -384,11 +442,6 @@ object KotlinToJVMBytecodeCompiler {
             }
             CodegenFactory.doCheckCancelled(generationState)
             generationState.factory.done()
-            performanceManager?.notifyGenerationFinished(
-                ktFiles.size,
-                environment.countLinesOfCode(ktFiles),
-                additionalDescription = "target " + module.getModuleName() + "-" + module.getModuleType() + " "
-            )
 
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
@@ -404,10 +457,35 @@ object KotlinToJVMBytecodeCompiler {
                 generationState.extraJvmDiagnosticsTrace.bindingContext, environment.messageCollector
             )
 
+            performanceManager?.notifyIRGenerationFinished()
+            performanceManager?.notifyGenerationFinished()
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             outputs[module] = generationState
         }
         return writeOutputs(environment, projectConfiguration, chunk, outputs)
+    }
+
+    private fun FirDiagnostic<*>.toRegularDiagnostic(): Diagnostic {
+        val psiSource = element as FirPsiSourceElement<*>
+        @Suppress("TYPE_MISMATCH")
+        when (this) {
+            is FirSimpleDiagnostic ->
+                return SimpleDiagnostic(
+                    psiSource.psi, factory.psiDiagnosticFactory, severity
+                )
+            is FirDiagnosticWithParameters1<*, *> ->
+                return DiagnosticWithParameters1(
+                    psiSource.psi, this.a, factory.psiDiagnosticFactory, severity
+                )
+            is FirDiagnosticWithParameters2<*, *, *> ->
+                return DiagnosticWithParameters2(
+                    psiSource.psi, this.a, this.b, factory.psiDiagnosticFactory, severity
+                )
+            is FirDiagnosticWithParameters3<*, *, *, *> ->
+                return DiagnosticWithParameters3(
+                    psiSource.psi, this.a, this.b, this.c, factory.psiDiagnosticFactory, severity
+                )
+        }
     }
 
     private fun getBuildFilePaths(buildFile: File?, sourceFilePaths: List<String>): List<String> =
@@ -452,11 +530,7 @@ object KotlinToJVMBytecodeCompiler {
         }
     }
 
-    private fun repeatAnalysisIfNeeded(
-        result: AnalysisResult?,
-        environment: KotlinCoreEnvironment,
-        targetDescription: String?
-    ): AnalysisResult? {
+    private fun repeatAnalysisIfNeeded(result: AnalysisResult?, environment: KotlinCoreEnvironment): AnalysisResult? {
         if (result is AnalysisResult.RetryWithAdditionalRoots) {
             val configuration = environment.configuration
 
@@ -479,7 +553,7 @@ object KotlinToJVMBytecodeCompiler {
             configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]?.clear()
 
             // Repeat analysis with additional Java roots (kapt generated sources)
-            return analyze(environment, targetDescription)
+            return analyze(environment)
         }
 
         return result
@@ -487,7 +561,7 @@ object KotlinToJVMBytecodeCompiler {
 
     @Suppress("MemberVisibilityCanBePrivate") // Used in ExecuteKotlinScriptMojo
     fun analyzeAndGenerate(environment: KotlinCoreEnvironment): GenerationState? {
-        val result = repeatAnalysisIfNeeded(analyze(environment, null), environment, null) ?: return null
+        val result = repeatAnalysisIfNeeded(analyze(environment), environment) ?: return null
 
         if (!result.shouldGenerateCode) return null
 
@@ -496,7 +570,7 @@ object KotlinToJVMBytecodeCompiler {
         return generate(environment, environment.configuration, result, environment.getSourceFiles(), null)
     }
 
-    fun analyze(environment: KotlinCoreEnvironment, targetDescription: String?): AnalysisResult? {
+    fun analyze(environment: KotlinCoreEnvironment): AnalysisResult? {
         val sourceFiles = environment.getSourceFiles()
         val collector = environment.messageCollector
 
@@ -529,7 +603,7 @@ object KotlinToJVMBytecodeCompiler {
             )
         }
 
-        performanceManager?.notifyAnalysisFinished(sourceFiles.size, environment.countLinesOfCode(sourceFiles), targetDescription)
+        performanceManager?.notifyAnalysisFinished()
 
         val analysisResult = analyzerWithCompilerReport.analysisResult
 
@@ -610,11 +684,7 @@ object KotlinToJVMBytecodeCompiler {
 
         KotlinCodegenFacade.compileCorrectFiles(generationState)
 
-        performanceManager?.notifyGenerationFinished(
-            sourceFiles.size,
-            environment.countLinesOfCode(sourceFiles),
-            additionalDescription = if (module != null) "target " + module.getModuleName() + "-" + module.getModuleType() + " " else ""
-        )
+        performanceManager?.notifyGenerationFinished()
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 

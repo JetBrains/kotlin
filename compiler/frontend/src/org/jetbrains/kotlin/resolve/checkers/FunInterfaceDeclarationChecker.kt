@@ -6,9 +6,16 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.resolve.sam.getAbstractMembers
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -52,6 +59,13 @@ class FunInterfaceDeclarationChecker : DeclarationChecker {
         context: DeclarationCheckerContext,
     ) {
         val ktFunction = abstractMember.source.getPsi() as? KtNamedFunction
+
+        if (abstractMember.isSuspend) {
+            val reportOn = ktFunction?.modifierList?.getModifier(KtTokens.SUSPEND_KEYWORD) ?: funInterfaceKeyword
+            context.trace.report(Errors.FUN_INTERFACE_WITH_SUSPEND_FUNCTION.on(reportOn))
+            return
+        }
+
         if (abstractMember.typeParameters.isNotEmpty()) {
             val reportOn = ktFunction?.typeParameterList ?: ktFunction?.funKeyword ?: funInterfaceKeyword
             context.trace.report(Errors.FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS.on(reportOn))

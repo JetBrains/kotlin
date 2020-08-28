@@ -44,26 +44,25 @@ open class NodeJsRootExtension(val rootProject: Project) : ConfigurationPhaseAwa
     private val projectProperties = PropertiesProvider(rootProject)
 
     inner class Experimental {
-        val generateKotlinExternals: Boolean
-            get() = projectProperties.jsGenerateExternals == true
-
         val discoverTypes: Boolean
             get() = projectProperties.jsDiscoverTypes == true
     }
 
     val experimental = Experimental()
 
-    val nodeJsSetupTask: NodeJsSetupTask
-        get() = rootProject.tasks.getByName(NodeJsSetupTask.NAME) as NodeJsSetupTask
+    val taskRequirements = TasksRequirements()
 
-    val npmInstallTask: KotlinNpmInstallTask
-        get() = rootProject.tasks.getByName(KotlinNpmInstallTask.NAME) as KotlinNpmInstallTask
+    val nodeJsSetupTaskProvider: TaskProvider<out NodeJsSetupTask>
+        get() = rootProject.tasks.withType(NodeJsSetupTask::class.java).named(NodeJsSetupTask.NAME)
+
+    val npmInstallTaskProvider: TaskProvider<out KotlinNpmInstallTask>
+        get() = rootProject.tasks.withType(KotlinNpmInstallTask::class.java).named(KotlinNpmInstallTask.NAME)
 
     val packageJsonUmbrellaTaskProvider: TaskProvider<Task>
         get() = rootProject.tasks.named(PACKAGE_JSON_UMBRELLA_TASK_NAME)
 
-    val rootPackageJsonTask: RootPackageJsonTask
-        get() = rootProject.tasks.getByName(RootPackageJsonTask.NAME) as RootPackageJsonTask
+    val rootPackageJsonTaskProvider: TaskProvider<RootPackageJsonTask>
+        get() = rootProject.tasks.withType(RootPackageJsonTask::class.java).named(RootPackageJsonTask.NAME)
 
     val rootPackageDir: File
         get() = rootProject.buildDir.resolve("js")
@@ -112,7 +111,7 @@ open class NodeJsRootExtension(val rootProject: Project) : ConfigurationPhaseAwa
         val nodeJsEnv = requireConfigured()
         if (download) {
             if (!nodeJsEnv.nodeBinDir.isDirectory) {
-                nodeJsSetupTask.exec()
+                nodeJsSetupTaskProvider.get().exec()
             }
         }
     }

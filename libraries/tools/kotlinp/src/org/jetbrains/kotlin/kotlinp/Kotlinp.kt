@@ -17,12 +17,12 @@ class Kotlinp(private val settings: KotlinpSettings) {
             is KotlinClassMetadata.FileFacade -> FileFacadePrinter(settings).print(classFile)
             is KotlinClassMetadata.SyntheticClass -> {
                 if (classFile.isLambda) LambdaPrinter(settings).print(classFile)
-                else buildString { appendln("synthetic class") }
+                else buildString { appendLine("synthetic class") }
             }
             is KotlinClassMetadata.MultiFileClassFacade -> MultiFileClassFacadePrinter().print(classFile)
             is KotlinClassMetadata.MultiFileClassPart -> MultiFileClassPartPrinter(settings).print(classFile)
-            is KotlinClassMetadata.Unknown -> buildString { appendln("unknown file (k=${classFile.header.kind})") }
-            null -> buildString { appendln("unsupported file") }
+            is KotlinClassMetadata.Unknown -> buildString { appendLine("unknown file (k=${classFile.header.kind})") }
+            null -> buildString { appendLine("unsupported file") }
         }
 
     internal fun readClassFile(file: File): KotlinClassMetadata? {
@@ -36,7 +36,7 @@ class Kotlinp(private val settings: KotlinpSettings) {
 
     internal fun renderModuleFile(metadata: KotlinModuleMetadata?): String =
         if (metadata != null) ModuleFilePrinter(settings).print(metadata)
-        else buildString { appendln("unsupported file") }
+        else buildString { appendLine("unsupported file") }
 
     internal fun readModuleFile(file: File): KotlinModuleMetadata? =
         KotlinModuleMetadata.read(file.readBytes())

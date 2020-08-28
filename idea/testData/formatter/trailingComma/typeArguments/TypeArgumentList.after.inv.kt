@@ -35,19 +35,19 @@ fun foo() {
             foofoo
             >()
 
-    testtest<foofoo, >()
+    testtest<foofoo>()
 
     testtest<foofoo, testtest<testtest<foofoo>>>()
 
-    testtest<foofoo, fososos, testtest<testtest<foofoo>>, >()
+    testtest<foofoo, fososos, testtest<testtest<foofoo>>>()
 
     testtest<
             foofoo, fososos, testtest<testtest<foofoo>>,
             >()
 
-    testtest<foofoo, testtest<testtest<foofoo, >>, testsa>()
+    testtest<foofoo, testtest<testtest<foofoo>>, testsa>()
 
-    testtest<foofoo, *, testtest<testtest<foofoo, >>, testsa>()
+    testtest<foofoo, *, testtest<testtest<foofoo>>, testsa>()
 
     testtest<
             foofoo, foofoo, foofoo, foofoo,
@@ -80,7 +80,7 @@ fun foo() {
             foofoo
             >()
 
-    testtest<foofoo,/**/>()
+    testtest<foofoo/**/>()
 
     testtest<foofoo, foofoo, foofoo, foofoo/*
      */, /* */ bar
@@ -93,7 +93,7 @@ fun foo() {
             foofoo
             >()
 
-    testtest<foofoo,/**/>()
+    testtest<foofoo/**/>()
 
     testtest<
             foofoo,/*
@@ -110,15 +110,15 @@ fun foo() {
             testtest<testtest<foofoo>>,
             >()
 
-    testtest<foofoo, testtest<testtest<foofoo, >>, /**/testsa>()
+    testtest<foofoo, testtest<testtest<foofoo>>, /**/testsa>()
 
-    testtest<foofoo, testtest<testtest<foofoo, >>/* */, /**/testsa>()
+    testtest<foofoo, testtest<testtest<foofoo>>/* */, /**/testsa>()
 
-    testtest<foofoo, testtest<testtest<foofoo, >>/*
+    testtest<foofoo, testtest<testtest<foofoo>>/*
     */, testsa>()
 
-    testtest<foofoo, seee, testtest<testtest<foofoo, >>, /**/testsa>()
+    testtest<foofoo, seee, testtest<testtest<foofoo>>, /**/testsa>()
 
-    testtest<foofoo, seee, testtest<testtest<foofoo, >>, /*
+    testtest<foofoo, seee, testtest<testtest<foofoo>>, /*
     */testsa>()
 }

@@ -18,6 +18,15 @@ class MapJVMTest {
         assertEquals(listOf("a", "b", "c"), map.keys.toList())
     }
 
+    @Test fun createSortedMapWithComparator() {
+        val map = sortedMapOf(compareBy<String> { it.length }.thenBy { it }, Pair("c", 3), Pair("bc", 2), Pair("bd", 4), Pair("abc", 1))
+        assertEquals(1, map["abc"])
+        assertEquals(2, map["bc"])
+        assertEquals(3, map["c"])
+        assertEquals(4, map["bd"])
+        assertEquals(listOf("c", "bc", "bd", "abc"), map.keys.toList())
+    }
+
     @Test fun toSortedMap() {
         val map = mapOf(Pair("c", 3), Pair("b", 2), Pair("a", 1))
         val sorted = map.toSortedMap()

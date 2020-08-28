@@ -23,28 +23,28 @@ open class ManyImplicitReceiversBenchmark : AbstractSimpleFileBenchmark() {
 
     override fun buildText(): String {
         return buildString {
-            appendln("inline fun <T, R> with(receiver: T, block: T.() -> R): R = block()")
+            appendLine("inline fun <T, R> with(receiver: T, block: T.() -> R): R = block()")
 
             for (i in 1..size) {
-                appendln("interface A$i {")
-                appendln("    fun foo$i()")
-                appendln("}")
-                appendln()
+                appendLine("interface A$i {")
+                appendLine("    fun foo$i()")
+                appendLine("}")
+                appendLine()
             }
-            appendln()
+            appendLine()
             append("fun test(")
             append((1..size).joinToString(", ") { "a$it: A$it" })
-            appendln(" {")
+            appendLine(" {")
             for (i in 1..size) {
-                appendln("with(a$i) {")
+                appendLine("with(a$i) {")
             }
             for (i in 1..size) {
-                appendln("foo$i()")
+                appendLine("foo$i()")
             }
             for (i in 1..size) {
-                appendln("}")
+                appendLine("}")
             }
-            appendln("}")
+            appendLine("}")
         }
     }
 }

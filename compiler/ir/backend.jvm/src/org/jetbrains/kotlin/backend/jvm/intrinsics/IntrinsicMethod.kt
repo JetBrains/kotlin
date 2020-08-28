@@ -31,7 +31,7 @@ abstract class IntrinsicMethod {
 
 
     companion object {
-        fun calcReceiverType(call: IrMemberAccessExpression, context: JvmBackendContext): Type {
+        fun calcReceiverType(call: IrMemberAccessExpression<*>, context: JvmBackendContext): Type {
             return context.typeMapper.mapType(call.dispatchReceiver?.type ?: call.extensionReceiver!!.type)
         }
 

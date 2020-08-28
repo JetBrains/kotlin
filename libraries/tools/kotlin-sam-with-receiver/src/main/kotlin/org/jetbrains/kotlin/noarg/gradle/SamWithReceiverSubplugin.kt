@@ -16,61 +16,77 @@
 
 package org.jetbrains.kotlin.samWithReceiver.gradle
 
-import org.gradle.api.Plugin
+import org.gradle.api.GradleException
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.gradle.tooling.provider.model.ToolingModelBuilder
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.noarg.gradle.model.builder.SamWithReceiverModelBuilder
 import javax.inject.Inject
 
-class SamWithReceiverGradleSubplugin @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) : Plugin<Project> {
-    companion object {
-        fun isEnabled(project: Project) = project.plugins.findPlugin(SamWithReceiverGradleSubplugin::class.java) != null
-    }
+class SamWithReceiverGradleSubplugin @Inject internal constructor(private val registry: ToolingModelBuilderRegistry) :
+    KotlinCompilerPluginSupportPlugin,
+    @Suppress("DEPRECATION") // implementing to fix KT-39809
+    KotlinGradleSubplugin<AbstractCompile> {
 
-    override fun apply(project: Project) {
-        project.extensions.create("samWithReceiver", SamWithReceiverExtension::class.java)
+    override fun apply(target: Project) {
+        target.extensions.create("samWithReceiver", SamWithReceiverExtension::class.java)
         registry.register(SamWithReceiverModelBuilder())
     }
-}
 
-class SamWithReceiverKotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
     companion object {
         const val SAM_WITH_RECEIVER_ARTIFACT_NAME = "kotlin-sam-with-receiver"
 
-        private val ANNOTATION_ARG_NAME = "annotation"
-        private val PRESET_ARG_NAME = "preset"
+        private const val ANNOTATION_ARG_NAME = "annotation"
+        private const val PRESET_ARG_NAME = "preset"
     }
 
-    override fun isApplicable(project: Project, task: AbstractCompile) = SamWithReceiverGradleSubplugin.isEnabled(project)
+    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = true
 
-    override fun apply(
-        project: Project,
-        kotlinCompile: AbstractCompile,
-        javaCompile: AbstractCompile?,
-        variantData: Any?,
-        androidProjectHandler: Any?,
-        kotlinCompilation: KotlinCompilation<*>?
-    ): List<SubpluginOption> {
-        if (!SamWithReceiverGradleSubplugin.isEnabled(project)) return emptyList()
+    override fun applyToCompilation(
+        kotlinCompilation: KotlinCompilation<*>
+    ): Provider<List<SubpluginOption>> {
+        val project = kotlinCompilation.target.project
 
-        val samWithReceiverExtension = project.extensions.findByType(SamWithReceiverExtension::class.java) ?: return emptyList()
+        val samWithReceiverExtension =
+            project.extensions.findByType(SamWithReceiverExtension::class.java) ?: return project.provider { emptyList<SubpluginOption>() }
 
-        val options = mutableListOf<SubpluginOption>()
+        return project.provider<List<SubpluginOption>> {
+            val options = mutableListOf<SubpluginOption>()
 
-        for (anno in samWithReceiverExtension.myAnnotations) {
-            options += SubpluginOption(ANNOTATION_ARG_NAME, anno)
+            for (anno in samWithReceiverExtension.myAnnotations) {
+                options += SubpluginOption(ANNOTATION_ARG_NAME, anno)
+            }
+
+            for (preset in samWithReceiverExtension.myPresets) {
+                options += SubpluginOption(PRESET_ARG_NAME, preset)
+            }
+
+            options
         }
-
-        for (preset in samWithReceiverExtension.myPresets) {
-            options += SubpluginOption(PRESET_ARG_NAME, preset)
-        }
-
-        return options
     }
 
     override fun getCompilerPluginId() = "org.jetbrains.kotlin.samWithReceiver"
     override fun getPluginArtifact(): SubpluginArtifact =
         JetBrainsSubpluginArtifact(artifactId = SAM_WITH_RECEIVER_ARTIFACT_NAME)
+
+    //region Stub implementation for legacy API, KT-39809
+    internal constructor(): this(object : ToolingModelBuilderRegistry {
+        override fun register(p0: ToolingModelBuilder) = Unit
+        override fun getBuilder(p0: String): ToolingModelBuilder? = null
+    })
+
+    override fun isApplicable(project: Project, task: AbstractCompile): Boolean = true
+
+    override fun apply(
+        project: Project, kotlinCompile: AbstractCompile, javaCompile: AbstractCompile?, variantData: Any?, androidProjectHandler: Any?,
+        kotlinCompilation: KotlinCompilation<KotlinCommonOptions>?
+    ): List<SubpluginOption> = throw GradleException(
+        "This version of the kotlin-sam-with-receiver Gradle plugin is built for a newer Kotlin version. " +
+                "Please use an older version of kotlin-sam-with-receiver or upgrade the Kotlin Gradle plugin version to make them match."
+    )
+    //endregion
 }

@@ -34,9 +34,12 @@ import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
+import org.jetbrains.kotlin.test.runTest
 import org.junit.Assert
 import java.io.File
 
+@WithMutedInDatabaseRunTest
 abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
 
     abstract override fun getTestDataPath(): String
@@ -71,6 +74,10 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
 
     public override fun createModule(path: String, moduleType: ModuleType<*>): Module {
         return super.createModule(path, moduleType)
+    }
+
+    override fun runTest() {
+        runTest { super.runTest() }
     }
 
     fun addRoot(module: Module, sourceDirInTestData: File, isTestRoot: Boolean, transformContainedFiles: ((File) -> Unit)? = null) {
@@ -155,21 +162,25 @@ fun Module.createFacet(
 fun Module.createMultiplatformFacetM1(
     platformKind: TargetPlatform? = null,
     useProjectSettings: Boolean = true,
-    implementedModuleNames: List<String>
+    implementedModuleNames: List<String>,
+    pureKotlinSourceFolders: List<String>
 ) {
     createFacetWithAdditionalSetup(platformKind, useProjectSettings) {
         this.implementedModuleNames = implementedModuleNames
+        this.pureKotlinSourceFolders = pureKotlinSourceFolders
     }
 }
 
 fun Module.createMultiplatformFacetM3(
     platformKind: TargetPlatform? = null,
     useProjectSettings: Boolean = true,
-    dependsOnModuleNames: List<String>
+    dependsOnModuleNames: List<String>,
+    pureKotlinSourceFolders: List<String>
 ) {
     createFacetWithAdditionalSetup(platformKind, useProjectSettings) {
         this.dependsOnModuleNames = dependsOnModuleNames
         this.isHmppEnabled = true
+        this.pureKotlinSourceFolders = pureKotlinSourceFolders
     }
 }
 

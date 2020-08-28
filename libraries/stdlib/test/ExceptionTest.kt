@@ -26,8 +26,8 @@ class ExceptionTest {
     @Test fun concurrentModificationException() = testCreateException(::ConcurrentModificationException, ::ConcurrentModificationException)
     @Test fun arithmeticException() = testCreateException(::ArithmeticException, ::ArithmeticException)
 
-    @Test fun noWhenBranchMatchedException() = testCreateException(::NoWhenBranchMatchedException, ::NoWhenBranchMatchedException, ::NoWhenBranchMatchedException, ::NoWhenBranchMatchedException)
-    @Test fun uninitializedPropertyAccessException() = testCreateException(::UninitializedPropertyAccessException, ::UninitializedPropertyAccessException, ::UninitializedPropertyAccessException, ::UninitializedPropertyAccessException)
+    @Test fun noWhenBranchMatchedException() = @Suppress("DEPRECATION_ERROR") testCreateException(::NoWhenBranchMatchedException, ::NoWhenBranchMatchedException, ::NoWhenBranchMatchedException, ::NoWhenBranchMatchedException)
+    @Test fun uninitializedPropertyAccessException() = @Suppress("DEPRECATION_ERROR") testCreateException(::UninitializedPropertyAccessException, ::UninitializedPropertyAccessException, ::UninitializedPropertyAccessException, ::UninitializedPropertyAccessException)
 
     @Test fun assertionError() = testCreateException(::AssertionError, ::AssertionError, ::AssertionError)
 

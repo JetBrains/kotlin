@@ -11,7 +11,9 @@
  * DESCRIPTION: Abstract classes may contain abstract members, which should be implemented in an anonymous class that inherits from that abstract type
  */
 
+// FILE: TestCase.kt
 // TESTCASE NUMBER: 1
+package testPackCase1
 private abstract class Base {
 
     abstract val a: Any
@@ -23,7 +25,6 @@ private abstract class Base {
     abstract fun foo()
     internal abstract fun boo(): Any
 }
-
 
 fun case1() {
     val impl = object : Base() {
@@ -47,11 +48,26 @@ fun case1() {
 }
 
 
-
+// FILE: TestCase.kt
 /*
-* TESTCASE NUMBER: 2
-* NOTE: property is not implemented
-*/
+ * TESTCASE NUMBER: 2
+ * NOTE: property is not implemented
+ */
+package testPackCase2
+private abstract class Base {
+
+    abstract val a: Any
+    abstract var b: Any
+    internal abstract val c: Any
+    internal abstract var d: Any
+
+
+    abstract fun foo()
+    internal abstract fun boo(): Any
+}
+
+
+
 fun case2() {
     val impl = <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>object<!> : Base() {
         override var b: Any
@@ -74,10 +90,20 @@ fun case2() {
 }
 
 
-/*
-* TESTCASE NUMBER: 3
-* NOTE: function is not implemented
-*/
+// FILE: TestCase.kt
+// TESTCASE NUMBER: 3
+package testPackCase3
+private abstract class Base {
+
+    abstract val a: Any
+    abstract var b: Any
+    internal abstract val c: Any
+    internal abstract var d: Any
+
+
+    abstract fun foo()
+    internal abstract fun boo(): Any
+}
 
 fun case3() {
     val impl = <!ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED!>object<!> : Base() {

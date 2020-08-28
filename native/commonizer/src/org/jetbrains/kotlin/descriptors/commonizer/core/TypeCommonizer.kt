@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.ir.*
+import org.jetbrains.kotlin.descriptors.commonizer.cir.*
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderStandardKotlinPackages
 import org.jetbrains.kotlin.types.AbstractStrictEqualityTypeChecker
 
@@ -24,6 +26,7 @@ class TypeCommonizer(private val cache: CirClassifiersCache) : AbstractStandardC
 /**
  * See also [AbstractStrictEqualityTypeChecker].
  */
+@Suppress("IntroduceWhenSubject")
 internal fun areTypesEqual(cache: CirClassifiersCache, a: CirType, b: CirType): Boolean = when {
     a is CirSimpleType -> (b is CirSimpleType) && areSimpleTypesEqual(cache, a, b)
     a is CirFlexibleType -> (b is CirFlexibleType)
@@ -33,34 +36,39 @@ internal fun areTypesEqual(cache: CirClassifiersCache, a: CirType, b: CirType): 
 }
 
 private fun areSimpleTypesEqual(cache: CirClassifiersCache, a: CirSimpleType, b: CirSimpleType): Boolean {
-    if (a !== b
-        && (a.arguments.size != b.arguments.size
-                || a.isMarkedNullable != b.isMarkedNullable
-                || a.isDefinitelyNotNullType != b.isDefinitelyNotNullType
-                || a.fqName != b.fqName)
-    ) {
-        return false
+    val aId = a.classifierId
+    val bId = b.classifierId
+
+    if (a !== b) {
+        if (a.arguments.size != b.arguments.size || a.isMarkedNullable != b.isMarkedNullable) {
+            return false
+        }
+
+        if (aId is CirClassifierId.ClassOrTypeAlias) {
+            if (bId !is CirClassifierId.ClassOrTypeAlias || aId.classId != bId.classId) return false
+        }
+
+        if (aId is CirClassifierId.TypeParameter) {
+            if (bId !is CirClassifierId.TypeParameter || aId.index != bId.index) return false
+        }
     }
 
-    fun isClassOrTypeAliasUnderStandardKotlinPackages() =
-        // N.B. only for descriptors that represent classes or type aliases, but not type parameters!
-        a.isClassOrTypeAlias && b.isClassOrTypeAlias
-                && a.fqName.isUnderStandardKotlinPackages
-                // If classes are from the standard Kotlin packages, compare them only by type constructors.
-                // Effectively, this includes comparison of 1) FQ names of underlying descriptors and 2) number of type constructor parameters.
-                // See org.jetbrains.kotlin.types.AbstractClassTypeConstructor.equals() for details.
-                && (a === b || a.expandedTypeConstructorId == b.expandedTypeConstructorId)
+    // N.B. only for descriptors that represent classes or type aliases, but not type parameters!
+    fun isClassOrTypeAliasUnderStandardKotlinPackages(): Boolean {
+        return (aId as? CirClassifierId.ClassOrTypeAlias)?.classId?.packageFqName?.isUnderStandardKotlinPackages == true
+    }
 
-    fun descriptorsCanBeCommonizedThemselves() =
-        a.kind == b.kind && when (a.kind) {
-            CirSimpleTypeKind.CLASS -> cache.classes[a.fqName].canBeCommonized()
-            CirSimpleTypeKind.TYPE_ALIAS -> cache.typeAliases[a.fqName].canBeCommonized()
-            CirSimpleTypeKind.TYPE_PARAMETER -> {
+    fun descriptorsCanBeCommonizedThemselves(): Boolean {
+        return when (aId) {
+            is CirClassifierId.Class -> bId is CirClassifierId.Class && cache.classes[aId.classId].canBeCommonized()
+            is CirClassifierId.TypeAlias -> bId is CirClassifierId.TypeAlias && cache.typeAliases[aId.classId].canBeCommonized()
+            is CirClassifierId.TypeParameter -> {
                 // Real type parameter commonization is performed in TypeParameterCommonizer.
                 // Here it is enough to check that FQ names are equal (which is already done above).
                 true
             }
         }
+    }
 
     val descriptorsCanBeCommonized =
         /* either class or type alias from Kotlin stdlib */ isClassOrTypeAliasUnderStandardKotlinPackages()
@@ -97,5 +105,5 @@ private inline fun CirNode<*, *>?.canBeCommonized() =
         true
     } else {
         // If entry is present, then contents (common declaration) should not be null.
-        common() != null
+        commonDeclaration() != null
     }

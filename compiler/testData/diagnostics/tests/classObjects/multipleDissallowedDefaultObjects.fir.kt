@@ -2,16 +2,16 @@ class A {
     inner class I {
         companion object A
 
-        companion object B
+        companion <!MANY_COMPANION_OBJECTS!>object B<!>
 
-        companion object C
+        companion <!MANY_COMPANION_OBJECTS!>object C<!>
     }
 }
 
 object O {
     companion object A
 
-    companion object B
+    companion <!MANY_COMPANION_OBJECTS!>object B<!>
 
-    companion object C
+    companion <!MANY_COMPANION_OBJECTS!>object C<!>
 }

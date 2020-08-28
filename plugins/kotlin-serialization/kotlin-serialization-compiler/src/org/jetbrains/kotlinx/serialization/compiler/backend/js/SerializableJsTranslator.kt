@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.declaration.DeclarationBodyVisitor
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
@@ -160,7 +159,6 @@ class SerializableJsTranslator(
         fun translate(
             declaration: KtPureClassOrObject,
             serializableClass: ClassDescriptor,
-            translator: DeclarationBodyVisitor,
             context: TranslationContext
         ) {
             if (serializableClass.isInternalSerializable)

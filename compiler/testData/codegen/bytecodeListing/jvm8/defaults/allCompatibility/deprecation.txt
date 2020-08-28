@@ -1,0 +1,58 @@
+@kotlin.Metadata
+public final class Base$DefaultImpls {
+    // source: 'deprecation.kt'
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method getProp(@org.jetbrains.annotations.NotNull p0: Base): java.lang.String
+    public deprecated static @java.lang.Deprecated method test(@org.jetbrains.annotations.NotNull p0: Base): void
+    public synthetic static method withDefault$default(p0: Base, p1: java.lang.String, p2: int, p3: java.lang.Object): void
+    public deprecated static @java.lang.Deprecated method withDefault(@org.jetbrains.annotations.NotNull p0: Base, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
+    public final inner class Base$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface Base {
+    // source: 'deprecation.kt'
+    public synthetic static method access$getProp$jd(p0: Base): java.lang.String
+    public synthetic static method access$test$jd(p0: Base): void
+    public synthetic static method access$withDefault$jd(p0: Base, p1: java.lang.String): void
+    public @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
+    public method test(): void
+    public synthetic static method withDefault$default(p0: Base, p1: java.lang.String, p2: int, p3: java.lang.Object): void
+    public method withDefault(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public final inner class Base$DefaultImpls
+}
+
+@kotlin.Metadata
+public final class Deprecated$DefaultImpls {
+    // source: 'deprecation.kt'
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method getProp(@org.jetbrains.annotations.NotNull p0: Deprecated): java.lang.String
+    public deprecated static @java.lang.Deprecated method test(@org.jetbrains.annotations.NotNull p0: Deprecated): void
+    public final inner class Deprecated$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface Deprecated {
+    // source: 'deprecation.kt'
+    public synthetic static method access$getProp$jd(p0: Deprecated): java.lang.String
+    public synthetic static method access$test$jd(p0: Deprecated): void
+    public @java.lang.Deprecated @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
+    public @java.lang.Deprecated method test(): void
+    public final inner class Deprecated$DefaultImpls
+}
+
+@kotlin.Metadata
+public final class Derived$DefaultImpls {
+    // source: 'deprecation.kt'
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method getProp(@org.jetbrains.annotations.NotNull p0: Derived): java.lang.String
+    public deprecated static @java.lang.Deprecated method test(@org.jetbrains.annotations.NotNull p0: Derived): void
+    public deprecated static @java.lang.Deprecated method withDefault(@org.jetbrains.annotations.NotNull p0: Derived, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
+    public final inner class Derived$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface Derived {
+    // source: 'deprecation.kt'
+    public synthetic static method access$getProp$jd(p0: Derived): java.lang.String
+    public synthetic static method access$test$jd(p0: Derived): void
+    public synthetic static method access$withDefault$jd(p0: Derived, p1: java.lang.String): void
+    public final inner class Derived$DefaultImpls
+}

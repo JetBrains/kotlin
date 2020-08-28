@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -250,6 +250,41 @@ object Aggregates : TemplateGroupBase() {
         }
     }
 
+    fun f_sumOf() = listOf("Int", "Long", "UInt", "ULong", "Double", "java.math.BigInteger", "java.math.BigDecimal").map { selectorType ->
+        fn("sumOf(selector: (T) -> $selectorType)") {
+            includeDefault()
+            include(CharSequences, ArraysOfUnsigned)
+            if (selectorType.startsWith("java")) platforms(Platform.JVM)
+        } builder {
+            inlineOnly()
+            since("1.4")
+            val typeShortName = when {
+                selectorType.startsWith("java") -> selectorType.substringAfterLast('.')
+                else -> selectorType
+            }
+            annotation("@OptIn(kotlin.experimental.ExperimentalTypeInference::class)")
+            annotation("@OverloadResolutionByLambdaReturnType")
+            specialFor(ArraysOfUnsigned) {
+                annotation("""@Suppress("INAPPLICABLE_JVM_NAME")""")
+            }
+            annotation("""@kotlin.jvm.JvmName("sumOf$typeShortName")""") // should not be needed if inline return type is mangled
+            if (selectorType.startsWith("U"))
+                annotation("@ExperimentalUnsignedTypes")
+
+            doc { "Returns the sum of all values produced by [selector] function applied to each ${f.element} in the ${f.collection}." }
+            returns(selectorType)
+            body {
+                """
+                var sum: $selectorType = 0.to$typeShortName()
+                for (element in this) {
+                    sum += selector(element)
+                }
+                return sum
+                """
+            }
+        }
+    }
+
     val f_sumByDouble = fn("sumByDouble(selector: (T) -> Double)") {
         includeDefault()
         include(CharSequences, ArraysOfUnsigned)
@@ -271,11 +306,11 @@ object Aggregates : TemplateGroupBase() {
     }
 
 
-    val f_minMax = run {
+    val f_minMax = sequence {
         val genericSpecializations = PrimitiveType.floatingPointPrimitives + setOf(null)
 
-        listOf("min", "max").map { op ->
-            fn("$op()") {
+        fun def(op: String, nullable: Boolean, orNull: String = "OrNull".ifOrEmpty(nullable)) =
+            fn("$op$orNull()") {
                 include(Iterables, genericSpecializations)
                 include(Sequences, genericSpecializations)
                 include(ArraysOfObjects, genericSpecializations)
@@ -283,234 +318,326 @@ object Aggregates : TemplateGroupBase() {
                 include(ArraysOfUnsigned)
                 include(CharSequences)
             } builder {
-                val isFloat = primitive?.isFloatingPoint() == true
-                val isGeneric = f in listOf(Iterables, Sequences, ArraysOfObjects)
-
                 typeParam("T : Comparable<T>")
-                if (primitive != null) {
-                    if (isFloat && isGeneric)
+                returns("T?")
+
+                val isFloat = primitive?.isFloatingPoint() == true
+
+                if (!nullable) {
+                    deprecate(Deprecation("Use ${op}OrNull instead.", "${op}OrNull()", DeprecationLevel.WARNING, warningSince = "1.4"))
+
+                    val isGeneric = f in listOf(Iterables, Sequences, ArraysOfObjects)
+                    if (isFloat && isGeneric) {
                         since("1.1")
+                    }
+
+                    body { "return ${op}OrNull()" }
+
+                    return@builder
                 }
+
+                since("1.4")
+
                 doc {
                     "Returns the ${if (op == "max") "largest" else "smallest"} ${f.element} or `null` if there are no ${f.element.pluralize()}." +
                     if (isFloat) "\n\n" + "If any of ${f.element.pluralize()} is `NaN` returns `NaN`." else ""
                 }
-                returns("T?")
 
+                val acc = op
+                val cmpBlock = if (isFloat)
+                    """$acc = ${op}Of($acc, e)"""
+                else
+                    """if ($acc ${if (op == "max") "<" else ">"} e) $acc = e"""
                 body {
                     """
                     val iterator = iterator()
                     if (!iterator.hasNext()) return null
-                    var $op = iterator.next()
-                    ${if (isFloat) "if ($op.isNaN()) return $op" else "\\"}
-
+                    var $acc = iterator.next()
                     while (iterator.hasNext()) {
                         val e = iterator.next()
-                        ${if (isFloat) "if (e.isNaN()) return e" else "\\"}
-                        if ($op ${if (op == "max") "<" else ">"} e) $op = e
+                        $cmpBlock
                     }
-                    return $op
+                    return $acc
                     """
                 }
                 body(ArraysOfObjects, ArraysOfPrimitives, CharSequences, ArraysOfUnsigned) {
                     """
                     if (isEmpty()) return null
-                    var $op = this[0]
-                    ${if (isFloat) "if ($op.isNaN()) return $op" else "\\"}
-
+                    var $acc = this[0]
                     for (i in 1..lastIndex) {
                         val e = this[i]
-                        ${if (isFloat) "if (e.isNaN()) return e" else "\\"}
-                        if ($op ${if (op == "max") "<" else ">"} e) $op = e
+                        $cmpBlock
                     }
-                    return $op
+                    return $acc
                     """
                 }
+            }
+
+        for (op in listOf("min", "max"))
+            for (nullable in listOf(false, true))
+                yield(def(op, nullable))
+    }
+
+    val f_minMaxBy = sequence {
+        fun def(op: String, nullable: Boolean, orNull: String = "OrNull".ifOrEmpty(nullable)) =
+            fn("$op$orNull(selector: (T) -> R)") {
+                includeDefault()
+                include(Maps, CharSequences, ArraysOfUnsigned)
+            } builder {
+                inline()
+                specialFor(ArraysOfUnsigned) { inlineOnly() }
+                specialFor(Maps) { if (op == "maxBy" || nullable) inlineOnly() }
+                typeParam("R : Comparable<R>")
+                returns("T?")
+
+                if (!nullable) {
+                    deprecate(Deprecation("Use ${op}OrNull instead.", "${op}OrNull(selector)", DeprecationLevel.WARNING, warningSince = "1.4"))
+                    body { "return ${op}OrNull(selector)" }
+                    return@builder
+                }
+
+                since("1.4")
+
+                doc { "Returns the first ${f.element} yielding the ${if (op == "maxBy") "largest" else "smallest"} value of the given function or `null` if there are no ${f.element.pluralize()}." }
+                sample("samples.collections.Collections.Aggregates.$op$orNull")
+
+                val (elem, value, cmp) = if (op == "minBy") Triple("minElem", "minValue", ">") else Triple("maxElem", "maxValue", "<")
                 body {
-                    body!!.replace(Regex("""^\s+\\\n""", RegexOption.MULTILINE), "") // remove empty lines ending with \
+                    """
+                    val iterator = iterator()
+                    if (!iterator.hasNext()) return null
+        
+                    var $elem = iterator.next()
+                    if (!iterator.hasNext()) return $elem
+                    var $value = selector($elem)
+                    do {
+                        val e = iterator.next()
+                        val v = selector(e)
+                        if ($value $cmp v) {
+                            $elem = e
+                            $value = v
+                        }
+                    } while (iterator.hasNext())
+                    return $elem
+                    """
                 }
+                body(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+                    """
+                    if (isEmpty()) return null
+        
+                    var $elem = this[0]
+                    val lastIndex = this.lastIndex
+                    if (lastIndex == 0) return $elem
+                    var $value = selector($elem)
+                    for (i in 1..lastIndex) {
+                        val e = this[i]
+                        val v = selector(e)
+                        if ($value $cmp v) {
+                            $elem = e
+                            $value = v
+                        }
+                    }
+                    return $elem
+                    """
+                }
+                body(Maps) { "return entries.$op$orNull(selector)" }
             }
-        }
+
+        for (op in listOf("minBy", "maxBy"))
+            for (nullable in listOf(false, true))
+                yield(def(op, nullable))
     }
 
-    val f_minBy = fn("minBy(selector: (T) -> R)") {
-        includeDefault()
-        include(Maps, CharSequences, ArraysOfUnsigned)
-    } builder {
-        inline()
-        specialFor(ArraysOfUnsigned) { inlineOnly() }
+    val f_minMaxWith = sequence {
+        fun def(op: String, nullable: Boolean, orNull: String = "OrNull".ifOrEmpty(nullable)) =
+            fn("$op$orNull(comparator: Comparator<in T>)") {
+                includeDefault()
+                include(Maps, CharSequences, ArraysOfUnsigned)
+            } builder {
+                specialFor(Maps) { if (op == "maxWith" || nullable) inlineOnly() }
+                returns("T?")
 
-        doc { "Returns the first ${f.element} yielding the smallest value of the given function or `null` if there are no ${f.element.pluralize()}." }
-        sample("samples.collections.Collections.Aggregates.minBy")
-        typeParam("R : Comparable<R>")
-        returns("T?")
-        body {
-            """
-            val iterator = iterator()
-            if (!iterator.hasNext()) return null
-
-            var minElem = iterator.next()
-            if (!iterator.hasNext()) return minElem
-            var minValue = selector(minElem)
-            do {
-                val e = iterator.next()
-                val v = selector(e)
-                if (minValue > v) {
-                    minElem = e
-                    minValue = v
+                if (!nullable) {
+                    deprecate(Deprecation("Use ${op}OrNull instead.", "${op}OrNull(comparator)", DeprecationLevel.WARNING, warningSince = "1.4"))
+                    body { "return ${op}OrNull(comparator)" }
+                    return@builder
                 }
-            } while (iterator.hasNext())
-            return minElem
-            """
-        }
-        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
-            """
-            if (isEmpty()) return null
 
-            var minElem = this[0]
-            val lastIndex = this.lastIndex
-            if (lastIndex == 0) return minElem
-            var minValue = selector(minElem)
-            for (i in 1..lastIndex) {
-                val e = this[i]
-                val v = selector(e)
-                if (minValue > v) {
-                    minElem = e
-                    minValue = v
+                since("1.4")
+
+                doc { "Returns the first ${f.element} having the ${if (op == "maxWith") "largest" else "smallest"} value according to the provided [comparator] or `null` if there are no ${f.element.pluralize()}." }
+
+                val (acc, cmp) = if (op == "minWith") Pair("min", ">") else Pair("max", "<")
+                body {
+                    """
+                    val iterator = iterator()
+                    if (!iterator.hasNext()) return null
+        
+                    var $acc = iterator.next()
+                    while (iterator.hasNext()) {
+                        val e = iterator.next()
+                        if (comparator.compare($acc, e) $cmp 0) $acc = e
+                    }
+                    return $acc
+                    """
                 }
+                body(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+                    """
+                    if (isEmpty()) return null
+                    var $acc = this[0]
+                    for (i in 1..lastIndex) {
+                        val e = this[i]
+                        if (comparator.compare($acc, e) $cmp 0) $acc = e
+                    }
+                    return $acc
+                    """
+                }
+                body(Maps) { "return entries.$op$orNull(comparator)" }
             }
-            return minElem
-            """
-        }
-        body(Maps) {
-            "return entries.minBy(selector)"
-        }
+
+        for (op in listOf("minWith", "maxWith"))
+            for (nullable in listOf(false, true))
+                yield(def(op, nullable))
     }
 
-    val f_minWith = fn("minWith(comparator: Comparator<in T>)") {
-        includeDefault()
-        include(Maps, CharSequences, ArraysOfUnsigned)
-    } builder {
-        doc { "Returns the first ${f.element} having the smallest value according to the provided [comparator] or `null` if there are no ${f.element.pluralize()}." }
-        returns("T?")
-        body {
-            """
-            val iterator = iterator()
-            if (!iterator.hasNext()) return null
+    fun f_minMaxOf() = sequence {
+        fun def(op: String, selectorType: String, nullable: Boolean, orNull: String = "OrNull".ifOrEmpty(nullable)) =
+            fn("${op}Of$orNull(selector: (T) -> $selectorType)") {
+                includeDefault()
+                include(Maps, CharSequences, ArraysOfUnsigned)
+            } builder {
+                inlineOnly()
+                since("1.4")
+                annotation("@OptIn(kotlin.experimental.ExperimentalTypeInference::class)")
+                annotation("@OverloadResolutionByLambdaReturnType")
 
-            var min = iterator.next()
-            while (iterator.hasNext()) {
-                val e = iterator.next()
-                if (comparator.compare(min, e) > 0) min = e
-            }
-            return min
-            """
-        }
-        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
-            """
-            if (isEmpty()) return null
-            var min = this[0]
-            for (i in 1..lastIndex) {
-                val e = this[i]
-                if (comparator.compare(min, e) > 0) min = e
-            }
-            return min
-            """
-        }
-        body(Maps) { "return entries.minWith(comparator)" }
-    }
+                val isFloat = selectorType != "R"
 
-    val f_maxBy = fn("maxBy(selector: (T) -> R)") {
-        includeDefault()
-        include(Maps, CharSequences, ArraysOfUnsigned)
-    } builder {
-        inline()
-        specialFor(ArraysOfUnsigned) { inlineOnly() }
-
-        doc { "Returns the first ${f.element} yielding the largest value of the given function or `null` if there are no ${f.element.pluralize()}." }
-        sample("samples.collections.Collections.Aggregates.maxBy")
-        typeParam("R : Comparable<R>")
-        returns("T?")
-        body {
-            """
-            val iterator = iterator()
-            if (!iterator.hasNext()) return null
-
-            var maxElem = iterator.next()
-            if (!iterator.hasNext()) return maxElem
-            var maxValue = selector(maxElem)
-            do {
-                val e = iterator.next()
-                val v = selector(e)
-                if (maxValue < v) {
-                    maxElem = e
-                    maxValue = v
+                doc {
+                    """
+                    Returns the ${if (op == "max") "largest" else "smallest"} value among all values produced by [selector] function 
+                    applied to each ${f.element} in the ${f.collection}${" or `null` if there are no ${f.element.pluralize()}".ifOrEmpty(nullable)}.
+                    """ +
+                    """
+                    If any of values produced by [selector] function is `NaN`, the returned result is `NaN`.
+                    """.ifOrEmpty(isFloat) +
+                    """
+                    @throws NoSuchElementException if the ${f.collection} is empty.
+                    """.ifOrEmpty(!nullable)
                 }
-            } while (iterator.hasNext())
-            return maxElem
-            """
-        }
-        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
-            """
-            if (isEmpty()) return null
 
-            var maxElem = this[0]
-            val lastIndex = this.lastIndex
-            if (lastIndex == 0) return maxElem
-            var maxValue = selector(maxElem)
-            for (i in 1..lastIndex) {
-                val e = this[i]
-                val v = selector(e)
-                if (maxValue < v) {
-                    maxElem = e
-                    maxValue = v
+                if (!isFloat) typeParam("R : Comparable<R>")
+                returns(selectorType + "?".ifOrEmpty(nullable))
+                val doOnEmpty = if (nullable) "return null" else "throw NoSuchElementException()"
+                val acc = op + "Value"
+                val cmpBlock = if (isFloat)
+                    """$acc = ${op}Of($acc, v)"""
+                else
+                    """if ($acc ${if (op == "max") "<" else ">"} v) {
+                            $acc = v
+                        }"""
+                body {
+                    """
+                    val iterator = iterator()
+                    if (!iterator.hasNext()) $doOnEmpty
+                    var $acc = selector(iterator.next())
+                    while (iterator.hasNext()) {
+                        val v = selector(iterator.next())
+                        $cmpBlock
+                    }
+                    return $acc
+                    """
+                }
+                body(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+                    """
+                    if (isEmpty()) $doOnEmpty
+        
+                    var $acc = selector(this[0])
+                    for (i in 1..lastIndex) {
+                        val v = selector(this[i])
+                        $cmpBlock
+                    }
+                    return $acc
+                    """
+                }
+                specialFor(Maps) {
+                    inlineOnly()
+                    body { "return entries.${op}Of$orNull(selector)" }
                 }
             }
-            return maxElem
-            """
-        }
-        specialFor(Maps) {
-            inlineOnly()
-            body { "return entries.maxBy(selector)" }
-        }
+
+
+        for (op in listOf("min", "max"))
+            for (selectorType in listOf("R", "Float", "Double"))
+                for (nullable in listOf(false, true))
+                    yield(def(op, selectorType, nullable))
     }
 
-    val f_maxWith = fn("maxWith(comparator: Comparator<in T>)") {
-        includeDefault()
-        include(Maps, CharSequences, ArraysOfUnsigned)
-    } builder {
-        doc { "Returns the first ${f.element} having the largest value according to the provided [comparator] or `null` if there are no ${f.element.pluralize()}." }
-        returns("T?")
-        body {
-            """
-        val iterator = iterator()
-        if (!iterator.hasNext()) return null
+    fun f_minMaxOfWith() = sequence {
+        val selectorType = "R"
+        fun def(op: String, nullable: Boolean, orNull: String = "OrNull".ifOrEmpty(nullable)) =
+            fn("${op}OfWith$orNull(comparator: Comparator<in R>, selector: (T) -> $selectorType)") {
+                includeDefault()
+                include(Maps, CharSequences, ArraysOfUnsigned)
+            } builder {
+                inlineOnly()
+                since("1.4")
+                annotation("@OptIn(kotlin.experimental.ExperimentalTypeInference::class)")
+                annotation("@OverloadResolutionByLambdaReturnType")
 
-        var max = iterator.next()
-        while (iterator.hasNext()) {
-            val e = iterator.next()
-            if (comparator.compare(max, e) < 0) max = e
-        }
-        return max
-        """
-        }
-        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
-            """
-            if (isEmpty()) return null
+                doc {
+                    """
+                    Returns the ${if (op == "max") "largest" else "smallest"} value according to the provided [comparator] 
+                    among all values produced by [selector] function applied to each ${f.element} in the ${f.collection}${" or `null` if there are no ${f.element.pluralize()}".ifOrEmpty(nullable)}.
+                    """ +
+                    """
+                    @throws NoSuchElementException if the ${f.collection} is empty.
+                    """.ifOrEmpty(!nullable)
+                }
 
-            var max = this[0]
-            for (i in 1..lastIndex) {
-                val e = this[i]
-                if (comparator.compare(max, e) < 0) max = e
+                typeParam(selectorType)
+                returns(selectorType + "?".ifOrEmpty(nullable))
+                val doOnEmpty = if (nullable) "return null" else "throw NoSuchElementException()"
+                val acc = op + "Value"
+                val cmp = if (op == "max") "<" else ">"
+                body {
+                    """
+                    val iterator = iterator()
+                    if (!iterator.hasNext()) $doOnEmpty
+                    var $acc = selector(iterator.next())
+                    while (iterator.hasNext()) {
+                        val v = selector(iterator.next())
+                        if (comparator.compare($acc, v) $cmp 0) {
+                            $acc = v
+                        }
+                    }
+                    return $acc
+                    """
+                }
+                body(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+                    """
+                    if (isEmpty()) $doOnEmpty
+        
+                    var $acc = selector(this[0])
+                    for (i in 1..lastIndex) {
+                        val v = selector(this[i])
+                        if (comparator.compare($acc, v) $cmp 0) {
+                            $acc = v
+                        }
+                    }
+                    return $acc
+                    """
+                }
+                specialFor(Maps) {
+                    body { "return entries.${op}OfWith$orNull(comparator, selector)" }
+                }
             }
-            return max
-            """
-        }
-        specialFor(Maps) {
-            inlineOnly()
-            body { "return entries.maxWith(comparator)" }
-        }
+
+        for (op in listOf("min", "max"))
+            for (nullable in listOf(false, true))
+                yield(def(op, nullable))
     }
+
 
     val f_foldIndexed = fn("foldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R)") {
         includeDefault()
@@ -1014,8 +1141,8 @@ object Aggregates : TemplateGroupBase() {
     val f_reduceOrNull = fn("reduceOrNull(operation: (acc: T, T) -> T)") {
         include(ArraysOfPrimitives, ArraysOfUnsigned, CharSequences)
     } builder {
-        since("1.3")
-        annotation("@ExperimentalStdlibApi")
+        since("1.4")
+        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
@@ -1039,8 +1166,8 @@ object Aggregates : TemplateGroupBase() {
     val f_reduceOrNullSuper = fn("reduceOrNull(operation: (acc: S, T) -> S)") {
         include(ArraysOfObjects, Iterables, Sequences)
     } builder {
-        since("1.3")
-        annotation("@ExperimentalStdlibApi")
+        since("1.4")
+        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
         inline()
 
         doc { reduceDoc("reduceOrNull") }
@@ -1139,8 +1266,8 @@ object Aggregates : TemplateGroupBase() {
     val f_reduceRightOrNull = fn("reduceRightOrNull(operation: (T, acc: T) -> T)") {
         include(CharSequences, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
-        since("1.3")
-        annotation("@ExperimentalStdlibApi")
+        since("1.4")
+        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
@@ -1165,8 +1292,8 @@ object Aggregates : TemplateGroupBase() {
     val f_reduceRightOrNullSuper = fn("reduceRightOrNull(operation: (T, acc: S) -> S)") {
         include(Lists, ArraysOfObjects)
     } builder {
-        since("1.3")
-        annotation("@ExperimentalStdlibApi")
+        since("1.4")
+        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
         inline()
         doc { reduceDoc("reduceRightOrNull") }
         sample("samples.collections.Collections.Aggregates.reduceRightOrNull")
@@ -1286,8 +1413,8 @@ object Aggregates : TemplateGroupBase() {
         includeDefault()
         include(CharSequences, ArraysOfUnsigned)
     } builder {
-        since("1.3")
-        annotation("@ExperimentalStdlibApi")
+        since("1.4")
+        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
 
         specialFor(Iterables, ArraysOfObjects, CharSequences) { inline() }
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) { inlineOnly() }
@@ -1384,8 +1511,8 @@ object Aggregates : TemplateGroupBase() {
         includeDefault()
         include(CharSequences, ArraysOfUnsigned)
     } builder {
-        since("1.3")
-        annotation("@ExperimentalStdlibApi")
+        since("1.4")
+        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
 
         specialFor(Iterables, ArraysOfObjects, CharSequences) { inline() }
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) { inlineOnly() }
@@ -1484,8 +1611,8 @@ object Aggregates : TemplateGroupBase() {
     val f_runningReduceSuper = fn("runningReduce(operation: (acc: S, T) -> S)") {
         include(ArraysOfObjects, Iterables, Sequences)
     } builder {
-        since("1.3")
-        annotation("@ExperimentalStdlibApi")
+        since("1.4")
+        annotation("@WasExperimental(ExperimentalStdlibApi::class)")
 
         specialFor(ArraysOfObjects, Iterables) { inline() }
 
@@ -1627,7 +1754,7 @@ object Aggregates : TemplateGroupBase() {
     } builder {
         since("1.3")
         annotation("@ExperimentalStdlibApi")
-        deprecate(Deprecation("Use runningReduce instead.", "runningReduce(operation)", DeprecationLevel.WARNING))
+        deprecate(Deprecation("Use runningReduce instead.", "runningReduce(operation)", DeprecationLevel.ERROR))
 
         specialFor(CharSequences) { inline() }
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) { inlineOnly() }
@@ -1642,7 +1769,7 @@ object Aggregates : TemplateGroupBase() {
     } builder {
         since("1.3")
         annotation("@ExperimentalStdlibApi")
-        deprecate(Deprecation("Use runningReduceIndexed instead.", "runningReduceIndexed(operation)", DeprecationLevel.WARNING))
+        deprecate(Deprecation("Use runningReduceIndexed instead.", "runningReduceIndexed(operation)", DeprecationLevel.ERROR))
 
         specialFor(CharSequences) { inline() }
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) { inlineOnly() }
@@ -1657,7 +1784,7 @@ object Aggregates : TemplateGroupBase() {
     } builder {
         since("1.3")
         annotation("@ExperimentalStdlibApi")
-        deprecate(Deprecation("Use runningReduce instead.", "runningReduce(operation)", DeprecationLevel.WARNING))
+        deprecate(Deprecation("Use runningReduce instead.", "runningReduce(operation)", DeprecationLevel.ERROR))
 
         specialFor(ArraysOfObjects, Iterables) { inline() }
 
@@ -1674,7 +1801,7 @@ object Aggregates : TemplateGroupBase() {
     } builder {
         since("1.3")
         annotation("@ExperimentalStdlibApi")
-        deprecate(Deprecation("Use runningReduceIndexed instead.", "runningReduceIndexed(operation)", DeprecationLevel.WARNING))
+        deprecate(Deprecation("Use runningReduceIndexed instead.", "runningReduceIndexed(operation)", DeprecationLevel.ERROR))
 
         specialFor(ArraysOfObjects, Iterables) { inline() }
 

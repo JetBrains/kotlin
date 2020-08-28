@@ -1,0 +1,4 @@
+FILE: main.kt
+    public final fun main(j: R|JavaClass|): R|kotlin/Unit| {
+        R|<local>/j|.R|/JavaClass.foo| = R|<local>/j|.R|/JavaClass.foo|.R|kotlin/String.plus|(String(OK))
+    }

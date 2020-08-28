@@ -20,7 +20,9 @@ val KotlinType.nameIfStandardType: Name?
     get() = constructor.declarationDescriptor?.takeIf(KotlinBuiltIns::isBuiltIn)?.name
 
 fun KotlinType.getJetTypeFqName(printTypeArguments: Boolean): String {
-    val declaration = requireNotNull(constructor.declarationDescriptor)
+    val declaration = requireNotNull(constructor.declarationDescriptor) {
+        "declarationDescriptor is null for constructor = $constructor with ${constructor.javaClass}"
+    }
     if (declaration is TypeParameterDescriptor) {
         return StringUtil.join(declaration.upperBounds, { type -> type.getJetTypeFqName(printTypeArguments) }, "&")
     }

@@ -7,12 +7,12 @@ class Foo {
         bar = ""
     }
 
-    constructor(a: Int) : this(a, 0, 0) {
+    constructor(a: Int) : <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>(a, 0, 0) {
     }
 
-    constructor(a: Int, b: Int) : this(a) {
+    constructor(a: Int, b: Int) : <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>(a) {
     }
 
-    constructor(a: Int, b: Int, c: Int) : this(a, b) {
+    constructor(a: Int, b: Int, c: Int) : <!CYCLIC_CONSTRUCTOR_DELEGATION_CALL!>this<!>(a, b) {
     }
 }

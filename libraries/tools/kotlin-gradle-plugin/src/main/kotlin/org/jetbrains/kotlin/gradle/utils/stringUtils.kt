@@ -21,6 +21,15 @@ internal fun dashSeparatedName(vararg nameParts: String?): String {
     return nonEmptyParts.joinToString(separator = "-")
 }
 
+internal fun String.decamelize(): String {
+    return replace(upperCaseRegex) {
+        val (first) = it.destructured
+        "-${first.toLowerCase()}"
+    }
+}
+
+private val upperCaseRegex = "([A-Z])".toRegex()
+
 private val invalidTaskNameCharacters = "[/\\\\:<>\"?*|]".toRegex()
 
 /**

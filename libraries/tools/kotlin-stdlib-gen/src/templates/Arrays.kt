@@ -82,11 +82,16 @@ object ArrayOps : TemplateGroupBase() {
         }
     }
 
+    private fun MemberBuilder.deprecatedNonNullArrayFunction() {
+        deprecate("Use Kotlin compiler 1.4 to avoid deprecation warning.")
+        annotation("""@DeprecatedSinceKotlin(hiddenSince = "1.4")""")
+    }
+
     val f_contentEquals = fn("contentEquals(other: SELF)") {
         include(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         since("1.1")
-        annotation("@kotlin.internal.LowPriorityInOverloadResolution")
+        deprecatedNonNullArrayFunction()
         infix(true)
         doc {
             """
@@ -247,7 +252,7 @@ object ArrayOps : TemplateGroupBase() {
         include(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         since("1.1")
-        annotation("@kotlin.internal.LowPriorityInOverloadResolution")
+        deprecatedNonNullArrayFunction()
         doc {
             """
             Returns a string representation of the contents of the specified array as if it is [List].
@@ -369,7 +374,7 @@ object ArrayOps : TemplateGroupBase() {
         include(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         since("1.1")
-        annotation("@kotlin.internal.LowPriorityInOverloadResolution")
+        deprecatedNonNullArrayFunction()
         doc {
             "Returns a hash code based on the contents of this array as if it is [List]."
         }
@@ -1467,16 +1472,26 @@ object ArrayOps : TemplateGroupBase() {
             body { """return ArrayList<T>(this.unsafeCast<Array<Any?>>())""" }
         }
 
-        val objectLiteralImpl = """
-                        return object : AbstractList<T>(), RandomAccess {
-                            override val size: Int get() = this@asList.size
-                            override fun isEmpty(): Boolean = this@asList.isEmpty()
-                            override fun contains(element: T): Boolean = this@asList.contains(element)
-                            override fun get(index: Int): T = this@asList[index]
-                            override fun indexOf(element: T): Int = this@asList.indexOf(element)
-                            override fun lastIndexOf(element: T): Int = this@asList.lastIndexOf(element)
-                        }
-                        """
+        val objectLiteralImpl = if (primitive in PrimitiveType.floatingPointPrimitives) """
+            return object : AbstractList<T>(), RandomAccess {
+                override val size: Int get() = this@asList.size
+                override fun isEmpty(): Boolean = this@asList.isEmpty()
+                override fun contains(element: T): Boolean = this@asList.any { it.toBits() == element.toBits() }
+                override fun get(index: Int): T = this@asList[index]
+                override fun indexOf(element: T): Int = this@asList.indexOfFirst { it.toBits() == element.toBits() }
+                override fun lastIndexOf(element: T): Int = this@asList.indexOfLast { it.toBits() == element.toBits() }
+            }
+            """
+        else """
+            return object : AbstractList<T>(), RandomAccess {
+                override val size: Int get() = this@asList.size
+                override fun isEmpty(): Boolean = this@asList.isEmpty()
+                override fun contains(element: T): Boolean = this@asList.contains(element)
+                override fun get(index: Int): T = this@asList[index]
+                override fun indexOf(element: T): Int = this@asList.indexOf(element)
+                override fun lastIndexOf(element: T): Int = this@asList.lastIndexOf(element)
+            }
+            """
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) {
             on(Platform.JVM) {
                 body { objectLiteralImpl }
@@ -1494,10 +1509,12 @@ object ArrayOps : TemplateGroupBase() {
                                 return this@asList[index]
                             }
                             override fun indexOf(element: T): Int {
+                                @Suppress("USELESS_CAST")
                                 if ((element as Any?) !is T) return -1
                                 return this@asList.indexOf(element)
                             }
                             override fun lastIndexOf(element: T): Int {
+                                @Suppress("USELESS_CAST")
                                 if ((element as Any?) !is T) return -1
                                 return this@asList.lastIndexOf(element)
                             }

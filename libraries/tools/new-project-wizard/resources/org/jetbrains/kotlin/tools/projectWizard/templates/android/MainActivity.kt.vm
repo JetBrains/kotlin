@@ -2,10 +2,25 @@ package ${package}
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+#if ($sharedPackage)
+import ${sharedPackage}.Greeting
+import android.widget.TextView
+#end
+
+#if( $sharedPackage )
+fun greet(): String {
+    return Greeting().greeting()
+}
+#end
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+#if( $sharedPackage )
+        val tv: TextView = findViewById(R.id.text_view)
+        tv.text = greet()
+#end
     }
 }

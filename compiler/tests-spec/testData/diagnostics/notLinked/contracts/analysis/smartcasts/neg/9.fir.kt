@@ -17,12 +17,12 @@ fun case_2(arg: Int?) {
 fun case_3() {
     val value_1: Boolean?
     funWithAtMostOnceCallsInPlace { value_1 = false }
-    value_1.<!INAPPLICABLE_CANDIDATE!>not<!>()
+    <!UNINITIALIZED_VARIABLE!>value_1<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
 }
 
 // TESTCASE NUMBER: 4
 fun case_4() {
     val value_1: Boolean?
     funWithUnknownCallsInPlace { value_1 = true }
-    value_1.<!INAPPLICABLE_CANDIDATE!>not<!>()
+    <!UNINITIALIZED_VARIABLE!>value_1<!>.<!INAPPLICABLE_CANDIDATE!>not<!>()
 }

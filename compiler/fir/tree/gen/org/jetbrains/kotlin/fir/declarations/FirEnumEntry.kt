@@ -65,6 +65,8 @@ abstract class FirEnumEntry : FirVariable<FirEnumEntry>(), FirCallableMemberDecl
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirEnumEntry
 
+    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirEnumEntry
+
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirEnumEntry
 
     abstract override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirEnumEntry

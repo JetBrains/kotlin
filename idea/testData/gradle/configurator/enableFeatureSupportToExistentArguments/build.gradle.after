@@ -2,24 +2,22 @@ buildscript {
     repositories {
         jcenter()
         mavenCentral()
-        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
     }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.11"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:{{kotlin_plugin_version}}"
     }
 }
 apply plugin: "kotlin"
 repositories {
     jcenter()
     mavenCentral()
-    maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
 }
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib"
 }
 compileKotlin {
     kotlinOptions {
-        freeCompilerArgs = ["-XXLanguage:+SamConversionForKotlinFunctions", "-XXLanguage:+InlineClasses"]
+        freeCompilerArgs = ["-XXLanguage:+SamConversionForKotlinFunctions", "-Xinline-classes"]
         // Free compiler arguments
     }
 }

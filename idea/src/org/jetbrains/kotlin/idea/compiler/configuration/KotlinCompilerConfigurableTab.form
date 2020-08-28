@@ -299,7 +299,7 @@
               <text resource-bundle="messages/KotlinBundle" key="language.version"/>
             </properties>
           </component>
-          <component id="d931b" class="javax.swing.JComboBox" binding="languageVersionComboBox">
+          <component id="d931b" class="javax.swing.JComboBox" binding="languageVersionComboBox" custom-create="true">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -323,7 +323,7 @@
               <text resource-bundle="messages/KotlinBundle" key="api.version"/>
             </properties>
           </component>
-          <component id="ab3e4" class="javax.swing.JComboBox" binding="apiVersionComboBox">
+          <component id="ab3e4" class="javax.swing.JComboBox" binding="apiVersionComboBox" custom-create="true">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
             </constraints>

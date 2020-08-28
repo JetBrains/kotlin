@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.utils.ArrayMapAccessor
 import org.jetbrains.kotlin.fir.utils.ComponentArrayOwner
+import org.jetbrains.kotlin.fir.utils.Protected
 import org.jetbrains.kotlin.fir.utils.TypeRegistry
 import kotlin.reflect.KClass
 
@@ -32,16 +33,22 @@ class FirExtensionService(val session: FirSession) : ComponentArrayOwner<FirExte
     var registeredExtensionsSize: Int = 0
         private set
 
+    var registeredPredicateBasedExtensionsSize: Int = 0
+        private set
+
     @PluginServicesInitialization
     fun registerExtensions(extensionClass: KClass<out FirExtension>, extensionFactories: List<FirExtension.Factory<*>>) {
         registeredExtensionsSize += extensionFactories.size
+        val extensions = extensionFactories.map { it.create(session) }
+        registeredPredicateBasedExtensionsSize += extensions.count { it is FirPredicateBasedExtension }
         registerComponent(
             extensionClass,
-            extensionFactories.map { it.create(session) }
+            extensions
         )
     }
 
     @PluginServicesInitialization
+    @OptIn(Protected::class)
     fun getAllExtensions(): List<FirExtension> {
         return arrayMap.flatten()
     }
@@ -51,3 +58,6 @@ val FirSession.extensionService: FirExtensionService by FirSession.sessionCompon
 
 val FirExtensionService.hasExtensions: Boolean
     get() = registeredExtensionsSize > 0
+
+val FirExtensionService.hasPredicateBasedExtensions: Boolean
+    get() = registeredPredicateBasedExtensionsSize > 0

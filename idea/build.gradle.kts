@@ -6,6 +6,9 @@ plugins {
 }
 
 val kotlinVersion: String by rootProject.extra
+val isFirPlugin: Boolean
+    get() = rootProject.findProperty("idea.fir.plugin") == "true"
+
 
 repositories {
     maven("https://jetbrains.bintray.com/markdown")
@@ -25,6 +28,11 @@ sourceSets {
             "idea-repl/resources",
             "resources-en"
         )
+        if (isFirPlugin) {
+            resources.srcDir("resources-fir")
+        } else {
+            resources.srcDir("resources-descriptors")
+        }
     }
     "test" {
         projectDefault()
@@ -71,9 +79,11 @@ dependencies {
     compile(project(":compiler:fir:java"))
     compile(project(":compiler:fir:jvm"))
     compile(project(":idea:idea-core"))
+    compile(project(":idea:idea-frontend-independent"))
     compile(project(":idea:ide-common"))
     compile(project(":idea:idea-jps-common"))
     compile(project(":idea:kotlin-gradle-tooling"))
+    compile(project(":idea:line-indent-provider"))
     compile(project(":plugins:uast-kotlin"))
     compile(project(":plugins:uast-kotlin-idea"))
     compile(project(":kotlin-script-util")) { isTransitive = false }
@@ -136,7 +146,7 @@ dependencies {
     testRuntime(project(":kotlin-noarg-compiler-plugin"))
     testRuntime(project(":plugins:annotation-based-compiler-plugins-ide-support")) { isTransitive = false }
     testRuntime(project(":kotlin-scripting-idea")) { isTransitive = false }
-    testRuntime(project(":kotlin-scripting-compiler-impl-unshaded"))
+    testRuntime(project(":kotlin-scripting-compiler-impl"))
     testRuntime(project(":sam-with-receiver-ide-plugin")) { isTransitive = false }
     testRuntime(project(":kotlinx-serialization-compiler-plugin"))
     testRuntime(project(":kotlinx-serialization-ide-plugin")) { isTransitive = false }
@@ -177,11 +187,17 @@ dependencies {
     testRuntime(intellijPluginDep("smali"))
     testRuntime(intellijPluginDep("testng"))
 
+    testRuntime(project(":idea:idea-frontend-fir"))
+
     if (Ide.AS36.orHigher()) {
         testRuntime(intellijPluginDep("android-layoutlib"))
         testRuntime(intellijPluginDep("git4idea"))
         testRuntime(intellijPluginDep("google-cloud-tools-core-as"))
         testRuntime(intellijPluginDep("google-login-as"))
+    }
+
+    if (Ide.AS41.orHigher()) {
+        testRuntime(intellijPluginDep("platform-images"))
     }
 }
 

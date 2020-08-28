@@ -8,10 +8,10 @@ fun withLocalClasses(param: Int): Interface {
             get() = 100
     }
 
-    interface LocalInterface : Interface {
+    <!LOCAL_INTERFACE_NOT_ALLOWED!>interface LocalInterface : Interface {
         override fun foo(x: Int): Int =
                 x + param
-    }
+    }<!>
 
     return object : LocalBase(), LocalInterface {
         override fun foo(x: Int): Int =

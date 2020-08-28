@@ -1,6 +1,10 @@
 // WITH_RUNTIME
 
-fun getEntry() : Map.Entry<kotlin.Array<String>, java.sql.Array> {
+object Holder {
+    class Array
+}
+
+fun getEntry() : Map.Entry<kotlin.Array<String>, Holder.Array> {
     throw Error()
 }
 

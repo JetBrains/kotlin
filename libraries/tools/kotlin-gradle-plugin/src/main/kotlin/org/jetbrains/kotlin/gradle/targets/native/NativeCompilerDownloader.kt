@@ -82,8 +82,8 @@ class NativeCompilerDownloader(
     private fun setupRepo(repoUrl: String): ArtifactRepository {
         return project.repositories.ivy { repo ->
             repo.setUrl(repoUrl)
-            repo.patternLayoutCompatible {
-                artifact("[artifact]-[revision].[ext]")
+            repo.patternLayout {
+                it.artifact("[artifact]-[revision].[ext]")
             }
             repo.metadataSources {
                 it.artifact()

@@ -25,8 +25,7 @@ import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeHostTestRun
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeSimulatorTestRun
 import org.jetbrains.kotlin.gradle.targets.native.NativeBinaryTestRunSource
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
-import org.jetbrains.kotlin.gradle.utils.setArchiveAppendixCompatible
-import org.jetbrains.kotlin.gradle.utils.setArchiveClassifierCompatible
+import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
@@ -62,8 +61,8 @@ open class KotlinNativeTarget @Inject constructor(
 
             if (hostSpecificSourceSets.isNotEmpty()) {
                 val hostSpecificMetadataJar = project.locateOrRegisterTask<Jar>(hostSpecificMetadataJarTaskName) {
-                    it.setArchiveAppendixCompatible { disambiguationClassifier.orEmpty().toLowerCase() }
-                    it.setArchiveClassifierCompatible { "metadata" }
+                    it.archiveAppendix.set(project.provider { disambiguationClassifier.orEmpty().toLowerCase() })
+                    it.archiveClassifier.set("metadata")
                 }
                 project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, hostSpecificMetadataJar)
 
@@ -108,7 +107,13 @@ open class KotlinNativeTarget @Inject constructor(
             }
         }
 
-        setOf(createKotlinVariant(targetName, mainCompilation, mutableUsageContexts))
+        val result = createKotlinVariant(targetName, mainCompilation, mutableUsageContexts)
+
+        result.sourcesArtifacts = setOf(
+            sourcesJarArtifact(mainCompilation, targetName, dashSeparatedName(targetName.toLowerCase()))
+        )
+
+        setOf(result)
     }
 
     override val binaries =

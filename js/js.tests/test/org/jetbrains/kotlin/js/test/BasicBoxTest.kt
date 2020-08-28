@@ -105,6 +105,8 @@ abstract class BasicBoxTest(
         doTest(filePath, "OK", MainCallParameters.noCall(), coroutinesPackage)
     }
 
+    open fun dontRunOnSpecificPlatform(targetBackend: TargetBackend): Boolean = false
+
     open fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters, coroutinesPackage: String = "") {
         val file = File(filePath)
         val outputDir = getOutputDir(file)
@@ -127,6 +129,7 @@ abstract class BasicBoxTest(
         val expectActualLinker = EXPECT_ACTUAL_LINKER.matcher(fileContent).find()
 
         val skipDceDriven = SKIP_DCE_DRIVEN.matcher(fileContent).find()
+        val splitPerModule = SPLIT_PER_MODULE.matcher(fileContent).find()
 
         TestFileFactoryImpl(coroutinesPackage).use { testFactory ->
             val inputFiles = TestFiles.createTestFiles(
@@ -171,14 +174,14 @@ abstract class BasicBoxTest(
                     testFactory.tmpDir,
                     file.parent, module, outputFileName, dceOutputFileName, pirOutputFileName, dependencies, allDependencies, friends, modules.size > 1,
                     !SKIP_SOURCEMAP_REMAPPING.matcher(fileContent).find(), outputPrefixFile, outputPostfixFile,
-                    actualMainCallParameters, testPackage, testFunction, needsFullIrRuntime, isMainModule, expectActualLinker, skipDceDriven
+                    actualMainCallParameters, testPackage, testFunction, needsFullIrRuntime, isMainModule, expectActualLinker, skipDceDriven, splitPerModule
                 )
 
                 when {
                     module.name.endsWith(OLD_MODULE_SUFFIX) -> null
                     // JS_IR generates single js file for all modules (apart from runtime).
                     // TODO: Split and refactor test runner for JS_IR
-                    targetBackend == TargetBackend.JS_IR && !isMainModule -> null
+                    targetBackend in listOf(TargetBackend.JS_IR, TargetBackend.JS_IR_ES6) && !isMainModule -> null
                     else -> Pair(outputFileName, module)
                 }
             }
@@ -231,7 +234,7 @@ abstract class BasicBoxTest(
                     globalCommonFiles + localCommonFiles + additionalCommonFiles + additionalMainFiles
 
 
-            val dontRunGeneratedCode = InTextDirectivesUtils.dontRunGeneratedCode(targetBackend, file)
+            val dontRunGeneratedCode = InTextDirectivesUtils.dontRunGeneratedCode(targetBackend, file) || dontRunOnSpecificPlatform(targetBackend)
 
             if (!dontRunGeneratedCode && generateNodeJsRunner && !SKIP_NODE_JS.matcher(fileContent).find()) {
                 val nodeRunnerName = mainModule.outputFileName(outputDir) + ".node.js"
@@ -251,6 +254,15 @@ abstract class BasicBoxTest(
 
                 if (runIrPir && !skipDceDriven) {
                     runGeneratedCode(pirAllJsFiles, testModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
+                }
+            } else {
+                val ignored = InTextDirectivesUtils.isIgnoredTarget(
+                    targetBackend, file,
+                    InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX
+                )
+
+                if (ignored) {
+                    throw AssertionError("Ignored test hasn't been ran. Emulate its failing")
                 }
             }
 
@@ -384,7 +396,8 @@ abstract class BasicBoxTest(
         needsFullIrRuntime: Boolean,
         isMainModule: Boolean,
         expectActualLinker: Boolean,
-        skipDceDriven: Boolean
+        skipDceDriven: Boolean,
+        splitPerModule: Boolean
     ) {
         val kotlinFiles =  module.files.filter { it.fileName.endsWith(".kt") }
         val testFiles = kotlinFiles.map { it.fileName }
@@ -408,7 +421,7 @@ abstract class BasicBoxTest(
         val incrementalData = IncrementalData()
         translateFiles(
             psiFiles.map(TranslationUnit::SourceFile), outputFile, dceOutputFile, pirOutputFile, config, outputPrefixFile, outputPostfixFile,
-            mainCallParameters, incrementalData, remap, testPackage, testFunction, needsFullIrRuntime, isMainModule, skipDceDriven
+            mainCallParameters, incrementalData, remap, testPackage, testFunction, needsFullIrRuntime, isMainModule, skipDceDriven, splitPerModule
         )
 
         if (incrementalCompilationChecksEnabled && module.hasFilesToRecompile) {
@@ -460,7 +473,7 @@ abstract class BasicBoxTest(
 
         translateFiles(
             translationUnits, recompiledOutputFile, recompiledOutputFile, recompiledOutputFile, recompiledConfig, outputPrefixFile, outputPostfixFile,
-            mainCallParameters, incrementalData, remap, testPackage, testFunction, needsFullIrRuntime, false, true
+            mainCallParameters, incrementalData, remap, testPackage, testFunction, needsFullIrRuntime, false, true, false
         )
 
         val originalOutput = FileUtil.loadFile(outputFile)
@@ -533,7 +546,8 @@ abstract class BasicBoxTest(
         testFunction: String,
         needsFullIrRuntime: Boolean,
         isMainModule: Boolean,
-        skipDceDriven: Boolean
+        skipDceDriven: Boolean,
+        splitPerModule: Boolean
     ) {
         val translator = K2JSTranslator(config, false)
         val translationResult = translator.translateUnits(ExceptionThrowingReporter, units, mainCallParameters)
@@ -680,6 +694,7 @@ abstract class BasicBoxTest(
         }
 
         val libraries = when (targetBackend) {
+            TargetBackend.JS_IR_ES6 -> dependencies
             TargetBackend.JS_IR -> dependencies
             TargetBackend.JS -> JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST + dependencies
             else -> error("Unsupported target backend: $targetBackend")
@@ -917,6 +932,7 @@ abstract class BasicBoxTest(
         private val KJS_WITH_FULL_RUNTIME = Pattern.compile("^// *KJS_WITH_FULL_RUNTIME *\$", Pattern.MULTILINE)
         private val EXPECT_ACTUAL_LINKER = Pattern.compile("^// EXPECT_ACTUAL_LINKER *$", Pattern.MULTILINE)
         private val SKIP_DCE_DRIVEN = Pattern.compile("^// *SKIP_DCE_DRIVEN *$", Pattern.MULTILINE)
+        private val SPLIT_PER_MODULE = Pattern.compile("^// *SPLIT_PER_MODULE *$", Pattern.MULTILINE)
 
         @JvmStatic
         protected val runTestInNashorn = getBoolean("kotlin.js.useNashorn")

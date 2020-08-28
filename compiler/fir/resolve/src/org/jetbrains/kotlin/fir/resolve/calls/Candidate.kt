@@ -36,7 +36,6 @@ data class CallInfo(
 
     val explicitReceiver: FirExpression?,
     val argumentList: FirArgumentList,
-    val isSafeCall: Boolean,
     val isPotentialQualifierPart: Boolean,
 
     val typeArguments: List<FirTypeProjection>,
@@ -116,6 +115,8 @@ class Candidate(
 
     val diagnostics: MutableList<ResolutionDiagnostic> = mutableListOf()
 
+    var passedStages: Int = 0
+
     fun dispatchReceiverExpression(): FirExpression = when (explicitReceiverKind) {
         ExplicitReceiverKind.DISPATCH_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS ->
             callInfo.explicitReceiver?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
@@ -144,3 +145,6 @@ class Candidate(
         return symbol.hashCode()
     }
 }
+
+val Candidate.fullyAnalyzed: Boolean
+    get() = passedStages == callInfo.callKind.resolutionSequence.size

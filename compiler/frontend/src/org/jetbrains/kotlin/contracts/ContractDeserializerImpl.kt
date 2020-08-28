@@ -94,7 +94,7 @@ class ContractDeserializerImpl(
                     val invocationKind = if (proto.hasKind())
                         proto.kind.toDescriptorInvocationKind() ?: return null
                     else
-                        InvocationKind.UNKNOWN
+                        EventOccurrencesRange.UNKNOWN
                     CallsEffectDeclaration(callable, invocationKind)
                 }
             }
@@ -165,10 +165,10 @@ class ContractDeserializerImpl(
                 BooleanVariableReference(parameterDescriptor)
         }
 
-        private fun ProtoBuf.Effect.InvocationKind.toDescriptorInvocationKind(): InvocationKind? = when (this) {
-            ProtoBuf.Effect.InvocationKind.AT_MOST_ONCE -> InvocationKind.AT_MOST_ONCE
-            ProtoBuf.Effect.InvocationKind.EXACTLY_ONCE -> InvocationKind.EXACTLY_ONCE
-            ProtoBuf.Effect.InvocationKind.AT_LEAST_ONCE -> InvocationKind.AT_LEAST_ONCE
+        private fun ProtoBuf.Effect.InvocationKind.toDescriptorInvocationKind(): EventOccurrencesRange? = when (this) {
+            ProtoBuf.Effect.InvocationKind.AT_MOST_ONCE -> EventOccurrencesRange.AT_MOST_ONCE
+            ProtoBuf.Effect.InvocationKind.EXACTLY_ONCE -> EventOccurrencesRange.EXACTLY_ONCE
+            ProtoBuf.Effect.InvocationKind.AT_LEAST_ONCE -> EventOccurrencesRange.AT_LEAST_ONCE
         }
 
         private fun extractType(proto: ProtoBuf.Expression): KotlinType? {

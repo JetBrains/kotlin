@@ -7,6 +7,6 @@ public final annotation class Anno : R|kotlin/Annotation| {
 }
 
 public final class Constructor : R|kotlin/Any| {
-    public constructor(): R|test/Constructor|
+    @R|test/Anno|(value = String(string)) public constructor(): R|test/Constructor|
 
 }

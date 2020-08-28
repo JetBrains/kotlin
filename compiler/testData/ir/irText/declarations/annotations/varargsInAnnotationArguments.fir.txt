@@ -84,10 +84,14 @@ FILE fqName:<root> fileName:/varargsInAnnotationArguments.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    annotations:
+      A1(xs = ['1', '2', '3'])
+      A2(xs = ['a', 'b', 'c'])
+      AA(xs = [A1(xs = ['4']), A1(xs = ['5']), A1(xs = ['6'])])
     BLOCK_BODY
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     annotations:
-      A1(xs = <null>)
-      A2(xs = <null>)
-      AA(xs = <null>)
+      A1(xs = [])
+      A2(xs = [])
+      AA(xs = [])
     BLOCK_BODY

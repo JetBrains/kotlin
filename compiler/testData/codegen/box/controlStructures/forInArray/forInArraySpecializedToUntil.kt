@@ -1,5 +1,6 @@
 // IGNORE_BACKEND: JS
 // IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
 // WITH_RUNTIME
 
 fun checkByteArray(): Boolean {

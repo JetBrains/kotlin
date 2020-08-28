@@ -1,0 +1,21 @@
+package
+
+public fun main(): kotlin.Unit
+public fun </*0*/ K> materialize(): K
+public fun </*0*/ T> test1(/*0*/ x: Inv<out T>): kotlin.Unit
+public fun </*0*/ T> test2(/*0*/ x: Inv<in T>): kotlin.Unit
+public fun </*0*/ T> test3(/*0*/ x: Inv<T>): kotlin.Unit
+
+public final class Foo {
+    public constructor Foo()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

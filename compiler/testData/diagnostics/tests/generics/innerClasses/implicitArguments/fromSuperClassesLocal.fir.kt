@@ -10,12 +10,12 @@ private fun <E> foobar() = {
             fun a() = A<E, X, Y, Z>()
         }
 
-        typealias LocalAlias<W> = A<E, X, Y, W>
+        typealias LocalAlias<W> = <!UNRESOLVED_REFERENCE!>A<E, X, Y, W><!>
     }
 
     class Derived : LocalOuter<Double, Short>() {
         fun foo(): LocalInner<Long> = null!!
-        fun bar(): LocalAlias<Char> = null!!
+        fun bar(): <!UNRESOLVED_REFERENCE!>LocalAlias<Char><!> = null!!
     }
 
     Derived()
@@ -27,12 +27,12 @@ private fun noParameters() = {
             fun a() = A<Any, X, Y, Z>()
         }
 
-        typealias LocalAlias2<W> = A<Any, X, Y, W>
+        typealias LocalAlias2<W> = <!UNRESOLVED_REFERENCE!>A<Any, X, Y, W><!>
     }
 
     class Derived2 : LocalOuter2<Double, Short>() {
         fun foo(): LocalInner2<Long> = null!!
-        fun bar(): LocalAlias2<Char> = null!!
+        fun bar(): <!UNRESOLVED_REFERENCE!>LocalAlias2<Char><!> = null!!
     }
 
     Derived2()
@@ -43,13 +43,13 @@ fun test() {
     x = foobar<String>()
 
     x().foo().a() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><A<String, Double, Short, Long>>() }
-    x().bar() <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><A<String, Double, Short, Char>>() }
+    x().bar() <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><A<String, Double, Short, Char>>() }
 
     x = foobar<Int>()
 
     var y = noParameters()
     y = noParameters()
 
-    y().foo().a() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><A<Any, Double, Short, Long>>() }
-    y().bar() <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!UNRESOLVED_REFERENCE!>_<!><A<Any, Double, Short, Char>>() }
+    y().foo().a() checkType { _<A<Any, Double, Short, Long>>() }
+    y().bar() <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><A<Any, Double, Short, Char>>() }
 }

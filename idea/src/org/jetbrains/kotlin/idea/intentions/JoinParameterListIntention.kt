@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.codeStyle.CodeStyleManager
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -22,7 +25,8 @@ abstract class AbstractJoinListIntention<TList : KtElement, TElement : KtElement
     override fun isApplicableTo(element: TList): Boolean {
         val elements = element.elements()
         if (elements.isEmpty()) return false
-        return hasLineBreakBefore(elements.first()) || elements.any { hasLineBreakAfter(it) }
+        return (hasLineBreakBefore(elements.first()) || elements.any { hasLineBreakAfter(it) })
+                && element.allChildren.none { it is PsiComment && it.node.elementType == KtTokens.EOL_COMMENT }
     }
 
     override fun applyTo(element: TList, editor: Editor?) {

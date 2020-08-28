@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
+import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSymbolOwner
@@ -18,7 +19,7 @@ class LocalClassesNavigationInfo(
     private val parentClassForFunction: Map<FirCallableMemberDeclaration<*>, FirClass<*>>,
     val allMembers: List<FirSymbolOwner<*>>
 ) {
-    val designationMap by lazy {
+    val designationMap: Map<FirCallableMemberDeclaration<*>, List<FirClass<*>>> by lazy {
         parentClassForFunction.keys.keysToMap {
             pathForCallable(it)
         }
@@ -45,10 +46,10 @@ fun FirClass<*>.collectLocalClassesNavigationInfo(): LocalClassesNavigationInfo 
     }
 
 private class NavigationInfoVisitor : FirDefaultVisitorVoid() {
-    val resultingMap = mutableMapOf<FirCallableMemberDeclaration<*>, FirClass<*>>()
-    val parentForClass = mutableMapOf<FirClass<*>, FirClass<*>?>()
-    val allMembers = mutableListOf<FirSymbolOwner<*>>()
-    private var currentPath = persistentListOf<FirClass<*>>()
+    val resultingMap: MutableMap<FirCallableMemberDeclaration<*>, FirClass<*>> = mutableMapOf()
+    val parentForClass: MutableMap<FirClass<*>, FirClass<*>?> = mutableMapOf()
+    val allMembers: MutableList<FirSymbolOwner<*>> = mutableListOf()
+    private var currentPath: PersistentList<FirClass<*>> = persistentListOf()
 
     override fun visitElement(element: FirElement) {}
 

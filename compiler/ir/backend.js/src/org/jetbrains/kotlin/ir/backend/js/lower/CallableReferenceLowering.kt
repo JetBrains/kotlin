@@ -17,11 +17,8 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedReceiverParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -117,7 +114,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         private val isKReference = superFunctionInterface.name.identifier[0] == 'K'
 
         private fun buildReferenceClass(): IrClass {
-            return buildClass {
+            return context.irFactory.buildClass {
                 setSourceRange(reference)
                 visibility = Visibilities.LOCAL
                 // A callable reference results in a synthetic class, while a lambda is not synthetic.
@@ -143,14 +140,6 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
             if (boundReceiver != null) {
                 boundReceiverField = addField(BOUND_RECEIVER_NAME, boundReceiver.type)
             }
-        }
-
-        private fun IrClass.createDispatchReceiver(): IrValueParameter {
-            val vpDescriptor = WrappedReceiverParameterDescriptor()
-            val vpSymbol = IrValueParameterSymbolImpl(vpDescriptor)
-            val declaration = IrValueParameterImpl(startOffset, endOffset, origin, vpSymbol, THIS_NAME, -1, defaultType, null, false, false)
-            vpDescriptor.bind(declaration)
-            return declaration
         }
 
         private fun createConstructor(clazz: IrClass): IrConstructor {
@@ -206,7 +195,8 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 isOperator = superMethod.isOperator
             }.apply {
                 overriddenSymbols = listOf(superMethod.symbol)
-                dispatchReceiverParameter = clazz.createDispatchReceiver().also { it.parent = this }
+                dispatchReceiverParameter = buildReceiverParameter(this, clazz.origin, clazz.defaultType, startOffset, endOffset)
+
                 if (isLambda) createLambdaInvokeMethod() else createFunctionReferenceInvokeMethod()
             }
         }
@@ -227,10 +217,30 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         private fun IrSimpleFunction.buildInvoke(): IrFunctionAccessExpression {
             val callee = function
             val irCall =  reference.run {
-                if (callee is IrConstructor) {
-                    IrConstructorCallImpl(startOffset, endOffset, callee.parentAsClass.defaultType, callee.symbol, callee.typeParameters.size, 0 /* TODO */, callee.valueParameters.size, CALLABLE_REFERENCE_INVOKE)
-                } else {
-                    IrCallImpl(startOffset, endOffset, callee.returnType, callee.symbol, callee.typeParameters.size, callee.valueParameters.size, CALLABLE_REFERENCE_INVOKE)
+                when (callee) {
+                    is IrConstructor ->
+                        IrConstructorCallImpl(
+                            startOffset,
+                            endOffset,
+                            callee.parentAsClass.defaultType,
+                            callee.symbol,
+                            callee.typeParameters.size,
+                            0 /* TODO */,
+                            callee.valueParameters.size,
+                            CALLABLE_REFERENCE_INVOKE
+                        )
+                    is IrSimpleFunction ->
+                        IrCallImpl(
+                            startOffset,
+                            endOffset,
+                            callee.returnType,
+                            callee.symbol,
+                            callee.typeParameters.size,
+                            callee.valueParameters.size,
+                            CALLABLE_REFERENCE_INVOKE
+                        )
+                    else ->
+                        error("unknown function kind: ${callee.render()}")
                 }
             }
 
@@ -293,14 +303,14 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
             val argumentTypes = parameterTypes.dropLast(1)
 
             valueParameters = argumentTypes.mapIndexed { i, t ->
-                buildValueParameter {
+                buildValueParameter(this) {
                     name = Name.identifier("p$i")
                     type = t
                     index = i
-                }.also { it.parent = this }
+                }
             }
 
-            body = IrBlockBodyImpl(reference.startOffset, reference.endOffset, listOf(reference.run {
+            body = factory.createBlockBody(reference.startOffset, reference.endOffset, listOf(reference.run {
                 IrReturnImpl(
                     startOffset,
                     endOffset, nothingType,
@@ -316,7 +326,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
             val superProperty = superFunctionInterface.declarations.filterIsInstance<IrProperty>().single()
             val supperGetter = superProperty.getter ?: error("Expected getter for KFunction.name property")
 
-            val nameProperty = clazz.addProperty {
+            val nameProperty = clazz.addProperty() {
                 visibility = superProperty.visibility
                 name = superProperty.name
                 origin = GENERATED_MEMBER_IN_CALLABLE_REFERENCE
@@ -326,12 +336,12 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 returnType = stringType
             }
             getter.overriddenSymbols += supperGetter.symbol
-            getter.dispatchReceiverParameter = buildValueParameter {
+            getter.dispatchReceiverParameter = buildValueParameter(getter) {
                 name = THIS_NAME
                 type = clazz.defaultType
-            }.also { it.parent = getter }
+            }
 
-            getter.body = IrBlockBodyImpl(
+            getter.body = context.irFactory.createBlockBody(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
                     IrReturnImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET, nothingType, getter.symbol, IrConstImpl.string(
@@ -347,7 +357,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
         fun build(): Pair<IrClass, IrConstructor> {
             val clazz = buildReferenceClass()
             val ctor = createConstructor(clazz)
-            val invoke = createInvokeMethod(clazz)
+            createInvokeMethod(clazz)
             createNameProperty(clazz)
             // TODO: create name property for KFunction*
 

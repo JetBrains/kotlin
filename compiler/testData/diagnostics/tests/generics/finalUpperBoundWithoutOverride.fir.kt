@@ -51,19 +51,19 @@ interface MessageManager9 : Manager<Message3> {
     fun <T : Message3> execute4() {}
 }
 
-object MessageManager10 : Message5<Int>() {
+object MessageManager10 : <!UNRESOLVED_REFERENCE!>Message5<Int><!>() {
     fun <T : Int> execute() {}
 }
 
-class MessageManager11<A> : Message5<Message5<A>>() {
-    fun <T : Message5<A>> execute() {}
+class MessageManager11<A> : <!UNRESOLVED_REFERENCE!>Message5<Message5<A>><!>() {
+    fun <T : <!UNRESOLVED_REFERENCE!>Message5<A><!>> execute() {}
 }
 
-data class MessageManager12(val x: Int) : Message5<Message2>() {
+data class MessageManager12(val x: Int) : <!UNRESOLVED_REFERENCE!>Message5<Message2><!>() {
     fun <T : Message2> execute() {}
 }
 
-sealed class MessageManager13<A> : Message5<A>() {
+sealed class MessageManager13<A> : <!UNRESOLVED_REFERENCE!>Message5<A><!>() {
     fun <T : A> execute() {}
 }
 

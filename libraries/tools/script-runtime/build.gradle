@@ -26,12 +26,11 @@ jar {
 }
 
 artifacts {
-    archives sourcesJar
-    sources sourcesJar
     mainJar jar
 }
 
-javadocJar()
+configureSourcesJar()
+configureJavadocJar()
 
 compileKotlin {
     kotlinOptions.freeCompilerArgs = [

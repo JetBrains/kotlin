@@ -15,6 +15,6 @@ package kotlin.text
 /**
  *  The exception thrown when a character encoding or decoding error occurs.
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.4")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual typealias CharacterCodingException = java.nio.charset.CharacterCodingException

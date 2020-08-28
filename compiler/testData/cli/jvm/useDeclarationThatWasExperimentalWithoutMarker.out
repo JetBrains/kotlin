@@ -1,0 +1,13 @@
+compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker.kt:1:13: error: this declaration is experimental and its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
+fun test(s: ArrayDeque<Int>): ArrayDeque<Int>? {
+            ^
+compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker.kt:1:31: error: this declaration is experimental and its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
+fun test(s: ArrayDeque<Int>): ArrayDeque<Int>? {
+                              ^
+compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker.kt:2:5: error: unresolved reference: ArrayDeque
+    ArrayDeque<Int>(42)
+    ^
+compiler/testData/cli/jvm/useDeclarationThatWasExperimentalWithoutMarker.kt:4:12: error: this declaration is experimental and its usage must be marked with '@kotlin.ExperimentalStdlibApi' or '@OptIn(kotlin.ExperimentalStdlibApi::class)'
+    val x: ArrayDeque<Int>? = null
+           ^
+COMPILATION_ERROR

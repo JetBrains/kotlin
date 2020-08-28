@@ -1,12 +1,11 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea
 
 import com.google.common.html.HtmlEscapers
-import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.codeInsight.documentation.DocumentationManagerUtil
 import com.intellij.codeInsight.javadoc.JavaDocInfoGeneratorFactory
 import com.intellij.lang.documentation.AbstractDocumentationProvider
@@ -33,7 +32,9 @@ import org.jetbrains.kotlin.idea.kdoc.*
 import org.jetbrains.kotlin.idea.kdoc.KDocRenderer.appendKDocContent
 import org.jetbrains.kotlin.idea.kdoc.KDocRenderer.appendKDocSections
 import org.jetbrains.kotlin.idea.kdoc.KDocTemplate.DescriptionBodyTemplate
+import org.jetbrains.kotlin.idea.references.resolveToDescriptors
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.isRunningInCidrIde
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocTag
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.java.NULLABILITY_ANNOTATIONS
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy
@@ -54,6 +56,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.utils.addToStdlib.constant
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -118,7 +121,7 @@ class WrapValueParameterHandler(val base: DescriptorRenderer.ValueParametersHand
 
     override fun appendAfterValueParameters(parameterCount: Int, builder: StringBuilder) {
         if (parameterCount > 0) {
-            builder.appendln()
+            builder.appendLine()
         }
         base.appendAfterValueParameters(parameterCount, builder)
     }
@@ -140,10 +143,11 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
 
     override fun getDocumentationElementForLink(psiManager: PsiManager, link: String, context: PsiElement?): PsiElement? {
         val navElement = context?.navigationElement as? KtElement ?: return null
-        val bindingContext = navElement.analyze(BodyResolveMode.PARTIAL)
+        val resolutionFacade = navElement.getResolutionFacade()
+        val bindingContext = navElement.analyze(resolutionFacade, BodyResolveMode.PARTIAL)
         val contextDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, navElement] ?: return null
         val descriptors = resolveKDocLink(
-            bindingContext, navElement.getResolutionFacade(),
+            bindingContext, resolutionFacade,
             contextDescriptor, null, link.split('.')
         )
         val target = descriptors.firstOrNull() ?: return null
@@ -172,9 +176,14 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
             withDefinedIn = false
             eachAnnotationOnNewLine = true
             boldOnlyForNamesInHtml = true
+            excludedTypeAnnotationClasses = NULLABILITY_ANNOTATIONS
+            defaultParameterValueRenderer = { (it.source.getPsi() as? KtParameter)?.defaultValue?.text ?: "..." }
         }
 
-        fun StringBuilder.renderKDoc(contentTag: KDocTag, sections: List<KDocSection>) {
+        internal fun StringBuilder.renderKDoc(
+            contentTag: KDocTag,
+            sections: List<KDocSection> = if (contentTag is KDocSection) listOf(contentTag) else emptyList()
+        ) {
             insert(DescriptionBodyTemplate.Kotlin()) {
                 content {
                     appendKDocContent(contentTag)
@@ -207,7 +216,7 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
                     }
                     if (!quickNavigation && kdoc != null) {
                         description {
-                            renderKDoc(kdoc.getDefaultSection(), listOf(kdoc.getDefaultSection()))
+                            renderKDoc(kdoc.getDefaultSection())
                         }
                     }
                 }
@@ -304,10 +313,9 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
                         return mixKotlinToJava(declarationDescriptor, element, originalElement)
                     }
                 }
-            } else {
-                // This element was resolved to non-kotlin element, it will be rendered with own provider
             }
 
+            // This element was resolved to non-kotlin element, it will be rendered with own provider
             return null
         }
 
@@ -316,7 +324,8 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
         }
 
         private fun buildKotlinDeclaration(declaration: KtExpression, quickNavigation: Boolean): KDocTemplate {
-            val context = declaration.analyze(BodyResolveMode.PARTIAL)
+            val resolutionFacade = declaration.getResolutionFacade()
+            val context = declaration.analyze(resolutionFacade, BodyResolveMode.PARTIAL)
             val declarationDescriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
 
             if (declarationDescriptor == null) {
@@ -328,29 +337,32 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
                 }
             }
 
-            return buildKotlin(context, declarationDescriptor, quickNavigation, declaration)
+            return buildKotlin(context, declarationDescriptor, quickNavigation, declaration, resolutionFacade)
         }
 
         private fun renderKotlinImplicitLambdaParameter(element: KtReferenceExpression, quickNavigation: Boolean): String? {
-            val context = element.analyze(BodyResolveMode.PARTIAL)
+            val resolutionFacade = element.getResolutionFacade()
+            val context = element.analyze(resolutionFacade, BodyResolveMode.PARTIAL)
             val target = element.mainReference.resolveToDescriptors(context).singleOrNull() as? ValueParameterDescriptor? ?: return null
-            return renderKotlin(context, target, quickNavigation, element)
+            return renderKotlin(context, target, quickNavigation, element, resolutionFacade)
         }
 
         private fun renderKotlin(
             context: BindingContext,
             declarationDescriptor: DeclarationDescriptor,
             quickNavigation: Boolean,
-            ktElement: KtElement
+            ktElement: KtElement,
+            resolutionFacade: ResolutionFacade,
         ) = buildString {
-            insert(buildKotlin(context, declarationDescriptor, quickNavigation, ktElement)) {}
+            insert(buildKotlin(context, declarationDescriptor, quickNavigation, ktElement, resolutionFacade)) {}
         }
 
         private fun buildKotlin(
             context: BindingContext,
             declarationDescriptor: DeclarationDescriptor,
             quickNavigation: Boolean,
-            ktElement: KtElement
+            ktElement: KtElement,
+            resolutionFacade: ResolutionFacade,
         ): KDocTemplate {
             @Suppress("NAME_SHADOWING")
             var declarationDescriptor = declarationDescriptor
@@ -361,7 +373,8 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
                 }
             }
 
-            val deprecationProvider = ktElement.getResolutionFacade().frontendService<DeprecationResolver>()
+            @OptIn(FrontendInternals::class)
+            val deprecationProvider = resolutionFacade.frontendService<DeprecationResolver>()
 
             return KDocTemplate().apply {
                 definition {
@@ -372,11 +385,22 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
 
                 if (!quickNavigation) {
                     description {
-                        val comment = declarationDescriptor.findKDoc { DescriptorToSourceUtilsIde.getAnyDeclaration(ktElement.project, it) }
-                        if (comment != null) {
-                            val sectionList = if (comment is KDocSection) listOf(comment) else emptyList()
-                            renderKDoc(comment, sectionList)
-                        } else if (declarationDescriptor is CallableDescriptor) { // If we couldn't find KDoc, try to find javadoc in one of super's
+                        declarationDescriptor.findKDoc { DescriptorToSourceUtilsIde.getAnyDeclaration(ktElement.project, it) }?.let {
+                            renderKDoc(it)
+                            return@description
+                        }
+                        if (declarationDescriptor is ClassConstructorDescriptor && !declarationDescriptor.isPrimary) {
+                            declarationDescriptor.constructedClass.findKDoc {
+                                DescriptorToSourceUtilsIde.getAnyDeclaration(
+                                    ktElement.project,
+                                    it
+                                )
+                            }?.let {
+                                renderKDoc(it)
+                                return@description
+                            }
+                        }
+                        if (declarationDescriptor is CallableDescriptor) { // If we couldn't find KDoc, try to find javadoc in one of super's
                             insert(DescriptionBodyTemplate.FromJava()) {
                                 body = extractJavaDescription(declarationDescriptor)
                             }

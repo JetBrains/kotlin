@@ -11,3 +11,4 @@ public abstract interface Trait : R|kotlin/Any| {
         public get(): R|kotlin/String|
 
 }
+

@@ -79,7 +79,15 @@ class ExpressionCheckersDiagnosticComponent(collector: AbstractDiagnosticCollect
         runCheck { checkers.expressionCheckers.check(getClassCall, data, it) }
     }
 
-    private fun <E : FirExpression> List<FirExpressionChecker<E>>.check(expression: E, context: CheckerContext, reporter: DiagnosticReporter) {
+    override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: CheckerContext) {
+        runCheck { checkers.expressionCheckers.check(equalityOperatorCall, data, it) }
+    }
+
+    override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: CheckerContext) {
+        runCheck { checkers.variableAssignmentCheckers.check(variableAssignment, data, it) }
+    }
+
+    private fun <E : FirStatement> List<FirExpressionChecker<E>>.check(expression: E, context: CheckerContext, reporter: DiagnosticReporter) {
         for (checker in this) {
             checker.check(expression, context, reporter)
         }

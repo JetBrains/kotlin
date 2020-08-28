@@ -33,7 +33,7 @@ data class Test(
         val c: List<@WriteWith<Parceler1> String>,
         val d: @WriteWith<Parceler2> List<String>,
         val e: @WriteWith<Parceler2> List<@WriteWith<Parceler1> String>
-)
+) : Parcelable
 
 fun box() = parcelTest { parcel ->
     val test = Test("Abc", "Abc", listOf("A", "bc"), listOf("A", "bc"), listOf("A", "bc"))
@@ -41,6 +41,7 @@ fun box() = parcelTest { parcel ->
 
     val bytes = parcel.marshall()
     parcel.unmarshall(bytes, 0, bytes.size)
+    parcel.setDataPosition(0)
 
     val test2 = readFromParcel<Test>(parcel)
 

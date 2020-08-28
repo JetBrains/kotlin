@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,9 +13,10 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
+import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlatformTestRun
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryType
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
@@ -31,6 +32,7 @@ abstract class KotlinJsIrSubTarget(
     private val disambiguationClassifier: String
 ) : KotlinJsSubTargetDsl {
     val project get() = target.project
+
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
     abstract val testTaskDescription: String
@@ -96,19 +98,22 @@ abstract class KotlinJsIrSubTarget(
             )
         )
 
-        val testJs = project.registerTask<KotlinJsTest>(testRun.subtargetTestTaskName()) { testJs ->
+        val testJs = project.registerTask<KotlinJsTest>(
+            testRun.subtargetTestTaskName(),
+            listOf(compilation)
+        ) { testJs ->
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
             testJs.description = testTaskDescription
 
             val testExecutableTask = compilation.binaries.getIrBinaries(
-                KotlinJsBinaryType.DEVELOPMENT
+                KotlinJsBinaryMode.DEVELOPMENT
             ).single().linkTask
 
             testJs.inputFileProperty.set(
-                testExecutableTask.map { it.outputFileProperty.get() }
+                testExecutableTask.flatMap { it.outputFileProperty }
             )
 
-            testJs.dependsOn(nodeJs.npmInstallTask, nodeJs.nodeJsSetupTask)
+            testJs.dependsOn(nodeJs.npmInstallTaskProvider, nodeJs.nodeJsSetupTaskProvider)
 
             testJs.onlyIf { task ->
                 (task as KotlinJsTest).inputFileProperty
@@ -117,7 +122,6 @@ abstract class KotlinJsIrSubTarget(
                     .get()
             }
 
-            testJs.compilation = compilation
             testJs.targetName = listOfNotNull(target.disambiguationClassifier, disambiguationClassifier)
                 .takeIf { it.isNotEmpty() }
                 ?.joinToString()
@@ -139,6 +143,10 @@ abstract class KotlinJsIrSubTarget(
                 if (it.testFramework == null) {
                     configureDefaultTestFramework(it)
                 }
+
+                if (it.enabled) {
+                    nodeJs.taskRequirements.addTaskRequirements(it)
+                }
             }
         }
     }
@@ -147,7 +155,7 @@ abstract class KotlinJsIrSubTarget(
 
     private fun configureMain() {
         target.compilations.all { compilation ->
-            if (compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME) {
+            if (compilation.isMain()) {
                 configureMain(compilation)
             }
         }
@@ -164,9 +172,10 @@ abstract class KotlinJsIrSubTarget(
 
     internal inline fun <reified T : Task> registerSubTargetTask(
         name: String,
+        args: List<Any> = emptyList(),
         noinline body: (T) -> (Unit)
     ): TaskProvider<T> =
-        project.registerTask(name) {
+        project.registerTask(name, args) {
             it.group = taskGroupName
             body(it)
         }

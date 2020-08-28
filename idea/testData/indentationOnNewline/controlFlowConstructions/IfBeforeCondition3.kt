@@ -1,0 +1,3 @@
+fun some() {
+    if<caret>
+}

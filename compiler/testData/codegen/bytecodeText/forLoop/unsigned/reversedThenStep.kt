@@ -16,12 +16,11 @@ fun box(): String {
 //   // Standard form of loop over progression
 //   val last = getProgressionLastElement(8u, 1u, -2)
 //   var inductionVar = 8u
-//   val step = -2
 //   if (last <= inductionVar) {
 //     // Loop is not empty
 //     do {
 //       val i = inductionVar
-//       inductionVar += step
+//       inductionVar += -2
 //       // Loop body
 //     } while (i != last)
 //   }

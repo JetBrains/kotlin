@@ -37,3 +37,13 @@ inline fun buildImplicitTypeRef(init: FirImplicitTypeRefBuilder.() -> Unit = {})
     }
     return FirImplicitTypeRefBuilder().apply(init).build()
 }
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildImplicitTypeRefCopy(original: FirImplicitTypeRef, init: FirImplicitTypeRefBuilder.() -> Unit = {}): FirImplicitTypeRef {
+    contract {
+        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirImplicitTypeRefBuilder()
+    copyBuilder.source = original.source
+    return copyBuilder.apply(init).build()
+}

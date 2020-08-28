@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,10 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.*
 import org.jetbrains.kotlin.descriptors.commonizer.Target
+import org.jetbrains.kotlin.descriptors.commonizer.konan.NativeDistributionCommonizer.StatsType.*
+import org.jetbrains.kotlin.descriptors.commonizer.stats.AggregatedStatsCollector
+import org.jetbrains.kotlin.descriptors.commonizer.stats.FileStatsOutput
+import org.jetbrains.kotlin.descriptors.commonizer.stats.RawStatsCollector
 import org.jetbrains.kotlin.descriptors.commonizer.utils.ResettableClockMark
 import org.jetbrains.kotlin.descriptors.konan.NATIVE_STDLIB_MODULE_NAME
 import org.jetbrains.kotlin.konan.library.*
@@ -37,27 +41,29 @@ class NativeDistributionCommonizer(
     private val destination: File,
     private val copyStdlib: Boolean,
     private val copyEndorsedLibs: Boolean,
-    private val withStats: Boolean,
+    private val statsType: StatsType,
     private val logger: Logger
 ) {
+    enum class StatsType {
+        RAW, AGGREGATED, NONE
+    }
+
+    private val clockMark = ResettableClockMark()
+
     fun run() {
         checkPreconditions()
+        clockMark.reset()
 
-        with(ResettableClockMark()) {
-            // 1. load libraries
-            val librariesByTargets = loadLibraries()
-            logger.log("* Loaded lazy (uninitialized) libraries in ${elapsedSinceLast()}")
+        // 1. load libraries
+        val librariesByTargets = loadLibraries()
 
-            // 2. run commonization
-            val result = commonize(librariesByTargets)
-            logger.log("* Commonization performed in ${elapsedSinceLast()}")
+        // 2. run commonization
+        val result = commonize(librariesByTargets)
 
-            // 3. write new libraries
-            saveModules(librariesByTargets, result)
-            logger.log("* Written libraries in ${elapsedSinceLast()}")
+        // 3. write new libraries
+        saveModules(librariesByTargets, result)
 
-            logger.log("TOTAL: ${elapsedSinceStart()}")
-        }
+        logTotal()
     }
 
     private fun checkPreconditions() {
@@ -76,14 +82,18 @@ class NativeDistributionCommonizer(
         }
     }
 
+    private fun logProgress(message: String) = logger.log("* $message in ${clockMark.elapsedSinceLast()}")
+
+    private fun logTotal() = logger.log("TOTAL: ${clockMark.elapsedSinceStart()}")
+
     private fun loadLibraries(): Map<InputTarget, NativeDistributionLibraries> {
         val stdlibPath = repository.resolve(konanCommonLibraryPath(KONAN_STDLIB_NAME))
         val stdlib = loadLibrary(stdlibPath)
 
-        return targets.associate { target ->
-            val inputTarget = InputTarget(target.name, target)
+        val result = targets.associate { target ->
+            val leafTarget = InputTarget(target.name, target)
 
-            val platformLibs = inputTarget.platformLibrariesSource
+            val platformLibs = leafTarget.platformLibrariesSource
                 .takeIf { it.isDirectory }
                 ?.listFiles()
                 ?.takeIf { it.isNotEmpty() }
@@ -93,8 +103,12 @@ class NativeDistributionCommonizer(
             if (platformLibs.isEmpty())
                 logger.warning("No platform libraries found for target $target. This target will be excluded from commonization.")
 
-            inputTarget to NativeDistributionLibraries(stdlib, platformLibs)
+            leafTarget to NativeDistributionLibraries(stdlib, platformLibs)
         }
+
+        logProgress("Read lazy (uninitialized) libraries")
+
+        return result
     }
 
     private fun loadLibrary(location: File): KotlinLibrary {
@@ -123,9 +137,13 @@ class NativeDistributionCommonizer(
     }
 
     private fun commonize(librariesByTargets: Map<InputTarget, NativeDistributionLibraries>): Result {
-        val statsCollector = if (withStats) NativeStatsCollector(targets, destination) else null
+        val statsCollector = when (statsType) {
+            RAW -> RawStatsCollector(targets, FileStatsOutput(destination, "raw"))
+            AGGREGATED -> AggregatedStatsCollector(targets, FileStatsOutput(destination, "aggregated"))
+            NONE -> null
+        }
         statsCollector.use {
-            val parameters = Parameters(statsCollector).apply {
+            val parameters = Parameters(statsCollector, ::logProgress).apply {
                 librariesByTargets.forEach { (target, libraries) ->
                     if (libraries.platformLibs.isEmpty()) return@forEach
 
@@ -158,14 +176,16 @@ class NativeDistributionCommonizer(
         copyCommonStandardLibraries()
 
         when (result) {
-            is NothingToCommonize -> {
+            is Result.NothingToCommonize -> {
                 // It may happen that all targets to be commonized (or at least all but one target) miss platform libraries.
                 // In such case commonizer will do nothing and return a special result value 'NothingToCommonize'.
-                // So, let's just copy platform libraries from those target where they are to the new destination.
-                originalLibrariesByTargets.keys.forEach(::copyTargetAsIs)
+                // So, let's just copy platform libraries from the target where they are to the new destination.
+                originalLibrariesByTargets.forEach { (target, libraries) ->
+                    copyTargetAsIs(target, libraries.platformLibs.size)
+                }
             }
 
-            is CommonizationPerformed -> {
+            is Result.Commonized -> {
                 val serializer = KlibMetadataMonolithicSerializer(
                     languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
                     metadataVersion = KlibMetadataVersion.INSTANCE,
@@ -173,19 +193,37 @@ class NativeDistributionCommonizer(
                 )
 
                 // 'targetsToCopy' are some targets with empty set of platform libraries
-                val targetsToCopy = originalLibrariesByTargets.keys - result.concreteTargets
-                targetsToCopy.forEach(::copyTargetAsIs)
+                val targetsToCopy = originalLibrariesByTargets.keys - result.leafTargets
+                if (targetsToCopy.isNotEmpty()) {
+                    targetsToCopy.forEach { target ->
+                        val libraries = originalLibrariesByTargets.getValue(target)
+                        copyTargetAsIs(target, libraries.platformLibs.size)
+                    }
+                }
 
-                val targetsToSerialize = result.concreteTargets + result.commonTarget
+                val leafTargetNames = result.leafTargets.map { it.name }
+                val targetsToSerialize = result.leafTargets + result.sharedTarget
                 targetsToSerialize.forEach { target ->
-                    val newModules = result.modulesByTargets.getValue(target)
+                    val moduleResults: Collection<ModuleResult> = result.modulesByTargets.getValue(target)
+                    val newModules: Collection<ModuleDescriptor> = moduleResults.mapNotNull { (it as? ModuleResult.Commonized)?.module }
+                    val absentModuleLocations: List<File> =
+                        moduleResults.mapNotNull { (it as? ModuleResult.Absent)?.originalLocation }
 
-                    val manifestProvider = when (target) {
-                        is InputTarget -> originalLibrariesByTargets.getValue(target)
-                        is OutputTarget -> CommonNativeManifestDataProvider(originalLibrariesByTargets.values)
+                    val manifestProvider: NativeManifestDataProvider
+                    val starredTarget: String?
+                    when (target) {
+                        is InputTarget -> {
+                            manifestProvider = originalLibrariesByTargets.getValue(target)
+                            starredTarget = target.name
+                        }
+                        is OutputTarget -> {
+                            manifestProvider = CommonNativeManifestDataProvider(originalLibrariesByTargets.values)
+                            starredTarget = null
+                        }
                     }
 
-                    serializeTarget(target, newModules, manifestProvider, serializer)
+                    val targetName = leafTargetNames.joinToString { if (it == starredTarget) "$it(*)" else it }
+                    serializeTarget(target, targetName, newModules, absentModuleLocations, manifestProvider, serializer)
                 }
             }
         }
@@ -206,24 +244,36 @@ class NativeDistributionCommonizer(
                     val libraryDestination = destination.resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR).resolve(libraryOrigin.name)
                     libraryOrigin.copyRecursively(libraryDestination)
                 }
+
+            val what = listOfNotNull(
+                "standard library".takeIf { copyStdlib },
+                "endorsed libraries".takeIf { copyEndorsedLibs }
+            ).joinToString(separator = " and ")
+
+            logProgress("Copied $what")
         }
     }
 
-    private fun copyTargetAsIs(target: InputTarget) {
-        val librariesDestination = target.librariesDestination
+    private fun copyTargetAsIs(leafTarget: InputTarget, librariesCount: Int) {
+        val librariesDestination = leafTarget.librariesDestination
         librariesDestination.mkdirs() // always create an empty directory even if there is nothing to copy
 
-        val librariesSource = target.platformLibrariesSource
+        val librariesSource = leafTarget.platformLibrariesSource
         if (librariesSource.isDirectory) librariesSource.copyRecursively(librariesDestination)
+
+        logProgress("Copied $librariesCount libraries for [${leafTarget.name}]")
     }
 
     private fun serializeTarget(
         target: Target,
+        targetName: String,
         newModules: Collection<ModuleDescriptor>,
+        absentModuleLocations: List<File>,
         manifestProvider: NativeManifestDataProvider,
         serializer: KlibMetadataMonolithicSerializer
     ) {
         val librariesDestination = target.librariesDestination
+        librariesDestination.mkdirs() // always create an empty directory even if there is nothing to copy
 
         for (newModule in newModules) {
             val libraryName = newModule.name
@@ -239,6 +289,13 @@ class NativeDistributionCommonizer(
 
             writeLibrary(metadata, manifestData, libraryDestination)
         }
+
+        for (absentModuleLocation in absentModuleLocations) {
+            val libraryName = absentModuleLocation.name
+            absentModuleLocation.copyRecursively(librariesDestination.resolve(libraryName))
+        }
+
+        logProgress("Written libraries for [$targetName]")
     }
 
     private fun writeLibrary(

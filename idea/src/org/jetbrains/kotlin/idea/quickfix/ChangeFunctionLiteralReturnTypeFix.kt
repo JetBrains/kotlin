@@ -53,7 +53,8 @@ class ChangeFunctionLiteralReturnTypeFix(
 
         val correspondingProperty = PsiTreeUtil.getParentOfType(functionLiteralExpression, KtProperty::class.java)
         if (correspondingProperty != null &&
-            correspondingProperty.initializer?.let { QuickFixUtil.canEvaluateTo(it, functionLiteralExpression) } ?: true
+            correspondingProperty.delegate == null &&
+            correspondingProperty.initializer?.let { QuickFixUtil.canEvaluateTo(it, functionLiteralExpression) } != false
         ) {
             val correspondingPropertyTypeRef = correspondingProperty.typeReference
             val propertyType = context.get(BindingContext.TYPE, correspondingPropertyTypeRef)

@@ -16,10 +16,11 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrErrorDeclarationImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrTypeAliasImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.withScope
@@ -51,7 +52,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
             is KtScript ->
                 ScriptGenerator(this).generateScriptDeclaration(ktDeclaration)
             else ->
-                IrErrorDeclarationImpl(
+                context.irFactory.createErrorDeclaration(
                     ktDeclaration.startOffsetSkippingComments, ktDeclaration.endOffset,
                     getOrFail(BindingContext.DECLARATION_TO_DESCRIPTOR, ktDeclaration)
                 )
@@ -79,20 +80,17 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
     fun generateClassOrObjectDeclaration(ktClassOrObject: KtPureClassOrObject): IrClass =
         ClassGenerator(this).generateClass(ktClassOrObject)
 
-    private fun generateTypeAliasDeclaration(ktTypeAlias: KtTypeAlias): IrTypeAlias {
-        val typeAliasDescriptor = getOrFail(BindingContext.TYPE_ALIAS, ktTypeAlias)
-        val irTypeAlias = context.symbolTable.declareTypeAlias(typeAliasDescriptor) { symbol ->
-            IrTypeAliasImpl.fromSymbolDescriptor(
-                ktTypeAlias.startOffsetSkippingComments, ktTypeAlias.endOffset,
-                symbol,
-                typeAliasDescriptor.expandedType.toIrType(),
-                IrDeclarationOrigin.DEFINED,
-                typeAliasDescriptor
-            )
+    private fun generateTypeAliasDeclaration(ktTypeAlias: KtTypeAlias): IrTypeAlias =
+        with(getOrFail(BindingContext.TYPE_ALIAS, ktTypeAlias)) {
+            context.symbolTable.declareTypeAlias(this) { symbol ->
+                context.irFactory.createTypeAlias(
+                    ktTypeAlias.startOffsetSkippingComments, ktTypeAlias.endOffset, symbol,
+                    name, visibility, expandedType.toIrType(), isActual, IrDeclarationOrigin.DEFINED
+                )
+            }.also {
+                generateGlobalTypeParametersDeclarations(it, declaredTypeParameters)
+            }
         }
-        generateGlobalTypeParametersDeclarations(irTypeAlias, typeAliasDescriptor.declaredTypeParameters)
-        return irTypeAlias
-    }
 
     fun generateGlobalTypeParametersDeclarations(
         irTypeParametersOwner: IrTypeParametersContainer,
@@ -174,7 +172,7 @@ abstract class DeclarationGeneratorExtension(val declarationGenerator: Declarati
 
     inline fun <T : IrDeclaration> T.buildWithScope(builder: (T) -> Unit): T =
         also { irDeclaration ->
-            context.symbolTable.withScope(irDeclaration.descriptor) {
+            context.symbolTable.withScope(irDeclaration) {
                 builder(irDeclaration)
             }
         }

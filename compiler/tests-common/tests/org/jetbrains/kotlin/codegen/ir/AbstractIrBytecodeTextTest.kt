@@ -9,5 +9,5 @@ import org.jetbrains.kotlin.codegen.AbstractBytecodeTextTest
 import org.jetbrains.kotlin.test.TargetBackend
 
 abstract class AbstractIrBytecodeTextTest : AbstractBytecodeTextTest() {
-    override fun getBackend() = TargetBackend.JVM_IR
+    override val backend = TargetBackend.JVM_IR
 }

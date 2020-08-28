@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import java.io.File
+import java.nio.file.Files
 import java.util.zip.ZipFile
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -97,6 +98,18 @@ class KotlinGradleIT : BaseGradleIT() {
         project.build("build") {
             assertSuccessful()
             assertTasksUpToDate(":compileKotlin", ":compileTestKotlin")
+        }
+    }
+
+    @Test
+    fun testKotlinCompileInFolderWithSpaces() {
+        val project = Project(projectName = "Project Path With Spaces")
+
+        project.build("build") {
+            assertSuccessful()
+            assertReportExists()
+            assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
+            assertNotContains("Forcing System.gc")
         }
     }
 
@@ -352,7 +365,7 @@ class KotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
-    fun testDowngradeTo106() {
+    fun testDowngradePluginVersion() {
         val project = Project("kotlinProject")
         val options = defaultBuildOptions().copy(incremental = true, withDaemon = false)
 
@@ -360,7 +373,7 @@ class KotlinGradleIT : BaseGradleIT() {
             assertSuccessful()
         }
 
-        project.build("clean", "assemble", options = options.copy(kotlinVersion = "1.0.6")) {
+        project.build("clean", "assemble", options = options.copy(kotlinVersion = "1.3.41")) {
             assertSuccessful()
         }
     }
@@ -588,14 +601,12 @@ class KotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testNoUnnamedInputsOutputs() {
-        // Use a new Gradle version to enable the usage of the input/output builders, which are new API:
-        val gradleVersionRequirement = GradleVersionRequired.AtLeast("4.4")
 
         val projects = listOf(
-            Project("simpleProject", gradleVersionRequirement),
-            Project("kotlin2JsProject", gradleVersionRequirement),
-            Project("multiplatformProject", gradleVersionRequirement),
-            Project("simple", gradleVersionRequirement, "kapt2")
+            Project("simpleProject"),
+            Project("kotlin2JsProject"),
+            Project("multiplatformProject"),
+            Project("simple", directoryPrefix = "kapt2")
         )
 
         projects.forEach {
@@ -668,8 +679,22 @@ class KotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
-    fun testInternalTest() {
-        Project("internalTest").build("build") {
+    fun testInternalTest() = with(
+        Project("internalTest")
+    ) {
+        build("build") {
+            assertSuccessful()
+            assertReportExists()
+            assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
+        }
+
+        // Check KT-35341: use symlinked build dir
+        val buildDir = projectDir.resolve("build")
+        buildDir.deleteRecursively()
+        val externalBuildDir = Files.createTempDirectory(workingDir.toPath(), "externalBuild")
+        Files.createSymbolicLink(buildDir.toPath(), externalBuildDir)
+
+        build("build") {
             assertSuccessful()
             assertReportExists()
             assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
@@ -894,7 +919,7 @@ class KotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
-    fun testNewModelInOldJvmPlugin() = with(Project("new-model-in-old-plugin", GradleVersionRequired.AtLeast("5.0"))) {
+    fun testNewModelInOldJvmPlugin() = with(Project("new-model-in-old-plugin")) {
         setupWorkingDir()
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.PsiElementWithOrigin
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.propertyNameByGetMethodName
 import org.jetbrains.kotlin.load.java.propertyNameBySetMethodName
@@ -213,4 +214,10 @@ fun accessorNameByPropertyName(name: String, accessor: KtLightMethod): String? {
 
 fun getAccessorNamesCandidatesByPropertyName(name: String): List<String> {
     return listOf(JvmAbi.setterName(name), JvmAbi.getterName(name))
+}
+
+fun KtLightMethod.checkIsMangled(): Boolean {
+    val demangledName = KotlinTypeMapper.InternalNameMapper.demangleInternalName(name) ?: return false
+    val originalName = propertyNameByAccessor(demangledName, this) ?: demangledName
+    return originalName == kotlinOrigin?.name
 }

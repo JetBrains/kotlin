@@ -37,16 +37,15 @@ class LazyPackageViewDescriptorImpl(
         module.packageFragmentProvider.getPackageFragments(fqName)
     }
 
-    override val memberScope: MemberScope = LazyScopeAdapter(storageManager.createLazyValue {
+    override val memberScope: MemberScope = LazyScopeAdapter(storageManager) {
         if (fragments.isEmpty()) {
             MemberScope.Empty
-        }
-        else {
+        } else {
             // Packages from SubpackagesScope are got via getContributedDescriptors(DescriptorKindFilter.PACKAGES, MemberScope.ALL_NAME_FILTER)
             val scopes = fragments.map { it.getMemberScope() } + SubpackagesScope(module, fqName)
-            ChainedMemberScope("package view scope for $fqName in ${module.name}", scopes)
+            ChainedMemberScope.create("package view scope for $fqName in ${module.name}", scopes)
         }
-    })
+    }
 
     override fun getContainingDeclaration(): PackageViewDescriptor? {
         return if (fqName.isRoot) null else module.getPackage(fqName.parent())

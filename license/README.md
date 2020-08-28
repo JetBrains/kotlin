@@ -204,10 +204,6 @@ any distributions of the tools or libraries:
       - License: MIT ([license/third_party/mocha-teamcity-reporter_LICENSE.txt](third_party/mocha-teamcity-reporter_LICENSE.txt)
              and [license/third_party/teamcity-service-messages_LICENSE.txt](third_party/teamcity-service-messages_LICENSE.txt))
       - Origin: Copyright (c) 2016 Jamie Sherriff and Copyright (c) 2013 Aaron Forsander
-      
- - Path: libraries/tools/kotlin-source-map-loader/kotlin-source-map-loader.js
-      - License: MIT ([license/third_party/source-map-loader_LICENSE.txt](third_party/source-map-loader_LICENSE.txt))
-      - Origin: Copyright JS Foundation and other contributors
 
 ## Example Code
 

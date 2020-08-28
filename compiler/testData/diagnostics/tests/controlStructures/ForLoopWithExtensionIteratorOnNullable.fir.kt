@@ -9,7 +9,7 @@ fun test() {
     // Error
     container.<!INAPPLICABLE_CANDIDATE!>iterator<!>()
     // for extension iterator, this code compiles, but should not
-    <!INAPPLICABLE_CANDIDATE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>for (s in container) {}<!>
+    <!INAPPLICABLE_CANDIDATE!>for (s in container) {}<!>
 }
 class OtherContainer<K>(val k: K) {
     operator fun iterator(): Iterator<K> = null!!
@@ -18,5 +18,5 @@ class OtherContainer<K>(val k: K) {
 fun test2() {
     val other: OtherContainer<String>? = null
     // Error
-    <!INAPPLICABLE_CANDIDATE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>for (s in other) {}<!>
+    <!INAPPLICABLE_CANDIDATE!>for (s in other) {}<!>
 }

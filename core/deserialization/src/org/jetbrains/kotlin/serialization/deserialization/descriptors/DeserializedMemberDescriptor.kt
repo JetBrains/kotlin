@@ -45,21 +45,6 @@ interface DeserializedMemberDescriptor : DeserializedDescriptor, MemberDescripto
     }
 }
 
-interface DeserializedContainerSource : SourceElement {
-    // Non-null if this container is loaded from a class with an incompatible binary version
-    val incompatibility: IncompatibleVersionErrorData<*>?
-
-    // True iff this is container is "invisible" because it's loaded from a pre-release class and this compiler is a release
-    val isPreReleaseInvisible: Boolean
-
-    // True iff this container was compiled by the new IR backend, this compiler is not using the IR backend right now,
-    // and no additional flags to override this behavior were specified.
-    val isInvisibleIrDependency: Boolean
-
-    // This string should only be used in error messages
-    val presentableString: String
-}
-
 interface DeserializedCallableMemberDescriptor : DeserializedMemberDescriptor, CallableMemberDescriptor
 
 class DeserializedSimpleFunctionDescriptor(
@@ -120,6 +105,7 @@ class DeserializedSimpleFunctionDescriptor(
             newOwner, original as SimpleFunctionDescriptor?, annotations, newName ?: name, kind,
             proto, nameResolver, typeTable, versionRequirementTable, containerSource, source
         ).also {
+            it.setHasStableParameterNames(hasStableParameterNames())
             it.coroutinesExperimentalCompatibilityMode = coroutinesExperimentalCompatibilityMode
         }
     }
@@ -173,7 +159,7 @@ class DeserializedPropertyDescriptor(
     ): PropertyDescriptorImpl {
         return DeserializedPropertyDescriptor(
             newOwner, original, annotations, newModality, newVisibility, isVar, newName, kind, isLateInit, isConst, isExternal,
-            @Suppress("DEPRECATION") isDelegated, isExpect, proto, nameResolver, typeTable, versionRequirementTable, containerSource
+            isDelegated, isExpect, proto, nameResolver, typeTable, versionRequirementTable, containerSource
         )
     }
 
@@ -209,7 +195,10 @@ class DeserializedClassConstructorDescriptor(
         return DeserializedClassConstructorDescriptor(
             newOwner as ClassDescriptor, original as ConstructorDescriptor?, annotations, isPrimary, kind,
             proto, nameResolver, typeTable, versionRequirementTable, containerSource, source
-        ).also { it.coroutinesExperimentalCompatibilityMode = coroutinesExperimentalCompatibilityMode }
+        ).also {
+            it.setHasStableParameterNames(hasStableParameterNames())
+            it.coroutinesExperimentalCompatibilityMode = coroutinesExperimentalCompatibilityMode
+        }
     }
 
     override fun isExternal(): Boolean = false

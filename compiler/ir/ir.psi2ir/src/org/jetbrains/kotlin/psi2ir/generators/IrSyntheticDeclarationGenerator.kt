@@ -39,7 +39,7 @@ class IrSyntheticDeclarationGenerator(context: GeneratorContext) : IrElementVisi
 
         contributedDescriptors.removeAll(declaredDescriptors)
 
-        symbolTable.withScope(irClass.descriptor) {
+        symbolTable.withScope(irClass) {
             contributedDescriptors.forEach { it.accept(descriptorGenerator, irClass) }
         }
     }

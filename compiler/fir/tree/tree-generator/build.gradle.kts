@@ -11,10 +11,9 @@ val compileOnly by configurations
 runtimeOnly.extendsFrom(compileOnly)
 
 dependencies {
-    compile(project(":compiler:frontend.common"))
-    compile(project(":core:descriptors"))
-    compile(project(":compiler:fir:cones"))
-    compile(project(":compiler:resolution"))
+    implementation(project(":core:compiler.common"))
+    implementation(project(":compiler:frontend.common"))
+    implementation(project(":compiler:fir:cones"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
     Platform[193].orLower {
@@ -27,7 +26,7 @@ dependencies {
     Platform[192].orHigher {
         runtimeOnly(intellijCoreDep()) { includeJars("jdom") }
     }
-    implementation(kotlin("reflect"))
+    implementation(project(":kotlin-reflect"))
 }
 
 val writeCopyright by task<WriteCopyrightToFile> {

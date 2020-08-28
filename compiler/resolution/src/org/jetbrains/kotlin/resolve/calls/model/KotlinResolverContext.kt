@@ -228,6 +228,8 @@ enum class KotlinCallKind(vararg resolutionPart: ResolutionPart) {
         CheckArgumentsInParenthesis,
         CheckExternalArgument,
         EagerResolveOfCallableReferences,
+        CompatibilityOfTypeVariableAsIntersectionTypePart,
+        CompatibilityOfPartiallyApplicableSamConversion,
         PostponedVariablesInitializerResolutionPart
     ),
     INVOKE(*FUNCTION.resolutionSequence.toTypedArray()),

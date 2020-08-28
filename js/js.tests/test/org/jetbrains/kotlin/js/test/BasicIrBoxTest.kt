@@ -11,11 +11,13 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.messageCollectorLogger
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.parsing.parseBoolean
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.File
@@ -30,7 +32,8 @@ abstract class BasicIrBoxTest(
     testGroupOutputDirPrefix: String,
     pathToRootOutputDir: String = TEST_DATA_DIR_PATH,
     generateSourceMap: Boolean = false,
-    generateNodeJsRunner: Boolean = false
+    generateNodeJsRunner: Boolean = false,
+    targetBackend: TargetBackend = TargetBackend.JS_IR
 ) : BasicBoxTest(
     pathToTestDir,
     testGroupOutputDirPrefix,
@@ -38,13 +41,13 @@ abstract class BasicIrBoxTest(
     typedArraysEnabled = true,
     generateSourceMap = generateSourceMap,
     generateNodeJsRunner = generateNodeJsRunner,
-    targetBackend = TargetBackend.JS_IR
+    targetBackend = targetBackend
 ) {
     open val generateDts = false
 
     override val skipMinification = true
 
-    private fun getBoolean(s: String, default: Boolean) = System.getProperty(s)?.let { getBoolean(it) } ?: default
+    private fun getBoolean(s: String, default: Boolean) = System.getProperty(s)?.let { parseBoolean(it) } ?: default
 
     override val skipRegularMode: Boolean = getBoolean("kotlin.js.ir.skipRegularMode")
 
@@ -52,13 +55,22 @@ abstract class BasicIrBoxTest(
 
     override val runIrPir: Boolean = getBoolean("kotlin.js.ir.pir", true)
 
+    val runEs6Mode: Boolean = getBoolean("kotlin.js.ir.es6", false)
+
+    val perModule: Boolean = getBoolean("kotlin.js.ir.perModule")
+
+    private val osName: String = System.getProperty("os.name").toLowerCase()
+
     // TODO Design incremental compilation for IR and add test support
     override val incrementalCompilationChecksEnabled = false
 
     private val compilationCache = mutableMapOf<String, String>()
 
+    private val cachedDependencies = mutableMapOf<String, Collection<String>>()
+
     override fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters, coroutinesPackage: String) {
         compilationCache.clear()
+        cachedDependencies.clear()
         super.doTest(filePath, expectedResult, mainCallParameters, coroutinesPackage)
     }
 
@@ -80,12 +92,10 @@ abstract class BasicIrBoxTest(
         testFunction: String,
         needsFullIrRuntime: Boolean,
         isMainModule: Boolean,
-        skipDceDriven: Boolean
+        skipDceDriven: Boolean,
+        splitPerModule: Boolean
     ) {
-        val filesToCompile = units
-            .map { (it as TranslationUnit.SourceFile).file }
-            // TODO: split input files to some parts (global common, local common, test)
-            .filterNot { it.virtualFilePath.contains(COMMON_FILES_DIR_PATH) }
+        val filesToCompile = units.map { (it as TranslationUnit.SourceFile).file }
 
         val runtimeKlibs = if (needsFullIrRuntime) listOf(fullRuntimeKlib, kotlinTestKLib) else listOf(defaultRuntimeKlib)
 
@@ -131,18 +141,14 @@ abstract class BasicIrBoxTest(
                     mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null },
                     exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction))),
                     generateFullJs = true,
-                    generateDceJs = runIrDce
+                    generateDceJs = runIrDce,
+                    es6mode = runEs6Mode,
+                    multiModule = splitPerModule || perModule
                 )
 
-                val wrappedCode =
-                    wrapWithModuleEmulationMarkers(compiledModule.jsCode!!, moduleId = config.moduleId, moduleKind = config.moduleKind)
-                outputFile.write(wrappedCode)
+                compiledModule.jsCode!!.writeTo(outputFile, config)
 
-                compiledModule.dceJsCode?.let { dceJsCode ->
-                    val dceWrappedCode =
-                        wrapWithModuleEmulationMarkers(dceJsCode, moduleId = config.moduleId, moduleKind = config.moduleKind)
-                    dceOutputFile.write(dceWrappedCode)
-                }
+                compiledModule.dceJsCode?.writeTo(dceOutputFile, config)
 
                 if (generateDts) {
                     val dtsFile = outputFile.withReplacedExtensionOrNull("_v5.js", ".d.ts")
@@ -161,11 +167,10 @@ abstract class BasicIrBoxTest(
                     friendDependencies = emptyList(),
                     mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null },
                     exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction))),
-                    dceDriven = true
-                ).jsCode!!.let { pirCode ->
-                    val pirWrappedCode = wrapWithModuleEmulationMarkers(pirCode, moduleId = config.moduleId, moduleKind = config.moduleKind)
-                    pirOutputFile.write(pirWrappedCode)
-                }
+                    dceDriven = true,
+                    es6mode = runEs6Mode,
+                    multiModule = splitPerModule || perModule
+                ).jsCode!!.writeTo(pirOutputFile, config)
             }
         } else {
             generateKLib(
@@ -175,12 +180,41 @@ abstract class BasicIrBoxTest(
                 configuration = config.configuration,
                 allDependencies = resolvedLibraries,
                 friendDependencies = emptyList(),
+                irFactory = PersistentIrFactory,
                 outputKlibPath = actualOutputFile,
                 nopack = true
             )
 
             compilationCache[outputFile.name.replace(".js", ".meta.js")] = actualOutputFile
         }
+    }
+
+    private fun JsCode.writeTo(outputFile: File, config: JsConfig) {
+        val wrappedCode =
+            wrapWithModuleEmulationMarkers(mainModule, moduleId = config.moduleId, moduleKind = config.moduleKind)
+        outputFile.write(wrappedCode)
+
+        val dependencyPaths = mutableListOf<String>()
+
+        dependencies.forEach { (moduleId, code) ->
+            val wrappedCode = wrapWithModuleEmulationMarkers(code, config.moduleKind, moduleId)
+            val dependencyPath = outputFile.absolutePath.replace("_v5.js", "-${moduleId}_v5.js")
+            dependencyPaths += dependencyPath
+            File(dependencyPath).write(wrappedCode)
+        }
+
+        cachedDependencies[outputFile.absolutePath] = dependencyPaths
+    }
+
+    override fun dontRunOnSpecificPlatform(targetBackend: TargetBackend): Boolean {
+        if (targetBackend != TargetBackend.JS_IR_ES6) return false
+        if (!runEs6Mode) return false
+
+        // TODO: Since j2v8 does not support ES6 on mac and windows, temporary don't run such test on those platforms.
+        if (osName.indexOf("win") >= 0) return true
+        if (osName.indexOf("mac") >= 0 || osName.indexOf("darwin") >= 0) return true
+
+        return false
     }
 
     override fun runGeneratedCode(
@@ -194,7 +228,8 @@ abstract class BasicIrBoxTest(
         // TODO: should we do anything special for module systems?
         // TODO: return list of js from translateFiles and provide then to this function with other js files
 
-        testChecker.check(jsFiles, testModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
+        val allFiles = jsFiles.flatMap { file -> cachedDependencies[File(file).absolutePath]?.let { deps -> deps + file } ?: listOf(file) }
+        testChecker.check(allFiles, testModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
     }
 }
 

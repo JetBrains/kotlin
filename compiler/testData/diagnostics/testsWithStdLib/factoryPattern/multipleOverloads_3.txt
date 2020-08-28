@@ -1,0 +1,32 @@
+package
+
+public fun test_1(/*0*/ name: Name, /*1*/ toplevelDescriptors: kotlin.collections.List<DeclarationDescriptor>): kotlin.collections.List<DeclarationDescriptor>
+public fun test_2(/*0*/ name: Name, /*1*/ toplevelDescriptors: kotlin.collections.List<DeclarationDescriptor>): kotlin.collections.List<DeclarationDescriptor>
+public fun test_3(/*0*/ name: Name, /*1*/ toplevelDescriptors: kotlin.collections.List<DeclarationDescriptor>): kotlin.collections.List<DeclarationDescriptor>
+public inline fun </*0*/ T, /*1*/ R> kotlin.collections.Iterable<T>.myFlatMap(/*0*/ transform: (T) -> kotlin.collections.Iterable<R>): kotlin.collections.List<R>
+@kotlin.OverloadResolutionByLambdaReturnType @kotlin.jvm.JvmName(name = "myFlatMapSequence") public inline fun </*0*/ T, /*1*/ R> kotlin.collections.Iterable<T>.myFlatMap(/*0*/ transform: (T) -> kotlin.sequences.Sequence<R>): kotlin.collections.List<R>
+
+public interface DeclarationDescriptor {
+    public abstract val name: Name
+    public abstract val nextCandidates: kotlin.collections.List<DeclarationDescriptor>?
+    public abstract val nextCandidatesSeq: kotlin.sequences.Sequence<DeclarationDescriptor>?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Name {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+package kotlin {
+
+    public final annotation class OverloadResolutionByLambdaReturnType : kotlin.Annotation {
+        public constructor OverloadResolutionByLambdaReturnType()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

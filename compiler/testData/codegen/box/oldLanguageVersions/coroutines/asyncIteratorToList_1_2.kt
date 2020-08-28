@@ -4,6 +4,7 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
 // DONT_TARGET_EXACT_BACKEND: JS_IR
+// DONT_TARGET_EXACT_BACKEND: JS_IR_ES6
 
 import helpers.*
 import kotlin.coroutines.experimental.*

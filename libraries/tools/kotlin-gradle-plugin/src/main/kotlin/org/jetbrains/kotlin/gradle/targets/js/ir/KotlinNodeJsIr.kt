@@ -1,15 +1,17 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryType
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
+import org.jetbrains.kotlin.gradle.tasks.dependsOn
+import org.jetbrains.kotlin.gradle.tasks.withType
 import javax.inject.Inject
 
 open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
@@ -21,7 +23,7 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
     private val runTaskName = disambiguateCamelCased("run")
 
     override fun runTask(body: NodeJsExec.() -> Unit) {
-        (project.tasks.getByName(runTaskName) as NodeJsExec).body()
+        project.tasks.withType<NodeJsExec>().named(runTaskName).configure(body)
     }
 
     override fun configureDefaultTestFramework(it: KotlinJsTest) {
@@ -31,11 +33,11 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
     override fun configureRun(
         compilation: KotlinJsIrCompilation
     ) {
-        compilation.binaries.getIrBinaries(KotlinJsBinaryType.DEVELOPMENT)
+        compilation.binaries.getIrBinaries(KotlinJsBinaryMode.DEVELOPMENT)
             .all { developmentExecutable ->
                 val runTaskHolder = NodeJsExec.create(compilation, disambiguateCamelCased(RUN_TASK_NAME)) {
                     group = taskGroupName
-                    inputFileProperty.set(developmentExecutable.linkTask.map { it.outputFileProperty.get() })
+                    inputFileProperty.set(developmentExecutable.linkTask.flatMap { it.outputFileProperty })
                 }
 
                 target.runTask.dependsOn(runTaskHolder)
@@ -45,10 +47,9 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
     override fun configureBuild(
         compilation: KotlinJsIrCompilation
     ) {
-        compilation.binaries.getIrBinaries(KotlinJsBinaryType.PRODUCTION)
+        compilation.binaries.getIrBinaries(KotlinJsBinaryMode.PRODUCTION)
             .all { productionExecutable ->
-                val assembleTask = project.tasks.getByName(LifecycleBasePlugin.ASSEMBLE_TASK_NAME)
-                assembleTask.dependsOn(productionExecutable.linkTask)
+                project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(productionExecutable.linkTask)
             }
     }
 }

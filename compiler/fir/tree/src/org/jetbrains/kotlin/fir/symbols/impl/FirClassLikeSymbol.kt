@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 sealed class FirClassLikeSymbol<D>(
     val classId: ClassId
@@ -27,7 +28,7 @@ sealed class FirClassSymbol<C : FirClass<C>>(classId: ClassId) : FirClassLikeSym
 
 class FirRegularClassSymbol(classId: ClassId) : FirClassSymbol<FirRegularClass>(classId)
 
-val ANONYMOUS_CLASS_ID = ClassId(FqName.ROOT, FqName("anonymous"), true)
+val ANONYMOUS_CLASS_ID = ClassId(FqName.ROOT, FqName.topLevel(Name.special("<anonymous>")), true)
 
 class FirAnonymousObjectSymbol : FirClassSymbol<FirAnonymousObject>(ANONYMOUS_CLASS_ID)
 

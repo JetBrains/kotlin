@@ -22,10 +22,11 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.prepareReceiverRegardingCap
 
 
 class FakeKotlinCallArgumentForCallableReference(
-    val index: Int
+    val index: Int,
+    val name: Name?
 ) : KotlinCallArgument {
     override val isSpread: Boolean get() = false
-    override val argumentName: Name? get() = null
+    override val argumentName: Name? get() = name
 }
 
 class ReceiverExpressionKotlinCallArgument private constructor(

@@ -1,4 +1,3 @@
-// FIR_IGNORE
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -DEBUG_INFO_SMARTCAST
 // SKIP_TXT
 
@@ -115,7 +114,7 @@ fun case_8(value_1: Int, value_2: Int) = when {
 fun case_9(value_1: Int, value_2: String, value_3: String) = when {
     value_1 == 1 -> try { 4 } catch (e: Exception) { 5 }
     value_1 == 2 -> try { throw Exception() } catch (e: Exception) { value_2 }
-    else -> try { throw Exception() } catch (e: Exception) <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>{ {<!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>value_3<!>} }<!> finally { }
+    else -> try { throw Exception() } catch (e: Exception) { {value_3} } finally { }
 }
 
 // TESTCASE NUMBER: 10
@@ -123,7 +122,7 @@ fun case_10(value_1: Int, value_2: String?, value_3: String?) {
     when {
         value_1 == 1 -> value_2 ?: true
         value_1 == 2 -> value_2 ?: value_3 ?: true
-        value_1 == 3 -> value_2!! <!USELESS_ELVIS!>?: true<!>
+        value_1 == 3 -> value_2!! ?: true
     }
 }
 
@@ -141,8 +140,8 @@ fun case_12(value_1: Int, value_2: Collection<Int>, value_3: Collection<Int>?) {
     when {
         value_1 == 1 -> value_2 as List<Int>
         value_1 == 2 -> value_2 as? List<Int>
-        value_1 == 3 -> value_3 <!UNCHECKED_CAST!>as? MutableMap<Int, Int><!>
-        value_1 == 4 -> (value_2 <!UNCHECKED_CAST!>as? Map<Int, Int><!>) as MutableMap<Int, Int>
+        value_1 == 3 -> value_3 as? MutableMap<Int, Int>
+        value_1 == 4 -> (value_2 as? Map<Int, Int>) as MutableMap<Int, Int>
     }
 }
 
@@ -164,8 +163,8 @@ fun case_14(value_1: Int, value_2: Int, value_3: Int, value_4: Boolean?) {
     var mutablevalue_3 = value_3
 
     when {
-        value_1 == 1 -> <!UNUSED_CHANGED_VALUE!>mutablevalue_2++<!>
-        value_1 == 2 -> <!UNUSED_CHANGED_VALUE!>mutablevalue_3--<!>
+        value_1 == 1 -> mutablevalue_2++
+        value_1 == 2 -> mutablevalue_3--
         value_1 == 3 -> value_4!!
     }
 }
@@ -275,7 +274,7 @@ fun case_23(value_1: Int) {
     fun r_1() {
         when {
             value_1 == 1 -> return
-            value_1 == 2 -> <!UNREACHABLE_CODE!>return return<!> return
+            value_1 == 2 -> return return return
         }
     }
 

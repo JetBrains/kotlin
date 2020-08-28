@@ -2,6 +2,7 @@ public final class SmartSet <T> extends kotlin.collections.AbstractSet<T> implem
     private java.lang.Object data;
     private int size;
     private static final int ARRAY_THRESHOLD;
+    @org.jetbrains.annotations.NotNull
     public static final SmartSet.Companion Companion;
 
     public int getSize() { /* compiled code */ }

@@ -1,0 +1,16 @@
+<html>
+<body>
+This inspection reports case insensitive comparison that can be replaced with <b>equals(..., ignoreCase = true)</b>.
+By using <b>equals()</b> you won't have to allocate any extra strings with <b>toLowerCase()/toUpperCase()</b> to do the comparison.
+<br><br>
+For example:
+<br>
+<pre>
+fun main() {
+    val a = "KoTliN"
+    val b = "KOTLIN"
+    println(a.toLowerCase() == b.toLowerCase()) // can be replaced with "a.equals(b, ignoreCase = true)"
+}
+</pre>
+</body>
+</html>

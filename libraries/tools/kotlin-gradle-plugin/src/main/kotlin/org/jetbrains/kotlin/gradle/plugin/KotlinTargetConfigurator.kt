@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import org.gradle.api.DefaultTask
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
@@ -21,6 +22,7 @@ import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.Delete
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.language.base.plugins.LifecycleBasePlugin
@@ -31,6 +33,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
+import org.jetbrains.kotlin.gradle.tasks.locateTask
+import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.COMPILE
 import org.jetbrains.kotlin.gradle.utils.RUNTIME
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -46,6 +52,7 @@ interface KotlinTargetConfigurator<KotlinTargetType : KotlinTarget> {
         configureCompilations(target)
         defineConfigurationsForTarget(target)
         configureArchivesAndComponent(target)
+        configureSourceSet(target)
         configureBuild(target)
         configurePlatformSpecificModel(target)
     }
@@ -55,6 +62,7 @@ interface KotlinTargetConfigurator<KotlinTargetType : KotlinTarget> {
     fun defineConfigurationsForTarget(target: KotlinTargetType)
     fun configureArchivesAndComponent(target: KotlinTargetType)
     fun configureBuild(target: KotlinTargetType)
+    fun configureSourceSet(target: KotlinTarget)
 
     fun configurePlatformSpecificModel(target: KotlinTargetType) = Unit
 }
@@ -65,8 +73,9 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 ) : KotlinTargetConfigurator<KotlinTargetType> {
 
     private fun Project.registerOutputsForStaleOutputCleanup(kotlinCompilation: KotlinCompilation<*>) {
-        val cleanTask = tasks.getByName(LifecycleBasePlugin.CLEAN_TASK_NAME) as Delete
-        cleanTask.delete(kotlinCompilation.output.allOutputs)
+        tasks.withType<Delete>().named(LifecycleBasePlugin.CLEAN_TASK_NAME).configure { cleanTask ->
+            cleanTask.delete(kotlinCompilation.output.allOutputs)
+        }
     }
 
     protected open fun setupCompilationDependencyFiles(compilation: KotlinCompilation<KotlinCommonOptions>) {
@@ -99,17 +108,23 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         }
     }
 
-    override fun configureCompilationDefaults(target: KotlinTargetType) {
+    override fun configureSourceSet(target: KotlinTarget) {
         val project = target.project
 
         target.compilations.all { compilation ->
-            defineConfigurationsForCompilation(compilation)
-
             if (createDefaultSourceSets) {
                 project.kotlinExtension.sourceSets.maybeCreate(compilation.defaultSourceSetName).also { sourceSet ->
                     compilation.source(sourceSet) // also adds dependencies, requires the configurations for target and source set to exist at this point
                 }
             }
+        }
+    }
+
+    override fun configureCompilationDefaults(target: KotlinTargetType) {
+        val project = target.project
+
+        target.compilations.all { compilation ->
+            defineConfigurationsForCompilation(compilation)
 
             if (compilation is KotlinCompilationWithResources) {
                 configureResourceProcessing(compilation, project.files(Callable { compilation.allKotlinSourceSets.map { it.resources } }))
@@ -125,10 +140,11 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
     ) {
         val project = compilation.target.project
 
-        val resourcesTask = project.tasks.maybeCreate(compilation.processResourcesTaskName, ProcessResources::class.java)
-        resourcesTask.description = "Processes $resourceSet."
-        DslObject(resourcesTask).conventionMapping.map("destinationDir") { project.file(compilation.output.resourcesDir) }
-        resourcesTask.from(resourceSet)
+        project.locateOrRegisterTask<ProcessResources>(compilation.processResourcesTaskName) { resourcesTask ->
+            resourcesTask.description = "Processes $resourceSet."
+            DslObject(resourcesTask).conventionMapping.map("destinationDir") { project.file(compilation.output.resourcesDir) }
+            resourcesTask.from(resourceSet)
+        }
     }
 
     protected fun createLifecycleTask(compilation: KotlinCompilation<*>) {
@@ -136,12 +152,12 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
         compilation.output.classesDirs.from(project.files().builtBy(compilation.compileAllTaskName))
 
-        project.tasks.create(compilation.compileAllTaskName).apply {
-            group = LifecycleBasePlugin.BUILD_GROUP
-            description = "Assembles outputs for compilation '${compilation.name}' of target '${compilation.target.name}'"
-            dependsOn(compilation.compileKotlinTaskName)
+        project.registerTask<DefaultTask>(compilation.compileAllTaskName) {
+            it.group = LifecycleBasePlugin.BUILD_GROUP
+            it.description = "Assembles outputs for compilation '${compilation.name}' of target '${compilation.target.name}'"
+            it.dependsOn(compilation.compileKotlinTaskName)
             if (compilation is KotlinCompilationWithResources) {
-                dependsOn(compilation.processResourcesTaskName)
+                it.dependsOn(compilation.processResourcesTaskName)
             }
         }
     }
@@ -228,22 +244,23 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
     override fun configureBuild(target: KotlinTargetType) {
         val project = target.project
 
-        val buildNeeded = project.tasks.getByName(JavaBasePlugin.BUILD_NEEDED_TASK_NAME)
-        val buildDependent = project.tasks.getByName(JavaBasePlugin.BUILD_DEPENDENTS_TASK_NAME)
+        val buildNeeded = project.tasks.named(JavaBasePlugin.BUILD_NEEDED_TASK_NAME)
+        val buildDependent = project.tasks.named(JavaBasePlugin.BUILD_DEPENDENTS_TASK_NAME)
 
         if (createTestCompilation) {
             val testCompilation = target.compilations.getByName(KotlinCompilation.TEST_COMPILATION_NAME)
             if (testCompilation is KotlinCompilationToRunnableFiles) {
-                addDependsOnTaskInOtherProjects(buildNeeded, true, testCompilation.deprecatedRuntimeConfigurationName)
-                addDependsOnTaskInOtherProjects(buildDependent, false, testCompilation.deprecatedRuntimeConfigurationName)
+                addDependsOnTaskInOtherProjects(project, buildNeeded, true, testCompilation.deprecatedRuntimeConfigurationName)
+                addDependsOnTaskInOtherProjects(project, buildDependent, false, testCompilation.deprecatedRuntimeConfigurationName)
             }
         }
     }
 
-    private fun addDependsOnTaskInOtherProjects(task: Task, useDependedOn: Boolean, configurationName: String) {
-        val project = task.project
+    private fun addDependsOnTaskInOtherProjects(project: Project, taskProvider: TaskProvider<*>, useDependedOn: Boolean, configurationName: String) {
         val configuration = project.configurations.getByName(configurationName)
-        task.dependsOn(configuration.getTaskDependencyFromProjectDependency(useDependedOn, task.name))
+        taskProvider.configure { task ->
+            task.dependsOn(configuration.getTaskDependencyFromProjectDependency(useDependedOn, taskProvider.name))
+        }
     }
 
     companion object {
@@ -352,19 +369,19 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
 
         target.compilations.all { compilation ->
             buildCompilationProcessor(compilation).run()
-            if (compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME) {
+            if (compilation.isMain()) {
                 sourcesJarTask(compilation, target.targetName, target.targetName.toLowerCase())
             }
         }
     }
 
     /** The implementations are expected to create a [Zip] task under the name [KotlinTarget.artifactsTaskName] of the [target]. */
-    protected open fun createArchiveTasks(target: KotlinTargetType): Zip {
+    protected open fun createArchiveTasks(target: KotlinTargetType): TaskProvider<out Zip> {
         //TODO Change Jar on Zip
-        return target.project.tasks.create(target.artifactsTaskName, Jar::class.java).apply {
-            description = "Assembles an archive containing the main classes."
-            group = BasePlugin.BUILD_GROUP
-            from(target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).output.allOutputs)
+        return target.project.registerTask<Jar>(target.artifactsTaskName) {
+            it.description = "Assembles an archive containing the main classes."
+            it.group = BasePlugin.BUILD_GROUP
+            it.from(target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).output.allOutputs)
         }
     }
 
@@ -375,7 +392,11 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
 
         val task = createArchiveTasks(target)
 
-        target.disambiguationClassifier?.let { task.appendix = it.toLowerCase() }
+        target.disambiguationClassifier?.let { classifier ->
+            task.configure { taskInstance ->
+                taskInstance.archiveAppendix.set(classifier.toLowerCase())
+            }
+        }
 
         // Workaround: adding the artifact during configuration seems to interfere with the Java plugin, which results into missing
         // task dependency 'assemble -> jar' if the Java plugin is applied after this steps

@@ -41,7 +41,12 @@ For local development, if you're not working on bytecode generation or the stand
 
 You also can use [Gradle properties](https://docs.gradle.org/current/userguide/build_environment.html#sec:gradle_configuration_properties) to setup `JDK_*` variables.
 
-> Note: The JDK 6 for MacOS is not available on Oracle's site. You can [download it here](https://support.apple.com/kb/DL1572).
+Note: The JDK 6 for MacOS is not available on Oracle's site. You can install it by
+
+```bash
+$ brew tap caskroom/versions
+$ brew cask install java6
+```
 
 On Windows you might need to add long paths setting to the repo:
 
@@ -80,6 +85,8 @@ command line parameters on the first run:
 - `gradlePluginTest` - build and run gradle plugin tests
 - `compilerTest` - build and run all compiler tests
 - `ideaPluginTest` - build and run all IDEA plugin tests
+
+To reproduce TeamCity build use `-Pteamcity=true` flag. Local builds don't run proguard and have jar compression disabled by default.
 
 **OPTIONAL:** Some artifacts, mainly Maven plugin ones, are built separately with Maven.
 Refer to [libraries/ReadMe.md](libraries/ReadMe.md) for details.

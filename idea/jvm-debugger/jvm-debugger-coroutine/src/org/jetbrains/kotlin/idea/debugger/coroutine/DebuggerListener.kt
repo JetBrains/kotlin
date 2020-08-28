@@ -33,13 +33,17 @@ class CoroutineDebuggerListener(val project: Project) : DebuggerListener {
     ): DebuggerConnection? {
         val isExternalSystemRunConfiguration = configuration is ExternalSystemRunConfiguration
         val isGradleConfiguration = gradleConfiguration(configuration.type.id)
-        val disableCoroutineAgent = KotlinDebuggerSettings.getInstance().DEBUG_DISABLE_COROUTINE_AGENT
-        if (!disableCoroutineAgent && runnerSettings is DebuggingRunnerData && !isExternalSystemRunConfiguration && !isGradleConfiguration)
-            return DebuggerConnection(project, configuration, params, runnerSettings)
+        val disableCoroutineAgent = KotlinDebuggerSettings.getInstance().debugDisableCoroutineAgent
+        if (!disableCoroutineAgent && runnerSettings is DebuggingRunnerData) {
+            if (isExternalSystemRunConfiguration && isGradleConfiguration)
+                // gradle related logic in KotlinGradleCoroutineDebugProjectResolver
+                return DebuggerConnection(project, configuration, params, runnerSettings, false)
+            else
+                return DebuggerConnection(project, configuration, params, runnerSettings, true)
+        }
         return null
     }
 
     private fun gradleConfiguration(configurationName: String) =
         "GradleRunConfiguration" == configurationName || "KotlinGradleRunConfiguration" == configurationName
-
 }

@@ -10,152 +10,238 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.Optional
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.targets.native.tasks.PodBuildTask.Companion.toValidSDK
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
-import java.math.BigInteger
-import java.security.MessageDigest
 import java.util.*
 
-abstract class AdvancedCocoapodsTask : DefaultTask() {
-    @get:Nested
-    lateinit var cocoapodsExtension: CocoapodsExtension
+internal val KotlinNativeTarget.toBuildSettingsFileName: String
+    get() = "build-settings-$disambiguationClassifier.properties"
 
-    @TaskAction
-    fun commonInvoke() {
-        podfileCheck(cocoapodsExtension)
-        specificInvoke()
+internal val KotlinNativeTarget.toValidSDK: String
+    get() = when (konanTarget) {
+        KonanTarget.IOS_X64 -> "iphonesimulator"
+        KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64 -> "iphoneos"
+        KonanTarget.WATCHOS_X86, KonanTarget.WATCHOS_X64 -> "watchsimulator"
+        KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_ARM64 -> "watchos"
+        KonanTarget.TVOS_X64 -> "appletvsimulator"
+        KonanTarget.TVOS_ARM64 -> "appletvos"
+        KonanTarget.MACOS_X64 -> "macosx"
+        else -> throw IllegalArgumentException("Bad target ${konanTarget.name}.")
     }
 
-    abstract fun specificInvoke()
-
-    private fun podfileCheck(cocoapodsExtension: CocoapodsExtension) {
-        check(cocoapodsExtension.podfile != null) {
-            "Execution of task '$name' requires the path to the Podfile. Specify it in the file ${project.buildFile.absolutePath}."
-        }
+internal val KotlinNativeTarget.platformLiteral: String
+    get() = when (konanTarget.family) {
+        Family.OSX -> "macos"
+        Family.IOS -> "ios"
+        Family.TVOS -> "tvos"
+        Family.WATCHOS -> "watchos"
+        else -> throw IllegalArgumentException("Unsupported native target '${konanTarget.name}'")
     }
-
-}
 
 /**
  * The task takes the path to the Podfile and calls `pod install`
  * to obtain sources or artifacts for the declared dependencies.
  * This task is a part of CocoaPods integration infrastructure.
  */
-open class PodInstallTask : AdvancedCocoapodsTask() {
-
-    @get:InputFile
-    @get:Optional
-    internal val podfileProvider: Provider<File?> = project.provider { cocoapodsExtension.podfile }
-
-    @get:OutputDirectory
-    @get:Optional
-    internal val podsXcodeProjDirProvider: Provider<File?> = project.provider {
-        cocoapodsExtension.podfile
-            ?.parentFile
-            ?.resolve("Pods")
-            ?.resolve("Pods.xcodeproj")
+open class PodInstallTask : DefaultTask() {
+    init {
+        onlyIf { cocoapodsExtension?.podfile != null }
     }
 
-    override fun specificInvoke() {
-        val podfileDir = podfileProvider.get()!!.parentFile
-        val podInstallProcess = ProcessBuilder("pod", "install").apply {
-            directory(podfileDir)
-            inheritIO()
-        }.start()
-        val podInstallRetCode = podInstallProcess.waitFor()
-        check(podInstallRetCode == 0) { "Unable to run 'pod install', return code $podInstallRetCode" }
+    @get:Optional
+    @get:Nested
+    internal var cocoapodsExtension: CocoapodsExtension? = null
 
-        val podsXcprojFile = podsXcodeProjDirProvider.get()
-        check(podsXcprojFile != null && podsXcprojFile.exists() && podsXcprojFile.isDirectory) {
-            "The directory 'Pods/Pods.xcodeproj' was not created as a result of the `pod install` call."
+    @get:Optional
+    @get:OutputDirectory
+    internal val podsXcodeProjDirProvider: Provider<File>?
+        get() = cocoapodsExtension?.podfile?.let {
+            project.provider { it.parentFile.resolve("Pods").resolve("Pods.xcodeproj") }
+        }
+
+
+    @TaskAction
+    fun doPodInstall() {
+        cocoapodsExtension?.podfile?.parentFile?.also { podfileDir ->
+            val podInstallProcess = ProcessBuilder("pod", "install").apply {
+                directory(podfileDir)
+            }.start()
+            val podInstallRetCode = podInstallProcess.waitFor()
+            val podInstallOutput = podInstallProcess.inputStream.use { it.reader().readText() }
+
+            check(podInstallRetCode == 0) {
+                listOf(
+                    "Executing of 'pod install' failed with code $podInstallRetCode.",
+                    "Error message:",
+                    podInstallOutput
+                ).joinToString("\n")
+            }
+            with(podsXcodeProjDirProvider) {
+                check(this != null && get().exists() && get().isDirectory) {
+                    "The directory 'Pods/Pods.xcodeproj' was not created as a result of the `pod install` call."
+                }
+            }
         }
     }
 }
 
-open class PodSetupBuildTask : AdvancedCocoapodsTask() {
-    @get:InputDirectory
-    @get:Optional
-    internal lateinit var podsXcodeProjDirProvider: Provider<File?>
+abstract class CocoapodsWithSyntheticTask : DefaultTask() {
+    init {
+        onlyIf {
+            cocoapodsExtension.pods.isNotEmpty()
+        }
+    }
+
+    @get:Nested
+    internal lateinit var cocoapodsExtension: CocoapodsExtension
+}
+
+/**
+ * The task takes the path to the .podspec file and calls `pod gen`
+ * to create synthetic xcode project and workspace.
+ */
+open class PodGenTask : CocoapodsWithSyntheticTask() {
+
+    @get:InputFile
+    internal lateinit var podspecProvider: Provider<File>
 
     @Internal
     lateinit var kotlinNativeTarget: KotlinNativeTarget
 
-    @get:OutputFile
-    @get:Optional
-    internal val buildSettingsFileProvider: Provider<File?> =
-        project.provider {
-            project
-                .cocoapodsBuildDirs
-                .root
-                .resolve("buildSettings")
-                .resolve(kotlinNativeTarget.toBuildSettingsFileName)
+    @get:OutputDirectory
+    internal val podsXcodeProjDirProvider: Provider<File>
+        get() = project.provider {
+            project.cocoapodsBuildDirs.synthetic(kotlinNativeTarget)
+                .resolve(podspecProvider.get().nameWithoutExtension)
+                .resolve("Pods")
+                .resolve("Pods.xcodeproj")
         }
 
-    override fun specificInvoke() {
+    @TaskAction
+    fun generate() {
+        val syntheticDir = project.cocoapodsBuildDirs.synthetic(kotlinNativeTarget).apply { mkdirs() }
+        val localPodspecPaths = cocoapodsExtension.pods.mapNotNull { it.podspec?.parentFile?.absolutePath }
+
+        val podGenProcessArgs = listOfNotNull(
+            "pod", "gen",
+            "--platforms=${kotlinNativeTarget.platformLiteral}",
+            "--gen-directory=${syntheticDir.absolutePath}",
+            localPodspecPaths.takeIf { it.isNotEmpty() }?.joinToString(separator = ",")?.let { "--local-sources=$it" },
+            podspecProvider.get().absolutePath
+        )
+
+        val podGenProcess = ProcessBuilder(podGenProcessArgs).apply {
+            directory(syntheticDir)
+        }.start()
+        val podGenRetCode = podGenProcess.waitFor()
+        val outputText = podGenProcess.inputStream.use { it.reader().readText() }
+
+        check(podGenRetCode == 0) {
+            listOfNotNull(
+                "Executing of '${podGenProcessArgs.joinToString(" ")}' failed with code $podGenRetCode and message:",
+                outputText,
+                outputText.takeIf {
+                    it.contains("deployment target")
+                            || it.contains("requested platforms: [\"${kotlinNativeTarget.platformLiteral}\"]")
+                }?.let {
+                    """
+                        Tip: try to configure deployment_target for ALL targets as follows:
+                        cocoapods {
+                            ...
+                            ${kotlinNativeTarget.konanTarget.family.name.toLowerCase()}.deploymentTarget = "..."
+                            ...
+                        }
+                    """.trimIndent()
+                }
+            ).joinToString("\n")
+        }
+
+        val podsXcprojFile = podsXcodeProjDirProvider.get()
+        check(podsXcprojFile.exists() && podsXcprojFile.isDirectory) {
+            "The directory '${podsXcprojFile.path}' was not created as a result of the `pod gen` call."
+        }
+    }
+}
+
+
+open class PodSetupBuildTask : CocoapodsWithSyntheticTask() {
+
+    @get:InputDirectory
+    internal lateinit var podsXcodeProjDirProvider: Provider<File>
+
+    @Internal
+    lateinit var kotlinNativeTarget: KotlinNativeTarget
+
+    @Input
+    lateinit var schemeName: Provider<String>
+
+    @get:OutputFile
+    internal val buildSettingsFileProvider: Provider<File> = project.provider {
+        project.cocoapodsBuildDirs
+            .buildSettings
+            .resolve(kotlinNativeTarget.toBuildSettingsFileName)
+    }
+
+    @TaskAction
+    fun setupBuild() {
         val podsXcodeProjDir = podsXcodeProjDirProvider.get()
 
         val buildSettingsReceivingCommand = listOf(
             "xcodebuild", "-showBuildSettings",
-            "-project", podsXcodeProjDir!!.name,
-            "-scheme", cocoapodsExtension.frameworkName,
+            "-project", podsXcodeProjDir.name,
+            "-scheme", schemeName.get(),
             "-sdk", kotlinNativeTarget.toValidSDK
         )
 
         val buildSettingsProcess = ProcessBuilder(buildSettingsReceivingCommand)
             .apply {
-                directory(podsXcodeProjDir!!.parentFile)
+                directory(podsXcodeProjDir.parentFile)
             }.start()
 
         val buildSettingsRetCode = buildSettingsProcess.waitFor()
         check(buildSettingsRetCode == 0) {
-            "Unable to run '${buildSettingsReceivingCommand.joinToString(" ")}' return code $buildSettingsRetCode"
+            listOf(
+                "Executing of '${buildSettingsReceivingCommand.joinToString(" ")}' failed with code $buildSettingsRetCode and message:",
+                buildSettingsProcess.errorStream.use { it.reader().readText() }
+            ).joinToString("\n")
         }
-
 
         val stdOut = buildSettingsProcess.inputStream
 
         val buildSettingsProperties = PodBuildSettingsProperties.readSettingsFromStream(stdOut)
-        buildSettingsProperties.writeSettings(buildSettingsFileProvider.get()!!)
-    }
-
-    companion object {
-        private val KotlinNativeTarget.toBuildSettingsFileName: String
-            get() = "build-settings-$disambiguationClassifier.properties"
+        buildSettingsFileProvider.get().let { buildSettingsProperties.writeSettings(it) }
     }
 }
 
 /**
  * The task compiles external cocoa pods sources.
  */
-open class PodBuildTask : AdvancedCocoapodsTask() {
+open class PodBuildTask : CocoapodsWithSyntheticTask() {
+
     @get:InputDirectory
-    @get:Optional
-    internal lateinit var podsXcodeProjDirProvider: Provider<File?>
+    internal lateinit var podsXcodeProjDirProvider: Provider<File>
 
     @get:InputFile
-    @get:Optional
-    internal lateinit var buildSettingsFileProvider: Provider<File?>
+    internal lateinit var buildSettingsFileProvider: Provider<File>
 
     @Internal
     lateinit var kotlinNativeTarget: KotlinNativeTarget
 
-    @get:OutputFile
     @get:Optional
-    internal val buildDirHashFileProvider: Provider<File?> =
-        project.provider {
-            project
-                .cocoapodsBuildDirs
-                .root
-                .resolve("buildDirHashSums")
-                .resolve(kotlinNativeTarget.toBuildDirHashSumFileName)
-        }
+    @get:OutputDirectory
+    internal var buildDirProvider: Provider<File>? = null
 
-    override fun specificInvoke() {
+    private val CocoapodsExtension.CocoapodsDependency.schemeName: String
+        get() = name.split("/")[0]
+
+    @TaskAction
+    fun buildDependencies() {
         val podBuildSettings = PodBuildSettingsProperties.readSettingsFromStream(
             FileInputStream(buildSettingsFileProvider.get())
         )
@@ -166,67 +252,27 @@ open class PodBuildTask : AdvancedCocoapodsTask() {
 
             val podXcodeBuildCommand = listOf(
                 "xcodebuild",
-                "-project", podsXcodeProjDir!!.name,
-                "-scheme", it.moduleName,
+                "-project", podsXcodeProjDir.name,
+                "-scheme", it.schemeName,
                 "-sdk", kotlinNativeTarget.toValidSDK,
                 "-configuration", podBuildSettings.configuration
             )
 
             val podBuildProcess = ProcessBuilder(podXcodeBuildCommand)
                 .apply {
-                    directory(podsXcodeProjDir!!.parentFile)
+                    directory(podsXcodeProjDir.parentFile)
                     inheritIO()
                 }.start()
 
             val podBuildRetCode = podBuildProcess.waitFor()
             check(podBuildRetCode == 0) {
-                "Unable to run '${podXcodeBuildCommand.joinToString(" ")}' return code $podBuildRetCode"
+                listOf(
+                    "Executing of '${podXcodeBuildCommand.joinToString(" ")}' failed with code $podBuildRetCode and message:",
+                    podBuildProcess.errorStream.use { it.reader().readText() }
+                ).joinToString("\n")
             }
         }
-        val buildDirHashSumFile = buildDirHashFileProvider.get()!!
-        buildDirHashSumFile!!.parentFile.mkdirs()
-        buildDirHashSumFile!!.createNewFile()
-        check(buildDirHashSumFile!!.exists()) {
-            "Unable to create file ${buildDirHashSumFile.toRelativeString(project.projectDir)}!"
-        }
-
-        buildDirHashSumFile.writeText(getFileChecksumStr(project.file(podBuildSettings.buildDir)))
-    }
-
-    companion object {
-
-        private fun getFileChecksumStr(file: File): String {
-            val digest = MessageDigest.getInstance("SHA-1")
-            file.walkTopDown().forEach {
-                val byteArray = ByteArray(1024)
-                var bytesCount = 0
-                if (it.isFile) {
-                    val inputStream = it.inputStream()
-                    while (inputStream.read(byteArray).also { bt -> bytesCount = bt } != -1) {
-                        digest.update(byteArray, 0, bytesCount)
-                    }
-                }
-            }
-            val buildDirHashSumStr = BigInteger(1, digest.digest()).toString(16).padStart(32, '0')
-            return buildDirHashSumStr
-        }
-
-        internal val KotlinNativeTarget.toBuildDirHashSumFileName: String
-            get() = "build-dir-hash-$disambiguationClassifier.txt"
-
-        internal val KotlinNativeTarget.toValidSDK: String
-            get() {
-                return when (konanTarget) {
-                    KonanTarget.IOS_X64 -> "iphonesimulator"
-                    KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64 -> "iphoneos"
-                    KonanTarget.WATCHOS_X86, KonanTarget.WATCHOS_X64 -> "watchsimulator"
-                    KonanTarget.WATCHOS_ARM32, KonanTarget.WATCHOS_ARM64 -> "watchos"
-                    KonanTarget.TVOS_X64 -> "appletvsimulator"
-                    KonanTarget.TVOS_ARM64 -> "appletvos"
-                    KonanTarget.MACOS_X64 -> "macos"
-                    else -> throw Error("Bad target ${konanTarget.name}")
-                }
-            }
+        buildDirProvider = project.provider { project.file(podBuildSettings.buildDir) }
     }
 }
 

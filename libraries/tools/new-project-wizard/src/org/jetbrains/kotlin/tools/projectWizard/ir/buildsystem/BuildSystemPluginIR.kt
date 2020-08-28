@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem
 
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.core.ignore
+import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardKotlinVersion
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
@@ -39,7 +40,7 @@ data class GradleOnlyPluginByNameIR(@NonNls val pluginId: String, override val p
 
 data class KotlinBuildSystemPluginIR(
     val type: Type,
-    val version: Version?,
+    val version: WizardKotlinVersion?,
     override val priority: Int? = null
 ) : BuildSystemPluginIR {
 
@@ -49,7 +50,7 @@ data class KotlinBuildSystemPluginIR(
                 GradlePrinter.GradleDsl.KOTLIN -> call("kotlin") { +type.toString().quotified }
                 GradlePrinter.GradleDsl.GROOVY -> call("id") { +"org.jetbrains.kotlin.$type".quotified }
             }
-            version?.let {
+            version?.version?.let {
                 +" version "
                 +it.toString().quotified
             }.ignore()
@@ -57,7 +58,7 @@ data class KotlinBuildSystemPluginIR(
         is MavenPrinter -> node("plugin") {
             singleLineNode("groupId") { +"org.jetbrains.kotlin" }
             singleLineNode("artifactId") { +"kotlin-maven-plugin" }
-            singleLineNode("version") { +version.toString() }
+            singleLineNode("version") { +version?.version.toString() }
 
             node("executions") {
                 node("execution") {

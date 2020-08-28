@@ -47,7 +47,7 @@ class TestComplexIncrementalAptCache {
                 listOf(processor),
                 generatedSources
             ) { elements, trees -> MentionedTypesTaskListener(cache.javaCache, elements, trees) }
-            cache.updateCache(listOf(processor))
+            cache.updateCache(listOf(processor), false)
         }
     }
 

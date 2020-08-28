@@ -26,23 +26,31 @@ class YarnWorkspaces : YarnBasics() {
 
     override fun prepareRootProject(
         rootProject: Project,
-        subProjects: Collection<KotlinCompilationNpmResolution>
+        subProjects: Collection<KotlinCompilationNpmResolution>,
+        resolutions: Map<String, String>
     ) {
         check(rootProject == rootProject.rootProject)
         setup(rootProject)
         return prepareRootPackageJson(
             rootProject,
-            subProjects
+            subProjects,
+            resolutions
         )
     }
 
     private fun prepareRootPackageJson(
         rootProject: Project,
-        npmProjects: Collection<KotlinCompilationNpmResolution>
+        npmProjects: Collection<KotlinCompilationNpmResolution>,
+        resolutions: Map<String, String>
     ) {
         val rootPackageJsonFile = preparedFiles(rootProject).single()
 
-        saveRootProjectWorkspacesPackageJson(rootProject, npmProjects, rootPackageJsonFile)
+        saveRootProjectWorkspacesPackageJson(
+            rootProject,
+            npmProjects,
+            resolutions,
+            rootPackageJsonFile
+        )
     }
 
     override fun resolveRootProject(
@@ -68,6 +76,7 @@ class YarnWorkspaces : YarnBasics() {
     private fun saveRootProjectWorkspacesPackageJson(
         rootProject: Project,
         npmProjects: Collection<KotlinCompilationNpmResolution>,
+        resolutions: Map<String, String>,
         rootPackageJsonFile: File
     ) {
         val nodeJsWorldDir = rootPackageJsonFile.parentFile
@@ -79,6 +88,7 @@ class YarnWorkspaces : YarnBasics() {
             YarnImportedPackagesVersionResolver(rootProject, npmProjects, nodeJsWorldDir).resolveAndUpdatePackages()
 
         rootPackageJson.workspaces = npmProjectWorkspaces + importedProjectWorkspaces
+        rootPackageJson.resolutions = resolutions
         rootPackageJson.saveTo(
             rootPackageJsonFile
         )

@@ -1,8 +1,0 @@
-// "Fix with 'asDynamic'" "true"
-// JS
-
-class A
-
-@JsName("aaaa")
-@Suppress("NOTHING_TO_INLINE")
-inline fun A.foo(): Int = asDynamic().foo()

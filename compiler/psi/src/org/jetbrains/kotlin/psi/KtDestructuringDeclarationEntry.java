@@ -34,6 +34,7 @@ import java.util.List;
 import static org.jetbrains.kotlin.lexer.KtTokens.VAL_KEYWORD;
 import static org.jetbrains.kotlin.lexer.KtTokens.VAR_KEYWORD;
 
+@SuppressWarnings("deprecation")
 public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbed implements KtVariableDeclaration {
     public KtDestructuringDeclarationEntry(@NotNull ASTNode node) {
         super(node);

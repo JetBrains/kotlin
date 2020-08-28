@@ -1,6 +1,3 @@
-const val constProperty1 = 42
-const val constProperty2 = 42
-
 actual val delegatedProperty1: Int by lazy { 42 }
 actual val delegatedProperty2: Int by lazy { 42 }
 actual val delegatedProperty3: Int by mapOf("delegatedProperty3" to 42)

@@ -22,6 +22,7 @@ typealias StatInfos = Map<String, Any>?
 
 class Stats(
     val name: String = "",
+    private val profilerConfig: ProfilerConfig = ProfilerConfig(),
     private val header: Array<String> = arrayOf("Name", "ValueMS", "StdDev"),
     private val acceptanceStabilityLevel: Int = 25
 ) : Closeable {
@@ -35,7 +36,7 @@ class Stats(
     init {
         statsOutput = statsFile.bufferedWriter()
 
-        statsOutput.appendln(header.joinToString())
+        statsOutput.appendLine(header.joinToString())
 
         PerformanceCounter.setTimeCounterEnabled(true)
     }
@@ -58,7 +59,7 @@ class Stats(
         )) {
             val n = "$id : ${v.first}"
 
-            TeamCity.test(n, durationMs = v.third) {
+            TeamCity.test(n, durationMs = v.third, includeStats = false) {
                 TeamCity.statValue("$id${v.second}", v.third)
             }
         }
@@ -76,10 +77,8 @@ class Stats(
 
                 val shortName = if (perfCounterName.endsWith(": time")) n.removeSuffix(": time") else null
 
-                shortName?.let {
-                    TeamCity.test(it, durationMs = mean) {
-                        TeamCity.statValue(it, mean)
-                    }
+                TeamCity.test(shortName, durationMs = mean) {
+                    TeamCity.statValue(n, mean)
                 }
             }
 
@@ -111,7 +110,7 @@ class Stats(
     private fun append(values: Array<Any>) {
         require(values.size == header.size) { "Expected ${header.size} values, actual ${values.size} values" }
         with(statsOutput) {
-            appendln(values.joinToString { it.toString() })
+            appendLine(values.joinToString { it.toString() })
             flush()
         }
     }
@@ -128,7 +127,6 @@ class Stats(
         setUp: (TestData<SV, TV>) -> Unit = { },
         test: (TestData<SV, TV>) -> Unit,
         tearDown: (TestData<SV, TV>) -> Unit = { },
-        profilerEnabled: Boolean = false,
         checkStability: Boolean = true
     ) {
 
@@ -138,15 +136,13 @@ class Stats(
             setUp = setUp,
             test = test,
             tearDown = tearDown,
-            profilerEnabled = profilerEnabled
         )
         val mainPhaseData = PhaseData(
             iterations = iterations,
             testName = testName,
             setUp = setUp,
             test = test,
-            tearDown = tearDown,
-            profilerEnabled = profilerEnabled
+            tearDown = tearDown
         )
         val block = {
             warmUpPhase(warmPhaseData)
@@ -171,7 +167,7 @@ class Stats(
                         "$testName stability is $stabilityPercentage %, above accepted level of $acceptanceStabilityLevel %"
                     }
 
-                    TeamCity.test(stabilityName, errorDetails = error) {
+                    TeamCity.test(stabilityName, errorDetails = error, includeStats = false) {
                         TeamCity.statValue(stabilityName, stabilityPercentage)
                     }
                 }
@@ -229,7 +225,7 @@ class Stats(
     }
 
     private fun <SV, TV> warmUpPhase(phaseData: PhaseData<SV, TV>) {
-        val warmUpStatInfosArray = phase(phaseData, WARM_UP)
+        val warmUpStatInfosArray = phase(phaseData, WARM_UP, true)
 
         if (phaseData.testName != WARM_UP) {
             printWarmUpTimings(phaseData.testName, warmUpStatInfosArray)
@@ -257,16 +253,17 @@ class Stats(
         return statInfosArray
     }
 
-    private fun <SV, TV> phase(phaseData: PhaseData<SV, TV>, phaseName: String): Array<StatInfos> {
+    private fun <SV, TV> phase(phaseData: PhaseData<SV, TV>, phaseName: String, warmup: Boolean = false): Array<StatInfos> {
         val statInfosArray = Array<StatInfos>(phaseData.iterations) { null }
         val testData = TestData<SV, TV>(null, null)
 
         try {
+            val phaseProfiler =
+                createPhaseProfiler(phaseData.testName, phaseName, profilerConfig.copy(warmup = warmup))
+
             for (attempt in 0 until phaseData.iterations) {
                 testData.reset()
                 triggerGC(attempt)
-
-                val phaseProfiler = createPhaseProfiler(phaseData, phaseName, attempt)
 
                 val setUpMillis = measureTimeMillis { phaseData.setUp(testData) }
                 val attemptName = "${phaseData.testName} #$attempt"
@@ -275,12 +272,10 @@ class Stats(
                 val valueMap = HashMap<String, Any>(2 * PerformanceCounter.numberOfCounters + 1)
                 statInfosArray[attempt] = valueMap
                 try {
-
                     phaseProfiler.start()
                     valueMap[TEST_KEY] = measureNanoTime {
                         phaseData.test(testData)
                     }
-                    phaseProfiler.stop()
 
                     PerformanceCounter.report { name, counter, nanos ->
                         valueMap["counter \"$name\": count"] = counter.toLong()
@@ -292,6 +287,7 @@ class Stats(
                     valueMap[ERROR_KEY] = t
                     break
                 } finally {
+                    phaseProfiler.stop()
                     try {
                         val tearDownMillis = measureTimeMillis {
                             phaseData.tearDown(testData)
@@ -313,19 +309,20 @@ class Stats(
         return statInfosArray
     }
 
-    private fun <K, T> createPhaseProfiler(
-        phaseData: PhaseData<K, T>,
+    private fun createPhaseProfiler(
+        testName: String,
         phaseName: String,
-        attempt: Int
+        profilerConfig: ProfilerConfig
     ): PhaseProfiler {
-        val profilerHandler = if (phaseData.profilerEnabled) ProfilerHandler.getInstance() else DummyProfilerHandler
+        profilerConfig.name = "$testName${if (phaseName.isEmpty()) "" else "-"+phaseName}"
+        profilerConfig.path = pathToResource("profile/${plainname()}")
+        val profilerHandler = if (profilerConfig.enabled && !profilerConfig.warmup)
+            ProfilerHandler.getInstance(profilerConfig)
+        else
+            DummyProfilerHandler
 
         return if (profilerHandler != DummyProfilerHandler) {
-            val profilerPath = pathToResource("profile/${plainname()}")
-            check(with(File(profilerPath)) { exists() || mkdirs() }) { "unable to mkdirs $profilerPath for ${phaseData.testName}" }
-            val activityName = "${phaseData.testName}-${if (phaseName.isEmpty()) "" else "$phaseName-"}$attempt"
-
-            ActualPhaseProfiler(activityName, profilerPath, profilerHandler)
+            ActualPhaseProfiler(profilerHandler)
         } else {
             DummyPhaseProfiler
         }
@@ -374,8 +371,7 @@ data class PhaseData<SV, TV>(
     val testName: String,
     val setUp: (TestData<SV, TV>) -> Unit,
     val test: (TestData<SV, TV>) -> Unit,
-    val tearDown: (TestData<SV, TV>) -> Unit,
-    val profilerEnabled: Boolean = false
+    val tearDown: (TestData<SV, TV>) -> Unit
 )
 
 data class TestData<SV, TV>(var setUpValue: SV?, var value: TV?) {

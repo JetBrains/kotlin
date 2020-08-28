@@ -1,0 +1,19 @@
+package
+
+public val kotlin.String.bar: kotlin.Unit
+public val kotlin.collections.List<Bar>.serializationWhitelists: kotlin.collections.LinkedHashSet<Foo> /* = java.util.LinkedHashSet<Foo> */
+public fun call(/*0*/ f: kotlin.Any): kotlin.Unit
+public fun Foo.bar(): kotlin.Int
+
+public interface Bar {
+    public abstract val serializationWhitelists: kotlin.collections.List<Foo>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Foo {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

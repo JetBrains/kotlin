@@ -3,5 +3,6 @@
 annotation class ann
 
 fun foo(): Int {
-    return (@ann 1)
+    @ann
+    return 1
 }

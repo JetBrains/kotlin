@@ -1,3 +1,4 @@
+// IGNORE_FIR
 class <info textAttributesKey="KOTLIN_CLASS">My</info>(val <info textAttributesKey="KOTLIN_INSTANCE_PROPERTY">x</info>: <info textAttributesKey="KOTLIN_CLASS">Int</info>?)
 
 fun <info textAttributesKey="KOTLIN_CLASS">My</info>?.<info textAttributesKey="KOTLIN_FUNCTION_DECLARATION">foo</info>(): <info textAttributesKey="KOTLIN_CLASS">Int</info> {

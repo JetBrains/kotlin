@@ -6,13 +6,13 @@ class ExcA : Exception()
 class ExcB : Exception()
 
 fun test2() {
-    val s: String? = <!NI;TYPE_MISMATCH!>try {
+    val s: String? = try {
         ""
     }
     catch (e: ExcA) {
         null
     }
-    catch (e: ExcB) {
+    catch (e: ExcB) <!NI;TYPE_MISMATCH!>{
         <!OI;CONSTANT_EXPECTED_TYPE_MISMATCH!>10<!>
     }<!>
     s<!UNSAFE_CALL!>.<!>length

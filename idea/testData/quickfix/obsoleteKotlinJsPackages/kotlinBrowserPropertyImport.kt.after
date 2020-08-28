@@ -1,0 +1,7 @@
+// "Fix 'kotlin.browser' package usage" "true"
+// JS
+
+package test
+
+import kotlinx.browser.localStorage
+import kotlin.dom.addClass

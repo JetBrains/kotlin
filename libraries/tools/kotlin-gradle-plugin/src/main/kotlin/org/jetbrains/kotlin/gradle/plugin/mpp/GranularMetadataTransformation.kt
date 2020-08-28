@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.*
 import org.gradle.api.artifacts.component.*
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -23,9 +24,14 @@ import java.util.zip.ZipOutputStream
 import javax.xml.parsers.DocumentBuilderFactory
 
 internal sealed class MetadataDependencyResolution(
+    @field:Transient // can't be used with Gradle Instant Execution, but fortunately not needed when deserialized
     val dependency: ResolvedComponentResult,
+    @field:Transient
     val projectDependency: Project?
 ) {
+    /** Evaluate and store the value, as the [dependency] will be lost during Gradle instant execution */
+//    val originalArtifactFiles: List<File> = dependency.dependents.flatMap {  it.allModuleArtifacts } .map { it.file }
+
     override fun toString(): String {
         val verb = when (this) {
             is KeepOriginalDependency -> "keep"
@@ -58,7 +64,10 @@ internal sealed class MetadataDependencyResolution(
          * If [doProcessFiles] is true, these temporary files are actually re-created during the call,
          * otherwise only their paths are returned, while the files might be missing.
          */
-        abstract fun getMetadataFilesBySourceSet(baseDir: File, doProcessFiles: Boolean): Map<String, FileCollection>
+        fun getMetadataFilesBySourceSet(baseDir: File, doProcessFiles: Boolean): Map<String, FileCollection> =
+            getExtractableMetadataFiles(baseDir).getMetadataFilesPerSourceSet(doProcessFiles)
+
+        abstract fun getExtractableMetadataFiles(baseDir: File): ExtractableMetadataFiles
 
         override fun toString(): String =
             super.toString() + ", sourceSets = " + allVisibleSourceSetNames.joinToString(", ", "[", "]") {
@@ -108,9 +117,14 @@ internal class GranularMetadataTransformation(
 
         requestedDependencies.forEach { dependency ->
             if (dependency !in originalDependencies) {
-                modifiedConfiguration = (modifiedConfiguration ?: allSourceSetsConfiguration.copyRecursive()).apply {
-                    dependencies.add(dependency)
+                modifiedConfiguration = modifiedConfiguration ?: project.configurations.detachedConfiguration().apply {
+                    fun <T> copyAttribute(key: Attribute<T>) {
+                        attributes.attribute(key, allSourceSetsConfiguration.attributes.getAttribute(key)!!)
+                    }
+                    allSourceSetsConfiguration.attributes.keySet().forEach { copyAttribute(it) }
+                    allSourceSetsConfiguration.extendsFrom.forEach { extendsFrom(it) }
                 }
+                modifiedConfiguration!!.dependencies.add(dependency)
             }
         }
 
@@ -177,6 +191,7 @@ internal class GranularMetadataTransformation(
 
         allModuleDependencies.forEach { resolvedDependency ->
             if (resolvedDependency.selected !in visitedDependencies) {
+//                val files = resolvedDependency.moduleArtifacts.map { it.file }
                 result.add(
                     MetadataDependencyResolution.ExcludeAsUnrequested(
                         resolvedDependency.selected,
@@ -267,6 +282,20 @@ internal class GranularMetadataTransformation(
             module, resolvedToProject, projectStructureMetadata, allVisibleSourceSets, visibleSourceSetsExcludingDependsOn,
             transitiveDependenciesToVisit, mppDependencyMetadataExtractor
         )
+        /*
+        return object : MetadataDependencyResolution.ChooseVisibleSourceSets(
+            module,
+            projectDependency,
+            projectStructureMetadata,
+            allVisibleSourceSets,
+            visibleSourceSetsExcludingDependsOn,
+            transitiveDependenciesToVisit
+        ) {
+            override fun getExtractableMetadataFiles(baseDir: File): ExtractableMetadataFiles =
+                mppDependencyMetadataExtractor.getExtractableMetadataFiles(visibleSourceSetsExcludingDependsOn, baseDir)
+
+        }
+         */
     }
 
     private class ChooseVisibleSourceSetsImpl(
@@ -285,18 +314,24 @@ internal class GranularMetadataTransformation(
         visibleSourceSetNamesExcludingDependsOn,
         visibleTransitiveDependencies
     ) {
-        override fun getMetadataFilesBySourceSet(baseDir: File, doProcessFiles: Boolean): Map<String, FileCollection> =
-            metadataExtractor.getVisibleSourceSetsMetadata(visibleSourceSetNamesExcludingDependsOn, baseDir, doProcessFiles)
+        override fun getExtractableMetadataFiles(baseDir: File): ExtractableMetadataFiles =
+            object : ExtractableMetadataFiles() {
+                override fun getMetadataFilesPerSourceSet(doProcessFiles: Boolean) : Map<String, FileCollection>
+                = metadataExtractor.getExtractableMetadataFiles(visibleSourceSetNamesExcludingDependsOn, baseDir, doProcessFiles)
+                    .getMetadataFilesPerSourceSet(doProcessFiles)
+            }
+
     }
 }
 
 private abstract class MppDependencyMetadataExtractor(val project: Project, val dependency: ResolvedComponentResult) {
     abstract fun getProjectStructureMetadata(): KotlinProjectStructureMetadata?
-    abstract fun getVisibleSourceSetsMetadata(
+
+    abstract fun getExtractableMetadataFiles(
         visibleSourceSetNames: Set<String>,
         baseDir: File,
         doProcessFiles: Boolean
-    ): Map<String, FileCollection>
+    ): ExtractableMetadataFiles
 }
 
 private class ProjectMppDependencyMetadataExtractor(
@@ -307,14 +342,19 @@ private class ProjectMppDependencyMetadataExtractor(
     override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? =
         buildKotlinProjectStructureMetadata(dependencyProject)
 
-    override fun getVisibleSourceSetsMetadata(
+    override fun getExtractableMetadataFiles(
         visibleSourceSetNames: Set<String>,
         baseDir: File,
         doProcessFiles: Boolean
-    ): Map<String, FileCollection> =
-        dependencyProject.multiplatformExtension.targets.getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME).compilations
+    ): ExtractableMetadataFiles {
+        val result = dependencyProject.multiplatformExtension.targets.getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME).compilations
             .filter { it.name in visibleSourceSetNames }
             .associate { it.defaultSourceSet.name to it.output.classesDirs }
+
+        return object : ExtractableMetadataFiles() {
+            override fun getMetadataFilesPerSourceSet(doProcessFiles: Boolean): Map<String, FileCollection> = result
+        }
+    }
 }
 
 private class JarArtifactMppDependencyMetadataExtractor(
@@ -338,72 +378,106 @@ private class JarArtifactMppDependencyMetadataExtractor(
         }
     }
 
-    override fun getVisibleSourceSetsMetadata(
+    override fun getExtractableMetadataFiles(
         visibleSourceSetNames: Set<String>,
         baseDir: File,
         doProcessFiles: Boolean
-    ): Map<String, FileCollection> {
+    ): ExtractableMetadataFiles {
+//        val artifactFile = artifact.file
         val primaryArtifact = primaryArtifact
         val moduleId = ModuleIds.fromComponent(project, dependency)
 
-        return extractSourceSetMetadataFromArtifacts(
+//        val jarArtifact = artifact
+//            ?: return object : ExtractableMetadataFiles() {
+//                override fun getMetadataFilesPerSourceSet(doProcessFiles: Boolean): Map<String, FileCollection> = emptyMap()
+//            }
+
+        return JarExtractableMetadataFiles(
             moduleId,
+            project,
+            primaryArtifact,
+//            artifactJar,
+//            visibleSourceSetNames,
             baseDir,
             doProcessFiles,
             visibleSourceSetNames.associate { it to (metadataArtifactBySourceSet[it] ?: primaryArtifact) }
         )
     }
 
-    private fun extractSourceSetMetadataFromArtifacts(
-        module: ModuleDependencyIdentifier,
-        baseDir: File,
+    private class JarExtractableMetadataFiles(
+        private val module: ModuleDependencyIdentifier,
+        private val project: Project,
+        private val primaryArtifact: File,
+        private val baseDir: File,
         doProcessFiles: Boolean,
-        artifactBySourceSet: Map<String, File>
-    ): Map<String, FileCollection> {
-        val moduleString = "${module.groupId}-${module.moduleId}"
-        val transformedModuleRoot = run { baseDir.resolve(moduleString).also { it.mkdirs() } }
+        private val artifactBySourceSet: Map<String, File>
+    ) : ExtractableMetadataFiles() {
 
-        val resultFiles = mutableMapOf<String, FileCollection>()
+        //TODO its part of extractor. Move it
+        fun getProjectStructureMetadata(): KotlinProjectStructureMetadata? {
+            return ZipFile(primaryArtifact).use { zip ->
+                val metadata = zip.getEntry("META-INF/$MULTIPLATFORM_PROJECT_METADATA_FILE_NAME")
+                    ?: return null
 
-        val projectStructureMetadata = checkNotNull(getProjectStructureMetadata()) {
-            "can't extract metadata from a module without project structure metadata"
+                val metadataXmlDocument = zip.getInputStream(metadata).use { inputStream ->
+                    DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(inputStream)
+                }
+
+                parseKotlinSourceSetMetadataFromXml(metadataXmlDocument)
+            }
         }
 
-        artifactBySourceSet.forEach { (sourceSetName, artifact) ->
-            ZipFile(artifact).use { zip ->
-                val entries = zip.entries().asSequence().filter { it.name.startsWith("$sourceSetName/") }.toList()
+        override fun getMetadataFilesPerSourceSet(doProcessFiles: Boolean): Map<String, FileCollection> {
+            val moduleString = "${module.groupId}-${module.moduleId}"
+            val transformedModuleRoot = run { baseDir.resolve(moduleString).also { it.mkdirs() } }
 
-                // TODO: once IJ supports non-JAR metadata dependencies, extract to a directory, not a JAR
-                // Also, if both IJ and the CLI compiler can read metadata from a path inside a JAR, then no operations will be needed
+            val resultFiles = mutableMapOf<String, FileCollection>()
+            val projectStructureMetadata = checkNotNull(getProjectStructureMetadata()) {
+                "can't extract metadata from a module without project structure metadata"
+            }
+//            val artifactJar :File= artifactBySourceSet.values().first()
+            artifactBySourceSet.forEach { (sourceSetName, artifact) ->
+                ZipFile(artifact).use { zip ->
+                    val entries = zip.entries().asSequence().filter { it.name.startsWith("$sourceSetName/") }.toList()
 
-                if (entries.any()) {
-                    val extension = projectStructureMetadata.sourceSetBinaryLayout[sourceSetName]?.archiveExtension
-                        ?: SourceSetMetadataLayout.METADATA.archiveExtension
+                    // TODO: once IJ supports non-JAR metadata dependencies, extract to a directory, not a JAR
+                    // Also, if both IJ and the CLI compiler can read metadata from a path inside a JAR, then no operations will be needed
 
-                    val extractToJarFile = transformedModuleRoot.resolve("$moduleString-$sourceSetName.$extension")
-                    resultFiles[sourceSetName] = project.files(extractToJarFile)
+                    if (entries.any()) {
+                        val extension = projectStructureMetadata.sourceSetBinaryLayout[sourceSetName]?.archiveExtension
+                            ?: SourceSetMetadataLayout.METADATA.archiveExtension
 
-                    if (doProcessFiles) {
-                        ZipOutputStream(extractToJarFile.outputStream()).use { resultZipOutput ->
-                            for (entry in entries) {
-                                if (entry.isDirectory)
-                                    continue
+                        val extractToJarFile = transformedModuleRoot.resolve("$moduleString-$sourceSetName.$extension")
+                        resultFiles[sourceSetName] = project.files(extractToJarFile)
 
-                                // Drop the source set name from the entry path
-                                val resultEntry = ZipEntry(entry.name.substringAfter("/"))
+                        if (doProcessFiles) {
+                            ZipOutputStream(extractToJarFile.outputStream()).use { resultZipOutput ->
+                                for (entry in entries) {
+                                    if (entry.isDirectory)
+                                        continue
 
-                                zip.getInputStream(entry).use { inputStream ->
-                                    resultZipOutput.putNextEntry(resultEntry)
-                                    inputStream.copyTo(resultZipOutput)
-                                    resultZipOutput.closeEntry()
+                                    // Drop the source set name from the entry path
+                                    val resultEntry = ZipEntry(entry.name.substringAfter("/"))
+
+                                    zip.getInputStream(entry).use { inputStream ->
+                                        resultZipOutput.putNextEntry(resultEntry)
+                                        inputStream.copyTo(resultZipOutput)
+                                        resultZipOutput.closeEntry()
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-        }
 
-        return resultFiles
+            return resultFiles
+        }
     }
 }
+
+// This class is needed to encapsulate how we extract the files and point to them in a way that doesn't capture the Gradle project state
+internal abstract class ExtractableMetadataFiles {
+    abstract fun getMetadataFilesPerSourceSet(doProcessFiles: Boolean): Map<String, FileCollection>
+}
+

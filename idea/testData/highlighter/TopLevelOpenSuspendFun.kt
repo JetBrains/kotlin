@@ -1,1 +1,2 @@
+// IGNORE_FIR
 <error descr="[WRONG_MODIFIER_TARGET] Modifier 'open' is not applicable to 'top level function'"><info descr="null">open</info></error> <info descr="null">suspend</info> fun <info descr="null">f</info>() {}

@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.renderer.PropertyAccessorRenderingPolicy
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
-import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import javax.swing.Icon
 
 class KotlinMethodSmartStepTarget(

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor
 import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinMangleComputer
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
-import org.jetbrains.kotlin.backend.common.serialization.mangle.collect
+import org.jetbrains.kotlin.backend.common.serialization.mangle.collectForMangler
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isUnit
@@ -115,12 +115,12 @@ abstract class DescriptorMangleComputer(protected val builder: StringBuilder, pr
             mangleExtensionReceiverParameter(builder, it)
         }
 
-        valueParameters.collect(builder, MangleConstant.VALUE_PARAMETERS) {
+        valueParameters.collectForMangler(builder, MangleConstant.VALUE_PARAMETERS) {
             appendSignature(specialValueParamPrefix(it))
             mangleValueParameter(this, it)
         }
         realTypeParameterContainer.typeParameters.filter { it.containingDeclaration == realTypeParameterContainer }
-            .collect(builder, MangleConstant.TYPE_PARAMETERS) { mangleTypeParameter(this, it) }
+            .collectForMangler(builder, MangleConstant.TYPE_PARAMETERS) { mangleTypeParameter(this, it) }
 
         returnType?.run {
             if (!isCtor && !isUnit() && addReturnType()) {
@@ -148,7 +148,7 @@ abstract class DescriptorMangleComputer(protected val builder: StringBuilder, pr
         tpBuilder.appendSignature(param.index)
         tpBuilder.appendSignature(MangleConstant.UPPER_BOUND_SEPARATOR)
 
-        param.upperBounds.collect(tpBuilder, MangleConstant.UPPER_BOUNDS) { mangleType(this, it) }
+        param.upperBounds.collectForMangler(tpBuilder, MangleConstant.UPPER_BOUNDS) { mangleType(this, it) }
     }
 
     private fun mangleType(tBuilder: StringBuilder, wtype: KotlinType) {
@@ -173,7 +173,7 @@ abstract class DescriptorMangleComputer(protected val builder: StringBuilder, pr
                 }
 
                 type.arguments.ifNotEmpty {
-                    collect(tBuilder, MangleConstant.TYPE_ARGUMENTS) { arg ->
+                    collectForMangler(tBuilder, MangleConstant.TYPE_ARGUMENTS) { arg ->
                         if (arg.isStarProjection) {
                             appendSignature(MangleConstant.STAR_MARK)
                         } else {
@@ -268,7 +268,7 @@ abstract class DescriptorMangleComputer(protected val builder: StringBuilder, pr
             mangleExtensionReceiverParameter(builder, extensionReceiver)
         }
 
-        descriptor.typeParameters.collect(builder, MangleConstant.TYPE_PARAMETERS) { mangleTypeParameter(this, it) }
+        descriptor.typeParameters.collectForMangler(builder, MangleConstant.TYPE_PARAMETERS) { mangleTypeParameter(this, it) }
 
         builder.append(descriptor.name.asString())
 

@@ -67,7 +67,7 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
                 fileClassMembers.add(it)
         }
 
-        if (fileClassMembers.isEmpty() && irFile.metadata?.descriptors.isNullOrEmpty()) return
+        if (fileClassMembers.isEmpty() && (irFile.metadata as? MetadataSource.File)?.descriptors.isNullOrEmpty()) return
 
         val irFileClass = createFileClass(irFile, fileClassMembers)
         classes.add(irFileClass)
@@ -82,7 +82,7 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
         val descriptor: ClassDescriptor
         when (fileEntry) {
             is PsiSourceManager.PsiFileEntry -> {
-                val ktFile = context.psiSourceManager.getKtFile(fileEntry as PsiSourceManager.PsiFileEntry)
+                val ktFile = context.psiSourceManager.getKtFile(fileEntry)
                     ?: throw AssertionError("Unexpected file entry: $fileEntry")
                 fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(ktFile)
                 descriptor = WrappedClassDescriptor(sourceElement = KotlinSourceElement(ktFile))

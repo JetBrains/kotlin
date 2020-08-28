@@ -197,11 +197,13 @@ object ConstructorCallCase : FunctionCallCase() {
     private inline fun FunctionCallInfo.doTranslate(
             getArguments: CallArgumentTranslator.ArgumentsInfo.() -> List<JsExpression>
     ): JsExpression {
-        val functionRef = ReferenceTranslator.translateAsValueReference(callableDescriptor, context)
 
-        if (callableDescriptor is SamConstructorDescriptor) {
+        (callableDescriptor as? SamConstructorDescriptor)?.baseDescriptorForSynthetic?.let { funInterface ->
+            val functionRef = ReferenceTranslator.translateAsTypeReference(funInterface, context)
             return JsNew(functionRef, argumentsInfo.getArguments())
         }
+
+        val functionRef = ReferenceTranslator.translateAsValueReference(callableDescriptor, context)
 
         val invocationArguments = mutableListOf<JsExpression>()
 

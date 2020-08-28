@@ -33,7 +33,7 @@ import com.intellij.psi.statistics.StatisticsManager
 import com.intellij.psi.util.proximity.PsiProximityComparator
 import com.intellij.ui.popup.list.ListPopupImpl
 import com.intellij.ui.popup.list.PopupListElementRenderer
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
@@ -42,8 +42,10 @@ import org.jetbrains.kotlin.idea.KotlinDescriptorIconProvider
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.completion.KotlinStatisticsInfo
+import org.jetbrains.kotlin.idea.completion.isDeprecatedAtCallSite
 import org.jetbrains.kotlin.idea.core.ImportableFqNameClassifier
 import org.jetbrains.kotlin.idea.imports.importableFqName
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
@@ -69,7 +71,8 @@ internal fun createSingleImportAction(
     val prioritizer = Prioritizer(element.containingKtFile)
     val variants = fqNames.mapNotNull { fqName ->
         val sameFqNameDescriptors = file.resolveImportReference(fqName)
-        val priority = sameFqNameDescriptors.map { prioritizer.priority(it) }.min() ?: return@mapNotNull null
+        val priority = sameFqNameDescriptors.minOfOrNull { prioritizer.priority(it, file.languageVersionSettings) }
+            ?: return@mapNotNull null
         Prioritizer.VariantWithPriority(SingleImportVariant(fqName, sameFqNameDescriptors), priority)
     }.sortedBy { it.priority }.map { it.variant }
 
@@ -88,8 +91,8 @@ internal fun createSingleImportActionForConstructor(
         val sameFqNameDescriptors = file.resolveImportReference(fqName.parent())
             .filterIsInstance<ClassDescriptor>()
             .flatMap { it.constructors }
-
-        val priority = sameFqNameDescriptors.asSequence().map { prioritizer.priority(it) }.min() ?: return@mapNotNull null
+        val priority = sameFqNameDescriptors.minOfOrNull { prioritizer.priority(it, file.languageVersionSettings) }
+            ?: return@mapNotNull null
         Prioritizer.VariantWithPriority(SingleImportVariant(fqName, sameFqNameDescriptors), priority)
     }.sortedBy { it.priority }.map { it.variant }
     return KotlinAddImportAction(project, editor, element, variants)
@@ -116,7 +119,7 @@ internal fun createGroupedImportsAction(
                 SingleImportVariant(samePackageFqNames.first(), descriptors)
             }
 
-            val priority = prioritizer.priority(descriptors)
+            val priority = prioritizer.priority(descriptors, file.languageVersionSettings)
             DescriptorGroupPrioritizer.VariantWithPriority(variant, priority)
         }
         .sortedBy {
@@ -272,8 +275,8 @@ private class Prioritizer(private val file: KtFile, private val compareNames: Bo
     private val classifier = ImportableFqNameClassifier(file)
     private val proximityComparator = PsiProximityComparator(file)
 
-    inner class Priority(descriptor: DeclarationDescriptor) : Comparable<Priority> {
-        private val isDeprecated = KotlinBuiltIns.isDeprecated(descriptor)
+    inner class Priority(descriptor: DeclarationDescriptor, languageVersionSettings: LanguageVersionSettings) : Comparable<Priority> {
+        private val isDeprecated = isDeprecatedAtCallSite(descriptor, languageVersionSettings)
         private val fqName = descriptor.importableFqName!!
         private val classification = classifier.classify(fqName, false)
         private val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(file.project, descriptor)
@@ -297,7 +300,8 @@ private class Prioritizer(private val file: KtFile, private val compareNames: Bo
         }
     }
 
-    fun priority(descriptor: DeclarationDescriptor) = Priority(descriptor)
+    fun priority(descriptor: DeclarationDescriptor, languageVersionSettings: LanguageVersionSettings) =
+        Priority(descriptor, languageVersionSettings)
 
     data class VariantWithPriority(val variant: AutoImportVariant, val priority: Priority)
 }
@@ -305,8 +309,11 @@ private class Prioritizer(private val file: KtFile, private val compareNames: Bo
 private class DescriptorGroupPrioritizer(file: KtFile) {
     private val prioritizer = Prioritizer(file, false)
 
-    inner class Priority(val descriptors: List<DeclarationDescriptor>) : Comparable<Priority> {
-        val ownDescriptorsPriority = descriptors.asSequence().map { prioritizer.priority(it) }.max()!!
+    inner class Priority(
+        val descriptors: List<DeclarationDescriptor>,
+        languageVersionSettings: LanguageVersionSettings
+    ) : Comparable<Priority> {
+        val ownDescriptorsPriority = descriptors.maxOf { prioritizer.priority(it, languageVersionSettings) }
 
         override fun compareTo(other: Priority): Int {
             val c1 = ownDescriptorsPriority.compareTo(other.ownDescriptorsPriority)
@@ -316,7 +323,8 @@ private class DescriptorGroupPrioritizer(file: KtFile) {
         }
     }
 
-    fun priority(descriptors: List<DeclarationDescriptor>) = Priority(descriptors)
+    fun priority(descriptors: List<DeclarationDescriptor>, languageVersionSettings: LanguageVersionSettings) =
+        Priority(descriptors, languageVersionSettings)
 
     data class VariantWithPriority(val variant: AutoImportVariant, val priority: Priority)
 }
@@ -348,7 +356,7 @@ private class SingleImportVariant(
     override val descriptorsToImport: Collection<DeclarationDescriptor>
         get() = listOf(
             descriptors.singleOrNull()
-                ?: descriptors.minBy { if (it is ClassDescriptor) 0 else 1 }
+                ?: descriptors.minByOrNull { if (it is ClassDescriptor) 0 else 1 }
                 ?: error("we create the class with not-empty descriptors always")
         )
 

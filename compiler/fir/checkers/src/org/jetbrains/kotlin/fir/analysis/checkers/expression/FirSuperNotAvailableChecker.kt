@@ -5,23 +5,25 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.references.FirSuperReference
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirSuperNotAvailableChecker : FirQualifiedAccessChecker() {
-    override fun check(functionCall: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (functionCall.source?.elementType == SUPER_EXPRESSION) {
-            val isInsideClass = context.containingDeclarations.any {
-                it.source?.elementType == CLASS || it.source?.elementType == OBJECT_LITERAL
-            }
+    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (expression.calleeReference.safeAs<FirSuperReference>()?.hadExplicitTypeInSource() != true) return
 
-            if (!isInsideClass) {
-                reporter.report(functionCall.source)
-            }
+        val isInsideClass = context.containingDeclarations.any {
+            it is FirClass<*>
+        }
+
+        if (!isInsideClass) {
+            reporter.report(expression.source)
         }
     }
 

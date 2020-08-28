@@ -63,7 +63,7 @@ FILE: flowFromInplaceLambda.kt
             ^ Int(1)
         }
         )))
-        <Inapplicable(INAPPLICABLE): [/takeInt]>#(R|<local>/x|)
+        <Inapplicable(INAPPLICABLE): /takeInt>#(R|<local>/x|)
         R|/takeInt|(R|<local>/y|)
         R|/takeInt|(R|<local>/a|)
     }

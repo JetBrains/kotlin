@@ -57,7 +57,7 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.ImportPath
 
 class KotlinUnusedImportInspection : AbstractKotlinInspection() {
-    data class ImportData(val unusedImports: List<KtImportDirective>, val optimizerData: OptimizedImportsBuilder.InputData)
+    class ImportData(val unusedImports: List<KtImportDirective>, val optimizerData: OptimizedImportsBuilder.InputData)
 
     companion object {
         fun analyzeImports(file: KtFile): ImportData? {
@@ -100,8 +100,11 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
                 val importPath = directive.importPath ?: continue
 
                 val isUsed = when {
+                    importPath.importedName in optimizerData.unresolvedNames &&
+                            directive.targetDescriptors(resolutionFacade).isEmpty() -> true
+
                     !importPaths.add(importPath) -> false
-                    importPath.isAllUnder -> importPath.fqName in parentFqNames
+                    importPath.isAllUnder -> optimizerData.unresolvedNames.isNotEmpty() || importPath.fqName in parentFqNames
                     importPath.fqName in fqNames -> importPath.importedName?.let { it in fqNames.getValue(importPath.fqName) } ?: false
                     importPath.fqName in invokeFunctionCallFqNames -> true
                     // case for type alias
@@ -109,7 +112,6 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
                 }
 
                 if (!isUsed) {
-                    if (directive.targetDescriptors(resolutionFacade).isEmpty()) continue // do not highlight unresolved imports as unused
                     unusedImports += directive
                 }
             }
@@ -128,6 +130,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
             if (!KotlinCodeInsightWorkspaceSettings.getInstance(file.project).optimizeImportsOnTheFly) {
                 fixes.add(EnableOptimizeImportsOnTheFlyFix(file))
             }
+
             manager.createProblemDescriptor(
                 it,
                 KotlinBundle.message("unused.import.directive"),

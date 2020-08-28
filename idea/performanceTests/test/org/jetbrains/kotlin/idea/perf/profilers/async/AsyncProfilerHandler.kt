@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.perf.profilers.async
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.kotlin.idea.perf.profilers.ProfilerConfig
 import org.jetbrains.kotlin.idea.perf.profilers.ProfilerHandler
 import org.jetbrains.kotlin.idea.perf.profilers.doOrThrow
 import org.jetbrains.kotlin.idea.perf.util.logMessage
@@ -25,7 +26,7 @@ import java.util.*
  *
  * AsyncProfiler could be downloaded from https://github.com/jvm-profiling-tools/async-profiler/releases/
  */
-internal class AsyncProfilerHandler : ProfilerHandler {
+internal class AsyncProfilerHandler(val profilerConfig: ProfilerConfig) : ProfilerHandler {
 
     private val asyncProfiler: Any
 
@@ -47,20 +48,20 @@ internal class AsyncProfilerHandler : ProfilerHandler {
         executeMethod.invoke(asyncProfiler, command)
     }
 
-    override fun startProfiling(activityName: String, options: List<String>) {
+    override fun startProfiling() {
         try {
-            profilingOptions = options
-            execute(AsyncProfilerCommandBuilder.buildStartCommand(options))
+            profilingOptions = profilerConfig.options
+            execute(AsyncProfilerCommandBuilder.buildStartCommand(profilerConfig.options))
             profilingStarted = true
         } catch (e: Exception) {
             throw RuntimeException(e)
         }
     }
 
-    override fun stopProfiling(snapshotsPath: String, activityName: String, options: List<String>) {
-        val combinedOptions = ArrayList(options)
-        val commandBuilder = AsyncProfilerCommandBuilder(snapshotsPath)
-        val name = activityName.replace(' ', '_').replace('/', '_')
+    override fun stopProfiling(attempt: Int) {
+        val combinedOptions = ArrayList(profilerConfig.options)
+        val commandBuilder = AsyncProfilerCommandBuilder(profilerConfig.path)
+        val name = "${profilerConfig.name}-$attempt".replace(' ', '_').replace('/', '_')
         val stopAndDumpCommands = commandBuilder.buildStopAndDumpCommands(name, combinedOptions)
         for (stopCommand in stopAndDumpCommands) {
             execute(stopCommand)

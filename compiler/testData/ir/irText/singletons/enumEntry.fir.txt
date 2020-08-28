@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/enumEntry.kt
           BLOCK_BODY
         CLASS CLASS name:A modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
           $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Z.ENTRY.A
-          CONSTRUCTOR visibility:public <> ($this:<root>.Z.ENTRY) returnType:IrErrorType [primary]
+          CONSTRUCTOR visibility:public <> ($this:<root>.Z.ENTRY) returnType:<root>.Z.ENTRY.A [primary]
             $outer: VALUE_PARAMETER name:<this> type:<root>.Z.ENTRY
             BLOCK_BODY
               DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/enumEntry.kt
             $this: VALUE_PARAMETER name:<this> type:<root>.Z.ENTRY.A
             BLOCK_BODY
               CALL 'public final fun test (): kotlin.Unit declared in <root>.Z.ENTRY' type=kotlin.Unit origin=null
-                $this: GET_OBJECT 'CLASS ENUM_ENTRY name:ENTRY modality:FINAL visibility:private superTypes:[<root>.Z]' type=<root>.Z.ENTRY
+                $this: GET_VAR '<this>: <root>.Z.ENTRY declared in <root>.Z.ENTRY' type=<root>.Z.ENTRY origin=null
           FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
             overridden:
               public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
@@ -47,10 +47,10 @@ FILE fqName:<root> fileName:/enumEntry.kt
           overridden:
             protected final fun clone (): kotlin.Any declared in kotlin.Enum
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<E of kotlin.Enum>
-        FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>, other:<root>.Z) returnType:kotlin.Int [fake_override,operator]
+        FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:<root>.Z, other:<root>.Z) returnType:kotlin.Int [fake_override,operator]
           overridden:
             public final fun compareTo (other: E of kotlin.Enum): kotlin.Int [operator] declared in kotlin.Enum
-          $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<E of kotlin.Enum>
+          $this: VALUE_PARAMETER name:<this> type:<root>.Z
           VALUE_PARAMETER name:other index:0 type:<root>.Z
         FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
           overridden:

@@ -74,7 +74,7 @@ abstract class AbstractReplInterpreterTest : KtUsefulTestCase() {
 
             val value = StringBuilder()
             while (lines.isNotEmpty() && !START_PATTERN.matcher(lines.peek()!!).matches()) {
-                value.appendln(lines.poll()!!)
+                value.appendLine(lines.poll()!!)
             }
 
             result.add(OneLine(code, value.toString()))

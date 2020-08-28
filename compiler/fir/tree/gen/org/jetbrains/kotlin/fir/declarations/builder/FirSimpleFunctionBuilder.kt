@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -85,4 +84,28 @@ inline fun buildSimpleFunction(init: FirSimpleFunctionBuilder.() -> Unit): FirSi
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
     return FirSimpleFunctionBuilder().apply(init).build()
+}
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildSimpleFunctionCopy(original: FirSimpleFunction, init: FirSimpleFunctionBuilder.() -> Unit): FirSimpleFunction {
+    contract {
+        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirSimpleFunctionBuilder()
+    copyBuilder.source = original.source
+    copyBuilder.session = original.session
+    copyBuilder.resolvePhase = original.resolvePhase
+    copyBuilder.origin = original.origin
+    copyBuilder.returnTypeRef = original.returnTypeRef
+    copyBuilder.receiverTypeRef = original.receiverTypeRef
+    copyBuilder.valueParameters.addAll(original.valueParameters)
+    copyBuilder.body = original.body
+    copyBuilder.status = original.status
+    copyBuilder.containerSource = original.containerSource
+    copyBuilder.contractDescription = original.contractDescription
+    copyBuilder.name = original.name
+    copyBuilder.symbol = original.symbol
+    copyBuilder.annotations.addAll(original.annotations)
+    copyBuilder.typeParameters.addAll(original.typeParameters)
+    return copyBuilder.apply(init).build()
 }

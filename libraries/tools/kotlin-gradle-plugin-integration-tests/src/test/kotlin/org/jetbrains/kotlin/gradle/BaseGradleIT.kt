@@ -13,22 +13,25 @@ import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.test.RunnerWithMuteInDatabase
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespaces
 import org.junit.After
 import org.junit.AfterClass
 import org.junit.Assert
 import org.junit.Before
+import org.junit.runner.RunWith
 import java.io.File
 import java.util.regex.Pattern
 import kotlin.test.*
 
 val SYSTEM_LINE_SEPARATOR: String = System.getProperty("line.separator")
 
+@RunWith(value = RunnerWithMuteInDatabase::class)
 abstract class BaseGradleIT {
 
     protected var workingDir = File(".")
 
-    protected open fun defaultBuildOptions(): BuildOptions = BuildOptions(withDaemon = true)
+    internal open fun defaultBuildOptions(): BuildOptions = BuildOptions(withDaemon = true)
 
     open val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.None
@@ -168,17 +171,9 @@ abstract class BaseGradleIT {
             assert(version != runnerGradleVersion) { "Not stopping Gradle daemon v$version as it matches the runner version" }
             println("Stopping gradle daemon v$version")
 
-            val envVariables = if (GradleVersion.version(version) < GradleVersion.version("5.0")) {
-                // Gradle versions below 5.0 do not support running on JDK11, and some of the tests
-                // set JAVA_HOME to JDK11. This makes sure we are using JDK8 when stopping those daemons.
-                environmentVariables + mapOf("JAVA_HOME" to System.getenv()["JDK_18"]!!)
-            } else {
-                environmentVariables
-            }
-
             val wrapperDir = gradleWrappers[version] ?: error("Was asked to stop unknown daemon $version")
             val cmd = createGradleCommand(wrapperDir, arrayListOf("-stop"))
-            val result = runProcess(cmd, wrapperDir, envVariables)
+            val result = runProcess(cmd, wrapperDir, environmentVariables)
             assert(result.isSuccessful) { "Could not stop daemon: $result" }
             DaemonRegistry.unregister(version)
         }
@@ -213,8 +208,14 @@ abstract class BaseGradleIT {
         val withBuildCache: Boolean = false,
         val kaptOptions: KaptOptions? = null,
         val parallelTasksInProject: Boolean? = null,
-        val jsCompilerType: KotlinJsCompilerType? = null
+        val jsCompilerType: KotlinJsCompilerType? = null,
+        val configurationCache: Boolean = false,
+        val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL
     )
+
+    enum class ConfigurationCacheProblems {
+        FAIL, WARN
+    }
 
     data class KaptOptions(
         val verbose: Boolean,
@@ -434,6 +435,18 @@ abstract class BaseGradleIT {
         return this
     }
 
+    fun CompiledProject.assertSingleFileExists(
+        directory: String = "",
+        filePath: String = ""
+    ): CompiledProject {
+        val directoryFile = fileInWorkingDir(directory)
+        assertTrue(
+            directoryFile.listFiles()?.size == 1,
+            "[$directory] should contain only single file"
+        )
+        return assertFileExists("$directory/$filePath")
+    }
+
     fun CompiledProject.assertFileExists(path: String = ""): CompiledProject {
         assertTrue(fileInWorkingDir(path).exists(), "The file [$path] does not exist.")
         return this
@@ -487,6 +500,12 @@ abstract class BaseGradleIT {
         }
     }
 
+    fun CompiledProject.assertTasksExecutedByPrefix(taskPrefixes: Iterable<String>) {
+        for (prefix in taskPrefixes) {
+            assertContainsRegex("(Executing actions for task|Executing task) '$prefix\\w*'".toRegex())
+        }
+    }
+
     fun CompiledProject.assertTasksExecuted(vararg tasks: String) {
         assertTasksExecuted(tasks.toList())
     }
@@ -529,6 +548,18 @@ abstract class BaseGradleIT {
         }
     }
 
+    fun CompiledProject.assertTasksRegisteredByPrefix(taskPrefixes: Iterable<String>) {
+        for (prefix in taskPrefixes) {
+            assertContainsRegex("'Register task $prefix\\w*'".toRegex())
+        }
+    }
+
+    fun CompiledProject.assertTasksNotRegisteredByPrefix(taskPrefixes: Iterable<String>) {
+        for (prefix in taskPrefixes) {
+            assertNotContains("'Register task $prefix\\w*'".toRegex())
+        }
+    }
+
     fun CompiledProject.assertTasksNotRealized(vararg tasks: String) {
         for (task in tasks) {
             assertNotContains("'Realize task $task'")
@@ -543,6 +574,12 @@ abstract class BaseGradleIT {
     fun CompiledProject.assertTasksSkipped(vararg tasks: String) {
         for (task in tasks) {
             assertContains("Skipping task '$task'")
+        }
+    }
+
+    fun CompiledProject.assertTasksSkippedByPrefix(taskPrefixes: Iterable<String>) {
+        for (prefix in taskPrefixes) {
+            assertContainsRegex("Skipping task '$prefix\\w*'".toRegex())
         }
     }
 
@@ -679,9 +716,9 @@ Finished executing task ':$taskName'|
         val xmlString = buildString {
             appendln("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
             appendln("<results>")
-            files.forEach {
+            files.forEach { file ->
                 appendln(
-                    it.readText()
+                    file.readText()
                         .trimTrailingWhitespaces()
                         .replace(projectDir.absolutePath, "/\$PROJECT_DIR$")
                         .replace(projectDir.name, "\$PROJECT_NAME$")
@@ -772,6 +809,9 @@ Finished executing task ':$taskName'|
             options.jsCompilerType?.let {
                 add("-Pkotlin.js.compiler=$it")
             }
+
+            add("-Dorg.gradle.unsafe.configuration-cache=${options.configurationCache}")
+            add("-Dorg.gradle.unsafe.configuration-cache-problems=${options.configurationCacheProblems.name.toLowerCase()}")
 
             // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):
             add("--console=plain")

@@ -4,21 +4,13 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class A$B {
-    @org.jetbrains.annotations.NotNull()
     public test.A$B.C c;
-    @org.jetbrains.annotations.NotNull()
     public test.A$B.D$E de;
-    @org.jetbrains.annotations.NotNull()
     public test.J$B.C jc;
-    @org.jetbrains.annotations.NotNull()
     public test.J$B.D$E jde;
-    @org.jetbrains.annotations.NotNull()
     public test.A$B.D$$E dee;
-    @org.jetbrains.annotations.NotNull()
     public test.A$B.D$$$E deee;
-    @org.jetbrains.annotations.NotNull()
     public test.J$B.D$$E jdee;
-    @org.jetbrains.annotations.NotNull()
     public test.J$B.D$$$E jdeee;
 
     public A$B() {
@@ -35,13 +27,9 @@ public final class A$B {
 
     @kotlin.Metadata()
     public static final class D$E {
-        @org.jetbrains.annotations.NotNull()
         public test.A$B.D$E.F f;
-        @org.jetbrains.annotations.NotNull()
         public test.A$B.D$E.F$G fg;
-        @org.jetbrains.annotations.NotNull()
         public test.J$B.D$E.F jf;
-        @org.jetbrains.annotations.NotNull()
         public test.J$B.D$E.F$G jfg;
 
         public D$E() {
@@ -139,6 +127,7 @@ public final class Foo {
 
         @kotlin.Metadata()
         public static final class Zoo {
+            @org.jetbrains.annotations.NotNull()
             public static final test.Foo.Bar.Zoo INSTANCE = null;
 
             private Zoo() {

@@ -24,13 +24,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import java.util.*
 
 class IrStringConcatenationImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType
-) :
-    IrExpressionBase(startOffset, endOffset, type),
-    IrStringConcatenation {
-
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val type: IrType
+) : IrStringConcatenation() {
     constructor(
         startOffset: Int,
         endOffset: Int,

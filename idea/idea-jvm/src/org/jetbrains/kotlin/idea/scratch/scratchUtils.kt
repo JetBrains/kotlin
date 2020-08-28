@@ -17,6 +17,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.actions.KOTLIN_WORKSHEET_EXTENSION
 import org.jetbrains.kotlin.idea.scratch.ui.KtScratchFileEditorWithPreview
 import org.jetbrains.kotlin.idea.scratch.ui.findScratchFileEditorWithPreview
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 
 internal val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.scratch")
 internal fun Logger.printDebugMessage(str: String) {
@@ -28,6 +29,7 @@ val VirtualFile.isKotlinWorksheet: Boolean
 
 val VirtualFile.isKotlinScratch: Boolean
     get() = ScratchFileService.getInstance().getRootType(this) is ScratchRootType
+            && KotlinParserDefinition.STD_SCRIPT_SUFFIX == this.extension
 
 @TestOnly
 fun getScratchEditorForSelectedFile(fileManager: FileEditorManager, virtualFile: VirtualFile): KtScratchFileEditorWithPreview? {

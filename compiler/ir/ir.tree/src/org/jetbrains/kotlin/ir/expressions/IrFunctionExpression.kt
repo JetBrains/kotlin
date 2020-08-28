@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 
-interface IrFunctionExpression : IrExpression {
-    val origin: IrStatementOrigin
-    var function: IrSimpleFunction
+abstract class IrFunctionExpression : IrExpression() {
+    abstract val origin: IrStatementOrigin
+
+    abstract var function: IrSimpleFunction
 }

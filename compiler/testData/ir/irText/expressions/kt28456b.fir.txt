@@ -47,7 +47,7 @@ FILE fqName:<root> fileName:/kt28456b.kt
   FUN name:testSimpleAssignment visibility:public modality:FINAL <> (a:<root>.A) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(PARAMETER_MAPPING_ERROR): [/set]>#' type=IrErrorType
+      ERROR_CALL 'Unresolved reference: <Inapplicable(PARAMETER_MAPPING_ERROR): /set>#' type=kotlin.Unit
         CONST Int type=kotlin.Int value=1
         CONST Int type=kotlin.Int value=0
   FUN name:testPostfixIncrement visibility:public modality:FINAL <> (a:<root>.A) returnType:kotlin.Int
@@ -59,7 +59,7 @@ FILE fqName:<root> fileName:/kt28456b.kt
             CALL 'public final fun get (i: kotlin.Int, a: kotlin.Int, b: kotlin.Int, c: kotlin.Int, d: kotlin.Int): kotlin.Int [operator] declared in <root>' type=kotlin.Int origin=null
               $receiver: GET_VAR 'a: <root>.A declared in <root>.testPostfixIncrement' type=<root>.A origin=null
               i: CONST Int type=kotlin.Int value=1
-          ERROR_CALL 'Unresolved reference: <Inapplicable(PARAMETER_MAPPING_ERROR): [/set]>#' type=IrErrorType
+          ERROR_CALL 'Unresolved reference: <Inapplicable(PARAMETER_MAPPING_ERROR): /set>#' type=kotlin.Unit
             CONST Int type=kotlin.Int value=1
             CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_VAR 'val tmp_0: kotlin.Int [val] declared in <root>.testPostfixIncrement' type=kotlin.Int origin=null
@@ -67,4 +67,15 @@ FILE fqName:<root> fileName:/kt28456b.kt
   FUN name:testCompoundAssignment visibility:public modality:FINAL <> (a:<root>.A) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.A
     BLOCK_BODY
-      ERROR_CALL 'FirArraySetCall (resolve isn't supported yet)' type=kotlin.Unit
+      BLOCK type=kotlin.Unit origin=null
+        VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.A [val]
+          GET_VAR 'a: <root>.A declared in <root>.testCompoundAssignment' type=<root>.A origin=null
+        VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Int [val]
+          CONST Int type=kotlin.Int value=1
+        ERROR_CALL 'Unresolved reference: <Inapplicable(PARAMETER_MAPPING_ERROR): /set>#' type=kotlin.Unit
+          GET_VAR 'val tmp_2: kotlin.Int [val] declared in <root>.testCompoundAssignment' type=kotlin.Int origin=null
+          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+            $this: CALL 'public final fun get (i: kotlin.Int, a: kotlin.Int, b: kotlin.Int, c: kotlin.Int, d: kotlin.Int): kotlin.Int [operator] declared in <root>' type=kotlin.Int origin=null
+              $receiver: GET_VAR 'val tmp_1: <root>.A [val] declared in <root>.testCompoundAssignment' type=<root>.A origin=null
+              i: GET_VAR 'val tmp_2: kotlin.Int [val] declared in <root>.testCompoundAssignment' type=kotlin.Int origin=null
+            other: CONST Int type=kotlin.Int value=10

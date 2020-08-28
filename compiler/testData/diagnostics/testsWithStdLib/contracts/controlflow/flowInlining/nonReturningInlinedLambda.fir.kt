@@ -21,7 +21,7 @@ fun withLabeledReturn() {
         y = 42
     }
 
-    println(y)
+    println(<!UNINITIALIZED_VARIABLE!>y<!>)
     println(x)
 }
 

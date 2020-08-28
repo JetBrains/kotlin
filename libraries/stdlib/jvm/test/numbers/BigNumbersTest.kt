@@ -62,6 +62,18 @@ class BigNumbersTest {
         assertEquals(BigInteger("2"), c)
     }
 
+    @Test fun sumOfBigInteger() {
+        val numbers = (1..10).map { it.toBigInteger() }
+        val i55 = 55.toBigInteger()
+        assertEquals(i55, numbers.sumOf { it })
+        assertEquals(i55, numbers.asSequence().sumOf { it })
+        assertEquals(i55, numbers.toTypedArray().sumOf { it })
+
+        val chars = ('0'..'9').joinToString("")
+        assertEquals(i55, chars.sumOf { it.toString().toBigInteger().inc() })
+        assertEquals(i55, chars.toCharArray().sumOf { it.toString().toBigInteger().inc() })
+    }
+
     @Test fun testBigDecimal() {
         val a = BigDecimal("2")
         val b = BigDecimal("3")
@@ -102,6 +114,18 @@ class BigNumbersTest {
         assertEquals(d2, d5 / d2)
         assertEquals(d4, d7 / d2)
         assertEquals(d1, d7 / d5)
+    }
+
+    @Test fun sumOfBigDecimal() {
+        val numbers = (1..10).map { it.toBigDecimal() }
+        val d55 = 55.toBigDecimal()
+        assertEquals(d55, numbers.sumOf { it })
+        assertEquals(d55, numbers.asSequence().sumOf { it })
+        assertEquals(d55, numbers.toTypedArray().sumOf { it })
+
+        val chars = ('0'..'9').joinToString("")
+        assertEquals(d55, chars.sumOf { it.toString().toBigDecimal().inc() })
+        assertEquals(d55, chars.toCharArray().sumOf { it.toString().toBigDecimal().inc() })
     }
 }
 

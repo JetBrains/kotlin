@@ -5,7 +5,7 @@ private class C {
 
 private typealias TA = C
 
-private val test1: C = <!INAPPLICABLE_CANDIDATE!>C<!>()
+private val test1: C = <!HIDDEN!>C<!>()
 private val test1co: C.Companion = C
 
 private val test2: TA = <!INAPPLICABLE_CANDIDATE!>TA<!>()

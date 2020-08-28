@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun foo() {
     var x: Int
     fun bar() {

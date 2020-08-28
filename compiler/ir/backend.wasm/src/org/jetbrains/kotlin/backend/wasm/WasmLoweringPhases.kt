@@ -26,32 +26,21 @@ private fun makeWasmModulePhase(
     lowering: (WasmBackendContext) -> FileLoweringPass,
     name: String,
     description: String,
-    prerequisite: Set<AnyNamedPhase> = emptySet()
-) = makeIrModulePhase<WasmBackendContext>(lowering, name, description, prerequisite, actions = setOf(validationAction, defaultDumper))
+    prerequisite: Set<NamedCompilerPhase<WasmBackendContext, *>> = emptySet()
+): NamedCompilerPhase<WasmBackendContext, IrModuleFragment> =
+    makeIrModulePhase(
+        lowering, name, description, prerequisite, actions = setOf(validationAction, defaultDumper)
+    )
 
 private fun makeCustomWasmModulePhase(
     op: (WasmBackendContext, IrModuleFragment) -> Unit,
     description: String,
     name: String,
-    prerequisite: Set<AnyNamedPhase> = emptySet()
-) = namedIrModulePhase(
-    name,
-    description,
-    prerequisite,
-    actions = setOf(defaultDumper, validationAction),
-    nlevels = 0,
-    lower = object : SameTypeCompilerPhase<WasmBackendContext, IrModuleFragment> {
-        override fun invoke(
-            phaseConfig: PhaseConfig,
-            phaserState: PhaserState<IrModuleFragment>,
-            context: WasmBackendContext,
-            input: IrModuleFragment
-        ): IrModuleFragment {
-            op(context, input)
-            return input
-        }
-    }
-)
+    prerequisite: Set<NamedCompilerPhase<WasmBackendContext, *>> = emptySet()
+): NamedCompilerPhase<WasmBackendContext, IrModuleFragment> =
+    makeCustomPhase(
+        op, name, description, prerequisite, actions = setOf(defaultDumper, validationAction), nlevels = 0,
+    )
 
 private val validateIrBeforeLowering = makeCustomWasmModulePhase(
     { context, module -> validationCallback(context, module) },
@@ -160,20 +149,20 @@ private val localClassExtractionPhase = makeWasmModulePhase(
 )
 
 private val innerClassesLoweringPhase = makeWasmModulePhase(
-    ::InnerClassesLowering,
+    { context -> InnerClassesLowering(context, context.innerClassesSupport) },
     name = "InnerClassesLowering",
     description = "Capture outer this reference to inner class"
 )
 
 private val innerClassesMemberBodyLoweringPhase = makeWasmModulePhase(
-    ::InnerClassesMemberBodyLowering,
+    { context -> InnerClassesMemberBodyLowering(context, context.innerClassesSupport) },
     name = "InnerClassesMemberBody",
     description = "Replace `this` with 'outer this' field references",
     prerequisite = setOf(innerClassesLoweringPhase)
 )
 
 private val innerClassConstructorCallsLoweringPhase = makeWasmModulePhase(
-    ::InnerClassConstructorCallsLowering,
+    { context -> InnerClassConstructorCallsLowering(context, context.innerClassesSupport) },
     name = "InnerClassConstructorCallsLowering",
     description = "Replace inner class constructor invocation"
 )
@@ -351,7 +340,7 @@ private val objectUsageLoweringPhase = makeWasmModulePhase(
     description = "Transform IrGetObjectValue into instance generator call"
 )
 
-val wasmPhases = namedIrModulePhase<WasmBackendContext>(
+val wasmPhases = NamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
     lower = validateIrBeforeLowering then

@@ -14,28 +14,38 @@
  * HELPERS: checkType
  */
 
-class A(val a: Int)  {
-    var isCompared = false
-    operator fun compareTo(other: A): Int = run {
-        isCompared = true
-        this.a - other.a
-    }
-}
+
 
 // TESTCASE NUMBER: 1
 fun case1() {
-    val a1 = A(-1)
-    val a2 = A(-3)
+    val a1 = A1(-1)
+    val a2 = A1(-3)
 
     val x = a1 < a2
 
     x checkType { check<Boolean>() }
 }
 
+class A1(val a: Int)  {
+    var isCompared = false
+    operator fun compareTo(other: A1): Int = run {
+        isCompared = true
+        this.a - other.a
+    }
+}
+
 // TESTCASE NUMBER: 2
+class A2(val a: Int)  {
+    var isCompared = false
+    operator fun compareTo(other: A2): Int = run {
+        isCompared = true
+        this.a - other.a
+    }
+}
+
 fun case2() {
-    val a1 = A(-1)
-    val a2 = A(-3)
+    val a1 = A2(-1)
+    val a2 = A2(-3)
 
     val x = a1 > a2
 
@@ -44,20 +54,36 @@ fun case2() {
 
 // TESTCASE NUMBER: 3
 fun case3() {
-    val a1 = A(-1)
-    val a2 = A(-3)
+    val a1 = A3(-1)
+    val a2 = A3(-3)
 
     val x = a1 <= a2
 
     x checkType { check<Boolean>() }
 }
 
+class A3(val a: Int)  {
+    var isCompared = false
+    operator fun compareTo(other: A3): Int = run {
+        isCompared = true
+        this.a - other.a
+    }
+}
+
 // TESTCASE NUMBER: 4
 fun case4() {
-    val a1 = A(-1)
-    val a2 = A(-3)
+    val a1 = A4(-1)
+    val a2 = A4(-3)
 
     val x = a1 >= a2
 
     x checkType { check<Boolean>() }
+}
+
+class A4(val a: Int)  {
+    var isCompared = false
+    operator fun compareTo(other: A4): Int = run {
+        isCompared = true
+        this.a - other.a
+    }
 }

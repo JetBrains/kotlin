@@ -301,6 +301,16 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
             runTest("idea/testData/shortenRefs/java/innerClassOnDemandImport.kt");
         }
 
+        @TestMetadata("redundantGrandParentClassQualifier.kt")
+        public void testRedundantGrandParentClassQualifier() throws Exception {
+            runTest("idea/testData/shortenRefs/java/redundantGrandParentClassQualifier.kt");
+        }
+
+        @TestMetadata("redundantGrandParentClassQualifierAmbiguous.kt")
+        public void testRedundantGrandParentClassQualifierAmbiguous() throws Exception {
+            runTest("idea/testData/shortenRefs/java/redundantGrandParentClassQualifierAmbiguous.kt");
+        }
+
         @TestMetadata("staticClassNoImports.kt")
         public void testStaticClassNoImports() throws Exception {
             runTest("idea/testData/shortenRefs/java/staticClassNoImports.kt");

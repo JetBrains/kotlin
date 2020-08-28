@@ -5,15 +5,23 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirConstKind
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.ClassId
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 inline fun <reified T : ConeKotlinType> FirTypeRef.coneTypeUnsafe() = (this as FirResolvedTypeRef).type as T
-inline fun <reified T : ConeKotlinType> FirTypeRef.coneTypeSafe() = (this as? FirResolvedTypeRef)?.type as? T
+@OptIn(ExperimentalContracts::class)
+inline fun <reified T : ConeKotlinType> FirTypeRef.coneTypeSafe(): T? {
+    contract {
+        returnsNotNull() implies (this@coneTypeSafe is FirResolvedTypeRef)
+    }
+    return (this as? FirResolvedTypeRef)?.type as? T
+}
+inline val FirTypeRef.coneType: ConeKotlinType get() = coneTypeUnsafe()
 
 val FirTypeRef.isAny: Boolean get() = isBuiltinType(StandardClassIds.Any, false)
 val FirTypeRef.isNullableAny: Boolean get() = isBuiltinType(StandardClassIds.Any, true)
@@ -22,15 +30,25 @@ val FirTypeRef.isNullableNothing: Boolean get() = isBuiltinType(StandardClassIds
 val FirTypeRef.isUnit: Boolean get() = isBuiltinType(StandardClassIds.Unit, false)
 val FirTypeRef.isBoolean: Boolean get() = isBuiltinType(StandardClassIds.Boolean, false)
 val FirTypeRef.isEnum: Boolean get() = isBuiltinType(StandardClassIds.Enum, false)
+val FirTypeRef.isArrayType: Boolean
+    get() =
+        isBuiltinType(StandardClassIds.Array, false) ||
+                StandardClassIds.primitiveArrayTypeByElementType.values.any { isBuiltinType(it, false) }
+
+private val FirTypeRef.classLikeTypeOrNull: ConeClassLikeType?
+    get() = when (this) {
+        is FirImplicitBuiltinTypeRef -> type
+        is FirResolvedTypeRef -> type as? ConeClassLikeType
+        else -> null
+    }
 
 private fun FirTypeRef.isBuiltinType(classId: ClassId, isNullable: Boolean): Boolean {
-    val type = when (this) {
-        is FirImplicitBuiltinTypeRef -> type
-        is FirResolvedTypeRef -> type as? ConeClassLikeType ?: return false
-        else -> return false
-    }
+    val type = this.classLikeTypeOrNull ?: return false
     return type.lookupTag.classId == classId && type.isNullable == isNullable
 }
+
+val FirTypeRef.isMarkedNullable: Boolean?
+    get() = classLikeTypeOrNull?.isMarkedNullable
 
 val FirFunctionTypeRef.parametersCount: Int
     get() = if (receiverTypeRef != null)
@@ -65,4 +83,18 @@ fun ConeClassLikeType.toConstKind(): FirConstKind<*>? = when (lookupTag.classId)
     StandardClassIds.UShort -> FirConstKind.UnsignedShort
     StandardClassIds.UByte -> FirConstKind.UnsignedByte
     else -> null
+}
+
+fun List<FirAnnotationCall>.computeTypeAttributes(): ConeAttributes {
+    if (this.isEmpty()) return ConeAttributes.Empty
+    val attributes = mutableListOf<ConeAttribute<*>>()
+    for (annotation in this) {
+        val type = annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>() ?: continue
+        when (type.lookupTag.classId) {
+            CompilerConeAttributes.Exact.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.Exact
+            CompilerConeAttributes.NoInfer.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.NoInfer
+            CompilerConeAttributes.ExtensionFunctionType.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.ExtensionFunctionType
+        }
+    }
+    return ConeAttributes.create(attributes)
 }

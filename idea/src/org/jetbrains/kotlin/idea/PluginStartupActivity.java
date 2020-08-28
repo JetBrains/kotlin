@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathMacros;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.EditorFactory;
@@ -39,14 +38,11 @@ import org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinTodoSearcher;
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
 import org.jetbrains.kotlin.resolve.konan.diagnostics.ErrorsNative;
-import org.jetbrains.kotlin.utils.PathUtil;
 
 import static org.jetbrains.kotlin.idea.TestResourceBundleKt.registerAdditionalResourceBundleInTests;
 
 public class PluginStartupActivity implements StartupActivity {
     private static final Logger LOG = Logger.getInstance(PluginStartupActivity.class);
-
-    private static final String KOTLIN_BUNDLED_PATH_VARIABLE = "KOTLIN_BUNDLED";
 
     @Override
     public void runActivity(@NotNull Project project) {
@@ -56,7 +52,6 @@ public class PluginStartupActivity implements StartupActivity {
 
         StartupCompatKt.runActivity(project);
 
-        registerPathVariable();
         initializeDiagnostics();
 
         try {
@@ -111,11 +106,6 @@ public class PluginStartupActivity implements StartupActivity {
     private static void consumeFactory(DiagnosticFactory<?> factory) {
         //noinspection ResultOfMethodCallIgnored
         factory.getClass();
-    }
-
-    private static void registerPathVariable() {
-        PathMacros macros = PathMacros.getInstance();
-        macros.setMacro(KOTLIN_BUNDLED_PATH_VARIABLE, PathUtil.getKotlinPathsForIdeaPlugin().getHomePath().getPath());
     }
 
 }

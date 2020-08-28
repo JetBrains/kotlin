@@ -32,7 +32,6 @@ import java.io.File
  * Component forces update for built-in libraries in plugin directory. They are ignored because of
  * com.intellij.util.indexing.FileBasedIndex.isUnderConfigOrSystem()
  */
-// BUNCH: 192
 class KotlinUpdatePluginStartupActivity : StartupActivity {
 
     override fun runActivity(project: Project) {

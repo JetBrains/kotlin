@@ -20,5 +20,5 @@ import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.TargetBackend
 
 abstract class AbstractIrBlackBoxCodegenTest : AbstractBlackBoxCodegenTest() {
-    override fun getBackend() = TargetBackend.JVM_IR
+    override val backend = TargetBackend.JVM_IR
 }

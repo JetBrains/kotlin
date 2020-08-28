@@ -104,20 +104,20 @@ fun dumpBuildLog(buildSteps: Iterable<BuildStep>): String {
 
     for ((i, step) in buildSteps.withIndex()) {
         if (i > 0) {
-            sb.appendln()
+            sb.appendLine()
         }
 
-        sb.appendln("================ Step #${i + 1} =================")
-        sb.appendln()
-        sb.appendln(BEGIN_COMPILED_FILES)
-        step.compiledKotlinFiles.sorted().forEach { sb.appendln(it) }
-        step.compiledJavaFiles.sorted().forEach { sb.appendln(it) }
-        sb.appendln(END_COMPILED_FILES)
-        sb.appendln("------------------------------------------")
+        sb.appendLine("================ Step #${i + 1} =================")
+        sb.appendLine()
+        sb.appendLine(BEGIN_COMPILED_FILES)
+        step.compiledKotlinFiles.sorted().forEach { sb.appendLine(it) }
+        step.compiledJavaFiles.sorted().forEach { sb.appendLine(it) }
+        sb.appendLine(END_COMPILED_FILES)
+        sb.appendLine("------------------------------------------")
 
         if (!step.compileSucceeded) {
-            sb.appendln(BEGIN_ERRORS)
-            step.compileErrors.forEach { sb.appendln(it) }
+            sb.appendLine(BEGIN_ERRORS)
+            step.compileErrors.forEach { sb.appendLine(it) }
         }
     }
 

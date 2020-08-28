@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM_IR
 // WITH_RUNTIME
 fun box(): String {
-    val uintProgression = 1u..7u
+    val uintProgression = 1u..7u step 3  // `step` ensures type is UIntProgression, NOT UIntRange
     for (i in uintProgression step 2) {
     }
 
@@ -15,22 +15,20 @@ fun box(): String {
 //
 // Expected lowered form of loop:
 //
-//   // Additional variables:
-//   val progression = intProgression
-//   val nestedFirst = progression.first
-//   val nestedLast = progression.last
-//   val nestedStep = progression.step
-//   val newStep = if (nestedStep > 0) 2 else -2
+//   // Additional statements:
+//   val nestedFirst = uintProgression.first
+//   val nestedLast = uintProgression.last
+//   val nestedStep = uintProgression.step
+//   val maybeNegatedStep = if (nestedStep <= 0) -2 else 2
 //
 //   // Standard form of loop over progression
 //   var inductionVar = nestedFirst
-//   val last = getProgressionLastElement(nestedFirst, nestedLast, newStep)
-//   val step = newStep
-//   if ((step > 0 && inductionVar <= last) || (step < 0 && last <= inductionVar)) {
+//   val last = getProgressionLastElement(nestedFirst, nestedLast, maybeNegatedStep)
+//   if ((maybeNegatedStep > 0 && inductionVar <= last) || (maybeNegatedStep < 0 && last <= inductionVar)) {
 //     // Loop is not empty
 //     do {
 //       val i = inductionVar
-//       inductionVar += step
+//       inductionVar += maybeNegatedStep
 //       // Loop body
 //     } while (i != last)
 //   }
@@ -45,9 +43,9 @@ fun box(): String {
 // 0 NEW java/lang/IllegalArgumentException
 // 0 ATHROW
 // 2 INVOKESTATIC kotlin/UnsignedKt.uintCompare
-// 1 IFGT
+// 2 IFGT
 // 1 IF_ICMPNE
-// 3 IFLE
+// 2 IFLE
 // 1 IFGE
 // 6 IF
 // 0 INEG

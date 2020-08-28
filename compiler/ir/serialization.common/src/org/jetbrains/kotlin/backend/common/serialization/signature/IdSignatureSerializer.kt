@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.name.FqName
 
 open class IdSignatureSerializer(val mangler: KotlinMangler.IrMangler) : IdSignatureComputer {
 
@@ -96,11 +95,12 @@ open class IdSignatureSerializer(val mangler: KotlinMangler.IrMangler) : IdSigna
 
     private val publicSignatureBuilder = PublicIdSigBuilder()
 
-    private fun composeContainerIdSignature(container: IrDeclarationParent): IdSignature {
-        if (container is IrPackageFragment) return IdSignature.PublicSignature(container.fqName, FqName.ROOT, null, 0)
-        if (container is IrDeclaration) return table.signatureByDeclaration(container)
-        error("Unexpected container ${container.render()}")
-    }
+    private fun composeContainerIdSignature(container: IrDeclarationParent): IdSignature =
+        when (container) {
+            is IrPackageFragment -> IdSignature.PublicSignature(container.fqName.asString(), "", null, 0)
+            is IrDeclaration -> table.signatureByDeclaration(container)
+            else -> error("Unexpected container ${container.render()}")
+        }
 
     fun composePublicIdSignature(declaration: IrDeclaration): IdSignature {
         assert(mangler.run { declaration.isExported() }) {

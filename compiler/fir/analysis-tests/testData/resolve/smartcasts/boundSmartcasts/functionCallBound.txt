@@ -19,7 +19,7 @@ FILE: functionCallBound.kt
     }
     public final fun check(base: R|Base|): R|Base| {
         ^check when () {
-            ==((R|<local>/base| as? R|Sub|)?.R|/isOk|(), Boolean(true)) ->  {
+            ==((R|<local>/base| as? R|Sub|)?.{ $subj$.R|/isOk|() }, Boolean(true)) ->  {
                 R|<local>/base|.R|/Sub.data|
             }
             else ->  {

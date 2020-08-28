@@ -11,7 +11,7 @@ fun foo() {
         x = 42
     }
     // Error!
-    x.hashCode()
+    <!UNINITIALIZED_VARIABLE!>x<!>.hashCode()
 }
 
 fun bar() {

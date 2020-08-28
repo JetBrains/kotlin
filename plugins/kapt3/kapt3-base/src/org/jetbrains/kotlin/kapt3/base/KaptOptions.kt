@@ -109,6 +109,7 @@ enum class KaptFlag(val description: String) {
     INFO_AS_WARNINGS("Info as warnings"),
     USE_LIGHT_ANALYSIS("Use light analysis"),
     CORRECT_ERROR_TYPES("Correct error types"),
+    DUMP_DEFAULT_PARAMETER_VALUES("Dump default parameter values"),
     MAP_DIAGNOSTIC_LOCATIONS("Map diagnostic locations"),
     STRICT("Strict mode"),
     INCLUDE_COMPILE_CLASSPATH("Detect annotation processors in compile classpath"),
@@ -168,29 +169,29 @@ fun KaptOptions.collectJavaSourceFiles(sourcesToReprocess: SourcesToReprocess = 
 
 fun KaptOptions.logString(additionalInfo: String = "") = buildString {
     val additionalInfoRendered = if (additionalInfo.isEmpty()) "" else " ($additionalInfo)"
-    appendln("Kapt3 is enabled$additionalInfoRendered.")
+    appendLine("Kapt3 is enabled$additionalInfoRendered.")
 
-    appendln("Annotation processing mode: ${mode.stringValue}")
-    appendln("Memory leak detection mode: ${detectMemoryLeaks.stringValue}")
-    KaptFlag.values().forEach { appendln(it.description + ": " + this@logString[it]) }
+    appendLine("Annotation processing mode: ${mode.stringValue}")
+    appendLine("Memory leak detection mode: ${detectMemoryLeaks.stringValue}")
+    KaptFlag.values().forEach { appendLine(it.description + ": " + this@logString[it]) }
 
-    appendln("Project base dir: $projectBaseDir")
-    appendln("Compile classpath: " + compileClasspath.joinToString())
-    appendln("Java source roots: " + javaSourceRoots.joinToString())
+    appendLine("Project base dir: $projectBaseDir")
+    appendLine("Compile classpath: " + compileClasspath.joinToString())
+    appendLine("Java source roots: " + javaSourceRoots.joinToString())
 
-    appendln("Sources output directory: $sourcesOutputDir")
-    appendln("Class files output directory: $classesOutputDir")
-    appendln("Stubs output directory: $stubsOutputDir")
-    appendln("Incremental data output directory: $incrementalDataOutputDir")
+    appendLine("Sources output directory: $sourcesOutputDir")
+    appendLine("Class files output directory: $classesOutputDir")
+    appendLine("Stubs output directory: $stubsOutputDir")
+    appendLine("Incremental data output directory: $incrementalDataOutputDir")
 
-    appendln("Annotation processing classpath: " + processingClasspath.joinToString())
-    appendln("Annotation processors: " + processors.joinToString())
+    appendLine("Annotation processing classpath: " + processingClasspath.joinToString())
+    appendLine("Annotation processors: " + processors.joinToString())
 
-    appendln("AP options: $processingOptions")
-    appendln("Javac options: $javacOptions")
+    appendLine("AP options: $processingOptions")
+    appendLine("Javac options: $javacOptions")
 
-    appendln("[incremental apt] Changed files: $changedFiles")
-    appendln("[incremental apt] Compiled sources directories: ${compiledSources.joinToString()}")
-    appendln("[incremental apt] Cache directory for incremental compilation: $incrementalCache")
-    appendln("[incremental apt] Changed classpath names: ${classpathChanges.joinToString()}")
+    appendLine("[incremental apt] Changed files: $changedFiles")
+    appendLine("[incremental apt] Compiled sources directories: ${compiledSources.joinToString()}")
+    appendLine("[incremental apt] Cache directory for incremental compilation: $incrementalCache")
+    appendLine("[incremental apt] Changed classpath names: ${classpathChanges.joinToString()}")
 }

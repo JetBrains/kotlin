@@ -6,12 +6,12 @@ FILE: companionObjectCall.kt
 
     }
     public final fun case1(a: R|A?|): R|kotlin/Unit| {
-        lval test: R|kotlin/String?| = R|<local>/a|?.R|kotlin/let|<R|A|, R|kotlin/String|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/String| <kind=EXACTLY_ONCE>  {
+        lval test: R|kotlin/String?| = R|<local>/a|?.{ $subj$.R|kotlin/let|<R|A|, R|kotlin/String|>(<L> = let@fun <anonymous>(it: R|A|): R|kotlin/String| <kind=EXACTLY_ONCE>  {
             Q|Case1|.R|/Case1.Companion.invoke|(R|<local>/it|)
             Q|Case1|.R|/Case1.Companion.invoke|(R|<local>/it|)
             ^ Q|Case1|.R|/Case1.Companion.invoke|(R|/A.A|())
         }
-        )
+        ) }
         Q|Case1|.R|/Case1.Companion.invoke|(R|/A.A|())
         Q|Case1|.R|/Case1.Companion.invoke|(a = R|/A.A|())
     }

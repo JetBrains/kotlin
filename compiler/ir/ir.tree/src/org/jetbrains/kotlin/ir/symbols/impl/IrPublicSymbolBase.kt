@@ -6,12 +6,23 @@
 package org.jetbrains.kotlin.ir.symbols.impl
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.WrappedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.render
 
-abstract class IrPublicSymbolBase<out D : DeclarationDescriptor>(override val descriptor: D, override val signature: IdSignature) : IrSymbol
+abstract class IrPublicSymbolBase<out D : DeclarationDescriptor> @OptIn(ObsoleteDescriptorBasedAPI::class) constructor(
+    @ObsoleteDescriptorBasedAPI
+    override val descriptor: D,
+    override val signature: IdSignature
+) : IrSymbol {
+    override fun toString(): String {
+        if (isBound) return owner.render()
+        return "Unbound public symbol for $signature"
+    }
+}
 
 abstract class IrBindablePublicSymbolBase<out D : DeclarationDescriptor, B : IrSymbolOwner>(descriptor: D, sig: IdSignature) :
     IrBindableSymbol<D, B>, IrPublicSymbolBase<D>(descriptor, sig) {
@@ -37,7 +48,7 @@ abstract class IrBindablePublicSymbolBase<out D : DeclarationDescriptor, B : IrS
         if (_owner == null) {
             _owner = owner
         } else {
-            throw IllegalStateException("${javaClass.simpleName} for $signature is already bound")
+            throw IllegalStateException("${javaClass.simpleName} for $signature is already bound: ${owner.render()}")
         }
     }
 
@@ -49,30 +60,24 @@ abstract class IrBindablePublicSymbolBase<out D : DeclarationDescriptor, B : IrS
 
 class IrClassPublicSymbolImpl(descriptor: ClassDescriptor, sig: IdSignature) :
     IrBindablePublicSymbolBase<ClassDescriptor, IrClass>(descriptor, sig),
-    IrClassSymbol {
-}
+    IrClassSymbol
 
 class IrEnumEntryPublicSymbolImpl(descriptor: ClassDescriptor, sig: IdSignature) :
     IrBindablePublicSymbolBase<ClassDescriptor, IrEnumEntry>(descriptor, sig),
-    IrEnumEntrySymbol {
-}
+    IrEnumEntrySymbol
 
 class IrSimpleFunctionPublicSymbolImpl(descriptor: FunctionDescriptor, sig: IdSignature) :
     IrBindablePublicSymbolBase<FunctionDescriptor, IrSimpleFunction>(descriptor, sig),
-    IrSimpleFunctionSymbol {
-}
+    IrSimpleFunctionSymbol
 
 class IrConstructorPublicSymbolImpl(descriptor: ClassConstructorDescriptor, sig: IdSignature) :
     IrBindablePublicSymbolBase<ClassConstructorDescriptor, IrConstructor>(descriptor, sig),
-    IrConstructorSymbol {
-}
+    IrConstructorSymbol
 
 class IrPropertyPublicSymbolImpl(descriptor: PropertyDescriptor, sig: IdSignature) :
     IrBindablePublicSymbolBase<PropertyDescriptor, IrProperty>(descriptor, sig),
-    IrPropertySymbol {
-}
+    IrPropertySymbol
 
 class IrTypeAliasPublicSymbolImpl(descriptor: TypeAliasDescriptor, sig: IdSignature) :
     IrBindablePublicSymbolBase<TypeAliasDescriptor, IrTypeAlias>(descriptor, sig),
-    IrTypeAliasSymbol {
-}
+    IrTypeAliasSymbol

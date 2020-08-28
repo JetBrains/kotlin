@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-interface IrConst<T> : IrExpression, IrExpressionWithCopy {
-    val kind: IrConstKind<T>
-    val value: T
+abstract class IrConst<T> : IrExpression(), IrExpressionWithCopy {
+    abstract val kind: IrConstKind<T>
+    abstract val value: T
 
-    override fun copy(): IrConst<T>
+    abstract override fun copy(): IrConst<T>
 }
 
 sealed class IrConstKind<T>(val asString: kotlin.String) {
@@ -41,4 +41,3 @@ sealed class IrConstKind<T>(val asString: kotlin.String) {
 
     override fun toString() = asString
 }
-

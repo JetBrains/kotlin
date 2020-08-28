@@ -14,12 +14,12 @@ FILE: constructorInObject.kt
         }
 
         public final static enum entry X: R|B| = object : R|B| {
-            private constructor(): R|anonymous| {
+            private constructor(): R|<anonymous>| {
                 super<R|B|>()
             }
 
-            public? constructor(): R|anonymous| {
-                this<R|anonymous|>()
+            public? constructor(): R|<anonymous>| {
+                super<R|B|>()
             }
 
         }
@@ -45,7 +45,7 @@ FILE: constructorInObject.kt
 
     }
     public? final? val anonObject: <implicit> = object : R|kotlin/Any| {
-        public? constructor(): R|anonymous| {
+        public? constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()
         }
 

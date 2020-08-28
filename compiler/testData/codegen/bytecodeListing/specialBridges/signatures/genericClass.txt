@@ -1,5 +1,6 @@
 @kotlin.Metadata
 public abstract class<<K:Ljava/lang/Object;V:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/Map<TK;TV;>;Lkotlin/jvm/internal/markers/KMutableMap;>  AbstractGenericMap {
+    // source: 'genericClass.kt'
     public @org.jetbrains.annotations.NotNull <()Ljava/util/Collection<TV;>;> method getValues(): java.util.Collection
     public bridge final <()Ljava/util/Collection<TV;>;> method values(): java.util.Collection
     public bridge final <()Ljava/util/Set<Ljava/util/Map$Entry<TK;TV;>;>;> method entrySet(): java.util.Set
@@ -22,6 +23,7 @@ public abstract class<<K:Ljava/lang/Object;V:Ljava/lang/Object;>Ljava/lang/Objec
 
 @kotlin.Metadata
 public final class<<K:Ljava/lang/Object;V:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/Map<TK;TV;>;Lkotlin/jvm/internal/markers/KMutableMap;>  GenericMap {
+    // source: 'genericClass.kt'
     public @org.jetbrains.annotations.NotNull <()Ljava/util/Collection<TV;>;> method getValues(): java.util.Collection
     public bridge final <()Ljava/util/Collection<TV;>;> method values(): java.util.Collection
     public bridge final <()Ljava/util/Set<Ljava/util/Map$Entry<TK;TV;>;>;> method entrySet(): java.util.Set
