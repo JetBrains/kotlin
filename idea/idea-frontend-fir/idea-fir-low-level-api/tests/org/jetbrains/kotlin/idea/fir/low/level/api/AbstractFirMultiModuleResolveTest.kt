@@ -15,9 +15,6 @@ import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.dependenciesWithoutSelf
-import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
-import org.jetbrains.kotlin.fir.extensions.extensionService
-import org.jetbrains.kotlin.fir.extensions.registerExtensions
 import org.jetbrains.kotlin.fir.java.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.firProvider
@@ -60,9 +57,7 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
 
     private fun createSession(module: Module, provider: FirProjectSessionProvider): FirJavaModuleBasedSession {
         val moduleInfo = module.productionSourceInfo()!!
-        return FirSessionFactory.createJavaModuleBasedSession(moduleInfo, provider, moduleInfo.contentScope()).also {
-            it.extensionService.registerExtensions(BunchOfRegisteredExtensions.empty())
-        }
+        return FirSessionFactory.createJavaModuleBasedSession(moduleInfo, provider, moduleInfo.contentScope())
     }
 
     private fun createLibrarySession(moduleInfo: IdeaModuleInfo, provider: FirProjectSessionProvider): FirLibrarySession {

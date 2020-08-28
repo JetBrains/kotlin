@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
@@ -14,29 +15,23 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
 import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtension
 
 class CheckersComponent : FirSessionComponent {
-    companion object {
-        fun componentWithDefaultCheckers(): CheckersComponent {
-            return CheckersComponent().apply {
-                register(CommonDeclarationCheckers)
-                register(CommonExpressionCheckers)
-            }
-        }
-    }
-
     val declarationCheckers: DeclarationCheckers get() = _declarationCheckers
     private val _declarationCheckers = ComposedDeclarationCheckers()
 
     val expressionCheckers: ExpressionCheckers get() = _expressionCheckers
     private val _expressionCheckers = ComposedExpressionCheckers()
 
+    @SessionConfiguration
     fun register(checkers: DeclarationCheckers) {
         _declarationCheckers.register(checkers)
     }
 
+    @SessionConfiguration
     fun register(checkers: ExpressionCheckers) {
         _expressionCheckers.register(checkers)
     }
 
+    @SessionConfiguration
     fun register(checkers: FirAdditionalCheckersExtension) {
         register(checkers.declarationCheckers)
         register(checkers.expressionCheckers)

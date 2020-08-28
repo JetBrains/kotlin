@@ -42,7 +42,3 @@ object FirJavaVisibilityChecker : FirVisibilityChecker() {
         }
     }
 }
-
-fun FirSession.registerJavaVisibilityChecker() {
-    register(FirVisibilityChecker::class, FirJavaVisibilityChecker)
-}

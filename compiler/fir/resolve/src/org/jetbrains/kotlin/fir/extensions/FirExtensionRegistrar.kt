@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.extensions
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionConfiguration
 import kotlin.reflect.KClass
 
 abstract class FirExtensionRegistrar {
@@ -76,8 +77,14 @@ class BunchOfRegisteredExtensions @PluginServicesInitialization constructor(
             return BunchOfRegisteredExtensions(extensions)
         }
     }
+
+    @OptIn(PluginServicesInitialization::class)
+    operator fun plus(other: BunchOfRegisteredExtensions): BunchOfRegisteredExtensions {
+        return BunchOfRegisteredExtensions(extensions + other.extensions)
+    }
 }
 
+@SessionConfiguration
 @OptIn(PluginServicesInitialization::class)
 fun FirExtensionService.registerExtensions(registeredExtensions: BunchOfRegisteredExtensions) {
     registeredExtensions.extensions.forEach { registerExtensions(it.kClass, it.extensionFactories) }

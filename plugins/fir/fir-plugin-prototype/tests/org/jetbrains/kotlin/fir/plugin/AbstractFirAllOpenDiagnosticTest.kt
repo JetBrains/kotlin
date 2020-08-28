@@ -8,16 +8,15 @@ package org.jetbrains.kotlin.fir.plugin
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.AbstractFirDiagnosticsTest
-import org.jetbrains.kotlin.fir.extensions.FirExtensionService
-import org.jetbrains.kotlin.fir.extensions.registerExtensions
+import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
 import java.io.File
 
 abstract class AbstractFirAllOpenDiagnosticTest : AbstractFirDiagnosticsTest() {
     override val pluginPhasesEnabled: Boolean
         get() = true
 
-    override fun registerFirExtensions(service: FirExtensionService) {
-        service.registerExtensions(FirAllOpenComponentRegistrar().configure())
+    override fun getFirExtensions(): BunchOfRegisteredExtensions {
+        return FirAllOpenComponentRegistrar().configure()
     }
 
     override fun updateConfiguration(configuration: CompilerConfiguration) {

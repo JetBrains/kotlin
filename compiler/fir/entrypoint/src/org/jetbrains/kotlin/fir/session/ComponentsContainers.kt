@@ -5,30 +5,25 @@
 
 package org.jetbrains.kotlin.fir.session
 
-import org.jetbrains.kotlin.fir.FirModuleBasedSession
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.CheckersComponent
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.ExtendedDeclarationCheckers
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExtendedExpressionCheckers
-import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.FirRegisteredPluginAnnotations
-import org.jetbrains.kotlin.fir.java.registerJavaVisibilityChecker
-import org.jetbrains.kotlin.fir.registerJvmEffectiveVisibilityResolver
-import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
-import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
-import org.jetbrains.kotlin.fir.resolve.calls.jvm.registerJvmCallConflictResolverFactory
+import org.jetbrains.kotlin.fir.java.FirJavaVisibilityChecker
+import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
+import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticNamesProvider
+import org.jetbrains.kotlin.fir.resolve.calls.jvm.JvmCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirQualifierResolverImpl
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeResolverImpl
-import org.jetbrains.kotlin.fir.resolve.registerJavaClassMapper
-import org.jetbrains.kotlin.fir.resolve.registerJavaSyntheticNamesProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedClassIndex
 import org.jetbrains.kotlin.fir.scopes.impl.FirDeclaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
 
 // -------------------------- Required components --------------------------
 
+@OptIn(SessionConfiguration::class)
 fun FirSession.registerCommonComponents() {
     register(FirDeclaredMemberScopeProvider::class, FirDeclaredMemberScopeProvider())
     register(FirCorrespondingSupertypesCache::class, FirCorrespondingSupertypesCache(this))
@@ -41,31 +36,24 @@ fun FirSession.registerCommonComponents() {
 
 // -------------------------- Resolve components --------------------------
 
-// TODO: rename to `registerCommonResolveComponents
+/*
+ * Resolve components which are same on all platforms
+ */
+@OptIn(SessionConfiguration::class)
 fun FirModuleBasedSession.registerResolveComponents() {
     register(FirQualifierResolver::class, FirQualifierResolverImpl(this))
     register(FirTypeResolver::class, FirTypeResolverImpl(this))
+    register(CheckersComponent::class, CheckersComponent())
 }
-
-fun FirModuleBasedSession.registerJavaSpecificComponents() {
-    registerJavaVisibilityChecker()
-    registerJvmCallConflictResolverFactory()
-    registerJvmEffectiveVisibilityResolver()
-    registerJavaClassMapper()
-    registerJavaSyntheticNamesProvider()
-}
-
-// -------------------------- Checker components --------------------------
 
 /*
- * TODO: in future rename to `registerCheckersComponent` and configure
- *    exact checkers according to platforms of current session
+ * Resolve components which have specific implementations on JVM
  */
-fun FirModuleBasedSession.registerCheckersComponent() {
-    register(CheckersComponent::class, CheckersComponent.componentWithDefaultCheckers())
-}
-
-fun FirModuleBasedSession.registerExtendedCheckersComponent() {
-    this.checkersComponent.register(ExtendedExpressionCheckers)
-    this.checkersComponent.register(ExtendedDeclarationCheckers)
+@OptIn(SessionConfiguration::class)
+fun FirModuleBasedSession.registerJavaSpecificComponents() {
+    register(FirVisibilityChecker::class, FirJavaVisibilityChecker)
+    register(ConeCallConflictResolverFactory::class, JvmCallConflictResolverFactory)
+    register(FirEffectiveVisibilityResolver::class, FirJvmEffectiveVisibilityResolver(this))
+    register(FirPlatformClassMapper::class, FirJavaClassMapper(this))
+    register(FirSyntheticNamesProvider::class, FirJavaSyntheticNamesProvider)
 }

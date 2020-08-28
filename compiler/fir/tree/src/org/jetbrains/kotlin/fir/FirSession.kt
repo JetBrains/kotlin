@@ -18,6 +18,9 @@ import kotlin.reflect.KClass
 @RequiresOptIn
 annotation class PrivateSessionConstructor
 
+@RequiresOptIn
+annotation class SessionConfiguration
+
 interface FirSessionComponent
 
 abstract class FirSession @PrivateSessionConstructor constructor(val sessionProvider: FirSessionProvider?) : ComponentArrayOwner<FirSessionComponent, FirSessionComponent>() {
@@ -39,6 +42,7 @@ abstract class FirSession @PrivateSessionConstructor constructor(val sessionProv
 
     final override val typeRegistry: TypeRegistry<FirSessionComponent, FirSessionComponent> = Companion
 
+    @SessionConfiguration
     fun register(tClass: KClass<out FirSessionComponent>, value: FirSessionComponent) {
         registerComponent(tClass, value)
     }

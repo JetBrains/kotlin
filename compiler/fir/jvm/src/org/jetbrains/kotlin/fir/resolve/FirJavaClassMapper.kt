@@ -16,7 +16,3 @@ class FirJavaClassMapper(private val session: FirSession) : FirPlatformClassMapp
         return javaClassId?.let { session.firSymbolProvider.getClassLikeSymbolByFqName(it)?.fir } as? FirRegularClass
     }
 }
-
-fun FirSession.registerJavaClassMapper() {
-    register(FirPlatformClassMapper::class, FirJavaClassMapper(this))
-}

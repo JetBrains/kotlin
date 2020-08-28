@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticNamesProvider
 import org.jetbrains.kotlin.load.java.propertyNameByGetMethodName
 import org.jetbrains.kotlin.name.Name
@@ -41,6 +40,3 @@ object FirJavaSyntheticNamesProvider : FirSyntheticNamesProvider() {
     }
 }
 
-fun FirSession.registerJavaSyntheticNamesProvider() {
-    register(FirSyntheticNamesProvider::class, FirJavaSyntheticNamesProvider)
-}
