@@ -18,11 +18,9 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.Assert
 import org.junit.runner.RunWith
-import java.io.IOException
 
 @RunWith(JUnit38ClassRunner::class)
 open class ConfigureKotlinInTempDirTest : AbstractConfigureKotlinInTempDirTest() {
-    @Throws(IOException::class)
     fun testNoKotlincExistsNoSettingsRuntime10() {
         val application = ApplicationManager.getApplication() as ApplicationImpl
         application.isSaveAllowed = true

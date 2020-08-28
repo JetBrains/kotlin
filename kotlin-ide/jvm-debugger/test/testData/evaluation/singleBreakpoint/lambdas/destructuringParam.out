@@ -9,20 +9,24 @@ KotlinStackFrame (destructuringParam.kt:12)
         JavaValue[field] arity: int = 1 (Lambda.!EXT!)
     JavaValue[local] $dstr$x$y: destructuringParam.A = A(x=O, y=K)
         JavaValue[field] x: java.lang.String = O (destructuringParam.kt:2)
-            JavaValue[field] value: char[] (String.!EXT!)
-                JavaValue[element] 0 = 'O' 79
+            JavaValue[field] value: byte[] (String.!EXT!)
+                JavaValue[element] 0 = 79
+            JavaValue[field] coder: byte = 0 (String.!EXT!)
             JavaValue[field] hash: int = 0 (String.!EXT!)
         JavaValue[field] y: java.lang.String = K (destructuringParam.kt:2)
-            JavaValue[field] value: char[] (String.!EXT!)
-                JavaValue[element] 0 = 'K' 75
+            JavaValue[field] value: byte[] (String.!EXT!)
+                JavaValue[element] 0 = 75
+            JavaValue[field] coder: byte = 0 (String.!EXT!)
             JavaValue[field] hash: int = 0 (String.!EXT!)
     JavaValue[local] x: java.lang.String = O (destructuringParam.kt:12)
-        JavaValue[field] value: char[] (String.!EXT!)
-            JavaValue[element] 0 = 'O' 79
+        JavaValue[field] value: byte[] (String.!EXT!)
+            JavaValue[element] 0 = 79
+        JavaValue[field] coder: byte = 0 (String.!EXT!)
         JavaValue[field] hash: int = 0 (String.!EXT!)
     JavaValue[local] y: java.lang.String = K (destructuringParam.kt:12)
-        JavaValue[field] value: char[] (String.!EXT!)
-            JavaValue[element] 0 = 'K' 75
+        JavaValue[field] value: byte[] (String.!EXT!)
+            JavaValue[element] 0 = 75
+        JavaValue[field] coder: byte = 0 (String.!EXT!)
         JavaValue[field] hash: int = 0 (String.!EXT!)
 Disconnected from the target VM
 
