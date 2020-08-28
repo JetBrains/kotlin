@@ -137,6 +137,9 @@ public final class GradleManager
                                                                    settings.isOfflineWork());
       final String rootProjectPath = projectLevelSettings != null ? projectLevelSettings.getExternalProjectPath() : projectPath;
       final String javaHome = gradleInstallationManager.getGradleJvmPath(project, rootProjectPath);
+      if (!StringUtil.isEmpty(javaHome)) {
+        LOG.info("Instructing gradle to use java from " + javaHome);
+      }
       result.setJavaHome(javaHome);
       String ideProjectPath;
       if (project.getBasePath() == null ||
