@@ -15,6 +15,7 @@ import com.intellij.ui.RowIcon
 import com.intellij.util.PlatformIcons
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
+import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.idea.KotlinIcons.ACTUAL
 import org.jetbrains.kotlin.idea.KotlinIcons.EXPECT
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
@@ -132,7 +133,7 @@ class KotlinIconProvider : IconProvider(), DumbAware {
             is KtProperty -> if (isVar) KotlinIcons.FIELD_VAR else KotlinIcons.FIELD_VAL
             is KtClassInitializer -> KotlinIcons.CLASS_INITIALIZER
             is KtTypeAlias -> KotlinIcons.TYPE_ALIAS
-            else -> null
+            else -> unwrapped?.takeIf { it != this }?.getBaseIcon()
         }
     }
 }
