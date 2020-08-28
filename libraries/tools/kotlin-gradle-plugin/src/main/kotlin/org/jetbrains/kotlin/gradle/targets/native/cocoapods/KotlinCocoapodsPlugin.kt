@@ -11,6 +11,7 @@ import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.daemon.common.trimQuotes
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import java.io.File
+import java.util.*
 
 internal val Project.cocoapodsBuildDirs: CocoapodsBuildDirs
     get() = CocoapodsBuildDirs(this)
@@ -68,17 +70,17 @@ private val Family.toPodGenTaskName: String
         name
     )
 
-private val String.toSetupBuildTaskName: String
-    get() = lowerCamelCaseName(
-        KotlinCocoapodsPlugin.POD_SETUP_BUILD_TASK_NAME,
-        this
-    )
+private fun String.toSetupBuildTaskName(pod: CocoapodsDependency): String = lowerCamelCaseName(
+    KotlinCocoapodsPlugin.POD_SETUP_BUILD_TASK_NAME,
+    pod.schemeName,
+    this
+)
 
-private val String.toBuildDependenciesTaskName: String
-    get() = lowerCamelCaseName(
-        KotlinCocoapodsPlugin.POD_BUILD_DEPENDENCIES_TASK_NAME,
-        this
-    )
+private fun String.toBuildDependenciesTaskName(pod: CocoapodsDependency): String = lowerCamelCaseName(
+    KotlinCocoapodsPlugin.POD_BUILD_TASK_NAME,
+    pod.schemeName,
+    this
+)
 
 private val CocoapodsDependency.toPodDownloadTaskName: String
     get() = lowerCamelCaseName(
@@ -225,7 +227,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             val defTask = project.registerTask<DefFileTask>(
                 lowerCamelCaseName("generateDef", pod.moduleName).asValidTaskName()
             ) {
-                it.pod = pod
+                it.pod = project.provider { pod }
                 it.description = "Generates a def file for CocoaPods dependencies with module ${pod.moduleName}"
                 // This task is an implementation detail so we don't add it in any group
                 // to avoid showing it in the `tasks` output.
@@ -248,8 +250,8 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                         && project.findProperty(CONFIGURATION_PROPERTY) == null
                     ) {
                         val podBuildTaskProvider =
-                            project.tasks.named(target.toValidSDK.toBuildDependenciesTaskName, PodBuildTask::class.java)
-                        interopTask.inputs.file(podBuildTaskProvider.get().buildSettingsFileProvider)
+                            project.tasks.named(target.toValidSDK.toBuildDependenciesTaskName(pod), PodBuildTask::class.java)
+                        interopTask.inputs.file(podBuildTaskProvider.get().buildSettingsFile)
                         interopTask.dependsOn(podBuildTaskProvider)
                     }
 
@@ -275,9 +277,9 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                             && project.findProperty(CONFIGURATION_PROPERTY) == null
                         ) {
                             val podBuildTaskProvider =
-                                project.tasks.named(target.toValidSDK.toBuildDependenciesTaskName, PodBuildTask::class.java)
+                                project.tasks.named(target.toValidSDK.toBuildDependenciesTaskName(pod), PodBuildTask::class.java)
                             val buildSettings =
-                                podBuildTaskProvider.get().buildSettingsFileProvider.get()
+                                podBuildTaskProvider.get().buildSettingsFile.get()
                                     .inputStream()
                                     .use {
                                         PodBuildSettingsProperties.readSettingsFromStream(it)
@@ -291,9 +293,14 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                             buildSettings.headerPaths?.let { args ->
                                 interop.compilerOpts.addAll(args.splitQuotedArgs().map { "-I$it" })
                             }
-                            buildSettings.frameworkPaths?.let { args ->
-                                interop.compilerOpts.addAll(args.splitQuotedArgs().map { "-F$it" })
-                            }
+
+                            val frameworkPaths = buildSettings.frameworkPaths
+                            val configurationBuildDir = buildSettings.configurationBuildDir
+                            val frameworkPathsSelfIncluding = mutableListOf<String>()
+                            frameworkPathsSelfIncluding += configurationBuildDir.trimQuotes()
+                            frameworkPaths?.let { frameworkPathsSelfIncluding.addAll(it.splitQuotedArgs()) }
+
+                            interop.compilerOpts.addAll(frameworkPathsSelfIncluding.map { "-F$it" })
                         }
                     }
                 }
@@ -306,7 +313,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         cocoapodsExtension: CocoapodsExtension
     ) {
         project.tasks.register(DUMMY_FRAMEWORK_TASK_NAME, DummyFrameworkTask::class.java) {
-            it.cocoapodsExtension = cocoapodsExtension
+            it.frameworkName = project.provider { cocoapodsExtension.frameworkName }
         }
     }
 
@@ -319,7 +326,18 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         project.tasks.register(POD_SPEC_TASK_NAME, PodspecTask::class.java) {
             it.group = TASK_GROUP
             it.description = "Generates a podspec file for CocoaPods import"
-            it.cocoapodsExtension = cocoapodsExtension
+            it.needPodspec = project.provider { cocoapodsExtension.needPodspec }
+            it.pods.set(cocoapodsExtension.pods)
+            it.version = project.provider { cocoapodsExtension.version }
+            it.homepage.set(cocoapodsExtension.homepage)
+            it.license.set(cocoapodsExtension.license)
+            it.authors.set(cocoapodsExtension.authors)
+            it.summary.set(cocoapodsExtension.summary)
+            it.frameworkName = project.provider { cocoapodsExtension.frameworkName }
+            it.ios = project.provider { cocoapodsExtension.ios }
+            it.osx = project.provider { cocoapodsExtension.osx }
+            it.tvos = project.provider { cocoapodsExtension.tvos }
+            it.watchos = project.provider { cocoapodsExtension.watchos }
             it.dependsOn(dummyFrameworkTaskProvider)
             val generateWrapper = project.findProperty(GENERATE_WRAPPER_PROPERTY)?.toString()?.toBoolean() ?: false
             if (generateWrapper) {
@@ -335,13 +353,13 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         project.tasks.register(POD_INSTALL_TASK_NAME, PodInstallTask::class.java) {
             it.group = TASK_GROUP
             it.description = "Invokes `pod install` call within Podfile location directory"
-            it.cocoapodsExtension = cocoapodsExtension
+            it.podfile.set(cocoapodsExtension.podfile)
             it.onlyIf { isAvailableToProduceSynthetic }
 
             //TODO avoid subproject task management here
             project.allprojects.map { it.tasks.named(POD_SPEC_TASK_NAME, PodspecTask::class.java) }
                 .forEach { podspecTaskProvider ->
-                    podspecTaskProvider.get().takeIf { task -> task.cocoapodsExtension.needPodspec }
+                    podspecTaskProvider.get().takeIf { task -> task.needPodspec.get() }
                         ?.also { task -> it.inputs.file(task.outputFileProvider) }
                     it.dependsOn(podspecTaskProvider)
                 }
@@ -361,12 +379,10 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             val podSource = pod.source
             val downloadPodTask = when (podSource) {
                 is Git -> project.tasks.register(pod.toPodDownloadTaskName, PodDownloadGitTask::class.java) {
-                    it.cocoapodsExtension = cocoapodsExtension
                     it.podName = project.provider { pod.name }
                     it.podSource = project.provider { podSource as Git }
                 }
                 is Url -> project.tasks.register(pod.toPodDownloadTaskName, PodDownloadUrlTask::class.java) {
-                    it.cocoapodsExtension = cocoapodsExtension
                     it.podName = project.provider { pod.name }
                     it.podSource = project.provider { podSource as Url }
                 }
@@ -394,10 +410,10 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
             project.tasks.register(family.toPodGenTaskName, PodGenTask::class.java) {
                 it.description = "Сreates a synthetic Xcode project to retrieve CocoaPods dependencies"
-                it.podspecProvider = podspecTaskProvider.get().outputFileProvider
+                it.podspec = podspecTaskProvider.map { task -> task.outputFileProvider.get() }
+                it.specRepos = project.provider { cocoapodsExtension.specRepos }
                 it.family = family
-                it.cocoapodsExtension = cocoapodsExtension
-                it.dependsOn(podspecTaskProvider)
+                it.pods.set(cocoapodsExtension.pods)
                 it.dependsOn(downloadPods)
                 it.onlyIf { isAvailableToProduceSynthetic }
             }
@@ -409,30 +425,36 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         kotlinExtension: KotlinMultiplatformExtension,
         cocoapodsExtension: CocoapodsExtension
     ) {
-        val sdks = mutableSetOf<String>()
+        val schemeNames = mutableSetOf<String>()
 
-        kotlinExtension.supportedTargets().all { target ->
+        cocoapodsExtension.pods.all { pod ->
 
-            val sdk = target.toValidSDK
-            if (sdk in sdks) {
+            if (schemeNames.contains(pod.schemeName)) {
                 return@all
             }
-            sdks += sdk
+            schemeNames.add(pod.schemeName)
 
-            val podGenTaskProvider = project.tasks.named(target.konanTarget.family.toPodGenTaskName, PodGenTask::class.java)
+            val sdks = mutableSetOf<String>()
 
-            project.tasks.register(sdk.toSetupBuildTaskName, PodSetupBuildTask::class.java) {
-                it.group = TASK_GROUP
-                it.description = "Collect environment variables from .xcworkspace file"
-                it.cocoapodsExtension = cocoapodsExtension
-                it.sdk = project.provider { sdk }
+            kotlinExtension.supportedTargets().all loop@{ target ->
 
-                val podspecTaskProvider = project.tasks.named(POD_SPEC_TASK_NAME, PodspecTask::class.java)
-                it.schemeName = podspecTaskProvider.map { it.specName }
+                val sdk = target.toValidSDK
+                if (sdk in sdks) {
+                    return@loop
+                }
+                sdks += sdk
 
-                it.podsXcodeProjDirProvider = podGenTaskProvider.get().podsXcodeProjDirProvider
-                it.dependsOn(podGenTaskProvider)
-                it.onlyIf { isAvailableToProduceSynthetic }
+                val podGenTaskProvider = project.tasks.named(target.konanTarget.family.toPodGenTaskName, PodGenTask::class.java)
+                project.tasks.register(sdk.toSetupBuildTaskName(pod), PodSetupBuildTask::class.java) {
+                    it.group = TASK_GROUP
+                    it.description = "Collect environment variables from .xcworkspace file"
+                    it.pod = project.provider { pod }
+                    it.sdk = project.provider { sdk }
+                    it.podsXcodeProjDir = podGenTaskProvider.map { podGen -> podGen.podsXcodeProjDir.get() }
+                    it.frameworkName = project.provider { cocoapodsExtension.frameworkName }
+                    it.dependsOn(podGenTaskProvider)
+                    it.onlyIf { isAvailableToProduceSynthetic }
+                }
             }
         }
     }
@@ -442,27 +464,38 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         kotlinExtension: KotlinMultiplatformExtension,
         cocoapodsExtension: CocoapodsExtension
     ) {
-        val sdks = mutableSetOf<String>()
+        val schemeNames = mutableSetOf<String>()
 
-        kotlinExtension.supportedTargets().all { target ->
+        cocoapodsExtension.pods.all { pod ->
 
-            val sdk = target.toValidSDK
-            if (sdk in sdks) {
+            if (schemeNames.contains(pod.schemeName)) {
                 return@all
             }
-            sdks += sdk
+            schemeNames.add(pod.schemeName)
 
-            val podSetupBuildTaskProvider = project.tasks.named(sdk.toSetupBuildTaskName, PodSetupBuildTask::class.java)
+            val sdks = mutableSetOf<String>()
 
-            project.tasks.register(sdk.toBuildDependenciesTaskName, PodBuildTask::class.java) {
-                it.group = TASK_GROUP
-                it.description = "Calls `xcodebuild` on xcworkspace for the pod scheme"
-                it.sdk = project.provider { sdk }
-                it.cocoapodsExtension = cocoapodsExtension
-                it.podsXcodeProjDirProvider = podSetupBuildTaskProvider.get().podsXcodeProjDirProvider
-                it.buildSettingsFileProvider = podSetupBuildTaskProvider.get().buildSettingsFileProvider
-                it.dependsOn(podSetupBuildTaskProvider)
-                it.onlyIf { isAvailableToProduceSynthetic }
+            kotlinExtension.supportedTargets().all loop@{ target ->
+
+                val sdk = target.toValidSDK
+
+                if (sdk in sdks) {
+                    return@loop
+                }
+                sdks += sdk
+
+                val podSetupBuildTaskProvider =
+                    project.tasks.named(sdk.toSetupBuildTaskName(pod), PodSetupBuildTask::class.java)
+
+                project.tasks.register(sdk.toBuildDependenciesTaskName(pod), PodBuildTask::class.java) {
+                    it.group = TASK_GROUP
+                    it.description = "Calls `xcodebuild` on xcworkspace for the pod scheme"
+                    it.sdk = project.provider { sdk }
+                    it.pod = project.provider { pod }
+                    it.podsXcodeProjDir = podSetupBuildTaskProvider.map { task -> task.podsXcodeProjDir.get() }
+                    it.buildSettingsFile = podSetupBuildTaskProvider.map { task -> task.buildSettingsFile.get() }
+                    it.onlyIf { isAvailableToProduceSynthetic }
+                }
             }
         }
     }
@@ -471,7 +504,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         project: Project,
         kotlinExtension: KotlinMultiplatformExtension
     ) {
-
         val podInstallTaskProvider = project.tasks.named(POD_INSTALL_TASK_NAME, PodInstallTask::class.java)
         project.tasks.register(POD_IMPORT_TASK_NAME) {
             it.group = TASK_GROUP
@@ -531,7 +563,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         const val POD_DOWNLOAD_TASK_NAME = "podDownload"
         const val POD_GEN_TASK_NAME = "podGen"
         const val POD_SETUP_BUILD_TASK_NAME = "podSetupBuild"
-        const val POD_BUILD_DEPENDENCIES_TASK_NAME = "podBuildDependencies"
+        const val POD_BUILD_TASK_NAME = "podBuild"
         const val POD_IMPORT_TASK_NAME = "podImport"
 
         // We don't move these properties in PropertiesProvider because

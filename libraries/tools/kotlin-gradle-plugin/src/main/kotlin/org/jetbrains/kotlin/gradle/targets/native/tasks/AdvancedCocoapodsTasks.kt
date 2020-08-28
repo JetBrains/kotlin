@@ -7,15 +7,14 @@ package org.jetbrains.kotlin.gradle.targets.native.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.repositories.ArtifactRepository
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.RelativePath
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.Optional
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.*
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.CocoapodsDependency.PodLocation.*
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
 import org.jetbrains.kotlin.konan.target.Family
 import java.io.File
@@ -34,6 +33,9 @@ private val Family.platformLiteral: String
         else -> throw IllegalArgumentException("Bad family ${this.name}")
     }
 
+val CocoapodsDependency.schemeName: String
+    get() = name.split("/")[0]
+
 /**
  * The task takes the path to the Podfile and calls `pod install`
  * to obtain sources or artifacts for the declared dependencies.
@@ -41,24 +43,24 @@ private val Family.platformLiteral: String
  */
 open class PodInstallTask : DefaultTask() {
     init {
-        onlyIf { cocoapodsExtension?.podfile != null }
+        onlyIf { podfile.isPresent }
     }
 
     @get:Optional
-    @get:Nested
-    internal var cocoapodsExtension: CocoapodsExtension? = null
+    @get:Input
+    internal val podfile = project.objects.property(File::class.java)
 
     @get:Optional
     @get:OutputDirectory
     internal val podsXcodeProjDirProvider: Provider<File>?
-        get() = cocoapodsExtension?.podfile?.let {
+        get() = podfile.orNull?.let {
             project.provider { it.parentFile.resolve("Pods").resolve("Pods.xcodeproj") }
         }
 
 
     @TaskAction
     fun doPodInstall() {
-        cocoapodsExtension?.podfile?.parentFile?.also { podfileDir ->
+        podfile.orNull?.parentFile?.also { podfileDir ->
             val podInstallProcess = ProcessBuilder("pod", "install").apply {
                 directory(podfileDir)
             }.start()
@@ -81,25 +83,12 @@ open class PodInstallTask : DefaultTask() {
     }
 }
 
-
-abstract class CocoapodsWithSyntheticTask : DefaultTask() {
-    init {
-        onlyIf {
-            cocoapodsExtension.pods.isNotEmpty()
-        }
-    }
-
-    @get:Nested
-    internal lateinit var cocoapodsExtension: CocoapodsExtension
-}
-
-abstract class PodDownloadTask : CocoapodsWithSyntheticTask() {
+abstract class DownloadCocoapodsTask : DefaultTask() {
     @get:Input
     internal lateinit var podName: Provider<String>
 }
 
-
-open class PodDownloadUrlTask : PodDownloadTask() {
+open class PodDownloadUrlTask : DownloadCocoapodsTask() {
 
     @get:Nested
     internal lateinit var podSource: Provider<Url>
@@ -181,8 +170,7 @@ open class PodDownloadUrlTask : PodDownloadTask() {
     }
 }
 
-
-open class PodDownloadGitTask : PodDownloadTask() {
+open class PodDownloadGitTask : DownloadCocoapodsTask() {
 
     @get:Nested
     internal lateinit var podSource: Provider<Git>
@@ -328,19 +316,31 @@ private fun runCommand(
  * The task takes the path to the .podspec file and calls `pod gen`
  * to create synthetic xcode project and workspace.
  */
-open class PodGenTask : CocoapodsWithSyntheticTask() {
+open class PodGenTask : DefaultTask() {
+
+    init {
+        onlyIf {
+            pods.get().isNotEmpty()
+        }
+    }
 
     @get:InputFile
-    internal lateinit var podspecProvider: Provider<File>
+    internal lateinit var podspec: Provider<File>
 
     @get:Internal
     lateinit var family: Family
 
+    @get:Nested
+    internal lateinit var specRepos: Provider<SpecRepos>
+
+    @get:Nested
+    val pods = project.objects.listProperty(CocoapodsDependency::class.java)
+
     @get:OutputDirectory
-    internal val podsXcodeProjDirProvider: Provider<File>
+    internal val podsXcodeProjDir: Provider<File>
         get() = project.provider {
             project.cocoapodsBuildDirs.synthetic(family)
-                .resolve(podspecProvider.get().nameWithoutExtension)
+                .resolve(podspec.get().nameWithoutExtension)
                 .resolve("Pods")
                 .resolve("Pods.xcodeproj")
         }
@@ -348,18 +348,18 @@ open class PodGenTask : CocoapodsWithSyntheticTask() {
     @TaskAction
     fun generate() {
         val syntheticDir = project.cocoapodsBuildDirs.synthetic(family).apply { mkdirs() }
-        val localPodspecPaths = cocoapodsExtension.pods.mapNotNull { it.source?.getLocalPath(project, it.name) }
+        val localPodspecPaths = pods.get().mapNotNull { it.source?.getLocalPath(project, it.name) }
 
-        val sources = cocoapodsExtension.specRepos.getAll().toMutableList()
-        sources += URI("https://cdn.cocoapods.org")
+        val specRepos = specRepos.get().getAll().toMutableList()
+        specRepos += URI("https://cdn.cocoapods.org")
 
         val podGenProcessArgs = listOfNotNull(
             "pod", "gen",
             "--platforms=${family.platformLiteral}",
             "--gen-directory=${syntheticDir.absolutePath}",
             localPodspecPaths.takeIf { it.isNotEmpty() }?.joinToString(separator = ",")?.let { "--local-sources=$it" },
-            sources.takeIf { it.isNotEmpty() }?.joinToString(separator = ",")?.let { "--sources=$it" },
-            podspecProvider.get().absolutePath
+            specRepos.takeIf { it.isNotEmpty() }?.joinToString(separator = ",")?.let { "--sources=$it" },
+            podspec.get().absolutePath
         )
 
         val podGenProcess = ProcessBuilder(podGenProcessArgs).apply {
@@ -388,7 +388,7 @@ open class PodGenTask : CocoapodsWithSyntheticTask() {
             ).joinToString("\n")
         }
 
-        val podsXcprojFile = podsXcodeProjDirProvider.get()
+        val podsXcprojFile = podsXcodeProjDir.get()
         check(podsXcprojFile.exists() && podsXcprojFile.isDirectory) {
             "The directory '${podsXcprojFile.path}' was not created as a result of the `pod gen` call."
         }
@@ -396,35 +396,35 @@ open class PodGenTask : CocoapodsWithSyntheticTask() {
 }
 
 
-open class PodSetupBuildTask : CocoapodsWithSyntheticTask() {
+open class PodSetupBuildTask : DefaultTask() {
 
-    @get:InputDirectory
-    internal lateinit var podsXcodeProjDirProvider: Provider<File>
+    @get:Input
+    lateinit var frameworkName: Provider<String>
 
     @get:Input
     internal lateinit var sdk: Provider<String>
 
-    @Input
-    lateinit var schemeName: Provider<String>
+    @get:Nested
+    lateinit var pod: Provider<CocoapodsDependency>
 
     @get:OutputFile
-    internal val buildSettingsFileProvider: Provider<File> = project.provider {
+    internal val buildSettingsFile: Provider<File> = project.provider {
         project.cocoapodsBuildDirs
             .buildSettings
-            .resolve(sdk.get().toBuildSettingsFileName)
+            .resolve(getBuildSettingFileName(pod.get(), sdk.get()))
     }
 
-    private val String.toBuildSettingsFileName: String
-        get() = "build-settings-$this.properties"
+    @get:Internal
+    internal lateinit var podsXcodeProjDir: Provider<File>
 
     @TaskAction
     fun setupBuild() {
-        val podsXcodeProjDir = podsXcodeProjDirProvider.get()
+        val podsXcodeProjDir = podsXcodeProjDir.get()
 
         val buildSettingsReceivingCommand = listOf(
             "xcodebuild", "-showBuildSettings",
             "-project", podsXcodeProjDir.name,
-            "-scheme", schemeName.get(),
+            "-scheme", pod.get().schemeName,
             "-sdk", sdk.get()
         )
 
@@ -442,113 +442,151 @@ open class PodSetupBuildTask : CocoapodsWithSyntheticTask() {
         }
 
         val stdOut = buildSettingsProcess.inputStream
-
         val buildSettingsProperties = PodBuildSettingsProperties.readSettingsFromStream(stdOut)
-        buildSettingsFileProvider.get().let { buildSettingsProperties.writeSettings(it) }
+        buildSettingsFile.get().let {
+            buildSettingsProperties.writeSettings(it)
+        }
     }
 }
+
+private fun getBuildSettingFileName(pod: CocoapodsDependency, sdk: String): String =
+    "build-settings-$sdk-${pod.schemeName}.properties"
 
 /**
  * The task compiles external cocoa pods sources.
  */
-open class PodBuildTask : CocoapodsWithSyntheticTask() {
-
-    @get:InputDirectory
-    internal lateinit var podsXcodeProjDirProvider: Provider<File>
+open class PodBuildTask : DefaultTask() {
 
     @get:InputFile
-    internal lateinit var buildSettingsFileProvider: Provider<File>
+    internal lateinit var buildSettingsFile: Provider<File>
+
+    @get:Nested
+    internal lateinit var pod: Provider<CocoapodsDependency>
+
+    @get:InputFiles
+    internal val srcDir: FileTree
+        get() = project.fileTree(
+            buildSettingsFile.map {
+                PodBuildSettingsProperties.readSettingsFromStream(
+                    FileInputStream(it)
+                ).podsTargetSrcRoot
+            }
+        )
+
+    @get:Internal
+    internal var buildDir: Provider<File> = project.provider {
+        project.file(
+            PodBuildSettingsProperties.readSettingsFromStream(
+                FileInputStream(buildSettingsFile.get())
+            ).buildDir
+        )
+    }
 
     @get:Input
     internal lateinit var sdk: Provider<String>
 
-    @get:Optional
-    @get:OutputDirectory
-    internal var buildDirProvider: Provider<File>? = null
+    @get:OutputFiles
+    internal val buildResult: Provider<FileCollection>? = project.provider {
+        project.fileTree(buildDir.get()) {
+            it.include("**/${pod.get().schemeName}.*/")
+            it.include("**/${pod.get().schemeName}/")
+        }
+    }
 
-    private val CocoapodsExtension.CocoapodsDependency.schemeName: String
-        get() = name.split("/")[0]
+    @get:Internal
+    internal lateinit var podsXcodeProjDir: Provider<File>
 
     @TaskAction
     fun buildDependencies() {
         val podBuildSettings = PodBuildSettingsProperties.readSettingsFromStream(
-            FileInputStream(buildSettingsFileProvider.get())
+            FileInputStream(buildSettingsFile.get())
         )
 
-        val podsXcodeProjDir = podsXcodeProjDirProvider.get()
+        val podsXcodeProjDir = podsXcodeProjDir.get()
 
-        cocoapodsExtension.pods.all {
+        val podXcodeBuildCommand = listOf(
+            "xcodebuild",
+            "-project", podsXcodeProjDir.name,
+            "-scheme", pod.get().schemeName,
+            "-sdk", sdk.get(),
+            "-configuration", podBuildSettings.configuration
+        )
 
-            val podXcodeBuildCommand = listOf(
-                "xcodebuild",
-                "-project", podsXcodeProjDir.name,
-                "-scheme", it.schemeName,
-                "-sdk", sdk.get(),
-                "-configuration", podBuildSettings.configuration
-            )
+        val podBuildProcess = ProcessBuilder(podXcodeBuildCommand)
+            .apply {
+                directory(podsXcodeProjDir.parentFile)
+                inheritIO()
+            }.start()
 
-            val podBuildProcess = ProcessBuilder(podXcodeBuildCommand)
-                .apply {
-                    directory(podsXcodeProjDir.parentFile)
-                    inheritIO()
-                }.start()
-
-            val podBuildRetCode = podBuildProcess.waitFor()
-            check(podBuildRetCode == 0) {
-                listOf(
-                    "Executing of '${podXcodeBuildCommand.joinToString(" ")}' failed with code $podBuildRetCode and message:",
-                    podBuildProcess.errorStream.use { it.reader().readText() }
-                ).joinToString("\n")
-            }
+        val podBuildRetCode = podBuildProcess.waitFor()
+        check(podBuildRetCode == 0) {
+            listOf(
+                "Executing of '${podXcodeBuildCommand.joinToString(" ")}' failed with code $podBuildRetCode and message:",
+                podBuildProcess.errorStream.use { it.reader().readText() }
+            ).joinToString("\n")
         }
-        buildDirProvider = project.provider { project.file(podBuildSettings.buildDir) }
     }
 }
+
 
 internal data class PodBuildSettingsProperties(
     internal val buildDir: String,
     internal val configuration: String,
+    internal val configurationBuildDir: String,
+    internal val podsTargetSrcRoot: String,
     internal val cflags: String? = null,
     internal val headerPaths: String? = null,
     internal val frameworkPaths: String? = null
 ) {
 
-    fun writeSettings(buildSettingsFile: File) {
+    fun writeSettings(
+        buildSettingsFile: File
+    ) {
         buildSettingsFile.parentFile.mkdirs()
+        buildSettingsFile.delete()
         buildSettingsFile.createNewFile()
 
         check(buildSettingsFile.exists()) { "Unable to create file ${buildSettingsFile.path}!" }
 
-        with(Properties()) {
-            setProperty(BUILD_DIR, buildDir)
-            setProperty(CONFIGURATION, configuration)
-            cflags?.let { setProperty(OTHER_CFLAGS, it) }
-            headerPaths?.let { setProperty(HEADER_SEARCH_PATHS, it) }
-            frameworkPaths?.let { setProperty(FRAMEWORK_SEARCH_PATHS, it) }
-            buildSettingsFile.outputStream().use {
-                store(it, null)
-            }
+        with(buildSettingsFile) {
+            appendText("$BUILD_DIR=$buildDir\n")
+            appendText("$CONFIGURATION=$configuration\n")
+            appendText("$CONFIGURATION_BUILD_DIR=$configurationBuildDir\n")
+            appendText("$PODS_TARGET_SRCROOT=$podsTargetSrcRoot\n")
+            cflags?.let { appendText("$OTHER_CFLAGS=$it\n") }
+            headerPaths?.let { appendText("$HEADER_SEARCH_PATHS=$it\n") }
+            frameworkPaths?.let { appendText("$FRAMEWORK_SEARCH_PATHS=$it") }
         }
     }
 
     companion object {
-        const val BUILD_DIR: String = "BUILD_DIR"
-        const val CONFIGURATION: String = "CONFIGURATION"
-        const val OTHER_CFLAGS: String = "OTHER_CFLAGS"
-        const val HEADER_SEARCH_PATHS: String = "HEADER_SEARCH_PATHS"
-        const val FRAMEWORK_SEARCH_PATHS: String = "FRAMEWORK_SEARCH_PATHS"
+        const val BUILD_DIR = "BUILD_DIR"
+        const val CONFIGURATION = "CONFIGURATION"
+        const val CONFIGURATION_BUILD_DIR = "CONFIGURATION_BUILD_DIR"
+        const val PODS_TARGET_SRCROOT = "PODS_TARGET_SRCROOT"
+        const val OTHER_CFLAGS = "OTHER_CFLAGS"
+        const val HEADER_SEARCH_PATHS = "HEADER_SEARCH_PATHS"
+        const val FRAMEWORK_SEARCH_PATHS = "FRAMEWORK_SEARCH_PATHS"
 
         fun readSettingsFromStream(inputStream: InputStream): PodBuildSettingsProperties {
             with(Properties()) {
                 load(inputStream)
                 return PodBuildSettingsProperties(
-                    getProperty(BUILD_DIR),
-                    getProperty(CONFIGURATION),
-                    getProperty(OTHER_CFLAGS),
-                    getProperty(HEADER_SEARCH_PATHS),
-                    getProperty(FRAMEWORK_SEARCH_PATHS)
+                    readProperty(BUILD_DIR),
+                    readProperty(CONFIGURATION),
+                    readProperty(CONFIGURATION_BUILD_DIR),
+                    readProperty(PODS_TARGET_SRCROOT),
+                    readNullableProperty(OTHER_CFLAGS),
+                    readNullableProperty(HEADER_SEARCH_PATHS),
+                    readNullableProperty(FRAMEWORK_SEARCH_PATHS)
                 )
             }
         }
+
+        private fun Properties.readProperty(propertyName: String) =
+            readNullableProperty(propertyName) ?: error("$propertyName property is absent")
+
+        private fun Properties.readNullableProperty(propertyName: String) =
+            getProperty(propertyName)
     }
 }

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.DUMMY_FRAMEWORK_TASK_NAME
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_BUILD_DEPENDENCIES_TASK_NAME
+import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_BUILD_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_DOWNLOAD_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_GEN_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_IMPORT_TASK_NAME
@@ -16,10 +16,8 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Compan
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_SPEC_TASK_NAME
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.junit.Assume.assumeFalse
 import org.junit.Assume.assumeTrue
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -46,7 +44,7 @@ class CocoaPodsIT : BaseGradleIT() {
     private val podspecTaskName = ":$POD_SPEC_TASK_NAME"
     private val podDownloadTaskName = ":$POD_DOWNLOAD_TASK_NAME"
     private val podGenTaskName = ":$POD_GEN_TASK_NAME"
-    private val podBuildTaskName = ":$POD_BUILD_DEPENDENCIES_TASK_NAME"
+    private val podBuildTaskName = ":$POD_BUILD_TASK_NAME"
     private val podSetupBuildTaskName = ":$POD_SETUP_BUILD_TASK_NAME"
     private val podImportTaskName = ":$POD_IMPORT_TASK_NAME"
     private val podInstallTaskName = ":$POD_INSTALL_TASK_NAME"
@@ -54,14 +52,30 @@ class CocoaPodsIT : BaseGradleIT() {
 
     private val defaultPodRepo = "https://github.com/AFNetworking/AFNetworking"
     private val defaultPodName = "AFNetworking"
+    private val downloadUrlPodName = "podspecWithFilesExample"
+    private val downloadUrlRepoName = "https://github.com/alozhkin/podspecWithFilesExample/raw/master"
     private val defaultTarget = "IOS"
     private val defaultFamily = "IOS"
     private val defaultSDK = "iphonesimulator"
-    private val defaultPodDownloadTaskName = podDownloadTaskName + defaultPodName
-    private val defaultPodGenTaskName = podGenTaskName + defaultFamily
-    private val defaultBuildTaskName = podBuildTaskName + defaultSDK.capitalize()
-    private val defaultSetupBuildTaskName = podSetupBuildTaskName + defaultSDK.capitalize()
+    private val defaultPodDownloadTaskName = podDownloadFullTaskName()
+    private val defaultPodGenTaskName = podGenFullTaskName()
+    private val defaultBuildTaskName = podBuildFullTaskName()
+    private val defaultSetupBuildTaskName = podSetupBuildFullTaskName()
     private val defaultCinteropTaskName = cinteropTaskName + defaultPodName + defaultTarget
+    private val downloadUrlTaskName = podDownloadTaskName + downloadUrlPodName.capitalize()
+
+    private fun podDownloadFullTaskName(podName: String = defaultPodName) = podDownloadTaskName + podName.capitalize()
+
+    private fun podGenFullTaskName(familyName: String = defaultFamily) = podGenTaskName + familyName.capitalize()
+
+    private fun podSetupBuildFullTaskName(podName: String = defaultPodName, sdkName: String = defaultSDK) =
+        podSetupBuildTaskName + podName.capitalize() + sdkName.capitalize()
+
+    private fun podBuildFullTaskName(podName: String = defaultPodName, sdkName: String = defaultSDK) =
+        podBuildTaskName + podName.capitalize() + sdkName.capitalize()
+
+    private fun cinteropFullTaskName(podName: String = defaultPodName, targetName: String = defaultTarget) =
+        cinteropTaskName + podName.capitalize() + targetName.capitalize()
 
     private lateinit var hooks: CustomHooks
     private lateinit var project: BaseGradleIT.Project
@@ -118,10 +132,10 @@ class CocoaPodsIT : BaseGradleIT() {
     )
 
     @Test
-    fun testPodImportUseFrameworksSingle() = doTestImportSingle(ImportMode.FRAMEWORKS)
+    fun testPodImportSingle() = doTestImportSingle()
 
     @Test
-    fun testPodImportUseModularHeadersSingle() = doTestImportSingle(ImportMode.MODULAR_HEADERS)
+    fun testPodImportMultiple() = doTestImportMultiple()
 
     @Test
     fun testPodspecMultiple() = doTestPodspec(
@@ -173,20 +187,14 @@ class CocoaPodsIT : BaseGradleIT() {
     )
 
     @Test
-    fun testPodImportUseFrameworksMultiple() = doTestImportMultiple(ImportMode.FRAMEWORKS)
-
-    @Test
-    fun testPodImportUseModularHeadersMultiple() = doTestImportMultiple(ImportMode.MODULAR_HEADERS)
-
-    @Test
-    fun testSpecReposDownloads() {
+    fun testSpecReposImport() {
         val podName = "example"
-        val podRepo = "https://github.com/alozhkin/spec_repo_example"
+        val podRepo = "https://github.com/alozhkin/spec_repo"
         with(project.gradleBuildScript()) {
             addPod(podName)
             addSpecRepo(podRepo)
         }
-        project.testDownload(listOf(podRepo))
+        project.testImportWithAsserts(listOf(podRepo))
     }
 
     @Test
@@ -275,19 +283,6 @@ class CocoaPodsIT : BaseGradleIT() {
         project.test(":kotlin-library:podDownload")
     }
 
-    @Ignore
-    @Test
-    fun testSubspecWithModuleName() {
-        with(project.gradleBuildScript()) {
-            addPod("AFNetworking/Reachability", "moduleName = \"CustomName\"")
-            addPod("AFNetworking/Security")
-        }
-        hooks.addHook {
-            assertTasksExecuted(defaultCinteropTaskName, cinteropTaskName + "AFNetworking/Security" + defaultTarget)
-        }
-        project.testImportWithAsserts()
-    }
-
 
     // up-to-date tests
 
@@ -355,6 +350,282 @@ class CocoaPodsIT : BaseGradleIT() {
         project.testSynthetic(defaultPodGenTaskName)
     }
 
+    @Test
+    fun testUTDPodAdded() {
+        with(project.gradleBuildScript()) {
+            addPod(defaultPodName, produceGitBlock(defaultPodRepo))
+        }
+        project.testImport(listOf(defaultPodRepo))
+
+        val anotherPodName = "Alamofire"
+        val anotherPodRepo = "https://github.com/Alamofire/Alamofire"
+        with(project.gradleBuildScript()) {
+            addPod(anotherPodName, produceGitBlock(anotherPodRepo))
+        }
+        hooks.rewriteHooks {
+            assertTasksExecuted(
+                podspecTaskName,
+                podDownloadFullTaskName(anotherPodName),
+                defaultPodGenTaskName,
+                podSetupBuildFullTaskName(anotherPodName),
+                podBuildFullTaskName(anotherPodName),
+                cinteropFullTaskName(anotherPodName)
+            )
+            assertTasksUpToDate(
+                defaultPodDownloadTaskName,
+                defaultSetupBuildTaskName,
+                defaultBuildTaskName,
+                defaultCinteropTaskName
+            )
+        }
+        project.testImport(listOf(defaultPodRepo, anotherPodRepo))
+
+        with(project.gradleBuildScript()) {
+            removePod(anotherPodName)
+        }
+        hooks.rewriteHooks {
+            assertTasksNotRegisteredByPrefix(
+                listOf(
+                    podDownloadFullTaskName(anotherPodName),
+                    podBuildFullTaskName(anotherPodName),
+                    cinteropFullTaskName(anotherPodName)
+                )
+            )
+            assertTasksUpToDate(
+                defaultBuildTaskName,
+                defaultPodDownloadTaskName,
+                defaultSetupBuildTaskName,
+                defaultCinteropTaskName
+            )
+        }
+        project.testImport(listOf(defaultPodRepo))
+    }
+
+    @Test
+    fun testImportSubspecs() {
+        with(project.gradleBuildScript()) {
+            addPod("SDWebImage/Core")
+            addPod("SDWebImage/MapKit")
+        }
+        project.testImport(listOf(defaultPodRepo))
+    }
+
+    @Test
+    fun testUTDTargetAdded() {
+        with(project.gradleBuildScript()) {
+            addPod(defaultPodName, produceGitBlock(defaultPodRepo))
+            appendToCocoapodsBlock("osx.deploymentTarget = \"13.5\"")
+        }
+        project.testImport(listOf(defaultPodRepo))
+
+        val anotherTarget = "MacosX64"
+        val anotherSdk = "macosx"
+        val anotherFamily = "OSX"
+        with(project.gradleBuildScript()) {
+            appendToKotlinBlock(anotherTarget.decapitalize() + "()")
+        }
+        hooks.rewriteHooks {
+            assertTasksExecuted(
+                podGenFullTaskName(anotherFamily),
+                podSetupBuildFullTaskName(sdkName = anotherSdk),
+                podBuildFullTaskName(sdkName = anotherSdk),
+                cinteropFullTaskName(targetName = anotherTarget)
+            )
+            assertTasksUpToDate(
+                podspecTaskName,
+                defaultPodDownloadTaskName,
+                defaultPodGenTaskName,
+                defaultSetupBuildTaskName,
+                defaultBuildTaskName,
+                defaultCinteropTaskName
+            )
+        }
+        project.testImport(listOf(defaultPodRepo))
+
+        with(project.gradleBuildScript()) {
+            var text = readText()
+            text = text.replace(anotherTarget.decapitalize() + "()", "")
+            writeText(text)
+        }
+        hooks.rewriteHooks {
+            assertTasksNotRegisteredByPrefix(
+                listOf(
+                    podGenFullTaskName(anotherFamily),
+                    podSetupBuildFullTaskName(sdkName = anotherSdk),
+                    podBuildFullTaskName(sdkName = anotherSdk),
+                    cinteropFullTaskName(targetName = anotherTarget)
+                )
+            )
+            assertTasksUpToDate(
+                podspecTaskName,
+                defaultPodDownloadTaskName,
+                defaultPodGenTaskName,
+                defaultSetupBuildTaskName,
+                defaultBuildTaskName,
+                defaultCinteropTaskName
+            )
+        }
+        project.testImport(listOf(defaultPodRepo))
+    }
+
+    @Test
+    fun testUTDPodspec() {
+        project.testWithWrapper(podspecTaskName)
+        hooks.addHook {
+            assertTasksExecuted(podspecTaskName)
+        }
+        with(project.gradleBuildScript()) {
+            appendToCocoapodsBlock("license = \"new license name\"")
+        }
+        project.testWithWrapper(podspecTaskName)
+        with(project.gradleBuildScript()) {
+            appendToCocoapodsBlock("license = \"new license name\"")
+        }
+        hooks.rewriteHooks {
+            assertTasksUpToDate(podspecTaskName)
+        }
+        project.testWithWrapper(podspecTaskName)
+    }
+
+    @Test
+    fun testUTDPodspecDeploymentTarget() {
+        project.testWithWrapper(podspecTaskName)
+        hooks.addHook {
+            assertTasksExecuted(podspecTaskName)
+        }
+        with(project.gradleBuildScript()) {
+            appendToCocoapodsBlock("ios.deploymentTarget = \"12.5\"")
+        }
+        project.testWithWrapper(podspecTaskName)
+        hooks.rewriteHooks {
+            assertTasksUpToDate(podspecTaskName)
+        }
+        project.testWithWrapper(podspecTaskName)
+    }
+
+    @Test
+    fun testUTDDownload() {
+        val gitRepo = downloadUrlRepoName.substringBeforeLast("/").substringBeforeLast("/")
+        with(project.gradleBuildScript()) {
+            addPod(downloadUrlPodName, produceGitBlock(repo = gitRepo))
+        }
+        hooks.addHook {
+            assertTasksExecuted(downloadUrlTaskName)
+        }
+        project.testDownload(listOf(gitRepo))
+        with(project.gradleBuildScript()) {
+            changePod(downloadUrlPodName, produceGitBlock(repo = gitRepo, commitName = "f52f035018b4f3fe253d50ce85a7e0652a62ee9b"))
+        }
+        project.testDownload(listOf(gitRepo))
+        hooks.rewriteHooks {
+            assertTasksUpToDate(downloadUrlTaskName)
+        }
+        project.testDownload(listOf(gitRepo))
+        val podArchivePath = "$downloadUrlRepoName/$downloadUrlPodName.tar.gz"
+        with(project.gradleBuildScript()) {
+            changePod(downloadUrlPodName, "source = url(\"$podArchivePath\")")
+        }
+        hooks.rewriteHooks {
+            assertTasksExecuted(downloadUrlTaskName)
+        }
+        project.testDownload(listOf(podArchivePath))
+    }
+
+    @Test
+    fun testUTDPodGen() {
+        with(project.gradleBuildScript()) {
+            addPod(defaultPodName)
+        }
+        val repos = listOf(
+            "https://github.com/alozhkin/spec_repo_example",
+            "https://github.com/alozhkin/spec_repo_example_2"
+        )
+        for (repo in repos) {
+            assumeTrue(isRepoAvailable(repo))
+        }
+        hooks.addHook {
+            assertTasksExecuted(defaultPodGenTaskName)
+        }
+        project.testSynthetic(defaultPodGenTaskName)
+        with(project.gradleBuildScript()) {
+            addSpecRepo("https://github.com/alozhkin/spec_repo_example")
+        }
+        project.testSynthetic(defaultPodGenTaskName)
+        with(project.gradleBuildScript()) {
+            addSpecRepo("https://github.com/alozhkin/spec_repo_example_2")
+        }
+        project.testSynthetic(defaultPodGenTaskName)
+        hooks.rewriteHooks {
+            assertTasksUpToDate(defaultPodGenTaskName)
+        }
+        project.testSynthetic(defaultPodGenTaskName)
+    }
+
+    @Test
+    fun testUTDBuild() {
+        with(project.gradleBuildScript()) {
+            addPod(defaultPodName, produceGitBlock())
+        }
+        hooks.addHook {
+            assertTasksExecuted(defaultBuildTaskName)
+        }
+        project.testImport()
+
+        val repo = "$downloadUrlRepoName/$downloadUrlPodName.tar.gz"
+        with(project.gradleBuildScript()) {
+            addPod(downloadUrlPodName, "source = url(\"$repo\")")
+        }
+        val urlTaskName = podBuildFullTaskName(downloadUrlPodName)
+        hooks.rewriteHooks {
+            assertTasksUpToDate(defaultBuildTaskName)
+            assertTasksExecuted(urlTaskName)
+        }
+        project.testImport()
+
+        val anotherTarget = "MacosX64"
+        val anotherSdk = "macosx"
+        with(project.gradleBuildScript()) {
+            appendToCocoapodsBlock("osx.deploymentTarget = \"13.5\"")
+            appendToKotlinBlock(anotherTarget.decapitalize() + "()")
+        }
+        val anotherSdkDefaultPodTaskName = podBuildFullTaskName(sdkName = anotherSdk)
+        val anotherTargetUrlTaskName = podBuildFullTaskName(downloadUrlPodName, anotherSdk)
+        hooks.rewriteHooks {
+            assertTasksUpToDate(defaultBuildTaskName, urlTaskName)
+            assertTasksExecuted(anotherSdkDefaultPodTaskName, anotherTargetUrlTaskName)
+        }
+        project.testImport()
+
+        hooks.rewriteHooks {
+            assertTasksUpToDate(defaultBuildTaskName, urlTaskName, anotherSdkDefaultPodTaskName, anotherTargetUrlTaskName)
+        }
+        project.testImport()
+    }
+
+    @Test
+    fun testPodBuildUTDClean() {
+        with(project.gradleBuildScript()) {
+            addPod(defaultPodName, produceGitBlock())
+        }
+        hooks.addHook {
+            assertTasksExecuted(defaultBuildTaskName)
+        }
+        project.testImport()
+
+        hooks.rewriteHooks {}
+        project.test(":clean")
+
+        hooks.addHook {
+            assertTasksExecuted(defaultBuildTaskName)
+        }
+        project.testImport()
+    }
+
+    @Test
+    fun testPodInstallWithoutPodFile() {
+        project.testSynthetic(podInstallTaskName)
+    }
+
 
     // groovy tests
 
@@ -395,6 +666,13 @@ class CocoaPodsIT : BaseGradleIT() {
         project.testImportWithAsserts(listOf(repo))
     }
 
+    @Test
+    fun supportPodsWithDependencies() {
+        with(project.gradleBuildScript()) {
+            addPod("AlamofireImage")
+        }
+        project.testImportWithAsserts()
+    }
 
     // paths
 
@@ -408,7 +686,7 @@ class CocoaPodsIT : BaseGradleIT() {
 
     // test configuration phase
 
-    private class CustomHooks() {
+    private class CustomHooks {
         private val hooks = mutableSetOf<CompiledProject.() -> Unit>()
 
         fun addHook(hook: CompiledProject.() -> Unit) {
@@ -427,21 +705,21 @@ class CocoaPodsIT : BaseGradleIT() {
         }
     }
 
-    private fun doTestImportSingle(importMode: ImportMode) {
+    private fun doTestImportSingle() {
         val project = getProjectByName(cocoapodsSingleKtPod)
         val subprojects = listOf("kotlin-library")
-        doTestPodImport(project, subprojects, importMode)
+        doTestPodImport(project, subprojects)
     }
 
-    private fun doTestImportMultiple(importMode: ImportMode) {
+    private fun doTestImportMultiple() {
         val project = getProjectByName(cocoapodsMultipleKtPods)
         val subprojects = listOf("kotlin-library", "second-library")
-        doTestPodImport(project, subprojects, importMode)
+        doTestPodImport(project, subprojects)
     }
 
-    private fun doTestPodImport(project: BaseGradleIT.Project, subprojects: List<String>, importMode: ImportMode) {
+    private fun doTestPodImport(project: BaseGradleIT.Project, subprojects: List<String>) {
         with(project) {
-            preparePodfile("ios-app", importMode)
+            preparePodfile("ios-app", ImportMode.FRAMEWORKS)
         }
         project.testImportWithAsserts()
         subprojects.forEach {
@@ -468,10 +746,10 @@ class CocoaPodsIT : BaseGradleIT() {
         project.testDownload(listOf(repo))
     }
 
-    fun doTestPodDownloadUrl(
+    private fun doTestPodDownloadUrl(
         fileExtension: String,
-        podName: String = "podspecWithFilesExample",
-        repoPath: String = "https://github.com/alozhkin/podspecWithFilesExample/raw/master",
+        podName: String = downloadUrlPodName,
+        repoPath: String = downloadUrlRepoName,
         archiveName: String = podName,
         flatten: Boolean = false
     ) {
@@ -552,6 +830,30 @@ class CocoaPodsIT : BaseGradleIT() {
         val pod = "pod(\"$podName\")"
         val podBlock = configuration?.wrap(pod) ?: pod
         appendToCocoapodsBlock(podBlock)
+    }
+
+    private fun File.removePod(podName: String) {
+        val text = readText()
+        val begin = text.indexOf("""pod("$podName")""")
+        require(begin != -1) { "Pod doesn't exist in file" }
+        var index = begin + """pod("$podName")""".length - 1
+        if (text.indexOf("""pod("$podName") {""", startIndex = begin) != -1) {
+            index += 2
+            var bracket = 1
+            while (bracket != 0) {
+                if (text[++index] == '{') {
+                    bracket++
+                } else if (text[index] == '}') {
+                    bracket--
+                }
+            }
+        }
+        writeText(text.removeRange(begin..index))
+    }
+
+    private fun File.changePod(podName: String, newConfiguration: String? = null) {
+        removePod(podName)
+        addPod(podName, newConfiguration)
     }
 
     private fun File.addSpecRepo(specRepo: String) = appendToCocoapodsBlock("url(\"$specRepo\")".wrap("specRepos"))
@@ -691,7 +993,7 @@ class CocoaPodsIT : BaseGradleIT() {
             assertTasksExecutedByPrefix(listOf("$taskPrefix:$POD_GEN_TASK_NAME"))
         }
 
-        with(listOf(POD_SETUP_BUILD_TASK_NAME, POD_BUILD_DEPENDENCIES_TASK_NAME).map { "$taskPrefix:$it" }) {
+        with(listOf(POD_SETUP_BUILD_TASK_NAME, POD_BUILD_TASK_NAME).map { "$taskPrefix:$it" }) {
             if (buildScriptText.matches("pod\\(.*\\)".toRegex())) {
                 assertTasksRegisteredByPrefix(this)
                 assertTasksExecutedByPrefix(this)
