@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     id 'org.jetbrains.kotlin.jvm'
 }
@@ -16,6 +14,6 @@ dependencies {
     implementation project(':b')
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'
 }
-tasks.withType(KotlinCompile) {
+compileKotlin {
     kotlinOptions.jvmTarget = '1.8'
 }
