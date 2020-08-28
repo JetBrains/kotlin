@@ -4,8 +4,8 @@ Connected to the target VM
 stepOverInlinedLambdaStdlib.kt:5
 stepOverInlinedLambdaStdlib.kt:6
 stepOverInlinedLambdaStdlib.kt:8
-stepOverInlinedLambdaStdlib.kt:10
-stepOverInlinedLambdaStdlib.kt:15
+_Collections.!EXT!
+stepOverInlinedLambdaStdlib.kt:8
 Disconnected from the target VM
 
 Process finished with exit code 0
