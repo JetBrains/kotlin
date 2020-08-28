@@ -53,12 +53,6 @@ class DeclarationStubGenerator(
             lazyTable.stubGenerator = if (value) this else null
         }
 
-    private lateinit var irProviders_: List<IrProvider>
-
-    fun setIrProviders(value: List<IrProvider>) {
-        irProviders_ = value
-    }
-
     val typeTranslator =
         TypeTranslator(
             lazyTable,
