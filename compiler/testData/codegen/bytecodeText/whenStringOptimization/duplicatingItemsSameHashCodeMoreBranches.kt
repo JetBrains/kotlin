@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM
 import kotlin.test.assertEquals
 
 fun foo(x : String) : String {
@@ -9,11 +8,13 @@ fun foo(x : String) : String {
         "ghi"  -> return "ghi"
         "aby|" -> return "aby"
         "abz]" -> return "fail"
+        "uvw" -> return "uvw"
     }
 
     return "other"
 }
 
-// Expecting 0 LOOKUPSWITCH as there is only 2 different hash codes.
-// An IF casecade is more efficient.
-// 0 LOOKUPSWITCH
+// 1 LOOKUPSWITCH
+
+// JVM_IR_TEMPLATES:
+// 0 LDC "fail"

@@ -4931,19 +4931,14 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/whenStringOptimization/duplicatingItems.kt");
         }
 
-        @TestMetadata("duplicatingItemsSameHashCode.kt")
-        public void testDuplicatingItemsSameHashCode() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/whenStringOptimization/duplicatingItemsSameHashCode.kt");
+        @TestMetadata("duplicatingItemsSameHashCodeFewBranches.kt")
+        public void testDuplicatingItemsSameHashCodeFewBranches() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/whenStringOptimization/duplicatingItemsSameHashCodeFewBranches.kt");
         }
 
-        @TestMetadata("duplicatingItemsSameHashCode2.kt")
-        public void testDuplicatingItemsSameHashCode2() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/whenStringOptimization/duplicatingItemsSameHashCode2.kt");
-        }
-
-        @TestMetadata("duplicatingItemsSameHashCode3.kt")
-        public void testDuplicatingItemsSameHashCode3() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/whenStringOptimization/duplicatingItemsSameHashCode3.kt");
+        @TestMetadata("duplicatingItemsSameHashCodeMoreBranches.kt")
+        public void testDuplicatingItemsSameHashCodeMoreBranches() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/whenStringOptimization/duplicatingItemsSameHashCodeMoreBranches.kt");
         }
 
         @TestMetadata("expression.kt")
