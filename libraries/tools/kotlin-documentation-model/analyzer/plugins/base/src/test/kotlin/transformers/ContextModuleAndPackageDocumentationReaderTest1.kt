@@ -3,8 +3,6 @@ package transformers
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
 import org.jetbrains.dokka.base.transformers.documentables.ModuleAndPackageDocumentationReader
 import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.model.DModule
-import org.jetbrains.dokka.model.DPackage
 import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.testApi.logger.TestLogger
@@ -13,6 +11,8 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import testApi.testRunner.TestDokkaConfigurationBuilder
+import testApi.testRunner.dModule
+import testApi.testRunner.dPackage
 
 class ContextModuleAndPackageDocumentationReaderTest1 : AbstractContextModuleAndPackageDocumentationReaderTest() {
 
@@ -83,7 +83,7 @@ class ContextModuleAndPackageDocumentationReaderTest1 : AbstractContextModuleAnd
 
     @Test
     fun `assert moduleA with sourceSetA`() {
-        val documentation = reader[DModule(name = "moduleA", sourceSets = setOf(sourceSetA))]
+        val documentation = reader[dModule(name = "moduleA", sourceSets = setOf(sourceSetA))]
         assertEquals(
             1, documentation.keys.size,
             "Expected moduleA only containing documentation in a single source set"
@@ -101,7 +101,7 @@ class ContextModuleAndPackageDocumentationReaderTest1 : AbstractContextModuleAnd
 
     @Test
     fun `assert moduleA with no source sets`() {
-        val documentation = reader[DModule("moduleA")]
+        val documentation = reader[dModule("moduleA")]
         assertEquals(
             emptyMap<DokkaSourceSet, DocumentationNode>(), documentation,
             "Expected no documentation received for module not declaring a matching sourceSet"
@@ -111,7 +111,7 @@ class ContextModuleAndPackageDocumentationReaderTest1 : AbstractContextModuleAnd
     @Test
     fun `assert moduleA with unknown source set`() {
         val documentation = reader[
-                DModule("moduleA", sourceSets = setOf(configurationBuilder.unattachedSourceSet { name = "unknown" }))
+                dModule("moduleA", sourceSets = setOf(configurationBuilder.unattachedSourceSet { name = "unknown" }))
         ]
         assertEquals(
             emptyMap<DokkaSourceSet, DocumentationNode>(), documentation,
@@ -121,7 +121,7 @@ class ContextModuleAndPackageDocumentationReaderTest1 : AbstractContextModuleAnd
 
     @Test
     fun `assert moduleA with all sourceSets`() {
-        val documentation = reader[DModule("moduleA", sourceSets = setOf(sourceSetA, sourceSetB, sourceSetB2))]
+        val documentation = reader[dModule("moduleA", sourceSets = setOf(sourceSetA, sourceSetB, sourceSetB2))]
         assertEquals(1, documentation.entries.size, "Expected only one entry from sourceSetA")
         assertEquals(sourceSetA, documentation.keys.single(), "Expected only one entry from sourceSetA")
         assertEquals("This is moduleA", documentation.texts.single())
@@ -129,7 +129,7 @@ class ContextModuleAndPackageDocumentationReaderTest1 : AbstractContextModuleAnd
 
     @Test
     fun `assert moduleB with sourceSetB and sourceSetB2`() {
-        val documentation = reader[DModule("moduleB", sourceSets = setOf(sourceSetB, sourceSetB2))]
+        val documentation = reader[dModule("moduleB", sourceSets = setOf(sourceSetB, sourceSetB2))]
         assertEquals(1, documentation.keys.size, "Expected only one entry from sourceSetB")
         assertEquals(sourceSetB, documentation.keys.single(), "Expected only one entry from sourceSetB")
         assertEquals("This is moduleB", documentation.texts.single())
@@ -137,7 +137,7 @@ class ContextModuleAndPackageDocumentationReaderTest1 : AbstractContextModuleAnd
 
     @Test
     fun `assert sample_A in sourceSetA`() {
-        val documentation = reader[DPackage(DRI("sample.a"), sourceSets = setOf(sourceSetA))]
+        val documentation = reader[dPackage(DRI("sample.a"), sourceSets = setOf(sourceSetA))]
         assertEquals(1, documentation.keys.size, "Expected only one entry from sourceSetA")
         assertEquals(sourceSetA, documentation.keys.single(), "Expected only one entry from sourceSetA")
         assertEquals("This is package sample.a", documentation.texts.single())
@@ -145,7 +145,7 @@ class ContextModuleAndPackageDocumentationReaderTest1 : AbstractContextModuleAnd
 
     @Test
     fun `assert sample_a_sub in sourceSetA`() {
-        val documentation = reader[DPackage(DRI("sample.a.sub"), sourceSets = setOf(sourceSetA))]
+        val documentation = reader[dPackage(DRI("sample.a.sub"), sourceSets = setOf(sourceSetA))]
         assertEquals(
             emptyMap<DokkaSourceSet, DocumentationNode>(), documentation,
             "Expected no documentation found for different package"
@@ -154,7 +154,7 @@ class ContextModuleAndPackageDocumentationReaderTest1 : AbstractContextModuleAnd
 
     @Test
     fun `assert sample_a in sourceSetB`() {
-        val documentation = reader[DPackage(DRI("sample.a"), sourceSets = setOf(sourceSetB))]
+        val documentation = reader[dPackage(DRI("sample.a"), sourceSets = setOf(sourceSetB))]
         assertEquals(
             emptyMap<DokkaSourceSet, DocumentationNode>(), documentation,
             "Expected no documentation found for different sourceSet"
@@ -163,7 +163,7 @@ class ContextModuleAndPackageDocumentationReaderTest1 : AbstractContextModuleAnd
 
     @Test
     fun `assert sample_b in sourceSetB`() {
-        val documentation = reader[DPackage(DRI("sample.b"), sourceSets = setOf(sourceSetB))]
+        val documentation = reader[dPackage(DRI("sample.b"), sourceSets = setOf(sourceSetB))]
         assertEquals(1, documentation.keys.size, "Expected only one entry from sourceSetB")
         assertEquals(sourceSetB, documentation.keys.single(), "Expected only one entry from sourceSetB")
         assertEquals("This is package sample.b", documentation.texts.single())
@@ -171,7 +171,7 @@ class ContextModuleAndPackageDocumentationReaderTest1 : AbstractContextModuleAnd
 
     @Test
     fun `assert sample_b in sourceSetB and sourceSetB2`() {
-        val documentation = reader[DPackage(DRI("sample.b"), sourceSets = setOf(sourceSetB, sourceSetB2))]
+        val documentation = reader[dPackage(DRI("sample.b"), sourceSets = setOf(sourceSetB, sourceSetB2))]
         assertEquals(1, documentation.keys.size, "Expected only one entry from sourceSetB")
         assertEquals(sourceSetB, documentation.keys.single(), "Expected only one entry from sourceSetB")
         assertEquals("This is package sample.b", documentation.texts.single())

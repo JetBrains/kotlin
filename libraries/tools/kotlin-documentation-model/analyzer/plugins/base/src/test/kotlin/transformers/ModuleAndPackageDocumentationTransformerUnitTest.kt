@@ -9,6 +9,7 @@ import org.jetbrains.dokka.model.SourceSetDependent
 import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import testApi.testRunner.dPackage
 import testApi.testRunner.documentationNode
 import testApi.testRunner.sourceSet
 
@@ -139,21 +140,21 @@ class ModuleAndPackageDocumentationTransformerUnitTest {
                     documentation = emptyMap(),
                     sourceSets = emptySet(),
                     packages = listOf(
-                        DPackage(
+                        dPackage(
                             dri = DRI("com.sample"),
                             documentation = mapOf(
                                 sourceSet("A") to documentationNode("pre-existing:A:com.sample")
                             ),
                             sourceSets = setOf(sourceSet("A"), sourceSet("B"), sourceSet("C")),
                         ),
-                        DPackage(
+                        dPackage(
                             dri = DRI("com.attach"),
                             documentation = mapOf(
                                 sourceSet("A") to documentationNode("pre-existing:A:com.attach")
                             ),
                             sourceSets = setOf(sourceSet("A"), sourceSet("B"), sourceSet("C"))
                         ),
-                        DPackage(
+                        dPackage(
                             dri = DRI("com.attach.sub"),
                             documentation = mapOf(
                                 sourceSet("A") to documentationNode("pre-existing:A:com.attach.sub"),
@@ -197,7 +198,7 @@ class ModuleAndPackageDocumentationTransformerUnitTest {
                 documentation = emptyMap(),
                 sourceSets = emptySet(),
                 packages = listOf(
-                    DPackage(
+                    dPackage(
                         dri = DRI("com.sample"),
                         documentation = mapOf(
                             /* No documentation added, since in wrong package */
@@ -206,7 +207,7 @@ class ModuleAndPackageDocumentationTransformerUnitTest {
                         sourceSets = setOf(sourceSet("A"), sourceSet("B"), sourceSet("C")),
 
                         ),
-                    DPackage(
+                    dPackage(
                         dri = DRI("com.attach"),
                         documentation = mapOf(
                             /* Documentation added */
@@ -215,7 +216,7 @@ class ModuleAndPackageDocumentationTransformerUnitTest {
                         ),
                         sourceSets = setOf(sourceSet("A"), sourceSet("B"), sourceSet("C")),
                     ),
-                    DPackage(
+                    dPackage(
                         dri = DRI("com.attach.sub"),
                         documentation = mapOf(
                             /* Documentation added */
