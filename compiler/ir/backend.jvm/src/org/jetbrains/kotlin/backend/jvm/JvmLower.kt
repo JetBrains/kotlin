@@ -129,10 +129,7 @@ internal val localDeclarationsPhase = makeIrFilePhase(
                         declaration.visibility
 
                 override fun forCapturedField(value: IrValueSymbol): Visibility =
-                    if (value is IrValueParameterSymbol && value.owner.isCrossinline)
-                        JavaVisibilities.PACKAGE_VISIBILITY // avoid requiring a synthetic accessor for it
-                    else
-                        Visibilities.PRIVATE
+                    JavaVisibilities.PACKAGE_VISIBILITY // avoid requiring a synthetic accessor for it
 
                 private fun scopedVisibility(inInlineFunctionScope: Boolean): Visibility =
                     if (inInlineFunctionScope) Visibilities.PUBLIC else JavaVisibilities.PACKAGE_VISIBILITY

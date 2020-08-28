@@ -19,4 +19,4 @@ fun test() {
 // 1 final synthetic LReceiver; \$this_label
 
 // JVM_IR_TEMPLATES
-// 1 private final synthetic LReceiver; \$this
+// 1 final synthetic LReceiver; \$this

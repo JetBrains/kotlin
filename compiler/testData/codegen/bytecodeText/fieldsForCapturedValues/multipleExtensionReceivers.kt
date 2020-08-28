@@ -22,5 +22,5 @@ fun Foo.test(bar: Bar) {
 // 1 final synthetic LBar; \$this_test
 
 // JVM_IR_TEMPLATES
-// 1 private final synthetic LFoo; \$this_test
-// 1 private final synthetic LBar; \$this_test\$1
+// 1 final synthetic LFoo; \$this_test
+// 1 final synthetic LBar; \$this_test\$1
