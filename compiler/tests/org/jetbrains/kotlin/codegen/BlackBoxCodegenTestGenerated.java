@@ -13787,6 +13787,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/inference/builderInference.kt");
         }
 
+        @TestMetadata("builderInferenceCheckNotNull.kt")
+        public void testBuilderInferenceCheckNotNull() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/builderInferenceCheckNotNull.kt");
+        }
+
         @TestMetadata("builderInferenceLeakingVariable.kt")
         public void testBuilderInferenceLeakingVariable() throws Exception {
             runTest("compiler/testData/codegen/box/inference/builderInferenceLeakingVariable.kt");

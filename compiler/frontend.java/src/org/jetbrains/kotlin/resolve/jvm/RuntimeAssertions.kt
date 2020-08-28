@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.isNullableUnderlyingType
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
@@ -103,7 +104,7 @@ object RuntimeAssertionsTypeChecker : AdditionalTypeChecker {
         expressionTypeWithSmartCast: KotlinType,
         c: ResolutionContext<*>
     ) {
-        if (TypeUtils.noExpectedType(c.expectedType) || c.expectedType is StubType) return
+        if (TypeUtils.noExpectedType(c.expectedType) || c.expectedType is StubType || c.expectedType.constructor is TypeVariableTypeConstructor) return
 
         val assertionInfo = RuntimeAssertionInfo.create(
             c.expectedType,

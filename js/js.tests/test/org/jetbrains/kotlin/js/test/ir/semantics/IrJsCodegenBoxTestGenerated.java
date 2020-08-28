@@ -10757,6 +10757,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/inference/approximateNonTopLevelCapturedTypes.kt");
         }
 
+        @TestMetadata("builderInferenceCheckNotNull.kt")
+        public void testBuilderInferenceCheckNotNull() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/builderInferenceCheckNotNull.kt");
+        }
+
         @TestMetadata("builderInferenceLeakingVariable.kt")
         public void testBuilderInferenceLeakingVariable() throws Exception {
             runTest("compiler/testData/codegen/box/inference/builderInferenceLeakingVariable.kt");
