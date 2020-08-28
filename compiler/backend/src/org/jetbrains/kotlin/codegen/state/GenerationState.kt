@@ -249,7 +249,9 @@ class GenerationState private constructor(
     val assertionsMode: JVMAssertionsMode = configuration.get(JVMConfigurationKeys.ASSERTIONS_MODE, JVMAssertionsMode.DEFAULT)
     val isInlineDisabled: Boolean = configuration.getBoolean(CommonConfigurationKeys.DISABLE_INLINE)
     val useTypeTableInSerializer: Boolean = configuration.getBoolean(JVMConfigurationKeys.USE_TYPE_TABLE)
-    val unifiedNullChecks: Boolean = languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4
+    val unifiedNullChecks: Boolean =
+        languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4 &&
+                !configuration.getBoolean(JVMConfigurationKeys.NO_UNIFIED_NULL_CHECKS)
     val functionsWithInlineClassReturnTypesMangled: Boolean =
         languageVersionSettings.supportsFeature(LanguageFeature.MangleClassMembersReturningInlineClasses)
 

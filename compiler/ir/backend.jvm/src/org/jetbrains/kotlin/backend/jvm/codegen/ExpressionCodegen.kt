@@ -1201,7 +1201,8 @@ class ExpressionCodegen(
             mappings,
             IrInlineIntrinsicsSupport(context, typeMapper),
             IrTypeCheckerContext(context.irBuiltIns),
-            state.languageVersionSettings
+            state.languageVersionSettings,
+            state.unifiedNullChecks,
         )
 
         return IrInlineCodegen(this, state, callee, methodOwner, signature, mappings, sourceCompiler, reifiedTypeInliner)

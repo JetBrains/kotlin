@@ -353,6 +353,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var noKotlinNothingValueException: Boolean by FreezableVar(false)
 
     @Argument(
+        value = "-Xno-unified-null-checks",
+        description = "Use pre-1.4 exception types in null checks instead of java.lang.NPE. See KT-22275 for more details"
+    )
+    var noUnifiedNullChecks: Boolean by FreezableVar(false)
+
+    @Argument(
         value = "-Xprofile",
         valueDescription = "<profilerPath:command:outputDir>",
         description = "Debug option: Run compiler with async profiler, save snapshots to outputDir, command is passed to async-profiler on start\n" +
