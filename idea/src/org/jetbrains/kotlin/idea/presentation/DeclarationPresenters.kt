@@ -5,17 +5,20 @@
 
 package org.jetbrains.kotlin.idea.presentation
 
+import com.intellij.ide.IconProvider
 import com.intellij.navigation.ColoredItemPresentation
 import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.ItemPresentationProvider
 import com.intellij.openapi.editor.colors.CodeInsightColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
+import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.util.Iconable
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.KotlinIconProvider
+import org.jetbrains.kotlin.idea.KotlinIconProviderBase
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import javax.swing.Icon
 
 open class KotlinDefaultNamedDeclarationPresentation(private val declaration: KtNamedDeclaration) : ColoredItemPresentation {
 
@@ -65,8 +68,10 @@ open class KotlinDefaultNamedDeclarationPresentation(private val declaration: Kt
         return KotlinBundle.message("presentation.text.object.in.container", containerFqName)
     }
 
-    override fun getIcon(unused: Boolean) =
-        KotlinIconProvider.INSTANCE.getIcon(declaration, Iconable.ICON_FLAG_VISIBILITY or Iconable.ICON_FLAG_READ_STATUS)
+    override fun getIcon(unused: Boolean): Icon? {
+        val instance = IconProvider.EXTENSION_POINT_NAME.findFirstSafe { it is KotlinIconProviderBase }
+        return instance?.getIcon(declaration, Iconable.ICON_FLAG_VISIBILITY or Iconable.ICON_FLAG_READ_STATUS)
+    }
 }
 
 class KtDefaultDeclarationPresenter : ItemPresentationProvider<KtNamedDeclaration> {

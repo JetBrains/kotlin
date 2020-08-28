@@ -174,6 +174,8 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
 
   <extensions defaultExtensionNs="com.intellij">
 
+    <iconProvider implementation="org.jetbrains.kotlin.idea.KotlinIconProviderBase"/>
+
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.IdePackageOracleFactory"/>
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener"/>
 
@@ -190,11 +192,15 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.completion.LookupCancelService"/>
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectService"/>
 
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.project.KotlinLibraryToSourceAnalysisStateComponent"/>
+
     <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinBeforeResolveHighlightingPass$Registrar"/>
 
     <elementDescriptionProvider
         implementation="org.jetbrains.kotlin.idea.findUsages.KotlinElementDescriptionProviderBase"
         order="first"/>
+
+    <findUsagesHandlerFactory implementation="org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory"/>
 
     <lang.findUsagesProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesProviderBase"/>
 
