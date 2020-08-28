@@ -174,8 +174,13 @@ class CoroutineInferenceSession(
         diagnosticsHolder: KotlinDiagnosticsHolder,
     ): Map<TypeConstructor, UnwrappedType>? {
         val (commonSystem, effectivelyEmptyConstraintSystem) = buildCommonSystem(initialStorage)
+        val initialStorageSubstitutor = initialStorage.buildResultingSubstitutor(commonSystem, transformTypeVariablesToErrorTypes = false)
         if (effectivelyEmptyConstraintSystem) {
-            updateCalls(lambda, commonSystem)
+            updateCalls(
+                lambda,
+                initialStorageSubstitutor,
+                commonSystem.errors
+            )
             return null
         }
 
@@ -188,7 +193,9 @@ class CoroutineInferenceSession(
             diagnosticsHolder
         )
 
-        updateCalls(lambda, commonSystem)
+        val resultingSubstitutor =
+            ComposedSubstitutor(initialStorageSubstitutor, commonSystem.buildCurrentSubstitutor() as NewTypeSubstitutor)
+        updateCalls(lambda, resultingSubstitutor, commonSystem.errors)
 
         return commonSystem.fixedTypeVariables.cast() // TODO: SUB
     }
@@ -289,23 +296,22 @@ class CoroutineInferenceSession(
         )
     }
 
-    private fun updateCalls(lambda: ResolvedLambdaAtom, commonSystem: NewConstraintSystemImpl) {
+    private fun updateCalls(lambda: ResolvedLambdaAtom, substitutor: NewTypeSubstitutor, errors: List<ConstraintSystemError>) {
         val nonFixedToVariablesSubstitutor = createNonFixedTypeToVariableSubstitutor()
-        val commonSystemSubstitutor = commonSystem.buildCurrentSubstitutor() as NewTypeSubstitutor
 
-        val nonFixedTypesToResult = nonFixedToVariablesSubstitutor.map.mapValues { commonSystemSubstitutor.safeSubstitute(it.value) }
-        val nonFixedTypesToResultSubstitutor = ComposedSubstitutor(commonSystemSubstitutor, nonFixedToVariablesSubstitutor)
+        val nonFixedTypesToResult = nonFixedToVariablesSubstitutor.map.mapValues { substitutor.safeSubstitute(it.value) }
+        val nonFixedTypesToResultSubstitutor = ComposedSubstitutor(substitutor, nonFixedToVariablesSubstitutor)
 
         val atomCompleter = createResolvedAtomCompleter(nonFixedTypesToResultSubstitutor, topLevelCallContext)
 
         for (completedCall in commonCalls) {
             updateCall(completedCall, nonFixedTypesToResultSubstitutor, nonFixedTypesToResult)
-            reportErrors(completedCall, completedCall.resolvedCall, commonSystem.errors)
+            reportErrors(completedCall, completedCall.resolvedCall, errors)
         }
 
         for (callInfo in partiallyResolvedCallsInfo) {
             val resolvedCall = completeCall(callInfo, atomCompleter) ?: continue
-            reportErrors(callInfo, resolvedCall, commonSystem.errors)
+            reportErrors(callInfo, resolvedCall, errors)
         }
 
         for (simpleCall in simpleCommonCalls) {

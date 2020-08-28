@@ -12652,6 +12652,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/inference/manyFlexibleTypeParametersFromJavaAndConversions.kt");
         }
 
+        @TestMetadata("mapCollectChainWithNullResult.kt")
+        public void testMapCollectChainWithNullResult() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/mapCollectChainWithNullResult.kt");
+        }
+
         @TestMetadata("noCoercionToUniForNullableLambdaReturnType.kt")
         public void testNoCoercionToUniForNullableLambdaReturnType() throws Exception {
             runTest("compiler/testData/codegen/box/inference/noCoercionToUniForNullableLambdaReturnType.kt");
