@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.registerCheckersComponent
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
-import org.jetbrains.kotlin.fir.resolve.calls.jvm.registerJvmCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.*
@@ -38,8 +37,7 @@ class FirJavaModuleBasedSession private constructor(
                 registerCommonComponents()
                 registerResolveComponents()
                 registerCheckersComponent()
-                registerJvmCallConflictResolverFactory()
-                registerJavaVisibilityChecker()
+                registerJavaSpecificComponents()
 
                 val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
 
