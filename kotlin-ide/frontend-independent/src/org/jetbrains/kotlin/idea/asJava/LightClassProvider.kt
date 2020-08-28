@@ -44,6 +44,8 @@ interface LightClassProvider {
 
     fun isKtFakeLightClass(psiClass: PsiClass): Boolean
 
+    fun isKtLightClassForDecompiledDeclaration(psiClass: PsiClass): Boolean
+
     fun createKtFakeLightMethod(ktDeclaration: KtNamedDeclaration): PsiMethod?
 
     companion object {
@@ -83,6 +85,9 @@ interface LightClassProvider {
 
         fun PsiClass.providedIsKtFakeLightClass(): Boolean =
             getInstance(project).isKtFakeLightClass(this)
+
+        fun PsiClass.providedIsKtLightClassForDecompiledDeclaration(): Boolean =
+            getInstance(project).isKtLightClassForDecompiledDeclaration(this)
 
         fun providedCreateKtFakeLightMethod(ktDeclaration: KtNamedDeclaration): PsiMethod? =
             getInstance(ktDeclaration.project).createKtFakeLightMethod(ktDeclaration)

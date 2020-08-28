@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightClass
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightMethod
+import org.jetbrains.kotlin.idea.caches.lightClasses.KtLightClassForDecompiledDeclaration
 import org.jetbrains.kotlin.psi.*
 
 class LightClassProviderImpl : LightClassProvider {
@@ -45,6 +46,9 @@ class LightClassProviderImpl : LightClassProvider {
 
     override fun isKtFakeLightClass(psiClass: PsiClass): Boolean =
         psiClass is KtFakeLightClass
+
+    override fun isKtLightClassForDecompiledDeclaration(psiClass: PsiClass): Boolean =
+        psiClass is KtLightClassForDecompiledDeclaration
 
     override fun createKtFakeLightMethod(ktDeclaration: KtNamedDeclaration): PsiMethod? =
         KtFakeLightMethod.get(ktDeclaration)

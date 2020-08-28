@@ -62,8 +62,6 @@
     <declarationRangeHandler key="org.jetbrains.kotlin.psi.KtDeclarationWithBody"
                              implementationClass="org.jetbrains.kotlin.idea.codeInsight.KotlinFunDeclarationRangeHandler"/>
 
-    <iconProvider implementation="org.jetbrains.kotlin.idea.KotlinIconProvider"/>
-
     <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.KtFunctionPresenter"
                               forClass="org.jetbrains.kotlin.psi.KtFunction"/>
     <itemPresentationProvider implementationClass="org.jetbrains.kotlin.idea.presentation.KtDefaultDeclarationPresenter"
