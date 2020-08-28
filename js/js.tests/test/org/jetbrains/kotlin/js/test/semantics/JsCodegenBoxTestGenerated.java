@@ -12598,6 +12598,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/innerNested/nestedInPackage.kt");
         }
 
+        @TestMetadata("nestedInnerClass.kt")
+        public void testNestedInnerClass() throws Exception {
+            runTest("compiler/testData/codegen/box/innerNested/nestedInnerClass.kt");
+        }
+
         @TestMetadata("nestedObjects.kt")
         public void testNestedObjects() throws Exception {
             runTest("compiler/testData/codegen/box/innerNested/nestedObjects.kt");

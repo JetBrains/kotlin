@@ -141,7 +141,7 @@ class InnerClassesMemberBodyLowering(val context: BackendContext, private val in
     private fun IrBody.fixThisReference(irClass: IrClass, container: IrDeclaration) {
         val enclosingFunction: IrDeclaration? = run {
             var current: IrDeclaration? = container
-            while (current != null && current !is IrFunction) {
+            while (current != null && current !is IrFunction && current !is IrClass) {
                 current = current.parent as? IrDeclaration
             }
             current
