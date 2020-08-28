@@ -235,7 +235,6 @@ internal val psiToIrPhase = konanUnitPhase(
                     .forEach(irProviderForCEnumsAndCStructs::referenceAllEnumsAndStructsFrom)
 
             val irProviders = listOf(linker)
-            stubGenerator.setIrProviders(irProviders)
 
             expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
             val module = translator.generateModuleFragment(
