@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import kotlin.Pair;
@@ -104,7 +103,8 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     private ClassFileFactory compileA(@NotNull TestFile testFile, List<TestFile> files) {
         Disposable compileDisposable = createDisposable("compileA");
         CompilerConfiguration configuration = createConfiguration(
-                ConfigurationKind.ALL, getTestJdkKind(files), Collections.singletonList(KotlinTestUtils.getAnnotationsJar()),
+                ConfigurationKind.ALL, getTestJdkKind(files), getBackend(),
+                Collections.singletonList(KotlinTestUtils.getAnnotationsJar()),
                 Collections.emptyList(), Collections.singletonList(testFile)
         );
 
@@ -126,8 +126,9 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     private ClassFileFactory compileB(@NotNull TestFile testFile, List<TestFile> files) {
         String commonHeader = StringsKt.substringBefore(files.get(0).content, "FILE:", "");
         CompilerConfiguration configuration = createConfiguration(
-                ConfigurationKind.ALL, getTestJdkKind(files), Lists.newArrayList(KotlinTestUtils.getAnnotationsJar(), aDir),
-                Collections.emptyList(), Lists.newArrayList(testFile, new TestFile("header", commonHeader))
+                ConfigurationKind.ALL, getTestJdkKind(files), getBackend(),
+                Arrays.asList(KotlinTestUtils.getAnnotationsJar(), aDir),
+                Collections.emptyList(), Arrays.asList(testFile, new TestFile("header", commonHeader))
         );
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, "b");

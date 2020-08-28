@@ -101,6 +101,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         CompilerConfiguration configuration = createConfiguration(
                 configurationKind,
                 testJdkKind,
+                getBackend(),
                 Collections.singletonList(getAnnotationsJar()),
                 ArraysKt.filterNotNull(javaSourceRoots),
                 testFilesWithConfigurationDirectives
@@ -494,7 +495,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         }
 
         CompilerConfiguration configuration = createConfiguration(
-                configurationKind, getTestJdkKind(files),
+                configurationKind, getTestJdkKind(files), getBackend(),
                 classpath,
                 ArraysKt.filterNotNull(new File[] {javaSourceDir}),
                 files
