@@ -138,7 +138,6 @@ val defaultSourceSet = DokkaSourceSetImpl(
     analysisPlatform = Platform.DEFAULT
 )
 
-// TODO NOW: Clean up
 fun sourceSet(name: String): DokkaConfiguration.DokkaSourceSet {
     return defaultSourceSet.copy(
         displayName = name,
