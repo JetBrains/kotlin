@@ -139,7 +139,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 )
             }
 
-            source = baseSource
+            source = baseSource?.fakeElement(FirFakeSourceElementKind.ImplicitReturn)
             result = this@toReturn
             if (labelName == null) {
                 target = context.firFunctionTargets.lastOrNull { !it.isLambda } ?: FirFunctionTarget(labelName, isLambda = false).apply {

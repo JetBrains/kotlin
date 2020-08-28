@@ -236,8 +236,7 @@ class RawFirBuilder(
                 }
                 else -> {
                     val result = { bodyExpression }.toFirExpression("Function has no body (but should)")
-                    // basePsi is null, because 'return' is synthetic & should not be bound to some PSI
-                    FirSingleExpressionBlock(result.toReturn(baseSource = null)) to null
+                    FirSingleExpressionBlock(result.toReturn(baseSource = result.source)) to null
                 }
             }
 

@@ -1361,8 +1361,9 @@ class DeclarationsConverter(
                 baseSession, baseScopeProvider, stubMode, blockTree, offset = tree.getStartOffset(block), context
             ).convertBlockExpression(blockTree.root)
         } else {
+            val firExpression = buildExpressionStub()
             FirSingleExpressionBlock(
-                buildExpressionStub().toReturn()
+                firExpression.toReturn(baseSource = firExpression.source)
             )
         }
     }
