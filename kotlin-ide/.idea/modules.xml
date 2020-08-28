@@ -470,6 +470,10 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/ant/intellij.ant.iml" filepath="$PROJECT_DIR$/intellij/plugins/ant/intellij.ant.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/ant/jps-plugin/intellij.ant.jps.iml" filepath="$PROJECT_DIR$/intellij/plugins/ant/jps-plugin/intellij.ant.jps.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/commander/intellij.commander.iml" filepath="$PROJECT_DIR$/intellij/plugins/commander/intellij.commander.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/completion-ml-ranking/intellij.completionMlRanking.iml" filepath="$PROJECT_DIR$/intellij/plugins/completion-ml-ranking/intellij.completionMlRanking.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/completion-ml-ranking/intellij.completionMlRanking.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/completion-ml-ranking/intellij.completionMlRanking.tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/completion-ml-ranking-models/intellij.completionMlRankingModels.iml" filepath="$PROJECT_DIR$/intellij/plugins/completion-ml-ranking-models/intellij.completionMlRankingModels.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/completion-ml-ranking-models/intellij.completionMlRankingModels.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/completion-ml-ranking-models/intellij.completionMlRankingModels.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/configuration-script/intellij.configurationScript.iml" filepath="$PROJECT_DIR$/intellij/plugins/configuration-script/intellij.configurationScript.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/configuration-script/intellij.configurationScript.test.java.iml" filepath="$PROJECT_DIR$/intellij/plugins/configuration-script/intellij.configurationScript.test.java.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/copyright/intellij.copyright.iml" filepath="$PROJECT_DIR$/intellij/plugins/copyright/intellij.copyright.iml" />
@@ -615,8 +619,6 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/maven/maven3-server-impl/intellij.maven.server.m3.impl.iml" filepath="$PROJECT_DIR$/intellij/plugins/maven/maven3-server-impl/intellij.maven.server.m3.impl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/maven/maven30-server-impl/intellij.maven.server.m30.impl.iml" filepath="$PROJECT_DIR$/intellij/plugins/maven/maven30-server-impl/intellij.maven.server.m30.impl.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/maven/maven36-server-impl/intellij.maven.server.m36.impl.iml" filepath="$PROJECT_DIR$/intellij/plugins/maven/maven36-server-impl/intellij.maven.server.m36.impl.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/ml-completion-models/intellij.mlCompletionModels.iml" filepath="$PROJECT_DIR$/intellij/plugins/ml-completion-models/intellij.mlCompletionModels.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/ml-completion-models/intellij.mlCompletionModels.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/ml-completion-models/intellij.mlCompletionModels.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/built-in-server/client/node-rpc-client/intellij.nodeRpcClient.iml" filepath="$PROJECT_DIR$/intellij/platform/built-in-server/client/node-rpc-client/intellij.nodeRpcClient.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/analysis-api/intellij.platform.analysis.iml" filepath="$PROJECT_DIR$/intellij/platform/analysis-api/intellij.platform.analysis.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/analysis-impl/intellij.platform.analysis.impl.iml" filepath="$PROJECT_DIR$/intellij/platform/analysis-impl/intellij.platform.analysis.impl.iml" />

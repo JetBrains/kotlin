@@ -1136,6 +1136,10 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/coffeescript/coffeescript-core/intellij.coffeescript.iml" filepath="$PROJECT_DIR$/intellij/plugins/coffeescript/coffeescript-core/intellij.coffeescript.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/coffeescript/coffeescript-tests/intellij.coffeescript.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/coffeescript/coffeescript-tests/intellij.coffeescript.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/commander/intellij.commander.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/commander/intellij.commander.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/completion-ml-ranking/intellij.completionMlRanking.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/completion-ml-ranking/intellij.completionMlRanking.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/completion-ml-ranking/intellij.completionMlRanking.tests.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/completion-ml-ranking/intellij.completionMlRanking.tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/completion-ml-ranking-models/intellij.completionMlRankingModels.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/completion-ml-ranking-models/intellij.completionMlRankingModels.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/completion-ml-ranking-models/intellij.completionMlRankingModels.tests.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/completion-ml-ranking-models/intellij.completionMlRankingModels.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/configuration-script/intellij.configurationScript.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/configuration-script/intellij.configurationScript.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/configuration-script/intellij.configurationScript.test.java.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/configuration-script/intellij.configurationScript.test.java.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/copyright/intellij.copyright.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/copyright/intellij.copyright.iml" />
@@ -1245,6 +1249,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/cucumber/intellij.gherkin.iml" filepath="$PROJECT_DIR$/intellij/contrib/cucumber/intellij.gherkin.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/localization/intellij.gnuGetText.iml" filepath="$PROJECT_DIR$/intellij/python/localization/intellij.gnuGetText.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/intellij.go.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/intellij.go.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/go-completion-ml-ranking/intellij.go.completionMlRanking.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/go-completion-ml-ranking/intellij.go.completionMlRanking.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/go-features-trainer/intellij.go.featuresTrainer.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/go-features-trainer/intellij.go.featuresTrainer.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/go-grazie/intellij.go.grazie.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/go-grazie/intellij.go.grazie.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/ide/intellij.go.ide.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/ide/intellij.go.ide.iml" />
@@ -1252,7 +1257,6 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/intellij.go.plugin.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/intellij.go.plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/go-prebuilt-stubs/intellij.go.prebuiltStubs.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/go-prebuilt-stubs/intellij.go.prebuiltStubs.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/profiler/intellij.go.profiler.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/profiler/intellij.go.profiler.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/go-stats-collector/intellij.go.statsCollector.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/go-stats-collector/intellij.go.statsCollector.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/template/intellij.go.template.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/template/intellij.go.template.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/template-integration/intellij.go.template.integration.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/template-integration/intellij.go.template.integration.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/testing/intellij.go.testing.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/testing/intellij.go.testing.iml" />
@@ -1624,8 +1628,6 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/microservices/microservices-test-utils/intellij.microservices.test.iml" filepath="$PROJECT_DIR$/intellij/plugins/microservices/microservices-test-utils/intellij.microservices.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/microservices/microservices-uast/intellij.microservices.uast.iml" filepath="$PROJECT_DIR$/intellij/plugins/microservices/microservices-uast/intellij.microservices.uast.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/microservices/microservices-ui/intellij.microservices.ui.iml" filepath="$PROJECT_DIR$/intellij/plugins/microservices/microservices-ui/intellij.microservices.ui.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/ml-completion-models/intellij.mlCompletionModels.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/ml-completion-models/intellij.mlCompletionModels.iml" />
-      <module fileurl="file://$PROJECT_DIR$/intellij/community/plugins/ml-completion-models/intellij.mlCompletionModels.tests.iml" filepath="$PROJECT_DIR$/intellij/community/plugins/ml-completion-models/intellij.mlCompletionModels.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/mobile-ide/intellij.mobile.ide.iml" filepath="$PROJECT_DIR$/intellij/mobile-ide/intellij.mobile.ide.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/mobile-ide/build/intellij.mobile.ide.build.iml" filepath="$PROJECT_DIR$/intellij/mobile-ide/build/intellij.mobile.ide.build.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/native/debugger/cdb/intellij.native.debugger.cdb.iml" filepath="$PROJECT_DIR$/intellij/native/debugger/cdb/intellij.native.debugger.cdb.iml" />
