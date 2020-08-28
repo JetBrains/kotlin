@@ -36,6 +36,7 @@ class SimpleJsClientTemplate : JsClientTemplate() {
         GenerationPhase.PROJECT_GENERATION
     ) {
         defaultValue = value(false)
+        description = KotlinNewProjectWizardBundle.message("module.template.simple.use.kotlinx.html.description")
     }
 
     override val settings: List<TemplateSetting<*, *>> = listOf(useKotlinxHtml)
