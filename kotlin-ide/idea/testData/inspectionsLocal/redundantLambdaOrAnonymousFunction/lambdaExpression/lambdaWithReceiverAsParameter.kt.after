@@ -1,0 +1,10 @@
+// WITH_RUNTIME
+class Chain
+
+fun complicate(chain: Chain) {
+    val p2 = fun Chain.(): Chain {
+        return also { println(it) }
+    }
+    p2(chain)
+    val vra = p2(chain)
+}

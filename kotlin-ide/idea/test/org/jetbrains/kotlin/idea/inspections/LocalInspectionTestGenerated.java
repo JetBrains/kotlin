@@ -7606,6 +7606,137 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         public void testEmptyLambdaWithoutParametersWithExtraParentheses() throws Exception {
             runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/emptyLambdaWithoutParametersWithExtraParentheses.kt");
         }
+
+        @RunWith(JUnit3RunnerWithInners.class)
+        @TestMetadata("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/anonymousFunction")
+        public static class AnonymousFunction extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            @TestMetadata("inWith.kt")
+            public void testInWith() throws Exception {
+                runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/anonymousFunction/inWith.kt");
+            }
+
+            @TestMetadata("lambdaWithReceiverAsParameter.kt")
+            public void testLambdaWithReceiverAsParameter() throws Exception {
+                runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/anonymousFunction/lambdaWithReceiverAsParameter.kt");
+            }
+
+            @TestMetadata("lambdaWithReceiverAsParameter2.kt")
+            public void testLambdaWithReceiverAsParameter2() throws Exception {
+                runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/anonymousFunction/lambdaWithReceiverAsParameter2.kt");
+            }
+
+            @TestMetadata("lambdaWithReceiverAsParameter3.kt")
+            public void testLambdaWithReceiverAsParameter3() throws Exception {
+                runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/anonymousFunction/lambdaWithReceiverAsParameter3.kt");
+            }
+
+            @TestMetadata("withConstantParameter.kt")
+            public void testWithConstantParameter() throws Exception {
+                runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/anonymousFunction/withConstantParameter.kt");
+            }
+
+            @TestMetadata("withInvoke.kt")
+            public void testWithInvoke() throws Exception {
+                runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/anonymousFunction/withInvoke.kt");
+            }
+
+            @TestMetadata("withNotInvoke.kt")
+            public void testWithNotInvoke() throws Exception {
+                runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/anonymousFunction/withNotInvoke.kt");
+            }
+
+            @TestMetadata("withReceiver.kt")
+            public void testWithReceiver() throws Exception {
+                runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/anonymousFunction/withReceiver.kt");
+            }
+
+            @TestMetadata("withReceiver2.kt")
+            public void testWithReceiver2() throws Exception {
+                runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/anonymousFunction/withReceiver2.kt");
+            }
+
+            @TestMetadata("withReceiverAsInvoke.kt")
+            public void testWithReceiverAsInvoke() throws Exception {
+                runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/anonymousFunction/withReceiverAsInvoke.kt");
+            }
+
+            @TestMetadata("withReceiverAsParameter.kt")
+            public void testWithReceiverAsParameter() throws Exception {
+                runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/anonymousFunction/withReceiverAsParameter.kt");
+            }
+
+            @TestMetadata("withoutBody.kt")
+            public void testWithoutBody() throws Exception {
+                runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/anonymousFunction/withoutBody.kt");
+            }
+
+            @TestMetadata("withoutInvocation.kt")
+            public void testWithoutInvocation() throws Exception {
+                runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/anonymousFunction/withoutInvocation.kt");
+            }
+
+            @TestMetadata("withoutInvocation2.kt")
+            public void testWithoutInvocation2() throws Exception {
+                runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/anonymousFunction/withoutInvocation2.kt");
+            }
+        }
+
+        @RunWith(JUnit3RunnerWithInners.class)
+        @TestMetadata("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/lambdaExpression")
+        public static class LambdaExpression extends AbstractLocalInspectionTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            @TestMetadata("inWith.kt")
+            public void testInWith() throws Exception {
+                runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/lambdaExpression/inWith.kt");
+            }
+
+            @TestMetadata("lambdaWithReceiverAsParameter.kt")
+            public void testLambdaWithReceiverAsParameter() throws Exception {
+                runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/lambdaExpression/lambdaWithReceiverAsParameter.kt");
+            }
+
+            @TestMetadata("lambdaWithReceiverAsParameter2.kt")
+            public void testLambdaWithReceiverAsParameter2() throws Exception {
+                runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/lambdaExpression/lambdaWithReceiverAsParameter2.kt");
+            }
+
+            @TestMetadata("lambdaWithReceiverAsParameter3.kt")
+            public void testLambdaWithReceiverAsParameter3() throws Exception {
+                runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/lambdaExpression/lambdaWithReceiverAsParameter3.kt");
+            }
+
+            @TestMetadata("withConstantParameter.kt")
+            public void testWithConstantParameter() throws Exception {
+                runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/lambdaExpression/withConstantParameter.kt");
+            }
+
+            @TestMetadata("withInvoke.kt")
+            public void testWithInvoke() throws Exception {
+                runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/lambdaExpression/withInvoke.kt");
+            }
+
+            @TestMetadata("withNotInvoke.kt")
+            public void testWithNotInvoke() throws Exception {
+                runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/lambdaExpression/withNotInvoke.kt");
+            }
+
+            @TestMetadata("withoutInvocation.kt")
+            public void testWithoutInvocation() throws Exception {
+                runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/lambdaExpression/withoutInvocation.kt");
+            }
+
+            @TestMetadata("withoutInvocation2.kt")
+            public void testWithoutInvocation2() throws Exception {
+                runTest("testData/inspectionsLocal/redundantLambdaOrAnonymousFunction/lambdaExpression/withoutInvocation2.kt");
+            }
+        }
     }
 
     @RunWith(JUnit3RunnerWithInners.class)

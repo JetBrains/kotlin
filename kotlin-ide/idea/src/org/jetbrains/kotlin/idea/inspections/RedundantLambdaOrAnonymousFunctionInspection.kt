@@ -2,65 +2,48 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
-import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineAnonymousFunctionProcessor
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.blockExpressionsOrSingle
-import org.jetbrains.kotlin.psi2ir.deparenthesize
-import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class RedundantLambdaOrAnonymousFunctionInspection : AbstractKotlinInspection() {
-    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor = callExpressionVisitor(
-        fun(callExpression: KtCallExpression) {
-            if (!isApplicable(callExpression)) return
-            val message = if (callExpression.calleeExpression?.deparenthesize() is KtFunction)
+    override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor = object : KtVisitorVoid() {
+        override fun visitNamedFunction(function: KtNamedFunction) {
+            processExpression(function)
+        }
+
+        override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
+            processExpression(lambdaExpression.functionLiteral)
+        }
+
+        private fun processExpression(function: KtFunction) {
+            if (findCallIfApplicableTo(function) == null) return
+            val message = if (function is KtNamedFunction)
                 KotlinBundle.message("inspection.redundant.anonymous.function.description")
             else
                 KotlinBundle.message("inspection.redundant.lambda.description")
 
-            holder.registerProblem(
-                callExpression,
-                message,
-                ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                RedundantLambdaOrAnonymousFunctionFix()
-            )
+            holder.registerProblem(function, message, RedundantLambdaOrAnonymousFunctionFix())
         }
-    )
+    }
 
     private class RedundantLambdaOrAnonymousFunctionFix : LocalQuickFix {
         override fun getFamilyName(): String = KotlinBundle.message("inspection.redundant.lambda.or.anonymous.function.fix")
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            val call = descriptor.psiElement as? KtCallExpression ?: return
-            applyTo(call)
+            val function = descriptor.psiElement as? KtFunction ?: return
+            val call = KotlinInlineAnonymousFunctionProcessor.findCallExpression(function) ?: return
+            KotlinInlineAnonymousFunctionProcessor(function, call, function.findExistingEditor(), project).run()
         }
     }
 
     companion object {
-        fun isApplicable(callExpression: KtCallExpression): Boolean {
-            val expression = callExpression.calleeExpression?.deparenthesize() as? KtExpression ?: return false
-            val function = when (expression) {
-                is KtLambdaExpression -> expression.functionLiteral
-                is KtFunction -> expression
-                else -> return false
-            }
-
-            val arguments = callExpression.valueArguments
-            if (arguments.isNotEmpty()) return false
-
-            val statements = function.bodyExpression?.blockExpressionsOrSingle()?.toList() ?: return false
-            if (statements.isNotEmpty()) return false
-
-            return callExpression.isUsedAsStatement(callExpression.analyze(BodyResolveMode.PARTIAL_WITH_CFA))
-        }
-
-        fun applyTo(callExpression: KtCallExpression) {
-            callExpression.delete()
-        }
+        fun findCallIfApplicableTo(function: KtFunction): KtExpression? = if (function.hasBody())
+            KotlinInlineAnonymousFunctionProcessor.findCallExpression(function)
+        else
+            null
     }
 }

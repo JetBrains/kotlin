@@ -1,3 +1,3 @@
 fun test() {
-    <caret>(fun(){})()
+    (<caret>fun(){})()
 }
