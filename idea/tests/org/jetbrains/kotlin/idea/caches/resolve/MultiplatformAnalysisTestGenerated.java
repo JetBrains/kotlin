@@ -38,6 +38,11 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
         runTest("idea/testData/multiplatform/callableReferences/");
     }
 
+    @TestMetadata("capturedTypesMismatch")
+    public void testCapturedTypesMismatch() throws Exception {
+        runTest("idea/testData/multiplatform/capturedTypesMismatch/");
+    }
+
     @TestMetadata("constructorsOfExpect")
     public void testConstructorsOfExpect() throws Exception {
         runTest("idea/testData/multiplatform/constructorsOfExpect/");
@@ -162,7 +167,6 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
     public void testLambdas() throws Exception {
         runTest("idea/testData/multiplatform/lambdas/");
     }
-
 
     @TestMetadata("languageConstructions")
     public void testLanguageConstructions() throws Exception {
