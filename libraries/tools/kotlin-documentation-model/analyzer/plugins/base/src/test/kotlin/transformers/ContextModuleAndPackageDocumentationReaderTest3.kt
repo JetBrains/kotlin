@@ -8,6 +8,7 @@ import org.jetbrains.dokka.utilities.DokkaConsoleLogger
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import testApi.testRunner.TestDokkaConfigurationBuilder
+import testApi.testRunner.dPackage
 import testApi.testRunner.dokkaConfiguration
 import testApi.testRunner.sourceSet
 import kotlin.test.assertEquals
@@ -48,7 +49,7 @@ class ContextModuleAndPackageDocumentationReaderTest3 : AbstractContextModuleAnd
 
     @Test
     fun `root package is matched by empty string and the root keyword`() {
-        val documentation = reader[DPackage(DRI(""), sourceSets = setOf(sourceSet))]
+        val documentation = reader[dPackage(DRI(""), sourceSets = setOf(sourceSet))]
         assertEquals(
             listOf("This is the root package", "This is also the root package"), documentation.texts
         )
