@@ -49,7 +49,7 @@ public abstract class helpers/ContinuationAdapter {
 @kotlin.Metadata
 public final class helpers/CoroutineUtilKt$handleExceptionContinuation$1 {
     // source: 'CoroutineUtil.kt'
-    private synthetic final field $x: kotlin.jvm.functions.Function1
+    synthetic final field $x: kotlin.jvm.functions.Function1
     private final @org.jetbrains.annotations.NotNull field context: kotlin.coroutines.EmptyCoroutineContext
     inner (anonymous) class helpers/CoroutineUtilKt$handleExceptionContinuation$1
     method <init>(p0: kotlin.jvm.functions.Function1): void
@@ -61,7 +61,7 @@ public final class helpers/CoroutineUtilKt$handleExceptionContinuation$1 {
 @kotlin.Metadata
 public final class helpers/CoroutineUtilKt$handleResultContinuation$1 {
     // source: 'CoroutineUtil.kt'
-    private synthetic final field $x: kotlin.jvm.functions.Function1
+    synthetic final field $x: kotlin.jvm.functions.Function1
     private final @org.jetbrains.annotations.NotNull field context: kotlin.coroutines.EmptyCoroutineContext
     inner (anonymous) class helpers/CoroutineUtilKt$handleResultContinuation$1
     method <init>(p0: kotlin.jvm.functions.Function1): void
