@@ -55,11 +55,12 @@ class CocoaPodsIT : BaseGradleIT() {
     private val defaultPodRepo = "https://github.com/AFNetworking/AFNetworking"
     private val defaultPodName = "AFNetworking"
     private val defaultTarget = "IOS"
-
+    private val defaultFamily = "IOS"
+    private val defaultSDK = "iphonesimulator"
     private val defaultPodDownloadTaskName = podDownloadTaskName + defaultPodName
-    private val defaultPodGenTaskName = podGenTaskName + defaultTarget
-    private val defaultBuildTaskName = podBuildTaskName + defaultTarget
-    private val defaultSetupBuildTaskName = podSetupBuildTaskName + defaultTarget
+    private val defaultPodGenTaskName = podGenTaskName + defaultFamily
+    private val defaultBuildTaskName = podBuildTaskName + defaultSDK.capitalize()
+    private val defaultSetupBuildTaskName = podSetupBuildTaskName + defaultSDK.capitalize()
     private val defaultCinteropTaskName = cinteropTaskName + defaultPodName + defaultTarget
 
     private lateinit var hooks: CustomHooks
