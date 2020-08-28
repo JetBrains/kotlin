@@ -31,8 +31,6 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
-import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -56,24 +54,15 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
+import org.jetbrains.kotlin.fir.analysis.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
-import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmClassCodegen
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
-import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.resolve.firProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
-import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.modules.Module
@@ -314,9 +303,7 @@ object KotlinToJVMBytecodeCompiler {
         val project = environment.project
         val performanceManager = environment.configuration.get(CLIConfigurationKeys.PERF_MANAGER)
 
-        Extensions.getArea(project)
-            .getExtensionPoint(PsiElementFinder.EP_NAME)
-            .unregisterExtension(JavaElementFinder::class.java)
+        PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
 
         val projectConfiguration = environment.configuration
         val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
@@ -363,25 +350,11 @@ object KotlinToJVMBytecodeCompiler {
                     project, environment.createPackagePartProvider(librariesScope)
                 )
             }
-            val firProvider = (session.firProvider as FirProviderImpl)
-            val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
-            val resolveTransformer = FirTotalResolveProcessor(session)
-            val collector = FirDiagnosticsCollector.create(session)
-            val firDiagnostics = mutableListOf<FirDiagnostic<*>>()
-            val firFiles = ktFiles.map {
-                val firFile = builder.buildFirFile(it)
-                firProvider.recordFile(firFile)
-                firFile
-            }.also { firFiles ->
-                try {
-                    resolveTransformer.process(firFiles)
-                    firFiles.forEach {
-                        firDiagnostics += collector.collectDiagnostics(it)
-                    }
-                } catch (e: Exception) {
-                    throw e
-                }
-            }
+
+            val firAnalyzerFacade = FirAnalyzerFacade(session, moduleConfiguration.languageVersionSettings, ktFiles)
+
+            firAnalyzerFacade.runResolution()
+            val firDiagnostics = firAnalyzerFacade.runCheckers()
             AnalyzerWithCompilerReport.reportDiagnostics(
                 SimpleDiagnostics(
                     firDiagnostics.map { it.toRegularDiagnostic() }
@@ -395,16 +368,9 @@ object KotlinToJVMBytecodeCompiler {
             }
 
             performanceManager?.notifyGenerationStarted()
-            val signaturer = IdSignatureDescriptor(JvmManglerDesc())
 
             performanceManager?.notifyIRTranslationStarted()
-            val (moduleFragment, symbolTable, sourceManager, components) =
-                Fir2IrConverter.createModuleFragment(
-                    session, resolveTransformer.scopeSession, firFiles,
-                    moduleConfiguration.languageVersionSettings, signaturer,
-                    JvmGeneratorExtensions(), FirJvmKotlinMangler(session), IrFactoryImpl,
-                    FirJvmVisibilityConverter
-                )
+            val (moduleFragment, symbolTable, sourceManager, components) = firAnalyzerFacade.convertToIr()
 
             performanceManager?.notifyIRTranslationFinished()
 
