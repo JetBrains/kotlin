@@ -23,7 +23,7 @@ abstract class KtScopeProvider : KtAnalysisSessionComponent() {
 
     abstract fun getScopeContextForPosition(
         originalFile: KtFile,
-        originalPosition: PsiElement?,
+        originalPosition: PsiElement,
         positionInFakeFile: KtElement
     ): KtScopeContext
 }
