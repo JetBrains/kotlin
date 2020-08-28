@@ -36,6 +36,7 @@ fun AbstractFirBasedSymbol<*>.ensureResolved(
 fun AbstractFirBasedSymbol<*>.ensureResolvedForCalls(
     useSiteSession: FirSession,
 ) {
+    if ((fir as FirDeclaration).resolvePhase >= FirResolvePhase.CONTRACTS) return
     val requiredPhase = when (this.fir) {
         is FirFunction<*>, is FirProperty -> FirResolvePhase.CONTRACTS
         else -> FirResolvePhase.STATUS
