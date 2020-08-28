@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.idea.codeInsight.moveUpDown.AbstractMoveStatementTes
 import org.jetbrains.kotlin.idea.codeInsight.postfix.AbstractPostfixTemplateProviderTest
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.AbstractSurroundWithTest
 import org.jetbrains.kotlin.idea.codeInsight.unwrap.AbstractUnwrapRemoveTest
+import org.jetbrains.kotlin.idea.completion.AbstractHighLevelJvmBasicCompletionTest
 import org.jetbrains.kotlin.idea.completion.test.*
 import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractBasicCompletionHandlerTest
 import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionCharFilterTest
@@ -1033,6 +1034,13 @@ fun main(args: Array<String>) {
                 model("checker/rendering")
                 model("checker/infos")
                 model("checker/diagnosticsMessage")
+            }
+        }
+
+        testGroup("idea/idea-fir/tests", "idea/idea-completion/testData") {
+            testClass<AbstractHighLevelJvmBasicCompletionTest> {
+                model("basic/common")
+                model("basic/java")
             }
         }
 

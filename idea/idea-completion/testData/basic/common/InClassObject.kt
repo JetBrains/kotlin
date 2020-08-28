@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class C {
     val field = 0
     class NestedClass

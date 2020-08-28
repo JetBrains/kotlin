@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class DefaultConstructor
 
 class TwoConstructors(s: String) {

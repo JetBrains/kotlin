@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class ResolvedCall<out D>(val candidateDescriptor: D)
 
 fun test(myResolvedCall: ResolvedCall<String>) {

@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class SomeObject<T, U>() {
     var field : T? = null
 }

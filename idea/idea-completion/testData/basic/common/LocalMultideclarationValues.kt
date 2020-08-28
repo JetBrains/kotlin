@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 data class TestData(val first: Int, val second: String)
 
 fun f() : TestData = TestData(42, "Second")
