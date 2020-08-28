@@ -442,6 +442,16 @@ fun main(args: Array<String>) {
             testClass<AbstractIrCompileKotlinAgainstKotlinTest> {
                 model("compileKotlinAgainstKotlin", targetBackend = TargetBackend.JVM_IR)
             }
+            testClass<AbstractJvmIrAgainstOldBoxTest> {
+                model("compileKotlinAgainstKotlin", targetBackend = TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD)
+            }
+            testClass<AbstractJvmOldAgainstIrBoxTest> {
+                model(
+                    "compileKotlinAgainstKotlin",
+                    targetBackend = TargetBackend.JVM_MULTI_MODULE_OLD_AGAINST_IR,
+                    skipTestsForExperimentalCoroutines = true
+                )
+            }
 
             testClass<AbstractIrBytecodeListingTest> {
                 model("codegen/bytecodeListing", targetBackend = TargetBackend.JVM_IR)
@@ -536,6 +546,16 @@ fun main(args: Array<String>) {
             }
             testClass<AbstractIrCompileKotlinAgainstInlineKotlinTest> {
                 model("codegen/boxInline", targetBackend = TargetBackend.JVM_IR)
+            }
+            testClass<AbstractJvmIrAgainstOldBoxInlineTest> {
+                model("codegen/boxInline", targetBackend = TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD)
+            }
+            testClass<AbstractJvmOldAgainstIrBoxInlineTest> {
+                model(
+                    "codegen/boxInline",
+                    targetBackend = TargetBackend.JVM_MULTI_MODULE_OLD_AGAINST_IR,
+                    skipTestsForExperimentalCoroutines = true
+                )
             }
         }
 

@@ -7,7 +7,7 @@
 
 // The lambda in box() attempts to store the result in a null Ref for some reason.
 // IGNORE_BACKEND: JVM
-// IGNORE_BACKEND_MULTI_MODULE: JVM
+// IGNORE_BACKEND_MULTI_MODULE: JVM, JVM_MULTI_MODULE_OLD_AGAINST_IR
 
 @file:JvmMultifileClass
 @file:JvmName("XKt")
