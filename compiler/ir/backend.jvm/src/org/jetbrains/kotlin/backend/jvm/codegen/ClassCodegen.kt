@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.lower.InstanceInitializersLowering
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.buildAssertionsDisabledField
 import org.jetbrains.kotlin.backend.jvm.lower.hasAssertionsDisabledField
@@ -360,7 +361,9 @@ abstract class ClassCodegen protected constructor(
         // the current class. If the current class is immediately enclosed by a method
         // or constructor, the name and type of the function is recorded as well.
         if (parentClassCodegen != null) {
-            val enclosingFunction = context.customEnclosingFunction[irClass.attributeOwnerId] ?: parentFunction
+            val enclosingFunction = if (parentFunction?.origin == InstanceInitializersLowering.COMMON_INIT_STATEMENTS)
+                irClass.primaryConstructor ?: irClass.constructors.first()
+            else parentFunction
             if (enclosingFunction != null || irClass.isAnonymousObject) {
                 val method = enclosingFunction?.let(context.methodSignatureMapper::mapAsmMethod)
                 visitor.visitOuterClass(parentClassCodegen.type.internalName, method?.name, method?.descriptor)

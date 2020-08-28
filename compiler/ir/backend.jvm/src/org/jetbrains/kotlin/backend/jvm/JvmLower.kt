@@ -144,12 +144,6 @@ internal val localDeclarationsPhase = makeIrFilePhase(
     prerequisite = setOf(functionReferencePhase, sharedVariablesPhase)
 )
 
-private val jvmLocalClassExtractionPhase = makeIrFilePhase(
-    ::JvmLocalClassPopupLowering,
-    name = "JvmLocalClassExtraction",
-    description = "Move local classes from field initializers and anonymous init blocks into the containing class"
-)
-
 private val computeStringTrimPhase = makeIrFilePhase<JvmBackendContext>(
     { context ->
         if (context.state.canReplaceStdlibRuntimeApiBehavior)
@@ -215,16 +209,14 @@ private val staticInitializersPhase = makeIrFilePhase(
     description = "Move code from object init blocks and static field initializers to a new <clinit> function"
 )
 
-private val initializersPhase = makeIrFilePhase(
-    ::InitializersLowering,
-    name = "Initializers",
-    description = "Merge init blocks and field initializers into constructors",
-    // Depends on local class extraction, because otherwise local classes in initializers will be copied into each constructor.
-    prerequisite = setOf(jvmLocalClassExtractionPhase)
+private val instanceInitializersPhase = makeIrFilePhase(
+    ::InstanceInitializersLowering,
+    name = "InstanceInitializers",
+    description = "Merge init blocks and field initializers into constructors"
 )
 
 private val initializersCleanupPhase = makeIrFilePhase(
-    { context ->
+    { context: JvmBackendContext ->
         InitializersCleanupLowering(context) {
             it.constantValue(context) == null && (!it.isStatic || it.correspondingPropertySymbol?.owner?.isConst != true)
         }
@@ -242,7 +234,7 @@ private val initializersCleanupPhase = makeIrFilePhase(
             }
         })
     }),
-    prerequisite = setOf(initializersPhase)
+    prerequisite = setOf(instanceInitializersPhase)
 )
 
 private val returnableBlocksPhase = makeIrFilePhase(
@@ -318,7 +310,6 @@ private val jvmFilePhases = listOf(
     assertionPhase,
     returnableBlocksPhase,
     localDeclarationsPhase,
-    jvmLocalClassExtractionPhase,
     staticLambdaPhase,
 
     jvmDefaultConstructorPhase,
@@ -350,7 +341,7 @@ private val jvmFilePhases = listOf(
     enumClassPhase,
     objectClassPhase,
     staticInitializersPhase,
-    initializersPhase,
+    instanceInitializersPhase,
     initializersCleanupPhase,
     collectionStubMethodLowering,
     functionNVarargBridgePhase,

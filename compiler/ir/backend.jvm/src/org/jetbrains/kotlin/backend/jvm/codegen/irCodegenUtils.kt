@@ -111,9 +111,7 @@ val IrType.isExtensionFunctionType: Boolean
 /* Borrowed with modifications from MemberCodegen.java */
 
 fun writeInnerClass(innerClass: IrClass, typeMapper: IrTypeMapper, context: JvmBackendContext, v: ClassBuilder) {
-    val outerClassInternalName =
-        if (context.customEnclosingFunction[innerClass.attributeOwnerId] != null) null
-        else innerClass.parent.safeAs<IrClass>()?.let(typeMapper::classInternalName)
+    val outerClassInternalName = innerClass.parent.safeAs<IrClass>()?.let(typeMapper::classInternalName)
     val innerName = innerClass.name.takeUnless { it.isSpecial }?.asString()
     val innerClassInternalName = typeMapper.classInternalName(innerClass)
     v.visitInnerClass(innerClassInternalName, outerClassInternalName, innerName, innerClass.calculateInnerClassAccessFlags(context))
