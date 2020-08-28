@@ -32,6 +32,11 @@ class KotlinSuggestedRefactoringTest : BaseSuggestedRefactoringTest() {
         }
     }
 
+    override fun tearDown() {
+        _suggestedChangeSignatureNewParameterValuesForTests = null
+        super.tearDown()
+    }
+
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     fun testAddParameter() {
