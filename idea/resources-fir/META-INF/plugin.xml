@@ -97,6 +97,9 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.fir.low.level.api.FirIdeResolveStateService"/>
     <projectService serviceImplementation="org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.asJava.LightClassProvider"
+                    serviceImplementation="org.jetbrains.kotlin.idea.asJava.LightClassProviderFirImpl"/>
+
     <completion.contributor language="kotlin"
                             id="KotlinCompletionContributor"
                             order="first"
@@ -201,8 +204,27 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
         order="first"/>
 
     <findUsagesHandlerFactory implementation="org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesSupport"
+                    serviceImplementation="org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesSupportFirImpl"/>
 
     <lang.findUsagesProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesProviderBase"/>
+
+    <gotoDeclarationHandler implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinImportAliasGotoDeclarationHandler"/>
+    <referencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReferencesSearcher"/>
+    <referencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinAliasedImportedElementSearcher"/>
+<!--    <directClassInheritorsSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinDirectInheritorsSearcher"/>-->
+<!--    <overridingMethodsSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinOverridingMethodsWithGenericsSearcher"/>-->
+<!--    <definitionsScopedSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinDefinitionsSearcher"/>-->
+<!--    <annotatedElementsSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinAnnotatedElementsSearcher"/>-->
+<!--    <classesWithAnnotatedMembersSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinClassesWithAnnotatedMembersSearcher"/>-->
+<!--    <methodReferencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinPropertyAccessorsReferenceSearcher"/>-->
+<!--    <methodReferencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinConstructorDelegationCallReferenceSearcher"/>-->
+<!--    <methodReferencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinOverridingMethodReferenceSearcher"/>-->
+<!--    <methodReferencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinConventionMethodReferencesSearcher"/>-->
+<!--    <methodReferencesSearch implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.DefaultAnnotationMethodKotlinImplicitReferenceSearcher"/>-->
+
+    <readWriteAccessDetector implementation="org.jetbrains.kotlin.idea.search.ideaExtensions.KotlinReadWriteAccessDetector" id="kotlin"/>
+
 
     <fileType name="Kotlin"
               implementationClass="org.jetbrains.kotlin.idea.KotlinFileType"

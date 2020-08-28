@@ -38,7 +38,7 @@ interface LightClassProvider {
 
     fun toLightElements(ktElement: KtElement): List<PsiNamedElement>
 
-    fun createKtFakeLightClass(kotlinOrigin: KtClassOrObject): PsiClass
+    fun createKtFakeLightClass(kotlinOrigin: KtClassOrObject): PsiClass?
 
     fun getRepresentativeLightMethod(psiElement: PsiElement): PsiMethod?
 
