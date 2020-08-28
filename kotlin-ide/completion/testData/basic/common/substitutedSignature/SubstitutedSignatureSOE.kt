@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 import kotlin.internal.Exact
 
 interface Column<out V>

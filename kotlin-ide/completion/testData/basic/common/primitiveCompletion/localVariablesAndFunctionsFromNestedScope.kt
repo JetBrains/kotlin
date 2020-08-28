@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 fun run(action: () -> Unit) = action()
 
 fun test() {

@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 open class A {
     fun aa() {}
     val aaa = 10

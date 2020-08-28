@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 package Test
 
 class Some() {

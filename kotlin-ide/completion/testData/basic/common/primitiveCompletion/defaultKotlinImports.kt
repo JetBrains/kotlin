@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 fun usage() {
     val a = <caret>
 }

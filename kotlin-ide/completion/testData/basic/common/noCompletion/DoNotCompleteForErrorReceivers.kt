@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 /// KT-1187 Wrong unnecessary completion
 
 fun anyfun() {

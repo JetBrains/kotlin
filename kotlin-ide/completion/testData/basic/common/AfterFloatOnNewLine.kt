@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 fun test() {
     val some = 1
     val f = 1.0f

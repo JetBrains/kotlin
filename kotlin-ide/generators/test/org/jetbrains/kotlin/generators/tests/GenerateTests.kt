@@ -994,7 +994,15 @@ private fun assembleWorkspace(): TWorkspace = workspace {
             model("checker/infos")
             model("checker/diagnosticsMessage")
         }
-    }*/
+    }
+
+    testGroup("idea/idea-fir/tests", "idea/idea-completion/testData") {
+        testClass<AbstractHighLevelJvmBasicCompletionTest> {
+            model("basic/common")
+            model("basic/java")
+        }
+    }
+    */
 
     testGroup("scripting-support") {
         testClass<AbstractScratchRunActionTest> {
