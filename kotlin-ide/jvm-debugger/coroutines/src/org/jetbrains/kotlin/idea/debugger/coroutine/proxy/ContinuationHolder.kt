@@ -86,7 +86,7 @@ class ContinuationHolder private constructor(val context: DefaultExecutionContex
         frame: MirrorOfStackFrame
     ): DefaultCoroutineStackFrameItem? {
         val stackTraceElement = frame.baseContinuationImpl.stackTraceElement?.stackTraceElement() ?: return null
-        val locationClass = context.findClassSafe(stackTraceElement.className) ?: return null
+        val locationClass = context.findClassSafe(stackTraceElement.className)
         val generatedLocation = locationCache.createLocation(locationClass, stackTraceElement.methodName, stackTraceElement.lineNumber)
         val spilledVariables = frame.baseContinuationImpl.spilledValues(context)
         return DefaultCoroutineStackFrameItem(generatedLocation, spilledVariables)

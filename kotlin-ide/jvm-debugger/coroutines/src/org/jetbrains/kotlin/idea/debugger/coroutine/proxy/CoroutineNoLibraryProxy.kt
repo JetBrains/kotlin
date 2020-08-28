@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.debugger.evaluate.DefaultExecutionContext
 
 class CoroutineNoLibraryProxy(private val executionContext: DefaultExecutionContext) : CoroutineInfoProvider {
-    val log by logger
+    private val log by logger
     private val debugMetadataKtType = executionContext.findCoroutineMetadataType()
     private val holder = ContinuationHolder.instance(executionContext)
 

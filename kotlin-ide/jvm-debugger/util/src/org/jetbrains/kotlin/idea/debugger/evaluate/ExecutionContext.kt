@@ -11,6 +11,7 @@ import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
 import com.intellij.debugger.impl.DebuggerUtilsEx
+import com.intellij.debugger.jdi.ClassesByNameProvider
 import com.intellij.debugger.jdi.StackFrameProxyImpl
 import com.intellij.debugger.jdi.VirtualMachineProxyImpl
 import com.intellij.openapi.project.Project
@@ -47,6 +48,10 @@ class DefaultExecutionContext(evaluationContext: EvaluationContextImpl) : BaseEx
             super.keepReference(ref)
         }
         return ref
+    }
+
+    val classesCache: ClassesByNameProvider by lazy {
+        ClassesByNameProvider.createCache(vm.allClasses())
     }
 }
 

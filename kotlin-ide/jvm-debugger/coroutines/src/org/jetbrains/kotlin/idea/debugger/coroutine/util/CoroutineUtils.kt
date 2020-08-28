@@ -105,7 +105,10 @@ fun StackTraceElement.isCreationSeparatorFrame() =
 
 fun Location.findPosition(project: Project) =
     readAction {
-        getPosition(project, declaringType().name(), lineNumber())
+        if (declaringType() != null)
+            getPosition(project, declaringType().name(), lineNumber())
+        else
+            null
     }
 
 private fun getPosition(project: Project, className: String, lineNumber: Int): XSourcePosition? {

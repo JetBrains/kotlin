@@ -73,7 +73,7 @@ class DefaultCoroutineStackFrameItem(location: Location, spilledVariables: List<
         return debugProcess.invokeInManagerThread {
             val frame = debugProcess.findFirstFrame() ?: return@invokeInManagerThread null
             val locationStackFrameProxyImpl = LocationStackFrameProxyImpl(location, frame)
-            val position = location.findPosition(debugProcess.project) ?: return@invokeInManagerThread null
+            val position = location.findPosition(debugProcess.project)
             CoroutineStackFrame(locationStackFrameProxyImpl, position, spilledVariables, false)
         }
     }
