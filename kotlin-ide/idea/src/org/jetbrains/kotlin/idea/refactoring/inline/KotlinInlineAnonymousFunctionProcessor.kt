@@ -27,26 +27,7 @@ class KotlinInlineAnonymousFunctionProcessor(
     override fun findUsages(): Array<UsageInfo> = arrayOf(UsageInfo(usage))
 
     override fun performRefactoring(usages: Array<out UsageInfo>) {
-        val invokeCallExpression = when (usage) {
-            is KtQualifiedExpression -> usage.selectorExpression
-            is KtCallExpression -> OperatorToFunctionIntention.convert(usage).second.parent
-            else -> return
-        } as KtCallExpression
-
-        val qualifiedExpression = invokeCallExpression.parent as KtQualifiedExpression
-        val function = qualifiedExpression.receiverExpression.deparenthesize() as KtNamedFunction
-        val codeToInline = createCodeToInlineForFunction(function, editor) ?: return
-        val context = invokeCallExpression.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
-        val resolvedCall = invokeCallExpression.getResolvedCall(context) ?: return
-
-        CodeInliner(
-            usageExpression = null,
-            bindingContext = context,
-            resolvedCall = resolvedCall,
-            callElement = invokeCallExpression,
-            inlineSetter = false,
-            codeToInline = codeToInline,
-        ).doInline()
+        Companion.performRefactoring(usage, editor)
     }
 
     companion object {
@@ -58,6 +39,29 @@ class KotlinInlineAnonymousFunctionProcessor(
             return psiElement?.takeIf {
                 it is KtCallExpression || it is KtQualifiedExpression && it.selectorExpression.isInvokeCall
             }
+        }
+
+        fun performRefactoring(usage: KtExpression, editor: Editor?) {
+            val invokeCallExpression = when (usage) {
+                is KtQualifiedExpression -> usage.selectorExpression
+                is KtCallExpression -> OperatorToFunctionIntention.convert(usage).second.parent
+                else -> return
+            } as KtCallExpression
+
+            val qualifiedExpression = invokeCallExpression.parent as KtQualifiedExpression
+            val function = qualifiedExpression.receiverExpression.deparenthesize() as KtNamedFunction
+            val codeToInline = createCodeToInlineForFunction(function, editor) ?: return
+            val context = invokeCallExpression.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
+            val resolvedCall = invokeCallExpression.getResolvedCall(context) ?: return
+
+            CodeInliner(
+                usageExpression = null,
+                bindingContext = context,
+                resolvedCall = resolvedCall,
+                callElement = invokeCallExpression,
+                inlineSetter = false,
+                codeToInline = codeToInline,
+            ).doInline()
         }
     }
 }
