@@ -38,6 +38,7 @@ class ReactJsClientTemplate : JsClientTemplate() {
         GenerationPhase.PROJECT_GENERATION
     ) {
         defaultValue = value(false)
+        description = KotlinNewProjectWizardBundle.message("module.template.react.use.styled.components.description")
     }
 
     val useReactRouterDom by booleanSetting(
@@ -45,6 +46,7 @@ class ReactJsClientTemplate : JsClientTemplate() {
         GenerationPhase.PROJECT_GENERATION
     ) {
         defaultValue = value(false)
+        description = KotlinNewProjectWizardBundle.message("module.template.react.use.react.router.dom.description")
     }
 
     val useReactRedux by booleanSetting(
@@ -52,6 +54,7 @@ class ReactJsClientTemplate : JsClientTemplate() {
         GenerationPhase.PROJECT_GENERATION
     ) {
         defaultValue = value(false)
+        description = KotlinNewProjectWizardBundle.message("module.template.react.use.react.redux.description")
     }
 
     override val settings: List<TemplateSetting<*, *>> =
