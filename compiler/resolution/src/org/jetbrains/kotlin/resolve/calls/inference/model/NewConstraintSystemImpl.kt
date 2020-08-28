@@ -92,7 +92,7 @@ class NewConstraintSystemImpl(
         transactionRegisterVariable(variable)
         storage.allTypeVariables[variable.freshTypeConstructor()] = variable
         notProperTypesCache.clear()
-        storage.notFixedTypeVariables[variable.freshTypeConstructor()] = MutableVariableWithConstraints(variable)
+        storage.notFixedTypeVariables[variable.freshTypeConstructor()] = MutableVariableWithConstraints(this, variable)
     }
 
     override fun markPostponedVariable(variable: TypeVariableMarker) {
@@ -200,7 +200,7 @@ class NewConstraintSystemImpl(
             notProperTypesCache.clear()
         }
         for ((variable, constraints) in otherSystem.notFixedTypeVariables) {
-            notFixedTypeVariables[variable] = MutableVariableWithConstraints(constraints)
+            notFixedTypeVariables[variable] = MutableVariableWithConstraints(this, constraints)
         }
         storage.initialConstraints.addAll(otherSystem.initialConstraints)
         storage.maxTypeDepthFromInitialConstraints =

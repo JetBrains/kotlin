@@ -7,21 +7,21 @@ package org.jetbrains.kotlin.resolve.calls.inference.model
 
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemUtilContext
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.model.KotlinTypeMarker
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
-import org.jetbrains.kotlin.types.model.TypeVariableMarker
+import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.trimToSize
 
+private typealias Context = TypeSystemInferenceExtensionContext
+
 class MutableVariableWithConstraints private constructor(
+    private val context: Context,
     override val typeVariable: TypeVariableMarker,
     constraints: List<Constraint>? // assume simplified and deduplicated
 ) : VariableWithConstraints {
 
-    constructor(typeVariable: TypeVariableMarker) : this(typeVariable, null)
+    constructor(context: Context, typeVariable: TypeVariableMarker) : this(context, typeVariable, null)
 
-    constructor(other: VariableWithConstraints) : this(other.typeVariable, other.constraints)
+    constructor(context: Context, other: VariableWithConstraints) : this(context, other.typeVariable, other.constraints)
 
     override val constraints: List<Constraint>
         get() {
@@ -152,20 +152,26 @@ class MutableVariableWithConstraints private constructor(
     }
 
     // Such constraint is applicable for simplification
-    private fun Constraint.isLowerAndFlexibleTypeWithDefNotNullLowerBound(): Boolean =
-        kind == ConstraintKind.LOWER && type is FlexibleType && type.lowerBound.isDefinitelyNotNullType
+    private fun Constraint.isLowerAndFlexibleTypeWithDefNotNullLowerBound(): Boolean {
+        return with(context) {
+            kind == ConstraintKind.LOWER && type.isFlexible() && type.lowerBoundIfFlexible().isDefinitelyNotNullType()
+        }
+    }
 
     private fun Constraint.isStrongerThanLowerAndFlexibleTypeWithDefNotNullLowerBound(other: Constraint): Boolean {
         if (this === other) return false
 
         if (typeHashCode != other.typeHashCode || kind == ConstraintKind.UPPER) return false
-        if (type !is FlexibleType) return false
-
-        val otherFlexibleType = other.type as? FlexibleType ?: return false
-        val otherLowerBound = otherFlexibleType.lowerBound as? DefinitelyNotNullType ?: return false
-        val otherUpperBound = otherFlexibleType.upperBound
-
-        return type.lowerBound == otherLowerBound.original && type.upperBound == otherUpperBound
+        with(context) {
+            if (!type.isFlexible() || !other.type.isFlexible()) return false
+            val otherLowerBound = other.type.lowerBoundIfFlexible()
+            if (!otherLowerBound.isDefinitelyNotNullType()) return false
+            require(otherLowerBound is DefinitelyNotNullTypeMarker)
+            val thisLowerBound = type.lowerBoundIfFlexible()
+            val thisUpperBound = type.upperBoundIfFlexible()
+            val otherUpperBound = other.type.upperBoundIfFlexible()
+            return thisLowerBound == otherLowerBound.original() && thisUpperBound == otherUpperBound
+        }
     }
 
     private fun SmartList<Constraint>.simplifyEqualityConstraints(): SmartList<Constraint> {
