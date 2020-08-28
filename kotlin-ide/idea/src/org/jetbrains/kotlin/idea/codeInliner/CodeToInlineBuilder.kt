@@ -311,8 +311,15 @@ class CodeToInlineBuilder(
         val targetDispatchReceiverType = targetCallable.dispatchReceiverParameter?.value?.type
         val targetExtensionReceiverType = targetCallable.extensionReceiverParameter?.value?.type
         val isAnonymousFunction = originalDeclaration?.isAnonymousFunction == true
-        val isAnonymousFunctionWithReceiver =
-            isAnonymousFunction && originalDeclaration.cast<KtNamedFunction>().receiverTypeReference != null
+        val isAnonymousFunctionWithReceiver = isAnonymousFunction &&
+                originalDeclaration.cast<KtNamedFunction>().receiverTypeReference != null
+
+        fun getParameterName(parameter: ValueParameterDescriptor): Name = if (isAnonymousFunction) {
+            val shift = if (isAnonymousFunctionWithReceiver) 2 else 1
+            Name.identifier("p${parameter.index + shift}")
+        } else {
+            parameter.name
+        }
 
         codeToInline.forEachDescendantOfType<KtSimpleNameExpression> { expression ->
             val parent = expression.parent
@@ -352,17 +359,13 @@ class CodeToInlineBuilder(
                     }
                 }
 
-                expression.putCopyableUserData(CodeToInline.PARAMETER_USAGE_KEY, target.name)
+                expression.putCopyableUserData(CodeToInline.PARAMETER_USAGE_KEY, getParameterName(target))
             } else if (receiverExpression == null) {
-                if (target is ValueParameterDescriptor && target.containingDeclaration == callableDescriptor) {
-                    val name = if (isAnonymousFunction) {
-                        val shift = if (isAnonymousFunctionWithReceiver) 2 else 1
-                        Name.identifier("p${target.index + shift}")
-                    } else {
-                        target.name
-                    }
-
-                    expression.putCopyableUserData(CodeToInline.PARAMETER_USAGE_KEY, name)
+                if (isAnonymousFunctionWithReceiver && target == callableDescriptor) {
+                    // parent is [KtThisExpression]
+                    parent.putCopyableUserData(CodeToInline.PARAMETER_USAGE_KEY, getFirstParameterName())
+                } else if (target is ValueParameterDescriptor && target.containingDeclaration == callableDescriptor) {
+                    expression.putCopyableUserData(CodeToInline.PARAMETER_USAGE_KEY, getParameterName(target))
                 } else if (target is TypeParameterDescriptor && target.containingDeclaration == callableDescriptor) {
                     expression.putCopyableUserData(CodeToInline.TYPE_PARAMETER_USAGE_KEY, target.name)
                 }
@@ -391,8 +394,11 @@ class CodeToInlineBuilder(
                                     )
                                 ) as? KtQualifiedExpression
 
-                                if (receiverType != targetDispatchReceiverType && receiverType != targetExtensionReceiverType) {
-                                    replaced?.receiverExpression?.putCopyableUserData(CodeToInline.SIDE_RECEIVER_USAGE_KEY, Unit)
+                                val thisExpression = replaced?.receiverExpression ?: return@addPreCommitAction
+                                if (isAnonymousFunctionWithReceiver && receiverType == targetExtensionReceiverType) {
+                                    thisExpression.putCopyableUserData(CodeToInline.PARAMETER_USAGE_KEY, getFirstParameterName())
+                                } else if (receiverType != targetDispatchReceiverType && receiverType != targetExtensionReceiverType) {
+                                    thisExpression.putCopyableUserData(CodeToInline.SIDE_RECEIVER_USAGE_KEY, Unit)
                                 }
                             }
                         }
@@ -402,3 +408,5 @@ class CodeToInlineBuilder(
         }
     }
 }
+
+private fun getFirstParameterName(): Name = Name.identifier("p1")

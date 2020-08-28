@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class CodeInliner<TCallElement : KtElement>(
-    private val usageExpression: KtExpression,
+    private val usageExpression: KtSimpleNameExpression?,
     private val bindingContext: BindingContext,
     private val resolvedCall: ResolvedCall<out CallableDescriptor>,
     private val callElement: TCallElement,
@@ -81,12 +81,7 @@ class CodeInliner<TCallElement : KtElement>(
             codeToInline.mainExpression = null
         }
 
-        var receiver = when (usageExpression) {
-            is KtSimpleNameExpression -> usageExpression.getReceiverExpression()
-            is KtCallExpression -> usageExpression.parent?.safeAs<KtQualifiedExpression>()?.receiverExpression
-            else -> null
-        }
-
+        var receiver = usageExpression?.getReceiverExpression()
         receiver?.marked(USER_CODE_KEY)
         var receiverType = if (receiver != null) bindingContext.getType(receiver) else null
 

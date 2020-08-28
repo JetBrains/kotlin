@@ -29,6 +29,26 @@ public class InlineTestGenerated extends AbstractInlineTest {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
+        @TestMetadata("inWith.kt")
+        public void testInWith() throws Exception {
+            runTest("testData/refactoring/inline/anonymousFunction/inWith.kt");
+        }
+
+        @TestMetadata("lambdaWithReceiverAsParameter.kt")
+        public void testLambdaWithReceiverAsParameter() throws Exception {
+            runTest("testData/refactoring/inline/anonymousFunction/lambdaWithReceiverAsParameter.kt");
+        }
+
+        @TestMetadata("lambdaWithReceiverAsParameter2.kt")
+        public void testLambdaWithReceiverAsParameter2() throws Exception {
+            runTest("testData/refactoring/inline/anonymousFunction/lambdaWithReceiverAsParameter2.kt");
+        }
+
+        @TestMetadata("lambdaWithReceiverAsParameter3.kt")
+        public void testLambdaWithReceiverAsParameter3() throws Exception {
+            runTest("testData/refactoring/inline/anonymousFunction/lambdaWithReceiverAsParameter3.kt");
+        }
+
         @TestMetadata("withConstantParameter.kt")
         public void testWithConstantParameter() throws Exception {
             runTest("testData/refactoring/inline/anonymousFunction/withConstantParameter.kt");
@@ -39,9 +59,19 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/anonymousFunction/withInvoke.kt");
         }
 
+        @TestMetadata("withNotInvoke.kt")
+        public void testWithNotInvoke() throws Exception {
+            runTest("testData/refactoring/inline/anonymousFunction/withNotInvoke.kt");
+        }
+
         @TestMetadata("withReceiver.kt")
         public void testWithReceiver() throws Exception {
             runTest("testData/refactoring/inline/anonymousFunction/withReceiver.kt");
+        }
+
+        @TestMetadata("withReceiver2.kt")
+        public void testWithReceiver2() throws Exception {
+            runTest("testData/refactoring/inline/anonymousFunction/withReceiver2.kt");
         }
 
         @TestMetadata("withReceiverAsInvoke.kt")

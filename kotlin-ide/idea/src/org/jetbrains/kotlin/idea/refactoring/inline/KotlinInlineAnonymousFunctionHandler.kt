@@ -22,11 +22,6 @@ class KotlinInlineAnonymousFunctionHandler : AbstractKotlinInlineFunctionHandler
             return showErrorHint(project, editor, message)
         }
 
-        if (function.receiverTypeReference != null) {
-            val message = KotlinBundle.message("refactoring.cannot.be.applied.to.anonymous.function.with.receiver", refactoringName)
-            return showErrorHint(project, editor, message)
-        }
-
         KotlinInlineAnonymousFunctionProcessor(function, call, editor, project).run()
     }
 }

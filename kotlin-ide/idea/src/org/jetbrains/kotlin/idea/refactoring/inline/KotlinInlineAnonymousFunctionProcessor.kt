@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.utils.addToStdlib.cast
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 class KotlinInlineAnonymousFunctionProcessor(
     function: KtNamedFunction,
@@ -27,23 +27,23 @@ class KotlinInlineAnonymousFunctionProcessor(
     override fun findUsages(): Array<UsageInfo> = arrayOf(UsageInfo(usage))
 
     override fun performRefactoring(usages: Array<out UsageInfo>) {
-        val callExpression = when (usage) {
-            is KtQualifiedExpression -> usage.selectorExpression as KtCallExpression
-            is KtCallExpression -> OperatorToFunctionIntention.convert(usage).second.parent as KtCallExpression
+        val invokeCallExpression = when (usage) {
+            is KtQualifiedExpression -> usage.selectorExpression
+            is KtCallExpression -> OperatorToFunctionIntention.convert(usage).second.parent
             else -> return
-        }
+        } as KtCallExpression
 
-        val qualifiedExpression = callExpression.parent.cast<KtQualifiedExpression>()
+        val qualifiedExpression = invokeCallExpression.parent as KtQualifiedExpression
         val function = qualifiedExpression.receiverExpression.deparenthesize() as KtNamedFunction
         val codeToInline = createCodeToInlineForFunction(function, editor) ?: return
-        val context = callExpression.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
-        val resolvedCall = callExpression.getResolvedCall(context) ?: return
+        val context = invokeCallExpression.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
+        val resolvedCall = invokeCallExpression.getResolvedCall(context) ?: return
 
         CodeInliner(
-            usageExpression = qualifiedExpression,
+            usageExpression = null,
             bindingContext = context,
             resolvedCall = resolvedCall,
-            callElement = callExpression,
+            callElement = invokeCallExpression,
             inlineSetter = false,
             codeToInline = codeToInline,
         ).doInline()
@@ -55,7 +55,16 @@ class KotlinInlineAnonymousFunctionProcessor(
                 .takeWhile { it is KtParenthesizedExpression }
                 .lastOrNull()?.parent as? KtExpression
 
-            return psiElement?.takeIf { it is KtCallExpression || it is KtQualifiedExpression }
+            return psiElement?.takeIf {
+                it is KtCallExpression || it is KtQualifiedExpression && it.selectorExpression.isInvokeCall
+            }
         }
     }
 }
+
+private val KtExpression?.isInvokeCall: Boolean
+    get() {
+        if (this !is KtCallExpression) return false
+        val callName = calleeExpression?.text ?: return false
+        return callName == OperatorNameConventions.INVOKE.asString()
+    }
