@@ -45,7 +45,7 @@ fun wrapScopeWithJvmMapped(
                 (klass.symbol.constructType(
                     klass.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
                     false
-                ) as ConeClassLikeType).wrapSubstitutionScopeIfNeed(useSiteSession, jvmMappedScope, klass, scopeSession)
+                ) as ConeClassLikeType).wrapSubstitutionScopeIfNeed(useSiteSession, jvmMappedScope, klass, scopeSession, klass.classId)
             }
         }
     } else {

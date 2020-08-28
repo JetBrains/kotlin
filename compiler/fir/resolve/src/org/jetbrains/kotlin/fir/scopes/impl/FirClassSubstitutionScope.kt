@@ -45,7 +45,7 @@ class FirClassSubstitutionScope(
     constructor(
         session: FirSession, useSiteMemberScope: FirTypeScope, scopeSession: ScopeSession,
         substitution: Map<FirTypeParameterSymbol, ConeKotlinType>,
-        skipPrivateMembers: Boolean, derivedClassId: ClassId? = null
+        skipPrivateMembers: Boolean, derivedClassId: ClassId?
     ) : this(session, useSiteMemberScope, scopeSession, substitutorByMap(substitution), skipPrivateMembers, derivedClassId)
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {

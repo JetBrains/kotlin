@@ -88,7 +88,7 @@ fun ConeClassLikeType.wrapSubstitutionScopeIfNeed(
     useSiteMemberScope: FirTypeScope,
     declaration: FirClassLikeDeclaration<*>,
     builder: ScopeSession,
-    derivedClassId: ClassId? = null
+    derivedClassId: ClassId?
 ): FirTypeScope {
     if (this.typeArguments.isEmpty()) return useSiteMemberScope
     return builder.getOrBuild(declaration.symbol, SubstitutionScopeKey(this)) {
