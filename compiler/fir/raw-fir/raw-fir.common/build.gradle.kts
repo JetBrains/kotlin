@@ -10,8 +10,9 @@ plugins {
 
 dependencies {
     api(project(":compiler:fir:tree"))
-    api(project(":compiler:psi"))
-    api("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.2")
+
+    implementation(kotlinxCollectionsImmutable())
+    implementation(project(":compiler:psi"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 

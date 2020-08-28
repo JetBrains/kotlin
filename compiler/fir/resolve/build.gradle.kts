@@ -8,13 +8,11 @@ repositories {
 }
 
 dependencies {
-    compile(project(":core:compiler.common"))
-    compile(project(":core:descriptors.jvm"))
-    compile(project(":core:deserialization"))
-    compile(project(":compiler:fir:cones"))
-    compile(project(":compiler:fir:tree"))
-    compile(project(":compiler:resolution.common"))
-    compile("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:${property("versions.kotlinx-collections-immutable")}")
+    api(project(":core:compiler.common"))
+    api(project(":compiler:resolution.common"))
+    api(project(":compiler:fir:cones"))
+    api(project(":compiler:fir:tree"))
+    api(kotlinxCollectionsImmutable())
     implementation(project(":core:util.runtime"))
 
     compileOnly(project(":kotlin-reflect-api"))

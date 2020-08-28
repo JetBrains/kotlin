@@ -16,6 +16,8 @@ repositories {
 
 dependencies {
     api(project(":compiler:fir:raw-fir:raw-fir.common"))
+    implementation(project(":compiler:psi"))
+    implementation(kotlinxCollectionsImmutable())
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 

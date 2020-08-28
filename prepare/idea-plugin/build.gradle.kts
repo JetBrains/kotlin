@@ -166,7 +166,7 @@ dependencies {
     embedded(protobufFull())
     embedded(kotlinBuiltins(forJvm = true))
 
-    libraries(commonDep("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:${property("versions.kotlinx-collections-immutable")}"))
+    libraries(commonDep(kotlinxCollectionsImmutable()))
     libraries(commonDep("javax.inject"))
     libraries(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8"))
     libraries(commonDep("org.jetbrains", "markdown"))

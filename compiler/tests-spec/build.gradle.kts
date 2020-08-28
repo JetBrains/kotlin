@@ -6,6 +6,9 @@ plugins {
 dependencies {
     testCompile(projectTests(":compiler"))
     Platform[192].orHigher {
+        testCompileOnly(intellijDep()) {
+            includeJars("gson", "groovy-all", rootProject = rootProject)
+        }
         testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
         testRuntimeOnly(intellijPluginDep("java"))
     }

@@ -22,19 +22,19 @@ dependencies {
         testRuntimeOnly(intellijPluginDep("java"))
     }
 
-    testRuntime(intellijDep())
+    testRuntimeOnly(intellijDep())
 
-    testCompile(commonDep("junit:junit"))
+    testApi(commonDep("junit:junit"))
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
-    testCompile(projectTests(":compiler:tests-common"))
+    testApi(projectTests(":compiler:tests-common"))
 
     testCompileOnly(project(":kotlin-reflect-api"))
-    testRuntime(project(":kotlin-reflect"))
-    testRuntime(project(":core:descriptors.runtime"))
-    testCompile(projectTests(":compiler:fir:analysis-tests"))
-    testCompile(project(":compiler:fir:resolve"))
-    testCompile(project(":compiler:fir:dump"))
+    testRuntimeOnly(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":core:descriptors.runtime"))
+    testApi(projectTests(":compiler:fir:analysis-tests"))
+    testApi(project(":compiler:fir:resolve"))
+    testApi(project(":compiler:fir:dump"))
 
     val asyncProfilerClasspath = project.findProperty("fir.bench.async.profiler.classpath") as? String
     if (asyncProfilerClasspath != null) {
