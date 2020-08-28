@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.session
 
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
@@ -55,9 +54,8 @@ object FirSessionFactory {
                 ) as FirSymbolProvider
             )
 
-            Extensions.getArea(sessionProvider.project)
-                .getExtensionPoint(PsiElementFinder.EP_NAME)
-                .registerExtension(FirJavaElementFinder(this, sessionProvider.project))
+            PsiElementFinder.EP.getPoint(sessionProvider.project)
+                .registerExtension(FirJavaElementFinder(this, sessionProvider.project), sessionProvider.project)
         }
     }
 
