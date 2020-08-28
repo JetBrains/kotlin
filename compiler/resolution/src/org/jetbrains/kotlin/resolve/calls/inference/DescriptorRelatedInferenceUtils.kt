@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
+import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.model.CallableReferenceKotlinCallArgument
@@ -61,7 +61,7 @@ fun CallableDescriptor.substituteAndApproximateTypes(
     return substitute(TypeSubstitutor.create(wrappedSubstitution)) ?: this
 }
 
-fun PostponedArgumentsAnalyzer.Context.addSubsystemFromArgument(argument: KotlinCallArgument?): Boolean {
+fun PostponedArgumentsAnalyzerContext.addSubsystemFromArgument(argument: KotlinCallArgument?): Boolean {
     return when (argument) {
         is SubKotlinCallArgument -> {
             addOtherSystem(argument.callResult.constraintSystem)

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
-import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
+import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedAtom
@@ -29,7 +29,7 @@ class NewConstraintSystemImpl(
     ResultTypeResolver.Context,
     ConstraintSystemCompletionContext,
     PostponedArgumentInputTypesResolver.Context,
-    PostponedArgumentsAnalyzer.Context {
+    PostponedArgumentsAnalyzerContext {
     private val storage = MutableConstraintStorage()
     private var state = State.BUILDING
     private val typeVariablesTransaction: MutableList<TypeVariableMarker> = SmartList()

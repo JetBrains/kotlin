@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.StoreNameReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
+import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.model.CoroutinePosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
@@ -48,7 +48,7 @@ class PostponedArgumentsAnalyzer(
 ) {
 
     fun analyze(
-        c: PostponedArgumentsAnalyzer.Context,
+        c: PostponedArgumentsAnalyzerContext,
         argument: PostponedResolvedAtom,
         candidate: Candidate
         //diagnosticsHolder: KotlinDiagnosticsHolder
@@ -96,7 +96,7 @@ class PostponedArgumentsAnalyzer(
     }
 
     private fun analyzeLambda(
-        c: PostponedArgumentsAnalyzer.Context,
+        c: PostponedArgumentsAnalyzerContext,
         lambda: ResolvedLambdaAtom,
         candidate: Candidate
         //diagnosticHolder: KotlinDiagnosticsHolder

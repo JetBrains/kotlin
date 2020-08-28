@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
-import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
+import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 
@@ -109,7 +109,7 @@ class CandidateFactory private constructor(
     }
 }
 
-fun PostponedArgumentsAnalyzer.Context.addSubsystemFromExpression(statement: FirStatement) {
+fun PostponedArgumentsAnalyzerContext.addSubsystemFromExpression(statement: FirStatement) {
     when (statement) {
         is FirFunctionCall,
         is FirQualifiedAccessExpression,
