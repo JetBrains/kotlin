@@ -38,7 +38,7 @@ class LightClassProviderImpl : LightClassProvider {
     override fun toLightElements(ktElement: KtElement): List<PsiNamedElement> =
         ktElement.toLightElements()
 
-    override fun createKtFakeLightClass(kotlinOrigin: KtClassOrObject): PsiClass =
+    override fun createKtFakeLightClass(kotlinOrigin: KtClassOrObject): PsiClass? =
         KtFakeLightClass(kotlinOrigin)
 
     override fun getRepresentativeLightMethod(psiElement: PsiElement): PsiMethod? =
