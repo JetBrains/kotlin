@@ -41,7 +41,10 @@ class PsiInlineCodegen(
     private val actualDispatchReceiver: Type = methodOwner
 ) : InlineCodegen<ExpressionCodegen>(
     codegen, state, function, methodOwner, signature, typeParameterMappings, sourceCompiler,
-    ReifiedTypeInliner(typeParameterMappings, PsiInlineIntrinsicsSupport(state), codegen.typeSystem, state.languageVersionSettings),
+    ReifiedTypeInliner(
+        typeParameterMappings, PsiInlineIntrinsicsSupport(state), codegen.typeSystem,
+        state.languageVersionSettings, state.unifiedNullChecks
+    ),
 ), CallGenerator {
     override fun generateAssertFieldIfNeeded(info: RootInliningContext) {
         if (info.generateAssertField) {

@@ -53,7 +53,8 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
     private val parametersMapping: TypeParameterMappings<KT>?,
     private val intrinsicsSupport: IntrinsicsSupport<KT>,
     private val typeSystem: TypeSystemCommonBackendContext,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val unifiedNullChecks: Boolean,
 ) {
     enum class OperationKind {
         NEW_ARRAY, AS, SAFE_AS, IS, JAVA_CLASS, ENUM_REIFIED, TYPE_OF;
@@ -222,7 +223,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         if (stubCheckcast !is TypeInsnNode) return false
 
         val newMethodNode = MethodNode(Opcodes.API_VERSION)
-        generateAsCast(InstructionAdapter(newMethodNode), kotlinType, asmType, safe, languageVersionSettings)
+        generateAsCast(InstructionAdapter(newMethodNode), kotlinType, asmType, safe, languageVersionSettings, unifiedNullChecks)
 
         instructions.insert(insn, newMethodNode.instructions)
         // Keep stubCheckcast to avoid VerifyErrors on 1.8+ bytecode,

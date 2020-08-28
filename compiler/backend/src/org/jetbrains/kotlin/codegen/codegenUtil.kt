@@ -98,11 +98,12 @@ fun generateAsCast(
     kotlinType: KotlinType,
     asmType: Type,
     isSafe: Boolean,
-    languageVersionSettings: LanguageVersionSettings
+    languageVersionSettings: LanguageVersionSettings,
+    unifiedNullChecks: Boolean,
 ) {
     if (!isSafe) {
         if (!TypeUtils.isNullableType(kotlinType)) {
-            generateNullCheckForNonSafeAs(v, kotlinType, languageVersionSettings)
+            generateNullCheckForNonSafeAs(v, kotlinType, unifiedNullChecks)
         }
     } else {
         with(v) {
@@ -122,15 +123,13 @@ fun generateAsCast(
 private fun generateNullCheckForNonSafeAs(
     v: InstructionAdapter,
     type: KotlinType,
-    languageVersionSettings: LanguageVersionSettings
+    unifiedNullChecks: Boolean,
 ) {
     with(v) {
         dup()
         val nonnull = Label()
         ifnonnull(nonnull)
-        val exceptionClass =
-            if (languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4) "java/lang/NullPointerException"
-            else "kotlin/TypeCastException"
+        val exceptionClass = if (unifiedNullChecks) "java/lang/NullPointerException" else "kotlin/TypeCastException"
         AsmUtil.genThrow(
             v,
             exceptionClass,
