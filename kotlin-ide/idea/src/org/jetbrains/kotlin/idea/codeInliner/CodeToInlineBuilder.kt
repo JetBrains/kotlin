@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
 import java.util.*
@@ -310,6 +311,8 @@ class CodeToInlineBuilder(
         val targetDispatchReceiverType = targetCallable.dispatchReceiverParameter?.value?.type
         val targetExtensionReceiverType = targetCallable.extensionReceiverParameter?.value?.type
         val isAnonymousFunction = originalDeclaration?.isAnonymousFunction == true
+        val isAnonymousFunctionWithReceiver =
+            isAnonymousFunction && originalDeclaration.cast<KtNamedFunction>().receiverTypeReference != null
 
         codeToInline.forEachDescendantOfType<KtSimpleNameExpression> { expression ->
             val parent = expression.parent
@@ -352,7 +355,13 @@ class CodeToInlineBuilder(
                 expression.putCopyableUserData(CodeToInline.PARAMETER_USAGE_KEY, target.name)
             } else if (receiverExpression == null) {
                 if (target is ValueParameterDescriptor && target.containingDeclaration == callableDescriptor) {
-                    val name = if (isAnonymousFunction) Name.identifier("p${target.index + 1}") else target.name
+                    val name = if (isAnonymousFunction) {
+                        val shift = if (isAnonymousFunctionWithReceiver) 2 else 1
+                        Name.identifier("p${target.index + shift}")
+                    } else {
+                        target.name
+                    }
+
                     expression.putCopyableUserData(CodeToInline.PARAMETER_USAGE_KEY, name)
                 } else if (target is TypeParameterDescriptor && target.containingDeclaration == callableDescriptor) {
                     expression.putCopyableUserData(CodeToInline.TYPE_PARAMETER_USAGE_KEY, target.name)
