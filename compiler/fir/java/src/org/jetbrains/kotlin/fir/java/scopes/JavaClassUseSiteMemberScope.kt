@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
-import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
+import org.jetbrains.kotlin.fir.resolve.FirJavaSyntheticNamesProvider
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.getContainingCallableNamesIfPresent
@@ -157,7 +157,7 @@ class JavaClassUseSiteMemberScope(
         if (name.isSpecial) {
             return processAccessorFunctionsAndPropertiesByName(name, emptyList(), processor)
         }
-        val getterNames = FirSyntheticPropertiesScope.possibleGetterNamesByPropertyName(name)
+        val getterNames = FirJavaSyntheticNamesProvider.possibleGetterNamesByPropertyName(name)
         val setterName = Name.identifier(SETTER_PREFIX + name.identifier.capitalize())
         return processAccessorFunctionsAndPropertiesByName(name, getterNames, processor)
     }

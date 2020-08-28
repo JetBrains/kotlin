@@ -9,10 +9,12 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.registerJvmEffectiveVisibilityResolver
 import org.jetbrains.kotlin.fir.resolve.calls.jvm.registerJvmCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.registerJavaClassMapper
+import org.jetbrains.kotlin.fir.resolve.registerJavaSyntheticNamesProvider
 
 fun FirSession.registerJavaSpecificComponents() {
     registerJavaVisibilityChecker()
     registerJvmCallConflictResolverFactory()
     registerJvmEffectiveVisibilityResolver()
     registerJavaClassMapper()
+    registerJavaSyntheticNamesProvider()
 }
