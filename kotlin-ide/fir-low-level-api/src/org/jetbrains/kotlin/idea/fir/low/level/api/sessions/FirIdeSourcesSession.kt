@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvide
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.resolve.transformers.PhasedFirFileResolver
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
-import org.jetbrains.kotlin.fir.session.registerCheckersComponent
 import org.jetbrains.kotlin.fir.session.registerCommonComponents
 import org.jetbrains.kotlin.fir.session.registerJavaSpecificComponents
 import org.jetbrains.kotlin.fir.session.registerResolveComponents
@@ -51,6 +50,7 @@ internal class FirIdeSourcesSession private constructor(
         /**
          * Should be invoked only under a [moduleInfo]-based lock
          */
+        @OptIn(SessionConfiguration::class)
         fun create(
             project: Project,
             moduleInfo: ModuleSourceInfo,
@@ -68,7 +68,6 @@ internal class FirIdeSourcesSession private constructor(
 
                 registerCommonComponents()
                 registerResolveComponents()
-                registerCheckersComponent()
 
                 val provider = FirIdeProvider(
                     project,

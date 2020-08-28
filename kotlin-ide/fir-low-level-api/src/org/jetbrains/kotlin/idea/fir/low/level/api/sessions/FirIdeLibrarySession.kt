@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.sessions
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
+import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
@@ -34,6 +35,7 @@ internal class FirIdeLibrariesSession private constructor(
     override val scope: GlobalSearchScope
 ) : FirIdeSession(moduleInfo, sessionProvider) {
     companion object {
+        @OptIn(SessionConfiguration::class)
         fun create(
             moduleInfo: ModuleSourceInfo,
             sessionProvider: FirIdeSessionProvider,
