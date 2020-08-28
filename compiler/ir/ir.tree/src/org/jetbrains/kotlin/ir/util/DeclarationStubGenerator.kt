@@ -196,13 +196,11 @@ class DeclarationStubGenerator(
         }
 
         if (createPropertyIfNeeded && descriptor is PropertyGetterDescriptor) {
-            val propertySymbol = symbolTable.referenceProperty(descriptor.correspondingProperty)
-            val property = irProviders_.getDeclaration(propertySymbol) as IrProperty
+            val property = generatePropertyStub(descriptor.correspondingProperty)
             return property.getter!!
         }
         if (createPropertyIfNeeded && descriptor is PropertySetterDescriptor) {
-            val propertySymbol = symbolTable.referenceProperty(descriptor.correspondingProperty)
-            val property = irProviders_.getDeclaration(propertySymbol) as IrProperty
+            val property = generatePropertyStub(descriptor.correspondingProperty)
             return property.setter!!
         }
 
