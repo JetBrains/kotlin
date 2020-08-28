@@ -10,12 +10,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.registerCheckersComponent
 import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.registerExtensions
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
-import org.jetbrains.kotlin.fir.java.registerJavaSpecificComponents
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -23,6 +21,10 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvide
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.resolve.transformers.PhasedFirFileResolver
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
+import org.jetbrains.kotlin.fir.session.registerCheckersComponent
+import org.jetbrains.kotlin.fir.session.registerCommonComponents
+import org.jetbrains.kotlin.fir.session.registerJavaSpecificComponents
+import org.jetbrains.kotlin.fir.session.registerResolveComponents
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
@@ -36,12 +38,13 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.util.collectTransitiveDepende
 /**
  * [org.jetbrains.kotlin.fir.FirSession] responsible for all Kotlin & Java source modules analysing module transitively depends on
  */
+@OptIn(PrivateSessionConstructor::class)
 internal class FirIdeSourcesSession private constructor(
-    override val moduleInfo: ModuleInfo?,
+    moduleInfo: ModuleInfo,
     sessionProvider: FirIdeSessionProvider,
     override val scope: GlobalSearchScope,
     val firFileBuilder: FirFileBuilder,
-) : FirIdeSession(sessionProvider) {
+) : FirIdeSession(moduleInfo, sessionProvider) {
     val cache get() = firIdeProvider.cache
 
     companion object {

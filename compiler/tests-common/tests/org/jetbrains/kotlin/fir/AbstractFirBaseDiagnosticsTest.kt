@@ -30,12 +30,11 @@ import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.registerExtensions
-import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
-import org.jetbrains.kotlin.fir.java.FirLibrarySession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -76,7 +75,8 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
 
         //For BuiltIns, registered in sessionProvider automatically
         val allProjectScope = GlobalSearchScope.allScope(project)
-        FirLibrarySession.create(
+
+        FirSessionFactory.createLibrarySession(
             builtInsModuleInfo, sessionProvider, allProjectScope, project,
             environment.createPackagePartProvider(allProjectScope)
         ).also {
@@ -88,7 +88,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
             val scope = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(
                 project,
                 moduleFiles.mapNotNull { it.ktFile })
-            FirJavaModuleBasedSession.create(info, sessionProvider, scope).also {
+            FirSessionFactory.createJavaModuleBasedSession(info, sessionProvider, scope).also {
                 registerFirExtensions(it.extensionService)
                 configureSession(it)
             }

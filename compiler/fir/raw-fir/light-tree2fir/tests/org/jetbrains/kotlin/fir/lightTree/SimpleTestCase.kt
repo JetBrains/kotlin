@@ -13,6 +13,7 @@ import com.intellij.testFramework.LightVirtualFile
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.builder.StubFirScopeProvider
 import org.jetbrains.kotlin.fir.lightTree.converter.DeclarationsConverter
@@ -63,7 +64,7 @@ class SimpleTestCase : AbstractRawFirBuilderTestCase() {
         println(DebugUtil.nodeTreeToString(builder.treeBuilt, false))
 
         val firFromLightTreeFile = DeclarationsConverter(
-            object : FirSession(null) {},
+            @OptIn(PrivateSessionConstructor::class) object : FirSession(null) {},
             StubFirScopeProvider,
             true,
             builder.lightTree

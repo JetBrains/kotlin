@@ -24,6 +24,7 @@ dependencies {
     compile(project(":compiler:fir:resolve"))
     compile(project(":compiler:fir:jvm"))
     compile(project(":compiler:fir:java"))
+    implementation(project(":compiler:fir:entrypoint"))
     compile(project(":compiler:fir:fir2ir"))
     compile(project(":compiler:fir:fir2ir:jvm-backend"))
     compile(project(":compiler:fir:checkers"))

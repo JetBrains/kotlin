@@ -312,6 +312,7 @@ include ":compiler:fir:cones",
         ":compiler:fir:dump",
         ":compiler:fir:jvm",
         ":compiler:fir:checkers",
+        ":compiler:fir:entrypoint",
         ":compiler:fir:analysis-tests"
 
 include ":idea:idea-frontend-fir:idea-fir-low-level-api"

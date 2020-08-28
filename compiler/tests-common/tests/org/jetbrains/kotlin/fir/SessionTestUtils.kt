@@ -11,9 +11,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.registerExtensions
-import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
-import org.jetbrains.kotlin.fir.java.FirLibrarySession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 
@@ -22,7 +21,7 @@ fun createSession(
     sourceScope: GlobalSearchScope,
     librariesScope: GlobalSearchScope = GlobalSearchScope.notScope(sourceScope),
     moduleName: String = "TestModule"
-) = createSession(environment.project, sourceScope, librariesScope, moduleName, environment::createPackagePartProvider)
+): FirSession = createSession(environment.project, sourceScope, librariesScope, moduleName, environment::createPackagePartProvider)
 
 fun createSession(
     project: Project,
@@ -33,7 +32,7 @@ fun createSession(
 ): FirSession {
     val moduleInfo = FirTestModuleInfo(name = Name.identifier(moduleName))
     val provider = FirProjectSessionProvider(project)
-    return FirJavaModuleBasedSession.create(moduleInfo, provider, sourceScope).also {
+    return FirSessionFactory.createJavaModuleBasedSession(moduleInfo, provider, sourceScope).also {
         createSessionForDependencies(project, provider, moduleInfo, librariesScope, packagePartProvider)
         it.extensionService.registerExtensions(BunchOfRegisteredExtensions.empty())
     }
@@ -48,7 +47,7 @@ private fun createSessionForDependencies(
 ) {
     val dependenciesInfo = FirTestModuleInfo(name = Name.identifier(moduleInfo.name.identifier + ".dependencies"))
     moduleInfo.dependencies.add(dependenciesInfo)
-    FirLibrarySession.create(
+    FirSessionFactory.createLibrarySession(
         dependenciesInfo, provider, librariesScope, project, packagePartProvider(librariesScope)
     )
 }

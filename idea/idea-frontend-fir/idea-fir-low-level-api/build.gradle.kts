@@ -15,6 +15,7 @@ dependencies {
     compile(project(":compiler:fir:checkers"))
     compile(project(":compiler:fir:java"))
     compile(project(":compiler:fir:jvm"))
+    implementation(project(":compiler:fir:entrypoint"))
     compile(intellijDep())
     compile(intellijCoreDep())
 

@@ -6,17 +6,9 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
-import org.jetbrains.kotlin.fir.resolve.FirTypeResolver
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirQualifierResolverImpl
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeResolverImpl
 
-abstract class FirModuleBasedSession(
+@OptIn(PrivateSessionConstructor::class)
+abstract class FirModuleBasedSession @PrivateSessionConstructor constructor(
     override val moduleInfo: ModuleInfo,
     sessionProvider: FirSessionProvider?
 ) : FirSession(sessionProvider)
-
-fun FirSession.registerResolveComponents() {
-    register(FirQualifierResolver::class, FirQualifierResolverImpl(this))
-    register(FirTypeResolver::class, FirTypeResolverImpl(this))
-}

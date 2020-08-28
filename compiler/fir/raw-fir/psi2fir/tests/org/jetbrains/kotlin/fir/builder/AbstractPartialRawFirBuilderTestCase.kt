@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.builder
 
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
@@ -14,7 +15,6 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractPartialRawFirBuilderTestCase : AbstractRawFirBuilderTestCase() {
-
     override fun doRawFirTest(filePath: String) {
         val nameToFind = File(filePath).useLines {
             it.first().run {
@@ -24,9 +24,13 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractRawFirBuilderTestC
         }
         val file = createKtFile(filePath)
         val functionToBuild = file.findDescendantOfType<KtNamedFunction> { it.name == nameToFind }!!
-        val firFunction = RawFirBuilder(
-            object : FirSession(null) {}, StubFirScopeProvider, false
-        ).buildFunctionWithBody(functionToBuild)
+
+        @OptIn(PrivateSessionConstructor::class)
+        val session = object : FirSession(null) {}
+
+        val firFunction = RawFirBuilder(session, StubFirScopeProvider, false)
+            .buildFunctionWithBody(functionToBuild)
+
         val firDump = firFunction.render(FirRenderer.RenderMode.WithFqNames)
         val expectedPath = filePath.replace(".kt", ".txt")
         KotlinTestUtils.assertEqualsToFile(File(expectedPath), firDump)

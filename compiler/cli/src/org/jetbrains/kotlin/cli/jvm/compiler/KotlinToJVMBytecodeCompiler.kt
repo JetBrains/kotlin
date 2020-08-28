@@ -58,7 +58,6 @@ import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
-import org.jetbrains.kotlin.fir.analysis.registerExtendedCheckersComponent
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmClassCodegen
@@ -68,12 +67,12 @@ import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.registerExtensions
-import org.jetbrains.kotlin.fir.java.FirJavaModuleBasedSession
-import org.jetbrains.kotlin.fir.java.FirLibrarySession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
+import org.jetbrains.kotlin.fir.session.FirSessionFactory
+import org.jetbrains.kotlin.fir.session.registerExtendedCheckersComponent
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
@@ -354,11 +353,11 @@ object KotlinToJVMBytecodeCompiler {
             }
 
             val moduleInfo = FirJvmModuleInfo(module.getModuleName())
-            val session: FirSession = FirJavaModuleBasedSession.create(moduleInfo, provider, scope).also {
+            val session: FirSession = FirSessionFactory.createJavaModuleBasedSession(moduleInfo, provider, scope).also {
                 val dependenciesInfo = FirJvmModuleInfo(Name.special("<dependencies>"))
                 moduleInfo.dependencies.add(dependenciesInfo)
                 val librariesScope = ProjectScope.getLibrariesScope(project)
-                FirLibrarySession.create(
+                FirSessionFactory.createLibrarySession(
                     dependenciesInfo, provider, librariesScope,
                     project, environment.createPackagePartProvider(librariesScope)
                 )
