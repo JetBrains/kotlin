@@ -90,15 +90,17 @@ object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator,
         module: Module
     ): List<BuildSystemIR> =
         buildList {
-            +GradleImportIR("org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
+            if (configurationData.buildSystemType == BuildSystemType.GradleKotlinDsl) {
+                +GradleImportIR("org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
+            }
 
             val targetVersionValue = inContextOfModuleConfigurator(module) {
                 reader {
                     JvmModuleConfigurator.targetJvmVersion.reference.settingValue.value
                 }
             }
-            when {
-                configurationData.buildSystemType.isGradle -> {
+            when (configurationData.buildSystemType) {
+                BuildSystemType.GradleKotlinDsl -> {
                     +GradleConfigureTaskIR(
                         GradleByClassTasksAccessIR("KotlinCompile"),
                         irs = listOf(
@@ -106,7 +108,15 @@ object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator,
                         )
                     )
                 }
-                configurationData.buildSystemType == BuildSystemType.Maven -> {
+                BuildSystemType.GradleGroovyDsl -> {
+                    +GradleSectionIR(
+                        "compileKotlin",
+                        irs = listOf(
+                            GradleAssignmentIR("kotlinOptions.jvmTarget", GradleStringConstIR(targetVersionValue))
+                        )
+                    )
+                }
+                BuildSystemType.Maven -> {
                     +MavenPropertyIR("kotlin.compiler.jvmTarget", targetVersionValue)
                 }
             }

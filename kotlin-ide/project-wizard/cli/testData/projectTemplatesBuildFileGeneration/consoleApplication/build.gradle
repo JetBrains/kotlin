@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     id 'org.jetbrains.kotlin.jvm' version 'KOTLIN_VERSION'
     id 'application'
@@ -16,7 +14,7 @@ repositories {
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'
 }
-tasks.withType(KotlinCompile) {
+compileKotlin {
     kotlinOptions.jvmTarget = '1.8'
 }
 application {
