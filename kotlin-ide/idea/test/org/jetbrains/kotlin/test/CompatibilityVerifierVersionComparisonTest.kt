@@ -6,16 +6,14 @@
 package org.jetbrains.kotlin.test
 
 import com.intellij.testFramework.LightPlatformTestCase
-import org.jetbrains.kotlin.idea.KotlinPluginUtil
-import org.jetbrains.kotlin.idea.KotlinPluginVersion
-import org.jetbrains.kotlin.idea.PlatformVersion
+import org.jetbrains.kotlin.idea.*
 import org.junit.internal.runners.JUnit38ClassRunner
 import org.junit.runner.RunWith
 
 @RunWith(JUnit38ClassRunner::class)
 class CompatibilityVerifierVersionComparisonTest : LightPlatformTestCase() {
     fun testKotlinVersionParsing() {
-        val version = KotlinPluginVersion.parse("1.2.40-dev-193-Studio3.0-1") ?: throw AssertionError("Version should not be null")
+        val version = OldKotlinPluginVersion.parse("1.2.40-dev-193-Studio3.0-1") ?: throw AssertionError("Version should not be null")
 
         assertEquals("1.2.40", version.kotlinVersion)
         assertNull(version.milestone)
@@ -33,7 +31,7 @@ class CompatibilityVerifierVersionComparisonTest : LightPlatformTestCase() {
     }
 
     fun testMilestoneVersion() {
-        val version = KotlinPluginVersion.parse("1.4-M1-eap-27-IJ2020.1-1") ?: throw AssertionError("Version should not be null")
+        val version = OldKotlinPluginVersion.parse("1.4-M1-eap-27-IJ2020.1-1") ?: throw AssertionError("Version should not be null")
 
         assertEquals("1.4", version.kotlinVersion)
         assertEquals("M1", version.milestone)
@@ -52,6 +50,7 @@ class CompatibilityVerifierVersionComparisonTest : LightPlatformTestCase() {
         val pluginVersion = KotlinPluginUtil.getPluginVersion()
         if (pluginVersion == "@snapshot@") return
 
-        assertNotNull("Can not parse current Kotlin Plugin version: $pluginVersion", KotlinPluginVersion.getCurrent())
+        val currentVersion = KotlinPluginVersion.getCurrent()
+        assert(currentVersion is KidKotlinPluginVersion) { "Can not parse current Kotlin Plugin version: $pluginVersion" }
     }
 }

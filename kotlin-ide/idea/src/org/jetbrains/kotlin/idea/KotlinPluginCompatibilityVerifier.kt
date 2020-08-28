@@ -9,7 +9,6 @@ import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.ui.Messages
 import com.intellij.util.PlatformUtils
 import com.intellij.util.text.nullize
-import org.intellij.lang.annotations.RegExp
 
 object KotlinPluginCompatibilityVerifier {
     @JvmStatic
@@ -26,14 +25,44 @@ object KotlinPluginCompatibilityVerifier {
     }
 }
 
-data class KotlinPluginVersion(
+interface KotlinPluginVersion {
+    val platformVersion: PlatformVersion
+    val buildNumber: String?
+
+    companion object {
+        fun parse(version: String): KotlinPluginVersion? {
+            return OldKotlinPluginVersion.parse(version) ?: KidKotlinPluginVersion.parse(version)
+        }
+
+        fun getCurrent(): KotlinPluginVersion? = parse(KotlinPluginUtil.getPluginVersion())
+    }
+}
+
+data class KidKotlinPluginVersion(
+    override val buildNumber: String?, // 53
+    override val platformVersion: PlatformVersion,
+) : KotlinPluginVersion {
+    companion object {
+        private val KID_KOTLIN_VERSION_REGEX = "([\\d]{3}).([\\d]+)-kid".toRegex()
+
+        fun parse(version: String): KidKotlinPluginVersion? {
+            val matchResult = KID_KOTLIN_VERSION_REGEX.matchEntire(version) ?: return null
+            val (platformNumber, buildNumber) = matchResult.destructured
+            val platformVersionText = "20" + platformNumber.take(2) + "." + platformNumber.takeLast(1)
+            val platformVersion = PlatformVersion(PlatformVersion.Platform.IDEA, platformVersionText)
+            return KidKotlinPluginVersion(buildNumber, platformVersion)
+        }
+    }
+}
+
+data class OldKotlinPluginVersion(
     val kotlinVersion: String, // 1.2.3
     val milestone: String?, // M1
     val status: String, // release, eap, rc
-    val buildNumber: String?, // 53
-    val platformVersion: PlatformVersion,
+    override val buildNumber: String?, // 53
+    override val platformVersion: PlatformVersion,
     val patchNumber: String // usually '1'
-) {
+) : KotlinPluginVersion {
     companion object {
         private const val KOTLIN_VERSION_REGEX_STRING =
             "^([\\d.]+)" +                // Version number, like 1.3.50
@@ -43,13 +72,13 @@ data class KotlinPluginVersion(
                     "-([A-Za-z0-9.]+)" +  // Platform version, like Studio4.0.1
                     "-(\\d+)$"            // Tooling update, like '-1'
 
-        private val KOTLIN_VERSION_REGEX = KOTLIN_VERSION_REGEX_STRING.toRegex()
+        private val OLD_KOTLIN_VERSION_REGEX = KOTLIN_VERSION_REGEX_STRING.toRegex()
 
-        fun parse(version: String): KotlinPluginVersion? {
-            val matchResult = KOTLIN_VERSION_REGEX.matchEntire(version) ?: return null
+        fun parse(version: String): OldKotlinPluginVersion? {
+            val matchResult = OLD_KOTLIN_VERSION_REGEX.matchEntire(version) ?: return null
             val (kotlinVersion, milestone, status, buildNumber, platformString, patchNumber) = matchResult.destructured
             val platformVersion = PlatformVersion.parse(platformString) ?: return null
-            return KotlinPluginVersion(
+            return OldKotlinPluginVersion(
                 kotlinVersion,
                 milestone.nullize(),
                 status,
@@ -58,8 +87,6 @@ data class KotlinPluginVersion(
                 patchNumber
             )
         }
-
-        fun getCurrent(): KotlinPluginVersion? = parse(KotlinPluginUtil.getPluginVersion())
     }
 
     override fun toString() = "$kotlinVersion for $platformVersion"
@@ -78,8 +105,7 @@ data class PlatformVersion(val platform: Platform, val version: String /* 3.1 or
         }
 
         fun getCurrent(): PlatformVersion? {
-            val prefix = PlatformUtils.getPlatformPrefix() ?: return null
-            val platform = when (prefix) {
+            val platform = when (PlatformUtils.getPlatformPrefix()) {
                 PlatformUtils.IDEA_CE_PREFIX, PlatformUtils.IDEA_PREFIX -> Platform.IDEA
                 "AndroidStudio" -> Platform.ANDROID_STUDIO // from 'com.android.tools.idea.IdeInfo'
                 else -> return null
