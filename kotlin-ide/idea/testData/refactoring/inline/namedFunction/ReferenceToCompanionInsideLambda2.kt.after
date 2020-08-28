@@ -9,5 +9,5 @@ private class A {
 
 private fun test(a: A) {
     val bar = 42
-    { A.bar }()
+    val c = A.bar
 }

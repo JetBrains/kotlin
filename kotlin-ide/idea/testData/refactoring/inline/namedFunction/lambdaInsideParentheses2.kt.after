@@ -1,13 +1,9 @@
 fun testApply() {
     val i: Int = 42
-    i.(fun Int.() {
-        toString()
-    })()
+    i.toString()
     val applyInside = i
 
-    i.(fun Int.() {
-        toString()
-    })()
+    i.toString()
     val applyTrailing = i
 }
 

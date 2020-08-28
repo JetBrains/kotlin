@@ -3,5 +3,5 @@ class Declaration {
 }
 
 fun call(declaration: Declaration) {
-    declaration.<caret>lambdaType(6) { it + 7 }
+    val a = declaration.<caret>lambdaType(6) { it + 7 }
 }

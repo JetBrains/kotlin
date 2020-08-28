@@ -48,7 +48,7 @@ class KotlinInlineAnonymousFunctionProcessor(
             }
         }
 
-        private fun performRefactoring(usage: KtExpression, editor: Editor?) {
+        fun performRefactoring(usage: KtExpression, editor: Editor?) {
             val project = usage.project
             val invokeCallExpression = when (usage) {
                 is KtQualifiedExpression -> usage.selectorExpression

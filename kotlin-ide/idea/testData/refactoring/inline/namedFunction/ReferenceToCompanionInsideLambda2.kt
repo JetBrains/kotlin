@@ -1,8 +1,8 @@
 package abc
 
 private class A {
-    fun <caret>foooo() {
-        { bar }()
+    fun <caret>foooo(): Int {
+        return { bar }()
     }
 
     companion object {
@@ -12,5 +12,5 @@ private class A {
 
 private fun test(a: A) {
     val bar = 42
-    a.foooo()
+    val c = a.foooo()
 }

@@ -1,6 +1,4 @@
 fun a() {
     val a: Int = 42
-    ({ it: Int ->
-        println(it)
-    })(a)
+    println(a)
 }

@@ -1,10 +1,6 @@
 class Chain
 
 fun complicate(chain: Chain) {
-    val vra = (fun Chain.(): Chain {
-        return this
-    })(chain)
-    val vrb = (fun Chain.(): Chain {
-        return Chain()
-    })(chain)
+    val vra = chain
+    val vrb = Chain()
 }

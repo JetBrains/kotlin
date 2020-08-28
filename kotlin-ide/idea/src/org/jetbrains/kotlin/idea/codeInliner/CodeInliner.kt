@@ -16,10 +16,12 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.inspections.RedundantLambdaOrAnonymousFunctionInspection
 import org.jetbrains.kotlin.idea.inspections.RedundantUnitExpressionInspection
 import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.intentions.LambdaToAnonymousFunctionIntention
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
+import org.jetbrains.kotlin.idea.refactoring.inline.KotlinInlineAnonymousFunctionProcessor
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -469,6 +471,8 @@ class CodeInliner<TCallElement : KtElement>(
             //TODO: do this earlier
             dropArgumentsForDefaultValues(element)
 
+            removeRedundantLambdasAndAnonymousFunctions(element)
+
             simplifySpreadArrayOfArguments(element)
 
             removeExplicitTypeArguments(element)
@@ -511,6 +515,15 @@ class CodeInliner<TCallElement : KtElement>(
         }
 
         return if (newElements.isEmpty()) PsiChildRange.EMPTY else PsiChildRange(newElements.first(), newElements.last())
+    }
+
+    private fun removeRedundantLambdasAndAnonymousFunctions(element: KtElement) {
+        for (function in element.collectDescendantsOfType<KtFunction>().asReversed()) {
+            val call = RedundantLambdaOrAnonymousFunctionInspection.findCallIfApplicableTo(function)
+            if (call != null) {
+                KotlinInlineAnonymousFunctionProcessor.performRefactoring(call, editor = null)
+            }
+        }
     }
 
     private fun restoreComments(element: KtElement) {

@@ -8,6 +8,6 @@ fun call() {
     println(42)
     println(declaration)
     Declaration()
-    println({ 42 }())
+    println(42)
     println({ 4 })
 }

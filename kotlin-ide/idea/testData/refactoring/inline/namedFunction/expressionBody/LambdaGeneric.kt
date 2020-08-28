@@ -1,4 +1,4 @@
 fun <T, U> operateLambda(p: T, f: (T) -> U) = f(p)
 fun returnLabel() {
-    <caret>operateLambda(1) {}
+    val a = <caret>operateLambda(1) {}
 }

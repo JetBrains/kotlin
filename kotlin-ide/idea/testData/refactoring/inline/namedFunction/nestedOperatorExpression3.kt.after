@@ -1,8 +1,8 @@
 fun callFail(p: String?) {
-    println(printAndGet(42) + ({
+    println(printAndGet(42) + run {
         println(33 - 33)
         33 + 33
-    })())
+    })
 
     println(33 - 33)
     println(printAndGet(-printAndGet(33 + 33)))

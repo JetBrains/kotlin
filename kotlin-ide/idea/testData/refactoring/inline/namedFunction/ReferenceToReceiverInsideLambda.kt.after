@@ -3,5 +3,4 @@ private class A {
 }
 
 private fun test(a: A) {
-    { a.bar }()
 }
