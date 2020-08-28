@@ -12518,6 +12518,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/innerNested/nestedInPackage.kt");
         }
 
+        @TestMetadata("nestedInnerClass.kt")
+        public void testNestedInnerClass() throws Exception {
+            runTest("compiler/testData/codegen/box/innerNested/nestedInnerClass.kt");
+        }
+
         @TestMetadata("nestedObjects.kt")
         public void testNestedObjects() throws Exception {
             runTest("compiler/testData/codegen/box/innerNested/nestedObjects.kt");
