@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -41,3 +42,10 @@ fun ConeClassLikeType.withArguments(typeArguments: Array<out ConeTypeProjection>
     is ConeClassErrorType -> this
     else -> error("Unknown cone type: ${this::class}")
 }
+
+fun ConeKotlinType.toTypeProjection(variance: Variance): ConeTypeProjection =
+    when (variance) {
+        Variance.INVARIANT -> this
+        Variance.IN_VARIANCE -> ConeKotlinTypeProjectionIn(this)
+        Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOut(this)
+    }
