@@ -35,9 +35,7 @@ internal class ExceptionState private constructor(
     }
 
     constructor(common: Common, stackTrace: List<String>) : this(common.irClass, common.fields, stackTrace) {
-        var wrapperSuperType: Complex? = common
-        while (wrapperSuperType != null && wrapperSuperType !is Wrapper) wrapperSuperType = (wrapperSuperType as Common).superClass
-        setUpCauseIfNeeded(wrapperSuperType as? Wrapper)
+        setUpCauseIfNeeded(common.superWrapperClass)
     }
 
     constructor(wrapper: Wrapper, stackTrace: List<String>) : this(wrapper.value as Throwable, wrapper.irClass, stackTrace) {

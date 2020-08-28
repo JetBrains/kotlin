@@ -180,16 +180,7 @@ internal fun getTypeArguments(
 
 internal fun State?.extractNonLocalDeclarations(): List<Variable> {
     this ?: return listOf()
-    val state = this.takeIf { it !is Complex } ?: (this as Complex).getOriginal()
-    return state.fields.filter { it.symbol !is IrFieldSymbol }
-}
-
-internal fun State?.getCorrectReceiverByFunction(irFunction: IrFunction): State? {
-    if (this !is Complex) return this
-
-    val original: Complex? = this.getOriginal()
-    val other = irFunction.parentClassOrNull?.thisReceiver ?: return this
-    return generateSequence(original) { it.superClass }.firstOrNull { it.irClass.thisReceiver == other } ?: this
+    return this.fields.filter { it.symbol !is IrFieldSymbol }
 }
 
 internal fun IrFunction.getCapitalizedFileName() = this.file.name.replace(".kt", "Kt").capitalizeAsciiOnly()

@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.ir.interpreter.state
 
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.interpreter.isInterface
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
-import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 
 internal class Common private constructor(
@@ -17,29 +15,12 @@ internal class Common private constructor(
 
     constructor(irClass: IrClass) : this(irClass, mutableListOf())
 
-    fun setSuperClassRecursive() {
-        var thisClass: Common? = this
-        while (thisClass != null) {
-            val superClass = thisClass.irClass.superTypes.filterNot { it.isInterface() }.singleOrNull()
-            val superClassOwner = superClass?.classOrNull?.owner
-            val superClassState = superClassOwner?.let { Common(it) }
-            superClassState?.let { thisClass!!.setSuperClassInstance(it) }
-
-            if (superClass == null && thisClass.irClass.superTypes.isNotEmpty()) {
-                // cover the case when super type implement an interface and so doesn't have explicit any as super class
-                thisClass.setSuperClassInstance(Common(getAnyClassRecursive()))
-            }
-            thisClass = superClassState
-        }
-    }
-
-    private fun getAnyClassRecursive(): IrClass {
-        var owner = irClass.superTypes.first().classOrNull!!.owner
-        while (owner.superTypes.isNotEmpty()) owner = owner.superTypes.first().classOrNull!!.owner
-        return owner
-    }
-
     override fun toString(): String {
-        return "Common(obj='${irClass.fqNameForIrSerialization}', super=$superClass, values=$fields)"
+        return "Common(obj='${irClass.fqNameForIrSerialization}', values=$fields)"
+    }
+
+    fun copyFieldsFrom(state: Complex) {
+        this.fields.addAll(state.fields)
+        superWrapperClass = state.superWrapperClass ?: state as? Wrapper
     }
 }

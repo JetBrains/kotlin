@@ -89,7 +89,13 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
         }
     }
 
-    internal class Proxy(val state: Common, val interpreter: IrInterpreter) {
+    /**
+     * calledFromBuiltIns - used to avoid cyclic calls. For example:
+     *     override fun toString(): String {
+     *         return super.toString()
+     *     }
+     */
+    internal class Proxy(val state: Common, val interpreter: IrInterpreter, private val calledFromBuiltIns: Boolean = false) {
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
             if (javaClass != other?.javaClass) return false
@@ -98,7 +104,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
 
             val valueArguments = mutableListOf<Variable>()
             val equalsFun = state.getEqualsFunction()
-            if (equalsFun.isFakeOverriddenFromAny()) return this.state.getOriginal() === other.state.getOriginal()
+            if (equalsFun.isFakeOverriddenFromAny() || calledFromBuiltIns) return this.state === other.state
 
             equalsFun.getDispatchReceiver()!!.let { valueArguments.add(Variable(it, state)) }
             valueArguments.add(Variable(equalsFun.valueParameters.single().symbol, other.state))
@@ -114,7 +120,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
         override fun hashCode(): Int {
             val valueArguments = mutableListOf<Variable>()
             val hashCodeFun = state.getHashCodeFunction()
-            if (hashCodeFun.isFakeOverriddenFromAny()) return System.identityHashCode(state.getOriginal())
+            if (hashCodeFun.isFakeOverriddenFromAny() || calledFromBuiltIns) return System.identityHashCode(state)
 
             hashCodeFun.getDispatchReceiver()!!.let { valueArguments.add(Variable(it, state)) }
             return with(interpreter) {
@@ -128,8 +134,8 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
         override fun toString(): String {
             val valueArguments = mutableListOf<Variable>()
             val toStringFun = state.getToStringFunction()
-            if (toStringFun.isFakeOverriddenFromAny()) {
-                return "${state.getOriginal().irClass.internalName()}@" + System.identityHashCode(state).toString(16).padStart(8, '0')
+            if (toStringFun.isFakeOverriddenFromAny() || calledFromBuiltIns) {
+                return "${state.irClass.internalName()}@" + hashCode().toString(16).padStart(8, '0')
             }
 
             toStringFun.getDispatchReceiver()!!.let { valueArguments.add(Variable(it, state)) }
@@ -142,12 +148,12 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
         }
     }
 
-    internal fun State.wrapAsProxyIfNeeded(): Any? {
+    internal fun State.wrapAsProxyIfNeeded(calledFromBuiltIns: Boolean = false): Any? {
         return when (this) {
             is ExceptionState -> this.getThisAsCauseForException()
             is Wrapper -> this.value
             is Primitive<*> -> this.value
-            is Common -> Proxy(this, this@IrInterpreter)
+            is Common -> Proxy(this, this@IrInterpreter, calledFromBuiltIns)
             is Lambda -> this // TODO as Proxy
             else -> throw AssertionError("${this::class} is unsupported as argument for wrap function")
         }
@@ -250,7 +256,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
 
         val receiverType = irFunction.dispatchReceiverParameter?.type
         val argsType = listOfNotNull(receiverType) + irFunction.valueParameters.map { it.type }
-        val argsValues = args.map { it.wrapAsProxyIfNeeded() }
+        val argsValues = args.map { it.wrapAsProxyIfNeeded(methodName !in setOf("plus", IrBuiltIns.OperatorNames.EQEQ)) }
 
         fun IrType.getOnlyName(): String {
             return when {
@@ -351,12 +357,10 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
         rawExtensionReceiver?.interpret()?.check { return it }
         val extensionReceiver = rawExtensionReceiver?.let { stack.popReturnValue() }?.checkNullability(expression.extensionReceiver?.type)
 
-        // get correct ir function
         val irFunction = dispatchReceiver?.getIrFunctionByIrCall(expression) ?: expression.symbol.owner
-        val functionReceiver = dispatchReceiver.getCorrectReceiverByFunction(irFunction)
 
         // it is important firstly to add receiver, then arguments; this order is used in builtin method call
-        irFunction.getDispatchReceiver()?.let { functionReceiver?.let { receiver -> valueArguments.add(Variable(it, receiver)) } }
+        irFunction.getDispatchReceiver()?.let { dispatchReceiver?.let { receiver -> valueArguments.add(Variable(it, receiver)) } }
         irFunction.getExtensionReceiver()?.let { extensionReceiver?.let { receiver -> valueArguments.add(Variable(it, receiver)) } }
 
         interpretValueParameters(expression, irFunction, valueArguments).check { return it }
@@ -365,11 +369,12 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
         if (dispatchReceiver is Complex) valueArguments.addAll(dispatchReceiver.typeArguments)
         if (extensionReceiver is Complex) valueArguments.addAll(extensionReceiver.typeArguments)
 
-        val isLocal = (dispatchReceiver as? Complex)?.getOriginal()?.irClass?.isLocal ?: irFunction.isLocal
-        if (isLocal) valueArguments.addAll(dispatchReceiver.extractNonLocalDeclarations())
+        if (dispatchReceiver?.irClass?.isLocal == true || irFunction.isLocal) {
+            valueArguments.addAll(dispatchReceiver.extractNonLocalDeclarations())
+        }
 
-        if (functionReceiver is Complex && irFunction.parentClassOrNull?.isInner == true) {
-            generateSequence(functionReceiver.outerClass) { (it.state as? Complex)?.outerClass }.forEach { valueArguments.add(it) }
+        if (dispatchReceiver is Complex && irFunction.parentClassOrNull?.isInner == true) {
+            generateSequence(dispatchReceiver.outerClass) { (it.state as? Complex)?.outerClass }.forEach { valueArguments.add(it) }
         }
 
         return stack.newFrame(asSubFrame = irFunction.isInline || irFunction.isLocal, initPool = valueArguments) {
@@ -469,7 +474,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
 
             for (i in 1 until statements.size) statements[i].interpret().check { return@newFrame it }
 
-            stack.pushReturnValue(state.apply { this.setSuperClassInstance(returnedState) })
+            stack.pushReturnValue(state.apply { this.copyFieldsFrom(returnedState) })
             Next
         }
     }
@@ -661,7 +666,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
 
         val objectState = when {
             objectClass.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.getCompanionObject(objectClass)
-            else -> Common(objectClass).apply { setSuperClassRecursive() } // TODO test type arguments
+            else -> Common(objectClass) // TODO test type arguments
         }
         mapOfObjects[objectClass.symbol] = objectState
         stack.pushReturnValue(objectState)
@@ -769,7 +774,6 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
                 is Primitive<*> -> arrayToList(result.value)
                 is Common -> when {
                     result.irClass.defaultType.isUnsignedArray() -> arrayToList((result.fields.single().state as Primitive<*>).value)
-                    result.irClass.defaultType.isUnsigned() -> listOf(result)
                     else -> listOf(Proxy(result, this))
                 }
                 else -> listOf(result)
@@ -782,15 +786,12 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
                 val storageProperty = owner.declarations.filterIsInstance<IrProperty>().first { it.name.asString() == "storage" }
                 val primitiveArray = args.map {
                     when (it) {
-                        is Common -> (it.fields.single().state as Primitive<*>).value   // is unsigned number
-                        else -> it                                                      // is primitive number
+                        is Proxy -> (it.state.fields.single().state as Primitive<*>).value  // is unsigned number
+                        else -> it                                                          // is primitive number
                     }
                 }
                 val unsignedArray = primitiveArray.toPrimitiveStateArray(storageProperty.backingField!!.type)
-                Common(owner).apply {
-                    setSuperClassRecursive()
-                    fields.add(Variable(storageProperty.symbol, unsignedArray))
-                }
+                Common(owner).apply { fields.add(Variable(storageProperty.symbol, unsignedArray)) }
             }
             else -> args.toPrimitiveStateArray(expression.type).apply {
                 if (expression.type.isArray()) {
