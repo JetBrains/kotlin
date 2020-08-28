@@ -69,9 +69,10 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
 
     protected open fun configureTestSpecific(configuration: CompilerConfiguration, testFiles: List<TestFile>) {}
 
-    protected open fun createConfiguration(
+    protected fun createConfiguration(
         kind: ConfigurationKind,
         jdkKind: TestJdkKind,
+        backend: TargetBackend,
         classpath: List<File?>,
         javaSource: List<File?>,
         testFilesWithConfigurationDirectives: List<TestFile>
