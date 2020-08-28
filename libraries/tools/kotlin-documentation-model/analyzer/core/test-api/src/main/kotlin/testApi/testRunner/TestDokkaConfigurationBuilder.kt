@@ -6,6 +6,7 @@ import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.Description
 import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.model.doc.Text
+import org.jetbrains.dokka.model.properties.PropertyContainer
 import java.io.File
 
 fun dokkaConfiguration(block: TestDokkaConfigurationBuilder.() -> Unit): DokkaConfigurationImpl =
@@ -144,6 +145,44 @@ fun sourceSet(name: String): DokkaConfiguration.DokkaSourceSet {
         sourceSetID = defaultSourceSet.sourceSetID.copy(sourceSetName = name)
     )
 }
+
+fun dModule(
+    name: String,
+    packages: List<DPackage> = emptyList(),
+    documentation: SourceSetDependent<DocumentationNode> = emptyMap(),
+    expectPresentInSet: DokkaConfiguration.DokkaSourceSet? = null,
+    sourceSets: Set<DokkaConfiguration.DokkaSourceSet> = emptySet(),
+    extra: PropertyContainer<DModule> = PropertyContainer.empty()
+): DModule = DModule(
+    name = name,
+    packages = packages,
+    documentation = documentation,
+    expectPresentInSet = expectPresentInSet,
+    sourceSets = sourceSets,
+    extra = extra
+)
+
+fun dPackage(
+    dri: DRI,
+    functions: List<DFunction> = emptyList(),
+    properties: List<DProperty> = emptyList(),
+    classlikes: List<DClasslike> = emptyList(),
+    typealiases: List<DTypeAlias> = emptyList(),
+    documentation: SourceSetDependent<DocumentationNode> = emptyMap(),
+    expectPresentInSet: DokkaConfiguration.DokkaSourceSet? = null,
+    sourceSets: Set<DokkaConfiguration.DokkaSourceSet> = emptySet(),
+    extra: PropertyContainer<DPackage> = PropertyContainer.empty()
+): DPackage = DPackage(
+    dri = dri,
+    functions = functions,
+    properties = properties,
+    classlikes = classlikes,
+    typealiases = typealiases,
+    documentation = documentation,
+    expectPresentInSet = expectPresentInSet,
+    sourceSets = sourceSets,
+    extra = extra
+)
 
 fun documentationNode(vararg texts: String): DocumentationNode {
     return DocumentationNode(texts.toList().map { Description(Text(it)) })
