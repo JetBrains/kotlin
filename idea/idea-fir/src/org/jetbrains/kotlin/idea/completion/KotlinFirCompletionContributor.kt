@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.idea.completion
 import com.intellij.codeInsight.completion.*
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PsiJavaPatterns
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.util.elementType
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.getAnalysisSessionFor
@@ -21,6 +24,7 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtLabelReferenceExpression
+import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 
@@ -63,6 +67,35 @@ private object KotlinHighLevelApiContributor : CompletionProvider<CompletionPara
 private object KotlinAvailableScopesCompletionContributor {
     private val lookupElementFactory = HighLevelApiLookupElementFactory()
 
+    fun getOriginalPosition(parameters: CompletionParameters, originalFile: KtFile): PsiElement {
+        fun PsiElement.getPositionForExpressionFunctionBody(): PsiElement? {
+            return when {
+                this is KtNamedFunction && bodyExpression == null && equalsToken != null -> this
+                elementType == KtTokens.EQ && parent is KtNamedFunction -> this
+                else -> null
+            }
+        }
+
+        val originalPosition = parameters.originalPosition
+        if (originalPosition is PsiWhiteSpace) {
+            originalPosition.prevSibling?.getPositionForExpressionFunctionBody()?.let {
+                /* We are in expression function body
+                 * fun x() = <caret>
+                 */
+                return it
+            }
+        }
+        if (originalPosition != null) return originalPosition
+        if (parameters.offset == originalFile.textLength) {
+            /*
+             * We are in the end of the file possibly in function with expression body
+             * fun x() = <caret><EOF>
+             */
+            originalFile.findElementAt(parameters.offset - 1)?.getPositionForExpressionFunctionBody()?.let { return it }
+        }
+        error("Can not find original position")
+    }
+
     @OptIn(InvalidWayOfUsingAnalysisSession::class)
     fun collectCompletions(parameters: CompletionParameters, result: CompletionResultSet) {
         val originalFile = parameters.originalFile as? KtFile ?: return
@@ -72,8 +105,10 @@ private object KotlinAvailableScopesCompletionContributor {
 
         val possibleReceiver = nameExpression.getQualifiedExpressionForSelector()?.receiverExpression
 
+        val originalPosition = getOriginalPosition(parameters, originalFile)
+
         with(getAnalysisSessionFor(originalFile).createContextDependentCopy()) {
-            val (implicitScopes, implicitReceivers) = originalFile.getScopeContextForPosition(parameters.originalPosition, nameExpression)
+            val (implicitScopes, implicitReceivers) = originalFile.getScopeContextForPosition(originalPosition, nameExpression)
 
             val typeOfPossibleReceiver = possibleReceiver?.getKtType()
             val possibleReceiverScope = typeOfPossibleReceiver?.getTypeScope()

@@ -69,7 +69,7 @@ abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTo
 
     fun KtType.getTypeScope(): KtScope? = scopeProvider.getTypeScope(this)
 
-    fun KtFile.getScopeContextForPosition(originalPosition: PsiElement?, positionInFakeFile: KtElement): KtScopeContext =
+    fun KtFile.getScopeContextForPosition(originalPosition: PsiElement, positionInFakeFile: KtElement): KtScopeContext =
         scopeProvider.getScopeContextForPosition(this, originalPosition, positionInFakeFile)
 
     fun KtDeclaration.getSymbol(): KtSymbol = symbolProvider.getSymbol(this)
