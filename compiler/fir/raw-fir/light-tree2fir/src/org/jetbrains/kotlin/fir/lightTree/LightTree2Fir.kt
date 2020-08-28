@@ -22,7 +22,7 @@ import java.io.File
 import java.nio.file.Path
 
 class LightTree2Fir(
-    val session: FirSession = @OptIn(PrivateSessionConstructor::class) object : FirSession(null) {},
+    val session: FirSession,
     private val scopeProvider: FirScopeProvider,
     private val stubMode: Boolean = false
 ) {

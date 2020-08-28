@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
+import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.isExtensionFunctionAnnotationCall
@@ -74,8 +75,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
     }
 
     protected fun KtFile.toFirFile(stubMode: Boolean): FirFile {
-        @OptIn(PrivateSessionConstructor::class)
-        val session = object : FirSession(null) {}
+        val session = FirSessionFactory.createEmptySession()
         return RawFirBuilder(session, StubFirScopeProvider, stubMode).buildFirFile(this)
     }
 

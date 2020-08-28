@@ -9,7 +9,9 @@ import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.java.*
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinDeserializedJvmSymbolsProvider
@@ -100,5 +102,10 @@ object FirSessionFactory {
                 )
             )
         }
+    }
+
+    @TestOnly
+    fun createEmptySession(): FirSession {
+        return object : FirSession(null) {}
     }
 }

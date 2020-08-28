@@ -6,9 +6,8 @@
 package org.jetbrains.kotlin.fir.builder
 
 import org.jetbrains.kotlin.fir.FirRenderer
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -25,8 +24,7 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractRawFirBuilderTestC
         val file = createKtFile(filePath)
         val functionToBuild = file.findDescendantOfType<KtNamedFunction> { it.name == nameToFind }!!
 
-        @OptIn(PrivateSessionConstructor::class)
-        val session = object : FirSession(null) {}
+        val session = FirSessionFactory.createEmptySession()
 
         val firFunction = RawFirBuilder(session, StubFirScopeProvider, false)
             .buildFunctionWithBody(functionToBuild)
