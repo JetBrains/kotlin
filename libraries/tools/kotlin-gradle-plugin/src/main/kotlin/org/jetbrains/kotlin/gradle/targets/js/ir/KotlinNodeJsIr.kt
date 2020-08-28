@@ -65,7 +65,14 @@ open class KotlinNodeJsIr @Inject constructor(target: KotlinJsIrTarget) :
         if (runTask == null) {
             val runTaskHolder = NodeJsExec.create(binary.compilation, name) {
                 group = taskGroupName
-                inputFileProperty.set(binary.linkTask.flatMap { it.outputFileProperty })
+                inputFileProperty.set(
+                    project.layout.file(
+                        binary.linkSyncTask.map {
+                            it.destinationDir
+                                .resolve(binary.linkTask.get().outputFile.name)
+                        }
+                    )
+                )
             }
 
             target.runTask.dependsOn(runTaskHolder)

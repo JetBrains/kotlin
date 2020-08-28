@@ -6,13 +6,16 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
+import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer.Companion.generateBinaryName
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.DefaultDistribution
+import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 interface JsBinary {
@@ -43,6 +46,21 @@ sealed class JsIrBinary(
             name,
             "Kotlin",
             target.targetName
+        )
+
+    val linkSyncTaskName: String = linkSyncTaskName()
+
+    val linkSyncTask: TaskProvider<Copy>
+        get() = target.project.tasks
+            .withType<Copy>()
+            .named(linkSyncTaskName)
+
+    private fun linkSyncTaskName(): String =
+        lowerCamelCaseName(
+            compilation.target.disambiguationClassifier,
+            compilation.name.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+            name,
+            COMPILE_SYNC
         )
 
     val target: KotlinTarget
@@ -99,3 +117,5 @@ internal val JsBinary.executeTaskBaseName: String
         mode,
         null
     )
+
+internal val COMPILE_SYNC = "compileSync"

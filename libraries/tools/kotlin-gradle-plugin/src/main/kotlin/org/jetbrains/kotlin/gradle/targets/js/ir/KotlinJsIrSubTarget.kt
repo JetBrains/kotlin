@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
-import org.jetbrains.kotlin.gradle.targets.js.subtargets.DefaultDistribution
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -60,17 +59,6 @@ abstract class KotlinJsIrSubTarget(
         NpmResolverPlugin.apply(project)
 
         configureTests()
-
-        target.compilations.all {
-            val npmProject = it.npmProject
-            it.binaries
-                .withType(JsIrBinary::class.java)
-                .all { binary ->
-                    binary.linkTask.configure {
-                        it.kotlinOptions.outputFile = npmProject.dir.resolve(npmProject.main).canonicalPath
-                    }
-                }
-        }
     }
 
     private val produceExecutable: Unit by lazy {
@@ -127,12 +115,17 @@ abstract class KotlinJsIrSubTarget(
             testJs.group = LifecycleBasePlugin.VERIFICATION_GROUP
             testJs.description = testTaskDescription
 
-            val testExecutableTask = compilation.binaries.getIrBinaries(
+            val binary = compilation.binaries.getIrBinaries(
                 KotlinJsBinaryMode.DEVELOPMENT
-            ).single().linkTask
+            ).single()
 
             testJs.inputFileProperty.set(
-                testExecutableTask.flatMap { it.outputFileProperty }
+                project.layout.file(
+                    binary.linkSyncTask.map {
+                        it.destinationDir
+                            .resolve(binary.linkTask.get().outputFile.name)
+                    }
+                )
             )
 
             testJs.dependsOn(nodeJs.npmInstallTaskProvider, nodeJs.nodeJsSetupTaskProvider)
